@@ -1,0 +1,20 @@
+{
+  "EnablePayloadSigning": true,
+  "EnableStreaming": true,
+  "ChunkSize": 32768,
+  "EnableBucketNameValidation": true,
+  "BucketName": "main-test-bucket-2019",
+  "Region": "EUWest1", //Set to USEast1 if you want to use Minio
+  "Endpoint": null, //Set to https://play.min.io:9000/ if you want to use Minio's play server
+
+  "Proxy": {
+    "UseProxy": false,
+    "ProxyAddress": "http://127.0.0.1:8888"
+  },
+
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information" //Critical, Error, Warning, Information, Debug, Trace
+    }
+  }
+}
