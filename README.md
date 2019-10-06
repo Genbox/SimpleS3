@@ -8,7 +8,7 @@ A C# implementation of Amazon's S3 API with a focus on simplicity and performanc
 ### S3 features
 These are the feature this library implements.
 * Support creating, deleting and listing contents of buckets
-* Support for download, upload and deletion of objects
+* Support for download, upload, and deletion of objects
 * Multipart upload and download support
 * Streaming chunked encoding support
 
@@ -23,14 +23,14 @@ These are the features provided by this API implementation.
 
 ### What is 'simple' about it?
 The API is designed to be intuitive and easy to use while still providing expert users with advanced capabilities. The official AWS S3 SDK can be confusing to use as they are not using constructors of classes to indicate which parameters are required, and which are optional.
-This API also supports uploading and downloading files as multiparts - exposed directly in the high-level client. It does not come at the expense of flexibility, as the lower level APIs allows you do everything youself.
+This API also supports uploading and downloading files as multiparts - exposed directly in the high-level client. It does not come at the expense of flexibility, as the lower-level APIs allow you to do everything yourself.
 
 ### What is 'secure' about it?
-In today's cloud enviroments, it is more important than ever to handle encryption keys correctly. Keys are generated to machines that shares memory with hundreds of other services, so it is important to limit the exposure of keys.
+In today's cloud environments, it is more important than ever to handle encryption keys correctly. Keys are generated on machines that share memory with hundreds of other services, so it is important to limit the exposure of keys.
 In SimpleS3, any derived keys are instantly zeroed from memory instead of waiting for the garbage collector. See [this](https://ianqvist.blogspot.com/2019/06/strings-from-security-perspective.html) for more details.
 
 ### What is 'performance' about it?
-The library is built with performance in mind. The network layer is built to persist HTTP connections across API calls and all objects in the library is pooled to reduce garbage generation. The only garbage that is generated, is when you manually take control of requests and when .NET creates nessecary garbage. The rest has been optimized away.
+The library is built with performance in mind. The network layer is built to persist HTTP connections across API calls and all objects in the library are pooled to reduce garbage generation. The only garbage that is generated, is when you manually take control of requests and when .NET creates necessary garbage. The rest has been optimized away.
 
 ## Examples
 
