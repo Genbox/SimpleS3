@@ -36,7 +36,7 @@ The library is built with performance in mind. The network layer is built to per
 
 #### Setup the config and client
 ```csharp
-S3Client client = new S3Client("YourKeyId", "YourAccessKey", AwsRegion.EuWest1)
+S3Client client = new S3Client("YourKeyId", "YourAccessKey", AwsRegion.EUWest1)
 ```
 
 #### Or use Microsoft's Dependency Injection
@@ -44,7 +44,7 @@ S3Client client = new S3Client("YourKeyId", "YourAccessKey", AwsRegion.EuWest1)
 ServiceCollection services = new ServiceCollection();
 services.AddSimpleS3Core(config => {
     config.Credentials = new SecretAccessKey("<YourKeyId>", "<YourAccessKey>");
-    config.Region = AwsRegion.EuWest1;
+    config.Region = AwsRegion.EUWest1;
 }).UseHttpClientFactory();
 
 ServiceProvider provider = services.BuildServiceProvider();
