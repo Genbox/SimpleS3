@@ -47,7 +47,7 @@ namespace Genbox.SimpleS3.Core
             return _bucketOperations.ListMultipartUploadsAsync(bucketName, config, token);
         }
 
-        public async Task<DeleteBucketStatus> EmptyBucket(string bucketName, CancellationToken token = default)
+        public async Task<DeleteBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
         {
             //TODO: this can be optimized if we don't use GetBucketRecursiveAsync, but instead call the methods directly
             List<S3DeleteInfo> tempList = new List<S3DeleteInfo>(1000);

@@ -112,9 +112,9 @@ namespace Genbox.SimpleS3
             return _bucketClient.ListMultipartUploadsAsync(bucketName, config, token);
         }
 
-        public Task<DeleteBucketStatus> EmptyBucket(string bucketName, CancellationToken token = default)
+        public Task<DeleteBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
         {
-            return _bucketClient.EmptyBucket(bucketName, token);
+            return _bucketClient.EmptyBucketAsync(bucketName, token);
         }
 
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string resource, Action<DeleteObjectRequest> config = null, CancellationToken token = default)

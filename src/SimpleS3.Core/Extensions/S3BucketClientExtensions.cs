@@ -87,7 +87,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             Validator.RequireNotNull(client);
             Validator.RequireNotNull(bucketName);
 
-            DeleteBucketStatus emptyResp = await client.EmptyBucket(bucketName, token).ConfigureAwait(false);
+            DeleteBucketStatus emptyResp = await client.EmptyBucketAsync(bucketName, token).ConfigureAwait(false);
 
             if (emptyResp != DeleteBucketStatus.Ok)
                 return emptyResp;
