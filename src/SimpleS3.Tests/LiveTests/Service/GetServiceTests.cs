@@ -23,8 +23,8 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Service
             string bucket1 = "testbucket-" + Guid.NewGuid();
             string bucket2 = "testbucket-" + Guid.NewGuid();
 
-            await BucketClient.PutBucketAsync(bucket1, AwsRegion.EUWest1).ConfigureAwait(false);
-            await BucketClient.PutBucketAsync(bucket2, AwsRegion.EUWest1).ConfigureAwait(false);
+            await BucketClient.PutBucketAsync(bucket1, AwsRegion.EuWest1).ConfigureAwait(false);
+            await BucketClient.PutBucketAsync(bucket2, AwsRegion.EuWest1).ConfigureAwait(false);
 
             List<S3Bucket> list = await ServiceClient.GetServiceAllAsync().ToListAsync().ConfigureAwait(false);
 

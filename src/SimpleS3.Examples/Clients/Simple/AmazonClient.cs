@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Examples.Clients.Simple
         public static S3Client Create(string keyId, string accessKey)
         {
             //This is the simplest way of creating S3Client
-            return new S3Client(keyId, accessKey, AwsRegion.EUWest1);
+            return new S3Client(keyId, accessKey, AwsRegion.EuWest1);
         }
     }
 }

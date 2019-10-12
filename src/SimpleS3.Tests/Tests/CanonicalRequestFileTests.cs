@@ -24,7 +24,7 @@ namespace Genbox.SimpleS3.Tests.Tests
 
         public CanonicalRequestFileTests()
         {
-            S3Config config = new S3Config(new StringAccessKey("AKIDEXAMPLE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"), AwsRegion.USEast1);
+            S3Config config = new S3Config(new StringAccessKey("AKIDEXAMPLE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
 
             IOptions<S3Config> options = Options.Create(config);
 

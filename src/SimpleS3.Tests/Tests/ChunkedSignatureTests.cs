@@ -22,7 +22,7 @@ namespace Genbox.SimpleS3.Tests.Tests
     {
         public ChunkedSignatureTests()
         {
-            S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.USEast1);
+            S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
 
             _options = Options.Create(config);
 

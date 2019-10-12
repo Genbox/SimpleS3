@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Examples.Clients.DependencyInjection
             services.AddSimpleS3Core(s3Config =>
             {
                 s3Config.Credentials = new StringAccessKey(keyId, accessKey);
-                s3Config.Region = AwsRegion.EUWest1;
+                s3Config.Region = AwsRegion.EuWest1;
             }).UseHttpClientFactory();
 
             IServiceProvider serviceProvider = services.BuildServiceProvider();

@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Examples.Clients.DependencyInjection
             services.AddSimpleS3Core(s3Config =>
             {
                 s3Config.Credentials = new StringAccessKey("Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG");
-                s3Config.Region = AwsRegion.USEast1;
+                s3Config.Region = AwsRegion.UsEast1;
                 s3Config.Endpoint = new Uri("https://play.min.io:9000/");
             }).UseHttpClientFactory();
 

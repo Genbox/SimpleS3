@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Benchmarks.Benchmarks
 
         public SignatureBenchmarks()
         {
-            S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.USEast1);
+            S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
             config.EnableStreaming = false;
 
             IOptions<S3Config> options = Options.Create(config);

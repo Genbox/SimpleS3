@@ -11,19 +11,19 @@ namespace Genbox.SimpleS3.Benchmarks.Benchmarks
         [Benchmark]
         public string EnumsDotNet()
         {
-            return AwsRegion.APEast1.AsString(EnumFormat.EnumMemberValue);
+            return AwsRegion.ApEast1.AsString(EnumFormat.EnumMemberValue);
         }
 
         [Benchmark]
         public string DotNet()
         {
-            return AwsRegion.APEast1.ToString(CultureInfo.InvariantCulture);
+            return AwsRegion.ApEast1.ToString(CultureInfo.InvariantCulture);
         }
 
         [Benchmark]
         public string DotNetUpper()
         {
-            return AwsRegion.APEast1.ToString().ToUpperInvariant();
+            return AwsRegion.ApEast1.ToString().ToUpperInvariant();
         }
     }
 }
