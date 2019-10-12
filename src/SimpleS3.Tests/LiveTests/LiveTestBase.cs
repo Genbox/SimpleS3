@@ -77,7 +77,6 @@ namespace Genbox.SimpleS3.Tests.LiveTests
             Config = Services.GetRequiredService<IOptions<S3Config>>().Value;
             ObjectClient = Services.GetRequiredService<IS3ObjectClient>();
             BucketClient = Services.GetRequiredService<IS3BucketClient>();
-            ServiceClient = Services.GetRequiredService<IS3ServiceClient>();
             Transfer = Services.GetRequiredService<Transfer>();
         }
 
@@ -86,7 +85,6 @@ namespace Genbox.SimpleS3.Tests.LiveTests
         protected S3Config Config { get; }
         protected string BucketName { get; }
         protected IS3ObjectClient ObjectClient { get; }
-        protected IS3ServiceClient ServiceClient { get; }
         protected IS3BucketClient BucketClient { get; }
         protected Transfer Transfer { get; }
 

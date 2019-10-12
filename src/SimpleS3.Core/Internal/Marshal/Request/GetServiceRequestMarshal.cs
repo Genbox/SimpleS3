@@ -6,9 +6,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
 {
     [UsedImplicitly]
-    internal class GetServiceRequestMarshal : IRequestMarshal<GetServiceRequest>
+    internal class GetServiceRequestMarshal : IRequestMarshal<ListBucketsRequest>
     {
-        public Stream MarshalRequest(GetServiceRequest request)
+        public Stream MarshalRequest(ListBucketsRequest request)
         {
             return null;
         }

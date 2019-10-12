@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Requests.Buckets;
+using Genbox.SimpleS3.Core.Requests.Service;
 using Genbox.SimpleS3.Core.Responses.Buckets;
+using Genbox.SimpleS3.Core.Responses.Service;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Operations
@@ -17,6 +19,14 @@ namespace Genbox.SimpleS3.Core.Operations
         public BucketOperations(IRequestHandler requestHandler)
         {
             _requestHandler = requestHandler;
+        }
+
+        public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
+        {
+            ListBucketsRequest req = new ListBucketsRequest();
+            config?.Invoke(req);
+
+            return _requestHandler.SendRequestAsync<ListBucketsRequest, ListBucketsResponse>(req, token);
         }
 
         public Task<GetBucketResponse> GetAsync(string bucketName, Action<GetBucketRequest> config = null, CancellationToken token = default)

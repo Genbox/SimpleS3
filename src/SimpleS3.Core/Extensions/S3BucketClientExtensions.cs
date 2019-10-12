@@ -7,8 +7,10 @@ using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Core.Misc;
+using Genbox.SimpleS3.Core.Requests.Service;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Responses.Service;
 
 namespace Genbox.SimpleS3.Core.Extensions
 {
@@ -98,6 +100,16 @@ namespace Genbox.SimpleS3.Core.Extensions
                 return DeleteBucketStatus.BucketNotEmpty;
 
             return DeleteBucketStatus.Ok;
+        }
+
+        public static async IAsyncEnumerable<S3Bucket> ListAllBuckets(this IS3BucketClient client, Action<ListBucketsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
+        {
+            Validator.RequireNotNull(client);
+
+            ListBucketsResponse resp = await client.ListBucketsAsync(config, token).ConfigureAwait(false);
+
+            foreach (S3Bucket respBucket in resp.Buckets)
+                yield return respBucket;
         }
     }
 }

@@ -27,12 +27,11 @@ using Polly;
 namespace Genbox.SimpleS3
 {
     /// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
-    public sealed class S3Client : IDisposable, IS3ServiceClient, IS3BucketClient, IS3ObjectClient
+    public sealed class S3Client : IDisposable, IS3BucketClient, IS3ObjectClient
     {
         private readonly IS3BucketClient _bucketClient;
         private readonly IS3ObjectClient _objectClient;
         private readonly ServiceProvider _provider;
-        private readonly IS3ServiceClient _serviceClient;
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="keyId">The key id</param>
@@ -84,7 +83,6 @@ namespace Genbox.SimpleS3
             _provider = services.BuildServiceProvider();
             _objectClient = _provider.GetRequiredService<IS3ObjectClient>();
             _bucketClient = _provider.GetRequiredService<IS3BucketClient>();
-            _serviceClient = _provider.GetRequiredService<IS3ServiceClient>();
         }
 
         public void Dispose()
@@ -115,6 +113,11 @@ namespace Genbox.SimpleS3
         public Task<DeleteBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
         {
             return _bucketClient.EmptyBucketAsync(bucketName, token);
+        }
+
+        public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
+        {
+            return _bucketClient.ListBucketsAsync(config, token);
         }
 
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string resource, Action<DeleteObjectRequest> config = null, CancellationToken token = default)
@@ -175,11 +178,6 @@ namespace Genbox.SimpleS3
         public Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string resource, Stream output, int numParallelParts = 4, int bufferSize = 16777216, CancellationToken token = default)
         {
             return _objectClient.MultipartDownloadAsync(bucketName, resource, output, numParallelParts, bufferSize, token);
-        }
-
-        public Task<GetServiceResponse> GetServiceAsync(Action<GetServiceRequest> config = null, CancellationToken token = default)
-        {
-            return _serviceClient.GetServiceAsync(config, token);
         }
     }
 }

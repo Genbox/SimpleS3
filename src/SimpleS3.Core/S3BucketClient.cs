@@ -8,9 +8,11 @@ using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Buckets;
 using Genbox.SimpleS3.Core.Requests.Objects.Types;
+using Genbox.SimpleS3.Core.Requests.Service;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.Objects;
 using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Responses.Service;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core
@@ -76,6 +78,11 @@ namespace Genbox.SimpleS3.Core
             }
 
             return DeleteBucketStatus.Ok;
+        }
+
+        public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
+        {
+            return _bucketOperations.ListBucketsAsync(config, token);
         }
     }
 }
