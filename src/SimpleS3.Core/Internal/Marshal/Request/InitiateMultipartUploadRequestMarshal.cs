@@ -12,9 +12,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
 {
     [UsedImplicitly]
-    internal class InitiateMultipartUploadRequestMarshal : IRequestMarshal<InitiateMultipartUploadRequest>
+    internal class InitiateMultipartUploadRequestMarshal : IRequestMarshal<CreateMultipartUploadRequest>
     {
-        public Stream MarshalRequest(InitiateMultipartUploadRequest request)
+        public Stream MarshalRequest(CreateMultipartUploadRequest request)
         {
             //This is required for multipart uploads
             request.AddQueryParameter(ObjectParameters.Uploads, string.Empty);

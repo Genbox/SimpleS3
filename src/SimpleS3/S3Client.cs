@@ -15,10 +15,8 @@ using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Buckets;
 using Genbox.SimpleS3.Core.Requests.Objects;
 using Genbox.SimpleS3.Core.Requests.Objects.Types;
-using Genbox.SimpleS3.Core.Requests.Service;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.Service;
 using Genbox.SimpleS3.Extensions.HttpClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -90,14 +88,14 @@ namespace Genbox.SimpleS3
             _provider?.Dispose();
         }
 
-        public Task<GetBucketResponse> GetBucketAsync(string bucketName, Action<GetBucketRequest> config = null, CancellationToken token = default)
+        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
         {
-            return _bucketClient.GetBucketAsync(bucketName, config, token);
+            return _bucketClient.ListObjectsAsync(bucketName, config, token);
         }
 
-        public Task<PutBucketResponse> PutBucketAsync(string bucketName, Action<PutBucketRequest> config = null, CancellationToken token = default)
+        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
         {
-            return _bucketClient.PutBucketAsync(bucketName, config, token);
+            return _bucketClient.CreateBucketAsync(bucketName, config, token);
         }
 
         public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)
@@ -125,9 +123,9 @@ namespace Genbox.SimpleS3
             return _objectClient.DeleteObjectAsync(bucketName, resource, config, token);
         }
 
-        public Task<DeleteMultipleObjectsResponse> DeleteMultipleObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> resources, Action<DeleteMultipleObjectsRequest> config = null, CancellationToken token = default)
+        public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> resources, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.DeleteMultipleObjectsAsync(bucketName, resources, config, token);
+            return _objectClient.DeleteObjectsAsync(bucketName, resources, config, token);
         }
 
         public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string resource, Action<HeadObjectRequest> config = null, CancellationToken token = default)
@@ -135,9 +133,9 @@ namespace Genbox.SimpleS3
             return _objectClient.HeadObjectAsync(bucketName, resource, config, token);
         }
 
-        public Task<InitiateMultipartUploadResponse> InitiateMultipartUploadAsync(string bucketName, string resource, Action<InitiateMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string resource, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.InitiateMultipartUploadAsync(bucketName, resource, config, token);
+            return _objectClient.CreateMultipartUploadAsync(bucketName, resource, config, token);
         }
 
         public Task<UploadPartResponse> UploadPartAsync(string bucketName, string resource, int partNumber, string uploadId, Stream content, Action<UploadPartRequest> config = null, CancellationToken token = default)
@@ -170,7 +168,7 @@ namespace Genbox.SimpleS3
             return _objectClient.PutObjectAsync(bucketName, resource, data, config, token);
         }
 
-        public Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string resource, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<InitiateMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string resource, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
         {
             return _objectClient.MultipartUploadAsync(bucketName, resource, data, partSize, numParallelParts, config, token);
         }

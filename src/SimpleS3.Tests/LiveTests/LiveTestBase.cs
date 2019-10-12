@@ -189,8 +189,8 @@ namespace Genbox.SimpleS3.Tests.LiveTests
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            PutBucketResponse putResponse = await BucketClient.PutBucketAsync(tempBucketName, request => request.Region = Config.Region).ConfigureAwait(false);
-            Assert.True(putResponse.IsSuccess);
+            CreateBucketResponse createResponse = await BucketClient.CreateBucketAsync(tempBucketName, request => request.Region = Config.Region).ConfigureAwait(false);
+            Assert.True(createResponse.IsSuccess);
 
             try
             {

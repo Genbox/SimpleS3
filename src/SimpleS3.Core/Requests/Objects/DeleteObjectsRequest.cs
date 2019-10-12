@@ -11,9 +11,9 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     /// keys that you want to delete, then this operation provides a suitable alternative to sending individual delete requests (see DELETE Object), reducing
     /// per-request overhead.
     /// </summary>
-    public class DeleteMultipleObjectsRequest : BaseRequest
+    public class DeleteObjectsRequest : BaseRequest
     {
-        public DeleteMultipleObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : base(HttpMethod.POST, bucketName, string.Empty)
+        public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : base(HttpMethod.POST, bucketName, string.Empty)
         {
             Mfa = new MfaAuthenticationBuilder();
             Objects = resources.ToList();

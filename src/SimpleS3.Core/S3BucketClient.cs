@@ -8,11 +8,9 @@ using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Buckets;
 using Genbox.SimpleS3.Core.Requests.Objects.Types;
-using Genbox.SimpleS3.Core.Requests.Service;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.Objects;
 using Genbox.SimpleS3.Core.Responses.S3Types;
-using Genbox.SimpleS3.Core.Responses.Service;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core
@@ -29,19 +27,19 @@ namespace Genbox.SimpleS3.Core
             _objectClient = objectClient;
         }
 
-        public Task<GetBucketResponse> GetBucketAsync(string bucketName, Action<GetBucketRequest> config = null, CancellationToken token = default)
+        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
         {
-            return _bucketOperations.GetAsync(bucketName, config, token);
+            return _bucketOperations.ListObjectsAsync(bucketName, config, token);
         }
 
-        public Task<PutBucketResponse> PutBucketAsync(string bucketName, Action<PutBucketRequest> config = null, CancellationToken token = default)
+        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
         {
-            return _bucketOperations.PutAsync(bucketName, config, token);
+            return _bucketOperations.CreateBucketAsync(bucketName, config, token);
         }
 
         public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)
         {
-            return _bucketOperations.DeleteAsync(bucketName, config, token);
+            return _bucketOperations.DeleteBucketAsync(bucketName, config, token);
         }
 
         public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest> config = null, CancellationToken token = default)
@@ -61,7 +59,7 @@ namespace Genbox.SimpleS3.Core
                 if (tempList.Count != 1000)
                     continue;
 
-                DeleteMultipleObjectsResponse multiDelResponse = await _objectClient.DeleteMultipleObjectsAsync(bucketName, tempList, request => request.Quiet = true, token).ConfigureAwait(false);
+                DeleteObjectsResponse multiDelResponse = await _objectClient.DeleteObjectsAsync(bucketName, tempList, request => request.Quiet = true, token).ConfigureAwait(false);
 
                 if (!multiDelResponse.IsSuccess)
                     return DeleteBucketStatus.FailedToDeleteObject;
@@ -71,7 +69,7 @@ namespace Genbox.SimpleS3.Core
 
             if (tempList.Count > 0)
             {
-                DeleteMultipleObjectsResponse multiDelResponse = await _objectClient.DeleteMultipleObjectsAsync(bucketName, tempList, request => request.Quiet = true, token).ConfigureAwait(false);
+                DeleteObjectsResponse multiDelResponse = await _objectClient.DeleteObjectsAsync(bucketName, tempList, request => request.Quiet = true, token).ConfigureAwait(false);
 
                 if (!multiDelResponse.IsSuccess)
                     return DeleteBucketStatus.FailedToDeleteObject;

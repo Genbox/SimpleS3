@@ -36,19 +36,19 @@ namespace Genbox.SimpleS3.Core.Operations
         public IList<IRequestWrapper> RequestWrappers { get; }
         public IList<IResponseWrapper> ResponseWrappers { get; }
 
-        public Task<DeleteObjectResponse> DeleteAsync(DeleteObjectRequest request, CancellationToken token = default)
+        public Task<DeleteObjectResponse> DeleteObjectAsync(DeleteObjectRequest request, CancellationToken token = default)
         {
             return _requestHandler.SendRequestAsync<DeleteObjectRequest, DeleteObjectResponse>(request, token);
         }
 
-        public Task<HeadObjectResponse> HeadAsync(HeadObjectRequest request, CancellationToken token = default)
+        public Task<HeadObjectResponse> HeadObjectAsync(HeadObjectRequest request, CancellationToken token = default)
         {
             return _requestHandler.SendRequestAsync<HeadObjectRequest, HeadObjectResponse>(request, token);
         }
 
-        public Task<InitiateMultipartUploadResponse> InitiateMultipartUploadAsync(InitiateMultipartUploadRequest request, CancellationToken token = default)
+        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(CreateMultipartUploadRequest request, CancellationToken token = default)
         {
-            return _requestHandler.SendRequestAsync<InitiateMultipartUploadRequest, InitiateMultipartUploadResponse>(request, token);
+            return _requestHandler.SendRequestAsync<CreateMultipartUploadRequest, CreateMultipartUploadResponse>(request, token);
         }
 
         public Task<UploadPartResponse> UploadPartAsync(UploadPartRequest request, CancellationToken token = default)
@@ -71,12 +71,12 @@ namespace Genbox.SimpleS3.Core.Operations
             return _requestHandler.SendRequestAsync<AbortMultipartUploadRequest, AbortMultipartUploadResponse>(request, token);
         }
 
-        public Task<DeleteMultipleObjectsResponse> DeleteMultipleAsync(DeleteMultipleObjectsRequest request, CancellationToken token = default)
+        public Task<DeleteObjectsResponse> DeleteObjectsAsync(DeleteObjectsRequest request, CancellationToken token = default)
         {
-            return _requestHandler.SendRequestAsync<DeleteMultipleObjectsRequest, DeleteMultipleObjectsResponse>(request, token);
+            return _requestHandler.SendRequestAsync<DeleteObjectsRequest, DeleteObjectsResponse>(request, token);
         }
 
-        public Task<PutObjectResponse> PutAsync(PutObjectRequest request, CancellationToken token = default)
+        public Task<PutObjectResponse> PutObjectAsync(PutObjectRequest request, CancellationToken token = default)
         {
             Validator.RequireNotNull(request);
 
@@ -97,7 +97,7 @@ namespace Genbox.SimpleS3.Core.Operations
             return _requestHandler.SendRequestAsync<PutObjectRequest, PutObjectResponse>(request, token);
         }
 
-        public async Task<GetObjectResponse> GetAsync(GetObjectRequest request, CancellationToken token = default)
+        public async Task<GetObjectResponse> GetObjectAsync(GetObjectRequest request, CancellationToken token = default)
         {
             GetObjectResponse response = await _requestHandler.SendRequestAsync<GetObjectRequest, GetObjectResponse>(request, token).ConfigureAwait(false);
 
@@ -107,7 +107,7 @@ namespace Genbox.SimpleS3.Core.Operations
             return response;
         }
 
-        public async IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(InitiateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, [EnumeratorCancellation] CancellationToken token = default)
+        public async IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(req);
             Validator.RequireNotNull(data);
@@ -124,13 +124,13 @@ namespace Genbox.SimpleS3.Core.Operations
             string bucket = req.BucketName;
             string resource = req.Resource;
 
-            InitiateMultipartUploadResponse initResp = await InitiateMultipartUploadAsync(req, token).ConfigureAwait(false);
+            CreateMultipartUploadResponse initResp = await CreateMultipartUploadAsync(req, token).ConfigureAwait(false);
 
             if (token.IsCancellationRequested)
                 yield break;
 
             if (!initResp.IsSuccess)
-                throw new RequestException(initResp.StatusCode, "InitiateMultipartUploadRequest was unsuccessful");
+                throw new RequestException(initResp.StatusCode, "CreateMultipartUploadRequest was unsuccessful");
 
             Queue<Task<UploadPartResponse>> uploads = new Queue<Task<UploadPartResponse>>();
 
@@ -185,7 +185,7 @@ namespace Genbox.SimpleS3.Core.Operations
             HeadObjectRequest headReq = new HeadObjectRequest(bucketName, resource);
             headReq.PartNumber = 1;
 
-            HeadObjectResponse headResp = await HeadAsync(headReq, token).ConfigureAwait(false);
+            HeadObjectResponse headResp = await HeadObjectAsync(headReq, token).ConfigureAwait(false);
 
             Queue<Task<GetObjectResponse>> queue = new Queue<Task<GetObjectResponse>>();
 
@@ -194,7 +194,7 @@ namespace Genbox.SimpleS3.Core.Operations
                 GetObjectRequest getReq = new GetObjectRequest(bucketName, resource);
                 config?.Invoke(getReq);
 
-                GetObjectResponse getResp = await GetAsync(getReq, token).ConfigureAwait(false);
+                GetObjectResponse getResp = await GetObjectAsync(getReq, token).ConfigureAwait(false);
 
                 if (!getResp.IsSuccess)
                     throw new Exception();
@@ -240,7 +240,7 @@ namespace Genbox.SimpleS3.Core.Operations
                 getReq.PartNumber = partNumber;
                 config?.Invoke(getReq);
 
-                GetObjectResponse getResp = await GetAsync(getReq, token).ConfigureAwait(false);
+                GetObjectResponse getResp = await GetObjectAsync(getReq, token).ConfigureAwait(false);
 
                 using (Stream stream = getResp.Content.AsStream())
                 {

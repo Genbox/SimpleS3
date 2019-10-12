@@ -8,9 +8,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
 {
     [UsedImplicitly]
-    internal class PutBucketResponseMarshal : IResponseMarshal<PutBucketRequest, PutBucketResponse>
+    internal class CreateBucketResponseMarshal : IResponseMarshal<CreateBucketRequest, CreateBucketResponse>
     {
-        public void MarshalResponse(PutBucketRequest request, PutBucketResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(CreateBucketRequest request, CreateBucketResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
         }
     }

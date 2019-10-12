@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Responses.XMLTypes;
 
-namespace Genbox.SimpleS3.Core.Responses.Service.XML
+namespace Genbox.SimpleS3.Core.Responses.Buckets.XML
 {
     [XmlRoot]
     public class ListAllMyBucketsResult

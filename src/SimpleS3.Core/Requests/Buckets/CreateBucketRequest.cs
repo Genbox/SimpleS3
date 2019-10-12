@@ -10,9 +10,9 @@ namespace Genbox.SimpleS3.Core.Requests.Buckets
     /// You can optionally specify a region in the request body. You might choose a region to optimize latency, minimize costs, or address regulatory
     /// requirements.
     /// </summary>
-    public class PutBucketRequest : BaseRequest, IAclProperties
+    public class CreateBucketRequest : BaseRequest, IAclProperties
     {
-        public PutBucketRequest(string bucketName) : base(HttpMethod.PUT, bucketName, string.Empty)
+        public CreateBucketRequest(string bucketName) : base(HttpMethod.PUT, bucketName, string.Empty)
         {
             AclGrantRead = new AclBuilder();
             AclGrantWrite = new AclBuilder();

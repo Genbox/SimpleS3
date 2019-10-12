@@ -8,9 +8,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
 {
     [UsedImplicitly]
-    internal class GetBucketRequestMarshal : IRequestMarshal<GetBucketRequest>
+    internal class ListObjectsRequestMarshal : IRequestMarshal<ListObjectsRequest>
     {
-        public Stream MarshalRequest(GetBucketRequest request)
+        public Stream MarshalRequest(ListObjectsRequest request)
         {
             request.AddQueryParameter(BucketParameters.Delimiter, request.Delimiter);
             request.AddQueryParameter(BucketParameters.EncodingType, request.EncodingType);

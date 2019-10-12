@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Responses.Objects.Properties;
 
 namespace Genbox.SimpleS3.Core.Responses.Objects
 {
-    public class InitiateMultipartUploadResponse : BaseResponse, ISseProperties
+    public class CreateMultipartUploadResponse : BaseResponse, ISseProperties
     {
         public DateTimeOffset AbortDate { get; internal set; }
         public string AbortRuleId { get; internal set; }

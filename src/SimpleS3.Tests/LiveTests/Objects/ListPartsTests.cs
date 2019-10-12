@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         {
             await CreateTempBucketAsync(async bucket =>
             {
-                InitiateMultipartUploadResponse initResp = await ObjectClient.InitiateMultipartUploadAsync(bucket, nameof(SimpleList)).ConfigureAwait(false);
+                CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(bucket, nameof(SimpleList)).ConfigureAwait(false);
 
                 ListPartsResponse listResp1 = await ObjectClient.ListPartsAsync(bucket, nameof(SimpleList), initResp.UploadId).ConfigureAwait(false);
 

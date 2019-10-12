@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
 {
     [UsedImplicitly]
-    internal class GetRequestMarshal : IRequestMarshal<GetObjectRequest>
+    internal class GetObjectRequestMarshal : IRequestMarshal<GetObjectRequest>
     {
         public Stream MarshalRequest(GetObjectRequest request)
         {

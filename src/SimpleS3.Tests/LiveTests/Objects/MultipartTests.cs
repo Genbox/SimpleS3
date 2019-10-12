@@ -23,7 +23,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         {
             string resourceName = nameof(AbortIncompleteUpload);
 
-            InitiateMultipartUploadResponse initResp = await ObjectClient.InitiateMultipartUploadAsync(BucketName, resourceName).ConfigureAwait(false);
+            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, resourceName).ConfigureAwait(false);
 
             Assert.Equal(BucketName, initResp.Bucket);
             Assert.Equal(resourceName, initResp.Key);
@@ -43,7 +43,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             byte[] key = {1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8};
             byte[] keyMd5 = CryptoHelper.Md5Hash(key);
 
-            InitiateMultipartUploadResponse initResp = await ObjectClient.InitiateMultipartUploadAsync(BucketName, resourceName, request =>
+            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, resourceName, request =>
             {
                 request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
                 request.SseCustomerKey = key;
@@ -125,7 +125,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         {
             string resourceName = nameof(ManualSinglePartUpload);
 
-            InitiateMultipartUploadResponse initResp = await ObjectClient.InitiateMultipartUploadAsync(BucketName, resourceName, request =>
+            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, resourceName, request =>
             {
                 request.SseAlgorithm = SseAlgorithm.Aes256;
                 request.StorageClass = StorageClass.StandardIa;
@@ -230,7 +230,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         {
             string resourceName = nameof(TooSmallUpload);
 
-            InitiateMultipartUploadResponse initResp = await ObjectClient.InitiateMultipartUploadAsync(BucketName, resourceName).ConfigureAwait(false);
+            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, resourceName).ConfigureAwait(false);
 
             Assert.Equal(BucketName, initResp.Bucket);
             Assert.Equal(resourceName, initResp.Key);

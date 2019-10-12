@@ -1,6 +1,6 @@
 ﻿using Genbox.SimpleS3.Abstracts.Enums;
 
-namespace Genbox.SimpleS3.Core.Requests.Service
+namespace Genbox.SimpleS3.Core.Requests.Buckets
 {
     /// <summary>This implementation of the GET operation returns a list of all buckets owned by the authenticated sender of the request.</summary>
     public class ListBucketsRequest : BaseRequest

@@ -15,9 +15,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
 {
     [UsedImplicitly]
-    internal class InitiateMultipartUploadResponseMarshal : IResponseMarshal<InitiateMultipartUploadRequest, InitiateMultipartUploadResponse>
+    internal class CreateMultipartUploadResponseMarshal : IResponseMarshal<CreateMultipartUploadRequest, CreateMultipartUploadResponse>
     {
-        public void MarshalResponse(InitiateMultipartUploadRequest request, InitiateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(CreateMultipartUploadRequest request, CreateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.AbortDate = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Iso8601DateTimeExt);
             response.AbortRuleId = headers.GetHeader(AmzHeaders.XAmzAbortDate);

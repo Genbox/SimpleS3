@@ -24,7 +24,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         {
             await CreateTempBucketAsync(async bucket =>
             {
-                InitiateMultipartUploadResponse initResp = await ObjectClient.InitiateMultipartUploadAsync(bucket, nameof(ListIncompleteParts)).ConfigureAwait(false);
+                CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(bucket, nameof(ListIncompleteParts)).ConfigureAwait(false);
 
                 byte[] file = new byte[5 * 1024];
 
@@ -57,7 +57,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 //Create 3 objects in bucket, including an incomplete multipart upload
                 await UploadAsync(bucket, "resource1").ConfigureAwait(false);
                 await UploadAsync(bucket, "resource2").ConfigureAwait(false);
-                InitiateMultipartUploadResponse initResp = await ObjectClient.InitiateMultipartUploadAsync(bucket, "multipart").ConfigureAwait(false);
+                CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(bucket, "multipart").ConfigureAwait(false);
 
                 //List the objects
                 List<S3Object> list = await BucketClient.GetBucketRecursiveAsync(bucket, true).ToListAsync().ConfigureAwait(false);

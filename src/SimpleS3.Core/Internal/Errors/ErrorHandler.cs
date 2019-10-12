@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Genbox.SimpleS3.Core.Responses.Errors;
 
-namespace Genbox.SimpleS3.Core.Internal.Responses.Errors
+namespace Genbox.SimpleS3.Core.Internal.Errors
 {
     internal static class ErrorHandler
     {

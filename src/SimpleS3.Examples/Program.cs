@@ -22,7 +22,7 @@ namespace Genbox.SimpleS3.Examples
                 const string objectName = "some-object";
 
                 //First we create the a bucket named "simple-s3-test". It might already be there, so we ignore if the request was not a success
-                await client.PutBucketAsync(bucketName).ConfigureAwait(false);
+                await client.CreateBucketAsync(bucketName).ConfigureAwait(false);
 
                 //Then we upload an object named "some-object" to the bucket. It contains "Hello World" inside it.
                 if (await UploadObject(client, bucketName, objectName).ConfigureAwait(false))

@@ -13,9 +13,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
 {
     [UsedImplicitly]
-    internal class DeleteMultipleObjectsRequestMarshal : IRequestMarshal<DeleteMultipleObjectsRequest>
+    internal class DeleteObjectsRequestMarshal : IRequestMarshal<DeleteObjectsRequest>
     {
-        public Stream MarshalRequest(DeleteMultipleObjectsRequest request)
+        public Stream MarshalRequest(DeleteObjectsRequest request)
         {
             request.AddQueryParameter(ObjectParameters.Delete, string.Empty);
             request.AddHeader(AmzHeaders.XAmzMfa, request.Mfa);

@@ -16,9 +16,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
 {
     [UsedImplicitly]
-    internal class GetBucketResponseMarshal : IResponseMarshal<GetBucketRequest, GetBucketResponse>
+    internal class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsRequest, ListObjectsResponse>
     {
-        public void MarshalResponse(GetBucketRequest request, GetBucketResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(ListObjectsRequest request, ListObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             XmlSerializer s = new XmlSerializer(typeof(ListBucketResult));
 

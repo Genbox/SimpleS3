@@ -14,11 +14,11 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     /// multipart upload. You specify this upload ID in each of your subsequent upload part requests (see Upload Part). You also include this upload ID in
     /// the final request to either complete or abort the multipart upload request.
     /// </summary>
-    public class InitiateMultipartUploadRequest : BaseRequest, IContentProperties, ICacheControl, IStorageClassProperties, ILockProperties, IAclProperties, ISseProperties, ISseCustomerKeyProperties, IHasContent, ISupportStreaming
+    public class CreateMultipartUploadRequest : BaseRequest, IContentProperties, ICacheControl, IStorageClassProperties, ILockProperties, IAclProperties, ISseProperties, ISseCustomerKeyProperties, IHasContent, ISupportStreaming
     {
         private byte[] _sseCustomerKey;
 
-        public InitiateMultipartUploadRequest(string bucketName, string resource) : base(HttpMethod.POST, bucketName, resource)
+        public CreateMultipartUploadRequest(string bucketName, string resource) : base(HttpMethod.POST, bucketName, resource)
         {
             Tags = new TagBuilder();
             Metadata = new MetadataBuilder();

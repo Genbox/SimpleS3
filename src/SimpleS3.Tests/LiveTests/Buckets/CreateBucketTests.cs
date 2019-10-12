@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            PutBucketResponse pResp = await BucketClient.PutBucketAsync(tempBucketName, request =>
+            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, request =>
             {
                 request.Region = Config.Region;
                 request.Acl = BucketCannedAcl.Private;
@@ -34,7 +34,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             await ObjectClient.PutObjectStringAsync(tempBucketName, tempObjName, "hello").ConfigureAwait(false);
             await ObjectClient.PutObjectStringAsync(tempBucketName, tempObjName2, "world!", null, request => request.StorageClass = StorageClass.OneZoneIa).ConfigureAwait(false);
 
-            GetBucketResponse gResp = await BucketClient.GetBucketAsync(tempBucketName).ConfigureAwait(false);
+            ListObjectsResponse gResp = await BucketClient.ListObjectsAsync(tempBucketName).ConfigureAwait(false);
             Assert.True(gResp.IsSuccess);
 
             Assert.Equal(2, gResp.KeyCount);
@@ -53,7 +53,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             Assert.Equal(6, gResp.Objects[1].Size);
             Assert.Equal(StorageClass.OneZoneIa, gResp.Objects[1].StorageClass);
 
-            GetBucketResponse gResp2 = await BucketClient.GetBucketAsync(tempBucketName, request => request.EncodingType = EncodingType.Url).ConfigureAwait(false);
+            ListObjectsResponse gResp2 = await BucketClient.ListObjectsAsync(tempBucketName, request => request.EncodingType = EncodingType.Url).ConfigureAwait(false);
             Assert.True(gResp2.IsSuccess);
             Assert.Equal(2, gResp2.KeyCount);
 
@@ -67,7 +67,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            PutBucketResponse pResp = await BucketClient.PutBucketAsync(tempBucketName, request =>
+            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, request =>
             {
                 request.AclGrantReadAcp.AddEmail(TestConstants.TestEmail);
                 request.AclGrantWriteAcp.AddEmail(TestConstants.TestEmail);
@@ -84,7 +84,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            PutBucketResponse pResp = await BucketClient.PutBucketAsync(tempBucketName, request =>
+            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, request =>
             {
                 request.EnableObjectLocking = true;
                 request.Region = Config.Region;

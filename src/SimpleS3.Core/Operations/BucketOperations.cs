@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Requests.Buckets;
-using Genbox.SimpleS3.Core.Requests.Service;
 using Genbox.SimpleS3.Core.Responses.Buckets;
-using Genbox.SimpleS3.Core.Responses.Service;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Operations
@@ -29,23 +27,23 @@ namespace Genbox.SimpleS3.Core.Operations
             return _requestHandler.SendRequestAsync<ListBucketsRequest, ListBucketsResponse>(req, token);
         }
 
-        public Task<GetBucketResponse> GetAsync(string bucketName, Action<GetBucketRequest> config = null, CancellationToken token = default)
+        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
         {
-            GetBucketRequest req = new GetBucketRequest(bucketName);
+            ListObjectsRequest req = new ListObjectsRequest(bucketName);
             config?.Invoke(req);
 
-            return _requestHandler.SendRequestAsync<GetBucketRequest, GetBucketResponse>(req, token);
+            return _requestHandler.SendRequestAsync<ListObjectsRequest, ListObjectsResponse>(req, token);
         }
 
-        public Task<PutBucketResponse> PutAsync(string bucketName, Action<PutBucketRequest> config = null, CancellationToken token = default)
+        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
         {
-            PutBucketRequest req = new PutBucketRequest(bucketName);
+            CreateBucketRequest req = new CreateBucketRequest(bucketName);
             config?.Invoke(req);
 
-            return _requestHandler.SendRequestAsync<PutBucketRequest, PutBucketResponse>(req, token);
+            return _requestHandler.SendRequestAsync<CreateBucketRequest, CreateBucketResponse>(req, token);
         }
 
-        public Task<DeleteBucketResponse> DeleteAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)
+        public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)
         {
             DeleteBucketRequest req = new DeleteBucketRequest(bucketName);
             config?.Invoke(req);

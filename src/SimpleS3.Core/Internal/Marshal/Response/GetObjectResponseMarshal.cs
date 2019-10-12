@@ -14,7 +14,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
 {
     [UsedImplicitly]
-    internal class GetResponseMarshal : IResponseMarshal<GetObjectRequest, GetObjectResponse>
+    internal class GetObjectResponseMarshal : IResponseMarshal<GetObjectRequest, GetObjectResponse>
     {
         public void MarshalResponse(GetObjectRequest request, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {

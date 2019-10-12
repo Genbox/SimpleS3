@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Responses.Service;
+using Genbox.SimpleS3.Core.Responses.Buckets;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         public async Task ListBucketsTest()
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
-            await BucketClient.PutBucketAsync(tempBucketName, request => request.Region = Config.Region).ConfigureAwait(false);
+            await BucketClient.CreateBucketAsync(tempBucketName, request => request.Region = Config.Region).ConfigureAwait(false);
 
             ListBucketsResponse resp = await BucketClient.ListBucketsAsync().ConfigureAwait(false);
             Assert.True(resp.Buckets.Count > 0);

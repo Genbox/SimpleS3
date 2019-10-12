@@ -32,31 +32,31 @@ namespace Genbox.SimpleS3.Core.Extensions
             return resp;
         }
 
-        public static Task<DeleteMultipleObjectsResponse> DeleteMultipleObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> resources, Action<DeleteMultipleObjectsRequest> config = null, CancellationToken token = default)
+        public static Task<DeleteObjectsResponse> DeleteMultipleObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> resources, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client);
             Validator.RequireNotNull(bucketName);
             Validator.RequireNotNull(resources);
 
-            return client.DeleteMultipleObjectsAsync(bucketName, resources.Select(x => new S3DeleteInfo(x, null)), config, token);
+            return client.DeleteObjectsAsync(bucketName, resources.Select(x => new S3DeleteInfo(x, null)), config, token);
         }
 
-        public static Task<DeleteMultipleObjectsResponse> DeleteMultipleObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> resources, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
+        public static Task<DeleteObjectsResponse> DeleteMultipleObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> resources, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client);
             Validator.RequireNotNull(bucketName);
             Validator.RequireNotNull(resources);
 
-            return client.DeleteMultipleObjectsAsync(bucketName, resources.Select(x => new S3DeleteInfo(x, null)), req => req.Mfa = mfa, token);
+            return client.DeleteObjectsAsync(bucketName, resources.Select(x => new S3DeleteInfo(x, null)), req => req.Mfa = mfa, token);
         }
 
-        public static Task<DeleteMultipleObjectsResponse> DeleteMultipleObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<S3DeleteInfo> resources, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
+        public static Task<DeleteObjectsResponse> DeleteMultipleObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<S3DeleteInfo> resources, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client);
             Validator.RequireNotNull(bucketName);
             Validator.RequireNotNull(resources);
 
-            return client.DeleteMultipleObjectsAsync(bucketName, resources, req => req.Mfa = mfa, token);
+            return client.DeleteObjectsAsync(bucketName, resources, req => req.Mfa = mfa, token);
         }
 
         public static async Task<PutObjectResponse> PutObjectDataAsync(this IS3ObjectClient client, string bucketName, string resource, byte[] data, Action<PutObjectRequest> config = null, CancellationToken token = default)

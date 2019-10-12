@@ -100,7 +100,7 @@ namespace Genbox.SimpleS3.Core.Fluid
 
         public Task<GetObjectResponse> ExecuteAsync(CancellationToken token = default)
         {
-            return _objectOperations.GetAsync(_request, token);
+            return _objectOperations.GetObjectAsync(_request, token);
         }
     }
 }

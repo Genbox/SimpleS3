@@ -184,7 +184,7 @@ namespace Genbox.SimpleS3.Core.Fluid
 
         public async Task<MultipartUploadStatus> ExecuteMultipartAsync(CancellationToken token = default)
         {
-            InitiateMultipartUploadRequest initReq = _request;
+            CreateMultipartUploadRequest initReq = _request;
             initReq.Method = HttpMethod.POST;
 
             IAsyncEnumerable<UploadPartResponse> async = _objectOperations.MultipartUploadAsync(initReq, _request.Content, token: token);
@@ -200,7 +200,7 @@ namespace Genbox.SimpleS3.Core.Fluid
 
         public async Task<PutObjectResponse> ExecuteAsync(CancellationToken token = default)
         {
-            PutObjectResponse response = await _objectOperations.PutAsync(_request, token).ConfigureAwait(false);
+            PutObjectResponse response = await _objectOperations.PutObjectAsync(_request, token).ConfigureAwait(false);
 
             if (_ownStream)
                 _request.Content.Dispose();

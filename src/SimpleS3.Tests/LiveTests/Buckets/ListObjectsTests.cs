@@ -12,9 +12,9 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 {
-    public class GetTests : LiveTestBase
+    public class ListObjectsTests : LiveTestBase
     {
-        public GetTests(ITestOutputHelper helper) : base(helper)
+        public ListObjectsTests(ITestOutputHelper helper) : base(helper)
         {
         }
 
@@ -31,27 +31,6 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         }
 
         [Fact]
-        public async Task GetWithDelimiter()
-        {
-            await CreateTempBucketAsync(async bucket =>
-            {
-                string tempObjName = "object-" + Guid.NewGuid();
-                string tempObjName2 = "something-" + Guid.NewGuid();
-
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
-
-                GetBucketResponse gResp = await BucketClient.GetBucketAsync(bucket, request => request.Delimiter = "-").ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
-
-                Assert.Equal(2, gResp.KeyCount);
-                Assert.Equal(2, gResp.CommonPrefixes.Count);
-                Assert.Equal("object-", gResp.CommonPrefixes[0]);
-                Assert.Equal("something-", gResp.CommonPrefixes[1]);
-            }).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task GetWithOwner()
         {
             await CreateTempBucketAsync(async bucket =>
@@ -59,7 +38,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 string tempObjName = "object-" + Guid.NewGuid();
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, string.Empty, config: request => request.AclGrantFullControl.AddEmail(TestConstants.TestEmail)).ConfigureAwait(false);
 
-                GetBucketResponse gResp = await BucketClient.GetBucketAsync(bucket, request => request.FetchOwner = true).ConfigureAwait(false);
+                ListObjectsResponse gResp = await BucketClient.ListObjectsAsync(bucket, request => request.FetchOwner = true).ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
                 Assert.Equal(1, gResp.KeyCount);
 
@@ -80,7 +59,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
 
-                GetBucketResponse gResp = await BucketClient.GetBucketAsync(bucket, request => request.Prefix = "object").ConfigureAwait(false);
+                ListObjectsResponse gResp = await BucketClient.ListObjectsAsync(bucket, request => request.Prefix = "object").ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
 
                 Assert.Equal(1, gResp.KeyCount);
@@ -93,6 +72,27 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", gResp.Objects[0].ETag);
                 Assert.Equal(5, gResp.Objects[0].Size);
                 Assert.Equal(StorageClass.Standard, gResp.Objects[0].StorageClass);
+            }).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ListWithDelimiter()
+        {
+            await CreateTempBucketAsync(async bucket =>
+            {
+                string tempObjName = "object-" + Guid.NewGuid();
+                string tempObjName2 = "something-" + Guid.NewGuid();
+
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
+
+                ListObjectsResponse gResp = await BucketClient.ListObjectsAsync(bucket, request => request.Delimiter = "-").ConfigureAwait(false);
+                Assert.True(gResp.IsSuccess);
+
+                Assert.Equal(2, gResp.KeyCount);
+                Assert.Equal(2, gResp.CommonPrefixes.Count);
+                Assert.Equal("object-", gResp.CommonPrefixes[0]);
+                Assert.Equal("something-", gResp.CommonPrefixes[1]);
             }).ConfigureAwait(false);
         }
 
@@ -118,7 +118,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                     await Task.WhenAll(tasks).ConfigureAwait(false);
                 }
 
-                GetBucketResponse gResp = await BucketClient.GetBucketAsync(bucket).ConfigureAwait(false);
+                ListObjectsResponse gResp = await BucketClient.ListObjectsAsync(bucket).ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
                 Assert.Equal(1000, gResp.KeyCount);
                 Assert.Equal(1000, gResp.Objects.Count);

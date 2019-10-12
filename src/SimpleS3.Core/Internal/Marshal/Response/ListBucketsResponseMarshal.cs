@@ -4,17 +4,17 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Abstracts.Marshal;
-using Genbox.SimpleS3.Core.Requests.Service;
+using Genbox.SimpleS3.Core.Requests.Buckets;
+using Genbox.SimpleS3.Core.Responses.Buckets;
+using Genbox.SimpleS3.Core.Responses.Buckets.XML;
 using Genbox.SimpleS3.Core.Responses.S3Types;
-using Genbox.SimpleS3.Core.Responses.Service;
-using Genbox.SimpleS3.Core.Responses.Service.XML;
 using Genbox.SimpleS3.Core.Responses.XMLTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
 {
     [UsedImplicitly]
-    internal class GetServiceResponseMarshal : IResponseMarshal<ListBucketsRequest, ListBucketsResponse>
+    internal class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsRequest, ListBucketsResponse>
     {
         public void MarshalResponse(ListBucketsRequest request, ListBucketsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {

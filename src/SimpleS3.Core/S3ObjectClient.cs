@@ -28,15 +28,15 @@ namespace Genbox.SimpleS3.Core
             DeleteObjectRequest req = new DeleteObjectRequest(bucketName, resource);
             config?.Invoke(req);
 
-            return _operations.DeleteAsync(req, token);
+            return _operations.DeleteObjectAsync(req, token);
         }
 
-        public Task<DeleteMultipleObjectsResponse> DeleteMultipleObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> resources, Action<DeleteMultipleObjectsRequest> config = null, CancellationToken token = default)
+        public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> resources, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
         {
-            DeleteMultipleObjectsRequest req = new DeleteMultipleObjectsRequest(bucketName, resources);
+            DeleteObjectsRequest req = new DeleteObjectsRequest(bucketName, resources);
             config?.Invoke(req);
 
-            return _operations.DeleteMultipleAsync(req, token);
+            return _operations.DeleteObjectsAsync(req, token);
         }
 
         public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string resource, Action<HeadObjectRequest> config = null, CancellationToken token = default)
@@ -44,15 +44,15 @@ namespace Genbox.SimpleS3.Core
             HeadObjectRequest req = new HeadObjectRequest(bucketName, resource);
             config?.Invoke(req);
 
-            return _operations.HeadAsync(req, token);
+            return _operations.HeadObjectAsync(req, token);
         }
 
-        public Task<InitiateMultipartUploadResponse> InitiateMultipartUploadAsync(string bucketName, string resource, Action<InitiateMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string resource, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
         {
-            InitiateMultipartUploadRequest req = new InitiateMultipartUploadRequest(bucketName, resource);
+            CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, resource);
             config?.Invoke(req);
 
-            return _operations.InitiateMultipartUploadAsync(req, token);
+            return _operations.CreateMultipartUploadAsync(req, token);
         }
 
         public Task<UploadPartResponse> UploadPartAsync(string bucketName, string resource, int partNumber, string uploadId, Stream content, Action<UploadPartRequest> config = null, CancellationToken token = default)
@@ -92,7 +92,7 @@ namespace Genbox.SimpleS3.Core
             GetObjectRequest req = new GetObjectRequest(bucketName, resource);
             config?.Invoke(req);
 
-            return _operations.GetAsync(req, token);
+            return _operations.GetObjectAsync(req, token);
         }
 
         public Task<PutObjectResponse> PutObjectAsync(string bucketName, string resource, Stream data, Action<PutObjectRequest> config = null, CancellationToken token = default)
@@ -100,12 +100,12 @@ namespace Genbox.SimpleS3.Core
             PutObjectRequest req = new PutObjectRequest(bucketName, resource, data);
             config?.Invoke(req);
 
-            return _operations.PutAsync(req, token);
+            return _operations.PutObjectAsync(req, token);
         }
 
-        public async Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string resource, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<InitiateMultipartUploadRequest> config = null, CancellationToken token = default)
+        public async Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string resource, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
         {
-            InitiateMultipartUploadRequest req = new InitiateMultipartUploadRequest(bucketName, resource);
+            CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, resource);
             config?.Invoke(req);
 
             IAsyncEnumerable<UploadPartResponse> asyncEnum = _operations.MultipartUploadAsync(req, data, partSize, numParallelParts, token);

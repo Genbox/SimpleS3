@@ -7,21 +7,20 @@ using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Core.Misc;
-using Genbox.SimpleS3.Core.Requests.Service;
+using Genbox.SimpleS3.Core.Requests.Buckets;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.S3Types;
-using Genbox.SimpleS3.Core.Responses.Service;
 
 namespace Genbox.SimpleS3.Core.Extensions
 {
     public static class S3BucketClientExtensions
     {
-        public static Task<PutBucketResponse> PutBucketAsync(this IS3BucketClient client, string bucketName, AwsRegion region, CancellationToken token = default)
+        public static Task<CreateBucketResponse> PutBucketAsync(this IS3BucketClient client, string bucketName, AwsRegion region, CancellationToken token = default)
         {
             Validator.RequireNotNull(client);
             Validator.RequireNotNull(bucketName);
 
-            return client.PutBucketAsync(bucketName, req => req.Region = region, token);
+            return client.CreateBucketAsync(bucketName, req => req.Region = region, token);
         }
 
         /// <summary>List all objects in a bucket</summary>
@@ -35,7 +34,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             Validator.RequireNotNull(bucketName);
 
             string continuationToken = null;
-            GetBucketResponse response;
+            ListObjectsResponse response;
 
             do
             {
@@ -43,7 +42,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                     break;
 
                 string cToken = continuationToken;
-                response = await client.GetBucketAsync(bucketName, req =>
+                response = await client.ListObjectsAsync(bucketName, req =>
                 {
                     req.ContinuationToken = cToken;
 

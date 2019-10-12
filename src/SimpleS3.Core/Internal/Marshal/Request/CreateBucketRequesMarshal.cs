@@ -11,9 +11,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
 {
     [UsedImplicitly]
-    internal class PutBucketRequestMarshal : IRequestMarshal<PutBucketRequest>
+    internal class CreateBucketRequesMarshal : IRequestMarshal<CreateBucketRequest>
     {
-        public Stream MarshalRequest(PutBucketRequest request)
+        public Stream MarshalRequest(CreateBucketRequest request)
         {
             request.AddHeader(AmzHeaders.XAmzBucketObjectLockEnabled, request.EnableObjectLocking);
             request.AddHeader(AmzHeaders.XAmzAcl, request.Acl);

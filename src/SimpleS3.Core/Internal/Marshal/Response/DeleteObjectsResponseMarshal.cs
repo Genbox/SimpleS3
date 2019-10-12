@@ -14,9 +14,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
 {
     [UsedImplicitly]
-    internal class DeleteMultipleObjectsResponseMarshal : IResponseMarshal<DeleteMultipleObjectsRequest, DeleteMultipleObjectsResponse>
+    internal class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObjectsRequest, DeleteObjectsResponse>
     {
-        public void MarshalResponse(DeleteMultipleObjectsRequest request, DeleteMultipleObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(DeleteObjectsRequest request, DeleteObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             XmlSerializer s = new XmlSerializer(typeof(DeleteResult));
 

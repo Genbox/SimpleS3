@@ -4,9 +4,9 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Validation.Validators.Requests.Buckets
 {
-    public class PutBucketRequestValidator : BaseRequestValidator<PutBucketRequest>
+    public class CreateBucketRequestValidator : BaseRequestValidator<CreateBucketRequest>
     {
-        public PutBucketRequestValidator(IOptions<S3Config> config) : base(config)
+        public CreateBucketRequestValidator(IOptions<S3Config> config) : base(config)
         {
             RuleFor(x => x.Resource).Empty();
         }

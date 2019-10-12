@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Responses.Buckets
 {
-    public class GetBucketResponse : BaseResponse
+    public class ListObjectsResponse : BaseResponse
     {
         public string Name { get; set; }
 

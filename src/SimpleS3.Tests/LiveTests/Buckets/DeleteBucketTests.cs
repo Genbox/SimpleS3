@@ -7,9 +7,9 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 {
-    public class DeleteTests : LiveTestBase
+    public class DeleteBucketTests : LiveTestBase
     {
-        public DeleteTests(ITestOutputHelper helper) : base(helper)
+        public DeleteBucketTests(ITestOutputHelper helper) : base(helper)
         {
         }
 
@@ -22,13 +22,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             Assert.False(delete1.IsSuccess);
             Assert.Equal(ErrorCode.NoSuchBucket, delete1.Error.Code);
 
-            await BucketClient.PutBucketAsync(tempBucketName, request => request.Region = Config.Region).ConfigureAwait(false);
+            await BucketClient.CreateBucketAsync(tempBucketName, request => request.Region = Config.Region).ConfigureAwait(false);
 
             DeleteBucketResponse delete2 = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
             Assert.True(delete2.IsSuccess);
             Assert.Equal(204, delete2.StatusCode);
 
-            GetBucketResponse resp = await BucketClient.GetBucketAsync(tempBucketName).ConfigureAwait(false);
+            ListObjectsResponse resp = await BucketClient.ListObjectsAsync(tempBucketName).ConfigureAwait(false);
             Assert.False(resp.IsSuccess);
             Assert.Equal(404, resp.StatusCode);
         }
