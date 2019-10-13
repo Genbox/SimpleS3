@@ -71,7 +71,7 @@ Upload upload = client.Transfer
                  .WithEncryption();
 
 PutObjectResponse resp = await upload.ExecuteAsync();
-Console.WriteLine("Sucess? " + resp.IsSuccess);
+Console.WriteLine("Success? " + resp.IsSuccess);
 
 //Download string
 Download download = client.Transfer
