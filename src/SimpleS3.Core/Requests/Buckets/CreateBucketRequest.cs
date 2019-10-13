@@ -12,8 +12,9 @@ namespace Genbox.SimpleS3.Core.Requests.Buckets
     /// </summary>
     public class CreateBucketRequest : BaseRequest, IAclProperties
     {
-        public CreateBucketRequest(string bucketName) : base(HttpMethod.PUT, bucketName, string.Empty)
+        public CreateBucketRequest(string bucketName, AwsRegion region) : base(HttpMethod.PUT, bucketName, string.Empty)
         {
+            Region = region;
             AclGrantRead = new AclBuilder();
             AclGrantWrite = new AclBuilder();
             AclGrantReadAcp = new AclBuilder();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Authentication;
@@ -7,7 +8,7 @@ namespace Genbox.SimpleS3.Examples.Clients.Simple
 {
     public static class MinioPlaygroundClient
     {
-        public static S3Client Create()
+        public static S3Client Create(IWebProxy proxy = null)
         {
             //Public minio playground credentials
             StringAccessKey key = new StringAccessKey("Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG");
@@ -18,7 +19,7 @@ namespace Genbox.SimpleS3.Examples.Clients.Simple
             //We have to set the endpoint to point to the Minio Playground server
             config.Endpoint = new Uri("https://play.min.io:9000/");
 
-            return new S3Client(config);
+            return new S3Client(config, proxy);
         }
     }
 }

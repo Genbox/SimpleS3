@@ -5,27 +5,27 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core;
-using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Authentication;
-using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Fluid;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Buckets;
 using Genbox.SimpleS3.Core.Requests.Objects;
 using Genbox.SimpleS3.Core.Requests.Objects.Types;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Extensions.HttpClient;
+using Genbox.SimpleS3.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Polly;
 
 namespace Genbox.SimpleS3
 {
     /// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
-    public sealed class S3Client : IDisposable, IS3BucketClient, IS3ObjectClient
+    public sealed class S3Client : IDisposable, IS3Client
     {
         private readonly IS3BucketClient _bucketClient;
         private readonly IS3ObjectClient _objectClient;
@@ -52,7 +52,7 @@ namespace Genbox.SimpleS3
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="config">The configuration you want to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(S3Config config, WebProxy proxy = null) : this(config, new HttpClientHandler {Proxy = proxy})
+        public S3Client(S3Config config, IWebProxy proxy = null) : this(config, new HttpClientHandler {Proxy = proxy})
         {
         }
 
@@ -60,42 +60,38 @@ namespace Genbox.SimpleS3
         {
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton(x => Options.Create(config));
-
-            IS3ClientBuilder builder = services.AddSimpleS3Core();
-            IHttpClientBuilder httpBuilder = builder.UseHttpClientFactory();
-
-            if (messageHandler != null)
-                httpBuilder.ConfigurePrimaryHttpMessageHandler(x => messageHandler);
-
-            httpBuilder.SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-            Random random = new Random();
-
-            // Policy is:
-            // Retries: 3
-            // Timeout: 2^attempt seconds (2, 4, 8 seconds) + -100 to 100 ms jitter
-            httpBuilder.AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
-                                + TimeSpan.FromMilliseconds(random.Next(-100, 100))));
-
+            services.AddSimpleS3(null, messageHandler);
             _provider = services.BuildServiceProvider();
             _objectClient = _provider.GetRequiredService<IS3ObjectClient>();
             _bucketClient = _provider.GetRequiredService<IS3BucketClient>();
+
+            Transfer = new Transfer(_objectClient.ObjectOperations);
         }
+
+        public S3Client(IS3ObjectClient objectClient, IS3BucketClient bucketClient)
+        {
+            _objectClient = objectClient;
+            _bucketClient = bucketClient;
+        }
+
+        public Transfer Transfer { get; }
 
         public void Dispose()
         {
             _provider?.Dispose();
         }
 
+        public IObjectOperations ObjectOperations => _objectClient.ObjectOperations;
+        public IBucketOperations BucketOperations => _bucketClient.BucketOperations;
+
         public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
         {
             return _bucketClient.ListObjectsAsync(bucketName, config, token);
         }
 
-        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
+        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, AwsRegion region, Action<CreateBucketRequest> config = null, CancellationToken token = default)
         {
-            return _bucketClient.CreateBucketAsync(bucketName, config, token);
+            return _bucketClient.CreateBucketAsync(bucketName, region, config, token);
         }
 
         public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)

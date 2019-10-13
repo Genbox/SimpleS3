@@ -76,12 +76,12 @@ namespace Genbox.SimpleS3.Core.Extensions
             return new S3ClientBuilder(collection);
         }
 
-        private static IServiceCollection Configure<TOptions>(this IServiceCollection services, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
+        public static IServiceCollection Configure<TOptions>(this IServiceCollection services, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
         {
             return services.Configure(Options.DefaultName, configureOptions);
         }
 
-        private static IServiceCollection Configure<TOptions>(this IServiceCollection services, string name, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
+        public static IServiceCollection Configure<TOptions>(this IServiceCollection services, string name, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));

@@ -25,29 +25,29 @@ These are the features provided by this API implementation.
 
 #### Setup the config and client
 ```csharp
-S3Client client = new S3Client("YourKeyId", "YourAccessKey", AwsRegion.EuWest1)
+S3Client client = new S3Client("MyKeyId", "MyAccessKey", AwsRegion.EuWest1)
 ```
 
 #### Or use Microsoft's Dependency Injection
 ```csharp
 ServiceCollection services = new ServiceCollection();
-services.AddSimpleS3Core(config => {
-    config.Credentials = new SecretAccessKey("<YourKeyId>", "<YourAccessKey>");
+services.AddSimpleS3(config => {
+    config.Credentials = new SecretAccessKey("MyKeyId", "MyAccessKey");
     config.Region = AwsRegion.EuWest1;
-}).UseHttpClientFactory();
+});
 
 ServiceProvider provider = services.BuildServiceProvider();
-S3Client client = provider.GetRequiredService<IS3Client>();
+IS3Client client = provider.GetRequiredService<IS3Client>();
 ```
 
 #### Upload an object to a bucket
 ```csharp
-await client.PutObjectStringAsync("MyBucket", "SimpleS3Object", "Hello World!");
+await client.PutObjectStringAsync("MyBucket", "MyObject", "Hello World!");
 ```
 
 #### Download an object
 ```csharp
-string content = await client.GetObjectStringAsync("MyBucket", "SimpleS3Object");
+string content = await client.GetObjectStringAsync("MyBucket", "MyObject");
 
 if (content != null)
     Console.WriteLine(content); //Outputs: Hello World!
@@ -57,25 +57,26 @@ else
 
 #### Delete an object
 ```csharp
-await client.DeleteObjectAsync("MyBucket", "SimpleS3Object");
+await client.DeleteObjectAsync("MyBucket", "MyObject");
 ```
 
 ### Fluid API
 Tbe fluid API makes downloading/uploading objects easier by providing a convinient way of supplying information such as cache control, content disposition, encryption keys etc.
 ```csharp
 //Upload string
-Upload upload = Transfer
-                .UploadString("bucket", "resource", "Hello World!", Encoding.UTF8)
-                .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
-                .WithCacheControl(CacheControlType.NoCache)
-                .WithEncryption();
+Upload upload = client.Transfer
+                 .UploadString("MyBucket", "MyObject", "Hello World!", Encoding.UTF8)
+                 .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
+                 .WithCacheControl(CacheControlType.NoCache)
+                 .WithEncryption();
 
 PutObjectResponse resp = await upload.ExecuteAsync();
 Console.WriteLine("Sucess? " + resp.IsSuccess);
 
 //Download string
-Download download = Transfer.Download("bucket", "resource")
-                    .WithRange(1, 5);                    
+Download download = client.Transfer
+                     .Download("MyBucket", "MyObject")
+                     .WithRange(0, 5);                    
 
 GetObjectResponse resp2 = await download.ExecuteAsync();
 Console.WriteLine(await resp2.Content.AsStringAsync()); //outputs 'Hello'

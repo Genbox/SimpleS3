@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             Validator.RequireNotNull(client);
             Validator.RequireNotNull(bucketName);
 
-            return client.CreateBucketAsync(bucketName, req => req.Region = region, token);
+            return client.CreateBucketAsync(bucketName, region, null, token);
         }
 
         /// <summary>List all objects in a bucket</summary>

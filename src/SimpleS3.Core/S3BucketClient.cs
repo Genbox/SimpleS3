@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Extensions;
@@ -18,33 +19,34 @@ namespace Genbox.SimpleS3.Core
     [PublicAPI]
     public class S3BucketClient : IS3BucketClient
     {
-        private readonly IBucketOperations _bucketOperations;
         private readonly IS3ObjectClient _objectClient;
 
         public S3BucketClient(IBucketOperations bucketOperations, IS3ObjectClient objectClient)
         {
-            _bucketOperations = bucketOperations;
+            BucketOperations = bucketOperations;
             _objectClient = objectClient;
         }
 
+        public IBucketOperations BucketOperations { get; }
+
         public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
         {
-            return _bucketOperations.ListObjectsAsync(bucketName, config, token);
+            return BucketOperations.ListObjectsAsync(bucketName, config, token);
         }
 
-        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
+        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, AwsRegion region, Action<CreateBucketRequest> config = null, CancellationToken token = default)
         {
-            return _bucketOperations.CreateBucketAsync(bucketName, config, token);
+            return BucketOperations.CreateBucketAsync(bucketName, region, config, token);
         }
 
         public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)
         {
-            return _bucketOperations.DeleteBucketAsync(bucketName, config, token);
+            return BucketOperations.DeleteBucketAsync(bucketName, config, token);
         }
 
         public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest> config = null, CancellationToken token = default)
         {
-            return _bucketOperations.ListMultipartUploadsAsync(bucketName, config, token);
+            return BucketOperations.ListMultipartUploadsAsync(bucketName, config, token);
         }
 
         public async Task<DeleteBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
@@ -80,7 +82,7 @@ namespace Genbox.SimpleS3.Core
 
         public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
         {
-            return _bucketOperations.ListBucketsAsync(config, token);
+            return BucketOperations.ListBucketsAsync(config, token);
         }
     }
 }

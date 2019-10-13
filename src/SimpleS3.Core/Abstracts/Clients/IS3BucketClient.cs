@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Buckets;
 using Genbox.SimpleS3.Core.Responses.Buckets;
@@ -9,6 +11,8 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
 {
     public interface IS3BucketClient
     {
+        IBucketOperations BucketOperations { get; }
+
         /// <summary>List all objects within a bucket</summary>
         /// <param name="bucketName"></param>
         /// <param name="config"></param>
@@ -18,9 +22,10 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
 
         /// <summary>Creates a bucket</summary>
         /// <param name="bucketName">Name of the bucket</param>
+        /// <param name="region">The region you want the bucket to reside in</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default);
+        Task<CreateBucketResponse> CreateBucketAsync(string bucketName, AwsRegion region, Action<CreateBucketRequest> config = null, CancellationToken token = default);
 
         /// <summary>
         /// Deletes a bucket. All objects (including all object versions and delete markers) in the bucket must be deleted before the bucket itself can
