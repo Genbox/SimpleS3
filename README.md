@@ -3,17 +3,18 @@
 [![NuGet](https://img.shields.io/nuget/v/Genbox.SimpleS3.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/Genbox.SimpleS3/)
 
 ### Description
-A C# implementation of Amazon's S3 API with a focus on simplicity and performance. Download or upload an object with a single line of code.
+A C# implementation of Amazon's S3 API with a focus on simplicity, security and performance. Download or upload an object with a single line of code.
 
-### S3 features
-These are the feature this library implements.
-* Support creating, deleting and listing contents of buckets
-* Support for download, upload, and deletion of objects
-* Multipart upload and download support
+### Support for S3 features
+* Support for GET, PUT, and DELETE on objects and buckets
+* Support listing all buckets you own
 * Streaming chunked encoding support
+* Server side encryption with customer keys
+* See the [S3 API status page](S3-API-status) for a full list
 
 ### API features
 These are the features provided by this API implementation.
+* Supports a fluid API to make it easy to download/upload an object
 * Uses [HttpClientFactory](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests) for optimal performance and flexibility
 * Dependency injection friendly
 * Supports configuration binding via [Microsoft.Extensions.Configuration](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-2.2)
