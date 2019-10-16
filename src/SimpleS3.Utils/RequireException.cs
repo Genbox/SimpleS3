@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Genbox.SimpleS3.Core.Internal
+namespace Genbox.SimpleS3.Utils
 {
     public class RequireException : Exception
     {

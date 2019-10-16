@@ -51,10 +51,10 @@ namespace Genbox.SimpleS3.Core
 
         public async Task<DeleteBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
         {
-            //TODO: this can be optimized if we don't use GetBucketRecursiveAsync, but instead call the methods directly
+            //TODO: this can be optimized if we don't use ListObjectsRecursiveAsync, but instead call the methods directly
             List<S3DeleteInfo> tempList = new List<S3DeleteInfo>(1000);
 
-            await foreach (S3Object obj in this.GetBucketRecursiveAsync(bucketName, token: token))
+            await foreach (S3Object obj in this.ListObjectsRecursiveAsync(bucketName, token: token))
             {
                 tempList.Add(new S3DeleteInfo(obj.Name, null));
 

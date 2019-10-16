@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Core.Internal.Helpers;
+using Genbox.SimpleS3.Utils;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Responses.Errors

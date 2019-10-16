@@ -5,7 +5,6 @@ using Genbox.SimpleS3.Abstracts.Authentication;
 using Genbox.SimpleS3.Abstracts.Factories;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Abstracts.Wrappers;
-using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Authentication;
@@ -53,7 +52,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.TryAddSingleton<IS3ObjectClient, S3ObjectClient>();
             collection.TryAddSingleton<IS3BucketClient, S3BucketClient>();
             collection.TryAddSingleton<IRequestHandler, DefaultRequestHandler>();
-            collection.TryAddSingleton<IS3ConfigCredentialProvider, S3ConfigNullCredentialProvider>();
+            collection.TryAddSingleton<IAccessKeyProtector, CopyAccessKeyProtector>();
             collection.TryAddSingleton<IValidatorFactory, ValidatorFactory>();
             collection.TryAddSingleton<IMarshalFactory, MarshalFactory>();
             collection.TryAddSingleton<Transfer>();

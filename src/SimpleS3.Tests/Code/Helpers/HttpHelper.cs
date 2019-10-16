@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Web;
-using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Tests.Code.Other;
+using Genbox.SimpleS3.Utils;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Genbox.SimpleS3.Tests.Code.Helpers

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core.Internal
+namespace Genbox.SimpleS3.Utils
 {
-    internal static class Validator
+    public static class Validator
     {
         [AssertionMethod]
         public static void RequireNotNull<T>([AssertionCondition(AssertionConditionType.IS_NOT_NULL)] [NoEnumeration]

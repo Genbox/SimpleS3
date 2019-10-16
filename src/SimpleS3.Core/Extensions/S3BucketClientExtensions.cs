@@ -5,11 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
-using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Buckets;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Core.Extensions
 {
@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
         /// <param name="getOwnerInfo">Set to true if you want to get object owner information as well.</param>
         /// <param name="token">A cancellation token</param>
-        public static async IAsyncEnumerable<S3Object> GetBucketRecursiveAsync(this IS3BucketClient client, string bucketName, bool getOwnerInfo = false, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<S3Object> ListObjectsRecursiveAsync(this IS3BucketClient client, string bucketName, bool getOwnerInfo = false, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(client);
             Validator.RequireNotNull(bucketName);

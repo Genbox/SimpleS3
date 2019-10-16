@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Genbox.HttpBuilders.Abstracts;
-using Genbox.SimpleS3.Core.Internal;
+using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Core.Builders
 {

@@ -7,10 +7,10 @@ using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Authentication;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Core.Internal.Constants;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
+using Genbox.SimpleS3.Utils;
 using Microsoft.Collections.Extensions;
 using Microsoft.Extensions.Logging;
 

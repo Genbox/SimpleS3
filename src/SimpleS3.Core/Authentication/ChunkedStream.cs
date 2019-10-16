@@ -4,8 +4,8 @@ using System.IO;
 using System.Text;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Core.Internal.Extensions;
+using Genbox.SimpleS3.Utils;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Authentication

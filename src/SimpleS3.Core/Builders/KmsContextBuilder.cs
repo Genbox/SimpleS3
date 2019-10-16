@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Genbox.HttpBuilders.Abstracts;
-using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Core.Internal.Helpers;
+using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Core.Builders
 {

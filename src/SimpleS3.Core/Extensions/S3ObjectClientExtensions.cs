@@ -7,11 +7,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Builders;
-using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Objects;
 using Genbox.SimpleS3.Core.Requests.Objects.Types;
 using Genbox.SimpleS3.Core.Responses.Objects;
+using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Core.Extensions
 {

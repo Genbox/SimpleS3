@@ -1,5 +1,4 @@
 ﻿using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Misc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

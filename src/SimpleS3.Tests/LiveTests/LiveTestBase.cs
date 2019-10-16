@@ -4,8 +4,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core;
-using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Extensions;
@@ -61,9 +61,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests
             Services = collection.BuildServiceProvider();
 
             //var _bucketClient = Services.GetRequiredService<IS3BucketClient>();
-
             //var serviceClient = Services.GetRequiredService<IS3ServiceClient>();
-
             //var enumerator = serviceClient.GetAllAsync().ToListAsync().Result;
 
             //foreach (S3Bucket bucket in enumerator)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -12,14 +13,14 @@ namespace Genbox.SimpleS3.Core.Authentication
 {
     public class SigningKeyBuilder : ISigningKeyBuilder
     {
-        private readonly IS3ConfigCredentialProvider _credentialProvider;
+        private readonly IEnumerable<IAccessKeyProtector> _keyTransforms;
         private readonly ILogger<SigningKeyBuilder> _logger;
         private readonly IOptions<S3Config> _options;
 
-        public SigningKeyBuilder(IOptions<S3Config> options, IS3ConfigCredentialProvider credentialProvider, ILogger<SigningKeyBuilder> logger)
+        public SigningKeyBuilder(IOptions<S3Config> options, IEnumerable<IAccessKeyProtector> keyTransforms, ILogger<SigningKeyBuilder> logger)
         {
             _options = options;
-            _credentialProvider = credentialProvider;
+            _keyTransforms = keyTransforms;
             _logger = logger;
         }
 
@@ -31,7 +32,12 @@ namespace Genbox.SimpleS3.Core.Authentication
             //Documentation says the key is valid for 7 days, but tests shows that is not true.
             string date = dateTime.ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo);
 
-            byte[] accessKey = _credentialProvider.GetKey();
+            byte[] accessKey = _options.Value.Credentials.AccessKey;
+
+            foreach (IAccessKeyProtector accessKeyTransform in _keyTransforms)
+            {
+                accessKey = accessKeyTransform.UnprotectKey(accessKey);
+            }
 
             byte[] key = Encoding.UTF8.GetBytes(SigningConstants.Scheme).Concat(accessKey).ToArray();
             byte[] hashDate = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(date), key);

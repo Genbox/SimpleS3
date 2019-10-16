@@ -5,8 +5,8 @@ using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Authentication;
-using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Core.Internal.Extensions;
+using Genbox.SimpleS3.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
 

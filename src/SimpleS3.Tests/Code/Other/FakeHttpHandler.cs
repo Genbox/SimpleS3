@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Internal;
+using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Tests.Code.Other
 {

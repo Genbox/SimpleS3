@@ -4,7 +4,7 @@ using System.Text;
 using EnumsNET;
 using Genbox.HttpBuilders.Abstracts;
 using Genbox.SimpleS3.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Internal;
+using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Core.Builders
 {

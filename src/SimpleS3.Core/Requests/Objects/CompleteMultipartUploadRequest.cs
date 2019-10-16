@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Genbox.SimpleS3.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Internal;
 using Genbox.SimpleS3.Core.Requests.Objects.Types;
 using Genbox.SimpleS3.Core.Responses.Objects;
+using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Core.Requests.Objects
 {
