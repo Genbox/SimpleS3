@@ -22,6 +22,7 @@ These are the features provided by this API implementation.
 * Extensive unit tests ensure correctness and stability
 * Support for uploading/downloading multiparts in parallel
 * Support for third-party servers like [Minio](https://min.io/) and [Wasabi](https://wasabi.com/)
+* ProfileManager to securely manage credentials
 
 ## Examples
 
