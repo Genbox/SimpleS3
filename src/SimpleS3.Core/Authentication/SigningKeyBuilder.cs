@@ -41,7 +41,6 @@ namespace Genbox.SimpleS3.Core.Authentication
             byte[] signingKey = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes("aws4_request"), hashService);
 
             //Security: clear key material
-            Array.Clear(accessKey, 0, accessKey.Length);
             Array.Clear(key, 0, key.Length);
 
             _logger.LogDebug("Signing key created: {SigningKey}", signingKey);
