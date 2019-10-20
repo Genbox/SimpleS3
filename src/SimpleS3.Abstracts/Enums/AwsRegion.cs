@@ -3,11 +3,11 @@
 namespace Genbox.SimpleS3.Abstracts.Enums
 {
     /// <summary>
-    /// The AWS regions. See https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html and
-    /// https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
+    /// The AWS regions. See https://docs.aws.amazon.com/en_pv/general/latest/gr/rande.html#s3_region for more info
     /// </summary>
     public enum AwsRegion
     {
+        /// <summary>Do not use this value</summary>
         Unknown = 0,
 
         /// <summary>Asia Pacific (Hong Kong)</summary>
@@ -88,6 +88,10 @@ namespace Genbox.SimpleS3.Abstracts.Enums
 
         /// <summary>US West (Oregon)</summary>
         [EnumMember(Value = "us-west-2")]
-        UsWest2
+        UsWest2,
+
+        /// <summary>Middle East (Bahrain)</summary>
+        [EnumMember(Value = "me-south-1")]
+        MeSouth1
     }
 }
