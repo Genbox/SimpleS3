@@ -26,8 +26,7 @@ namespace Genbox.SimpleS3.Tests.Tests
 
             _options = Options.Create(config);
 
-            CopyAccessKeyProtector copyProtector = new CopyAccessKeyProtector();
-            SigningKeyBuilder keyBuilder = new SigningKeyBuilder(_options, new[] {copyProtector}, new NullLogger<SigningKeyBuilder>());
+            SigningKeyBuilder keyBuilder = new SigningKeyBuilder(_options, new NullLogger<SigningKeyBuilder>());
             _scopeBuilder = new ScopeBuilder(_options);
             _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, new NullLogger<SignatureBuilder>());
             _chunkedSigBuilder = new ChunkedSignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);

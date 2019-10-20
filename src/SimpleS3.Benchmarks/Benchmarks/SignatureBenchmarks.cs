@@ -33,8 +33,7 @@ namespace Genbox.SimpleS3.Benchmarks.Benchmarks
 
             IOptions<S3Config> options = Options.Create(config);
 
-            CopyAccessKeyProtector copyProtector = new CopyAccessKeyProtector();
-            _signingKeyBuilder = new SigningKeyBuilder(options, new[] { copyProtector }, NullLogger<SigningKeyBuilder>.Instance);
+            _signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
             IScopeBuilder scopeBuilder = new ScopeBuilder(options);
             _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<SignatureBuilder>.Instance);
             _chunkSigBuilder = new ChunkedSignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);

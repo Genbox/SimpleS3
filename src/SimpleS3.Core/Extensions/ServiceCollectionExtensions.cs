@@ -52,7 +52,6 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.TryAddSingleton<IS3ObjectClient, S3ObjectClient>();
             collection.TryAddSingleton<IS3BucketClient, S3BucketClient>();
             collection.TryAddSingleton<IRequestHandler, DefaultRequestHandler>();
-            collection.TryAddSingleton<IAccessKeyProtector, CopyAccessKeyProtector>();
             collection.TryAddSingleton<IValidatorFactory, ValidatorFactory>();
             collection.TryAddSingleton<IMarshalFactory, MarshalFactory>();
             collection.TryAddSingleton<Transfer>();
