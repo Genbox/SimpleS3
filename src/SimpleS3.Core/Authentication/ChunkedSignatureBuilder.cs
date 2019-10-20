@@ -26,7 +26,7 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         public byte[] CreateChunkSignature(IRequest request, byte[] previousSignature, byte[] content, int contentLength)
         {
-            Validator.RequireNotNull(request);
+            Validator.RequireNotNull(request, nameof(request));
 
             _logger.LogTrace("Creating chunk signature {Resource}", request.Resource);
 

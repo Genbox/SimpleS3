@@ -30,7 +30,7 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
 
         public CompleteMultipartUploadRequest(string bucketName, string resource, string uploadId, IEnumerable<UploadPartResponse> parts) : this(bucketName, resource, uploadId)
         {
-            Validator.RequireNotNull(parts);
+            Validator.RequireNotNull(parts, nameof(parts));
 
             if (UploadParts == null)
                 UploadParts = new List<S3PartInfo>();

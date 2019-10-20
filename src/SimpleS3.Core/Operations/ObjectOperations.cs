@@ -78,7 +78,7 @@ namespace Genbox.SimpleS3.Core.Operations
 
         public Task<PutObjectResponse> PutObjectAsync(PutObjectRequest request, CancellationToken token = default)
         {
-            Validator.RequireNotNull(request);
+            Validator.RequireNotNull(request, nameof(request));
 
             Stream data = request.Content;
 
@@ -109,8 +109,8 @@ namespace Genbox.SimpleS3.Core.Operations
 
         public async IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, [EnumeratorCancellation] CancellationToken token = default)
         {
-            Validator.RequireNotNull(req);
-            Validator.RequireNotNull(data);
+            Validator.RequireNotNull(req, nameof(req));
+            Validator.RequireNotNull(data, nameof(data));
 
             if (RequestWrappers != null)
             {
@@ -179,7 +179,7 @@ namespace Genbox.SimpleS3.Core.Operations
 
         public async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string resource, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
-            Validator.RequireNotNull(output);
+            Validator.RequireNotNull(output, nameof(output));
 
             //Use a HEAD request on the resource to determine if the file was originally uploaded with multipart
             HeadObjectRequest headReq = new HeadObjectRequest(bucketName, resource);

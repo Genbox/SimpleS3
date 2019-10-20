@@ -22,9 +22,9 @@ namespace Genbox.SimpleS3.Core.RequestWrappers
 
         public ChunkedRequestStreamWrapper(IOptions<S3Config> config, IChunkedSignatureBuilder chunkedSigBuilder, ISignatureBuilder signatureBuilder)
         {
-            Validator.RequireNotNull(config);
-            Validator.RequireNotNull(chunkedSigBuilder);
-            Validator.RequireNotNull(signatureBuilder);
+            Validator.RequireNotNull(config, nameof(config));
+            Validator.RequireNotNull(chunkedSigBuilder, nameof(chunkedSigBuilder));
+            Validator.RequireNotNull(signatureBuilder, nameof(signatureBuilder));
 
             _chunkedSigBuilder = chunkedSigBuilder;
             _signatureBuilder = signatureBuilder;
@@ -41,8 +41,8 @@ namespace Genbox.SimpleS3.Core.RequestWrappers
 
         public Stream Wrap(Stream input, IRequest request)
         {
-            Validator.RequireNotNull(input);
-            Validator.RequireNotNull(request);
+            Validator.RequireNotNull(input, nameof(input));
+            Validator.RequireNotNull(request, nameof(request));
 
             //See https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
             request.AddHeader(HttpHeaders.ContentEncoding, "aws-chunked");

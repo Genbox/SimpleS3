@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Tests.Code.Other
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            Validator.RequireNotNull(request);
+            Validator.RequireNotNull(request, nameof(request));
 
             SendResource = request.RequestUri.AbsolutePath.TrimStart('/');
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);

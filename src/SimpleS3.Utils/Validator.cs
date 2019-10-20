@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Utils
@@ -7,40 +7,53 @@ namespace Genbox.SimpleS3.Utils
     public static class Validator
     {
         [AssertionMethod]
-        public static void RequireNotNull<T>([AssertionCondition(AssertionConditionType.IS_NOT_NULL)] [NoEnumeration]
-            T value, [CanBeNull] string message = null) where T : class
+        public static void RequireValidEnum<T>([AssertionCondition(AssertionConditionType.IS_NOT_NULL)]in string value, string parameterName, out T enumValue, string message = null) where T : struct, Enum
         {
-            if (value == null)
-                throw new ArgumentNullException(message);
+            RequireNotNull(value, parameterName, message);
+            RequireThat(Enum.TryParse(value, true, out enumValue), () => new ArgumentException(parameterName, message));
         }
 
         [AssertionMethod]
-        public static void RequireNotEmpty<T>(ICollection<T> value, [CanBeNull] string message = null)
+        public static void RequireValidEnum<T>([AssertionCondition(AssertionConditionType.IS_NOT_NULL)]in T value, string parameterName, string message = null) where T : struct, Enum
+        {
+            RequireThat(Enum.IsDefined(typeof(T), value), () => new ArgumentException(parameterName, message));
+        }
+
+        [AssertionMethod]
+        public static void RequireNotNull<T>([AssertionCondition(AssertionConditionType.IS_NOT_NULL)]in T value, string parameterName, string message = null) where T : class
+        {
+            RequireThat(value != null, () => new ArgumentNullException(parameterName, message));
+        }
+
+        [AssertionMethod]
+        public static void RequireNotNullOrEmpty(in ICollection value, string parameterName, string message = null)
         {
             RequireNotNull(value, message);
-            RequireThat(value.Count > 0, message);
+            RequireThat(value.Count > 0, () => new ArgumentNullException(parameterName, message));
         }
 
         [AssertionMethod]
-        public static void RequireNotEmpty([AssertionCondition(AssertionConditionType.IS_NOT_NULL)]
-            string value, [CanBeNull] string message = null)
+        public static void RequireNotNullOrEmpty([AssertionCondition(AssertionConditionType.IS_NOT_NULL)]in string value, string parameterName, string message = null)
         {
-            RequireThat(!string.IsNullOrEmpty(value), message);
+            RequireThat(!string.IsNullOrEmpty(value), () => new ArgumentNullException(parameterName, message));
         }
 
         [AssertionMethod]
-        public static void RequireNotWhitespace([AssertionCondition(AssertionConditionType.IS_NOT_NULL)]
-            string value, [CanBeNull] string message = null)
+        public static void RequireNotNullOrWhiteSpace([AssertionCondition(AssertionConditionType.IS_NOT_NULL)]in string value, string parameterName, string message = null)
         {
-            RequireThat(!string.IsNullOrWhiteSpace(value), message);
+            RequireThat(!string.IsNullOrWhiteSpace(value), () => new ArgumentNullException(parameterName, message));
         }
 
         [AssertionMethod]
-        public static void RequireThat([AssertionCondition(AssertionConditionType.IS_TRUE)]
-            bool condition, [CanBeNull] string message = null)
+        public static void RequireThat<T>([AssertionCondition(AssertionConditionType.IS_TRUE)]in bool condition, Func<T> func = null) where T : Exception, new()
         {
-            if (!condition)
-                throw new RequireException(message);
+            if (condition)
+                return;
+
+            if (func != null)
+                throw func();
+
+            throw new T();
         }
     }
 }

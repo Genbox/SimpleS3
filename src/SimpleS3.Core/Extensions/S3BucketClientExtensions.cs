@@ -17,8 +17,8 @@ namespace Genbox.SimpleS3.Core.Extensions
     {
         public static Task<CreateBucketResponse> PutBucketAsync(this IS3BucketClient client, string bucketName, AwsRegion region, CancellationToken token = default)
         {
-            Validator.RequireNotNull(client);
-            Validator.RequireNotNull(bucketName);
+            Validator.RequireNotNull(client, nameof(client));
+            Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
 
             return client.CreateBucketAsync(bucketName, region, null, token);
         }
@@ -30,8 +30,8 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="token">A cancellation token</param>
         public static async IAsyncEnumerable<S3Object> ListObjectsRecursiveAsync(this IS3BucketClient client, string bucketName, bool getOwnerInfo = false, [EnumeratorCancellation] CancellationToken token = default)
         {
-            Validator.RequireNotNull(client);
-            Validator.RequireNotNull(bucketName);
+            Validator.RequireNotNull(client, nameof(client));
+            Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
 
             string continuationToken = null;
             ListObjectsResponse response;
@@ -62,8 +62,8 @@ namespace Genbox.SimpleS3.Core.Extensions
 
         public static async IAsyncEnumerable<S3Upload> ListAllMultipartUploadsAsync(this IS3BucketClient client, string bucketName, [EnumeratorCancellation] CancellationToken token = default)
         {
-            Validator.RequireNotNull(client);
-            Validator.RequireNotNull(bucketName);
+            Validator.RequireNotNull(client, nameof(client));
+            Validator.RequireNotNull(bucketName, nameof(bucketName));
 
             string uploadIdMarker = null;
             ListMultipartUploadsResponse response;
@@ -85,8 +85,8 @@ namespace Genbox.SimpleS3.Core.Extensions
 
         public static async Task<DeleteBucketStatus> DeleteBucketRecursiveAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
         {
-            Validator.RequireNotNull(client);
-            Validator.RequireNotNull(bucketName);
+            Validator.RequireNotNull(client, nameof(client));
+            Validator.RequireNotNull(bucketName, nameof(bucketName));
 
             DeleteBucketStatus emptyResp = await client.EmptyBucketAsync(bucketName, token).ConfigureAwait(false);
 
@@ -103,7 +103,7 @@ namespace Genbox.SimpleS3.Core.Extensions
 
         public static async IAsyncEnumerable<S3Bucket> ListAllBuckets(this IS3BucketClient client, Action<ListBucketsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
-            Validator.RequireNotNull(client);
+            Validator.RequireNotNull(client, nameof(client));
 
             ListBucketsResponse resp = await client.ListBucketsAsync(config, token).ConfigureAwait(false);
 

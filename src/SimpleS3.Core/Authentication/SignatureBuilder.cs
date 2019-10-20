@@ -51,7 +51,7 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         public byte[] CreateSignature(IRequest request)
         {
-            Validator.RequireNotNull(request);
+            Validator.RequireNotNull(request, nameof(request));
 
             _logger.LogTrace("Creating signature for {Resource}", request.Resource);
 

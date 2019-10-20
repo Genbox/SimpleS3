@@ -37,8 +37,8 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public TagBuilder Add(string key, string value)
         {
-            Validator.RequireNotNull(key);
-            Validator.RequireNotNull(value);
+            Validator.RequireNotNull(key, nameof(key));
+            Validator.RequireNotNull(value, nameof(value));
 
             if (_tags == null)
                 _tags = new Dictionary<string, string>();

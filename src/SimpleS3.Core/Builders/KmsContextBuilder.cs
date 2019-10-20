@@ -31,8 +31,8 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public void AddEntry(string key, string value)
         {
-            Validator.RequireNotNull(key);
-            Validator.RequireNotNull(value);
+            Validator.RequireNotNull(key, nameof(key));
+            Validator.RequireNotNull(value, nameof(value));
 
             if (_dict == null)
                 _dict = new Dictionary<string, string>();

@@ -37,13 +37,13 @@ namespace Genbox.SimpleS3.Core.Requests
 
         public DefaultRequestHandler(IOptions<S3Config> options, IValidatorFactory validator, IMarshalFactory marshaller, INetworkDriver networkDriver, IAuthorizationBuilder authBuilder, IEnumerable<IRequestStreamWrapper> requestStreamWrappers, ILogger<DefaultRequestHandler> logger)
         {
-            Validator.RequireNotNull(options);
-            Validator.RequireNotNull(validator);
-            Validator.RequireNotNull(marshaller);
-            Validator.RequireNotNull(networkDriver);
-            Validator.RequireNotNull(authBuilder);
-            Validator.RequireNotNull(requestStreamWrappers);
-            Validator.RequireNotNull(logger);
+            Validator.RequireNotNull(options, nameof(options));
+            Validator.RequireNotNull(validator, nameof(validator));
+            Validator.RequireNotNull(marshaller, nameof(marshaller));
+            Validator.RequireNotNull(networkDriver, nameof(networkDriver));
+            Validator.RequireNotNull(authBuilder, nameof(authBuilder));
+            Validator.RequireNotNull(requestStreamWrappers, nameof(requestStreamWrappers));
+            Validator.RequireNotNull(logger, nameof(logger));
 
             validator.ValidateAndThrow(options.Value);
 

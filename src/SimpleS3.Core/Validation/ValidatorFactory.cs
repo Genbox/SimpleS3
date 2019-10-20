@@ -24,7 +24,7 @@ namespace Genbox.SimpleS3.Core.Validation
                 Type type = x.GetType();
                 Type baseType = type.BaseType;
 
-                Validator.RequireNotNull(baseType);
+                Validator.RequireNotNull(baseType, nameof(baseType));
 
                 Type[] args = baseType.GetGenericArguments();
 

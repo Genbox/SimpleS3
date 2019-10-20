@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Tests.Code.Helpers
     {
         public static HttpHandler ParseHttpRequest(string request)
         {
-            Validator.RequireNotNull(request);
+            Validator.RequireNotNull(request, nameof(request));
 
             //Hack to change linux newlines into windows newlines
             request = request.Replace("\n", Environment.NewLine, false, CultureInfo.InvariantCulture);

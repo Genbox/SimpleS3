@@ -106,7 +106,7 @@ namespace Genbox.SimpleS3.Core.Builders
         /// <param name="id">The user id, for example 79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be</param>
         public AclBuilder AddUserId(string id)
         {
-            Validator.RequireNotNull(id);
+            Validator.RequireNotNull(id, nameof(id));
 
             if (_ids == null)
                 _ids = new HashSet<string>( /*1*/);

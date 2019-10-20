@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Responses.Errors
     {
         public GenericError(IDictionary<string, string> lookup)
         {
-            Validator.RequireNotNull(lookup);
+            Validator.RequireNotNull(lookup, nameof(lookup));
 
             Code = ValueHelper.ParseEnum<ErrorCode>(lookup["Code"]);
             Message = lookup["Message"];

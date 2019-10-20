@@ -148,7 +148,7 @@ namespace Genbox.SimpleS3.Core.Fluid
 
         public Upload WithAccessControl(ObjectAclBuilder acl)
         {
-            Validator.RequireNotNull(acl);
+            Validator.RequireNotNull(acl, nameof(acl));
 
             _request.AclGrantRead = acl.ReadObject;
             _request.AclGrantReadAcp = acl.ReadAcl;

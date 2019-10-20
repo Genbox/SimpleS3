@@ -30,7 +30,7 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public string BuildAuthorization(IRequest request)
         {
-            Validator.RequireNotNull(request);
+            Validator.RequireNotNull(request, nameof(request));
 
             return BuildHeader(request.Date, request.Headers, _signatureBuilder.CreateSignature(request));
         }
