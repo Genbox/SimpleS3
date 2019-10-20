@@ -2,7 +2,6 @@
 using System.Text;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
-using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluid;

@@ -3,7 +3,7 @@ using Genbox.SimpleS3.Core.Misc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Genbox.SimpleS3.Extensions.HttpClient
+namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
 {
     public static class S3ClientBuilderExtensions
     {

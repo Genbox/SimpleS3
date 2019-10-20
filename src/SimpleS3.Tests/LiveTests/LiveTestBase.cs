@@ -14,7 +14,7 @@ using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Objects;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Extensions.HttpClient;
+using Genbox.SimpleS3.Extensions.HttpClient.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
