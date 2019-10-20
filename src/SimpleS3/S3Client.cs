@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -72,6 +72,8 @@ namespace Genbox.SimpleS3
         {
             _objectClient = objectClient;
             _bucketClient = bucketClient;
+
+            Transfer = new Transfer(_objectClient.ObjectOperations);
         }
 
         public Transfer Transfer { get; }
