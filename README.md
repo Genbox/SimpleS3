@@ -10,6 +10,7 @@ A C# implementation of Amazon's S3 API with a focus on simplicity, security and 
 * Support listing all buckets you own
 * Streaming chunked encoding support
 * Server side encryption with customer keys
+* Support for path and virtual host style buckets
 * See the [S3 API status page](S3-API-status) for a full list
 
 ### API features
