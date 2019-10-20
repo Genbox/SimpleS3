@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "SimpleS3.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "object put s3net-test dfsetup222-2.exe dfsetup222.exe"
+      //"commandLineArgs": "-r EUWest1 bucket -b bucketname get"
+    }
+  }
+}

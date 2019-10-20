@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "SimpleS3.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "bucket list"
+      //"commandLineArgs": "-r EUWest1 bucket -b bucketname get"
+    }
+  }
+}
