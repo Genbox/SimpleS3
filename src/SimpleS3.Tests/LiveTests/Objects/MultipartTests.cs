@@ -40,7 +40,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         {
             string resourceName = nameof(ManualMultiplePartUpload);
 
-            byte[] key = {1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8};
+            byte[] key = { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 };
             byte[] keyMd5 = CryptoHelper.Md5Hash(key);
 
             CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, resourceName, request =>
@@ -84,7 +84,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.True(uploadResp2.IsSuccess);
             Assert.NotNull(uploadResp2.ETag);
 
-            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, resourceName, initResp.UploadId, new[] {uploadResp1, uploadResp2}).ConfigureAwait(false);
+            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, resourceName, initResp.UploadId, new[] { uploadResp1, uploadResp2 }).ConfigureAwait(false);
 
             Assert.True(completeResp.IsSuccess);
             Assert.NotNull(uploadResp2.ETag);
@@ -145,7 +145,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.Equal(SseAlgorithm.Aes256, uploadResp.SseAlgorithm);
             Assert.Equal(StorageClass.StandardIa, uploadResp.StorageClass);
 
-            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, resourceName, initResp.UploadId, new[] {uploadResp}).ConfigureAwait(false);
+            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, resourceName, initResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
 
             Assert.True(completeResp.IsSuccess);
             Assert.NotNull(completeResp.ETag);
@@ -252,7 +252,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.True(uploadResp2.IsSuccess);
             Assert.NotNull(uploadResp2.ETag);
 
-            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, resourceName, initResp.UploadId, new[] {uploadResp1, uploadResp2}).ConfigureAwait(false);
+            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, resourceName, initResp.UploadId, new[] { uploadResp1, uploadResp2 }).ConfigureAwait(false);
 
             Assert.False(completeResp.IsSuccess);
             Assert.Equal(400, completeResp.StatusCode);

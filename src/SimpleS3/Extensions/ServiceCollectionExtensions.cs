@@ -49,7 +49,7 @@ namespace Genbox.SimpleS3.Extensions
 
         public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config> configureS3, IWebProxy proxy)
         {
-            return collection.AddSimpleS3(configureS3, new HttpClientHandler {Proxy = proxy});
+            return collection.AddSimpleS3(configureS3, new HttpClientHandler { Proxy = proxy });
         }
     }
 }

@@ -2,9 +2,7 @@
 
 namespace Genbox.SimpleS3.Abstracts.Enums
 {
-    /// <summary>
-    /// The AWS regions. See https://docs.aws.amazon.com/en_pv/general/latest/gr/rande.html#s3_region for more info
-    /// </summary>
+    /// <summary>The AWS regions. See https://docs.aws.amazon.com/en_pv/general/latest/gr/rande.html#s3_region for more info</summary>
     public enum AwsRegion
     {
         /// <summary>Do not use this value</summary>

@@ -66,7 +66,7 @@ namespace Genbox.SimpleS3.Tests.Tests
                 string expectedCr = ResourceHelper.GetResource(Path.ChangeExtension(name, "creq"));
                 string expectedSts = ResourceHelper.GetResource(Path.ChangeExtension(name, "sts"));
 
-                yield return new object[] {content, expectedCr, expectedSts};
+                yield return new object[] { content, expectedCr, expectedSts };
             }
         }
     }

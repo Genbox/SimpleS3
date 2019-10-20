@@ -67,7 +67,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                         obj.Size = content.Size;
 
                         if (content.Owner != null)
-                            obj.Owner = new S3ObjectIdentity {Name = content.Owner.DisplayName, Id = content.Owner.Id};
+                            obj.Owner = new S3ObjectIdentity { Name = content.Owner.DisplayName, Id = content.Owner.Id };
 
                         response.Objects.Add(obj);
                     }

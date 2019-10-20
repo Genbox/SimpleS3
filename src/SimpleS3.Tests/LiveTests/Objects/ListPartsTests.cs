@@ -64,7 +64,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
                 Assert.Equal("\"32ca18808933aa12e979375d07048a11\"", part.ETag);
                 Assert.Equal(file.Length, part.Size);
 
-                await ObjectClient.CompleteMultipartUploadAsync(bucket, nameof(SimpleList), initResp.UploadId, new[] {uploadResp}).ConfigureAwait(false);
+                await ObjectClient.CompleteMultipartUploadAsync(bucket, nameof(SimpleList), initResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
 
                 ListPartsResponse listResp3 = await ObjectClient.ListPartsAsync(bucket, nameof(SimpleList), initResp.UploadId).ConfigureAwait(false);
                 Assert.False(listResp3.IsSuccess);

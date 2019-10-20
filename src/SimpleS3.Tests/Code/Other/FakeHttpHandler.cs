@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Tests.Code.Other
 
             SendResource = request.RequestUri.AbsolutePath.TrimStart('/');
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new ByteArrayContent(new byte[] {1, 2, 3});
+            response.Content = new ByteArrayContent(new byte[] { 1, 2, 3 });
             return Task.FromResult(response);
         }
     }

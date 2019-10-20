@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -52,7 +52,7 @@ namespace Genbox.SimpleS3
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="config">The configuration you want to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(S3Config config, IWebProxy proxy = null) : this(config, new HttpClientHandler {Proxy = proxy})
+        public S3Client(S3Config config, IWebProxy proxy = null) : this(config, new HttpClientHandler { Proxy = proxy })
         {
         }
 

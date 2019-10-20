@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Extensions
     {
         public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, IWebProxy proxy)
         {
-            return builder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler {Proxy = proxy});
+            return builder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { Proxy = proxy });
         }
 
         public static IHttpClientBuilder AddDefaultRetryPolicy(this IHttpClientBuilder builder)

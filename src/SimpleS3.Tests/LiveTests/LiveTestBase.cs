@@ -46,7 +46,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests
             IConfigurationSection proxySection = _configRoot.GetSection("Proxy");
 
             if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
-                httpClientBuilder.ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler {Proxy = new WebProxy(proxySection["ProxyAddress"])});
+                httpClientBuilder.ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler { Proxy = new WebProxy(proxySection["ProxyAddress"]) });
 
             collection.AddLogging(x =>
             {
