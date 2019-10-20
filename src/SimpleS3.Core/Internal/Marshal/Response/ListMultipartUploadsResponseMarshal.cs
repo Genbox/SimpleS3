@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using EnumsNET;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Requests.Buckets;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.Buckets.XML;
@@ -34,7 +34,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                 response.NextUploadIdMarker = listResult.NextUploadIdMarker;
 
                 if (listResult.EncodingType != null)
-                    response.EncodingType = EnumsNET.Enums.Parse<EncodingType>(listResult.EncodingType, EnumFormat.EnumMemberValue);
+                    response.EncodingType = ValueHelper.ParseEnum<EncodingType>(listResult.EncodingType);
 
                 response.MaxUploads = listResult.MaxUploads;
                 response.IsTruncated = listResult.IsTruncated;
@@ -62,7 +62,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                         s3Upload.UploadId = listUpload.UploadId;
 
                         if (listUpload.StorageClass != null)
-                            s3Upload.StorageClass = EnumsNET.Enums.Parse<StorageClass>(listUpload.StorageClass, EnumFormat.EnumMemberValue);
+                            s3Upload.StorageClass = ValueHelper.ParseEnum<StorageClass>(listUpload.StorageClass);
 
                         s3Upload.Initiated = listUpload.Initiated;
 

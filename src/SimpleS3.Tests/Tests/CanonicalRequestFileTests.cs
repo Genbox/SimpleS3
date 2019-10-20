@@ -29,7 +29,7 @@ namespace Genbox.SimpleS3.Tests.Tests
             IOptions<S3Config> options = Options.Create(config);
 
             CopyAccessKeyProtector copyProtector = new CopyAccessKeyProtector();
-            ISigningKeyBuilder keyBuilder = new SigningKeyBuilder(options, new[] { copyProtector }, new NullLogger<SigningKeyBuilder>());
+            ISigningKeyBuilder keyBuilder = new SigningKeyBuilder(options, new[] {copyProtector}, new NullLogger<SigningKeyBuilder>());
             _scopeBuilder = new ScopeBuilder(options);
             _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, new NullLogger<SignatureBuilder>());
         }
@@ -67,7 +67,7 @@ namespace Genbox.SimpleS3.Tests.Tests
                 string expectedCr = ResourceHelper.GetResource(Path.ChangeExtension(name, "creq"));
                 string expectedSts = ResourceHelper.GetResource(Path.ChangeExtension(name, "sts"));
 
-                yield return new object[] { content, expectedCr, expectedSts };
+                yield return new object[] {content, expectedCr, expectedSts};
             }
         }
     }

@@ -1,0 +1,25 @@
+﻿using System;
+
+namespace Genbox.SimpleS3.Utils.Extensions
+{
+    public static class StringExtensions
+    {
+        public static bool Contains(this string str, string value, StringComparison comparison)
+        {
+            return str.IndexOf(value, comparison) >= 0;
+        }
+
+        public static bool Contains(this string str, char value)
+        {
+            return str.IndexOf(value) >= 0;
+        }
+
+        public static bool EndsWith(this string str, char character)
+        {
+            if (str.Length == 0)
+                return false;
+
+            return str[str.Length - 1] == character;
+        }
+    }
+}

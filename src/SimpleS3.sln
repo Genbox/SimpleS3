@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28922.388
@@ -13,7 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{7C26C924
 	ProjectSection(SolutionItems) = preProject
 		..\Directory.Build.props = ..\Directory.Build.props
 		..\Global.ruleset = ..\Global.ruleset
-		..\NuGet.Config = ..\NuGet.Config
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject

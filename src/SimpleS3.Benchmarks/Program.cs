@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Running;
-using Genbox.SimpleS3.Benchmarks.Benchmarks;
 
 namespace Genbox.SimpleS3.Benchmarks
 {
@@ -7,7 +6,7 @@ namespace Genbox.SimpleS3.Benchmarks
     {
         private static void Main(string[] args)
         {
-            BenchmarkRunner.Run<EnumToStringBenchmark>();
+            BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
         }
     }
 }

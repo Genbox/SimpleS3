@@ -35,9 +35,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             byte[] accessKey = _options.Value.Credentials.AccessKey;
 
             foreach (IAccessKeyProtector accessKeyTransform in _keyTransforms)
-            {
                 accessKey = accessKeyTransform.UnprotectKey(accessKey);
-            }
 
             byte[] key = Encoding.UTF8.GetBytes(SigningConstants.Scheme).Concat(accessKey).ToArray();
             byte[] hashDate = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(date), key);

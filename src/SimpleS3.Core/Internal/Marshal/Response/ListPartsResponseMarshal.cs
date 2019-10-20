@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using EnumsNET;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Requests.Objects;
 using Genbox.SimpleS3.Core.Responses.Objects;
 using Genbox.SimpleS3.Core.Responses.Objects.XML;
@@ -32,7 +32,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                 response.UploadId = listResult.UploadId;
 
                 if (listResult.StorageClass != null)
-                    response.StorageClass = EnumsNET.Enums.Parse<StorageClass>(listResult.StorageClass, EnumFormat.EnumMemberValue);
+                    response.StorageClass = ValueHelper.ParseEnum<StorageClass>(listResult.StorageClass);
 
                 response.PartNumberMarker = listResult.PartNumberMarker;
                 response.NextPartNumberMarker = listResult.NextPartNumberMarker;
@@ -40,7 +40,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                 response.IsTruncated = listResult.IsTruncated;
 
                 if (listResult.EncodingType != null)
-                    response.EncodingType = EnumsNET.Enums.Parse<EncodingType>(listResult.EncodingType, EnumFormat.EnumMemberValue);
+                    response.EncodingType = ValueHelper.ParseEnum<EncodingType>(listResult.EncodingType);
 
                 if (listResult.Owner != null)
                 {
