@@ -27,7 +27,7 @@ namespace Genbox.SimpleS3.Examples
                 const string objectName = "some-object";
 
                 //First we create the a bucket named "simple-s3-test". It might already be there, so we ignore if the request was not a success
-                await client.CreateBucketAsync(bucketName, AwsRegion.UsEast1).ConfigureAwait(false);
+                await client.CreateBucketAsync(bucketName).ConfigureAwait(false);
 
                 //Upload and download an object using the normal API
                 await UploadDownloadWithNormalApi(client, bucketName, objectName).ConfigureAwait(false);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
@@ -16,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
     [UsedImplicitly]
     internal class PutObjectRequestMarshal : IRequestMarshal<PutObjectRequest>
     {
-        public Stream MarshalRequest(PutObjectRequest request)
+        public Stream MarshalRequest(PutObjectRequest request, IS3Config config)
         {
             request.AddHeader(HttpHeaders.CacheControl, request.CacheControl);
             request.AddHeader(AmzHeaders.XAmzStorageClass, request.StorageClass);

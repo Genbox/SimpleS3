@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Internal.Constants;
@@ -15,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
     [UsedImplicitly]
     internal class DeleteObjectsRequestMarshal : IRequestMarshal<DeleteObjectsRequest>
     {
-        public Stream MarshalRequest(DeleteObjectsRequest request)
+        public Stream MarshalRequest(DeleteObjectsRequest request, IS3Config config)
         {
             request.AddQueryParameter(ObjectParameters.Delete, string.Empty);
             request.AddHeader(AmzHeaders.XAmzMfa, request.Mfa);

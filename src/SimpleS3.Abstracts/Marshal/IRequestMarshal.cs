@@ -8,6 +8,6 @@ namespace Genbox.SimpleS3.Abstracts.Marshal
 
     public interface IRequestMarshal<in T> : IRequestMarshal where T : IRequest
     {
-        Stream MarshalRequest(T request);
+        Stream MarshalRequest(T request, IS3Config config);
     }
 }

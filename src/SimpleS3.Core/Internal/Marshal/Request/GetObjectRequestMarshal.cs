@@ -1,4 +1,5 @@
 using System.IO;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Internal.Constants;
@@ -12,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
     [UsedImplicitly]
     internal class GetObjectRequestMarshal : IRequestMarshal<GetObjectRequest>
     {
-        public Stream MarshalRequest(GetObjectRequest request)
+        public Stream MarshalRequest(GetObjectRequest request, IS3Config config)
         {
             request.AddHeader(HttpHeaders.Range, request.Range);
             request.AddHeader(HttpHeaders.IfMatch, request.IfETagMatch);

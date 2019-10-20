@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Internal.Constants;
@@ -14,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
     [UsedImplicitly]
     internal class InitiateMultipartUploadRequestMarshal : IRequestMarshal<CreateMultipartUploadRequest>
     {
-        public Stream MarshalRequest(CreateMultipartUploadRequest request)
+        public Stream MarshalRequest(CreateMultipartUploadRequest request, IS3Config config)
         {
             //This is required for multipart uploads
             request.AddQueryParameter(ObjectParameters.Uploads, string.Empty);

@@ -22,7 +22,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             Assert.False(delete1.IsSuccess);
             Assert.Equal(ErrorCode.NoSuchBucket, delete1.Error.Code);
 
-            await BucketClient.CreateBucketAsync(tempBucketName, Config.Region).ConfigureAwait(false);
+            await BucketClient.CreateBucketAsync(tempBucketName).ConfigureAwait(false);
 
             DeleteBucketResponse delete2 = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
             Assert.True(delete2.IsSuccess);

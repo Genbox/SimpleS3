@@ -15,12 +15,12 @@ namespace Genbox.SimpleS3.Core.Extensions
 {
     public static class S3BucketClientExtensions
     {
-        public static Task<CreateBucketResponse> PutBucketAsync(this IS3BucketClient client, string bucketName, AwsRegion region, CancellationToken token = default)
+        public static Task<CreateBucketResponse> PutBucketAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
 
-            return client.CreateBucketAsync(bucketName, region, null, token);
+            return client.CreateBucketAsync(bucketName, null, token);
         }
 
         /// <summary>List all objects in a bucket</summary>

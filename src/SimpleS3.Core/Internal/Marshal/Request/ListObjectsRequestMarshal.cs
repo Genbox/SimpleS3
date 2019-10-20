@@ -1,4 +1,5 @@
 using System.IO;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Internal.Constants;
 using Genbox.SimpleS3.Core.Internal.Extensions;
@@ -10,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
     [UsedImplicitly]
     internal class ListObjectsRequestMarshal : IRequestMarshal<ListObjectsRequest>
     {
-        public Stream MarshalRequest(ListObjectsRequest request)
+        public Stream MarshalRequest(ListObjectsRequest request, IS3Config config)
         {
             request.AddQueryParameter(BucketParameters.Delimiter, request.Delimiter);
             request.AddQueryParameter(BucketParameters.EncodingType, request.EncodingType);

@@ -60,7 +60,7 @@ namespace Genbox.SimpleS3.Core.Requests
         {
             _logger.LogTrace($"Sending {typeof(TReq)} to bucket '{request.BucketName}' as resource '{request.Resource}'");
 
-            Stream requestStream = _marshaller.MarshalRequest(request);
+            Stream requestStream = _marshaller.MarshalRequest(request, _options.Value);
 
             _validator.ValidateAndThrow(request);
 

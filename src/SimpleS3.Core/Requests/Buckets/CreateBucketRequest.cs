@@ -12,9 +12,8 @@ namespace Genbox.SimpleS3.Core.Requests.Buckets
     /// </summary>
     public class CreateBucketRequest : BaseRequest, IAclProperties
     {
-        public CreateBucketRequest(string bucketName, AwsRegion region) : base(HttpMethod.PUT, bucketName, string.Empty)
+        public CreateBucketRequest(string bucketName) : base(HttpMethod.PUT, bucketName, string.Empty)
         {
-            Region = region;
             AclGrantRead = new AclBuilder();
             AclGrantWrite = new AclBuilder();
             AclGrantReadAcp = new AclBuilder();
@@ -24,9 +23,6 @@ namespace Genbox.SimpleS3.Core.Requests.Buckets
 
         /// <summary>Enable object locking on the bucket.</summary>
         public bool EnableObjectLocking { get; set; }
-
-        /// <summary>The region where you wish to create the bucket. If not set, it defaults to us-east-1 (US East, N. Virginia).</summary>
-        public AwsRegion Region { get; set; }
 
         /// <inheritdoc />
         public BucketCannedAcl Acl { get; set; }

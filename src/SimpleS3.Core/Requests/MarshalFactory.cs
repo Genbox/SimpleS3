@@ -36,10 +36,10 @@ namespace Genbox.SimpleS3.Core.Requests
             }, x => x);
         }
 
-        public Stream MarshalRequest<T>(T request) where T : IRequest
+        public Stream MarshalRequest<T>(T request, IS3Config config) where T : IRequest
         {
             if (_requestMarshals.TryGetValue(typeof(T), out IRequestMarshal marshaller))
-                return ((IRequestMarshal<T>)marshaller).MarshalRequest(request);
+                return ((IRequestMarshal<T>)marshaller).MarshalRequest(request, config);
 
             return null;
         }

@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, Config.Region, req => req.Acl = BucketCannedAcl.Private).ConfigureAwait(false);
+            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.Acl = BucketCannedAcl.Private).ConfigureAwait(false);
             Assert.True(pResp.IsSuccess);
 
             //We prefix with a number here to keep sort order when we download the list of objects further down
@@ -63,7 +63,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, Config.Region, req =>
+            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, req =>
             {
                 req.AclGrantReadAcp.AddEmail(TestConstants.TestEmail);
                 req.AclGrantWriteAcp.AddEmail(TestConstants.TestEmail);
@@ -79,7 +79,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, Config.Region, req => req.EnableObjectLocking = true).ConfigureAwait(false);
+            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.EnableObjectLocking = true).ConfigureAwait(false);
             Assert.True(pResp.IsSuccess);
         }
     }

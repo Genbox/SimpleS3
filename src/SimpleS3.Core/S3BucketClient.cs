@@ -34,9 +34,9 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.ListObjectsAsync(bucketName, config, token);
         }
 
-        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, AwsRegion region, Action<CreateBucketRequest> config = null, CancellationToken token = default)
+        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
         {
-            return BucketOperations.CreateBucketAsync(bucketName, region, config, token);
+            return BucketOperations.CreateBucketAsync(bucketName, config, token);
         }
 
         public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)
