@@ -11,7 +11,7 @@ A C# implementation of Amazon's S3 API with a focus on simplicity, security and 
 * Streaming chunked encoding support
 * Server-side encryption with customer keys
 * Support for path and virtual host style buckets
-* See the [S3 API status page](S3-API-status) for a full list
+* See the [S3 API status page](https://github.com/Genbox/SimpleS3/wiki/S3-API-status) for a full list
 
 ### API features
 These are the features provided by this API implementation.
