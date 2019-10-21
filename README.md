@@ -9,13 +9,13 @@ A C# implementation of Amazon's S3 API with a focus on simplicity, security and 
 * Support for GET, PUT, and DELETE on objects and buckets
 * Support listing all buckets you own
 * Streaming chunked encoding support
-* Server side encryption with customer keys
+* Server-side encryption with customer keys
 * Support for path and virtual host style buckets
 * See the [S3 API status page](S3-API-status) for a full list
 
 ### API features
 These are the features provided by this API implementation.
-* Supports a fluid API to make it easy to download/upload an object
+* Supports a fluent API to make it easy to download/upload an object
 * Uses [HttpClientFactory](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests) for optimal performance and flexibility
 * Dependency injection friendly
 * Supports configuration binding via [Microsoft.Extensions.Configuration](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-2.2)
@@ -63,8 +63,8 @@ else
 await client.DeleteObjectAsync("MyBucket", "MyObject");
 ```
 
-### Fluid API
-Tbe fluid API makes downloading/uploading objects easier by providing a convinient way of supplying information such as cache control, content disposition, encryption keys etc.
+### Fluent API
+The fluent API makes downloading/uploading objects easier by providing a convenient way of supplying information such as cache control, content-disposition, encryption keys, etc.
 ```csharp
 //Upload string
 Upload upload = client.Transfer
