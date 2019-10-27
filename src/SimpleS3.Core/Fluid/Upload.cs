@@ -23,9 +23,9 @@ namespace Genbox.SimpleS3.Core.Fluid
         private readonly bool _ownStream;
         private readonly PutObjectRequest _request;
 
-        internal Upload(IObjectOperations objectOperations, string bucket, string resource, Stream stream, bool ownStream = false)
+        internal Upload(IObjectOperations objectOperations, string bucket, string objectKey, Stream stream, bool ownStream = false)
         {
-            _request = new PutObjectRequest(bucket, resource, stream);
+            _request = new PutObjectRequest(bucket, objectKey, stream);
             _objectOperations = objectOperations;
             _ownStream = ownStream;
         }

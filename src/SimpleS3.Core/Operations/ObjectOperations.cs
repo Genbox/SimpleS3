@@ -122,7 +122,7 @@ namespace Genbox.SimpleS3.Core.Operations
             }
 
             string bucket = req.BucketName;
-            string resource = req.Resource;
+            string objectKey = req.ObjectKey;
 
             CreateMultipartUploadResponse initResp = await CreateMultipartUploadAsync(req, token).ConfigureAwait(false);
 
@@ -151,7 +151,7 @@ namespace Genbox.SimpleS3.Core.Operations
                     byte[] partData = new byte[bufferSize];
                     await data.ReadAsync(partData, 0, partData.Length, token).ConfigureAwait(false);
 
-                    uploads.Enqueue(UploadPartAsync(bucket, resource, partData, i, initResp.UploadId, semaphore, token));
+                    uploads.Enqueue(UploadPartAsync(bucket, objectKey, partData, i, initResp.UploadId, semaphore, token));
 
                     offset += partSize;
                 }
@@ -169,7 +169,7 @@ namespace Genbox.SimpleS3.Core.Operations
                     yield return response;
                 }
 
-                CompleteMultipartUploadRequest completeReq = new CompleteMultipartUploadRequest(bucket, resource, initResp.UploadId, responses);
+                CompleteMultipartUploadRequest completeReq = new CompleteMultipartUploadRequest(bucket, objectKey, initResp.UploadId, responses);
                 CompleteMultipartUploadResponse completeResp = await CompleteMultipartUploadAsync(completeReq, token).ConfigureAwait(false);
 
                 if (!completeResp.IsSuccess)
@@ -177,12 +177,12 @@ namespace Genbox.SimpleS3.Core.Operations
             }
         }
 
-        public async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string resource, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
+        public async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(output, nameof(output));
 
-            //Use a HEAD request on the resource to determine if the file was originally uploaded with multipart
-            HeadObjectRequest headReq = new HeadObjectRequest(bucketName, resource);
+            //Use a HEAD request on the object key to determine if the file was originally uploaded with multipart
+            HeadObjectRequest headReq = new HeadObjectRequest(bucketName, objectKey);
             headReq.PartNumber = 1;
 
             HeadObjectResponse headResp = await HeadObjectAsync(headReq, token).ConfigureAwait(false);
@@ -191,7 +191,7 @@ namespace Genbox.SimpleS3.Core.Operations
 
             if (headResp.NumberOfParts == null)
             {
-                GetObjectRequest getReq = new GetObjectRequest(bucketName, resource);
+                GetObjectRequest getReq = new GetObjectRequest(bucketName, objectKey);
                 config?.Invoke(getReq);
 
                 GetObjectResponse getResp = await GetObjectAsync(getReq, token).ConfigureAwait(false);
@@ -217,7 +217,7 @@ namespace Genbox.SimpleS3.Core.Operations
                         if (token.IsCancellationRequested)
                             yield break;
 
-                        queue.Enqueue(DownloadPartAsync(bucketName, resource, output, headResp.ContentLength, i, bufferSize, semaphore, mutex, token, config));
+                        queue.Enqueue(DownloadPartAsync(bucketName, objectKey, output, headResp.ContentLength, i, bufferSize, semaphore, mutex, token, config));
                     }
 
                     while (queue.TryDequeue(out Task<GetObjectResponse> task))
@@ -232,11 +232,11 @@ namespace Genbox.SimpleS3.Core.Operations
             }
         }
 
-        private async Task<GetObjectResponse> DownloadPartAsync(string bucketName, string resource, Stream output, long partSize, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, CancellationToken token, Action<GetObjectRequest> config)
+        private async Task<GetObjectResponse> DownloadPartAsync(string bucketName, string objectKey, Stream output, long partSize, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, CancellationToken token, Action<GetObjectRequest> config)
         {
             try
             {
-                GetObjectRequest getReq = new GetObjectRequest(bucketName, resource);
+                GetObjectRequest getReq = new GetObjectRequest(bucketName, objectKey);
                 getReq.PartNumber = partNumber;
                 config?.Invoke(getReq);
 
@@ -274,13 +274,13 @@ namespace Genbox.SimpleS3.Core.Operations
             }
         }
 
-        private async Task<UploadPartResponse> UploadPartAsync(string bucketName, string resource, byte[] data, int partNumber, string uploadId, SemaphoreSlim semaphore, CancellationToken token)
+        private async Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, byte[] data, int partNumber, string uploadId, SemaphoreSlim semaphore, CancellationToken token)
         {
             try
             {
                 using (MemoryStream ms = new MemoryStream(data))
                 {
-                    UploadPartRequest req = new UploadPartRequest(bucketName, resource, partNumber, uploadId, ms);
+                    UploadPartRequest req = new UploadPartRequest(bucketName, objectKey, partNumber, uploadId, ms);
                     return await UploadPartAsync(req, token).ConfigureAwait(false);
                 }
             }

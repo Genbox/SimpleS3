@@ -58,24 +58,24 @@ namespace Genbox.SimpleS3.Core.Requests
 
         public async Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken cancellationToken) where TResp : IResponse, new() where TReq : IRequest
         {
-            _logger.LogTrace($"Sending {typeof(TReq)} to bucket '{request.BucketName}' as resource '{request.Resource}'");
+            _logger.LogTrace($"Sending {typeof(TReq)} to bucket '{request.BucketName}' with key '{request.ObjectKey}'");
 
             Stream requestStream = _marshaller.MarshalRequest(request, _options.Value);
 
             _validator.ValidateAndThrow(request);
 
-            //Ensure that the resource is encoded
-            string encodedResource = UrlHelper.UrlPathEncode(request.Resource);
+            //Ensure that the object key is encoded
+            string encodedResource = UrlHelper.UrlPathEncode(request.ObjectKey);
 
             if (_options.Value.Endpoint == null || _options.Value.NamingType == NamingType.PathStyle)
             {
                 if (!string.IsNullOrEmpty(request.BucketName))
-                    request.Resource = request.BucketName + '/' + encodedResource;
+                    request.ObjectKey = request.BucketName + '/' + encodedResource;
                 else
-                    request.Resource = encodedResource;
+                    request.ObjectKey = encodedResource;
             }
             else
-                request.Resource = encodedResource;
+                request.ObjectKey = encodedResource;
 
             StringBuilder sb = new StringBuilder(512);
 
@@ -124,7 +124,7 @@ namespace Genbox.SimpleS3.Core.Requests
             //We add the authorization header here because we need ALL other headers to be present when we do
             request.AddHeader(HttpHeaders.Authorization, _authBuilder.BuildAuthorization(request));
 
-            sb.Append('/').Append(request.Resource);
+            sb.Append('/').Append(request.ObjectKey);
 
             //Map all the parameters on to the url
             if (request.QueryParameters.Count > 0)

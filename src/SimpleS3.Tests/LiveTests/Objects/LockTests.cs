@@ -21,15 +21,15 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             DateTimeOffset lockRetainUntil = DateTimeOffset.UtcNow.AddMinutes(1);
 
             //We add a unique guid to prevent contamination across runs
-            string resource = $"{nameof(LockMode)}-{lockMode}-{Guid.NewGuid()}";
+            string objectKey = $"{nameof(LockMode)}-{lockMode}-{Guid.NewGuid()}";
 
-            await UploadAsync(resource, request =>
+            await UploadAsync(objectKey, request =>
             {
                 request.LockMode = lockMode;
                 request.LockRetainUntil = lockRetainUntil;
             }).ConfigureAwait(false);
 
-            GetObjectResponse resp = await AssertAsync(resource).ConfigureAwait(false);
+            GetObjectResponse resp = await AssertAsync(objectKey).ConfigureAwait(false);
             Assert.Equal(lockMode, resp.LockMode);
             Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntilDate.DateTime, TimeSpan.FromSeconds(1));
         }
@@ -42,11 +42,11 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             DateTimeOffset lockRetainUntil = DateTimeOffset.UtcNow.AddMinutes(1);
 
             //We add a unique guid to prevent contamination across runs
-            string resource = $"{nameof(LockModeFluid)}-{lockMode}-{Guid.NewGuid()}";
+            string objectKey = $"{nameof(LockModeFluid)}-{lockMode}-{Guid.NewGuid()}";
 
-            await UploadTransferAsync(resource, upload => upload.WithLock(lockMode, lockRetainUntil)).ConfigureAwait(false);
+            await UploadTransferAsync(objectKey, upload => upload.WithLock(lockMode, lockRetainUntil)).ConfigureAwait(false);
 
-            GetObjectResponse resp = await AssertAsync(resource).ConfigureAwait(false);
+            GetObjectResponse resp = await AssertAsync(objectKey).ConfigureAwait(false);
             Assert.Equal(lockMode, resp.LockMode);
             Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntilDate.DateTime, TimeSpan.FromSeconds(1));
         }

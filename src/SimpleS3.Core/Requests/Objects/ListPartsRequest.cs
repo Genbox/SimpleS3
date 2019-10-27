@@ -6,7 +6,7 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     /// <summary>This operation lists the parts that have been uploaded for a specific multipart upload.</summary>
     public class ListPartsRequest : BaseRequest
     {
-        public ListPartsRequest(string bucketName, string resource, string uploadId) : base(HttpMethod.GET, bucketName, resource)
+        public ListPartsRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.GET, bucketName, objectKey)
         {
             UploadId = uploadId;
         }

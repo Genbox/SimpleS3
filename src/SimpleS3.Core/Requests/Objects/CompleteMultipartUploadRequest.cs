@@ -19,16 +19,16 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     /// </summary>
     public class CompleteMultipartUploadRequest : BaseRequest
     {
-        private CompleteMultipartUploadRequest(string bucketName, string resource, string uploadId) : base(HttpMethod.POST, bucketName, resource)
+        private CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.POST, bucketName, objectKey)
         {
             UploadId = uploadId;
         }
 
-        public CompleteMultipartUploadRequest(string bucketName, string resource, string uploadId, params UploadPartResponse[] parts) : this(bucketName, resource, uploadId, (IEnumerable<UploadPartResponse>)parts)
+        public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, params UploadPartResponse[] parts) : this(bucketName, objectKey, uploadId, (IEnumerable<UploadPartResponse>)parts)
         {
         }
 
-        public CompleteMultipartUploadRequest(string bucketName, string resource, string uploadId, IEnumerable<UploadPartResponse> parts) : this(bucketName, resource, uploadId)
+        public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts) : this(bucketName, objectKey, uploadId)
         {
             Validator.RequireNotNull(parts, nameof(parts));
 

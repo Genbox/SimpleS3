@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Tests.Code.Helpers
         [ThreadStatic]
         private static Assembly _cachedAssembly;
 
-        private static Assembly _assembly => _cachedAssembly ?? (_cachedAssembly = typeof(ResourceHelper).Assembly);
+        private static Assembly _assembly => _cachedAssembly ??= typeof(ResourceHelper).Assembly;
 
         public static IEnumerable<(string name, string content)> GetResources(string filter)
         {

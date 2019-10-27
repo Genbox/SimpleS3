@@ -21,15 +21,15 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         [Fact]
         public async Task AbortIncompleteUpload()
         {
-            string resourceName = nameof(AbortIncompleteUpload);
+            string objectKey = nameof(AbortIncompleteUpload);
 
-            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, resourceName).ConfigureAwait(false);
+            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
 
             Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(resourceName, initResp.Key);
+            Assert.Equal(objectKey, initResp.Key);
             Assert.NotNull(initResp.UploadId);
 
-            AbortMultipartUploadResponse abortResp = await ObjectClient.AbortMultipartUploadAsync(BucketName, resourceName, initResp.UploadId).ConfigureAwait(false);
+            AbortMultipartUploadResponse abortResp = await ObjectClient.AbortMultipartUploadAsync(BucketName, objectKey, initResp.UploadId).ConfigureAwait(false);
 
             Assert.True(abortResp.IsSuccess);
             Assert.Equal(204, abortResp.StatusCode);
@@ -38,12 +38,12 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         [Fact]
         public async Task ManualMultiplePartUpload()
         {
-            string resourceName = nameof(ManualMultiplePartUpload);
+            string objectKey = nameof(ManualMultiplePartUpload);
 
             byte[] key = { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 };
             byte[] keyMd5 = CryptoHelper.Md5Hash(key);
 
-            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, resourceName, request =>
+            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, objectKey, request =>
             {
                 request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
                 request.SseCustomerKey = key;
@@ -52,7 +52,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             Assert.True(initResp.IsSuccess);
             Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(resourceName, initResp.Key);
+            Assert.Equal(objectKey, initResp.Key);
             Assert.NotNull(initResp.UploadId);
 
             byte[] file = new byte[1024 * 1024 * 10];
@@ -61,7 +61,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             byte[][] parts = file.Chunk(file.Length / 2).Select(x => x.ToArray()).ToArray();
 
-            UploadPartResponse uploadResp1 = await ObjectClient.UploadPartAsync(BucketName, resourceName, 1, initResp.UploadId, new MemoryStream(parts[0]), request =>
+            UploadPartResponse uploadResp1 = await ObjectClient.UploadPartAsync(BucketName, objectKey, 1, initResp.UploadId, new MemoryStream(parts[0]), request =>
             {
                 request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
                 request.SseCustomerKey = key;
@@ -74,7 +74,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.True(uploadResp1.IsSuccess);
             Assert.NotNull(uploadResp1.ETag);
 
-            UploadPartResponse uploadResp2 = await ObjectClient.UploadPartAsync(BucketName, resourceName, 2, initResp.UploadId, new MemoryStream(parts[1]), request =>
+            UploadPartResponse uploadResp2 = await ObjectClient.UploadPartAsync(BucketName, objectKey, 2, initResp.UploadId, new MemoryStream(parts[1]), request =>
             {
                 request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
                 request.SseCustomerKey = key;
@@ -84,12 +84,12 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.True(uploadResp2.IsSuccess);
             Assert.NotNull(uploadResp2.ETag);
 
-            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, resourceName, initResp.UploadId, new[] { uploadResp1, uploadResp2 }).ConfigureAwait(false);
+            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, objectKey, initResp.UploadId, new[] { uploadResp1, uploadResp2 }).ConfigureAwait(false);
 
             Assert.True(completeResp.IsSuccess);
             Assert.NotNull(uploadResp2.ETag);
 
-            GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, resourceName, request =>
+            GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, objectKey, request =>
             {
                 request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
                 request.SseCustomerKey = key;
@@ -123,9 +123,9 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         [Fact]
         public async Task ManualSinglePartUpload()
         {
-            string resourceName = nameof(ManualSinglePartUpload);
+            string objectKey = nameof(ManualSinglePartUpload);
 
-            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, resourceName, request =>
+            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, objectKey, request =>
             {
                 request.SseAlgorithm = SseAlgorithm.Aes256;
                 request.StorageClass = StorageClass.StandardIa;
@@ -133,24 +133,24 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             Assert.True(initResp.IsSuccess);
             Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(resourceName, initResp.Key);
+            Assert.Equal(objectKey, initResp.Key);
             Assert.NotNull(initResp.UploadId);
 
             byte[] file = new byte[1024 * 1024 * 5];
             file[0] = (byte)'a';
 
-            UploadPartResponse uploadResp = await ObjectClient.UploadPartAsync(BucketName, resourceName, 1, initResp.UploadId, new MemoryStream(file)).ConfigureAwait(false);
+            UploadPartResponse uploadResp = await ObjectClient.UploadPartAsync(BucketName, objectKey, 1, initResp.UploadId, new MemoryStream(file)).ConfigureAwait(false);
             Assert.True(uploadResp.IsSuccess);
             Assert.NotNull(uploadResp.ETag);
             Assert.Equal(SseAlgorithm.Aes256, uploadResp.SseAlgorithm);
             Assert.Equal(StorageClass.StandardIa, uploadResp.StorageClass);
 
-            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, resourceName, initResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
+            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, objectKey, initResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
 
             Assert.True(completeResp.IsSuccess);
             Assert.NotNull(completeResp.ETag);
 
-            GetObjectResponse resp = await ObjectClient.GetObjectAsync(BucketName, resourceName).ConfigureAwait(false);
+            GetObjectResponse resp = await ObjectClient.GetObjectAsync(BucketName, objectKey).ConfigureAwait(false);
             Assert.True(resp.IsSuccess);
             Assert.Equal(file, await resp.Content.AsDataAsync().ConfigureAwait(false));
         }
@@ -228,12 +228,12 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         [Fact]
         public async Task TooSmallUpload()
         {
-            string resourceName = nameof(TooSmallUpload);
+            string objectKey = nameof(TooSmallUpload);
 
-            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, resourceName).ConfigureAwait(false);
+            CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
 
             Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(resourceName, initResp.Key);
+            Assert.Equal(objectKey, initResp.Key);
             Assert.NotNull(initResp.UploadId);
 
             //4 MB is below the 5 MB limit. See https://docs.aws.amazon.com/AmazonS3/latest/dev/qfacts.html
@@ -242,17 +242,17 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             byte[][] chunks = file.Chunk(file.Length / 2).Select(x => x.ToArray()).ToArray();
 
-            UploadPartResponse uploadResp1 = await ObjectClient.UploadPartAsync(BucketName, resourceName, 1, initResp.UploadId, new MemoryStream(chunks[0])).ConfigureAwait(false);
+            UploadPartResponse uploadResp1 = await ObjectClient.UploadPartAsync(BucketName, objectKey, 1, initResp.UploadId, new MemoryStream(chunks[0])).ConfigureAwait(false);
 
             Assert.True(uploadResp1.IsSuccess);
             Assert.NotNull(uploadResp1.ETag);
 
-            UploadPartResponse uploadResp2 = await ObjectClient.UploadPartAsync(BucketName, resourceName, 2, initResp.UploadId, new MemoryStream(chunks[1])).ConfigureAwait(false);
+            UploadPartResponse uploadResp2 = await ObjectClient.UploadPartAsync(BucketName, objectKey, 2, initResp.UploadId, new MemoryStream(chunks[1])).ConfigureAwait(false);
 
             Assert.True(uploadResp2.IsSuccess);
             Assert.NotNull(uploadResp2.ETag);
 
-            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, resourceName, initResp.UploadId, new[] { uploadResp1, uploadResp2 }).ConfigureAwait(false);
+            CompleteMultipartUploadResponse completeResp = await ObjectClient.CompleteMultipartUploadAsync(BucketName, objectKey, initResp.UploadId, new[] { uploadResp1, uploadResp2 }).ConfigureAwait(false);
 
             Assert.False(completeResp.IsSuccess);
             Assert.Equal(400, completeResp.StatusCode);

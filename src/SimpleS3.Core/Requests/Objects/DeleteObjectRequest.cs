@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     /// </summary>
     public class DeleteObjectRequest : BaseRequest
     {
-        public DeleteObjectRequest(string bucketName, string resource) : base(HttpMethod.DELETE, bucketName, resource)
+        public DeleteObjectRequest(string bucketName, string objectKey) : base(HttpMethod.DELETE, bucketName, objectKey)
         {
             Mfa = new MfaAuthenticationBuilder();
         }

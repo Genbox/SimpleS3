@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     /// </summary>
     public class AbortMultipartUploadRequest : BaseRequest
     {
-        public AbortMultipartUploadRequest(string bucketName, string resource, string uploadId) : base(HttpMethod.DELETE, bucketName, resource)
+        public AbortMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.DELETE, bucketName, objectKey)
         {
             UploadId = uploadId;
         }

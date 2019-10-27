@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     {
         private byte[] _sseCustomerKey;
 
-        public GetObjectRequest(string bucketName, string resource) : base(HttpMethod.GET, bucketName, resource)
+        public GetObjectRequest(string bucketName, string objectKey) : base(HttpMethod.GET, bucketName, objectKey)
         {
             Range = new RangeBuilder();
             IfETagMatch = new ETagBuilder();

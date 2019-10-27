@@ -13,10 +13,9 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         IBucketOperations BucketOperations { get; }
 
         /// <summary>List all objects within a bucket</summary>
-        /// <param name="bucketName"></param>
-        /// <param name="config"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
+        /// <param name="bucketName">Name of the bucket</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token</param>
         Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default);
 
         /// <summary>Creates a bucket</summary>

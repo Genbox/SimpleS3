@@ -39,6 +39,14 @@ namespace Genbox.SimpleS3.Abstracts
         /// <summary>Use this to set a custom endpoint. For example, when using minio, you can set it to https://miniohost.com/</summary>
         Uri Endpoint { get; set; }
 
+        /// <summary>
+        /// If enabled, bucket names are validated to ensure they are valid DNS names. This is to ensure you can always access your bucket using virtual host naming style.
+        /// </summary>
         bool EnableBucketNameValidation { get; set; }
+
+        /// <summary>
+        /// Controls the level of validation that is applied to object keys. By default we only allow a set of safe characters. A higher level means fewer special characters are allowed.
+        /// </summary>
+        Level ObjectKeyValidationLevel { get; set; }
     }
 }

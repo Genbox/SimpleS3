@@ -53,9 +53,9 @@ namespace Genbox.SimpleS3.Core.Authentication
         {
             Validator.RequireNotNull(request, nameof(request));
 
-            _logger.LogTrace("Creating signature for {Resource}", request.Resource);
+            _logger.LogTrace("Creating signature for {ObjectKey}", request.ObjectKey);
 
-            string canonicalRequest = CreateCanonicalRequest(request.Method, request.Resource, request.Headers, request.QueryParameters, request.Headers[AmzHeaders.XAmzContentSha256]);
+            string canonicalRequest = CreateCanonicalRequest(request.Method, request.ObjectKey, request.Headers, request.QueryParameters, request.Headers[AmzHeaders.XAmzContentSha256]);
             string stringToSign = CreateStringToSign(request.Date, _scopeBuilder.CreateScope("s3", request.Date), canonicalRequest);
             byte[] signature = CreateSignature(request.Date, stringToSign);
 
@@ -72,9 +72,9 @@ namespace Genbox.SimpleS3.Core.Authentication
             return CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date, "s3"));
         }
 
-        internal string CreateCanonicalRequest(HttpMethod method, string resource, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
+        internal string CreateCanonicalRequest(HttpMethod method, string objectKey, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
         {
-            _logger.LogTrace("Creating canonical request for {Resource}", resource);
+            _logger.LogTrace("Creating canonical request for {ObjectKey}", objectKey);
 
             //Consists of:
             // HTTP Verb + \n
@@ -86,7 +86,7 @@ namespace Genbox.SimpleS3.Core.Authentication
 
             StringBuilder sb = new StringBuilder(512);
             sb.Append(method.ToString()).Append(SigningConstants.Newline);
-            sb.Append(CanonicalizeUri(resource)).Append(SigningConstants.Newline);
+            sb.Append(CanonicalizeUri(objectKey)).Append(SigningConstants.Newline);
             sb.Append(CanonicalizeQueryParameters(query)).Append(SigningConstants.Newline);
 
             //Headers needs to be ordered by key

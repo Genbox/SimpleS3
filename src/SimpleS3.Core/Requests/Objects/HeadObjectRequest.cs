@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     /// </summary>
     public class HeadObjectRequest : GetObjectRequest
     {
-        public HeadObjectRequest(string bucketName, string resource) : base(bucketName, resource)
+        public HeadObjectRequest(string bucketName, string objectKey) : base(bucketName, objectKey)
         {
             Method = HttpMethod.HEAD;
         }
