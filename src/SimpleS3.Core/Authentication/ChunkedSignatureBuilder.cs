@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Core.Authentication
         {
             Validator.RequireNotNull(request, nameof(request));
 
-            _logger.LogTrace("Creating chunk signature {Resource}", request.Resource);
+            _logger.LogTrace("Creating chunk signature {ObjectKey}", request.ObjectKey);
 
             string stringToSign = CreateStringToSign(request.Date, _scopeBuilder.CreateScope("s3", request.Date), previousSignature, content, contentLength);
             byte[] signature = CreateSignature(request.Date, stringToSign);

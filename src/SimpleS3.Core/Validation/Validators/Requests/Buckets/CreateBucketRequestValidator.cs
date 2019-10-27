@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Validation.Validators.Requests.Buckets
     {
         public CreateBucketRequestValidator(IOptions<S3Config> config) : base(config)
         {
-            RuleFor(x => x.Resource).Empty();
+            RuleFor(x => x.ObjectKey).Empty();
         }
     }
 }

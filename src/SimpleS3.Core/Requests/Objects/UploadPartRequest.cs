@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     {
         private byte[] _sseCustomerKey;
 
-        public UploadPartRequest(string bucketName, string resource, int partNumber, string uploadId, Stream content) : base(HttpMethod.PUT, bucketName, resource)
+        public UploadPartRequest(string bucketName, string objectKey, int partNumber, string uploadId, Stream content) : base(HttpMethod.PUT, bucketName, objectKey)
         {
             if (partNumber <= 0 || partNumber > 10_000)
                 throw new ArgumentException("Part number must be between 1 and 10.000 inclusive", nameof(partNumber));

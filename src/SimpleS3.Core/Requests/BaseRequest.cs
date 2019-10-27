@@ -10,9 +10,9 @@ namespace Genbox.SimpleS3.Core.Requests
         private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>();
 
-        protected BaseRequest(HttpMethod method, string bucketName, string resource)
+        protected BaseRequest(HttpMethod method, string bucketName, string objectKey)
         {
-            Resource = resource;
+            ObjectKey = objectKey;
             Date = DateTimeOffset.UtcNow;
             Method = method;
             BucketName = bucketName;
@@ -22,7 +22,7 @@ namespace Genbox.SimpleS3.Core.Requests
         public DateTimeOffset Date { get; internal set; }
 
         /// <inheritdoc />
-        public string Resource { get; set; }
+        public string ObjectKey { get; set; }
 
         /// <inheritdoc />
         public HttpMethod Method { get; internal set; }

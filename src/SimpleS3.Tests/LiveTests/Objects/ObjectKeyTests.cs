@@ -7,9 +7,9 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 {
-    public class ResourceNameTests : LiveTestBase
+    public class ObjectKeyTests : LiveTestBase
     {
-        public ResourceNameTests(ITestOutputHelper helper) : base(helper)
+        public ObjectKeyTests(ITestOutputHelper helper) : base(helper)
         {
         }
 

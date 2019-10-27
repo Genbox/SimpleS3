@@ -18,15 +18,15 @@ namespace Genbox.SimpleS3.Core.Fluid
         private readonly IObjectOperations _objectOperations;
         private readonly GetObjectRequest _request;
 
-        internal Download(IObjectOperations objectOperations, string bucket, string resource)
+        internal Download(IObjectOperations objectOperations, string bucket, string objectKey)
         {
-            _request = new GetObjectRequest(bucket, resource);
+            _request = new GetObjectRequest(bucket, objectKey);
             _objectOperations = objectOperations;
         }
 
         public async Task<MultipartDownloadStatus> ExecuteMultipartAsync(Stream output, CancellationToken token = default)
         {
-            IAsyncEnumerable<GetObjectResponse> async = _objectOperations.MultipartDownloadAsync(_request.BucketName, _request.Resource, output, config: CopyProperties, token: token);
+            IAsyncEnumerable<GetObjectResponse> async = _objectOperations.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
 
             await foreach (GetObjectResponse resp in async.WithCancellation(token))
             {

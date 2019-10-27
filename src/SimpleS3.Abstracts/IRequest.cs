@@ -9,8 +9,8 @@ namespace Genbox.SimpleS3.Abstracts
         /// <summary>Date of the request</summary>
         DateTimeOffset Date { get; }
 
-        /// <summary>Resource (if any) of the request</summary>
-        string Resource { get; set; }
+        /// <summary>Key of the object</summary>
+        string ObjectKey { get; set; }
 
         /// <summary>The method to use when performing the request</summary>
         HttpMethod Method { get; }

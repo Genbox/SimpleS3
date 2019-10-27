@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     {
         private byte[] _sseCustomerKey;
 
-        public CreateMultipartUploadRequest(string bucketName, string resource) : base(HttpMethod.POST, bucketName, resource)
+        public CreateMultipartUploadRequest(string bucketName, string objectKey) : base(HttpMethod.POST, bucketName, objectKey)
         {
             Tags = new TagBuilder();
             Metadata = new MetadataBuilder();

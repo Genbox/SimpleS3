@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Requests.Objects
     /// </summary>
     public class PutObjectRequest : CreateMultipartUploadRequest
     {
-        public PutObjectRequest(string bucketName, string resource, Stream data) : base(bucketName, resource)
+        public PutObjectRequest(string bucketName, string objectKey, Stream data) : base(bucketName, objectKey)
         {
             Method = HttpMethod.PUT;
             Content = data;

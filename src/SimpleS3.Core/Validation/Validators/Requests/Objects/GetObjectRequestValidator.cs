@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Validation.Validators.Requests.Objects
     {
         public GetObjectRequestValidator(IOptions<S3Config> config) : base(config)
         {
-            RuleFor(x => x.Resource).NotEmpty().WithMessage("You must provide a resource.");
+            RuleFor(x => x.ObjectKey).NotEmpty().WithMessage("You must provide an object key.");
         }
     }
 }

@@ -116,64 +116,64 @@ namespace Genbox.SimpleS3
             return _bucketClient.ListBucketsAsync(config, token);
         }
 
-        public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string resource, Action<DeleteObjectRequest> config = null, CancellationToken token = default)
+        public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.DeleteObjectAsync(bucketName, resource, config, token);
+            return _objectClient.DeleteObjectAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> resources, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
+        public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.DeleteObjectsAsync(bucketName, resources, config, token);
+            return _objectClient.DeleteObjectsAsync(bucketName, objectKeys, config, token);
         }
 
-        public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string resource, Action<HeadObjectRequest> config = null, CancellationToken token = default)
+        public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.HeadObjectAsync(bucketName, resource, config, token);
+            return _objectClient.HeadObjectAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string resource, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.CreateMultipartUploadAsync(bucketName, resource, config, token);
+            return _objectClient.CreateMultipartUploadAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<UploadPartResponse> UploadPartAsync(string bucketName, string resource, int partNumber, string uploadId, Stream content, Action<UploadPartRequest> config = null, CancellationToken token = default)
+        public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.UploadPartAsync(bucketName, resource, partNumber, uploadId, content, config, token);
+            return _objectClient.UploadPartAsync(bucketName, objectKey, partNumber, uploadId, content, config, token);
         }
 
-        public Task<ListPartsResponse> ListPartsAsync(string bucketName, string resource, string uploadId, Action<ListPartsRequest> config = null, CancellationToken token = default)
+        public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.ListPartsAsync(bucketName, resource, uploadId, config, token);
+            return _objectClient.ListPartsAsync(bucketName, objectKey, uploadId, config, token);
         }
 
-        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string resource, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.CompleteMultipartUploadAsync(bucketName, resource, uploadId, parts, config, token);
+            return _objectClient.CompleteMultipartUploadAsync(bucketName, objectKey, uploadId, parts, config, token);
         }
 
-        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string resource, string uploadId, Action<AbortMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.AbortMultipartUploadAsync(bucketName, resource, uploadId, config, token);
+            return _objectClient.AbortMultipartUploadAsync(bucketName, objectKey, uploadId, config, token);
         }
 
-        public Task<GetObjectResponse> GetObjectAsync(string bucketName, string resource, Action<GetObjectRequest> config = null, CancellationToken token = default)
+        public Task<GetObjectResponse> GetObjectAsync(string bucketName, string objectKey, Action<GetObjectRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.GetObjectAsync(bucketName, resource, config, token);
+            return _objectClient.GetObjectAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<PutObjectResponse> PutObjectAsync(string bucketName, string resource, Stream data, Action<PutObjectRequest> config = null, CancellationToken token = default)
+        public Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream data, Action<PutObjectRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.PutObjectAsync(bucketName, resource, data, config, token);
+            return _objectClient.PutObjectAsync(bucketName, objectKey, data, config, token);
         }
 
-        public Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string resource, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
         {
-            return _objectClient.MultipartUploadAsync(bucketName, resource, data, partSize, numParallelParts, config, token);
+            return _objectClient.MultipartUploadAsync(bucketName, objectKey, data, partSize, numParallelParts, config, token);
         }
 
-        public Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string resource, Stream output, int numParallelParts = 4, int bufferSize = 16777216, CancellationToken token = default)
+        public Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int numParallelParts = 4, int bufferSize = 16777216, CancellationToken token = default)
         {
-            return _objectClient.MultipartDownloadAsync(bucketName, resource, output, numParallelParts, bufferSize, token);
+            return _objectClient.MultipartDownloadAsync(bucketName, objectKey, output, numParallelParts, bufferSize, token);
         }
     }
 }
