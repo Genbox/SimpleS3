@@ -52,6 +52,11 @@ namespace Genbox.SimpleS3.Core.Misc
 
         public async Task CopyToFileAsync(string file)
         {
+            string dir = Path.GetDirectoryName(file);
+            
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
             using (FileStream fs = File.OpenWrite(file))
                 await CopyToAsync(fs).ConfigureAwait(false);
         }
