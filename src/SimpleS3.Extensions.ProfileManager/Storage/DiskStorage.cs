@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Microsoft.Extensions.Options;
 
@@ -30,7 +31,14 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Storage
             if (!Directory.Exists(_options.Value.ProfileLocation))
                 Directory.CreateDirectory(_options.Value.ProfileLocation);
 
-            File.WriteAllBytes(path, data);
+            if (File.Exists(path))
+            {
+                if (_options.Value.OverwriteExisting)
+                    File.WriteAllBytes(path, data);
+                else
+                    throw new Exception($"Cannot overwrite existing profile {name} because {nameof(DiskStorageOptions.OverwriteExisting)} is {_options.Value.OverwriteExisting}");
+            }
+
             return path;
         }
     }

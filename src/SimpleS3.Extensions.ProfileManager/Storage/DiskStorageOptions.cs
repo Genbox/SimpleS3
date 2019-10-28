@@ -9,5 +9,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Storage
         public static string DefaultLocation => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SimpleS3", "Profiles") : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SimpleS3", "Profiles");
 
         public string ProfileLocation { get; set; } = DefaultLocation;
+
+        public bool OverwriteExisting { get; set; } = false;
     }
 }
