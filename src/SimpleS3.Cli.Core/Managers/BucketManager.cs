@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Cli.Core.Helpers;
 using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.S3Types;
 using Genbox.SimpleS3.Utils;
@@ -26,11 +28,20 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
             return RequestHelper.ExecuteRequestAsync(_client, c => c.CreateBucketAsync(bucketName));
         }
 
-        public Task DeleteAsync(string bucketName)
+        public async Task EmptyAsync(string bucketName)
         {
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
 
-            return RequestHelper.ExecuteRequestAsync(_client, c => c.DeleteBucketAsync(bucketName));
+            if (await _client.EmptyBucketAsync(bucketName).ConfigureAwait(false) != EmptyBucketStatus.Ok)
+                throw new Exception("Failed to empty bucket");
+        }
+
+        public async Task DeleteAsync(string bucketName)
+        {
+            Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+
+            if (await _client.DeleteBucketRecursiveAsync(bucketName).ConfigureAwait(false) != DeleteBucketStatus.Ok)
+                throw new Exception("Failed to empty bucket");
         }
 
         public IAsyncEnumerable<S3Object> GetAsync(string bucketName, bool includeOwner)

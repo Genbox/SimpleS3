@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Genbox.SimpleS3.Cli.CommandLineUtils
 {
-    /// <inheritdoc />
     internal class CommandLineService<T> : IDisposable, ICommandLineService where T : class
     {
         private readonly CommandLineApplication _application;
@@ -28,22 +27,29 @@ namespace Genbox.SimpleS3.Cli.CommandLineUtils
             _logger = logger;
             _state = state;
 
-            logger.LogDebug("Constructing CommandLineApplication<{type}> with args [{args}]",
-                typeof(T).FullName, string.Join(",", state.Arguments));
+            logger.LogDebug("Constructing CommandLineApplication<{type}> with args [{args}]", typeof(T).FullName, string.Join(",", state.Arguments));
             _application = new CommandLineApplication<T>(state.Console, state.WorkingDirectory, true);
             _application.Conventions
-                .UseDefaultConventions()
+                .UseAttributes()
+                //.SetAppNameFromEntryAssembly()
+                //.SetRemainingArgsPropertyOnModel()
+                .SetSubcommandPropertyOnModel()
+                .SetParentPropertyOnModel()
+                .UseOnExecuteMethodFromModel()
+                //.UseOnValidateMethodFromModel()
+                //.UseOnValidationErrorMethodFromModel()
+                .UseDefaultHelpOption()
+                .UseCommandNameFromModelType()
                 .UseConstructorInjection(serviceProvider);
 
             foreach (IConvention convention in serviceProvider.GetServices<IConvention>())
                 _application.Conventions.AddConvention(convention);
         }
 
-        /// <inheritdoc />
         public async Task<int> RunAsync(CancellationToken cancellationToken)
         {
             _logger.LogDebug("Running");
-            _state.ExitCode = await _application.ExecuteAsync(_state.Arguments, cancellationToken);
+            _state.ExitCode = await _application.ExecuteAsync(_state.Arguments, cancellationToken).ConfigureAwait(false);
             return _state.ExitCode;
         }
 

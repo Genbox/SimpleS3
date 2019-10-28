@@ -20,10 +20,7 @@ namespace Genbox.SimpleS3.Cli.CommandLineUtils
         private readonly IUnhandledExceptionHandler? _unhandledExceptionHandler;
 
         /// <summary>Creates a new instance.</summary>
-        public CommandLineLifetime(IApplicationLifetime applicationLifetime,
-            ICommandLineService cliService,
-            IConsole console,
-            IUnhandledExceptionHandler? unhandledExceptionHandler = null)
+        public CommandLineLifetime(IApplicationLifetime applicationLifetime, ICommandLineService cliService, IConsole console, IUnhandledExceptionHandler? unhandledExceptionHandler = null)
         {
             _applicationLifetime = applicationLifetime;
             _cliService = cliService;

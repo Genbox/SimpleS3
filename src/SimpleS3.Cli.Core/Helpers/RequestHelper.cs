@@ -35,19 +35,20 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
             throw new Exception(sb.ToString());
         }
 
-        public static IAsyncEnumerable<T> ExecuteAsyncEnumerable<T>(IS3Client client, Func<IS3Client, IAsyncEnumerable<T>> func)
+        public static  IAsyncEnumerable<T> ExecuteAsyncEnumerable<T>(IS3Client client, Func<IS3Client, IAsyncEnumerable<T>> func)
         {
             Validator.RequireNotNull(func, nameof(func));
 
-            try
-            {
-                return func(client);
-            }
-            catch (Exception e)
-            {
-            }
+            //IAsyncEnumerator<T> enumerator = func(client).GetAsyncEnumerator();
 
-            return null;
+            return func(client);
+            //bool next;
+
+            //do
+            //{
+            //    next = await enumerator.MoveNextAsync().ConfigureAwait(false);
+            //    yield return enumerator.Current;
+            //} while (next);
         }
     }
 }

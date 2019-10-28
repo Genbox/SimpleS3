@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Genbox.SimpleS3.Cli.Core.Enums;
 using Genbox.SimpleS3.Utils.Extensions;
 
@@ -21,10 +22,21 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
             {
                 if (resource.Contains('*'))
                     resourceType = ResourceType.Expand;
-                else if (resource.EndsWith('/'))
-                    resourceType = ResourceType.Directory;
                 else
-                    resourceType = ResourceType.File;
+                {
+                    if (Directory.Exists(resource) || File.Exists(resource))
+                    {
+                        FileAttributes attr = File.GetAttributes(resource);
+                        resourceType = attr.HasFlag(FileAttributes.Directory) ? ResourceType.Directory : ResourceType.File;
+                    }
+                    else
+                    {
+                        if (resource.EndsWith(Path.DirectorySeparatorChar) || resource.EndsWith(Path.AltDirectorySeparatorChar))
+                            resourceType = ResourceType.Directory;
+                        else
+                            resourceType = ResourceType.File;
+                    }
+                }
 
                 data = (null, resource, locationType, resourceType);
             }
@@ -37,7 +49,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
 
                 if (parsedResource.Contains('*'))
                     resourceType = ResourceType.Expand;
-                else if (parsedResource.EndsWith('/'))
+                else if (parsedResource.EndsWith('/') || parsedResource.Length == 0)
                     resourceType = ResourceType.Directory;
                 else
                     resourceType = ResourceType.File;

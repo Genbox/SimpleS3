@@ -5,7 +5,6 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Genbox.SimpleS3.Cli.Commands
 {
-    [HelpOption("--help")]
     public abstract class CommandBase<T>
     {
         protected T Parent { get; set; }
