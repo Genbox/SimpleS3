@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SimpleS3.Extensions.ProfileManager\SimpleS3.Extensions.ProfileManager.csproj" />
     <ProjectReference Include="..\SimpleS3\SimpleS3.csproj" />
   </ItemGroup>
 

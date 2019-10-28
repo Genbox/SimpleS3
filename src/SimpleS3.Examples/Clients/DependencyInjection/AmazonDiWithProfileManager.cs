@@ -1,4 +1,5 @@
 ﻿using System;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
@@ -15,10 +16,12 @@ namespace Genbox.SimpleS3.Examples.Clients.DependencyInjection
             ServiceCollection services = new ServiceCollection();
 
             //Here we setup our S3Client
-            IProfileManagerBuilder builder = services.AddSimpleS3WithProfile("MyProfile");
+            IS3ClientBuilder builder = services.AddSimpleS3();
 
             //Here we enable in-memory encryption using Microsoft Data Protection
-            builder.UseDataProtection();
+            builder.UseProfileManager()
+                .BindConfigToProfile("MyProfile")
+                .UseDataProtection();
 
             //Finally we build the service provider and return the S3Client
             IServiceProvider serviceProvider = services.BuildServiceProvider();

@@ -5,27 +5,14 @@ using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClient.Extensions;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
-using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Genbox.SimpleS3.Utils.Extensions;
 
 namespace Genbox.SimpleS3.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IProfileManagerBuilder AddSimpleS3WithProfile(this IServiceCollection collection, string profileName = ProfileManager.ProfileManager.DefaultProfile, Action<S3Config> configureS3 = null)
-        {
-            IS3ClientBuilder builder = collection.AddSimpleS3((config, x) =>
-            {
-                IProfileManager profileManger = x.GetRequiredService<IProfileManager>();
-                config.UseProfile(profileManger, profileName);
-            });
-
-            IProfileManagerBuilder profileBuilder = builder.UseProfileManager();
-            return profileBuilder;
-        }
-
-        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3)
+        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3 = null)
         {
             IS3ClientBuilder builder = collection.AddSimpleS3Core();
             builder.UseS3Client();

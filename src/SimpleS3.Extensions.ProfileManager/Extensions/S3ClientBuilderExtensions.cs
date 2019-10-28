@@ -21,7 +21,9 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
             if (config != null)
                 builder.Services.Configure(config);
 
-            return new ProfileManagerBuilder(builder.Services);
+            ProfileManagerBuilder managerBuilder = new ProfileManagerBuilder(builder.Services);
+            managerBuilder.BindConfigToProfile(ProfileManager.DefaultProfile);
+            return managerBuilder;
         }
     }
 }
