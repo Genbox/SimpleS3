@@ -2,9 +2,14 @@
 {
     public class S3DeleteError
     {
-        public string Key { get; set; }
+        public string ObjectKey { get; set; }
         public string VersionId { get; set; }
         public string Code { get; set; }
         public string Message { get; set; }
+
+        public override string ToString()
+        {
+            return $"Error on {ObjectKey}: {Message}";
+        }
     }
 }

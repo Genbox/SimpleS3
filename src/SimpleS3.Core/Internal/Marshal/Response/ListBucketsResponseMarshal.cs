@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
 
                 if (listResult.Owner != null)
                 {
-                    response.Owner = new S3ObjectIdentity();
+                    response.Owner = new S3Identity();
                     response.Owner.Id = listResult.Owner.Id;
                     response.Owner.Name = listResult.Owner.DisplayName;
                 }

@@ -33,7 +33,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                     foreach (Deleted deleted in deleteResult.Deleted)
                     {
                         S3DeletedObject s3Deleted = new S3DeletedObject();
-                        s3Deleted.Key = deleted.Key;
+                        s3Deleted.ObjectKey = deleted.Key;
                         s3Deleted.DeleteMarkerVersionId = deleted.DeleteMarkerVersionId;
                         s3Deleted.VersionId = deleted.VersionId;
                         s3Deleted.DeleteMarker = deleted.DeleteMarker;
@@ -51,7 +51,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                     foreach (Error error in deleteResult.Error)
                     {
                         S3DeleteError s3DeleteError = new S3DeleteError();
-                        s3DeleteError.Key = error.Key;
+                        s3DeleteError.ObjectKey = error.Key;
                         s3DeleteError.VersionId = error.VersionId;
                         s3DeleteError.Code = error.Code;
                         s3DeleteError.Message = error.Message;

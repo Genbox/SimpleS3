@@ -5,11 +5,16 @@ namespace Genbox.SimpleS3.Core.Responses.S3Types
 {
     public class S3Object
     {
-        public string Name { get; set; }
+        public string ObjectKey { get; set; }
         public DateTimeOffset LastModified { get; set; }
         public string ETag { get; set; }
         public long Size { get; set; }
         public StorageClass StorageClass { get; set; }
-        public S3ObjectIdentity Owner { get; set; }
+        public S3Identity Owner { get; set; }
+
+        public override string ToString()
+        {
+            return ObjectKey;
+        }
     }
 }
