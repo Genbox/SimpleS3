@@ -4,7 +4,8 @@
     {
         Unknown = 0,
         Ok,
-        FailedToDeleteObject,
+        RequestFailed,
+        FailedToEmpty,
         BucketNotEmpty
     }
 }

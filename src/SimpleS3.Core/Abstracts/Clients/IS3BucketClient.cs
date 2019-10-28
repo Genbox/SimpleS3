@@ -43,7 +43,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <summary>Remove everything within a bucket, except for the bucket itself.</summary>
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="token">A cancellation token </param>
-        Task<DeleteBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default);
+        Task<EmptyBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default);
 
         /// <summary>List all buckets you own</summary>
         /// <param name="config">A delegate to configure the request</param>

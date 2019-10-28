@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Buckets;
 using Genbox.SimpleS3.Core.Requests.Objects.Types;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.S3Types;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core
@@ -48,35 +46,31 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.ListMultipartUploadsAsync(bucketName, config, token);
         }
 
-        public async Task<DeleteBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
+        public async Task<EmptyBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
         {
-            //TODO: this can be optimized if we don't use ListObjectsRecursiveAsync, but instead call the methods directly
-            List<S3DeleteInfo> tempList = new List<S3DeleteInfo>(1000);
+            string continuationToken = null;
+            ListObjectsResponse response;
 
-            await foreach (S3Object obj in this.ListObjectsRecursiveAsync(bucketName, token: token))
+            do
             {
-                tempList.Add(new S3DeleteInfo(obj.Name, null));
+                if (token.IsCancellationRequested)
+                    break;
 
-                if (tempList.Count != 1000)
-                    continue;
+                string cToken = continuationToken;
+                response = await BucketOperations.ListObjectsAsync(bucketName, req => req.ContinuationToken = cToken, token).ConfigureAwait(false);
 
-                DeleteObjectsResponse multiDelResponse = await _objectClient.DeleteObjectsAsync(bucketName, tempList, request => request.Quiet = true, token).ConfigureAwait(false);
+                if (!response.IsSuccess)
+                    return EmptyBucketStatus.RequestFailed;
+
+                DeleteObjectsResponse multiDelResponse = await _objectClient.DeleteObjectsAsync(bucketName, response.Objects.Select(x => new S3DeleteInfo(x.ObjectKey, null)), req => req.Quiet = true, token).ConfigureAwait(false);
 
                 if (!multiDelResponse.IsSuccess)
-                    return DeleteBucketStatus.FailedToDeleteObject;
+                    return EmptyBucketStatus.RequestFailed;
 
-                tempList.Clear();
-            }
+                continuationToken = response.NextContinuationToken;
+            } while (response.IsTruncated);
 
-            if (tempList.Count > 0)
-            {
-                DeleteObjectsResponse multiDelResponse = await _objectClient.DeleteObjectsAsync(bucketName, tempList, request => request.Quiet = true, token).ConfigureAwait(false);
-
-                if (!multiDelResponse.IsSuccess)
-                    return DeleteBucketStatus.FailedToDeleteObject;
-            }
-
-            return DeleteBucketStatus.Ok;
+            return EmptyBucketStatus.Ok;
         }
 
         public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
