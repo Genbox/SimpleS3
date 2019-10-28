@@ -33,7 +33,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             await UploadAsync(resources[0]).ConfigureAwait(false);
             await UploadAsync(resources[1]).ConfigureAwait(false);
 
-            DeleteObjectsResponse resp = await ObjectClient.DeleteMultipleObjectsAsync(BucketName, resources, request => request.Quiet = false).ConfigureAwait(false);
+            DeleteObjectsResponse resp = await ObjectClient.DeleteObjectsAsync(BucketName, resources, request => request.Quiet = false).ConfigureAwait(false);
 
             Assert.Equal(2, resp.Deleted.Count);
             Assert.Contains(resp.Deleted, o => o.Key == resources[0]);
