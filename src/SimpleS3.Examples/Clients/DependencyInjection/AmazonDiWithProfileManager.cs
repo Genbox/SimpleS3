@@ -1,5 +1,4 @@
 ﻿using System;
-using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
@@ -16,20 +15,16 @@ namespace Genbox.SimpleS3.Examples.Clients.DependencyInjection
             ServiceCollection services = new ServiceCollection();
 
             //Here we setup our S3Client
-            IS3ClientBuilder builder = services.AddSimpleS3((s3Config, provider) =>
-            {
-                IProfileManager profileManger = provider.GetRequiredService<IProfileManager>();
-                s3Config.UseProfile(profileManger);
-            });
+            IProfileManagerBuilder builder = services.AddSimpleS3WithProfile("MyProfile");
 
-            //Here we enable the profile manager and enable in-memory encryption using Microsoft Data Protection
-            builder.UseProfileManager().UseDataProtection();
+            //Here we enable in-memory encryption using Microsoft Data Protection
+            builder.UseDataProtection();
 
             //Finally we build the service provider and return the S3Client
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             IProfileManager manager = serviceProvider.GetRequiredService<IProfileManager>();
-            IProfile profile = manager.GetProfile();
+            IProfile profile = manager.GetProfile("MyProfile");
 
             //If profile is null, then we do not yet have a profile stored on disk. We use ConsoleSetup as an easy and secure way of asking for credentials
             if (profile == null)
