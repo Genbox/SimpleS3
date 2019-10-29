@@ -9,9 +9,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
 {
     public static class S3ClientBuilderExtensions
     {
-        /// <summary>
-        /// Adds a profile manager that is configured to use the disk for storage and JSON for serialization
-        /// </summary>
+        /// <summary>Adds a profile manager that is configured to use the disk for storage and JSON for serialization</summary>
         public static IProfileManagerBuilder UseProfileManager(this IS3ClientBuilder builder, Action<DiskStorageOptions> config = null)
         {
             builder.Services.AddSingleton<IProfileManager, ProfileManager>();

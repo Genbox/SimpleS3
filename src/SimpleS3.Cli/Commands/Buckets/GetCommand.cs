@@ -43,7 +43,6 @@ namespace Genbox.SimpleS3.Cli.Commands.Buckets
                         Console.WriteLine("{0,-20}{1,-12}{2,-18}{3,-38}{4,-20}{5}", "Modified on", "Size", "Storage class", "ETag", "Owner", "Name");
                     else
                         Console.WriteLine("{0,-20}{1,-12}{2,-18}{3,-38}{4}", "Modified on", "Size", "Storage class", "ETag", "Name");
-
                 }
                 else
                     Console.WriteLine("{0,-20}{1,-12}{2}", "Modified on", "Size", "Name");
@@ -64,13 +63,10 @@ namespace Genbox.SimpleS3.Cli.Commands.Buckets
                             Console.WriteLine("{0,-20}{1,-12}{2,-18}{3,-38}{4,-20}{5}", obj.LastModified.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), obj.Size, obj.StorageClass, obj.ETag, ownerInfo, obj.ObjectKey);
                         }
                         else
-                        {
                             Console.WriteLine("{0,-20}{1,-12}{2,-18}{3,-38}{4}", obj.LastModified.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), obj.Size, obj.StorageClass, obj.ETag, obj.ObjectKey);
-                        }
                     }
                     else
                         Console.WriteLine("{0,-20}{1,-12}{2}", obj.LastModified.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), obj.Size, obj.ObjectKey);
-
                 } while (await list.MoveNextAsync().ConfigureAwait(false));
             }
         }

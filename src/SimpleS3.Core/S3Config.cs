@@ -34,7 +34,7 @@ namespace Genbox.SimpleS3.Core
         public Uri Endpoint { get; set; }
 
         public bool EnableBucketNameValidation { get; set; } = true;
-            
+
         public Level ObjectKeyValidationLevel { get; set; } = Level.Level2;
     }
 }

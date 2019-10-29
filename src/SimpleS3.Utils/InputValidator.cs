@@ -178,7 +178,8 @@ namespace Genbox.SimpleS3.Utils
         }
 
         /// <summary>
-        /// Validates a bucket name according to standard DNS rules. See https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html#bucketnamingrules for more details.
+        /// Validates a bucket name according to standard DNS rules. See
+        /// https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html#bucketnamingrules for more details.
         /// </summary>
         /// <param name="bucketName">The bucket name</param>
         /// <param name="status">Contains the error if validation failed</param>

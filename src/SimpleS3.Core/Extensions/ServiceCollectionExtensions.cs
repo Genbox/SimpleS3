@@ -15,10 +15,10 @@ using Genbox.SimpleS3.Core.Operations;
 using Genbox.SimpleS3.Core.Requests;
 using Genbox.SimpleS3.Core.RequestWrappers;
 using Genbox.SimpleS3.Core.Validation;
+using Genbox.SimpleS3.Utils.Extensions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Genbox.SimpleS3.Utils.Extensions;
 using IValidatorFactory = Genbox.SimpleS3.Abstracts.Factories.IValidatorFactory;
 
 namespace Genbox.SimpleS3.Core.Extensions

@@ -40,12 +40,14 @@ namespace Genbox.SimpleS3.Abstracts
         Uri Endpoint { get; set; }
 
         /// <summary>
-        /// If enabled, bucket names are validated to ensure they are valid DNS names. This is to ensure you can always access your bucket using virtual host naming style.
+        /// If enabled, bucket names are validated to ensure they are valid DNS names. This is to ensure you can always access your bucket using virtual
+        /// host naming style.
         /// </summary>
         bool EnableBucketNameValidation { get; set; }
 
         /// <summary>
-        /// Controls the level of validation that is applied to object keys. By default we only allow a set of safe characters. A higher level means fewer special characters are allowed.
+        /// Controls the level of validation that is applied to object keys. By default we only allow a set of safe characters. A higher level means
+        /// fewer special characters are allowed.
         /// </summary>
         Level ObjectKeyValidationLevel { get; set; }
     }

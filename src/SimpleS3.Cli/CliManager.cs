@@ -17,10 +17,10 @@ namespace Genbox.SimpleS3.Cli
         private CliManager(string profileName, AwsRegion region)
         {
             ServiceCollection services = new ServiceCollection();
-            var builder = services.AddSimpleS3();
+            IS3ClientBuilder builder = services.AddSimpleS3();
 
             builder.UseProfileManager()
-                    .UseDataProtection();
+                .UseDataProtection();
 
             //Override the region if it is set via commandline
             builder.Services.PostConfigure<S3Config>(config =>

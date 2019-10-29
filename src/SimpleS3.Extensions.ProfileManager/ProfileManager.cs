@@ -48,8 +48,10 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
             string protector = profile.GetTag("Protector");
 
             if (!string.IsNullOrEmpty(protector))
+            {
                 if (_protector == null || !protector.Equals(_protector.GetType().Name, StringComparison.OrdinalIgnoreCase))
                     throw new Exception("The access key is protected with " + protector + " but it was not available");
+            }
 
             return profile;
         }

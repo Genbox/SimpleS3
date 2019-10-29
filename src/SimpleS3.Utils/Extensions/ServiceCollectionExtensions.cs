@@ -36,14 +36,10 @@ namespace Genbox.SimpleS3.Utils.Extensions
         public static IServiceCollection PostConfigure<TOptions>(this IServiceCollection services, string name, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
         {
             if (services == null)
-            {
                 throw new ArgumentNullException(nameof(services));
-            }
 
             if (configureOptions == null)
-            {
                 throw new ArgumentNullException(nameof(configureOptions));
-            }
 
             services.AddOptions();
             services.AddSingleton<IPostConfigureOptions<TOptions>>(x => new PostConfigureOptions<TOptions, IServiceProvider>(name, x, configureOptions));

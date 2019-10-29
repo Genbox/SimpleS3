@@ -50,7 +50,6 @@ namespace Genbox.SimpleS3.Core.Extensions
                         req.FetchOwner = true;
 
                     config?.Invoke(req);
-
                 }, token).ConfigureAwait(false);
 
                 if (!response.IsSuccess)

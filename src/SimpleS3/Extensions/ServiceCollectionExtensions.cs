@@ -5,8 +5,8 @@ using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClient.Extensions;
-using Microsoft.Extensions.DependencyInjection;
 using Genbox.SimpleS3.Utils.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Extensions
 {

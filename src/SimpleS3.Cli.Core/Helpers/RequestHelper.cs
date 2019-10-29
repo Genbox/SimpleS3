@@ -35,7 +35,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
             throw new Exception(sb.ToString());
         }
 
-        public static  IAsyncEnumerable<T> ExecuteAsyncEnumerable<T>(IS3Client client, Func<IS3Client, IAsyncEnumerable<T>> func)
+        public static IAsyncEnumerable<T> ExecuteAsyncEnumerable<T>(IS3Client client, Func<IS3Client, IAsyncEnumerable<T>> func)
         {
             Validator.RequireNotNull(func, nameof(func));
 

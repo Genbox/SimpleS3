@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
 
                 if (component.Length == 0)
                     continue;
-                
+
                 sb.Append(component.Trim('/'));
 
                 if (i < components.Length - 1)

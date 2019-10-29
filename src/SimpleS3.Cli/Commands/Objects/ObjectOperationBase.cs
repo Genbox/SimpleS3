@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace Genbox.SimpleS3.Cli.Commands
+namespace Genbox.SimpleS3.Cli.Commands.Objects
 {
     public abstract class ObjectOperationBase : CommandBase<S3Cli>
     {
