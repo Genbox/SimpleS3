@@ -34,6 +34,14 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers
                         Console.WriteLine();
                         break;
                     }
+                    else if (key.Key == ConsoleKey.Escape)
+                    {
+                        while (pass.Count > 0)
+                        {
+                            pass.RemoveAt(pass.Count - 1);
+                            Console.Write("\b \b");
+                        }
+                    }
                 }
             } while (true);
 

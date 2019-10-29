@@ -106,7 +106,7 @@ namespace Genbox.SimpleS3
             return _bucketClient.ListMultipartUploadsAsync(bucketName, config, token);
         }
 
-        public Task<DeleteBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
+        public Task<EmptyBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
         {
             return _bucketClient.EmptyBucketAsync(bucketName, token);
         }

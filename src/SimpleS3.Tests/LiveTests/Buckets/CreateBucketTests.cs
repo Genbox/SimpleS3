@@ -37,13 +37,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             Assert.Equal(2, gResp.Objects.Count);
             Assert.Equal(string.Empty, gResp.Prefix);
 
-            Assert.Equal(tempObjName, gResp.Objects[0].Name);
+            Assert.Equal(tempObjName, gResp.Objects[0].ObjectKey);
             Assert.Equal(DateTime.UtcNow, gResp.Objects[0].LastModified.DateTime, TimeSpan.FromSeconds(5));
             Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", gResp.Objects[0].ETag);
             Assert.Equal(5, gResp.Objects[0].Size);
             Assert.Equal(StorageClass.Standard, gResp.Objects[0].StorageClass);
 
-            Assert.Equal(tempObjName2, gResp.Objects[1].Name);
+            Assert.Equal(tempObjName2, gResp.Objects[1].ObjectKey);
             Assert.Equal(DateTime.UtcNow, gResp.Objects[1].LastModified.DateTime, TimeSpan.FromSeconds(5));
             Assert.Equal("\"08cf82251c975a5e9734699fadf5e9c0\"", gResp.Objects[1].ETag);
             Assert.Equal(6, gResp.Objects[1].Size);
@@ -54,8 +54,8 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             Assert.Equal(2, gResp2.KeyCount);
 
             //The keys should be URL encoded at this point
-            Assert.Equal(UrlHelper.UrlEncode(tempObjName), gResp.Objects[0].Name);
-            Assert.Equal(UrlHelper.UrlEncode(tempObjName2), gResp.Objects[1].Name);
+            Assert.Equal(UrlHelper.UrlEncode(tempObjName), gResp.Objects[0].ObjectKey);
+            Assert.Equal(UrlHelper.UrlEncode(tempObjName2), gResp.Objects[1].ObjectKey);
         }
 
         [Fact]

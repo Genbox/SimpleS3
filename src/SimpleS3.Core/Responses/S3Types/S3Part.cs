@@ -8,5 +8,10 @@ namespace Genbox.SimpleS3.Core.Responses.S3Types
         public DateTimeOffset LastModified { get; set; }
         public string ETag { get; set; }
         public long Size { get; set; }
+
+        public override string ToString()
+        {
+            return $"Part: {PartNumber}";
+        }
     }
 }

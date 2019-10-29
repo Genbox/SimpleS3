@@ -57,7 +57,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                     foreach (Content content in bucketResult.Contents)
                     {
                         S3Object obj = new S3Object();
-                        obj.Name = content.Key;
+                        obj.ObjectKey = content.Key;
                         obj.ETag = content.ETag;
 
                         if (content.StorageClass != null)
@@ -67,7 +67,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                         obj.Size = content.Size;
 
                         if (content.Owner != null)
-                            obj.Owner = new S3ObjectIdentity { Name = content.Owner.DisplayName, Id = content.Owner.Id };
+                            obj.Owner = new S3Identity { Name = content.Owner.DisplayName, Id = content.Owner.Id };
 
                         response.Objects.Add(obj);
                     }

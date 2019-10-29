@@ -32,7 +32,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return resp;
         }
 
-        public static Task<DeleteObjectsResponse> DeleteMultipleObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> objectKeys, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
+        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> objectKeys, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
@@ -41,7 +41,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x, null)), config, token);
         }
 
-        public static Task<DeleteObjectsResponse> DeleteMultipleObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> objectKeys, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
+        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> objectKeys, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
@@ -50,7 +50,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x, null)), req => req.Mfa = mfa, token);
         }
 
-        public static Task<DeleteObjectsResponse> DeleteMultipleObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<S3DeleteInfo> objectKeys, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
+        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<S3DeleteInfo> objectKeys, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));

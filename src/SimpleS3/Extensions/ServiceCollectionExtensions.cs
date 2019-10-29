@@ -6,12 +6,13 @@ using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClient.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Genbox.SimpleS3.Utils.Extensions;
 
 namespace Genbox.SimpleS3.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3)
+        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3 = null)
         {
             IS3ClientBuilder builder = collection.AddSimpleS3Core();
             builder.UseS3Client();

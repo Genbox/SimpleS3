@@ -33,11 +33,11 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             await UploadAsync(resources[0]).ConfigureAwait(false);
             await UploadAsync(resources[1]).ConfigureAwait(false);
 
-            DeleteObjectsResponse resp = await ObjectClient.DeleteMultipleObjectsAsync(BucketName, resources, request => request.Quiet = false).ConfigureAwait(false);
+            DeleteObjectsResponse resp = await ObjectClient.DeleteObjectsAsync(BucketName, resources, request => request.Quiet = false).ConfigureAwait(false);
 
             Assert.Equal(2, resp.Deleted.Count);
-            Assert.Contains(resp.Deleted, o => o.Key == resources[0]);
-            Assert.Contains(resp.Deleted, o => o.Key == resources[1]);
+            Assert.Contains(resp.Deleted, o => o.ObjectKey == resources[0]);
+            Assert.Contains(resp.Deleted, o => o.ObjectKey == resources[1]);
 
             Assert.All(resp.Deleted, o => Assert.True(o.DeleteMarker));
             Assert.All(resp.Deleted, o => Assert.NotEmpty(o.DeleteMarkerVersionId));
@@ -56,12 +56,12 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             DeleteObjectsResponse resp = await ObjectClient.DeleteObjectsAsync(BucketName, resources, request => request.Quiet = false).ConfigureAwait(false);
 
             Assert.Equal(1, resp.Deleted.Count);
-            Assert.Equal(resources[1].Name, resp.Deleted[0].Key);
+            Assert.Equal(resources[1].Name, resp.Deleted[0].ObjectKey);
             Assert.True(resp.Deleted[0].DeleteMarker);
             Assert.NotEmpty(resp.Deleted[0].DeleteMarkerVersionId);
 
             Assert.Equal(1, resp.Errors.Count);
-            Assert.Equal(resources[0].Name, resp.Errors[0].Key);
+            Assert.Equal(resources[0].Name, resp.Errors[0].ObjectKey);
             Assert.Equal(resources[0].VersionId, resp.Errors[0].VersionId);
             Assert.Equal("NoSuchVersion", resp.Errors[0].Code);
             Assert.Equal("The specified version does not exist.", resp.Errors[0].Message);

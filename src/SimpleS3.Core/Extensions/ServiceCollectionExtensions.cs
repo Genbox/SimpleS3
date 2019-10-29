@@ -18,7 +18,7 @@ using Genbox.SimpleS3.Core.Validation;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
+using Genbox.SimpleS3.Utils.Extensions;
 using IValidatorFactory = Genbox.SimpleS3.Abstracts.Factories.IValidatorFactory;
 
 namespace Genbox.SimpleS3.Core.Extensions
@@ -72,24 +72,6 @@ namespace Genbox.SimpleS3.Core.Extensions
                 .WithSingletonLifetime());
 
             return new S3ClientBuilder(collection);
-        }
-
-        public static IServiceCollection Configure<TOptions>(this IServiceCollection services, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
-        {
-            return services.Configure(Options.DefaultName, configureOptions);
-        }
-
-        public static IServiceCollection Configure<TOptions>(this IServiceCollection services, string name, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
-        {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
-
-            if (configureOptions == null)
-                throw new ArgumentNullException(nameof(configureOptions));
-
-            services.AddOptions();
-            services.AddSingleton<IConfigureOptions<TOptions>>(x => new ConfigureNamedOptions<TOptions, IServiceProvider>(name, x, configureOptions));
-            return services;
         }
     }
 }

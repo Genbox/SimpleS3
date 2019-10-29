@@ -41,7 +41,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 
                 S3Upload upload = Assert.Single(listResp.Uploads);
 
-                Assert.Equal(listResp.NextKeyMarker, upload.Name);
+                Assert.Equal(listResp.NextKeyMarker, upload.ObjectKey);
                 Assert.Equal(listResp.NextUploadIdMarker, upload.UploadId);
                 Assert.Equal(TestConstants.TestUsername, upload.Initiator.Name);
                 Assert.Equal(StorageClass.Standard, upload.StorageClass);
@@ -64,15 +64,15 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 
                 //Only 2 objects should be present, as one of them is only initiated
                 Assert.Equal(2, list.Count);
-                Assert.Equal("resource1", list[0].Name);
-                Assert.Equal("resource2", list[1].Name);
+                Assert.Equal("resource1", list[0].ObjectKey);
+                Assert.Equal("resource2", list[1].ObjectKey);
 
                 //List multipart transfers
                 List<S3Upload> uploads = await BucketClient.ListAllMultipartUploadsAsync(bucket).ToListAsync().ConfigureAwait(false);
 
                 S3Upload upload = Assert.Single(uploads);
 
-                Assert.Equal("multipart", upload.Name);
+                Assert.Equal("multipart", upload.ObjectKey);
             }).ConfigureAwait(false);
         }
     }

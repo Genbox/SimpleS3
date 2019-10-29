@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
         /// <param name="getOwnerInfo">Set to true if you want to get object owner information as well.</param>
         /// <param name="token">A cancellation token</param>
-        public static async IAsyncEnumerable<S3Object> ListObjectsRecursiveAsync(this IS3BucketClient client, string bucketName, bool getOwnerInfo = false, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<S3Object> ListObjectsRecursiveAsync(this IS3BucketClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
@@ -48,10 +48,13 @@ namespace Genbox.SimpleS3.Core.Extensions
 
                     if (getOwnerInfo)
                         req.FetchOwner = true;
+
+                    config?.Invoke(req);
+
                 }, token).ConfigureAwait(false);
 
                 if (!response.IsSuccess)
-                    throw new Exception();
+                    throw new Exception("Request failed");
 
                 foreach (S3Object responseObject in response.Objects)
                     yield return responseObject;
@@ -88,15 +91,20 @@ namespace Genbox.SimpleS3.Core.Extensions
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
 
-            DeleteBucketStatus emptyResp = await client.EmptyBucketAsync(bucketName, token).ConfigureAwait(false);
+            EmptyBucketStatus emptyResp = await client.EmptyBucketAsync(bucketName, token).ConfigureAwait(false);
 
-            if (emptyResp != DeleteBucketStatus.Ok)
-                return emptyResp;
+            if (emptyResp != EmptyBucketStatus.Ok)
+                return DeleteBucketStatus.FailedToEmpty;
 
             DeleteBucketResponse delResponse = await client.DeleteBucketAsync(bucketName, null, token).ConfigureAwait(false);
 
-            if (!delResponse.IsSuccess && delResponse.Error.Code == ErrorCode.BucketNotEmpty)
-                return DeleteBucketStatus.BucketNotEmpty;
+            if (!delResponse.IsSuccess)
+            {
+                if (delResponse.Error.Code == ErrorCode.BucketNotEmpty)
+                    return DeleteBucketStatus.BucketNotEmpty;
+
+                return DeleteBucketStatus.RequestFailed;
+            }
 
             return DeleteBucketStatus.Ok;
         }

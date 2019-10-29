@@ -58,7 +58,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                     foreach (Upload listUpload in listResult.Uploads)
                     {
                         S3Upload s3Upload = new S3Upload();
-                        s3Upload.Name = listUpload.Key;
+                        s3Upload.ObjectKey = listUpload.Key;
                         s3Upload.UploadId = listUpload.UploadId;
 
                         if (listUpload.StorageClass != null)
@@ -68,14 +68,14 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
 
                         if (listUpload.Owner != null)
                         {
-                            s3Upload.Owner = new S3ObjectIdentity();
+                            s3Upload.Owner = new S3Identity();
                             s3Upload.Owner.Name = listUpload.Owner.DisplayName;
                             s3Upload.Owner.Id = listUpload.Owner.Id;
                         }
 
                         if (listUpload.Initiator != null)
                         {
-                            s3Upload.Initiator = new S3ObjectIdentity();
+                            s3Upload.Initiator = new S3Identity();
                             s3Upload.Initiator.Name = listUpload.Initiator.DisplayName;
                             s3Upload.Initiator.Id = listUpload.Initiator.Id;
                         }

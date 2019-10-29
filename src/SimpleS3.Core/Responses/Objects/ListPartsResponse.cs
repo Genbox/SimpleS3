@@ -15,8 +15,8 @@ namespace Genbox.SimpleS3.Core.Responses.Objects
         public int MaxParts { get; set; }
         public bool IsTruncated { get; set; }
         public EncodingType EncodingType { get; set; }
-        public S3ObjectIdentity Owner { get; set; }
-        public S3ObjectIdentity Initiator { get; set; }
+        public S3Identity Owner { get; set; }
+        public S3Identity Initiator { get; set; }
         public IList<S3Part> Parts { get; set; }
     }
 }

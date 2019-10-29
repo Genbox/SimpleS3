@@ -67,7 +67,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 
                 Assert.Equal("object", gResp.Prefix);
 
-                Assert.Equal(tempObjName, gResp.Objects[0].Name);
+                Assert.Equal(tempObjName, gResp.Objects[0].ObjectKey);
                 Assert.Equal(DateTime.UtcNow, gResp.Objects[0].LastModified.DateTime, TimeSpan.FromSeconds(5));
                 Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", gResp.Objects[0].ETag);
                 Assert.Equal(5, gResp.Objects[0].Size);

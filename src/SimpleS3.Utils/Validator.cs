@@ -45,6 +45,13 @@ namespace Genbox.SimpleS3.Utils
         }
 
         [AssertionMethod]
+        public static void RequireThat([AssertionCondition(AssertionConditionType.IS_TRUE)]in bool condition, string parameterName, string message = null)
+        {
+            if (!condition)
+                throw new ArgumentException(message, parameterName);
+        }
+
+        [AssertionMethod]
         public static void RequireThat<T>([AssertionCondition(AssertionConditionType.IS_TRUE)]in bool condition, Func<T> func = null) where T : Exception, new()
         {
             if (condition)

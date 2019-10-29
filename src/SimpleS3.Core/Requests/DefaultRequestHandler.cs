@@ -56,7 +56,7 @@ namespace Genbox.SimpleS3.Core.Requests
             _logger = logger;
         }
 
-        public async Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken cancellationToken) where TResp : IResponse, new() where TReq : IRequest
+        public async Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken cancellationToken = default) where TResp : IResponse, new() where TReq : IRequest
         {
             _logger.LogTrace($"Sending {typeof(TReq)} to bucket '{request.BucketName}' with key '{request.ObjectKey}'");
 
