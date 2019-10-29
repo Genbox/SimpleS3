@@ -40,9 +40,9 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         [InlineData(StorageClass.OneZoneIa, true)]
         [InlineData(StorageClass.ReducedRedundancy, true)]
         [InlineData(StorageClass.StandardIa, true)]
-        public async Task CanUploadClassFluid(StorageClass storageClass, bool canDownload)
+        public async Task CanUploadClassFluent(StorageClass storageClass, bool canDownload)
         {
-            PutObjectResponse pResp = await UploadTransferAsync(nameof(CanUploadClassFluid) + "-" + storageClass, upload => upload.WithStorageClass(storageClass)).ConfigureAwait(false);
+            PutObjectResponse pResp = await UploadTransferAsync(nameof(CanUploadClassFluent) + "-" + storageClass, upload => upload.WithStorageClass(storageClass)).ConfigureAwait(false);
             Assert.Equal(storageClass, pResp.StorageClass);
 
             if (canDownload)

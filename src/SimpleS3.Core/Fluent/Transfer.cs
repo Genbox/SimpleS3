@@ -3,7 +3,7 @@ using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core.Fluid
+namespace Genbox.SimpleS3.Core.Fluent
 {
     [PublicAPI]
     public class Transfer

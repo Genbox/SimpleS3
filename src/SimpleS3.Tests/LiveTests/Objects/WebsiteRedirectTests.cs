@@ -22,9 +22,9 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task WebsiteRedirectFluid()
+        public async Task WebsiteRedirectFluent()
         {
-            await UploadTransferAsync(nameof(WebsiteRedirectFluid), upload => upload.WithWebsiteRedirectLocation("https://google.com")).ConfigureAwait(false);
+            await UploadTransferAsync(nameof(WebsiteRedirectFluent), upload => upload.WithWebsiteRedirectLocation("https://google.com")).ConfigureAwait(false);
 
             GetObjectResponse resp1 = await AssertAsync(nameof(WebsiteRedirect)).ConfigureAwait(false);
             Assert.Equal("https://google.com", resp1.WebsiteRedirectLocation);

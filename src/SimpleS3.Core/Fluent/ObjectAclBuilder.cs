@@ -2,7 +2,7 @@
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Builders;
 
-namespace Genbox.SimpleS3.Core.Fluid
+namespace Genbox.SimpleS3.Core.Fluent
 {
     public class ObjectAclBuilder
     {

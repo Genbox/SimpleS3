@@ -37,12 +37,12 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         [Theory]
         [InlineData(Core.Enums.LockMode.Compliance)]
         [InlineData(Core.Enums.LockMode.Governance)]
-        public async Task LockModeFluid(LockMode lockMode)
+        public async Task LockModeFluent(LockMode lockMode)
         {
             DateTimeOffset lockRetainUntil = DateTimeOffset.UtcNow.AddMinutes(1);
 
             //We add a unique guid to prevent contamination across runs
-            string objectKey = $"{nameof(LockModeFluid)}-{lockMode}-{Guid.NewGuid()}";
+            string objectKey = $"{nameof(LockModeFluent)}-{lockMode}-{Guid.NewGuid()}";
 
             await UploadTransferAsync(objectKey, upload => upload.WithLock(lockMode, lockRetainUntil)).ConfigureAwait(false);
 

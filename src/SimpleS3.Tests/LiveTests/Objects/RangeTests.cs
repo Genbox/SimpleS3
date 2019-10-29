@@ -23,11 +23,11 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task RangeFluid()
+        public async Task RangeFluent()
         {
-            await ObjectClient.PutObjectStringAsync(BucketName, nameof(RangeFluid), "123456789012345678901234567890123456789012345678901234567890").ConfigureAwait(false);
+            await ObjectClient.PutObjectStringAsync(BucketName, nameof(RangeFluent), "123456789012345678901234567890123456789012345678901234567890").ConfigureAwait(false);
 
-            GetObjectResponse resp = await Transfer.Download(BucketName, nameof(RangeFluid))
+            GetObjectResponse resp = await Transfer.Download(BucketName, nameof(RangeFluent))
                 .WithRange(0, 10)
                 .ExecuteAsync()
                 .ConfigureAwait(false);

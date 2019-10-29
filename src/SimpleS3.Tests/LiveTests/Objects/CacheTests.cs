@@ -22,11 +22,11 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task CacheControlFluid()
+        public async Task CacheControlFluent()
         {
-            await UploadTransferAsync(nameof(CacheControlFluid), upload => upload.WithCacheControl(CacheControlType.MaxAge, 100)).ConfigureAwait(false);
+            await UploadTransferAsync(nameof(CacheControlFluent), upload => upload.WithCacheControl(CacheControlType.MaxAge, 100)).ConfigureAwait(false);
 
-            GetObjectResponse gResp = await AssertAsync(nameof(CacheControlFluid)).ConfigureAwait(false);
+            GetObjectResponse gResp = await AssertAsync(nameof(CacheControlFluent)).ConfigureAwait(false);
             Assert.Equal("max-age=100", gResp.CacheControl);
         }
 
@@ -42,13 +42,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task IfETagMatchFluid()
+        public async Task IfETagMatchFluent()
         {
-            PutObjectResponse resp = await UploadTransferAsync(nameof(IfETagMatchFluid)).ConfigureAwait(false);
+            PutObjectResponse resp = await UploadTransferAsync(nameof(IfETagMatchFluent)).ConfigureAwait(false);
 
-            await AssertTransferAsync(nameof(IfETagMatchFluid), down => down.WithEtagConditional(resp.ETag)).ConfigureAwait(false);
+            await AssertTransferAsync(nameof(IfETagMatchFluent), down => down.WithEtagConditional(resp.ETag)).ConfigureAwait(false);
 
-            GetObjectResponse resp2 = await AssertTransferAsync(nameof(IfETagMatchFluid), down => down.WithEtagConditional("not the tag you are looking for"), false).ConfigureAwait(false);
+            GetObjectResponse resp2 = await AssertTransferAsync(nameof(IfETagMatchFluent), down => down.WithEtagConditional("not the tag you are looking for"), false).ConfigureAwait(false);
             Assert.Equal(412, resp2.StatusCode);
         }
 
@@ -64,13 +64,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task IfETagNotMatchFluid()
+        public async Task IfETagNotMatchFluent()
         {
-            PutObjectResponse resp = await UploadTransferAsync(nameof(IfETagNotMatchFluid)).ConfigureAwait(false);
+            PutObjectResponse resp = await UploadTransferAsync(nameof(IfETagNotMatchFluent)).ConfigureAwait(false);
 
-            await AssertTransferAsync(nameof(IfETagNotMatchFluid), down => down.WithEtagConditional(null, "not the tag you are looking for")).ConfigureAwait(false);
+            await AssertTransferAsync(nameof(IfETagNotMatchFluent), down => down.WithEtagConditional(null, "not the tag you are looking for")).ConfigureAwait(false);
 
-            GetObjectResponse resp2 = await AssertTransferAsync(nameof(IfETagNotMatchFluid), down => down.WithEtagConditional(null, resp.ETag), false).ConfigureAwait(false);
+            GetObjectResponse resp2 = await AssertTransferAsync(nameof(IfETagNotMatchFluent), down => down.WithEtagConditional(null, resp.ETag), false).ConfigureAwait(false);
             Assert.Equal(304, resp2.StatusCode);
         }
     }

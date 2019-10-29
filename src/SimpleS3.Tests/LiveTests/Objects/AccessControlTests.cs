@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Fluid;
+using Genbox.SimpleS3.Core.Fluent;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -33,9 +33,9 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         [InlineData(ObjectCannedAcl.Private)]
         [InlineData(ObjectCannedAcl.PublicRead)]
         [InlineData(ObjectCannedAcl.PublicReadWrite)]
-        public Task CannedAclFluid(ObjectCannedAcl acl)
+        public Task CannedAclFluent(ObjectCannedAcl acl)
         {
-            return UploadTransferAsync($"{nameof(CannedAclFluid)}-{acl}", upload => upload.WithAccessControl(acl));
+            return UploadTransferAsync($"{nameof(CannedAclFluent)}-{acl}", upload => upload.WithAccessControl(acl));
         }
 
         [Fact]
@@ -55,13 +55,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public Task MultiplePermissionsFluid()
+        public Task MultiplePermissionsFluent()
         {
             ObjectAclBuilder acl = new ObjectAclBuilder();
             acl.AddEmail(TestConstants.TestEmail, ObjectPermissions.Read | ObjectPermissions.ReadAcl | ObjectPermissions.WriteAcl | ObjectPermissions.FullControl);
             acl.AddUserId(TestConstants.TestUserId, ObjectPermissions.Read | ObjectPermissions.ReadAcl | ObjectPermissions.WriteAcl | ObjectPermissions.FullControl);
 
-            return UploadTransferAsync(nameof(MultiplePermissionsFluid), upload => upload.WithAccessControl(acl));
+            return UploadTransferAsync(nameof(MultiplePermissionsFluent), upload => upload.WithAccessControl(acl));
         }
     }
 }

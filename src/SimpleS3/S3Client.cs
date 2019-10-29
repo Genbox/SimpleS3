@@ -11,7 +11,7 @@ using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Authentication;
-using Genbox.SimpleS3.Core.Fluid;
+using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Buckets;
 using Genbox.SimpleS3.Core.Requests.Objects;

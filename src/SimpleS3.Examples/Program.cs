@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Fluid;
+using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Responses.Objects;
 using Genbox.SimpleS3.Examples.Clients.Simple;
 
@@ -31,8 +31,8 @@ namespace Genbox.SimpleS3.Examples
                 //Upload and download an object using the normal API
                 await UploadDownloadWithNormalApi(client, bucketName, objectName).ConfigureAwait(false);
 
-                //Upload and download an object using the fluid API
-                await UploadDownloadWithFluid(client, bucketName, objectName).ConfigureAwait(false);
+                //Upload and download an object using the fluent API
+                await UploadDownloadWithFluent(client, bucketName, objectName).ConfigureAwait(false);
             }
         }
 
@@ -70,10 +70,10 @@ namespace Genbox.SimpleS3.Examples
                 Console.WriteLine("Failed uploading object");
         }
 
-        private static async Task UploadDownloadWithFluid(S3Client client, string bucketName, string objectName)
+        private static async Task UploadDownloadWithFluent(S3Client client, string bucketName, string objectName)
         {
             Console.WriteLine();
-            Console.WriteLine("Using the fluid API");
+            Console.WriteLine("Using the fluent API");
 
             //Upload string
             Upload upload = client.Transfer

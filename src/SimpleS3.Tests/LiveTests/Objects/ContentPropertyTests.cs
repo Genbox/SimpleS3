@@ -29,16 +29,16 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task ContentPropertiesFluid()
+        public async Task ContentPropertiesFluent()
         {
-            await UploadTransferAsync(nameof(ContentPropertiesFluid), upload =>
+            await UploadTransferAsync(nameof(ContentPropertiesFluent), upload =>
             {
                 upload.WithContentDisposition(ContentDispositionType.Attachment, "filename.jpg");
                 upload.WithContentEncoding(ContentEncodingType.Identity);
                 upload.WithContentType("text/html", "utf-8");
             }).ConfigureAwait(false);
 
-            GetObjectResponse resp = await AssertAsync(nameof(ContentPropertiesFluid)).ConfigureAwait(false);
+            GetObjectResponse resp = await AssertAsync(nameof(ContentPropertiesFluent)).ConfigureAwait(false);
             Assert.Equal(4, resp.ContentLength);
             Assert.Equal("attachment; filename*=\"filename.jpg\"", resp.ContentDisposition);
             Assert.Equal("text/html; charset=utf-8", resp.ContentType);

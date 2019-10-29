@@ -156,14 +156,14 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task MultipartFluid()
+        public async Task MultipartFluent()
         {
             byte[] data = new byte[10 * 1024 * 1024]; //10 Mb
 
             for (int i = 0; i < data.Length; i++)
                 data[i] = (byte)(i % 255);
 
-            MultipartUploadStatus resp = await Transfer.UploadData(BucketName, nameof(MultipartFluid), data)
+            MultipartUploadStatus resp = await Transfer.UploadData(BucketName, nameof(MultipartFluent), data)
                 .ExecuteMultipartAsync()
                 .ConfigureAwait(false);
 

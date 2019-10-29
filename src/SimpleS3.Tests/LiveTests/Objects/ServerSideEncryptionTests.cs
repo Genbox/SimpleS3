@@ -52,7 +52,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task ServerSideEncryptionCustomerKeyFluid()
+        public async Task ServerSideEncryptionCustomerKeyFluent()
         {
             byte[] key = new byte[32];
             new Random(42).NextBytes(key);
@@ -62,7 +62,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.Equal(SseCustomerAlgorithm.Aes256, pResp.SseCustomerAlgorithm);
 
             //TODO: Missing support for Transfer Download
-            //await AssertAsync(nameof(ServerSideEncryptionCustomerKeyFluid), request =>
+            //await AssertAsync(nameof(ServerSideEncryptionCustomerKeyFluent), request =>
             //{
             //    request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
             //    request.SseCustomerKey = key;
@@ -71,17 +71,17 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task ServerSideEncryptionFluid()
+        public async Task ServerSideEncryptionFluent()
         {
-            PutObjectResponse resp = await UploadTransferAsync(nameof(ServerSideEncryptionFluid) + "aes", upload => upload.WithEncryption()).ConfigureAwait(false);
+            PutObjectResponse resp = await UploadTransferAsync(nameof(ServerSideEncryptionFluent) + "aes", upload => upload.WithEncryption()).ConfigureAwait(false);
             Assert.Equal(SseAlgorithm.Aes256, resp.SseAlgorithm);
 
-            await AssertAsync(nameof(ServerSideEncryptionFluid) + "aes").ConfigureAwait(false);
+            await AssertAsync(nameof(ServerSideEncryptionFluent) + "aes").ConfigureAwait(false);
 
-            resp = await UploadTransferAsync(nameof(ServerSideEncryptionFluid) + "kms", upload => upload.WithEncryptionKms()).ConfigureAwait(false);
+            resp = await UploadTransferAsync(nameof(ServerSideEncryptionFluent) + "kms", upload => upload.WithEncryptionKms()).ConfigureAwait(false);
             Assert.Equal(SseAlgorithm.AwsKms, resp.SseAlgorithm);
 
-            await AssertAsync(nameof(ServerSideEncryptionFluid) + "kms").ConfigureAwait(false);
+            await AssertAsync(nameof(ServerSideEncryptionFluent) + "kms").ConfigureAwait(false);
         }
     }
 }

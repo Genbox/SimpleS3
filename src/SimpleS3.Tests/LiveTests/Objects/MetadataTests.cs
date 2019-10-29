@@ -41,7 +41,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
 
         [Fact]
-        public async Task MultipleMetadataFluid()
+        public async Task MultipleMetadataFluent()
         {
             await UploadTransferAsync(nameof(MultipleMetadata), upload =>
             {

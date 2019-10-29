@@ -29,15 +29,15 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
 
         [Fact]
-        public async Task MultipleTagsFluid()
+        public async Task MultipleTagsFluent()
         {
-            await UploadTransferAsync(nameof(MultipleTagsFluid), upload =>
+            await UploadTransferAsync(nameof(MultipleTagsFluent), upload =>
             {
                 upload.WithTag("mykey1", "myvalue1");
                 upload.WithTag("mykey2", "myvalue2");
             }).ConfigureAwait(false);
 
-            GetObjectResponse gResp = await AssertAsync(nameof(MultipleTagsFluid)).ConfigureAwait(false);
+            GetObjectResponse gResp = await AssertAsync(nameof(MultipleTagsFluent)).ConfigureAwait(false);
             Assert.Equal(2, gResp.TagCount);
         }
 

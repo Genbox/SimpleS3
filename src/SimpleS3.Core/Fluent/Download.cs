@@ -11,7 +11,7 @@ using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Objects;
 using Genbox.SimpleS3.Core.Responses.Objects;
 
-namespace Genbox.SimpleS3.Core.Fluid
+namespace Genbox.SimpleS3.Core.Fluent
 {
     public class Download
     {
