@@ -1,14 +1,10 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
-using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core
@@ -16,12 +12,9 @@ namespace Genbox.SimpleS3.Core
     [PublicAPI]
     public class S3BucketClient : IS3BucketClient
     {
-        private readonly IS3ObjectClient _objectClient;
-
-        public S3BucketClient(IBucketOperations bucketOperations, IS3ObjectClient objectClient)
+        public S3BucketClient(IBucketOperations bucketOperations)
         {
             BucketOperations = bucketOperations;
-            _objectClient = objectClient;
         }
 
         public IBucketOperations BucketOperations { get; }
