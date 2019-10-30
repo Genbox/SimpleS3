@@ -40,7 +40,6 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 
                 Assert.Equal(listResp.NextKeyMarker, upload.ObjectKey);
                 Assert.Equal(listResp.NextUploadIdMarker, upload.UploadId);
-                Assert.Equal(TestConstants.TestUsername, upload.Initiator.Name);
                 Assert.Equal(StorageClass.Standard, upload.StorageClass);
                 Assert.Equal(DateTime.UtcNow, upload.Initiated.DateTime, TimeSpan.FromSeconds(5));
             }).ConfigureAwait(false);

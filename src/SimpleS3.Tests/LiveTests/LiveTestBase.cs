@@ -60,22 +60,18 @@ namespace Genbox.SimpleS3.Tests.LiveTests
 
             Services = collection.BuildServiceProvider();
 
-            //var _bucketClient = Services.GetRequiredService<IS3BucketClient>();
-            //var serviceClient = Services.GetRequiredService<IS3ServiceClient>();
-            //var enumerator = serviceClient.GetAllAsync().ToListAsync().Result;
-
-            //foreach (S3Bucket bucket in enumerator)
-            //{
-            //    if (bucket.Name.Contains("test", StringComparison.OrdinalIgnoreCase))
-            //        _bucketClient.DeleteBucketRecursiveAsync(bucket.Name).Wait();
-            //}
-
             BucketName = _configRoot["BucketName"] ?? "main-test-bucket-2019";
 
             Config = Services.GetRequiredService<IOptions<S3Config>>().Value;
             ObjectClient = Services.GetRequiredService<IS3ObjectClient>();
             BucketClient = Services.GetRequiredService<IS3BucketClient>();
             Transfer = Services.GetRequiredService<Transfer>();
+
+            //foreach (S3Bucket bucket in BucketClient.ListAllBucketsAsync().ToListAsync().Result)
+            //{
+            //    if (bucket.Name.Contains("test", StringComparison.OrdinalIgnoreCase))
+            //        BucketClient.DeleteBucketRecursiveAsync(bucket.Name).Wait();
+            //}
         }
 
         public ServiceProvider Services { get; }
