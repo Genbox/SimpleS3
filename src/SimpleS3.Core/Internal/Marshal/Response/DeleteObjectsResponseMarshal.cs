@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Abstracts.Marshal;
+using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects.XML;
@@ -53,7 +55,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                         S3DeleteError s3DeleteError = new S3DeleteError();
                         s3DeleteError.ObjectKey = error.Key;
                         s3DeleteError.VersionId = error.VersionId;
-                        s3DeleteError.Code = error.Code;
+                        s3DeleteError.Code = ValueHelper.ParseEnum<ErrorCode>(error.Code);
                         s3DeleteError.Message = error.Message;
 
                         response.Errors.Add(s3DeleteError);

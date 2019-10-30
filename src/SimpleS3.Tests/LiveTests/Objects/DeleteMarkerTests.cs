@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -63,7 +64,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.Equal(1, resp.Errors.Count);
             Assert.Equal(resources[0].Name, resp.Errors[0].ObjectKey);
             Assert.Equal(resources[0].VersionId, resp.Errors[0].VersionId);
-            Assert.Equal("NoSuchVersion", resp.Errors[0].Code);
+            Assert.Equal(ErrorCode.NoSuchVersion, resp.Errors[0].Code);
             Assert.Equal("The specified version does not exist.", resp.Errors[0].Message);
         }
     }
