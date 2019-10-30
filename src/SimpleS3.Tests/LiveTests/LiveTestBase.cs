@@ -190,15 +190,14 @@ namespace Genbox.SimpleS3.Tests.LiveTests
             {
                 await (action?.Invoke(tempBucketName)).ConfigureAwait(false);
             }
-            catch (Exception)
+            finally
             {
+                DeleteAllObjectsStatus delResp = await ObjectClient.DeleteAllObjectsAsync(tempBucketName).ConfigureAwait(false);
+                Assert.Equal(DeleteAllObjectsStatus.Ok, delResp);
+
+                DeleteBucketResponse del2Resp = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
+                Assert.True(del2Resp.IsSuccess);
             }
-
-            DeleteAllObjectsStatus delResp = await ObjectClient.DeleteAllObjectsAsync(tempBucketName).ConfigureAwait(false);
-            Assert.Equal(DeleteAllObjectsStatus.Ok, delResp);
-
-            DeleteBucketResponse del2Resp = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
-            Assert.True(del2Resp.IsSuccess);
         }
     }
 }
