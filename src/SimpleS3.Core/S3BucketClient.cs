@@ -28,17 +28,26 @@ namespace Genbox.SimpleS3.Core
 
         public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
         {
-            return BucketOperations.CreateBucketAsync(bucketName, config, token);
+            CreateBucketRequest request = new CreateBucketRequest(bucketName);
+            config?.Invoke(request);
+
+            return BucketOperations.CreateBucketAsync(request, token);
         }
 
         public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)
         {
-            return BucketOperations.DeleteBucketAsync(bucketName, config, token);
+            DeleteBucketRequest request = new DeleteBucketRequest(bucketName);
+            config?.Invoke(request);
+
+            return BucketOperations.DeleteBucketAsync(request, token);
         }
 
         public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest> config = null, CancellationToken token = default)
         {
-            return BucketOperations.ListMultipartUploadsAsync(bucketName, config, token);
+            ListMultipartUploadsRequest request = new ListMultipartUploadsRequest(bucketName);
+            config?.Invoke(request);
+
+            return BucketOperations.ListMultipartUploadsAsync(request, token);
         }
 
         public async Task<EmptyBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
@@ -70,7 +79,10 @@ namespace Genbox.SimpleS3.Core
 
         public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
         {
-            return BucketOperations.ListBucketsAsync(config, token);
+            ListBucketsRequest request = new ListBucketsRequest();
+            config?.Invoke(request);
+
+            return BucketOperations.ListBucketsAsync(request, token);
         }
     }
 }

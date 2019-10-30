@@ -19,36 +19,24 @@ namespace Genbox.SimpleS3.Core.Operations
             _requestHandler = requestHandler;
         }
 
-        public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
+        public Task<CreateBucketResponse> CreateBucketAsync(CreateBucketRequest request, CancellationToken token = default)
         {
-            ListBucketsRequest req = new ListBucketsRequest();
-            config?.Invoke(req);
-
-            return _requestHandler.SendRequestAsync<ListBucketsRequest, ListBucketsResponse>(req, token);
+            return _requestHandler.SendRequestAsync<CreateBucketRequest, CreateBucketResponse>(request, token);
         }
 
-        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
+        public Task<DeleteBucketResponse> DeleteBucketAsync(DeleteBucketRequest request, CancellationToken token = default)
         {
-            CreateBucketRequest req = new CreateBucketRequest(bucketName);
-            config?.Invoke(req);
-
-            return _requestHandler.SendRequestAsync<CreateBucketRequest, CreateBucketResponse>(req, token);
+            return _requestHandler.SendRequestAsync<DeleteBucketRequest, DeleteBucketResponse>(request, token);
         }
 
-        public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)
+        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(ListMultipartUploadsRequest request, CancellationToken token = default)
         {
-            DeleteBucketRequest req = new DeleteBucketRequest(bucketName);
-            config?.Invoke(req);
-
-            return _requestHandler.SendRequestAsync<DeleteBucketRequest, DeleteBucketResponse>(req, token);
+            return _requestHandler.SendRequestAsync<ListMultipartUploadsRequest, ListMultipartUploadsResponse>(request, token);
         }
 
-        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest> config = null, CancellationToken token = default)
+        public Task<ListBucketsResponse> ListBucketsAsync(ListBucketsRequest request, CancellationToken token = default)
         {
-            ListMultipartUploadsRequest req = new ListMultipartUploadsRequest(bucketName);
-            config?.Invoke(req);
-
-            return _requestHandler.SendRequestAsync<ListMultipartUploadsRequest, ListMultipartUploadsResponse>(req, token);
+            return _requestHandler.SendRequestAsync<ListBucketsRequest, ListBucketsResponse>(request, token);
         }
     }
 }
