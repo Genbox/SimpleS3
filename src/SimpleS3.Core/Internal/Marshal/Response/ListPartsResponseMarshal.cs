@@ -6,11 +6,11 @@ using System.Xml.Serialization;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Helpers;
-using Genbox.SimpleS3.Core.Requests.Objects;
-using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.Objects.XML;
-using Genbox.SimpleS3.Core.Responses.S3Types;
-using Genbox.SimpleS3.Core.Responses.XMLTypes;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Objects.XML;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.XMLTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
@@ -27,8 +27,8 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                 r.Namespaces = false;
 
                 ListPartsResult listResult = (ListPartsResult)s.Deserialize(r);
-                response.Bucket = listResult.Bucket;
-                response.Key = listResult.Key;
+                response.BucketName = listResult.Bucket;
+                response.ObjectKey = listResult.Key;
                 response.UploadId = listResult.UploadId;
 
                 if (listResult.StorageClass != null)

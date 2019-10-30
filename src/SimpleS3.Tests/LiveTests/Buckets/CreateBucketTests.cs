@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
-using Genbox.SimpleS3.Core.Responses.Buckets;
-using Genbox.SimpleS3.Core.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -39,13 +39,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             Assert.Equal(string.Empty, gResp.Prefix);
 
             Assert.Equal(tempObjName, gResp.Objects[0].ObjectKey);
-            Assert.Equal(DateTime.UtcNow, gResp.Objects[0].LastModified.DateTime, TimeSpan.FromSeconds(5));
+            Assert.Equal(DateTime.UtcNow, gResp.Objects[0].LastModifiedOn.DateTime, TimeSpan.FromSeconds(5));
             Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", gResp.Objects[0].ETag);
             Assert.Equal(5, gResp.Objects[0].Size);
             Assert.Equal(StorageClass.Standard, gResp.Objects[0].StorageClass);
 
             Assert.Equal(tempObjName2, gResp.Objects[1].ObjectKey);
-            Assert.Equal(DateTime.UtcNow, gResp.Objects[1].LastModified.DateTime, TimeSpan.FromSeconds(5));
+            Assert.Equal(DateTime.UtcNow, gResp.Objects[1].LastModifiedOn.DateTime, TimeSpan.FromSeconds(5));
             Assert.Equal("\"08cf82251c975a5e9734699fadf5e9c0\"", gResp.Objects[1].ETag);
             Assert.Equal(6, gResp.Objects[1].Size);
             Assert.Equal(StorageClass.OneZoneIa, gResp.Objects[1].StorageClass);

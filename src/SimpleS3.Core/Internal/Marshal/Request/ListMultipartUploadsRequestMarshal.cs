@@ -3,7 +3,7 @@ using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Internal.Constants;
 using Genbox.SimpleS3.Core.Internal.Extensions;
-using Genbox.SimpleS3.Core.Requests.Buckets;
+using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Request

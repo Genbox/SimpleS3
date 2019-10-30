@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Misc;
-using Genbox.SimpleS3.Core.Requests.Objects;
-using Genbox.SimpleS3.Core.Requests.Objects.Types;
-using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Core.Extensions
@@ -40,7 +40,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             Validator.RequireNotNull(bucketName, nameof(bucketName));
             Validator.RequireNotNull(objectKeys, nameof(objectKeys));
 
-            return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x, null)), config, token);
+            return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x)), config, token);
         }
 
         public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> objectKeys, bool quiet = true, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
@@ -49,7 +49,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             Validator.RequireNotNull(bucketName, nameof(bucketName));
             Validator.RequireNotNull(objectKeys, nameof(objectKeys));
 
-            return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x, null)), req =>
+            return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x)), req =>
             {
                 req.Mfa = mfa;
                 req.Quiet = quiet;
@@ -67,6 +67,39 @@ namespace Genbox.SimpleS3.Core.Extensions
                 req.Mfa = mfa;
                 req.Quiet = quiet;
             }, token);
+        }
+
+        /// <summary>
+        /// Delete all objects within the bucket
+        /// </summary>
+        public static async Task<DeleteAllObjectsStatus> DeleteAllObjectsAsync(this IS3ObjectClient client, string bucketName, CancellationToken token = default)
+        {
+            string continuationToken = null;
+            ListObjectsResponse response;
+
+            do
+            {
+                if (token.IsCancellationRequested)
+                    break;
+
+                string cToken = continuationToken;
+                response = await client.ListObjectsAsync(bucketName, req => req.ContinuationToken = cToken, token).ConfigureAwait(false);
+
+                if (!response.IsSuccess)
+                    return DeleteAllObjectsStatus.RequestFailed;
+
+                if (response.KeyCount == 0)
+                    break;
+
+                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, response.Objects.Select(x => x.ObjectKey), true, token: token).ConfigureAwait(false);
+
+                if (!multiDelResponse.IsSuccess)
+                    return DeleteAllObjectsStatus.RequestFailed;
+
+                continuationToken = response.NextContinuationToken;
+            } while (response.IsTruncated);
+
+            return DeleteAllObjectsStatus.Ok;
         }
 
         public static async Task<PutObjectResponse> PutObjectDataAsync(this IS3ObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest> config = null, CancellationToken token = default)

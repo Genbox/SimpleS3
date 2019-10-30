@@ -6,11 +6,11 @@ using System.Xml.Serialization;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Helpers;
-using Genbox.SimpleS3.Core.Requests.Buckets;
-using Genbox.SimpleS3.Core.Responses.Buckets;
-using Genbox.SimpleS3.Core.Responses.Buckets.XML;
-using Genbox.SimpleS3.Core.Responses.S3Types;
-using Genbox.SimpleS3.Core.Responses.XMLTypes;
+using Genbox.SimpleS3.Core.Network.Requests.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets.XML;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.XMLTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response

@@ -4,11 +4,11 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Abstracts.Marshal;
-using Genbox.SimpleS3.Core.Requests.Objects;
-using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.Objects.XML;
-using Genbox.SimpleS3.Core.Responses.S3Types;
-using Genbox.SimpleS3.Core.Responses.XMLTypes;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Objects.XML;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.XMLTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                         s3Deleted.ObjectKey = deleted.Key;
                         s3Deleted.DeleteMarkerVersionId = deleted.DeleteMarkerVersionId;
                         s3Deleted.VersionId = deleted.VersionId;
-                        s3Deleted.DeleteMarker = deleted.DeleteMarker;
+                        s3Deleted.IsDeleteMarker = deleted.DeleteMarker;
 
                         response.Deleted.Add(s3Deleted);
                     }

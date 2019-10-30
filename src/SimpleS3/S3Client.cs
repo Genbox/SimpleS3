@@ -13,11 +13,11 @@ using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Misc;
-using Genbox.SimpleS3.Core.Requests.Buckets;
-using Genbox.SimpleS3.Core.Requests.Objects;
-using Genbox.SimpleS3.Core.Requests.Objects.Types;
-using Genbox.SimpleS3.Core.Responses.Buckets;
-using Genbox.SimpleS3.Core.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.Buckets;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -104,11 +104,6 @@ namespace Genbox.SimpleS3
         public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest> config = null, CancellationToken token = default)
         {
             return _bucketClient.ListMultipartUploadsAsync(bucketName, config, token);
-        }
-
-        public Task<EmptyBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
-        {
-            return _bucketClient.EmptyBucketAsync(bucketName, token);
         }
 
         public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)

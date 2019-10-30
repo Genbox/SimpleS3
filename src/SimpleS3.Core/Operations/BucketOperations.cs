@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
-using Genbox.SimpleS3.Core.Requests.Buckets;
-using Genbox.SimpleS3.Core.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Requests.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Operations

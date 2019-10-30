@@ -9,7 +9,7 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
-using Genbox.SimpleS3.Core.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Request

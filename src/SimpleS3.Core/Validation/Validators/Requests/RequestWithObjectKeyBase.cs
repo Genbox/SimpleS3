@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Genbox.SimpleS3.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Requests;
+using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Utils;
 using Microsoft.Extensions.Options;
 

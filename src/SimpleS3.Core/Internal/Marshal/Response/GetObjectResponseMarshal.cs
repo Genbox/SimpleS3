@@ -7,8 +7,8 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Misc;
-using Genbox.SimpleS3.Core.Requests.Objects;
-using Genbox.SimpleS3.Core.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
     {
         public void MarshalResponse(GetObjectRequest request, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.Expiration = headers.GetHeaderDate(AmzHeaders.XAmzExpiration, DateTimeFormat.Iso8601DateTime);
+            response.ExpiresOn = headers.GetHeader(AmzHeaders.XAmzExpiration);
             response.Metadata = ParseMetadata(headers);
             response.ETag = headers.GetHeader(HttpHeaders.ETag);
             response.CacheControl = headers.GetHeader(HttpHeaders.CacheControl);

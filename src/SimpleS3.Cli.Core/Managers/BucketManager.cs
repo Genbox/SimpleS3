@@ -6,8 +6,8 @@ using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Cli.Core.Helpers;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Misc;
-using Genbox.SimpleS3.Core.Responses.Buckets;
-using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Cli.Core.Managers
@@ -32,7 +32,7 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
         {
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
 
-            if (await _client.EmptyBucketAsync(bucketName).ConfigureAwait(false) != EmptyBucketStatus.Ok)
+            if (await _client.DeleteAllObjectsAsync(bucketName).ConfigureAwait(false) != DeleteAllObjectsStatus.Ok)
                 throw new Exception("Failed to empty bucket");
         }
 
@@ -40,8 +40,15 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
         {
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
 
-            if (await _client.DeleteBucketRecursiveAsync(bucketName).ConfigureAwait(false) != DeleteBucketStatus.Ok)
-                throw new Exception("Failed to empty bucket");
+            DeleteAllObjectsStatus delResp = await _client.DeleteAllObjectsAsync(bucketName).ConfigureAwait(false);
+
+            if (delResp != DeleteAllObjectsStatus.Ok)
+                throw new Exception("Failed to delete bucket");
+
+            DeleteBucketResponse delResp2 = await _client.DeleteBucketAsync(bucketName).ConfigureAwait(false);
+
+            if (!delResp2.IsSuccess)
+                throw new Exception("Failed to delete bucket");
         }
 
         public async IAsyncEnumerable<S3Bucket> ListAsync(CancellationToken token)

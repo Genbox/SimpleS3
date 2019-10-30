@@ -6,11 +6,11 @@ using System.Xml.Serialization;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Helpers;
-using Genbox.SimpleS3.Core.Requests.Objects;
-using Genbox.SimpleS3.Core.Responses.Buckets.XML;
-using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.S3Types;
-using Genbox.SimpleS3.Core.Responses.XMLTypes;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets.XML;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.XMLTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
@@ -30,7 +30,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                 response.MaxKeys = bucketResult.MaxKeys;
                 response.IsTruncated = bucketResult.IsTruncated;
                 response.KeyCount = bucketResult.KeyCount;
-                response.Name = bucketResult.Name;
+                response.BucketName = bucketResult.Name;
                 response.Prefix = bucketResult.Prefix;
                 response.ContinuationToken = bucketResult.ContinuationToken;
 
@@ -63,7 +63,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                         if (content.StorageClass != null)
                             obj.StorageClass = ValueHelper.ParseEnum<StorageClass>(content.StorageClass);
 
-                        obj.LastModified = content.LastModified;
+                        obj.LastModifiedOn = content.LastModified;
                         obj.Size = content.Size;
 
                         if (content.Owner != null)

@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -68,7 +68,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
                 Assert.Equal("object", gResp.Prefix);
 
                 Assert.Equal(tempObjName, gResp.Objects[0].ObjectKey);
-                Assert.Equal(DateTime.UtcNow, gResp.Objects[0].LastModified.DateTime, TimeSpan.FromSeconds(5));
+                Assert.Equal(DateTime.UtcNow, gResp.Objects[0].LastModifiedOn.DateTime, TimeSpan.FromSeconds(5));
                 Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", gResp.Objects[0].ETag);
                 Assert.Equal(5, gResp.Objects[0].Size);
                 Assert.Equal(StorageClass.Standard, gResp.Objects[0].StorageClass);

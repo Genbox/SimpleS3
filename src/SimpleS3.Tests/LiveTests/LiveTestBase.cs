@@ -11,9 +11,9 @@ using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Misc;
-using Genbox.SimpleS3.Core.Requests.Objects;
-using Genbox.SimpleS3.Core.Responses.Buckets;
-using Genbox.SimpleS3.Core.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Extensions.HttpClient.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -194,8 +194,11 @@ namespace Genbox.SimpleS3.Tests.LiveTests
             {
             }
 
-            DeleteBucketStatus errorCode = await BucketClient.DeleteBucketRecursiveAsync(tempBucketName).ConfigureAwait(false);
-            Assert.Equal(DeleteBucketStatus.Ok, errorCode);
+            DeleteAllObjectsStatus delResp = await ObjectClient.DeleteAllObjectsAsync(tempBucketName).ConfigureAwait(false);
+            Assert.Equal(DeleteAllObjectsStatus.Ok, delResp);
+
+            DeleteBucketResponse del2Resp = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
+            Assert.True(del2Resp.IsSuccess);
         }
     }
 }

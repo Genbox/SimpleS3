@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Misc;
-using Genbox.SimpleS3.Core.Responses.Errors;
-using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.Errors;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Tests.Code.Extensions;
 using Xunit;
 using Xunit.Abstractions;
@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
 
             Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(objectKey, initResp.Key);
+            Assert.Equal(objectKey, initResp.ObjectKey);
             Assert.NotNull(initResp.UploadId);
 
             AbortMultipartUploadResponse abortResp = await ObjectClient.AbortMultipartUploadAsync(BucketName, objectKey, initResp.UploadId).ConfigureAwait(false);
@@ -54,7 +54,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             Assert.True(initResp.IsSuccess);
             Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(objectKey, initResp.Key);
+            Assert.Equal(objectKey, initResp.ObjectKey);
             Assert.NotNull(initResp.UploadId);
 
             byte[] file = new byte[1024 * 1024 * 10];
@@ -135,7 +135,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             Assert.True(initResp.IsSuccess);
             Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(objectKey, initResp.Key);
+            Assert.Equal(objectKey, initResp.ObjectKey);
             Assert.NotNull(initResp.UploadId);
 
             byte[] file = new byte[1024 * 1024 * 5];
@@ -235,7 +235,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
 
             Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(objectKey, initResp.Key);
+            Assert.Equal(objectKey, initResp.ObjectKey);
             Assert.NotNull(initResp.UploadId);
 
             //4 MB is below the 5 MB limit. See https://docs.aws.amazon.com/AmazonS3/latest/dev/qfacts.html
@@ -269,8 +269,8 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
                 ListPartsResponse listResp1 = await ObjectClient.ListPartsAsync(bucket, nameof(ListParts), initResp.UploadId).ConfigureAwait(false);
 
-                Assert.Equal(bucket, listResp1.Bucket);
-                Assert.Equal("ListParts", listResp1.Key);
+                Assert.Equal(bucket, listResp1.BucketName);
+                Assert.Equal("ListParts", listResp1.ObjectKey);
                 Assert.Equal(initResp.UploadId, listResp1.UploadId);
                 Assert.Equal(StorageClass.Standard, listResp1.StorageClass);
                 Assert.Equal(0, listResp1.PartNumberMarker);
@@ -290,8 +290,8 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
                 ListPartsResponse listResp2 = await ObjectClient.ListPartsAsync(bucket, nameof(ListParts), initResp.UploadId).ConfigureAwait(false);
 
-                Assert.Equal(bucket, listResp2.Bucket);
-                Assert.Equal("ListParts", listResp2.Key);
+                Assert.Equal(bucket, listResp2.BucketName);
+                Assert.Equal("ListParts", listResp2.ObjectKey);
                 Assert.Equal(initResp.UploadId, listResp2.UploadId);
                 Assert.Equal(StorageClass.Standard, listResp2.StorageClass);
                 Assert.Equal(0, listResp2.PartNumberMarker);

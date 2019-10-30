@@ -6,9 +6,9 @@ using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Misc;
-using Genbox.SimpleS3.Core.Requests.Buckets;
-using Genbox.SimpleS3.Core.Responses.Buckets;
-using Genbox.SimpleS3.Core.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core
@@ -48,36 +48,6 @@ namespace Genbox.SimpleS3.Core
             config?.Invoke(request);
 
             return BucketOperations.ListMultipartUploadsAsync(request, token);
-        }
-
-        public async Task<EmptyBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default)
-        {
-            string continuationToken = null;
-            ListObjectsResponse response;
-
-            do
-            {
-                if (token.IsCancellationRequested)
-                    break;
-
-                string cToken = continuationToken;
-                response = await _objectClient.ListObjectsAsync(bucketName, req => req.ContinuationToken = cToken, token).ConfigureAwait(false);
-
-                if (!response.IsSuccess)
-                    return EmptyBucketStatus.RequestFailed;
-
-                if (response.KeyCount == 0)
-                    break;
-
-                DeleteObjectsResponse multiDelResponse = await _objectClient.DeleteObjectsAsync(bucketName, response.Objects.Select(x => x.ObjectKey), true, token: token).ConfigureAwait(false);
-
-                if (!multiDelResponse.IsSuccess)
-                    return EmptyBucketStatus.RequestFailed;
-
-                continuationToken = response.NextContinuationToken;
-            } while (response.IsTruncated);
-
-            return EmptyBucketStatus.Ok;
         }
 
         public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)

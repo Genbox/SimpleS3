@@ -9,8 +9,8 @@ using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
-using Genbox.SimpleS3.Core.Requests;
-using Genbox.SimpleS3.Core.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Requests;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 

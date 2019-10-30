@@ -7,9 +7,9 @@ using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Cli.Core.Enums;
 using Genbox.SimpleS3.Cli.Core.Helpers;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Requests.Objects.Types;
-using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Cli.Core.Managers
@@ -205,7 +205,7 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
                             if (!response.IsSuccess)
                                 return ObjectOperationStatus.Error;
 
-                            await RequestHelper.ExecuteRequestAsync(_client, c => c.DeleteObjectsAsync(parsed.bucket, response.Objects.Select(x => new S3DeleteInfo(x.ObjectKey, null)))).ConfigureAwait(false);
+                            await RequestHelper.ExecuteRequestAsync(_client, c => c.DeleteObjectsAsync(parsed.bucket, response.Objects.Select(x => new S3DeleteInfo(x.ObjectKey)))).ConfigureAwait(false);
 
                             continuationToken = response.NextContinuationToken;
                         } while (response.IsTruncated);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Xunit;
 using Xunit.Abstractions;
 

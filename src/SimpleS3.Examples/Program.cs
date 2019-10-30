@@ -5,7 +5,7 @@ using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
-using Genbox.SimpleS3.Core.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Examples.Clients.Simple;
 
 namespace Genbox.SimpleS3.Examples

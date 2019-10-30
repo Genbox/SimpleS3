@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Cli.Commands.Buckets;
-using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace Genbox.SimpleS3.Cli.Commands.Objects
@@ -61,13 +61,13 @@ namespace Genbox.SimpleS3.Cli.Commands.Objects
                             if (obj.Owner != null)
                                 ownerInfo = obj.Owner.Name;
 
-                            Console.WriteLine("{0,-20}{1,-12}{2,-18}{3,-38}{4,-20}{5}", obj.LastModified.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), obj.Size, obj.StorageClass, obj.ETag, ownerInfo, obj.ObjectKey);
+                            Console.WriteLine("{0,-20}{1,-12}{2,-18}{3,-38}{4,-20}{5}", obj.LastModifiedOn.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), obj.Size, obj.StorageClass, obj.ETag, ownerInfo, obj.ObjectKey);
                         }
                         else
-                            Console.WriteLine("{0,-20}{1,-12}{2,-18}{3,-38}{4}", obj.LastModified.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), obj.Size, obj.StorageClass, obj.ETag, obj.ObjectKey);
+                            Console.WriteLine("{0,-20}{1,-12}{2,-18}{3,-38}{4}", obj.LastModifiedOn.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), obj.Size, obj.StorageClass, obj.ETag, obj.ObjectKey);
                     }
                     else
-                        Console.WriteLine("{0,-20}{1,-12}{2}", obj.LastModified.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), obj.Size, obj.ObjectKey);
+                        Console.WriteLine("{0,-20}{1,-12}{2}", obj.LastModifiedOn.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), obj.Size, obj.ObjectKey);
                 } while (await list.MoveNextAsync().ConfigureAwait(false));
             }
         }

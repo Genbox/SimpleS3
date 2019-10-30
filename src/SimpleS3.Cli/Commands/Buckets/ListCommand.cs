@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace Genbox.SimpleS3.Cli.Commands.Buckets
@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Cli.Commands.Buckets
             Console.WriteLine("{0,-21}{1}", "Created on", "Name");
 
             await foreach (S3Bucket bucket in Manager.BucketManager.ListAsync(token))
-                Console.WriteLine("{0,-21}{1}", bucket.CreationDate.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), bucket.Name);
+                Console.WriteLine("{0,-21}{1}", bucket.CreatedOn.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), bucket.Name);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Requests.Objects.Types;
-using Genbox.SimpleS3.Core.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -39,7 +39,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.Contains(resp.Deleted, o => o.ObjectKey == resources[0]);
             Assert.Contains(resp.Deleted, o => o.ObjectKey == resources[1]);
 
-            Assert.All(resp.Deleted, o => Assert.True(o.DeleteMarker));
+            Assert.All(resp.Deleted, o => Assert.True(o.IsDeleteMarker));
             Assert.All(resp.Deleted, o => Assert.NotEmpty(o.DeleteMarkerVersionId));
         }
 
@@ -48,7 +48,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         {
             List<S3DeleteInfo> resources = new List<S3DeleteInfo>(2);
             resources.Add(new S3DeleteInfo(nameof(DeleteMultipleWithError) + "1", "versionnotfound"));
-            resources.Add(new S3DeleteInfo(nameof(DeleteMultipleWithError) + "2", null));
+            resources.Add(new S3DeleteInfo(nameof(DeleteMultipleWithError) + "2"));
 
             await UploadAsync(resources[0].Name).ConfigureAwait(false);
             await UploadAsync(resources[1].Name).ConfigureAwait(false);
@@ -57,7 +57,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             Assert.Equal(1, resp.Deleted.Count);
             Assert.Equal(resources[1].Name, resp.Deleted[0].ObjectKey);
-            Assert.True(resp.Deleted[0].DeleteMarker);
+            Assert.True(resp.Deleted[0].IsDeleteMarker);
             Assert.NotEmpty(resp.Deleted[0].DeleteMarkerVersionId);
 
             Assert.Equal(1, resp.Errors.Count);

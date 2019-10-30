@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Genbox.SimpleS3.Core.Responses.Errors;
+using Genbox.SimpleS3.Core.Network.Responses.Errors;
 
 namespace Genbox.SimpleS3.Core.Internal.Errors
 {

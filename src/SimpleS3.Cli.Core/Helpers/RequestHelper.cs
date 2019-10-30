@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Core.Responses;
-using Genbox.SimpleS3.Core.Responses.Errors;
+using Genbox.SimpleS3.Core.Network.Responses;
+using Genbox.SimpleS3.Core.Network.Responses.Errors;
 using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Cli.Core.Helpers

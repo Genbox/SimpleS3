@@ -2,9 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
-using Genbox.SimpleS3.Core.Misc;
-using Genbox.SimpleS3.Core.Requests.Buckets;
-using Genbox.SimpleS3.Core.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Requests.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Clients
 {
@@ -32,11 +31,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
         Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest> config = null, CancellationToken token = default);
-
-        /// <summary>Remove everything within a bucket, except for the bucket itself.</summary>
-        /// <param name="bucketName">Name of the bucket</param>
-        /// <param name="token">A cancellation token </param>
-        Task<EmptyBucketStatus> EmptyBucketAsync(string bucketName, CancellationToken token = default);
 
         /// <summary>List all buckets you own</summary>
         /// <param name="config">A delegate to configure the request</param>

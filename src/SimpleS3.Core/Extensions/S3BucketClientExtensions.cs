@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Misc;
-using Genbox.SimpleS3.Core.Requests.Buckets;
-using Genbox.SimpleS3.Core.Responses.Buckets;
-using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Requests.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Core.Extensions
@@ -59,31 +59,6 @@ namespace Genbox.SimpleS3.Core.Extensions
 
                 uploadIdMarker = response.NextUploadIdMarker;
             } while (response.IsTruncated);
-        }
-
-        /// <summary>Delete all objects within a bucket and then delete the bucket itself.</summary>
-        /// <returns></returns>
-        public static async Task<DeleteBucketStatus> DeleteBucketRecursiveAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
-        {
-            Validator.RequireNotNull(client, nameof(client));
-            Validator.RequireNotNull(bucketName, nameof(bucketName));
-
-            EmptyBucketStatus emptyResp = await client.EmptyBucketAsync(bucketName, token).ConfigureAwait(false);
-
-            if (emptyResp != EmptyBucketStatus.Ok)
-                return DeleteBucketStatus.FailedToEmpty;
-
-            DeleteBucketResponse delResponse = await client.DeleteBucketAsync(bucketName, null, token).ConfigureAwait(false);
-
-            if (!delResponse.IsSuccess)
-            {
-                if (delResponse.Error.Code == ErrorCode.BucketNotEmpty)
-                    return DeleteBucketStatus.BucketNotEmpty;
-
-                return DeleteBucketStatus.RequestFailed;
-            }
-
-            return DeleteBucketStatus.Ok;
         }
 
         /// <summary>List all buckets</summary>

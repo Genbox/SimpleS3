@@ -2,9 +2,9 @@
 using System.IO;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Responses.Buckets;
-using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Xunit;
 using Xunit.Abstractions;
 

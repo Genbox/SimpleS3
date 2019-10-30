@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Requests.Objects.Properties;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 
 namespace Genbox.SimpleS3.Core.Validation.Validators.Requests.Objects.Properties
 {
-    public class SseCustomerKeyPropertiesValidator : ValidatorBase<ISseCustomerKeyProperties>
+    public class SseCustomerKeyPropertiesValidator : ValidatorBase<IHasSseCustomerKey>
     {
         public IConditionBuilder SseCustomerKeyProperties()
         {

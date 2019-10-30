@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
 

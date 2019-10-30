@@ -7,9 +7,9 @@ using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
-using Genbox.SimpleS3.Core.Requests.Objects;
-using Genbox.SimpleS3.Core.Responses.Objects;
-using Genbox.SimpleS3.Core.Responses.Objects.XML;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Objects.XML;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
@@ -19,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
     {
         public void MarshalResponse(CreateMultipartUploadRequest request, CreateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.AbortDate = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Iso8601DateTimeExt);
+            response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Iso8601DateTimeExt);
             response.AbortRuleId = headers.GetHeader(AmzHeaders.XAmzAbortDate);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSSE);
             response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSSEAwsKmsKeyId);
@@ -34,7 +34,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
 
                 InitiateMultipartUploadResult resp = (InitiateMultipartUploadResult)xmlSerializer.Deserialize(xmlReader);
                 response.Bucket = resp.Bucket;
-                response.Key = resp.Key;
+                response.ObjectKey = resp.Key;
                 response.UploadId = resp.UploadId;
             }
         }
