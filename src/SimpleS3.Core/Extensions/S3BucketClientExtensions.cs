@@ -15,8 +15,26 @@ namespace Genbox.SimpleS3.Core.Extensions
 {
     public static class S3BucketClientExtensions
     {
-        public static Task<CreateBucketResponse> PutBucketAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
+        /// <summary>
+        /// Delete a bucket
+        /// </summary>
+        public static Task<DeleteBucketResponse> DeleteBucketAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
         {
+            //Note: This method only exists to give a cleaner API. It provides no extra functionality.
+
+            Validator.RequireNotNull(client, nameof(client));
+            Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+
+            return client.DeleteBucketAsync(bucketName, null, token);
+        }
+
+        /// <summary>
+        /// Create a bucket
+        /// </summary>
+        public static Task<CreateBucketResponse> CreateBucketAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
+        {
+            //Note: This method only exists to give a cleaner API. It provides no extra functionality.
+
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
 
@@ -28,7 +46,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
         /// <param name="getOwnerInfo">Set to true if you want to get object owner information as well.</param>
         /// <param name="token">A cancellation token</param>
-        public static async IAsyncEnumerable<S3Object> ListObjectsRecursiveAsync(this IS3BucketClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IS3BucketClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
@@ -62,6 +80,9 @@ namespace Genbox.SimpleS3.Core.Extensions
             } while (response.IsTruncated);
         }
 
+        /// <summary>
+        /// List all multipart uploads
+        /// </summary>
         public static async IAsyncEnumerable<S3Upload> ListAllMultipartUploadsAsync(this IS3BucketClient client, string bucketName, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
@@ -85,6 +106,10 @@ namespace Genbox.SimpleS3.Core.Extensions
             } while (response.IsTruncated);
         }
 
+        /// <summary>
+        /// Delete all objects within a bucket and then delete the bucket itself.
+        /// </summary>
+        /// <returns></returns>
         public static async Task<DeleteBucketStatus> DeleteBucketRecursiveAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
@@ -108,14 +133,26 @@ namespace Genbox.SimpleS3.Core.Extensions
             return DeleteBucketStatus.Ok;
         }
 
-        public static async IAsyncEnumerable<S3Bucket> ListAllBuckets(this IS3BucketClient client, Action<ListBucketsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
+        /// <summary>
+        /// List all buckets
+        /// </summary>
+        public static async IAsyncEnumerable<S3Bucket> ListBucketsAsync(this IS3BucketClient client, Action<ListBucketsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
-            Validator.RequireNotNull(client, nameof(client));
+            ListBucketsResponse response = await client.ListBucketsAsync(config, token).ConfigureAwait(false);
 
-            ListBucketsResponse resp = await client.ListBucketsAsync(config, token).ConfigureAwait(false);
+            if (!response.IsSuccess)
+                throw new Exception($"Request failed with status code {response.StatusCode}");
 
-            foreach (S3Bucket respBucket in resp.Buckets)
-                yield return respBucket;
+            if (token.IsCancellationRequested)
+                yield break;
+
+            foreach (S3Bucket bucket in response.Buckets)
+            {
+                if (token.IsCancellationRequested)
+                    yield break;
+
+                yield return bucket;
+            }
         }
     }
 }

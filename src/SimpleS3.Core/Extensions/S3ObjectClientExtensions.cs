@@ -41,22 +41,30 @@ namespace Genbox.SimpleS3.Core.Extensions
             return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x, null)), config, token);
         }
 
-        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> objectKeys, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
+        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> objectKeys, bool quiet = true, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
             Validator.RequireNotNull(objectKeys, nameof(objectKeys));
 
-            return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x, null)), req => req.Mfa = mfa, token);
+            return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x, null)), req =>
+            {
+                req.Mfa = mfa;
+                req.Quiet = quiet;
+            }, token);
         }
 
-        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<S3DeleteInfo> objectKeys, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
+        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<S3DeleteInfo> objectKeys, bool quiet = true, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
             Validator.RequireNotNull(objectKeys, nameof(objectKeys));
 
-            return client.DeleteObjectsAsync(bucketName, objectKeys, req => req.Mfa = mfa, token);
+            return client.DeleteObjectsAsync(bucketName, objectKeys, req =>
+            {
+                req.Mfa = mfa;
+                req.Quiet = quiet;
+            }, token);
         }
 
         public static async Task<PutObjectResponse> PutObjectDataAsync(this IS3ObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest> config = null, CancellationToken token = default)

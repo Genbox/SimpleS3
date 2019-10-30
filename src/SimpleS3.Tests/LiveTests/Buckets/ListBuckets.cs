@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Responses.Buckets;
+using Genbox.SimpleS3.Core.Responses.S3Types;
 using Xunit;
 using Xunit.Abstractions;
+using Genbox.SimpleS3.Core.Extensions;
 
 namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 {
@@ -19,10 +21,10 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             string tempBucketName = "testbucket-" + Guid.NewGuid();
             await BucketClient.CreateBucketAsync(tempBucketName).ConfigureAwait(false);
 
-            ListBucketsResponse resp = await BucketClient.ListBucketsAsync().ConfigureAwait(false);
-            Assert.True(resp.Buckets.Count > 0);
+            List<S3Bucket> list = await S3BucketClientExtensions.ListBucketsAsync(BucketClient).ToListAsync().ConfigureAwait(false);
+            Assert.True(list.Count > 0);
 
-            Assert.NotNull(resp.Buckets.SingleOrDefault(x => x.Name == tempBucketName));
+            Assert.NotNull(list.SingleOrDefault(x => x.Name == tempBucketName));
         }
     }
 }

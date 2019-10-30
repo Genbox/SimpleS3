@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Buckets;
-using Genbox.SimpleS3.Core.Requests.Objects.Types;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.Objects;
 using JetBrains.Annotations;
@@ -62,7 +62,7 @@ namespace Genbox.SimpleS3.Core
                 if (!response.IsSuccess)
                     return EmptyBucketStatus.RequestFailed;
 
-                DeleteObjectsResponse multiDelResponse = await _objectClient.DeleteObjectsAsync(bucketName, response.Objects.Select(x => new S3DeleteInfo(x.ObjectKey, null)), req => req.Quiet = true, token).ConfigureAwait(false);
+                DeleteObjectsResponse multiDelResponse = await _objectClient.DeleteObjectsAsync(bucketName, response.Objects.Select(x => x.ObjectKey), true, token: token).ConfigureAwait(false);
 
                 if (!multiDelResponse.IsSuccess)
                     return EmptyBucketStatus.RequestFailed;

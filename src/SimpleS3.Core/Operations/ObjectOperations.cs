@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
-using Genbox.SimpleS3.Core.Internal.Extensions;
-using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Objects;
 using Genbox.SimpleS3.Core.Responses.Objects;
 using Genbox.SimpleS3.Utils;
@@ -80,19 +76,14 @@ namespace Genbox.SimpleS3.Core.Operations
         {
             Validator.RequireNotNull(request, nameof(request));
 
-            Stream data = request.Content;
-
             if (RequestWrappers != null)
             {
                 foreach (IRequestWrapper wrapper in RequestWrappers)
                 {
                     if (wrapper.IsSupported(request))
-                        data = wrapper.Wrap(data, request);
+                        request.Content = wrapper.Wrap(request.Content, request);
                 }
             }
-
-            //Make sure we overwrite the stream reference with the wrapped one
-            request.Content = data;
 
             return _requestHandler.SendRequestAsync<PutObjectRequest, PutObjectResponse>(request, token);
         }

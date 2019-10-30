@@ -129,7 +129,7 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
                         {
                             //Source: remote directory - Destination: local directory
                             case ResourceType.Directory:
-                                await foreach (S3Object s3Object in RequestHelper.ExecuteAsyncEnumerable(_client, c => c.ListObjectsRecursiveAsync(parsedSource.bucket, config: req => { req.Prefix = parsedSource.resource; })))
+                                await foreach (S3Object s3Object in RequestHelper.ExecuteAsyncEnumerable(_client, c => c.ListAllObjectsAsync(parsedSource.bucket, config: req => { req.Prefix = parsedSource.resource; })))
                                 {
                                     string destFolder = parsedDestination.resource;
                                     string destFile = LocalPathHelper.Combine(destFolder, parsedDestination.resource, s3Object.ObjectKey);

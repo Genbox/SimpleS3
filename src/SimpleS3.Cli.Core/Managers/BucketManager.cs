@@ -48,7 +48,7 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
         {
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
 
-            return RequestHelper.ExecuteAsyncEnumerable(_client, c => c.ListObjectsRecursiveAsync(bucketName, includeOwner));
+            return RequestHelper.ExecuteAsyncEnumerable(_client, c => c.ListAllObjectsAsync(bucketName, includeOwner));
         }
 
         public async IAsyncEnumerable<S3Bucket> ListAsync(CancellationToken token)
