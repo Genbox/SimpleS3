@@ -22,7 +22,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
         }
 
         /// <summary>Enable object locking on the bucket.</summary>
-        public bool EnableObjectLocking { get; set; }
+        public bool? EnableObjectLocking { get; set; }
 
         /// <inheritdoc />
         public BucketCannedAcl Acl { get; set; }
