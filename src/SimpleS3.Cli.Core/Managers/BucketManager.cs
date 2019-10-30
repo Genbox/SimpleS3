@@ -44,13 +44,6 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
                 throw new Exception("Failed to empty bucket");
         }
 
-        public IAsyncEnumerable<S3Object> GetAsync(string bucketName, bool includeOwner)
-        {
-            Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
-
-            return RequestHelper.ExecuteAsyncEnumerable(_client, c => c.ListAllObjectsAsync(bucketName, includeOwner));
-        }
-
         public async IAsyncEnumerable<S3Bucket> ListAsync(CancellationToken token)
         {
             ListBucketsResponse resp = await RequestHelper.ExecuteRequestAsync(_client, c => c.ListBucketsAsync(null, token)).ConfigureAwait(false);

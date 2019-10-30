@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Requests.Objects.Types;
 using Genbox.SimpleS3.Core.Responses.Objects;
 using Genbox.SimpleS3.Core.Responses.S3Types;
+using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Cli.Core.Managers
 {
@@ -215,6 +217,13 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
             }
 
             return ObjectOperationStatus.Ok;
+        }
+
+        public IAsyncEnumerable<S3Object> ListAsync(string bucketName, bool includeOwner)
+        {
+            Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+
+            return RequestHelper.ExecuteAsyncEnumerable(_client, c => c.ListAllObjectsAsync(bucketName, includeOwner));
         }
     }
 }

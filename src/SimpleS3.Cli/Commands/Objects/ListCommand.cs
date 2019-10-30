@@ -4,13 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Cli.Commands.Buckets;
 using Genbox.SimpleS3.Core.Responses.S3Types;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace Genbox.SimpleS3.Cli.Commands.Buckets
+namespace Genbox.SimpleS3.Cli.Commands.Objects
 {
     [Command(Description = "List the objects in a bucket")]
-    internal class GetCommand : CommandBase<Bucket>
+    internal class ListCommand : CommandBase<Bucket>
     {
         [Argument(0)]
         [Required]
@@ -24,7 +25,7 @@ namespace Genbox.SimpleS3.Cli.Commands.Buckets
 
         protected override async Task ExecuteAsync(CommandLineApplication app, CancellationToken token)
         {
-            IAsyncEnumerator<S3Object> list = Manager.BucketManager.GetAsync(BucketName, IncludeOwner).GetAsyncEnumerator(token);
+            IAsyncEnumerator<S3Object> list = Manager.ObjectManager.ListAsync(BucketName, IncludeOwner).GetAsyncEnumerator(token);
 
             bool hasData = await list.MoveNextAsync().ConfigureAwait(false);
 

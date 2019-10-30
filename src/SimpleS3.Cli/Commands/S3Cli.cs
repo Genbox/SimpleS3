@@ -5,12 +5,13 @@ using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Cli.Commands.Buckets;
 using Genbox.SimpleS3.Cli.Commands.Objects;
 using McMaster.Extensions.CommandLineUtils;
+using ListCommand = Genbox.SimpleS3.Cli.Commands.Objects.ListCommand;
 
 namespace Genbox.SimpleS3.Cli.Commands
 {
     [VersionOptionFromMember("--version", MemberName = nameof(GetVersion))]
     [Command("s3cli")]
-    [Subcommand(typeof(Bucket), typeof(RemoveCommand), typeof(CopyCommand), typeof(MoveCommand))]
+    [Subcommand(typeof(Bucket), typeof(RemoveCommand), typeof(CopyCommand), typeof(MoveCommand), typeof(ListCommand))]
     public sealed class S3Cli : CommandBase<S3Cli>
     {
         [Option("-p <profile>", Description = "Set the profile to use")]

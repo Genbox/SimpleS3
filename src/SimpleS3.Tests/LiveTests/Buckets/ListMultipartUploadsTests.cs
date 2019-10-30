@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.Objects;
 using Genbox.SimpleS3.Core.Responses.S3Types;
@@ -13,9 +10,9 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 {
-    public class ListPartsTests : LiveTestBase
+    public class ListMultipartUploadsTests : LiveTestBase
     {
-        public ListPartsTests(ITestOutputHelper helper) : base(helper)
+        public ListMultipartUploadsTests(ITestOutputHelper helper) : base(helper)
         {
         }
 
@@ -46,33 +43,6 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 Assert.Equal(TestConstants.TestUsername, upload.Initiator.Name);
                 Assert.Equal(StorageClass.Standard, upload.StorageClass);
                 Assert.Equal(DateTime.UtcNow, upload.Initiated.DateTime, TimeSpan.FromSeconds(5));
-            }).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task ListObjects()
-        {
-            await CreateTempBucketAsync(async bucket =>
-            {
-                //Create 3 objects in bucket, including an incomplete multipart upload
-                await UploadAsync(bucket, "resource1").ConfigureAwait(false);
-                await UploadAsync(bucket, "resource2").ConfigureAwait(false);
-                CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(bucket, "multipart").ConfigureAwait(false);
-
-                //List the objects
-                List<S3Object> list = await ObjectClient.ListAllObjectsAsync(bucket, true).ToListAsync().ConfigureAwait(false);
-
-                //Only 2 objects should be present, as one of them is only initiated
-                Assert.Equal(2, list.Count);
-                Assert.Equal("resource1", list[0].ObjectKey);
-                Assert.Equal("resource2", list[1].ObjectKey);
-
-                //List multipart transfers
-                List<S3Upload> uploads = await BucketClient.ListAllMultipartUploadsAsync(bucket).ToListAsync().ConfigureAwait(false);
-
-                S3Upload upload = Assert.Single(uploads);
-
-                Assert.Equal("multipart", upload.ObjectKey);
             }).ConfigureAwait(false);
         }
     }
