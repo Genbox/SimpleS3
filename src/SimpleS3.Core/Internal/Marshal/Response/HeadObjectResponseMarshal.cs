@@ -32,6 +32,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
             response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSSEAwsKmsKeyId);
             response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSSECustomerAlgorithm);
             response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSSECustomerKeyMD5, BinaryEncoding.Base64);
+            response.RequestCharged = string.Equals("RequestPayer", headers.GetHeader(AmzHeaders.XAmzVersionId), StringComparison.OrdinalIgnoreCase);
 
             response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
 
@@ -46,6 +47,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
             response.LockRetainUntilDate = headers.GetHeaderDate(AmzHeaders.XAmzObjectLockRetainUntilDate, DateTimeFormat.Iso8601DateTimeExt);
             response.LockLegalHold = headers.GetHeaderBool(AmzHeaders.XAmzObjectLockLegalHold);
             response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzMoPartsCount);
+            response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
         }
 
         private static IDictionary<string, string> ParseMetadata(IDictionary<string, string> headers)

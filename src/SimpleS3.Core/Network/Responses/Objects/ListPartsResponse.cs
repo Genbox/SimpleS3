@@ -50,11 +50,11 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public IList<S3Part> Parts { get; internal set; }
 
         public string UploadId { get; internal set; }
-        public DateTimeOffset AbortsOn { get; internal set; }
+        public DateTimeOffset? AbortsOn { get; internal set; }
         public string AbortRuleId { get; internal set; }
         public StorageClass StorageClass { get; internal set; }
         public bool IsTruncated { get; internal set; }
         public EncodingType EncodingType { get; internal set; }
-        public bool RequestCharged { get; }
+        public bool RequestCharged { get; internal set; }
     }
 }

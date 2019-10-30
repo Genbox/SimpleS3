@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internal.Enums;
+using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -20,6 +23,10 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
     {
         public void MarshalResponse(ListPartsRequest request, ListPartsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
+            response.RequestCharged = string.Equals("RequestPayer", headers.GetHeader(AmzHeaders.XAmzVersionId), StringComparison.OrdinalIgnoreCase);
+            response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Iso8601DateTimeExt);
+            response.AbortRuleId = headers.GetHeader(AmzHeaders.XAmzAbortDate);
+
             XmlSerializer s = new XmlSerializer(typeof(ListPartsResult));
 
             using (XmlTextReader r = new XmlTextReader(responseStream))

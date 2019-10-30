@@ -9,6 +9,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Buckets.XML
     {
         public string Name { get; set; }
         public string Prefix { get; set; }
+        public string Delimiter { get; set; }
 
         [XmlElement]
         public List<CommonPrefix> CommonPrefixes { get; set; }

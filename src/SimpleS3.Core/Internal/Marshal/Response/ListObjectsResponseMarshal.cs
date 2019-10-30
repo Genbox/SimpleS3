@@ -28,6 +28,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
 
                 ListBucketResult bucketResult = (ListBucketResult)s.Deserialize(r);
                 response.MaxKeys = bucketResult.MaxKeys;
+                response.Delimiter = bucketResult.Delimiter;
                 response.IsTruncated = bucketResult.IsTruncated;
                 response.KeyCount = bucketResult.KeyCount;
                 response.BucketName = bucketResult.Name;
