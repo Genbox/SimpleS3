@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Responses.Buckets;
+using Genbox.SimpleS3.Core.Responses.Objects;
 using Genbox.SimpleS3.Core.Responses.S3Types;
 using Xunit;
 using Xunit.Abstractions;
@@ -38,7 +38,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 string tempObjName = "object-" + Guid.NewGuid();
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, string.Empty, config: request => request.AclGrantFullControl.AddEmail(TestConstants.TestEmail)).ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await BucketClient.ListObjectsAsync(bucket, request => request.FetchOwner = true).ConfigureAwait(false);
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, request => request.FetchOwner = true).ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
                 Assert.Equal(1, gResp.KeyCount);
 
@@ -59,7 +59,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await BucketClient.ListObjectsAsync(bucket, request => request.Prefix = "object").ConfigureAwait(false);
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, request => request.Prefix = "object").ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
 
                 Assert.Equal(1, gResp.KeyCount);
@@ -86,7 +86,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await BucketClient.ListObjectsAsync(bucket, request => request.Delimiter = "-").ConfigureAwait(false);
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, request => request.Delimiter = "-").ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
 
                 Assert.Equal(2, gResp.KeyCount);
@@ -118,7 +118,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                     await Task.WhenAll(tasks).ConfigureAwait(false);
                 }
 
-                ListObjectsResponse gResp = await BucketClient.ListObjectsAsync(bucket).ConfigureAwait(false);
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket).ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
                 Assert.Equal(1000, gResp.KeyCount);
                 Assert.Equal(1000, gResp.Objects.Count);

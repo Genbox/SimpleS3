@@ -43,5 +43,8 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
 
         /// <summary>Get an object from an S3 bucket See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_GetObject.html for details</summary>
         Task<GetObjectResponse> GetObjectAsync(GetObjectRequest request, CancellationToken token = default);
+
+        /// <summary>List objects within a bucket See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_ListObjectsV2.html for details</summary>
+        Task<ListObjectsResponse> ListObjectsAsync(ListObjectsRequest request, CancellationToken token = default);
     }
 }

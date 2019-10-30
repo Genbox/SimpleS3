@@ -98,6 +98,12 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="token">A cancellation token</param>
         Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream data, Action<PutObjectRequest> config = null, CancellationToken token = default);
 
+        /// <summary>List all objects within a bucket</summary>
+        /// <param name="bucketName">Name of the bucket</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token</param>
+        Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default);
+
         /// <summary>A convenience method to automate a multipart upload</summary>
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="objectKey">The key of the object</param>

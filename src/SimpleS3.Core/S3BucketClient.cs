@@ -26,11 +26,6 @@ namespace Genbox.SimpleS3.Core
 
         public IBucketOperations BucketOperations { get; }
 
-        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
-        {
-            return BucketOperations.ListObjectsAsync(bucketName, config, token);
-        }
-
         public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
         {
             return BucketOperations.CreateBucketAsync(bucketName, config, token);
@@ -57,7 +52,7 @@ namespace Genbox.SimpleS3.Core
                     break;
 
                 string cToken = continuationToken;
-                response = await BucketOperations.ListObjectsAsync(bucketName, req => req.ContinuationToken = cToken, token).ConfigureAwait(false);
+                response = await _objectClient.ListObjectsAsync(bucketName, req => req.ContinuationToken = cToken, token).ConfigureAwait(false);
 
                 if (!response.IsSuccess)
                     return EmptyBucketStatus.RequestFailed;

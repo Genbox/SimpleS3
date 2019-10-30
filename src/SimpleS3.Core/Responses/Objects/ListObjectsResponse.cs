@@ -2,7 +2,7 @@
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Responses.S3Types;
 
-namespace Genbox.SimpleS3.Core.Responses.Buckets
+namespace Genbox.SimpleS3.Core.Responses.Objects
 {
     public class ListObjectsResponse : BaseResponse
     {

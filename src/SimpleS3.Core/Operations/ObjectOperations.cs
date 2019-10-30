@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -96,6 +95,11 @@ namespace Genbox.SimpleS3.Core.Operations
                 response.Content.InputStream = wrapper.Wrap(response.Content.AsStream(), response);
 
             return response;
+        }
+
+        public Task<ListObjectsResponse> ListObjectsAsync(ListObjectsRequest request, CancellationToken token = default)
+        {
+            return _requestHandler.SendRequestAsync<ListObjectsRequest, ListObjectsResponse>(request, token);
         }
     }
 }

@@ -60,7 +60,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(bucket, "multipart").ConfigureAwait(false);
 
                 //List the objects
-                List<S3Object> list = await BucketClient.ListAllObjectsAsync(bucket, true).ToListAsync().ConfigureAwait(false);
+                List<S3Object> list = await ObjectClient.ListAllObjectsAsync(bucket, true).ToListAsync().ConfigureAwait(false);
 
                 //Only 2 objects should be present, as one of them is only initiated
                 Assert.Equal(2, list.Count);

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Responses.Buckets;
+using Genbox.SimpleS3.Core.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -28,7 +29,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             Assert.True(delete2.IsSuccess);
             Assert.Equal(204, delete2.StatusCode);
 
-            ListObjectsResponse resp = await BucketClient.ListObjectsAsync(tempBucketName).ConfigureAwait(false);
+            ListObjectsResponse resp = await ObjectClient.ListObjectsAsync(tempBucketName).ConfigureAwait(false);
             Assert.False(resp.IsSuccess);
             Assert.Equal(404, resp.StatusCode);
         }

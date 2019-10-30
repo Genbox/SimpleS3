@@ -12,12 +12,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
     {
         IBucketOperations BucketOperations { get; }
 
-        /// <summary>List all objects within a bucket</summary>
-        /// <param name="bucketName">Name of the bucket</param>
-        /// <param name="config">A delegate to configure the request</param>
-        /// <param name="token">A cancellation token</param>
-        Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default);
-
         /// <summary>Creates a bucket</summary>
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="config">A delegate to configure the request</param>
@@ -37,7 +31,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        /// <returns></returns>
         Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest> config = null, CancellationToken token = default);
 
         /// <summary>Remove everything within a bucket, except for the bucket itself.</summary>

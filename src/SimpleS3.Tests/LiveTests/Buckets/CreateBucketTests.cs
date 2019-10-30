@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Responses.Buckets;
+using Genbox.SimpleS3.Core.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -30,7 +31,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             await ObjectClient.PutObjectStringAsync(tempBucketName, tempObjName, "hello").ConfigureAwait(false);
             await ObjectClient.PutObjectStringAsync(tempBucketName, tempObjName2, "world!", null, request => request.StorageClass = StorageClass.OneZoneIa).ConfigureAwait(false);
 
-            ListObjectsResponse gResp = await BucketClient.ListObjectsAsync(tempBucketName).ConfigureAwait(false);
+            ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(tempBucketName).ConfigureAwait(false);
             Assert.True(gResp.IsSuccess);
 
             Assert.Equal(2, gResp.KeyCount);
@@ -49,7 +50,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
             Assert.Equal(6, gResp.Objects[1].Size);
             Assert.Equal(StorageClass.OneZoneIa, gResp.Objects[1].StorageClass);
 
-            ListObjectsResponse gResp2 = await BucketClient.ListObjectsAsync(tempBucketName, request => request.EncodingType = EncodingType.Url).ConfigureAwait(false);
+            ListObjectsResponse gResp2 = await ObjectClient.ListObjectsAsync(tempBucketName, request => request.EncodingType = EncodingType.Url).ConfigureAwait(false);
             Assert.True(gResp2.IsSuccess);
             Assert.Equal(2, gResp2.KeyCount);
 

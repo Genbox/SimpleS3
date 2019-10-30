@@ -132,5 +132,13 @@ namespace Genbox.SimpleS3.Core
 
             return MultipartDownloadStatus.Ok;
         }
+
+        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
+        {
+            ListObjectsRequest req = new ListObjectsRequest(bucketName);
+            config?.Invoke(req);
+
+            return ObjectOperations.ListObjectsAsync(req, token);
+        }
     }
 }

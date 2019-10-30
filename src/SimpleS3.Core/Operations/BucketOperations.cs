@@ -27,14 +27,6 @@ namespace Genbox.SimpleS3.Core.Operations
             return _requestHandler.SendRequestAsync<ListBucketsRequest, ListBucketsResponse>(req, token);
         }
 
-        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
-        {
-            ListObjectsRequest req = new ListObjectsRequest(bucketName);
-            config?.Invoke(req);
-
-            return _requestHandler.SendRequestAsync<ListObjectsRequest, ListObjectsResponse>(req, token);
-        }
-
         public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
         {
             CreateBucketRequest req = new CreateBucketRequest(bucketName);

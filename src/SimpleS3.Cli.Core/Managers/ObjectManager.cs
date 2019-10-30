@@ -7,7 +7,6 @@ using Genbox.SimpleS3.Cli.Core.Enums;
 using Genbox.SimpleS3.Cli.Core.Helpers;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Requests.Objects.Types;
-using Genbox.SimpleS3.Core.Responses.Buckets;
 using Genbox.SimpleS3.Core.Responses.Objects;
 using Genbox.SimpleS3.Core.Responses.S3Types;
 

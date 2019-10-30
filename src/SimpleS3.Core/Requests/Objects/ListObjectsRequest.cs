@@ -1,7 +1,7 @@
 ﻿using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
 
-namespace Genbox.SimpleS3.Core.Requests.Buckets
+namespace Genbox.SimpleS3.Core.Requests.Objects
 {
     /// <summary>
     /// List the content of a bucket in chunks of up to 1000 objects at the time. To use this operation in an AWS Identity and Access Management

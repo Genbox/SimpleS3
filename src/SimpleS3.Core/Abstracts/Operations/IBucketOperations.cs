@@ -10,9 +10,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
     [PublicAPI]
     public interface IBucketOperations
     {
-        /// <summary>List objects within a bucket See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_ListObjectsV2.html for details</summary>
-        Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default);
-
         /// <summary>Creates a bucket See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_CreateBucket.html for details</summary>
         Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default);
 
