@@ -66,6 +66,9 @@ namespace Genbox.SimpleS3.Core
                 if (!response.IsSuccess)
                     return EmptyBucketStatus.RequestFailed;
 
+                if (response.KeyCount == 0)
+                    break;
+
                 DeleteObjectsResponse multiDelResponse = await _objectClient.DeleteObjectsAsync(bucketName, response.Objects.Select(x => x.ObjectKey), true, token: token).ConfigureAwait(false);
 
                 if (!multiDelResponse.IsSuccess)
