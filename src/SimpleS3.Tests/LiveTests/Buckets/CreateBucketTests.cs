@@ -1,66 +1,46 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 {
-    public class PutTests : LiveTestBase
+    public class CreateBucketTests : LiveTestBase
     {
-        public PutTests(ITestOutputHelper helper) : base(helper)
+        public CreateBucketTests(ITestOutputHelper helper) : base(helper)
         {
         }
 
         [Fact]
-        public async Task PutAndGet()
+        public async Task CreateStandard()
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.Acl = BucketCannedAcl.Private).ConfigureAwait(false);
+            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName).ConfigureAwait(false);
             Assert.True(pResp.IsSuccess);
 
-            //We prefix with a number here to keep sort order when we download the list of objects further down
-            string tempObjName = "object-1" + Guid.NewGuid();
-            string tempObjName2 = "object-2" + Guid.NewGuid();
-
-            await ObjectClient.PutObjectStringAsync(tempBucketName, tempObjName, "hello").ConfigureAwait(false);
-            await ObjectClient.PutObjectStringAsync(tempBucketName, tempObjName2, "world!", null, request => request.StorageClass = StorageClass.OneZoneIa).ConfigureAwait(false);
-
-            ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(tempBucketName).ConfigureAwait(false);
-            Assert.True(gResp.IsSuccess);
-
-            Assert.Equal(2, gResp.KeyCount);
-            Assert.Equal(2, gResp.Objects.Count);
-            Assert.Equal(string.Empty, gResp.Prefix);
-
-            Assert.Equal(tempObjName, gResp.Objects[0].ObjectKey);
-            Assert.Equal(DateTime.UtcNow, gResp.Objects[0].LastModifiedOn.DateTime, TimeSpan.FromSeconds(5));
-            Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", gResp.Objects[0].ETag);
-            Assert.Equal(5, gResp.Objects[0].Size);
-            Assert.Equal(StorageClass.Standard, gResp.Objects[0].StorageClass);
-
-            Assert.Equal(tempObjName2, gResp.Objects[1].ObjectKey);
-            Assert.Equal(DateTime.UtcNow, gResp.Objects[1].LastModifiedOn.DateTime, TimeSpan.FromSeconds(5));
-            Assert.Equal("\"08cf82251c975a5e9734699fadf5e9c0\"", gResp.Objects[1].ETag);
-            Assert.Equal(6, gResp.Objects[1].Size);
-            Assert.Equal(StorageClass.OneZoneIa, gResp.Objects[1].StorageClass);
-
-            ListObjectsResponse gResp2 = await ObjectClient.ListObjectsAsync(tempBucketName, request => request.EncodingType = EncodingType.Url).ConfigureAwait(false);
-            Assert.True(gResp2.IsSuccess);
-            Assert.Equal(2, gResp2.KeyCount);
-
-            //The keys should be URL encoded at this point
-            Assert.Equal(UrlHelper.UrlEncode(tempObjName), gResp.Objects[0].ObjectKey);
-            Assert.Equal(UrlHelper.UrlEncode(tempObjName2), gResp.Objects[1].ObjectKey);
+            //Delete again to cleanup
+            await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task PutWithAcl()
+        public async Task CreateWithCannedAcl()
+        {
+            string tempBucketName = "testbucket-" + Guid.NewGuid();
+
+            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.Acl = BucketCannedAcl.PublicReadWrite).ConfigureAwait(false);
+            Assert.True(pResp.IsSuccess);
+
+            //TODO: Check ACL once we have that functionality
+
+            //Delete again to cleanup
+            await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task CreateWithCustomAcl()
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
@@ -73,15 +53,25 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 req.AclGrantFullControl.AddEmail(TestConstants.TestEmail);
             }).ConfigureAwait(false);
             Assert.True(pResp.IsSuccess);
+
+            //TODO: Check ACL once we have that functionality
+
+            //Delete again to cleanup
+            await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task PutWithObjectLocking()
+        public async Task CreateWithObjectLocking()
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
             CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.EnableObjectLocking = true).ConfigureAwait(false);
             Assert.True(pResp.IsSuccess);
+
+            //TODO: Check locking is enabled once we have that functionality
+
+            //Delete again to cleanup
+            await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
         }
     }
 }
