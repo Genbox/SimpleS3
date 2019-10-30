@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -26,7 +26,7 @@ namespace Genbox.SimpleS3.Core.Fluent
 
         public async Task<MultipartDownloadStatus> ExecuteMultipartAsync(Stream output, CancellationToken token = default)
         {
-            IAsyncEnumerable<GetObjectResponse> async = _objectOperations.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
+            IAsyncEnumerable<GetObjectResponse> async = MultipartHelper.MultipartDownloadAsync(_objectOperations, _request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
 
             await foreach (GetObjectResponse resp in async.WithCancellation(token))
             {

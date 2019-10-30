@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Requests.Objects;
 using Genbox.SimpleS3.Core.Requests.Objects.Types;
@@ -108,7 +109,7 @@ namespace Genbox.SimpleS3.Core
             CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, objectKey);
             config?.Invoke(req);
 
-            IAsyncEnumerable<UploadPartResponse> asyncEnum = ObjectOperations.MultipartUploadAsync(req, data, partSize, numParallelParts, token);
+            IAsyncEnumerable<UploadPartResponse> asyncEnum = MultipartHelper.MultipartUploadAsync(ObjectOperations, req, data, partSize, numParallelParts, token);
 
             await foreach (UploadPartResponse obj in asyncEnum.WithCancellation(token))
             {
@@ -121,7 +122,7 @@ namespace Genbox.SimpleS3.Core
 
         public async Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, CancellationToken token = default)
         {
-            IAsyncEnumerable<GetObjectResponse> asyncEnum = ObjectOperations.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, null, token);
+            IAsyncEnumerable<GetObjectResponse> asyncEnum = MultipartHelper.MultipartDownloadAsync(ObjectOperations, bucketName, objectKey, output, bufferSize, numParallelParts, null, token);
 
             await foreach (GetObjectResponse obj in asyncEnum.WithCancellation(token))
             {

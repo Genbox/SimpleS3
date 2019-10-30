@@ -45,11 +45,5 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
 
         /// <summary>Get an object from an S3 bucket See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_GetObject.html for details</summary>
         Task<GetObjectResponse> GetObjectAsync(GetObjectRequest request, CancellationToken token = default);
-
-        /// <summary>Upload a steam using multipart upload</summary>
-        IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, CancellationToken token = default);
-
-        /// <summary>Download to a stream using multipart download</summary>
-        IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest> config = null, CancellationToken token = default);
     }
 }
