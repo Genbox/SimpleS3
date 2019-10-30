@@ -15,9 +15,7 @@ namespace Genbox.SimpleS3.Core.Extensions
 {
     public static class S3BucketClientExtensions
     {
-        /// <summary>
-        /// Delete a bucket
-        /// </summary>
+        /// <summary>Delete a bucket</summary>
         public static Task<DeleteBucketResponse> DeleteBucketAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
         {
             //Note: This method only exists to give a cleaner API. It provides no extra functionality.
@@ -28,9 +26,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return client.DeleteBucketAsync(bucketName, null, token);
         }
 
-        /// <summary>
-        /// Create a bucket
-        /// </summary>
+        /// <summary>Create a bucket</summary>
         public static Task<CreateBucketResponse> CreateBucketAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
         {
             //Note: This method only exists to give a cleaner API. It provides no extra functionality.
@@ -41,9 +37,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return client.CreateBucketAsync(bucketName, null, token);
         }
 
-        /// <summary>
-        /// List all multipart uploads
-        /// </summary>
+        /// <summary>List all multipart uploads</summary>
         public static async IAsyncEnumerable<S3Upload> ListAllMultipartUploadsAsync(this IS3BucketClient client, string bucketName, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
@@ -67,9 +61,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             } while (response.IsTruncated);
         }
 
-        /// <summary>
-        /// Delete all objects within a bucket and then delete the bucket itself.
-        /// </summary>
+        /// <summary>Delete all objects within a bucket and then delete the bucket itself.</summary>
         /// <returns></returns>
         public static async Task<DeleteBucketStatus> DeleteBucketRecursiveAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
         {
@@ -94,9 +86,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return DeleteBucketStatus.Ok;
         }
 
-        /// <summary>
-        /// List all buckets
-        /// </summary>
+        /// <summary>List all buckets</summary>
         public static async IAsyncEnumerable<S3Bucket> ListBucketsAsync(this IS3BucketClient client, Action<ListBucketsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             ListBucketsResponse response = await client.ListBucketsAsync(config, token).ConfigureAwait(false);

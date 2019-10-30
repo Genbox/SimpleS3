@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Responses.S3Types;
 using Xunit;
 using Xunit.Abstractions;
-using Genbox.SimpleS3.Core.Extensions;
 
 namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 {
