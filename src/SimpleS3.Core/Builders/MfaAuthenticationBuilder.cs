@@ -15,6 +15,12 @@ namespace Genbox.SimpleS3.Core.Builders
             return $"{_serialNumber} {_value}";
         }
 
+        public void Reset()
+        {
+            _serialNumber = null;
+            _value = null;
+        }
+
         public string HeaderName => null;
 
         public void SetAuth(string serialNumber, string value)

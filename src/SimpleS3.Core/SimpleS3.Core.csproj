@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Enums.NET" Version="2.3.2" />
     <PackageReference Include="FluentValidation" Version="8.5.0" />
-    <PackageReference Include="Genbox.HttpBuilders" Version="0.1.0-alpha8" />
+    <PackageReference Include="Genbox.HttpBuilders" Version="0.1.0-alpha10" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.0.0" />
     <PackageReference Include="Microsoft.Experimental.Collections" Version="1.0.6-e190117-3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />

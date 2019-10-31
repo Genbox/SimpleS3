@@ -27,6 +27,11 @@ namespace Genbox.SimpleS3.Core.Builders
             return JsonHelper.EncodeJson(_dict);
         }
 
+        public void Reset()
+        {
+            _dict?.Clear();
+        }
+
         public string HeaderName => null;
 
         public void AddEntry(string key, string value)

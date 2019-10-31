@@ -20,6 +20,11 @@ namespace Genbox.SimpleS3.Core.Builders
             return string.Join("&", _tags.Select(x => x.Key + '=' + x.Value));
         }
 
+        public void Reset()
+        {
+            _tags = null;
+        }
+
         public string HeaderName => null;
 
         //From https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html

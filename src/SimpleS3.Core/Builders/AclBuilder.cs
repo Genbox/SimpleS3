@@ -17,6 +17,7 @@ namespace Genbox.SimpleS3.Core.Builders
         private ISet<string> _emails;
         private ISet<string> _ids;
         private ISet<string> _uris;
+        private StringBuilder _sb;
 
         public string Build()
         {
@@ -34,16 +35,19 @@ namespace Genbox.SimpleS3.Core.Builders
             if (_uris != null)
                 count += _uris.Count;
 
-            StringBuilder sb = new StringBuilder(count * 50);
+            if (_sb == null)
+                _sb = new StringBuilder(100);
+            else
+                _sb.Clear();
 
             if (_emails != null)
             {
                 foreach (string email in _emails)
                 {
-                    sb.Append("emailAddress=\"").Append(email).Append('"');
+                    _sb.Append("emailAddress=\"").Append(email).Append('"');
 
                     if (--count != 0)
-                        sb.Append(',');
+                        _sb.Append(',');
                 }
             }
 
@@ -51,10 +55,10 @@ namespace Genbox.SimpleS3.Core.Builders
             {
                 foreach (string id in _ids)
                 {
-                    sb.Append("id=\"").Append(id).Append('"');
+                    _sb.Append("id=\"").Append(id).Append('"');
 
                     if (--count != 0)
-                        sb.Append(',');
+                        _sb.Append(',');
                 }
             }
 
@@ -62,14 +66,21 @@ namespace Genbox.SimpleS3.Core.Builders
             {
                 foreach (string uri in _uris)
                 {
-                    sb.Append("uri=\"").Append(uri).Append('"');
+                    _sb.Append("uri=\"").Append(uri).Append('"');
 
                     if (--count != 0)
-                        sb.Append(',');
+                        _sb.Append(',');
                 }
             }
 
-            return sb.ToString();
+            return _sb.ToString();
+        }
+
+        public void Reset()
+        {
+            _emails?.Clear();
+            _ids?.Clear();
+            _uris?.Clear();
         }
 
         public string HeaderName => null;
