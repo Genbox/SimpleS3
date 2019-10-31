@@ -8,7 +8,7 @@
   "Endpoint": null, //Set to https://play.min.io:9000/ if you want to use Minio's play server
 
   "Proxy": {
-    "UseProxy": true,
+    "UseProxy": false,
     "ProxyAddress": "http://127.0.0.1:8888"
   },
 
