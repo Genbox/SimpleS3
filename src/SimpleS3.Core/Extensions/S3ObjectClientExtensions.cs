@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -69,6 +69,9 @@ namespace Genbox.SimpleS3.Core.Extensions
 
                 if (!multiDelResponse.IsSuccess)
                     return DeleteAllObjectsStatus.RequestFailed;
+
+                if (multiDelResponse.Errors.Count > 0)
+                    return DeleteAllObjectsStatus.ObjectDeleteFailed;
 
                 continuationToken = response.NextContinuationToken;
             } while (response.IsTruncated);

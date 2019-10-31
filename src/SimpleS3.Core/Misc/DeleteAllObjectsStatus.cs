@@ -4,6 +4,7 @@
     {
         Unknown = 0,
         Ok,
-        RequestFailed
+        RequestFailed,
+        ObjectDeleteFailed
     }
 }
