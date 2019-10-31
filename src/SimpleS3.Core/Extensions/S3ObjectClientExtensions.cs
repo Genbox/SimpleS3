@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,32 +43,6 @@ namespace Genbox.SimpleS3.Core.Extensions
             return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x)), config, token);
         }
 
-        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> objectKeys, bool quiet = true, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
-        {
-            Validator.RequireNotNull(client, nameof(client));
-            Validator.RequireNotNull(bucketName, nameof(bucketName));
-            Validator.RequireNotNull(objectKeys, nameof(objectKeys));
-
-            return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x)), req =>
-            {
-                req.Mfa = mfa;
-                req.Quiet = quiet;
-            }, token);
-        }
-
-        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<S3DeleteInfo> objectKeys, bool quiet = true, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
-        {
-            Validator.RequireNotNull(client, nameof(client));
-            Validator.RequireNotNull(bucketName, nameof(bucketName));
-            Validator.RequireNotNull(objectKeys, nameof(objectKeys));
-
-            return client.DeleteObjectsAsync(bucketName, objectKeys, req =>
-            {
-                req.Mfa = mfa;
-                req.Quiet = quiet;
-            }, token);
-        }
-
         /// <summary>
         /// Delete all objects within the bucket
         /// </summary>
@@ -91,7 +65,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                 if (response.KeyCount == 0)
                     break;
 
-                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, response.Objects.Select(x => x.ObjectKey), true, token: token).ConfigureAwait(false);
+                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, response.Objects.Select(x => x.ObjectKey), req => req.Quiet = false, token).ConfigureAwait(false);
 
                 if (!multiDelResponse.IsSuccess)
                     return DeleteAllObjectsStatus.RequestFailed;
