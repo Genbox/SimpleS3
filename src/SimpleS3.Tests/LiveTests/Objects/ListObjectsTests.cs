@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Xunit;
@@ -62,9 +61,9 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             await CreateTempBucketAsync(async bucket =>
             {
                 string tempObjName = "object-" + Guid.NewGuid();
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello", config: request => request.AclGrantFullControl.AddEmail(TestConstants.TestEmail)).ConfigureAwait(false);
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello", config: req => req.AclGrantFullControl.AddEmail(TestConstants.TestEmail)).ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, request => request.FetchOwner = true).ConfigureAwait(false);
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.FetchOwner = true).ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
 
                 S3Object obj = gResp.Objects.First();
@@ -85,7 +84,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, request => request.Prefix = "object").ConfigureAwait(false);
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.Prefix = "object").ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
 
                 Assert.Equal(1, gResp.KeyCount);
@@ -108,7 +107,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, request => request.Delimiter = "-").ConfigureAwait(false);
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.Delimiter = "-").ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
 
                 Assert.Equal("-", gResp.Delimiter);
@@ -124,24 +123,18 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         {
             await CreateTempBucketAsync(async bucket =>
             {
-                string tempObjName = "object-" + Guid.NewGuid();
-                string tempObjName2 = "something-" + Guid.NewGuid();
+                string tempObjName = "!#/()";
 
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, string.Empty).ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, request => request.Delimiter = "-").ConfigureAwait(false);
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
+                
+                Assert.Equal(EncodingType.Url, gResp.EncodingType);
 
-                Assert.Equal("-", gResp.Delimiter);
-                Assert.Equal(2, gResp.KeyCount);
-                Assert.Equal(2, gResp.CommonPrefixes.Count);
-                Assert.Equal("object-", gResp.CommonPrefixes[0]);
-                Assert.Equal("something-", gResp.CommonPrefixes[1]);
+                S3Object obj = Assert.Single(gResp.Objects);
 
-                //The keys should be URL encoded at this point
-                Assert.Equal(UrlHelper.UrlEncode(tempObjName), gResp.Objects[0].ObjectKey);
-                Assert.Equal(UrlHelper.UrlEncode(tempObjName2), gResp.Objects[1].ObjectKey);
+                Assert.Equal("%21%23/%28%29", obj.ObjectKey);
 
             }).ConfigureAwait(false);
         }

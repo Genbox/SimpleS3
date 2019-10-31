@@ -14,9 +14,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Buckets.XML
         [XmlElement]
         public List<CommonPrefix> CommonPrefixes { get; set; }
 
-        [XmlElement("Encoding-Type")]
         public string EncodingType { get; set; }
-
         public string ContinuationToken { get; set; }
         public string NextContinuationToken { get; set; }
         public string StartAfter { get; set; }

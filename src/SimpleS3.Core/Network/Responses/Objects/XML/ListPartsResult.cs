@@ -8,10 +8,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects.XML
     public sealed class ListPartsResult
     {
         public string Bucket { get; set; }
-
-        [XmlElement("Encoding-Type")]
         public string EncodingType { get; set; }
-
         public string Key { get; set; }
         public string UploadId { get; set; }
         public Initiator Initiator { get; set; }

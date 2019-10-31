@@ -12,8 +12,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Buckets.XML
         public string UploadIdMarker { get; set; }
         public string NextKeyMarker { get; set; }
         public string NextUploadIdMarker { get; set; }
-
-        [XmlElement("Encoding-Type")]
         public string EncodingType { get; set; }
 
         public int MaxUploads { get; set; }
