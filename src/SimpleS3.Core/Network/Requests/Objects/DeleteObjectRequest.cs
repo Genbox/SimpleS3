@@ -15,9 +15,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             Mfa = new MfaAuthenticationBuilder();
         }
 
-        public string VersionId { get; set; }
-
         /// <summary>If multi-factor approval is activated, you need to supply MFA information.</summary>
         public MfaAuthenticationBuilder Mfa { get; internal set; }
+
+        public string VersionId { get; set; }
     }
 }

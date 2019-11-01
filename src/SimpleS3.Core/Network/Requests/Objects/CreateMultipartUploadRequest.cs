@@ -7,10 +7,6 @@ using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Core.Network.SharedProperties;
-using IHasContent = Genbox.SimpleS3.Core.Network.Requests.Properties.IHasContent;
-using IHasLock = Genbox.SimpleS3.Core.Network.Requests.Properties.IHasLock;
-using IHasSse = Genbox.SimpleS3.Core.Network.Requests.Properties.IHasSse;
-using IHasSseCustomerKey = Genbox.SimpleS3.Core.Network.Requests.Properties.IHasSseCustomerKey;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
@@ -57,22 +53,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public string WebsiteRedirectLocation { get; set; }
 
         /// <inheritdoc />
-        public ObjectCannedAcl Acl { get; set; }
-
-        /// <inheritdoc />
-        public AclBuilder AclGrantRead { get; internal set; }
-
-        /// <inheritdoc />
-        public AclBuilder AclGrantReadAcp { get; internal set; }
-
-        /// <inheritdoc />
-        public AclBuilder AclGrantWriteAcp { get; internal set; }
-
-        /// <inheritdoc />
-        public AclBuilder AclGrantFullControl { get; internal set; }
-
-        /// <inheritdoc />
         public CacheControlBuilder CacheControl { get; internal set; }
+
+        /// <inheritdoc />
+        public Stream Content { get; set; }
 
         /// <inheritdoc />
         public ContentDispositionBuilder ContentDisposition { get; internal set; }
@@ -90,9 +74,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public DateTimeOffset? Expires { get; set; }
 
         /// <inheritdoc />
-        public Stream Content { get; set; }
-
-        /// <inheritdoc />
         public LockMode LockMode { get; set; }
 
         /// <inheritdoc />
@@ -100,6 +81,30 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         /// <inheritdoc />
         public bool? LockLegalHold { get; set; }
+
+        /// <inheritdoc />
+        public ObjectCannedAcl Acl { get; set; }
+
+        /// <inheritdoc />
+        public AclBuilder AclGrantRead { get; internal set; }
+
+        /// <inheritdoc />
+        public AclBuilder AclGrantReadAcp { get; internal set; }
+
+        /// <inheritdoc />
+        public AclBuilder AclGrantWriteAcp { get; internal set; }
+
+        /// <inheritdoc />
+        public AclBuilder AclGrantFullControl { get; internal set; }
+
+        /// <inheritdoc />
+        public SseAlgorithm SseAlgorithm { get; set; }
+
+        /// <inheritdoc />
+        public string SseKmsKeyId { get; set; }
+
+        /// <inheritdoc />
+        public KmsContextBuilder SseContext { get; set; }
 
         /// <inheritdoc />
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
@@ -129,15 +134,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             if (_sseCustomerKey != null)
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
-
-        /// <inheritdoc />
-        public SseAlgorithm SseAlgorithm { get; set; }
-
-        /// <inheritdoc />
-        public string SseKmsKeyId { get; set; }
-
-        /// <inheritdoc />
-        public KmsContextBuilder SseContext { get; set; }
 
         /// <inheritdoc />
         public StorageClass StorageClass { get; set; }

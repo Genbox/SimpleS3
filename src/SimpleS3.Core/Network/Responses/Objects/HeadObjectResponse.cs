@@ -21,17 +21,17 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public string WebsiteRedirectLocation { get; internal set; }
 
         public int? NumberOfParts { get; internal set; }
+        public string CacheControl { get; internal set; }
+        public string ETag { get; internal set; }
 
         public bool IsDeleteMarker { get; internal set; }
         public string ExpiresOn { get; internal set; }
-        public string VersionId { get; internal set; }
-        public string CacheControl { get; internal set; }
-        public string ETag { get; internal set; }
         public LockMode LockMode { get; internal set; }
         public DateTimeOffset LockRetainUntilDate { get; internal set; }
         public bool LockLegalHold { get; internal set; }
         public IDictionary<string, string> Metadata { get; internal set; }
         public ReplicationStatus ReplicationStatus { get; internal set; }
+        public bool RequestCharged { get; internal set; }
         public string ContentType { get; internal set; }
         public string ContentDisposition { get; internal set; }
         public string ContentEncoding { get; internal set; }
@@ -43,6 +43,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; internal set; }
         public byte[] SseCustomerKeyMd5 { get; internal set; }
         public StorageClass StorageClass { get; internal set; }
-        public bool RequestCharged { get; internal set; }
+        public string VersionId { get; internal set; }
     }
 }

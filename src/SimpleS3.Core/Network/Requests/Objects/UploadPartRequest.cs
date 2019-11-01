@@ -3,8 +3,8 @@ using System.IO;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Core.Network.SharedProperties;
-using IHasSseCustomerKey = Genbox.SimpleS3.Core.Network.Requests.Properties.IHasSseCustomerKey;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
@@ -35,8 +35,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// <summary>Content of the part</summary>
         public Stream Content { get; }
 
-        public string UploadId { get; }
-        
         /// <inheritdoc />
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
 
@@ -65,5 +63,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             if (_sseCustomerKey != null)
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
+
+        public string UploadId { get; }
     }
 }

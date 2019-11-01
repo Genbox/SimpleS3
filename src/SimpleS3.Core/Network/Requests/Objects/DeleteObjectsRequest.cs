@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         }
 
         /// <summary>If multi-factor approval is activated, you need to supply MFA information.</summary>
-        public MfaAuthenticationBuilder Mfa { get; internal set; }
+        public MfaAuthenticationBuilder Mfa { get; }
 
         /// <summary>In quiet mode the response includes only keys where the delete operation encountered an error.</summary>
         public bool Quiet { get; set; }

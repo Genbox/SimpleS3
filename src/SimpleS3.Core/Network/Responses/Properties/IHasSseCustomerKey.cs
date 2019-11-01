@@ -5,7 +5,8 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Properties
     public interface IHasSseCustomerKey
     {
         /// <summary>
-        /// If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.
+        /// If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the
+        /// encryption algorithm used.
         /// </summary>
         SseCustomerAlgorithm SseCustomerAlgorithm { get; }
 

@@ -4,8 +4,6 @@ using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Core.Network.SharedProperties;
-using IHasCache = Genbox.SimpleS3.Core.Network.Requests.Properties.IHasCache;
-using IHasSseCustomerKey = Genbox.SimpleS3.Core.Network.Requests.Properties.IHasSseCustomerKey;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
@@ -35,8 +33,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// Simple Storage Service Developer Guide.
         /// </summary>
         public int? PartNumber { get; set; }
-
-        public string VersionId { get; set; }
 
         /// <inheritdoc />
         public DateTimeOffset? IfModifiedSince { get; set; }
@@ -99,5 +95,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             if (_sseCustomerKey != null)
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
+
+        public string VersionId { get; set; }
     }
 }

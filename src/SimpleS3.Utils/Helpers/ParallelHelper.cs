@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Utils.Helpers
                 {
                     await semaphore.WaitAsync().ConfigureAwait(false);
 
-                    queue.Enqueue(PerformTask<T>(task, semaphore));
+                    queue.Enqueue(PerformTask(task, semaphore));
                 }
 
                 await Task.WhenAll(queue).ConfigureAwait(false);

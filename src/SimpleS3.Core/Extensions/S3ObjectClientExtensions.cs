@@ -43,9 +43,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x)), config, token);
         }
 
-        /// <summary>
-        /// Delete all objects within the bucket
-        /// </summary>
+        /// <summary>Delete all objects within the bucket</summary>
         public static async Task<DeleteAllObjectsStatus> DeleteAllObjectsAsync(this IS3ObjectClient client, string bucketName, CancellationToken token = default)
         {
             string continuationToken = null;

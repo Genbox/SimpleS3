@@ -7,7 +7,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Properties
     [PublicAPI]
     public interface IHasSse
     {
-
         /// <summary>Specifies the server-side encryption algorithm to use when Amazon S3 creates an object.</summary>
         SseAlgorithm SseAlgorithm { get; set; }
 

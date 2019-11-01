@@ -2,9 +2,7 @@
 {
     public interface IHasRequestCharged
     {
-        /// <summary>
-        /// If present, indicates that the requester was successfully charged for the request.
-        /// </summary>
+        /// <summary>If present, indicates that the requester was successfully charged for the request.</summary>
         bool RequestCharged { get; }
     }
 }

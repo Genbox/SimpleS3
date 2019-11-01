@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Core
         public bool EnableBucketNameValidation { get; set; } = true;
 
         public KeyValidationMode ObjectKeyValidationMode { get; set; } = KeyValidationMode.AsciiMode;
-        
+
         public bool AutoUrlDecodeResponses { get; set; } = true;
     }
 }

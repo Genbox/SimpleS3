@@ -7,8 +7,8 @@ namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
     {
         public int PartNumber { get; internal set; }
         public DateTimeOffset LastModified { get; internal set; }
-        public string ETag { get; internal set; }
         public long Size { get; internal set; }
+        public string ETag { get; internal set; }
 
         public override string ToString()
         {

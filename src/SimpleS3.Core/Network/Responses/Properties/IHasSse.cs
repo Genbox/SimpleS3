@@ -12,9 +12,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Properties
         /// </summary>
         SseAlgorithm SseAlgorithm { get; }
 
-        /// <summary>
-        /// If present, specifies the ID of the AWS Key Management Service (KMS) customer master key (CMK) that was used for the object.
-        /// </summary>
+        /// <summary>If present, specifies the ID of the AWS Key Management Service (KMS) customer master key (CMK) that was used for the object.</summary>
         string SseKmsKeyId { get; }
     }
 }

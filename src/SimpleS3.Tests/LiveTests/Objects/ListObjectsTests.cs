@@ -31,115 +31,6 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task ListStandard()
-        {
-            await CreateTempBucketAsync(async bucket =>
-            {
-                string tempObjName = "object-" + Guid.NewGuid();
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
-
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket).ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
-
-                Assert.Equal(bucket, gResp.BucketName);
-                Assert.Equal(1, gResp.KeyCount);
-                Assert.Equal(1000, gResp.MaxKeys);
-                Assert.False(gResp.IsTruncated);
-
-                S3Object obj = gResp.Objects.First();
-                Assert.Equal(tempObjName, obj.ObjectKey);
-                Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", obj.ETag);
-                Assert.Equal(StorageClass.Standard, obj.StorageClass);
-                Assert.Equal(5, obj.Size);
-                Assert.Equal(DateTime.UtcNow, obj.LastModifiedOn.UtcDateTime, TimeSpan.FromSeconds(5));
-            }).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task ListWithOwner()
-        {
-            await CreateTempBucketAsync(async bucket =>
-            {
-                string tempObjName = "object-" + Guid.NewGuid();
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello", config: req => req.AclGrantFullControl.AddEmail(TestConstants.TestEmail)).ConfigureAwait(false);
-
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.FetchOwner = true).ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
-
-                S3Object obj = gResp.Objects.First();
-                Assert.Equal(TestConstants.TestUsername, obj.Owner.Name);
-                Assert.Equal(TestConstants.TestUserId, obj.Owner.Id);
-
-            }).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task ListWithPrefix()
-        {
-            await CreateTempBucketAsync(async bucket =>
-            {
-                string tempObjName = "object-" + Guid.NewGuid();
-                string tempObjName2 = "something-" + Guid.NewGuid();
-
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
-
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.Prefix = "object").ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
-
-                Assert.Equal(1, gResp.KeyCount);
-                Assert.Equal("object", gResp.Prefix);
-
-                S3Object obj = Assert.Single(gResp.Objects);
-
-                Assert.Equal(tempObjName, obj.ObjectKey);
-            }).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task ListWithDelimiter()
-        {
-            await CreateTempBucketAsync(async bucket =>
-            {
-                string tempObjName = "object-" + Guid.NewGuid();
-                string tempObjName2 = "something-" + Guid.NewGuid();
-
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
-
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.Delimiter = "-").ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
-
-                Assert.Equal("-", gResp.Delimiter);
-                Assert.Equal(2, gResp.KeyCount);
-                Assert.Equal(2, gResp.CommonPrefixes.Count);
-                Assert.Equal("object-", gResp.CommonPrefixes[0]);
-                Assert.Equal("something-", gResp.CommonPrefixes[1]);
-            }).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task ListWithEncoding()
-        {
-            await CreateTempBucketAsync(async bucket =>
-            {
-                string tempObjName = "!#/()";
-
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, string.Empty).ConfigureAwait(false);
-
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
-                
-                Assert.Equal(EncodingType.Url, gResp.EncodingType);
-
-                S3Object obj = Assert.Single(gResp.Objects);
-
-                Assert.Equal("%21%23/%28%29", obj.ObjectKey);
-
-            }).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task ListMoreThanMaxKeys()
         {
             await CreateTempBucketAsync(async bucket =>
@@ -177,7 +68,113 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
                 Assert.Equal(gResp.NextContinuationToken, gResp2.ContinuationToken);
                 Assert.Null(gResp2.NextContinuationToken);
                 Assert.False(gResp2.IsTruncated);
+            }).ConfigureAwait(false);
+        }
 
+        [Fact]
+        public async Task ListStandard()
+        {
+            await CreateTempBucketAsync(async bucket =>
+            {
+                string tempObjName = "object-" + Guid.NewGuid();
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
+
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket).ConfigureAwait(false);
+                Assert.True(gResp.IsSuccess);
+
+                Assert.Equal(bucket, gResp.BucketName);
+                Assert.Equal(1, gResp.KeyCount);
+                Assert.Equal(1000, gResp.MaxKeys);
+                Assert.False(gResp.IsTruncated);
+
+                S3Object obj = gResp.Objects.First();
+                Assert.Equal(tempObjName, obj.ObjectKey);
+                Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", obj.ETag);
+                Assert.Equal(StorageClass.Standard, obj.StorageClass);
+                Assert.Equal(5, obj.Size);
+                Assert.Equal(DateTime.UtcNow, obj.LastModifiedOn.UtcDateTime, TimeSpan.FromSeconds(5));
+            }).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ListWithDelimiter()
+        {
+            await CreateTempBucketAsync(async bucket =>
+            {
+                string tempObjName = "object-" + Guid.NewGuid();
+                string tempObjName2 = "something-" + Guid.NewGuid();
+
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
+
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.Delimiter = "-").ConfigureAwait(false);
+                Assert.True(gResp.IsSuccess);
+
+                Assert.Equal("-", gResp.Delimiter);
+                Assert.Equal(2, gResp.KeyCount);
+                Assert.Equal(2, gResp.CommonPrefixes.Count);
+                Assert.Equal("object-", gResp.CommonPrefixes[0]);
+                Assert.Equal("something-", gResp.CommonPrefixes[1]);
+            }).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ListWithEncoding()
+        {
+            await CreateTempBucketAsync(async bucket =>
+            {
+                string tempObjName = "!#/()";
+
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, string.Empty).ConfigureAwait(false);
+
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
+                Assert.True(gResp.IsSuccess);
+
+                Assert.Equal(EncodingType.Url, gResp.EncodingType);
+
+                S3Object obj = Assert.Single(gResp.Objects);
+
+                Assert.Equal("%21%23/%28%29", obj.ObjectKey);
+            }).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ListWithOwner()
+        {
+            await CreateTempBucketAsync(async bucket =>
+            {
+                string tempObjName = "object-" + Guid.NewGuid();
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello", config: req => req.AclGrantFullControl.AddEmail(TestConstants.TestEmail)).ConfigureAwait(false);
+
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.FetchOwner = true).ConfigureAwait(false);
+                Assert.True(gResp.IsSuccess);
+
+                S3Object obj = gResp.Objects.First();
+                Assert.Equal(TestConstants.TestUsername, obj.Owner.Name);
+                Assert.Equal(TestConstants.TestUserId, obj.Owner.Id);
+            }).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ListWithPrefix()
+        {
+            await CreateTempBucketAsync(async bucket =>
+            {
+                string tempObjName = "object-" + Guid.NewGuid();
+                string tempObjName2 = "something-" + Guid.NewGuid();
+
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
+
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.Prefix = "object").ConfigureAwait(false);
+                Assert.True(gResp.IsSuccess);
+
+                Assert.Equal(1, gResp.KeyCount);
+                Assert.Equal("object", gResp.Prefix);
+
+                S3Object obj = Assert.Single(gResp.Objects);
+
+                Assert.Equal(tempObjName, obj.ObjectKey);
             }).ConfigureAwait(false);
         }
     }
