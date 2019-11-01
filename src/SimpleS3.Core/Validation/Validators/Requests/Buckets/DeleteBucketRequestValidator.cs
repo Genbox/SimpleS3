@@ -3,9 +3,9 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Validation.Validators.Requests.Buckets
 {
-    public class CreateBucketRequestValidator : RequestWithoutObjectKeyBase<CreateBucketRequest>
+    public class DeleteBucketRequestValidator : RequestWithoutObjectKeyBase<DeleteBucketRequest>
     {
-        public CreateBucketRequestValidator(IOptions<S3Config> config) : base(config)
+        public DeleteBucketRequestValidator(IOptions<S3Config> config) : base(config)
         {
         }
     }
