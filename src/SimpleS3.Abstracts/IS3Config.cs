@@ -46,9 +46,8 @@ namespace Genbox.SimpleS3.Abstracts
         bool EnableBucketNameValidation { get; set; }
 
         /// <summary>
-        /// Controls the level of validation that is applied to object keys. By default we only allow a set of safe characters. A higher level means
-        /// fewer special characters are allowed.
+        /// Controls the mode of validation that is applied to object keys. By default we only allow safe ASCII characters and a few special chars.
         /// </summary>
-        Level ObjectKeyValidationLevel { get; set; }
+        KeyValidationMode ObjectKeyValidationMode { get; set; }
     }
 }

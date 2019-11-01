@@ -25,24 +25,24 @@ namespace Genbox.SimpleS3.Utils.Tests
         }
 
         [Theory]
-        [InlineData("abcdeABCDE01234!-_.*'()", Level.Level3)]
-        [InlineData("..", Level.Level3)]
-        [InlineData("4my-organization", Level.Level3)]
-        [InlineData("my.great_photos-2014/jan/myvacation.jpg", Level.Level3)]
-        [InlineData("videos/2014/birthday/video1.wmv", Level.Level3)]
-        [InlineData("this is a test?", Level.Level2)]
-        [InlineData("#[]<>", Level.Level1)]
-        [InlineData("!\"#¤%&/()=?", Level.Level0)]
-        public void ObjectKeySuccessTest(string input, Level mode)
+        [InlineData("abcdeABCDE01234!-_.*'()", KeyValidationMode.SafeMode)]
+        [InlineData("..", KeyValidationMode.SafeMode)]
+        [InlineData("4my-organization", KeyValidationMode.SafeMode)]
+        [InlineData("my.great_photos-2014/jan/myvacation.jpg", KeyValidationMode.SafeMode)]
+        [InlineData("videos/2014/birthday/video1.wmv", KeyValidationMode.SafeMode)]
+        [InlineData("this is a test?", KeyValidationMode.AsciiMode)]
+        [InlineData("#[]<>", KeyValidationMode.ExtendedAsciiMode)]
+        [InlineData("!\"#¤%&/()=?", KeyValidationMode.ExtendedAsciiMode)]
+        public void ObjectKeySuccessTest(string input, KeyValidationMode mode)
         {
             Assert.True(InputValidator.TryValidateObjectKey(input, mode, out _));
         }
 
         [Theory]
-        [InlineData(" ", Level.Level3)]
-        [InlineData(".\\.", Level.Level3)]
-        [InlineData("a/b[].jpg", Level.Level3)]
-        public void ObjectKeyFailTest(string input, Level mode)
+        [InlineData(" ", KeyValidationMode.SafeMode)]
+        [InlineData(".\\.", KeyValidationMode.SafeMode)]
+        [InlineData("a/b[].jpg", KeyValidationMode.SafeMode)]
+        public void ObjectKeyFailTest(string input, KeyValidationMode mode)
         {
             Assert.False(InputValidator.TryValidateObjectKey(input, mode, out _));
         }

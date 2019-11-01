@@ -89,7 +89,7 @@ namespace Genbox.SimpleS3.Utils
             }
         }
 
-        public static bool TryValidateObjectKey(string objectKey, Level mode, out ValidationStatus status)
+        public static bool TryValidateObjectKey(string objectKey, KeyValidationMode mode, out ValidationStatus status)
         {
             if (string.IsNullOrEmpty(objectKey))
             {
@@ -103,7 +103,7 @@ namespace Genbox.SimpleS3.Utils
                 return false;
             }
 
-            if (mode == Level.Level0)
+            if (mode == KeyValidationMode.Unrestricted)
             {
                 status = ValidationStatus.Ok;
                 return true;
@@ -124,7 +124,14 @@ namespace Genbox.SimpleS3.Utils
                 if (CharHelper.OneOf(c, '/', '!', '-', '_', '.', '*', '\'', '(', ')'))
                     continue;
 
-                if (mode == Level.Level3)
+                //0xD800 to 0xDFFF are reserved code points in UTF-16. Since they will always be URL encoded to %EF%BF%BD (the � char) in UTF-8
+                if (CharHelper.InRange(c, '\uD800', '\uDFFF'))
+                {
+                    status = ValidationStatus.WrongFormat;
+                    return false;
+                }
+
+                if (mode == KeyValidationMode.SafeMode)
                 {
                     status = ValidationStatus.WrongFormat;
                     return false;
@@ -136,7 +143,7 @@ namespace Genbox.SimpleS3.Utils
                 if (CharHelper.InRange(c, (char)0, (char)31) || c == (char)127)
                     continue;
 
-                if (mode == Level.Level2)
+                if (mode == KeyValidationMode.AsciiMode)
                 {
                     status = ValidationStatus.WrongFormat;
                     return false;
@@ -148,7 +155,7 @@ namespace Genbox.SimpleS3.Utils
                 if (CharHelper.InRange(c, (char)128, (char)255))
                     continue;
 
-                if (mode == Level.Level1)
+                if (mode == KeyValidationMode.ExtendedAsciiMode)
                 {
                     status = ValidationStatus.WrongFormat;
                     return false;
@@ -159,7 +166,7 @@ namespace Genbox.SimpleS3.Utils
             return true;
         }
 
-        public static void ValidateObjectKey(string bucketName, Level mode)
+        public static void ValidateObjectKey(string bucketName, KeyValidationMode mode)
         {
             Validator.RequireNotNull(bucketName, nameof(bucketName));
 
@@ -264,6 +271,26 @@ namespace Genbox.SimpleS3.Utils
                 default:
                     throw new ArgumentException("Failed to validate key id");
             }
+        }
+
+        public static bool ContainsInvalidXml(string xml)
+        {
+            if (string.IsNullOrEmpty(xml))
+                return false;
+
+            foreach (char c in xml)
+            {
+                //Invalid 
+
+                if (c == '\"' || c == '\'' || c == '<' || c == '>' || c == '&' || c == '\uFFFE' || c == '\uFFFF')
+                    return true;
+
+                //See https://www.w3.org/TR/unicode-xml/#Noncharacters
+                if (CharHelper.InRange(c, '\uFDD0', '\uFDEF'))
+                    return true;
+            }
+
+            return false;
         }
     }
 }
