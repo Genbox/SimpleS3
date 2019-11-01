@@ -176,7 +176,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             //Only marshal successful responses
             if (response.IsSuccess)
-                _marshaller.MarshalResponse(request, response, headers, responseStream);
+                _marshaller.MarshalResponse(_options.Value, request, response, headers, responseStream);
 
             return response;
         }

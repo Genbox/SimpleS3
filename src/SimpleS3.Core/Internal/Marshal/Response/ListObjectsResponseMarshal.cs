@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Helpers;
@@ -18,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
     [UsedImplicitly]
     internal class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsRequest, ListObjectsResponse>
     {
-        public void MarshalResponse(ListObjectsRequest request, ListObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IS3Config config, ListObjectsRequest request, ListObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             XmlSerializer s = new XmlSerializer(typeof(ListBucketResult));
 

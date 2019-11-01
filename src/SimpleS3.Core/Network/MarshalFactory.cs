@@ -44,10 +44,10 @@ namespace Genbox.SimpleS3.Core.Network
             return null;
         }
 
-        public void MarshalResponse<TRequest, TResponse>(TRequest request, TResponse response, IDictionary<string, string> headers, Stream responseStream) where TRequest : IRequest where TResponse : IResponse
+        public void MarshalResponse<TRequest, TResponse>(IS3Config config, TRequest request, TResponse response, IDictionary<string, string> headers, Stream responseStream) where TRequest : IRequest where TResponse : IResponse
         {
             if (_responseMarshals.TryGetValue(typeof(TResponse), out IResponseMarshal marshaller))
-                ((IResponseMarshal<TRequest, TResponse>)marshaller).MarshalResponse(request, response, headers, responseStream);
+                ((IResponseMarshal<TRequest, TResponse>)marshaller).MarshalResponse(config, request, response, headers, responseStream);
         }
     }
 }

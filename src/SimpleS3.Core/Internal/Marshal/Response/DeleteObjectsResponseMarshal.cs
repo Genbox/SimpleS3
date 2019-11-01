@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Abstracts.Marshal;
@@ -20,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
     [UsedImplicitly]
     internal class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObjectsRequest, DeleteObjectsResponse>
     {
-        public void MarshalResponse(DeleteObjectsRequest request, DeleteObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IS3Config config, DeleteObjectsRequest request, DeleteObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.RequestCharged = string.Equals("RequestPayer", headers.GetHeader(AmzHeaders.XAmzVersionId), StringComparison.OrdinalIgnoreCase);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
@@ -17,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
     [UsedImplicitly]
     internal class CompleteMultipartUploadResponseMarshal : IResponseMarshal<CompleteMultipartUploadRequest, CompleteMultipartUploadResponse>
     {
-        public void MarshalResponse(CompleteMultipartUploadRequest request, CompleteMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IS3Config config, CompleteMultipartUploadRequest request, CompleteMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.ExpiresOn = headers.GetHeader(AmzHeaders.XAmzExpiration);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSSE);

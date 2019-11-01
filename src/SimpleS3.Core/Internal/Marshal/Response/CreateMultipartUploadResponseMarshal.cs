@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
@@ -18,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
     [UsedImplicitly]
     internal class CreateMultipartUploadResponseMarshal : IResponseMarshal<CreateMultipartUploadRequest, CreateMultipartUploadResponse>
     {
-        public void MarshalResponse(CreateMultipartUploadRequest request, CreateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IS3Config config, CreateMultipartUploadRequest request, CreateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Iso8601DateTimeExt);
             response.AbortRuleId = headers.GetHeader(AmzHeaders.XAmzAbortDate);
