@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
@@ -18,16 +17,26 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         [InlineData("This/Should/Look/Like/Directories/File.txt")]
         [InlineData("_\\_")]
         [InlineData("~")]
+        [InlineData("/")]
         [InlineData(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~/")]
-        public async Task NameTests(string name)
+        public async Task TestValidCharacters(string name)
         {
-            await ObjectClient.PutObjectStringAsync(BucketName, name, name).ConfigureAwait(false);
+            PutObjectResponse putResp = await ObjectClient.PutObjectStringAsync(BucketName, name, string.Empty).ConfigureAwait(false);
+            Assert.True(putResp.IsSuccess);
 
-            GetObjectResponse dlResp = await ObjectClient.GetObjectAsync(BucketName, name).ConfigureAwait(false);
-            Assert.Equal("binary/octet-stream", dlResp.ContentType);
-            Assert.Equal(name.Length, dlResp.ContentLength);
+            GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, name).ConfigureAwait(false);
+            Assert.True(getResp.IsSuccess);
+        }
 
-            Assert.Equal(name, Encoding.UTF8.GetString(await dlResp.Content.AsDataAsync().ConfigureAwait(false)));
+        [Theory]
+        [InlineData(".")]
+        [InlineData("\0")]
+        public async Task TestInvalidCharacters(string name)
+        {
+            //These 2 test cases came after an exhaustive search in the whole UTF-16 character space.
+
+            PutObjectResponse putResp = await ObjectClient.PutObjectStringAsync(BucketName, name, string.Empty).ConfigureAwait(false);
+            Assert.False(putResp.IsSuccess);
         }
     }
 }
