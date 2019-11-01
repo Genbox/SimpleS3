@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
@@ -21,17 +22,19 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         {
             await CreateTempBucketAsync(async bucket =>
             {
-                CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(bucket, nameof(ListIncompleteParts)).ConfigureAwait(false);
+                string objName = nameof(ListIncompleteParts) + "%";
+
+                CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(bucket, objName).ConfigureAwait(false);
 
                 byte[] file = new byte[5 * 1024];
 
                 using (MemoryStream ms = new MemoryStream(file))
-                    await ObjectClient.UploadPartAsync(bucket, nameof(ListIncompleteParts), 1, initResp.UploadId, ms).ConfigureAwait(false);
+                    await ObjectClient.UploadPartAsync(bucket, objName, 1, initResp.UploadId, ms).ConfigureAwait(false);
 
-                ListMultipartUploadsResponse listResp = await BucketClient.ListMultipartUploadsAsync(bucket).ConfigureAwait(false);
+                ListMultipartUploadsResponse listResp = await BucketClient.ListMultipartUploadsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
 
                 Assert.Equal(bucket, listResp.Bucket);
-                Assert.Equal("ListIncompleteParts", listResp.NextKeyMarker);
+                Assert.Equal(WebUtility.UrlEncode(objName), listResp.NextKeyMarker);
                 Assert.NotEmpty(listResp.NextUploadIdMarker);
                 Assert.Equal(1000, listResp.MaxUploads);
                 Assert.False(listResp.IsTruncated);

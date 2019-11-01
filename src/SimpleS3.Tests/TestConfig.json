@@ -6,6 +6,7 @@
   "BucketName": "main-test-bucket-2019",
   "Region": "EUWest1", //Set to USEast1 if you want to use Minio
   "Endpoint": null, //Set to https://play.min.io:9000/ if you want to use Minio's play server
+  "AutoUrlDecodeResponses": false,
 
   "Proxy": {
     "UseProxy": false,

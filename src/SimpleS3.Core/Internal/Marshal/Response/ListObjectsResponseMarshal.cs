@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Abstracts;
@@ -28,12 +29,18 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                 r.Namespaces = false;
 
                 ListBucketResult bucketResult = (ListBucketResult)s.Deserialize(r);
+
+                if (bucketResult.EncodingType != null)
+                    response.EncodingType = ValueHelper.ParseEnum<EncodingType>(bucketResult.EncodingType);
+
+                response.Delimiter = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(bucketResult.Delimiter) : bucketResult.Delimiter;
+                response.Prefix = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(bucketResult.Prefix) : bucketResult.Prefix;
+                response.StartAfter = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(bucketResult.StartAfter) : bucketResult.StartAfter;
+                response.NextContinuationToken = bucketResult.NextContinuationToken;
                 response.MaxKeys = bucketResult.MaxKeys;
-                response.Delimiter = bucketResult.Delimiter;
                 response.IsTruncated = bucketResult.IsTruncated;
                 response.KeyCount = bucketResult.KeyCount;
                 response.BucketName = bucketResult.Name;
-                response.Prefix = bucketResult.Prefix;
                 response.ContinuationToken = bucketResult.ContinuationToken;
 
                 if (bucketResult.CommonPrefixes != null)
@@ -46,12 +53,6 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                 else
                     response.CommonPrefixes = Array.Empty<string>();
 
-                if (bucketResult.EncodingType != null)
-                    response.EncodingType = ValueHelper.ParseEnum<EncodingType>(bucketResult.EncodingType);
-
-                response.NextContinuationToken = bucketResult.NextContinuationToken;
-                response.StartAfter = bucketResult.StartAfter;
-
                 if (bucketResult.Contents != null)
                 {
                     response.Objects = new List<S3Object>(bucketResult.KeyCount);
@@ -59,7 +60,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                     foreach (Content content in bucketResult.Contents)
                     {
                         S3Object obj = new S3Object();
-                        obj.ObjectKey = content.Key;
+                        obj.ObjectKey = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(content.Key) : content.Key;
                         obj.ETag = content.ETag;
 
                         if (content.StorageClass != null)

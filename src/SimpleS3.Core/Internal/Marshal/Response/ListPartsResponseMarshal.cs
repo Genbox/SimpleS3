@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Abstracts;
@@ -35,8 +36,12 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                 r.Namespaces = false;
 
                 ListPartsResult listResult = (ListPartsResult)s.Deserialize(r);
+
+                if (listResult.EncodingType != null)
+                    response.EncodingType = ValueHelper.ParseEnum<EncodingType>(listResult.EncodingType);
+
+                response.ObjectKey = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listResult.Key) : listResult.Key;
                 response.BucketName = listResult.Bucket;
-                response.ObjectKey = listResult.Key;
                 response.UploadId = listResult.UploadId;
 
                 if (listResult.StorageClass != null)
@@ -46,9 +51,6 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                 response.NextPartNumberMarker = listResult.NextPartNumberMarker;
                 response.MaxParts = listResult.MaxParts;
                 response.IsTruncated = listResult.IsTruncated;
-
-                if (listResult.EncodingType != null)
-                    response.EncodingType = ValueHelper.ParseEnum<EncodingType>(listResult.EncodingType);
 
                 if (listResult.Owner != null)
                 {

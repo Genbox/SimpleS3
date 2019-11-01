@@ -49,5 +49,10 @@ namespace Genbox.SimpleS3.Abstracts
         /// Controls the mode of validation that is applied to object keys. By default we only allow safe ASCII characters and a few special chars.
         /// </summary>
         KeyValidationMode ObjectKeyValidationMode { get; set; }
+
+        /// <summary>
+        /// If a response has EncodingType set to Url, SimpleS3 will automatically URL decode the encoded part of the response if this setting is true.
+        /// </summary>
+        bool AutoUrlDecodeResponses { get; set; }
     }
 }

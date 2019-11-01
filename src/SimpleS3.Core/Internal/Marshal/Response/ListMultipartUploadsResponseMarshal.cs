@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Abstracts;
@@ -28,19 +29,19 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                 r.Namespaces = false;
 
                 ListMultipartUploadsResult listResult = (ListMultipartUploadsResult)s.Deserialize(r);
-                response.Bucket = listResult.Bucket;
-                response.KeyMarker = listResult.KeyMarker;
-                response.UploadIdMarker = listResult.UploadIdMarker;
-                response.NextKeyMarker = listResult.NextKeyMarker;
-                response.NextUploadIdMarker = listResult.NextUploadIdMarker;
 
                 if (listResult.EncodingType != null)
                     response.EncodingType = ValueHelper.ParseEnum<EncodingType>(listResult.EncodingType);
 
+                response.KeyMarker = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listResult.KeyMarker) : listResult.KeyMarker;
+                response.NextKeyMarker = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listResult.NextKeyMarker) : listResult.NextKeyMarker;
+                response.Prefix = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listResult.Prefix) : listResult.Prefix;
+                response.Delimiter = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listResult.Delimiter) : listResult.Delimiter;
+                response.Bucket = listResult.Bucket;
+                response.UploadIdMarker = listResult.UploadIdMarker;
+                response.NextUploadIdMarker = listResult.NextUploadIdMarker;
                 response.MaxUploads = listResult.MaxUploads;
                 response.IsTruncated = listResult.IsTruncated;
-                response.Prefix = listResult.Prefix;
-                response.Delimiter = listResult.Delimiter;
 
                 if (listResult.CommonPrefixes != null)
                 {
@@ -59,7 +60,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response
                     foreach (Upload listUpload in listResult.Uploads)
                     {
                         S3Upload s3Upload = new S3Upload();
-                        s3Upload.ObjectKey = listUpload.Key;
+                        s3Upload.ObjectKey = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listUpload.Key) : listUpload.Key;
                         s3Upload.UploadId = listUpload.UploadId;
 
                         if (listUpload.StorageClass != null)
