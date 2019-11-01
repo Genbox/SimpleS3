@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -171,7 +171,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             Assert.Equal(MultipartUploadStatus.Ok, resp);
 
-            GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, nameof(MultipartViaClient)).ConfigureAwait(false);
+            GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, nameof(MultipartFluent)).ConfigureAwait(false);
             Assert.True(getResp.IsSuccess);
 
             using (MemoryStream ms = new MemoryStream())
@@ -184,12 +184,9 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             //Try multipart downloading it
             //using (MemoryStream ms = new MemoryStream())
             //{
-            //    await ObjectClient.MultipartDownloadAsync(BucketName, nameof(MultipartViaClient), ms).ConfigureAwait(false);
+            //    await ObjectClient.MultipartDownloadAsync(BucketName, nameof(MultipartFluent), ms).ConfigureAwait(false);
             //    Assert.Equal(data, ms.ToArray());
             //}
-
-            HeadObjectResponse headResp = await ObjectClient.HeadObjectAsync(BucketName, nameof(MultipartViaClient), req => req.PartNumber = 1).ConfigureAwait(false);
-            Assert.Equal(2, headResp.NumberOfParts);
         }
 
         [Fact]

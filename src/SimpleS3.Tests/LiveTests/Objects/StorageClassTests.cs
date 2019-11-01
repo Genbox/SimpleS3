@@ -27,7 +27,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             if (canDownload)
             {
-                GetObjectResponse gResp = await AssertAsync(storageClass.ToString()).ConfigureAwait(false);
+                GetObjectResponse gResp = await AssertAsync(nameof(CanUploadClass) + "-" + storageClass).ConfigureAwait(false);
                 Assert.Equal(storageClass, gResp.StorageClass);
             }
         }
@@ -47,7 +47,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             if (canDownload)
             {
-                GetObjectResponse gResp = await AssertAsync(storageClass.ToString()).ConfigureAwait(false);
+                GetObjectResponse gResp = await AssertAsync(nameof(CanUploadClassFluent) + "-" + storageClass).ConfigureAwait(false);
                 Assert.Equal(storageClass, gResp.StorageClass);
             }
         }

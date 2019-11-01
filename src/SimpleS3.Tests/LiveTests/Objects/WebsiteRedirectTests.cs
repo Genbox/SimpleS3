@@ -26,7 +26,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         {
             await UploadTransferAsync(nameof(WebsiteRedirectFluent), upload => upload.WithWebsiteRedirectLocation("https://google.com")).ConfigureAwait(false);
 
-            GetObjectResponse resp1 = await AssertAsync(nameof(WebsiteRedirect)).ConfigureAwait(false);
+            GetObjectResponse resp1 = await AssertAsync(nameof(WebsiteRedirectFluent)).ConfigureAwait(false);
             Assert.Equal("https://google.com", resp1.WebsiteRedirectLocation);
             Assert.Equal(200, resp1.StatusCode);
         }
