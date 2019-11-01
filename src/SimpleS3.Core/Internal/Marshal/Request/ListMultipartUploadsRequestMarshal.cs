@@ -13,12 +13,12 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
     {
         public Stream MarshalRequest(ListMultipartUploadsRequest request, IS3Config config)
         {
-            request.AddHeader(BucketParameters.Delimiter, request.Delimiter);
-            request.AddHeader(BucketParameters.EncodingType, request.EncodingType);
-            request.AddHeader(BucketParameters.MaxUploads, request.MaxUploads);
-            request.AddHeader(BucketParameters.KeyMarker, request.KeyMarker);
-            request.AddHeader(BucketParameters.Prefix, request.Prefix);
-            request.AddHeader(BucketParameters.UploadIdMarker, request.UploadIdMarker);
+            request.AddQueryParameter(BucketParameters.Delimiter, request.Delimiter);
+            request.AddQueryParameter(BucketParameters.EncodingType, request.EncodingType);
+            request.AddQueryParameter(BucketParameters.MaxUploads, request.MaxUploads);
+            request.AddQueryParameter(BucketParameters.KeyMarker, request.KeyMarker);
+            request.AddQueryParameter(BucketParameters.Prefix, request.Prefix);
+            request.AddQueryParameter(BucketParameters.UploadIdMarker, request.UploadIdMarker);
             request.AddQueryParameter("uploads", string.Empty);
             return null;
         }
