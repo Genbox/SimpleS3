@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Genbox.SimpleS3.Abstracts;
@@ -7,6 +6,7 @@ using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
+using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
         public void MarshalResponse(IS3Config config, GetObjectRequest request, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.ExpiresOn = headers.GetHeader(AmzHeaders.XAmzExpiration);
-            response.Metadata = ParseMetadata(headers);
+            response.Metadata = MetadataHelper.ParseMetadata(headers);
             response.ETag = headers.GetHeader(HttpHeaders.ETag);
             response.CacheControl = headers.GetHeader(HttpHeaders.CacheControl);
             response.LastModified = headers.GetHeaderDate(HttpHeaders.LastModified, DateTimeFormat.Rfc1123);
@@ -36,8 +36,9 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
             response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSSECustomerKeyMD5, BinaryEncoding.Base64);
             response.IsDeleteMarker = headers.GetHeaderBool(AmzHeaders.XAmzDeleteMarker);
             response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
-            response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
+
+            response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
 
             //It should default to standard
             if (response.StorageClass == StorageClass.Unknown)
@@ -51,24 +52,6 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
             response.LockLegalHold = headers.GetHeaderBool(AmzHeaders.XAmzObjectLockLegalHold);
             response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzPartsCount);
             response.Content = new ContentReader(responseStream);
-        }
-
-        private static IDictionary<string, string> ParseMetadata(IDictionary<string, string> headers)
-        {
-            string _metadataHeader = "x-amz-meta-";
-
-            IDictionary<string, string> metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (KeyValuePair<string, string> item in headers)
-            {
-                if (!item.Key.StartsWith(_metadataHeader, StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                //If we crash here, it is because AWS sent us an invalid header.
-                metadata[item.Key.Substring(_metadataHeader.Length)] = item.Value;
-            }
-
-            return metadata;
         }
     }
 }

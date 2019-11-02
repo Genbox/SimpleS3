@@ -32,7 +32,6 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             request.AddQueryParameter(AmzParameters.ResponseContentType, request.ResponseContentType);
             request.AddQueryParameter(AmzParameters.PartNumber, request.PartNumber);
             request.AddQueryParameter(AmzParameters.VersionId, request.VersionId);
-
             return null;
         }
     }

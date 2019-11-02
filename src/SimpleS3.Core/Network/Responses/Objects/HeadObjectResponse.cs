@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Network.SharedProperties;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Objects
 {
-    public class HeadObjectResponse : BaseResponse, IHasMetadata, IHasReplicationStatus, IHasSse, IHasStorageClass, IHasResponseContent, IHasCache, IHasSseCustomerKey, IHasLock, IHasDeleteMarker, IHasVersionId, IHasRequestCharged, IHasExpiresOn
+    public class HeadObjectResponse : BaseResponse, IHasMetadata, IHasReplicationStatus, IHasSse, IHasStorageClass, IHasResponseContent, IHasCache, IHasSseCustomerKey, IHasLock, IHasDeleteMarker, IHasVersionId, IHasExpiresOn
     {
         /// <summary>Provides information about the object restoration operation and expiration time of the restored object copy.</summary>
         public string Restore { get; internal set; }
@@ -30,7 +30,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public bool LockLegalHold { get; internal set; }
         public IDictionary<string, string> Metadata { get; internal set; }
         public ReplicationStatus ReplicationStatus { get; internal set; }
-        public bool RequestCharged { get; internal set; }
         public string ContentType { get; internal set; }
         public string ContentDisposition { get; internal set; }
         public string ContentEncoding { get; internal set; }
