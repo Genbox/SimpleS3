@@ -3,8 +3,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Xunit;
 using Xunit.Abstractions;
@@ -18,20 +17,20 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         }
 
         [Fact]
-        public async Task ListIncompleteParts()
+        public async Task ListMultipartUploadsStandard()
         {
             await CreateTempBucketAsync(async bucket =>
             {
-                string objName = nameof(ListIncompleteParts) + "%";
+                string objName = nameof(ListMultipartUploadsStandard) + "%";
 
-                CreateMultipartUploadResponse initResp = await ObjectClient.CreateMultipartUploadAsync(bucket, objName).ConfigureAwait(false);
+                CreateMultipartUploadResponse initResp = await MultipartClient.CreateMultipartUploadAsync(bucket, objName).ConfigureAwait(false);
 
                 byte[] file = new byte[5 * 1024];
 
                 using (MemoryStream ms = new MemoryStream(file))
-                    await ObjectClient.UploadPartAsync(bucket, objName, 1, initResp.UploadId, ms).ConfigureAwait(false);
+                    await MultipartClient.UploadPartAsync(bucket, objName, 1, initResp.UploadId, ms).ConfigureAwait(false);
 
-                ListMultipartUploadsResponse listResp = await BucketClient.ListMultipartUploadsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
+                ListMultipartUploadsResponse listResp = await MultipartClient.ListMultipartUploadsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
 
                 Assert.Equal(bucket, listResp.Bucket);
                 Assert.Equal(WebUtility.UrlEncode(objName), listResp.NextKeyMarker);

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using Genbox.SimpleS3.Core.Network.Responses.XMLTypes;
+using Genbox.SimpleS3.Core.Network.Responses.XmlTypes;
 
-namespace Genbox.SimpleS3.Core.Network.Responses.Buckets.XML
+namespace Genbox.SimpleS3.Core.Network.Responses.Buckets.Xml
 {
     [XmlRoot]
     public sealed class ListMultipartUploadsResult

@@ -41,31 +41,6 @@ namespace Genbox.SimpleS3.Core.Operations
             return _requestHandler.SendRequestAsync<HeadObjectRequest, HeadObjectResponse>(request, token);
         }
 
-        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(CreateMultipartUploadRequest request, CancellationToken token = default)
-        {
-            return _requestHandler.SendRequestAsync<CreateMultipartUploadRequest, CreateMultipartUploadResponse>(request, token);
-        }
-
-        public Task<UploadPartResponse> UploadPartAsync(UploadPartRequest request, CancellationToken token = default)
-        {
-            return _requestHandler.SendRequestAsync<UploadPartRequest, UploadPartResponse>(request, token);
-        }
-
-        public Task<ListPartsResponse> ListPartsAsync(ListPartsRequest request, CancellationToken token = default)
-        {
-            return _requestHandler.SendRequestAsync<ListPartsRequest, ListPartsResponse>(request, token);
-        }
-
-        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(CompleteMultipartUploadRequest request, CancellationToken token = default)
-        {
-            return _requestHandler.SendRequestAsync<CompleteMultipartUploadRequest, CompleteMultipartUploadResponse>(request, token);
-        }
-
-        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(AbortMultipartUploadRequest request, CancellationToken token = default)
-        {
-            return _requestHandler.SendRequestAsync<AbortMultipartUploadRequest, AbortMultipartUploadResponse>(request, token);
-        }
-
         public Task<DeleteObjectsResponse> DeleteObjectsAsync(DeleteObjectsRequest request, CancellationToken token = default)
         {
             return _requestHandler.SendRequestAsync<DeleteObjectsRequest, DeleteObjectsResponse>(request, token);

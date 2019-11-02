@@ -28,11 +28,6 @@ namespace Genbox.SimpleS3.Core.Operations
             return _requestHandler.SendRequestAsync<DeleteBucketRequest, DeleteBucketResponse>(request, token);
         }
 
-        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(ListMultipartUploadsRequest request, CancellationToken token = default)
-        {
-            return _requestHandler.SendRequestAsync<ListMultipartUploadsRequest, ListMultipartUploadsResponse>(request, token);
-        }
-
         public Task<ListBucketsResponse> ListBucketsAsync(ListBucketsRequest request, CancellationToken token = default)
         {
             return _requestHandler.SendRequestAsync<ListBucketsRequest, ListBucketsResponse>(request, token);

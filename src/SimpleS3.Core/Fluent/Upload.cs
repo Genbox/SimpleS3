@@ -11,7 +11,9 @@ using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Misc;
+using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Utils;
 
@@ -19,14 +21,16 @@ namespace Genbox.SimpleS3.Core.Fluent
 {
     public class Upload
     {
+        private readonly IMultipartOperations _multipartOperations;
         private readonly IObjectOperations _objectOperations;
         private readonly bool _ownStream;
         private readonly PutObjectRequest _request;
 
-        internal Upload(IObjectOperations objectOperations, string bucket, string objectKey, Stream stream, bool ownStream = false)
+        internal Upload(IObjectOperations objectOperations, IMultipartOperations multipartOperations, string bucket, string objectKey, Stream stream, bool ownStream = false)
         {
             _request = new PutObjectRequest(bucket, objectKey, stream);
             _objectOperations = objectOperations;
+            _multipartOperations = multipartOperations;
             _ownStream = ownStream;
         }
 
@@ -187,7 +191,7 @@ namespace Genbox.SimpleS3.Core.Fluent
             CreateMultipartUploadRequest initReq = _request;
             initReq.Method = HttpMethod.POST;
 
-            IAsyncEnumerable<UploadPartResponse> async = MultipartHelper.MultipartUploadAsync(_objectOperations, initReq, _request.Content, token: token);
+            IAsyncEnumerable<UploadPartResponse> async = MultipartHelper.MultipartUploadAsync(_multipartOperations, initReq, _request.Content, token: token);
 
             await foreach (UploadPartResponse resp in async.WithCancellation(token))
             {

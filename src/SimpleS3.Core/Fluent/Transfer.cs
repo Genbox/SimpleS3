@@ -8,16 +8,18 @@ namespace Genbox.SimpleS3.Core.Fluent
     [PublicAPI]
     public class Transfer
     {
+        private readonly IMultipartOperations _multipartOperations;
         private readonly IObjectOperations _objectOperations;
 
-        public Transfer(IObjectOperations objectOperations)
+        public Transfer(IObjectOperations objectOperations, IMultipartOperations multipartOperations)
         {
             _objectOperations = objectOperations;
+            _multipartOperations = multipartOperations;
         }
 
         public Upload UploadStream(string bucket, string objectKey, Stream stream, bool ownStream = false)
         {
-            return new Upload(_objectOperations, bucket, objectKey, stream, ownStream);
+            return new Upload(_objectOperations, _multipartOperations, bucket, objectKey, stream, ownStream);
         }
 
         public Upload UploadFile(string bucket, string objectKey, string fileName)

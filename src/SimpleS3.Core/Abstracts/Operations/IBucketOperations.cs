@@ -15,9 +15,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
         /// <summary>Delete a bucket See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_DeleteBucket.html for details</summary>
         Task<DeleteBucketResponse> DeleteBucketAsync(DeleteBucketRequest request, CancellationToken token = default);
 
-        /// <summary>List in-progress multipart uploads See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_ListMultipartUploads.html for details</summary>
-        Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(ListMultipartUploadsRequest request, CancellationToken token = default);
-
         /// <summary>
         /// List all buckets owned by the authenticated sender of the request See
         /// https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_ListBuckets.html for details

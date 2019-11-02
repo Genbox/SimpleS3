@@ -13,11 +13,6 @@ namespace Genbox.SimpleS3.Core.Internal.Constants
         public const string ResponseContentLanguage = _responseHeader + HttpHeaders.ContentLanguage;
         public const string ResponseContentType = _responseHeader + HttpHeaders.ContentType;
         public const string VersionId = "versionId";
-        public const string Uploads = "uploads";
-        public const string PartNumber = "partNumber";
-        public const string UploadId = "uploadId";
-        public const string MaxParts = "max-parts";
-        public const string PartNumberMarker = "part-number-marker";
         public const string EncodingType = "encoding-type";
         public const string Delete = "delete";
     }

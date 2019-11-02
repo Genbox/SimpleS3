@@ -8,7 +8,9 @@ using Genbox.SimpleS3.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Misc;
+using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Utils;
 
@@ -16,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Internal.Helpers
 {
     internal static class MultipartHelper
     {
-        public static async IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(IObjectOperations operations, CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(IMultipartOperations operations, CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(req, nameof(req));
             Validator.RequireNotNull(data, nameof(data));
@@ -183,7 +185,7 @@ namespace Genbox.SimpleS3.Core.Internal.Helpers
             }
         }
 
-        private static async Task<UploadPartResponse> UploadPartAsync(IObjectOperations operations, string bucketName, string objectKey, byte[] data, int partNumber, string uploadId, SemaphoreSlim semaphore, CancellationToken token)
+        private static async Task<UploadPartResponse> UploadPartAsync(IMultipartOperations operations, string bucketName, string objectKey, byte[] data, int partNumber, string uploadId, SemaphoreSlim semaphore, CancellationToken token)
         {
             try
             {

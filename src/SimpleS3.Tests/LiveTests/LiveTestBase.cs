@@ -65,6 +65,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests
             Config = Services.GetRequiredService<IOptions<S3Config>>().Value;
             ObjectClient = Services.GetRequiredService<IS3ObjectClient>();
             BucketClient = Services.GetRequiredService<IS3BucketClient>();
+            MultipartClient = Services.GetRequiredService<IS3MultipartClient>();
             Transfer = Services.GetRequiredService<Transfer>();
 
             //foreach (S3Bucket bucket in BucketClient.ListAllBucketsAsync().ToListAsync().Result)
@@ -80,6 +81,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests
         protected string BucketName { get; }
         protected IS3ObjectClient ObjectClient { get; }
         protected IS3BucketClient BucketClient { get; }
+        protected IS3MultipartClient MultipartClient { get; }
         protected Transfer Transfer { get; }
 
         public void Dispose()

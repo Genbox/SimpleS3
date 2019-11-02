@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using Genbox.SimpleS3.Core.Network.Responses.XMLTypes;
+using Genbox.SimpleS3.Core.Network.Responses.XmlTypes;
 
-namespace Genbox.SimpleS3.Core.Network.Responses.Objects.XML
+namespace Genbox.SimpleS3.Core.Network.Responses.Objects.Xml
 {
     [XmlRoot]
     public sealed class DeleteResult

@@ -35,14 +35,6 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.DeleteBucketAsync(request, token);
         }
 
-        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest> config = null, CancellationToken token = default)
-        {
-            ListMultipartUploadsRequest request = new ListMultipartUploadsRequest(bucketName);
-            config?.Invoke(request);
-
-            return BucketOperations.ListMultipartUploadsAsync(request, token);
-        }
-
         public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
         {
             ListBucketsRequest request = new ListBucketsRequest();

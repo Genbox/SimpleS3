@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {

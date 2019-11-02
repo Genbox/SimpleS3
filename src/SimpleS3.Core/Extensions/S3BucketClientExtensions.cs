@@ -35,30 +35,6 @@ namespace Genbox.SimpleS3.Core.Extensions
             return client.CreateBucketAsync(bucketName, null, token);
         }
 
-        /// <summary>List all multipart uploads</summary>
-        public static async IAsyncEnumerable<S3Upload> ListAllMultipartUploadsAsync(this IS3BucketClient client, string bucketName, [EnumeratorCancellation] CancellationToken token = default)
-        {
-            Validator.RequireNotNull(client, nameof(client));
-            Validator.RequireNotNull(bucketName, nameof(bucketName));
-
-            string uploadIdMarker = null;
-            ListMultipartUploadsResponse response;
-
-            do
-            {
-                if (token.IsCancellationRequested)
-                    break;
-
-                string marker = uploadIdMarker;
-                response = await client.ListMultipartUploadsAsync(bucketName, req => req.UploadIdMarker = marker, token).ConfigureAwait(false);
-
-                foreach (S3Upload responseObject in response.Uploads)
-                    yield return responseObject;
-
-                uploadIdMarker = response.NextUploadIdMarker;
-            } while (response.IsTruncated);
-        }
-
         /// <summary>List all buckets</summary>
         public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(this IS3BucketClient client, Action<ListBucketsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
