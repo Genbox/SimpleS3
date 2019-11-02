@@ -1,4 +1,5 @@
-﻿using System.IO;
+using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
@@ -45,6 +46,28 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Multipart
 
             if (algorithm == SseAlgorithm.AwsKms)
                 Assert.NotNull(completeResp.SseKmsKeyId);
+        }
+
+        [Fact]
+        public async Task MultipartWithLock()
+        {
+            string objectKey = nameof(MultipartWithLock);
+
+            CreateMultipartUploadResponse initResp = await MultipartClient.CreateMultipartUploadAsync(BucketName, objectKey, req =>
+            {
+                req.LockMode = LockMode.Governance;
+                req.LockRetainUntil = DateTimeOffset.UtcNow.AddMinutes(5);
+            }).ConfigureAwait(false);
+
+            Assert.True(initResp.IsSuccess);
+
+            byte[] file = new byte[1024 * 1024 * 5];
+
+            UploadPartResponse uploadResp = await MultipartClient.UploadPartAsync(BucketName, objectKey, 1, initResp.UploadId, new MemoryStream(file), req => req.ContentMd5 = CryptoHelper.Md5Hash(file)).ConfigureAwait(false);
+            Assert.True(uploadResp.IsSuccess);
+
+            CompleteMultipartUploadResponse completeResp = await MultipartClient.CompleteMultipartUploadAsync(BucketName, objectKey, initResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
+            Assert.True(completeResp.IsSuccess);
         }
 
         [Fact]

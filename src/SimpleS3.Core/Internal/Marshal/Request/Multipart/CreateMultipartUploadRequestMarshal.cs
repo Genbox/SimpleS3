@@ -19,8 +19,6 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Multipart
         {
             //This is required for multipart uploads
             request.AddQueryParameter(AmzParameters.Uploads, string.Empty);
-            request.AddHeader(AmzHeaders.XAmzRequestPayer, request.RequestPayer == Payer.Requester ? "requester" : null);
-
             request.AddHeader(HttpHeaders.CacheControl, request.CacheControl);
             request.AddHeader(AmzHeaders.XAmzStorageClass, request.StorageClass);
             request.AddHeader(AmzHeaders.XAmzTagging, request.Tags);
@@ -47,7 +45,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Multipart
             request.AddHeader(HttpHeaders.ContentDisposition, request.ContentDisposition);
             request.AddHeader(HttpHeaders.ContentEncoding, request.ContentEncoding);
             request.AddHeader(HttpHeaders.ContentType, request.ContentType);
-            request.AddHeader(HttpHeaders.ContentMd5, request.ContentMd5, BinaryEncoding.Base64);
+            request.AddHeader(AmzHeaders.XAmzRequestPayer, request.RequestPayer == Payer.Requester ? "requester" : null);
 
             if (request.Metadata != null)
             {

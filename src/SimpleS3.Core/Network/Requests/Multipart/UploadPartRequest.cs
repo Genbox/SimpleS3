@@ -9,7 +9,7 @@ using Genbox.SimpleS3.Core.Network.SharedProperties;
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 {
     /// <summary>This operation uploads a part in a multipart upload.</summary>
-    public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, ISupportStreaming, IHasUploadId, IHasRequestPayer
+    public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5, ISupportStreaming, IHasUploadId, IHasRequestPayer
     {
         private byte[] _sseCustomerKey;
 
@@ -23,18 +23,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             Content = content;
         }
 
-        /// <summary>
-        /// This header can be used as a message integrity check to verify that the part data is the same data that was originally sent. Although it is
-        /// optional, we recommend using the Content-MD5 mechanism as an end-to-end integrity check. For more information, see RFC 1864.
-        /// </summary>
-        public byte[] ContentMd5 { get; set; }
-
         /// <summary>The part number</summary>
         public int PartNumber { get; }
 
         /// <summary>Content of the part</summary>
         public Stream Content { get; }
 
+        public byte[] ContentMd5 { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public Payer RequestPayer { get; set; }
         public byte[] SseCustomerKeyMd5 { get; set; }
