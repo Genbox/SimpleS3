@@ -4,7 +4,6 @@ using System.Text;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
-using Genbox.SimpleS3.Core.Internal.Constants;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
@@ -18,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Multipart
         public Stream MarshalRequest(CreateMultipartUploadRequest request, IS3Config config)
         {
             //This is required for multipart uploads
-            request.AddQueryParameter(MultipartParameters.Uploads, string.Empty);
+            request.AddQueryParameter(AmzParameters.Uploads, string.Empty);
 
             request.AddHeader(HttpHeaders.CacheControl, request.CacheControl);
             request.AddHeader(AmzHeaders.XAmzStorageClass, request.StorageClass);

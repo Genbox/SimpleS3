@@ -51,7 +51,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
         public StorageClass StorageClass { get; internal set; }
         public bool IsTruncated { get; internal set; }
         public EncodingType EncodingType { get; internal set; }
-
         public string UploadId { get; internal set; }
     }
 }

@@ -3,7 +3,6 @@ using System.Text;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
-using Genbox.SimpleS3.Core.Internal.Constants;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
@@ -18,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
     {
         public Stream MarshalRequest(DeleteObjectsRequest request, IS3Config config)
         {
-            request.AddQueryParameter(ObjectParameters.Delete, string.Empty);
+            request.AddQueryParameter(AmzParameters.Delete, string.Empty);
             request.AddHeader(AmzHeaders.XAmzMfa, request.Mfa);
             request.AddHeader(AmzHeaders.XAmzBypassGovernanceRetention, request.BypassGovernanceRetention);
 

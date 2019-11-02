@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
@@ -35,10 +35,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         /// <summary>Content of the part</summary>
         public Stream Content { get; }
 
-        /// <inheritdoc />
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
 
-        /// <inheritdoc />
         public byte[] SseCustomerKey
         {
             get => _sseCustomerKey;

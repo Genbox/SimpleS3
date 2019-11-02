@@ -1,7 +1,7 @@
 using System.IO;
 using Genbox.SimpleS3.Abstracts;
+using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
-using Genbox.SimpleS3.Core.Internal.Constants;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using JetBrains.Annotations;
@@ -13,14 +13,14 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
     {
         public Stream MarshalRequest(ListObjectsRequest request, IS3Config config)
         {
-            request.AddQueryParameter(BucketParameters.Delimiter, request.Delimiter);
-            request.AddQueryParameter(BucketParameters.EncodingType, request.EncodingType);
-            request.AddQueryParameter(BucketParameters.MaxKeys, request.MaxKeys);
-            request.AddQueryParameter(BucketParameters.Prefix, request.Prefix);
-            request.AddQueryParameter(BucketParameters.ContinuationToken, request.ContinuationToken);
-            request.AddQueryParameter(BucketParameters.FetchOwner, request.FetchOwner);
-            request.AddQueryParameter(BucketParameters.StartAfter, request.StartAfter);
-            request.AddQueryParameter(BucketParameters.ListType, 2);
+            request.AddQueryParameter(AmzParameters.Delimiter, request.Delimiter);
+            request.AddQueryParameter(AmzParameters.EncodingType, request.EncodingType);
+            request.AddQueryParameter(AmzParameters.MaxKeys, request.MaxKeys);
+            request.AddQueryParameter(AmzParameters.Prefix, request.Prefix);
+            request.AddQueryParameter(AmzParameters.ContinuationToken, request.ContinuationToken);
+            request.AddQueryParameter(AmzParameters.FetchOwner, request.FetchOwner);
+            request.AddQueryParameter(AmzParameters.StartAfter, request.StartAfter);
+            request.AddQueryParameter(AmzParameters.ListType, 2);
             return null;
         }
     }

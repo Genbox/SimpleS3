@@ -21,7 +21,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
         public string SseContext { get; internal set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; internal set; }
         public byte[] SseCustomerKeyMd5 { get; internal set; }
-
         public string UploadId { get; internal set; }
     }
 }

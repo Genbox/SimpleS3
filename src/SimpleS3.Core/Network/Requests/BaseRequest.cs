@@ -18,25 +18,25 @@ namespace Genbox.SimpleS3.Core.Network.Requests
             BucketName = bucketName;
         }
 
-        /// <inheritdoc />
+
         public DateTimeOffset Date { get; internal set; }
 
-        /// <inheritdoc />
+
         public string ObjectKey { get; set; }
 
-        /// <inheritdoc />
+
         public HttpMethod Method { get; internal set; }
 
-        /// <inheritdoc />
+
         public string BucketName { get; }
 
-        /// <inheritdoc />
+
         public IReadOnlyDictionary<string, string> Headers => _headers;
 
-        /// <inheritdoc />
+
         public IReadOnlyDictionary<string, string> QueryParameters => _queryParameters;
 
-        /// <inheritdoc />
+
         public void AddQueryParameter(string key, string value)
         {
             if (string.IsNullOrWhiteSpace(key))
@@ -49,7 +49,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests
                 _queryParameters.Add(key, value);
         }
 
-        /// <inheritdoc />
+
         public void AddHeader(string key, string value)
         {
             if (string.IsNullOrWhiteSpace(key))

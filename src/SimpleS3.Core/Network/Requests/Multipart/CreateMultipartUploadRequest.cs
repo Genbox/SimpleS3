@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+using System;
 using Genbox.HttpBuilders;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
@@ -52,61 +51,25 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         /// </summary>
         public string WebsiteRedirectLocation { get; set; }
 
-        /// <inheritdoc />
         public CacheControlBuilder CacheControl { get; internal set; }
-
-        /// <inheritdoc />
         public ContentDispositionBuilder ContentDisposition { get; internal set; }
-
-        /// <inheritdoc />
         public ContentEncodingBuilder ContentEncoding { get; internal set; }
-
-        /// <inheritdoc />
         public byte[] ContentMd5 { get; set; }
-
-        /// <inheritdoc />
         public ContentTypeBuilder ContentType { get; internal set; }
-
-        /// <inheritdoc />
         public DateTimeOffset? Expires { get; set; }
-
-        /// <inheritdoc />
         public LockMode LockMode { get; set; }
-
-        /// <inheritdoc />
         public DateTimeOffset? LockRetainUntil { get; set; }
-
-        /// <inheritdoc />
         public bool? LockLegalHold { get; set; }
-
-        /// <inheritdoc />
         public ObjectCannedAcl Acl { get; set; }
-
-        /// <inheritdoc />
         public AclBuilder AclGrantRead { get; internal set; }
-
-        /// <inheritdoc />
         public AclBuilder AclGrantReadAcp { get; internal set; }
-
-        /// <inheritdoc />
         public AclBuilder AclGrantWriteAcp { get; internal set; }
-
-        /// <inheritdoc />
         public AclBuilder AclGrantFullControl { get; internal set; }
-
-        /// <inheritdoc />
         public SseAlgorithm SseAlgorithm { get; set; }
-
-        /// <inheritdoc />
         public string SseKmsKeyId { get; set; }
-
-        /// <inheritdoc />
         public KmsContextBuilder SseContext { get; set; }
-
-        /// <inheritdoc />
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
 
-        /// <inheritdoc />
         public byte[] SseCustomerKey
         {
             get => _sseCustomerKey;

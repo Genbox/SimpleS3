@@ -23,7 +23,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public int? NumberOfParts { get; internal set; }
         public string CacheControl { get; internal set; }
         public string ETag { get; internal set; }
-
         public bool IsDeleteMarker { get; internal set; }
         public string ExpiresOn { get; internal set; }
         public LockMode LockMode { get; internal set; }

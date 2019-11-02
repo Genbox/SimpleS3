@@ -1,8 +1,8 @@
 using System.IO;
 using System.Text;
 using Genbox.SimpleS3.Abstracts;
+using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
-using Genbox.SimpleS3.Core.Internal.Constants;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using JetBrains.Annotations;
@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Multipart
     {
         public Stream MarshalRequest(CompleteMultipartUploadRequest request, IS3Config config)
         {
-            request.AddQueryParameter(MultipartParameters.UploadId, request.UploadId);
+            request.AddQueryParameter(AmzParameters.UploadId, request.UploadId);
 
             //build the XML required to describe each part
             StringBuilder sb = new StringBuilder();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Genbox.HttpBuilders;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
@@ -34,43 +34,43 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// </summary>
         public int? PartNumber { get; set; }
 
-        /// <inheritdoc />
+
         public DateTimeOffset? IfModifiedSince { get; set; }
 
-        /// <inheritdoc />
+
         public DateTimeOffset? IfUnmodifiedSince { get; set; }
 
-        /// <inheritdoc />
+
         public ETagBuilder IfETagMatch { get; internal set; }
 
-        /// <inheritdoc />
+
         public ETagBuilder IfETagNotMatch { get; internal set; }
 
-        /// <inheritdoc />
+
         public RangeBuilder Range { get; internal set; }
 
-        /// <inheritdoc />
+
         public DateTimeOffset? ResponseExpires { get; set; }
 
-        /// <inheritdoc />
+
         public CacheControlBuilder ResponseCacheControl { get; }
 
-        /// <inheritdoc />
+
         public ContentTypeBuilder ResponseContentType { get; }
 
-        /// <inheritdoc />
+
         public ContentDispositionBuilder ResponseContentDisposition { get; }
 
-        /// <inheritdoc />
+
         public ContentLanguageBuilder ResponseContentLanguage { get; }
 
-        /// <inheritdoc />
+
         public ContentEncodingBuilder ResponseContentEncoding { get; }
 
-        /// <inheritdoc />
+
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
 
-        /// <inheritdoc />
+
         public byte[] SseCustomerKey
         {
             get => _sseCustomerKey;
@@ -87,7 +87,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             }
         }
 
-        /// <inheritdoc />
+
         public byte[] SseCustomerKeyMd5 { get; set; }
 
         public void ClearSensitiveMaterial()

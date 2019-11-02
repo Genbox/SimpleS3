@@ -17,7 +17,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             Content = data;
         }
 
-        /// <inheritdoc />
         public Stream Content { get; set; }
     }
 }

@@ -24,7 +24,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public MfaAuthenticationBuilder Mfa { get; }
 
         /// <summary>
-        /// Specifies whether you want to delete this object even if it has a Governance-type Object Lock in place. You must have sufficient permissions to perform this operation.
+        /// Specifies whether you want to delete this object even if it has a Governance-type Object Lock in place. You must have sufficient permissions
+        /// to perform this operation.
         /// </summary>
         public bool? BypassGovernanceRetention { get; set; }
 

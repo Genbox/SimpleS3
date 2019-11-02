@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Cli.CommandLineUtils
             _blockProcessExit.Set();
         }
 
-        /// <inheritdoc />
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
