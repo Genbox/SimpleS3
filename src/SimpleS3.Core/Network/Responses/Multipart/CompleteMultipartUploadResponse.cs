@@ -15,6 +15,8 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
         /// <summary>The object key of the newly created object.</summary>
         public string ObjectKey { get; internal set; }
 
+        public SseCustomerAlgorithm SseCustomerAlgorithm { get; internal set; }
+
         public string ETag { get; internal set; }
 
         public string ExpiresOn { get; internal set; }
