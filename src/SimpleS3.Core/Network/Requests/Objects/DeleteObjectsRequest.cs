@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// keys that you want to delete, then this operation provides a suitable alternative to sending individual delete requests (see DELETE Object), reducing
     /// per-request overhead.
     /// </summary>
-    public class DeleteObjectsRequest : BaseRequest, IHasRequestPayer
+    public class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention
     {
         public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : base(HttpMethod.POST, bucketName, string.Empty)
         {
@@ -25,16 +25,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// <summary>If multi-factor approval is activated, you need to supply MFA information.</summary>
         public MfaAuthenticationBuilder Mfa { get; }
 
-        /// <summary>
-        /// Specifies whether you want to delete this object even if it has a Governance-type Object Lock in place. You must have sufficient permissions
-        /// to perform this operation.
-        /// </summary>
-        public bool? BypassGovernanceRetention { get; set; }
-
         /// <summary>In quiet mode the response includes only keys where the delete operation encountered an error.</summary>
         public bool Quiet { get; set; }
 
+        /// <summary>The list of objects</summary>
         public IList<S3DeleteInfo> Objects { get; }
+
+        public bool? BypassGovernanceRetention { get; set; }
         public Payer RequestPayer { get; set; }
     }
 }
