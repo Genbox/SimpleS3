@@ -20,6 +20,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
         {
             request.AddQueryParameter(ObjectParameters.Delete, string.Empty);
             request.AddHeader(AmzHeaders.XAmzMfa, request.Mfa);
+            request.AddHeader(AmzHeaders.XAmzBypassGovernanceRetention, request.BypassGovernanceRetention);
 
             StringBuilder sb = new StringBuilder(512);
             sb.Append("<Delete>");

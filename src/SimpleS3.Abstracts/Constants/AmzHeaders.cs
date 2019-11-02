@@ -17,7 +17,8 @@
         public const string XAmzAbortDate = "x-amz-abort-date";
         public const string XAmzAbortRuleId = "x-amz-abort-rule-id";
         public const string XAmzBucketObjectLockEnabled = "x-amz-bucket-object-lock-enabled";
-        public const string XAmzMoPartsCount = "x-amz-mp-parts-count";
+        public const string XAmzPartsCount = "x-amz-mp-parts-count";
+        public const string XAmzBypassGovernanceRetention = "x-amz-bypass-governance-retention";
 
         #region Requests
 

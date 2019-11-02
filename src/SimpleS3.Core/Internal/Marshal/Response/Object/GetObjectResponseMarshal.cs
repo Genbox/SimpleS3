@@ -49,7 +49,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
             response.LockMode = headers.GetHeaderEnum<LockMode>(AmzHeaders.XAmzObjectLockMode);
             response.LockRetainUntilDate = headers.GetHeaderDate(AmzHeaders.XAmzObjectLockRetainUntilDate, DateTimeFormat.Iso8601DateTimeExt);
             response.LockLegalHold = headers.GetHeaderBool(AmzHeaders.XAmzObjectLockLegalHold);
-            response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzMoPartsCount);
+            response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzPartsCount);
             response.Content = new ContentReader(responseStream);
         }
 

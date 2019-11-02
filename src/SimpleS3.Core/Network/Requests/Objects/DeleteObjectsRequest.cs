@@ -23,6 +23,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// <summary>If multi-factor approval is activated, you need to supply MFA information.</summary>
         public MfaAuthenticationBuilder Mfa { get; }
 
+        /// <summary>
+        /// Specifies whether you want to delete this object even if it has a Governance-type Object Lock in place. You must have sufficient permissions to perform this operation.
+        /// </summary>
+        public bool? BypassGovernanceRetention { get; set; }
+
         /// <summary>In quiet mode the response includes only keys where the delete operation encountered an error.</summary>
         public bool Quiet { get; set; }
 

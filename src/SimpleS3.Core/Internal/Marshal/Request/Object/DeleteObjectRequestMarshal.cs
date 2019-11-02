@@ -15,6 +15,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
         public Stream MarshalRequest(DeleteObjectRequest request, IS3Config config)
         {
             request.AddHeader(AmzHeaders.XAmzMfa, request.Mfa);
+            request.AddHeader(AmzHeaders.XAmzBypassGovernanceRetention, request.BypassGovernanceRetention);
             request.AddQueryParameter(ObjectParameters.VersionId, request.VersionId);
             return null;
         }
