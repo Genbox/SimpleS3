@@ -5,6 +5,7 @@ using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Abstracts;
+using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Helpers;
@@ -42,6 +43,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
                 response.KeyCount = bucketResult.KeyCount;
                 response.BucketName = bucketResult.Name;
                 response.ContinuationToken = bucketResult.ContinuationToken;
+                response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
                 if (bucketResult.CommonPrefixes != null)
                 {

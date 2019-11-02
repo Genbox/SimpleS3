@@ -2,6 +2,7 @@ using System.IO;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
@@ -14,6 +15,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
     {
         public Stream MarshalRequest(GetObjectRequest request, IS3Config config)
         {
+            request.AddHeader(AmzHeaders.XAmzRequestPayer, request.RequestPayer == Payer.Requester ? "requester" : null);
             request.AddHeader(HttpHeaders.Range, request.Range);
             request.AddHeader(HttpHeaders.IfMatch, request.IfETagMatch);
             request.AddHeader(HttpHeaders.IfNoneMatch, request.IfETagNotMatch);
@@ -30,6 +32,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             request.AddQueryParameter(AmzParameters.ResponseContentType, request.ResponseContentType);
             request.AddQueryParameter(AmzParameters.PartNumber, request.PartNumber);
             request.AddQueryParameter(AmzParameters.VersionId, request.VersionId);
+
             return null;
         }
     }

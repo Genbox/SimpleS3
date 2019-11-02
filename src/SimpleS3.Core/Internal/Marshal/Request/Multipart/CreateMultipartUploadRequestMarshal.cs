@@ -4,6 +4,7 @@ using System.Text;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
@@ -12,12 +13,13 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Multipart
 {
     [UsedImplicitly]
-    internal class InitiateMultipartUploadRequestMarshal : IRequestMarshal<CreateMultipartUploadRequest>
+    internal class CreateMultipartUploadRequestMarshal : IRequestMarshal<CreateMultipartUploadRequest>
     {
         public Stream MarshalRequest(CreateMultipartUploadRequest request, IS3Config config)
         {
             //This is required for multipart uploads
             request.AddQueryParameter(AmzParameters.Uploads, string.Empty);
+            request.AddHeader(AmzHeaders.XAmzRequestPayer, request.RequestPayer == Payer.Requester ? "requester" : null);
 
             request.AddHeader(HttpHeaders.CacheControl, request.CacheControl);
             request.AddHeader(AmzHeaders.XAmzStorageClass, request.StorageClass);

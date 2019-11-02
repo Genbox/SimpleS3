@@ -1,5 +1,7 @@
 ﻿using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Core.Network.SharedProperties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
@@ -8,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// The DELETE operation removes the null version (if there is one) of an object and inserts a delete marker, which becomes the current version
     /// of the object. If there isn't a null version, Amazon S3 does not remove any objects.
     /// </summary>
-    public class DeleteObjectRequest : BaseRequest, IHasVersionId
+    public class DeleteObjectRequest : BaseRequest, IHasVersionId, IHasRequestPayer
     {
         public DeleteObjectRequest(string bucketName, string objectKey) : base(HttpMethod.DELETE, bucketName, objectKey)
         {
@@ -25,5 +27,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public bool? BypassGovernanceRetention { get; set; }
 
         public string VersionId { get; set; }
+        public Payer RequestPayer { get; set; }
     }
 }

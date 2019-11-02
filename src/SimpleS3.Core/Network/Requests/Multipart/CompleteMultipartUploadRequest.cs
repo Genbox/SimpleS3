@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Utils;
@@ -17,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// the connection from timing out. Because a request could fail after the initial 200 OK response has been sent, it is important that you check the
     /// response body to determine whether the request succeeded.
     /// </summary>
-    public class CompleteMultipartUploadRequest : BaseRequest
+    public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer
     {
         private CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.POST, bucketName, objectKey)
         {
@@ -41,5 +43,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 
         public string UploadId { get; }
         public IList<S3PartInfo> UploadParts { get; }
+        public Payer RequestPayer { get; set; }
     }
 }

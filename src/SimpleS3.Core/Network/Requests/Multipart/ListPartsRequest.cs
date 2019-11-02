@@ -1,11 +1,12 @@
 ﻿using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Core.Network.SharedProperties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 {
     /// <summary>This operation lists the parts that have been uploaded for a specific multipart upload.</summary>
-    public class ListPartsRequest : BaseRequest, IHasUploadId
+    public class ListPartsRequest : BaseRequest, IHasUploadId, IHasRequestPayer
     {
         public ListPartsRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.GET, bucketName, objectKey)
         {
@@ -22,5 +23,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public string PartNumberMarker { get; set; }
 
         public string UploadId { get; }
+        public Payer RequestPayer { get; set; }
     }
 }

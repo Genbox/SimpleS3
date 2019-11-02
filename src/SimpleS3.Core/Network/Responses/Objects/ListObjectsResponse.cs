@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Objects
 {
-    public class ListObjectsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt
+    public class ListObjectsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt, IHasRequestCharged
     {
         /// <summary>Name of the bucket.</summary>
         public string BucketName { get; internal set; }
@@ -39,5 +39,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public string Prefix { get; internal set; }
         public string Delimiter { get; internal set; }
         public IList<string> CommonPrefixes { get; internal set; }
+        public bool RequestCharged { get; internal set; }
     }
 }

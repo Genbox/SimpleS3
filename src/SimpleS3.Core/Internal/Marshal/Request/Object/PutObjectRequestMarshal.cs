@@ -45,6 +45,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             request.AddHeader(HttpHeaders.ContentDisposition, request.ContentDisposition);
             request.AddHeader(HttpHeaders.ContentEncoding, request.ContentEncoding);
             request.AddHeader(HttpHeaders.ContentType, request.ContentType);
+            request.AddHeader(AmzHeaders.XAmzRequestPayer, request.RequestPayer == Payer.Requester ? "requester" : null);
 
             if (request.Metadata != null)
             {

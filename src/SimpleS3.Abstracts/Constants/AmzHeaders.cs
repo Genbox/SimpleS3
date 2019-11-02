@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Abstracts.Constants
+namespace Genbox.SimpleS3.Abstracts.Constants
 {
     public static class AmzHeaders
     {
@@ -19,6 +19,8 @@
         public const string XAmzBucketObjectLockEnabled = "x-amz-bucket-object-lock-enabled";
         public const string XAmzPartsCount = "x-amz-mp-parts-count";
         public const string XAmzBypassGovernanceRetention = "x-amz-bypass-governance-retention";
+        public const string XAmzRequestPayer = "x-amz-request-payer";
+        public const string XAmzRequestCharged = "x-amz-request-charged";
 
         #region Requests
 

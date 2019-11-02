@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Genbox.SimpleS3.Abstracts;
+using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -13,6 +14,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Multipart
     {
         public void MarshalResponse(IS3Config config, AbortMultipartUploadRequest request, AbortMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
+            response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
         }
     }
 }

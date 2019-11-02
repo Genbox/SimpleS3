@@ -1,5 +1,6 @@
 ﻿using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
@@ -8,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// (IAM) policy, you must have permissions to perform the s3:ListBucket action. The bucket owner has this permission by default and can grant this
     /// permission to others.
     /// </summary>
-    public class ListObjectsRequest : BaseRequest
+    public class ListObjectsRequest : BaseRequest, IHasRequestPayer
     {
         public ListObjectsRequest(string bucketName) : base(HttpMethod.GET, bucketName, string.Empty)
         {
@@ -62,5 +63,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// specify this parameter along with the continuation-token parameter, and then Amazon S3 ignores this parameter.
         /// </summary>
         public string StartAfter { get; set; }
+
+        public Payer RequestPayer { get; set; }
     }
 }

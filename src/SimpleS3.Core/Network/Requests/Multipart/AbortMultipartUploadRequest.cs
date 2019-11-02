@@ -1,4 +1,6 @@
 ﻿using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 {
@@ -9,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// consumed by all parts. To verify that all parts have been removed, so you don't get charged for the part storage, you should call the List Parts
     /// operation and ensure the parts list is empty.
     /// </summary>
-    public class AbortMultipartUploadRequest : BaseRequest
+    public class AbortMultipartUploadRequest : BaseRequest, IHasRequestPayer
     {
         public AbortMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.DELETE, bucketName, objectKey)
         {
@@ -17,5 +19,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         }
 
         public string UploadId { get; }
+
+        public Payer RequestPayer { get; set; }
     }
 }

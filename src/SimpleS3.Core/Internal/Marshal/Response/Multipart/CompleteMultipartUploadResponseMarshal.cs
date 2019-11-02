@@ -22,10 +22,10 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Multipart
         {
             response.ExpiresOn = headers.GetHeader(AmzHeaders.XAmzExpiration);
             response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
-            response.RequestCharged = string.Equals("RequestPayer", headers.GetHeader(AmzHeaders.XAmzVersionId), StringComparison.OrdinalIgnoreCase);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSSE);
             response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSSEAwsKmsKeyId);
             response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSSECustomerAlgorithm);
+            response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
             using (responseStream)
             {

@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// multipart upload. You specify this upload ID in each of your subsequent upload part requests (see Upload Part). You also include this upload ID in
     /// the final request to either complete or abort the multipart upload request.
     /// </summary>
-    public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, ISupportStreaming
+    public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, ISupportStreaming, IHasRequestPayer
     {
         private byte[] _sseCustomerKey;
 
@@ -69,6 +69,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public string SseKmsKeyId { get; set; }
         public KmsContextBuilder SseContext { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
+        public Payer RequestPayer { get; set; }
+        public byte[] SseCustomerKeyMd5 { get; set; }
+        public StorageClass StorageClass { get; set; }
 
         public byte[] SseCustomerKey
         {
@@ -86,16 +89,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             }
         }
 
-        /// <inheritdoc />
-        public byte[] SseCustomerKeyMd5 { get; set; }
-
         public void ClearSensitiveMaterial()
         {
             if (_sseCustomerKey != null)
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
-
-        /// <inheritdoc />
-        public StorageClass StorageClass { get; set; }
     }
 }

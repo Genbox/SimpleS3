@@ -3,6 +3,7 @@ using System.Text;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
@@ -20,6 +21,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             request.AddQueryParameter(AmzParameters.Delete, string.Empty);
             request.AddHeader(AmzHeaders.XAmzMfa, request.Mfa);
             request.AddHeader(AmzHeaders.XAmzBypassGovernanceRetention, request.BypassGovernanceRetention);
+            request.AddHeader(AmzHeaders.XAmzRequestPayer, request.RequestPayer == Payer.Requester ? "requester" : null);
 
             StringBuilder sb = new StringBuilder(512);
             sb.Append("<Delete>");

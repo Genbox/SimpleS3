@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Genbox.SimpleS3.Abstracts;
@@ -18,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
         {
             response.IsDeleteMarker = headers.GetHeaderBool(AmzHeaders.XAmzDeleteMarker);
             response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
-            response.RequestCharged = string.Equals("RequestPayer", headers.GetHeader(AmzHeaders.XAmzVersionId), StringComparison.OrdinalIgnoreCase);
+            response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
         }
     }
 }

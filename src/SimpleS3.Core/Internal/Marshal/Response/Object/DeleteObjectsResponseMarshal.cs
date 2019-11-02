@@ -7,7 +7,6 @@ using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Abstracts.Marshal;
-using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -23,7 +22,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
     {
         public void MarshalResponse(IS3Config config, DeleteObjectsRequest request, DeleteObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.RequestCharged = string.Equals("RequestPayer", headers.GetHeader(AmzHeaders.XAmzVersionId), StringComparison.OrdinalIgnoreCase);
+            response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
             XmlSerializer s = new XmlSerializer(typeof(DeleteResult));
 

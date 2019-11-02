@@ -36,8 +36,8 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
             response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSSECustomerKeyMD5, BinaryEncoding.Base64);
             response.IsDeleteMarker = headers.GetHeaderBool(AmzHeaders.XAmzDeleteMarker);
             response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
-
             response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
+            response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
             //It should default to standard
             if (response.StorageClass == StorageClass.Unknown)

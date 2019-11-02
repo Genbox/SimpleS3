@@ -9,7 +9,7 @@ using Genbox.SimpleS3.Core.Network.SharedProperties;
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 {
     /// <summary>This operation uploads a part in a multipart upload.</summary>
-    public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, ISupportStreaming, IHasUploadId
+    public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, ISupportStreaming, IHasUploadId, IHasRequestPayer
     {
         private byte[] _sseCustomerKey;
 
@@ -36,6 +36,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public Stream Content { get; }
 
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
+        public Payer RequestPayer { get; set; }
+        public byte[] SseCustomerKeyMd5 { get; set; }
+        public string UploadId { get; }
 
         public byte[] SseCustomerKey
         {
@@ -53,15 +56,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             }
         }
 
-        /// <inheritdoc />
-        public byte[] SseCustomerKeyMd5 { get; set; }
-
         public void ClearSensitiveMaterial()
         {
             if (_sseCustomerKey != null)
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
-
-        public string UploadId { get; }
     }
 }

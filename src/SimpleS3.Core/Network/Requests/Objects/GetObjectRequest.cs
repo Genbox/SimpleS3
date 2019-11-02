@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// This implementation of the GET operation retrieves objects from Amazon S3. To use GET, you must have READ access to the object. If you grant
     /// READ access to the anonymous user, you can return the object without using an authorization header.
     /// </summary>
-    public class GetObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId
+    public class GetObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId, IHasRequestPayer
     {
         private byte[] _sseCustomerKey;
 
@@ -34,42 +34,21 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// </summary>
         public int? PartNumber { get; set; }
 
-
         public DateTimeOffset? IfModifiedSince { get; set; }
-
-
         public DateTimeOffset? IfUnmodifiedSince { get; set; }
-
-
         public ETagBuilder IfETagMatch { get; internal set; }
-
-
         public ETagBuilder IfETagNotMatch { get; internal set; }
-
-
         public RangeBuilder Range { get; internal set; }
-
-
         public DateTimeOffset? ResponseExpires { get; set; }
-
-
         public CacheControlBuilder ResponseCacheControl { get; }
-
-
         public ContentTypeBuilder ResponseContentType { get; }
-
-
         public ContentDispositionBuilder ResponseContentDisposition { get; }
-
-
         public ContentLanguageBuilder ResponseContentLanguage { get; }
-
-
         public ContentEncodingBuilder ResponseContentEncoding { get; }
-
-
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
-
+        public string VersionId { get; set; }
+        public Payer RequestPayer { get; set; }
+        public byte[] SseCustomerKeyMd5 { get; set; }
 
         public byte[] SseCustomerKey
         {
@@ -87,15 +66,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             }
         }
 
-
-        public byte[] SseCustomerKeyMd5 { get; set; }
-
         public void ClearSensitiveMaterial()
         {
             if (_sseCustomerKey != null)
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
-
-        public string VersionId { get; set; }
     }
 }

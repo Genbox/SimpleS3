@@ -2,6 +2,8 @@
 using System.Linq;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
@@ -11,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// keys that you want to delete, then this operation provides a suitable alternative to sending individual delete requests (see DELETE Object), reducing
     /// per-request overhead.
     /// </summary>
-    public class DeleteObjectsRequest : BaseRequest
+    public class DeleteObjectsRequest : BaseRequest, IHasRequestPayer
     {
         public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : base(HttpMethod.POST, bucketName, string.Empty)
         {
@@ -33,5 +35,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public bool Quiet { get; set; }
 
         public IList<S3DeleteInfo> Objects { get; }
+        public Payer RequestPayer { get; set; }
     }
 }
