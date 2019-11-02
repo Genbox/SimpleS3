@@ -23,8 +23,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
 
             List<S3Bucket> list = await BucketClient.ListAllBucketsAsync().ToListAsync().ConfigureAwait(false);
             Assert.True(list.Count > 0);
-
-            Assert.NotNull(list.SingleOrDefault(x => x.Name == tempBucketName));
+            Assert.Contains(tempBucketName, list.Select(x => x.Name));
         }
     }
 }

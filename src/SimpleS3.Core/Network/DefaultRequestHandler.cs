@@ -65,7 +65,7 @@ namespace Genbox.SimpleS3.Core.Network
             _validator.ValidateAndThrow(request);
 
             //Ensure that the object key is encoded
-            string encodedResource = UrlHelper.UrlPathEncode(request.ObjectKey);
+            string encodedResource = request.ObjectKey != null ? UrlHelper.UrlPathEncode(request.ObjectKey) : null;
 
             if (_options.Value.Endpoint == null || _options.Value.NamingType == NamingType.PathStyle)
             {

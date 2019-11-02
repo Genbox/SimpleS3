@@ -133,6 +133,9 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         private static string CanonicalizeUri(string resourcePath)
         {
+            if (resourcePath == null)
+                return SigningConstants.SlashStr;
+
             if (!resourcePath.StartsWith(SigningConstants.SlashStr, StringComparison.Ordinal))
                 resourcePath = SigningConstants.Slash + resourcePath;
 
