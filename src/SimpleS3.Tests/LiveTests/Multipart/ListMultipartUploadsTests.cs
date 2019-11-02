@@ -8,7 +8,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
+namespace Genbox.SimpleS3.Tests.LiveTests.Multipart
 {
     public class ListMultipartUploadsTests : LiveTestBase
     {

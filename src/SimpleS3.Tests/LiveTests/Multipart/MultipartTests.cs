@@ -1,7 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Helpers;
@@ -9,7 +7,6 @@ using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Network.Responses.Errors;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Tests.Code.Extensions;
 using Xunit;
 using Xunit.Abstractions;
@@ -20,81 +17,6 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Multipart
     {
         public MultipartTests(ITestOutputHelper helper) : base(helper)
         {
-        }
-
-        [Fact]
-        public async Task AbortIncompleteUpload()
-        {
-            string objectKey = nameof(AbortIncompleteUpload);
-
-            CreateMultipartUploadResponse initResp = await MultipartClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
-
-            Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(objectKey, initResp.ObjectKey);
-            Assert.NotNull(initResp.UploadId);
-
-            AbortMultipartUploadResponse abortResp = await MultipartClient.AbortMultipartUploadAsync(BucketName, objectKey, initResp.UploadId).ConfigureAwait(false);
-
-            Assert.True(abortResp.IsSuccess);
-            Assert.Equal(204, abortResp.StatusCode);
-        }
-
-        [Fact]
-        public async Task ListParts()
-        {
-            await CreateTempBucketAsync(async bucket =>
-            {
-                //We add the special characters at the end to test EncodingType support.
-                string objName = nameof(ListParts) + "%";
-
-                CreateMultipartUploadResponse initResp = await MultipartClient.CreateMultipartUploadAsync(bucket, objName).ConfigureAwait(false);
-
-                ListPartsResponse listResp1 = await MultipartClient.ListPartsAsync(bucket, objName, initResp.UploadId).ConfigureAwait(false);
-
-                Assert.Equal(bucket, listResp1.BucketName);
-                Assert.Equal(objName, listResp1.ObjectKey);
-                Assert.Equal(initResp.UploadId, listResp1.UploadId);
-                Assert.Equal(StorageClass.Standard, listResp1.StorageClass);
-                Assert.Equal(0, listResp1.PartNumberMarker);
-                Assert.Equal(0, listResp1.NextPartNumberMarker);
-                Assert.Equal(1000, listResp1.MaxParts);
-                Assert.False(listResp1.IsTruncated);
-                Assert.Equal(TestConstants.TestUsername, listResp1.Owner.Name);
-
-                Assert.Empty(listResp1.Parts);
-
-                UploadPartResponse uploadResp;
-
-                byte[] file = new byte[5 * 1024];
-
-                using (MemoryStream ms = new MemoryStream(file))
-                    uploadResp = await MultipartClient.UploadPartAsync(bucket, objName, 1, initResp.UploadId, ms).ConfigureAwait(false);
-
-                ListPartsResponse listResp2 = await MultipartClient.ListPartsAsync(bucket, objName, initResp.UploadId, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
-
-                Assert.Equal(bucket, listResp2.BucketName);
-                Assert.Equal(WebUtility.UrlEncode(objName), listResp2.ObjectKey); //It should be encoded at this point
-                Assert.Equal(initResp.UploadId, listResp2.UploadId);
-                Assert.Equal(StorageClass.Standard, listResp2.StorageClass);
-                Assert.Equal(0, listResp2.PartNumberMarker);
-                Assert.Equal(1, listResp2.NextPartNumberMarker);
-                Assert.Equal(1000, listResp2.MaxParts);
-                Assert.False(listResp2.IsTruncated);
-                Assert.Equal(TestConstants.TestUsername, listResp2.Owner.Name);
-
-                S3Part part = Assert.Single(listResp2.Parts);
-
-                Assert.Equal(1, part.PartNumber);
-                Assert.Equal(DateTime.UtcNow, part.LastModified.DateTime, TimeSpan.FromSeconds(5));
-                Assert.Equal("\"32ca18808933aa12e979375d07048a11\"", part.ETag);
-                Assert.Equal(file.Length, part.Size);
-
-                await MultipartClient.CompleteMultipartUploadAsync(bucket, objName, initResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
-
-                ListPartsResponse listResp3 = await MultipartClient.ListPartsAsync(bucket, objName, initResp.UploadId).ConfigureAwait(false);
-                Assert.False(listResp3.IsSuccess);
-                Assert.Equal(404, listResp3.StatusCode);
-            }).ConfigureAwait(false);
         }
 
         [Fact]
