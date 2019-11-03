@@ -31,10 +31,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="all" />
     <PackageReference Include="Microsoft.DotNet.Analyzers.Compatibility" Version="0.2.12-alpha" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="2.9.6" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="2.9.7" PrivateAssets="all" />
     <PackageReference Include="IDisposableAnalyzers" Version="2.1.2" PrivateAssets="all" />
-    <PackageReference Include="Roslynator.Analyzers" Version="2.1.0" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="2.2.0" PrivateAssets="all" />
     <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" PrivateAssets="all" />
     <PackageReference Include="AsyncFixer" Version="1.1.6" PrivateAssets="all" />
     <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="4.0.0" PrivateAssets="all" />
