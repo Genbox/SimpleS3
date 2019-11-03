@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Multipart
     {
         public void MarshalResponse(IS3Config config, CreateMultipartUploadRequest request, CreateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Iso8601DateTimeExt);
+            response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Rfc1123);
             response.AbortRuleId = headers.GetHeader(AmzHeaders.XAmzAbortRuleId);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSSE);
             response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSSEAwsKmsKeyId);

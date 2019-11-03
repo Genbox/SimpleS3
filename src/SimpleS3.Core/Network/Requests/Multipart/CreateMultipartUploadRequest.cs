@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// multipart upload. You specify this upload ID in each of your subsequent upload part requests (see Upload Part). You also include this upload ID in
     /// the final request to either complete or abort the multipart upload request.
     /// </summary>
-    public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpires, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer
+    public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer
     {
         private byte[] _sseCustomerKey;
 
@@ -54,7 +54,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public ContentDispositionBuilder ContentDisposition { get; internal set; }
         public ContentEncodingBuilder ContentEncoding { get; internal set; }
         public ContentTypeBuilder ContentType { get; internal set; }
-        public DateTimeOffset? Expires { get; set; }
+        public DateTimeOffset? ExpiresOn { get; set; }
         public LockMode LockMode { get; set; }
         public DateTimeOffset? LockRetainUntil { get; set; }
         public bool? LockLegalHold { get; set; }

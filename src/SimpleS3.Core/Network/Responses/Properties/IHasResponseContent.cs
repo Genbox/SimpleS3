@@ -13,9 +13,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Properties
         string ContentEncoding { get; }
         string ContentLanguage { get; }
 
-        /// <summary>The date and time at which the object is no longer able to be cached.</summary>
-        DateTimeOffset? Expires { get; }
-
         DateTimeOffset? LastModified { get; }
     }
 }

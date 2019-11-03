@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
@@ -15,13 +16,21 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         [Fact]
         public async Task BasicCRDTest()
         {
-            PutObjectResponse pResp = await UploadAsync(nameof(BasicCRDTest)).ConfigureAwait(false);
-            Assert.Equal(200, pResp.StatusCode);
+            PutObjectResponse putResp = await UploadAsync(nameof(BasicCRDTest)).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
 
-            await AssertAsync(nameof(BasicCRDTest)).ConfigureAwait(false);
+            //Test lifecycle expiration (yes, we add 2 days. I don't know why Amazon works like this)
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
+            Assert.Equal("AllExpire", putResp.LifeCycleRuleId);
 
-            DeleteObjectResponse dResp = await ObjectClient.DeleteObjectAsync(BucketName, nameof(BasicCRDTest)).ConfigureAwait(false);
-            Assert.Equal(204, dResp.StatusCode);
+            GetObjectResponse getResp = await AssertAsync(nameof(BasicCRDTest)).ConfigureAwait(false);
+
+            //Test lifecycle expiration
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
+            Assert.Equal("AllExpire", getResp.LifeCycleRuleId);
+
+            DeleteObjectResponse deleteResp = await ObjectClient.DeleteObjectAsync(BucketName, nameof(BasicCRDTest)).ConfigureAwait(false);
+            Assert.Equal(204, deleteResp.StatusCode);
         }
 
         [Fact]

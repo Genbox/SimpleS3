@@ -71,38 +71,35 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Multipart
         }
 
         [Fact]
-        public async Task ManualSinglePartUpload()
+        public async Task SinglePartUpload()
         {
-            string objectKey = nameof(ManualSinglePartUpload);
+            string objectKey = nameof(SinglePartUpload);
 
-            CreateMultipartUploadResponse initResp = await MultipartClient.CreateMultipartUploadAsync(BucketName, objectKey, req =>
-            {
-                req.SseAlgorithm = SseAlgorithm.Aes256;
-                req.StorageClass = StorageClass.StandardIa;
-            }).ConfigureAwait(false);
+            CreateMultipartUploadResponse createResp = await MultipartClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
+            Assert.True(createResp.IsSuccess);
+            Assert.Equal(BucketName, createResp.Bucket);
+            Assert.Equal(objectKey, createResp.ObjectKey);
+            Assert.NotNull(createResp.UploadId);
 
-            Assert.True(initResp.IsSuccess);
-            Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(objectKey, initResp.ObjectKey);
-            Assert.NotNull(initResp.UploadId);
+            //Test lifecycle expiration
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, createResp.AbortsOn.Value.UtcDateTime.Date);
+            Assert.Equal("AllExpire", createResp.AbortRuleId);
 
             byte[] file = new byte[1024 * 1024 * 5];
             file[0] = (byte)'a';
 
-            UploadPartResponse uploadResp = await MultipartClient.UploadPartAsync(BucketName, objectKey, 1, initResp.UploadId, new MemoryStream(file)).ConfigureAwait(false);
+            UploadPartResponse uploadResp = await MultipartClient.UploadPartAsync(BucketName, objectKey, 1, createResp.UploadId, new MemoryStream(file)).ConfigureAwait(false);
             Assert.True(uploadResp.IsSuccess);
-            Assert.NotNull(uploadResp.ETag);
-            Assert.Equal(SseAlgorithm.Aes256, uploadResp.SseAlgorithm);
-            Assert.Equal(StorageClass.StandardIa, uploadResp.StorageClass);
+            Assert.Equal("\"10f74ef02085310ccd1f87150b83e537\"", uploadResp.ETag);
 
-            CompleteMultipartUploadResponse completeResp = await MultipartClient.CompleteMultipartUploadAsync(BucketName, objectKey, initResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
-
+            CompleteMultipartUploadResponse completeResp = await MultipartClient.CompleteMultipartUploadAsync(BucketName, objectKey, createResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
             Assert.True(completeResp.IsSuccess);
-            Assert.NotNull(completeResp.ETag);
+            Assert.Equal("\"bd74e21dfa8678d127240f76e518e9c2-1\"", completeResp.ETag);
+            Assert.NotNull(completeResp.VersionId);
 
-            GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, objectKey).ConfigureAwait(false);
-            Assert.True(getResp.IsSuccess);
-            Assert.Equal(file, await getResp.Content.AsDataAsync().ConfigureAwait(false));
+            //Test lifecycle expiration
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, completeResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
+            Assert.Equal("AllExpire", completeResp.LifeCycleRuleId);
         }
 
         [Fact]

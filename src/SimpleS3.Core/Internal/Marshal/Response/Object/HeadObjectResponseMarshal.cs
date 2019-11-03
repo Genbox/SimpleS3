@@ -18,8 +18,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
     {
         public void MarshalResponse(IS3Config config, HeadObjectRequest request, HeadObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.ExpiresOn = headers.GetHeader(AmzHeaders.XAmzExpiration);
-            response.Metadata = MetadataHelper.ParseMetadata(headers);
+            response.Metadata = HeaderParserHelper.ParseMetadata(headers);
             response.ETag = headers.GetHeader(HttpHeaders.ETag);
             response.CacheControl = headers.GetHeader(HttpHeaders.CacheControl);
             response.LastModified = headers.GetHeaderDate(HttpHeaders.LastModified, DateTimeFormat.Rfc1123);
@@ -27,7 +26,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
             response.ContentDisposition = headers.GetHeader(HttpHeaders.ContentDisposition);
             response.ContentEncoding = headers.GetHeader(HttpHeaders.ContentEncoding);
             response.ContentLanguage = headers.GetHeader(HttpHeaders.ContentLanguage);
-            response.Expires = headers.GetHeaderDate(HttpHeaders.Expires, DateTimeFormat.Rfc1123);
+            response.ExpiresOn = headers.GetHeaderDate(HttpHeaders.Expires, DateTimeFormat.Rfc1123);
             response.ReplicationStatus = headers.GetHeaderEnum<ReplicationStatus>(AmzHeaders.XAmzReplicationStatus);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSSE);
             response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSSEAwsKmsKeyId);

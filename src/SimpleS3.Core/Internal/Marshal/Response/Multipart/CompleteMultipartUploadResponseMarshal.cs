@@ -8,6 +8,7 @@ using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
+using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart.Xml;
@@ -20,12 +21,17 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Multipart
     {
         public void MarshalResponse(IS3Config config, CompleteMultipartUploadRequest request, CompleteMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.ExpiresOn = headers.GetHeader(AmzHeaders.XAmzExpiration);
             response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSSE);
             response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSSEAwsKmsKeyId);
             response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSSECustomerAlgorithm);
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
+
+            if (HeaderParserHelper.TryParseExpiration(headers, out var data))
+            {
+                response.LifeCycleExpiresOn = data.expiresOn;
+                response.LifeCycleRuleId = data.ruleId;
+            }
 
             using (responseStream)
             {

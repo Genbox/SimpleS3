@@ -34,7 +34,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.Equal("gzip", response.ContentEncoding);
             Assert.Equal("da-DK", response.ContentLanguage);
             Assert.Equal("text/html; charset=utf-8", response.ContentType);
-            Assert.Equal(DateTime.UtcNow, response.Expires.Value.DateTime, TimeSpan.FromSeconds(5));
+            Assert.Equal(DateTime.UtcNow, response.ExpiresOn.Value.DateTime, TimeSpan.FromSeconds(5));
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.Equal("attachment; filename*=\"filename.txt\"", response.ContentDisposition);
             Assert.Equal("da-DK", response.ContentLanguage);
             Assert.Equal("text/html; charset=utf-8", response.ContentType);
-            Assert.Equal(DateTime.UtcNow, response.Expires.Value.DateTime, TimeSpan.FromSeconds(5));
+            Assert.Equal(DateTime.UtcNow, response.ExpiresOn.Value.DateTime, TimeSpan.FromSeconds(5));
         }
     }
 }

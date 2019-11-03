@@ -1,11 +1,10 @@
-﻿namespace Genbox.SimpleS3.Core.Network.Responses.Properties
+﻿using System;
+
+namespace Genbox.SimpleS3.Core.Network.Responses.Properties
 {
     public interface IHasExpiresOn
     {
-        /// <summary>
-        /// If the expiration is configured for the object (see PUT Bucket lifecycle), the response includes this header. It includes the expiry-date
-        /// and rule-id key-value pairs that provide information about object expiration. The value of the rule-id is URL encoded.
-        /// </summary>
-        string ExpiresOn { get; }
+        /// <summary>A date time for when the response has expired and should no longer be cached.</summary>
+        DateTimeOffset? ExpiresOn { get; }
     }
 }

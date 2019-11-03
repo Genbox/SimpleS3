@@ -10,6 +10,12 @@ You also need to set BucketName in the TestConfig.json file. The bucket needs to
 - Public block: disabled
 - Versioing: enabled
 - Locking: enabled
+- Lifecycle bucket policy called "AllExpire" with:
+    - Current version
+	- Previous versions
+	- Expire current version of object: 1 day
+	- Permanently delete previous versions: 1 day
+	- Clean-up incomplete multipart uploads: 1 day
 
 If you want to use Minio's play server, run the following:
 

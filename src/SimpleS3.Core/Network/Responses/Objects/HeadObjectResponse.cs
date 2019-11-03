@@ -24,7 +24,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public string CacheControl { get; internal set; }
         public string ETag { get; internal set; }
         public bool IsDeleteMarker { get; internal set; }
-        public string ExpiresOn { get; internal set; }
         public LockMode LockMode { get; internal set; }
         public DateTimeOffset LockRetainUntilDate { get; internal set; }
         public bool LockLegalHold { get; internal set; }
@@ -34,7 +33,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public string ContentDisposition { get; internal set; }
         public string ContentEncoding { get; internal set; }
         public string ContentLanguage { get; internal set; }
-        public DateTimeOffset? Expires { get; internal set; }
+        public DateTimeOffset? ExpiresOn { get; internal set; }
         public DateTimeOffset? LastModified { get; internal set; }
         public SseAlgorithm SseAlgorithm { get; internal set; }
         public string SseKmsKeyId { get; internal set; }

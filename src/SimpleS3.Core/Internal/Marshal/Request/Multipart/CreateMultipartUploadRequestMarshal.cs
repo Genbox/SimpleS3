@@ -41,7 +41,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Multipart
             request.AddHeader(AmzHeaders.XAmzSSECustomerAlgorithm, request.SseCustomerAlgorithm);
             request.AddHeader(AmzHeaders.XAmzSSECustomerKey, request.SseCustomerKey, BinaryEncoding.Base64);
             request.AddHeader(AmzHeaders.XAmzSSECustomerKeyMD5, request.SseCustomerKeyMd5, BinaryEncoding.Base64);
-            request.AddHeader(HttpHeaders.Expires, request.Expires, DateTimeFormat.Rfc1123);
+            request.AddHeader(HttpHeaders.Expires, request.ExpiresOn, DateTimeFormat.Rfc1123);
             request.AddHeader(HttpHeaders.ContentDisposition, request.ContentDisposition);
             request.AddHeader(HttpHeaders.ContentEncoding, request.ContentEncoding);
             request.AddHeader(HttpHeaders.ContentType, request.ContentType);

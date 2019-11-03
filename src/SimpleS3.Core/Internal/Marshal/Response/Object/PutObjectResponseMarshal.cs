@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Genbox.SimpleS3.Abstracts;
@@ -6,6 +7,7 @@ using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
+using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using JetBrains.Annotations;
@@ -24,7 +26,6 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
                 response.StorageClass = StorageClass.Standard;
 
             response.ETag = headers.GetHeader(HttpHeaders.ETag);
-            response.ExpiresOn = headers.GetHeader(AmzHeaders.XAmzExpiration);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSSE);
             response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSSEAwsKmsKeyId);
             response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSSECustomerAlgorithm);
@@ -32,6 +33,12 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
             response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
             response.SseContext = headers.GetHeader(AmzHeaders.XAmzSSEContext);
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
+
+            if (HeaderParserHelper.TryParseExpiration(headers, out var data))
+            {
+                response.LifeCycleExpiresOn = data.expiresOn;
+                response.LifeCycleRuleId = data.ruleId;
+            }
         }
     }
 }
