@@ -48,6 +48,12 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
             response.LockRetainUntilDate = headers.GetHeaderDate(AmzHeaders.XAmzObjectLockRetainUntilDate, DateTimeFormat.Iso8601DateTimeExt);
             response.LockLegalHold = headers.GetHeaderBool(AmzHeaders.XAmzObjectLockLegalHold);
             response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzPartsCount);
+
+            if (HeaderParserHelper.TryParseExpiration(headers, out var data))
+            {
+                response.LifeCycleExpiresOn = data.expiresOn;
+                response.LifeCycleRuleId = data.ruleId;
+            }
         }
     }
 }

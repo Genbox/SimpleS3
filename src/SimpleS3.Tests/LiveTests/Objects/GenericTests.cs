@@ -26,8 +26,14 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             GetObjectResponse getResp = await AssertAsync(nameof(BasicCRDTest)).ConfigureAwait(false);
 
             //Test lifecycle expiration
-            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, getResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
             Assert.Equal("AllExpire", getResp.LifeCycleRuleId);
+
+            HeadObjectResponse headResp = await ObjectClient.HeadObjectAsync(BucketName, nameof(BasicCRDTest)).ConfigureAwait(false);
+
+            //Expiration should work on head too
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, headResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
+            Assert.Equal("AllExpire", headResp.LifeCycleRuleId);
 
             DeleteObjectResponse deleteResp = await ObjectClient.DeleteObjectAsync(BucketName, nameof(BasicCRDTest)).ConfigureAwait(false);
             Assert.Equal(204, deleteResp.StatusCode);
