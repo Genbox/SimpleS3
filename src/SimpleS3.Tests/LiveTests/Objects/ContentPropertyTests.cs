@@ -19,13 +19,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             {
                 request.ContentDisposition.Set(ContentDispositionType.Attachment, "filename.jpg");
                 request.ContentEncoding.Add(ContentEncodingType.Identity);
-                request.ContentType.Set("text/html", "utf-8");
+                request.ContentType.Set(MediaType.Text_plain, Charset.Utf_8);
             }).ConfigureAwait(false);
 
             GetObjectResponse resp = await AssertAsync(nameof(ContentProperties)).ConfigureAwait(false);
             Assert.Equal(4, resp.ContentLength);
             Assert.Equal("attachment; filename*=\"filename.jpg\"", resp.ContentDisposition);
-            Assert.Equal("text/html; charset=utf-8", resp.ContentType);
+            Assert.Equal("text/plain; charset=utf-8", resp.ContentType);
         }
 
         [Fact]

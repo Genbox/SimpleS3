@@ -70,6 +70,12 @@ namespace Genbox.SimpleS3.Core.Fluent
             return this;
         }
 
+        public Upload WithContentType(MediaType mediaType, Charset charset = Charset.Utf_8, string boundary = null)
+        {
+            _request.ContentType.Set(mediaType, charset, boundary);
+            return this;
+        }
+
         public Upload WithContentEncoding(ContentEncodingBuilder builder)
         {
             _request.ContentEncoding = builder;
