@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class ListObjectsRequest : BaseRequest, IHasRequestPayer
     {
-        public ListObjectsRequest(string bucketName) : base(HttpMethod.GET, bucketName, string.Empty)
+        public ListObjectsRequest(string bucketName) : base(HttpMethod.GET, bucketName, null)
         {
         }
 

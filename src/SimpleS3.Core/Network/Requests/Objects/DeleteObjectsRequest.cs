@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention
     {
-        public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : base(HttpMethod.POST, bucketName, string.Empty)
+        public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : base(HttpMethod.POST, bucketName, null)
         {
             Mfa = new MfaAuthenticationBuilder();
             Objects = resources.ToList();

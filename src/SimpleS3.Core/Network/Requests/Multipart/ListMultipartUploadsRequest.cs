@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// </summary>
     public class ListMultipartUploadsRequest : BaseRequest
     {
-        public ListMultipartUploadsRequest(string bucketName) : base(HttpMethod.GET, bucketName, string.Empty)
+        public ListMultipartUploadsRequest(string bucketName) : base(HttpMethod.GET, bucketName, null)
         {
         }
 
