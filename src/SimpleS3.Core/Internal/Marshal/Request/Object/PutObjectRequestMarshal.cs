@@ -54,7 +54,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             }
 
             //Locks require the Content-MD5 header to be set
-            if (request.LockMode != LockMode.Unknown)
+            if (request.LockMode != LockMode.Unknown || (request.LockLegalHold.HasValue && request.LockLegalHold.Value))
             {
                 string md5Hash = request.Content == null ? "1B2M2Y8AsgTpgAmY7PhCfg==" : Convert.ToBase64String(CryptoHelper.Md5Hash(request.Content, true));
                 request.AddHeader(HttpHeaders.ContentMd5, md5Hash);

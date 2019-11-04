@@ -48,7 +48,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
             response.WebsiteRedirectLocation = headers.GetHeader(AmzHeaders.XAmzWebsiteRedirectLocation);
             response.LockMode = headers.GetHeaderEnum<LockMode>(AmzHeaders.XAmzObjectLockMode);
             response.LockRetainUntilDate = headers.GetHeaderDate(AmzHeaders.XAmzObjectLockRetainUntilDate, DateTimeFormat.Iso8601DateTimeExt);
-            response.LockLegalHold = headers.GetHeaderBool(AmzHeaders.XAmzObjectLockLegalHold);
+            response.LockLegalHold = headers.GetHeader(AmzHeaders.XAmzObjectLockLegalHold) == "ON";
             response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzPartsCount);
 
             if (HeaderParserHelper.TryParseExpiration(headers, out var data))
