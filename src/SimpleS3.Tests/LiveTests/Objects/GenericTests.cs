@@ -40,6 +40,21 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
+        public async Task GetWithContentRange()
+        {
+            await UploadAsync(nameof(GetWithContentRange)).ConfigureAwait(false);
+
+            GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, nameof(GetWithContentRange), req => req.Range.Add(0, 2)).ConfigureAwait(false);
+            Assert.Equal("bytes", getResp.AcceptRanges);
+            Assert.Equal("bytes 0-2/4", getResp.ContentRange);
+            Assert.Equal("tes", await getResp.Content.AsStringAsync().ConfigureAwait(false));
+
+            HeadObjectResponse headResp = await ObjectClient.HeadObjectAsync(BucketName, nameof(GetWithContentRange), req => req.Range.Add(0, 2)).ConfigureAwait(false);
+            Assert.Equal("bytes", getResp.AcceptRanges);
+            Assert.Equal("bytes 0-2/4", headResp.ContentRange);
+        }
+
+        [Fact]
         public async Task HeadTest()
         {
             await UploadAsync(nameof(BasicCRDTest)).ConfigureAwait(false);

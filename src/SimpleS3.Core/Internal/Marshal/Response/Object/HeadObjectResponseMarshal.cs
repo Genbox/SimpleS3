@@ -26,6 +26,8 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
             response.ContentDisposition = headers.GetHeader(HttpHeaders.ContentDisposition);
             response.ContentEncoding = headers.GetHeader(HttpHeaders.ContentEncoding);
             response.ContentLanguage = headers.GetHeader(HttpHeaders.ContentLanguage);
+            response.ContentRange = headers.GetHeader(HttpHeaders.ContentRange);
+            response.AcceptRanges = headers.GetHeader(HttpHeaders.AcceptRanges);
             response.ExpiresOn = headers.GetHeaderDate(HttpHeaders.Expires, DateTimeFormat.Rfc1123);
             response.ReplicationStatus = headers.GetHeaderEnum<ReplicationStatus>(AmzHeaders.XAmzReplicationStatus);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSSE);

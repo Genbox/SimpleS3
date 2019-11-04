@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Properties
@@ -23,6 +23,12 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Properties
         /// language.
         /// </summary>
         string ContentLanguage { get; }
+
+        /// <summary>The range of bytes returned in the response. Only set if the response is partial.</summary>
+        string ContentRange { get; }
+
+        /// <summary>When this has a value, it indicates the type of partial requests the server supports.</summary>
+        string AcceptRanges { get; }
 
         DateTimeOffset? LastModified { get; }
     }

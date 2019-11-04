@@ -35,6 +35,8 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public string ContentDisposition { get; internal set; }
         public string ContentEncoding { get; internal set; }
         public string ContentLanguage { get; internal set; }
+        public string ContentRange { get; internal set; }
+        public string AcceptRanges { get; internal set; }
         public DateTimeOffset? ExpiresOn { get; internal set; }
         public DateTimeOffset? LastModified { get; internal set; }
         public SseAlgorithm SseAlgorithm { get; internal set; }

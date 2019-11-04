@@ -38,10 +38,8 @@ namespace Genbox.SimpleS3.Abstracts.Constants
         /// <summary>https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Unmodified-Since</summary>
         public const string IfUnmodifiedSince = "if-unmodified-since";
 
-
         /// <summary>https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization</summary>
         public const string Authorization = "authorization";
-
 
         /// <summary>https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Range</summary>
         public const string Range = "range";
@@ -69,5 +67,8 @@ namespace Genbox.SimpleS3.Abstracts.Constants
 
         /// <summary>https://tools.ietf.org/html/rfc1864</summary>
         public const string ContentMd5 = "content-md5";
+
+        /// <summary>https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Ranges</summary>
+        public const string AcceptRanges = "accept-ranges";
     }
 }
