@@ -281,7 +281,6 @@ namespace Genbox.SimpleS3.Utils
             foreach (char c in xml)
             {
                 //Invalid 
-
                 if (c == '\"' || c == '\'' || c == '<' || c == '>' || c == '&' || c == '\uFFFE' || c == '\uFFFF')
                     return true;
 

@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Internal.Constants;
-using Genbox.SimpleS3.Core.Network.Responses.Properties;
 
 namespace Genbox.SimpleS3.Core.Internal.Helpers
 {

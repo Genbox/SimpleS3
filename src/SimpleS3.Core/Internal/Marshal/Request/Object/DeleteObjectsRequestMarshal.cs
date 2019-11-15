@@ -43,9 +43,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             sb.Append("</Delete>");
 
             byte[] data = Encoding.UTF8.GetBytes(sb.ToString());
-
             request.AddHeader(HttpHeaders.ContentMd5, CryptoHelper.Md5Hash(data), BinaryEncoding.Base64);
-
             return new MemoryStream(data);
         }
     }
