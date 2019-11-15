@@ -3,6 +3,7 @@ using BenchmarkDotNet.Attributes;
 
 namespace Genbox.SimpleS3.Benchmarks.Benchmarks
 {
+    [InProcess]
     public class StringBuilderBenchmarks
     {
         private readonly StringBuilder _append = new StringBuilder();
