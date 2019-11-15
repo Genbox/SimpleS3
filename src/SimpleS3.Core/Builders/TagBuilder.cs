@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,7 +8,7 @@ using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Core.Builders
 {
-    public class TagBuilder : IHttpHeaderBuilder
+    public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, string>>
     {
         private readonly Regex _validChar = new Regex(@"^[a-z0-9 \+\-=\._:/]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private IDictionary<string, string> _tags;
@@ -66,6 +67,19 @@ namespace Genbox.SimpleS3.Core.Builders
             _tags.Add(key, value);
 
             return this;
+        }
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        {
+            if (_tags == null)
+                return Enumerable.Empty<KeyValuePair<string, string>>().GetEnumerator();
+
+            return _tags.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

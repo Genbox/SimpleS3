@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Genbox.SimpleS3.Core.Builders
@@ -23,12 +24,11 @@ namespace Genbox.SimpleS3.Core.Builders
                 _allowed.Add(b);
         }
 
-        public string this[string i] { get => _metadata[i]; set => _metadata[i] = value; }
-
-        public int Count => _metadata.Count;
-
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
+            if (_metadata == null)
+                return Enumerable.Empty<KeyValuePair<string, string>>().GetEnumerator();
+
             return _metadata.GetEnumerator();
         }
 
