@@ -20,12 +20,14 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         /// </summary>
         public string WebsiteRedirectLocation { get; internal set; }
 
-        public DateTimeOffset? LifeCycleExpiresOn { get; internal set; }
-        public string LifeCycleRuleId { get; internal set; }
         public int? NumberOfParts { get; internal set; }
         public string CacheControl { get; internal set; }
         public string ETag { get; internal set; }
         public bool IsDeleteMarker { get; internal set; }
+
+        public DateTimeOffset? LifeCycleExpiresOn { get; internal set; }
+        public string LifeCycleRuleId { get; internal set; }
+        public DateTimeOffset? ExpiresOn { get; internal set; }
         public LockMode LockMode { get; internal set; }
         public DateTimeOffset LockRetainUntilDate { get; internal set; }
         public bool LockLegalHold { get; internal set; }
@@ -37,15 +39,14 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public string ContentLanguage { get; internal set; }
         public string ContentRange { get; internal set; }
         public string AcceptRanges { get; internal set; }
-        public DateTimeOffset? ExpiresOn { get; internal set; }
         public DateTimeOffset? LastModified { get; internal set; }
+        public DateTimeOffset? RestoreExpiresOn { get; }
+        public bool RestoreInProgress { get; }
         public SseAlgorithm SseAlgorithm { get; internal set; }
         public string SseKmsKeyId { get; internal set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; internal set; }
         public byte[] SseCustomerKeyMd5 { get; internal set; }
         public StorageClass StorageClass { get; internal set; }
         public string VersionId { get; internal set; }
-        public DateTimeOffset? RestoreExpiresOn { get; }
-        public bool RestoreInProgress { get; }
     }
 }

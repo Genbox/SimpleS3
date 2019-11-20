@@ -34,18 +34,6 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntilDate.DateTime, TimeSpan.FromSeconds(1));
         }
 
-        [Fact]
-        public async Task LegalHold()
-        {
-            await UploadAsync(nameof(LegalHold), request => request.LockLegalHold = true).ConfigureAwait(false);
-
-            GetObjectResponse getResp = await AssertAsync(nameof(LegalHold)).ConfigureAwait(false);
-            Assert.True(getResp.LockLegalHold);
-
-            HeadObjectResponse headResp = await ObjectClient.HeadObjectAsync(BucketName, nameof(LegalHold)).ConfigureAwait(false);
-            Assert.True(headResp.LockLegalHold);
-        }
-
         [Theory]
         [InlineData(Core.Enums.LockMode.Compliance)]
         [InlineData(Core.Enums.LockMode.Governance)]
@@ -61,6 +49,18 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             GetObjectResponse resp = await AssertAsync(objectKey).ConfigureAwait(false);
             Assert.Equal(lockMode, resp.LockMode);
             Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntilDate.DateTime, TimeSpan.FromSeconds(1));
+        }
+
+        [Fact]
+        public async Task LegalHold()
+        {
+            await UploadAsync(nameof(LegalHold), request => request.LockLegalHold = true).ConfigureAwait(false);
+
+            GetObjectResponse getResp = await AssertAsync(nameof(LegalHold)).ConfigureAwait(false);
+            Assert.True(getResp.LockLegalHold);
+
+            HeadObjectResponse headResp = await ObjectClient.HeadObjectAsync(BucketName, nameof(LegalHold)).ConfigureAwait(false);
+            Assert.True(headResp.LockLegalHold);
         }
     }
 }

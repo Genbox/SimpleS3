@@ -16,13 +16,26 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact(Skip = "Require a setup of another AWS account with 'Requester pays' setup")]
-        public async Task PutGetRequestPayerTest()
+        public async Task DeleteRequestPayerTest()
         {
-            PutObjectResponse putResp = await ObjectClient.PutObjectAsync(BucketName, nameof(PutGetRequestPayerTest), null, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            PutObjectResponse putResp = await ObjectClient.PutObjectAsync(BucketName, nameof(DeleteRequestPayerTest), null, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
             Assert.True(putResp.RequestCharged);
 
-            GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, nameof(PutGetRequestPayerTest), req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
-            Assert.True(getResp.RequestCharged);
+            DeleteObjectResponse delResp = await ObjectClient.DeleteObjectAsync(BucketName, nameof(DeleteRequestPayerTest), req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            Assert.True(delResp.RequestCharged);
+
+            PutObjectResponse putResp2 = await ObjectClient.PutObjectAsync(BucketName, nameof(DeleteRequestPayerTest), null, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            Assert.True(putResp2.RequestCharged);
+
+            DeleteObjectsResponse delResp2 = await ObjectClient.DeleteObjectsAsync(BucketName, new[] { nameof(DeleteRequestPayerTest) }, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            Assert.True(delResp2.RequestCharged);
+        }
+
+        [Fact(Skip = "Require a setup of another AWS account with 'Requester pays' setup")]
+        public async Task ListObjectsRequestPayerTest()
+        {
+            ListObjectsResponse listResp = await ObjectClient.ListObjectsAsync(BucketName, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            Assert.True(listResp.RequestCharged);
         }
 
         [Fact(Skip = "Require a setup of another AWS account with 'Requester pays' setup")]
@@ -46,26 +59,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact(Skip = "Require a setup of another AWS account with 'Requester pays' setup")]
-        public async Task ListObjectsRequestPayerTest()
+        public async Task PutGetRequestPayerTest()
         {
-            ListObjectsResponse listResp = await ObjectClient.ListObjectsAsync(BucketName, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
-            Assert.True(listResp.RequestCharged);
-        }
-
-        [Fact(Skip = "Require a setup of another AWS account with 'Requester pays' setup")]
-        public async Task DeleteRequestPayerTest()
-        {
-            PutObjectResponse putResp = await ObjectClient.PutObjectAsync(BucketName, nameof(DeleteRequestPayerTest), null, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            PutObjectResponse putResp = await ObjectClient.PutObjectAsync(BucketName, nameof(PutGetRequestPayerTest), null, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
             Assert.True(putResp.RequestCharged);
 
-            DeleteObjectResponse delResp = await ObjectClient.DeleteObjectAsync(BucketName, nameof(DeleteRequestPayerTest), req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
-            Assert.True(delResp.RequestCharged);
-
-            PutObjectResponse putResp2 = await ObjectClient.PutObjectAsync(BucketName, nameof(DeleteRequestPayerTest), null, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
-            Assert.True(putResp2.RequestCharged);
-
-            DeleteObjectsResponse delResp2 = await ObjectClient.DeleteObjectsAsync(BucketName, new[] { nameof(DeleteRequestPayerTest) }, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
-            Assert.True(delResp2.RequestCharged);
+            GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, nameof(PutGetRequestPayerTest), req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            Assert.True(getResp.RequestCharged);
         }
     }
 }

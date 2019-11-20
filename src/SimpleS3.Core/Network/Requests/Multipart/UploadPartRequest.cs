@@ -30,10 +30,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public Stream Content { get; }
 
         public byte[] ContentMd5 { get; set; }
-        public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public Payer RequestPayer { get; set; }
+        public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public byte[] SseCustomerKeyMd5 { get; set; }
-        public string UploadId { get; }
 
         public byte[] SseCustomerKey
         {
@@ -56,5 +55,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             if (_sseCustomerKey != null)
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
+
+        public string UploadId { get; }
     }
 }

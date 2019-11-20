@@ -52,16 +52,15 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
                 req.SelectParameters.InputFormat = new S3CsvInputFormat
                 {
-                    HeaderUsage = HeaderUsage.Use,
+                    HeaderUsage = HeaderUsage.Use
                 };
 
                 req.SelectParameters.OutputFormat = new S3CsvOutputFormat();
 
                 req.OutputLocation = new S3OutputLocation(BucketName, "outputJob")
                 {
-                    StorageClass = StorageClass.Standard,
+                    StorageClass = StorageClass.Standard
                 };
-
             }).ConfigureAwait(false);
 
             Assert.Equal(202, restoreResp.StatusCode);

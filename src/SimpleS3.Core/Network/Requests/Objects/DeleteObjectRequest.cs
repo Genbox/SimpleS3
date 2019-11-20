@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public MfaAuthenticationBuilder Mfa { get; internal set; }
 
         public bool? BypassGovernanceRetention { get; set; }
-        public string VersionId { get; set; }
         public Payer RequestPayer { get; set; }
+        public string VersionId { get; set; }
     }
 }

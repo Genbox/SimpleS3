@@ -33,14 +33,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
         /// </summary>
         public TagBuilder Tags { get; internal set; }
 
-        /// <summary>
-        /// The name of the bucket where the restore results will be placed.
-        /// </summary>
+        /// <summary>The name of the bucket where the restore results will be placed.</summary>
         public string BucketName { get; }
 
-        /// <summary>
-        /// The prefix that is prepended to the restore results for this request.
-        /// </summary>
+        /// <summary>The prefix that is prepended to the restore results for this request.</summary>
         public string Prefix { get; }
 
         public ObjectCannedAcl Acl { get; set; }

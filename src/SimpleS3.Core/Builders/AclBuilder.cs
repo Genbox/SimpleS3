@@ -16,8 +16,8 @@ namespace Genbox.SimpleS3.Core.Builders
     {
         private ISet<string> _emails;
         private ISet<string> _ids;
-        private ISet<string> _uris;
         private StringBuilder _sb;
+        private ISet<string> _uris;
 
         public string Build()
         {

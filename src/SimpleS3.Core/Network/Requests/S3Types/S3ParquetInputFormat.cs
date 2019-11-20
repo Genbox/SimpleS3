@@ -2,6 +2,5 @@
 {
     public class S3ParquetInputFormat : InputFormat
     {
-
     }
 }

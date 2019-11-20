@@ -8,12 +8,12 @@ namespace Genbox.SimpleS3.Tests.Tests
     public class FastXmlWriterTests
     {
         [Fact]
-        public void NormalXmlValue()
+        public void EncodedXmlValue()
         {
             FastXmlWriter writer = new FastXmlWriter(50);
-            writer.WriteElement("Test", "Value");
+            writer.WriteElement("Test", "<&>");
 
-            Assert.Equal("<Test>Value</Test>", writer.ToString());
+            Assert.Equal("<Test>&lt;&amp;&gt;</Test>", writer.ToString());
         }
 
         [Fact]
@@ -35,12 +35,12 @@ namespace Genbox.SimpleS3.Tests.Tests
         }
 
         [Fact]
-        public void EncodedXmlValue()
+        public void NormalXmlValue()
         {
             FastXmlWriter writer = new FastXmlWriter(50);
-            writer.WriteElement("Test", "<&>");
+            writer.WriteElement("Test", "Value");
 
-            Assert.Equal("<Test>&lt;&amp;&gt;</Test>", writer.ToString());
+            Assert.Equal("<Test>Value</Test>", writer.ToString());
         }
     }
 }

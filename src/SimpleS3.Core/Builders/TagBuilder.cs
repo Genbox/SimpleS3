@@ -13,6 +13,19 @@ namespace Genbox.SimpleS3.Core.Builders
         private readonly Regex _validChar = new Regex(@"^[a-z0-9 \+\-=\._:/]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private IDictionary<string, string> _tags;
 
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        {
+            if (_tags == null)
+                return Enumerable.Empty<KeyValuePair<string, string>>().GetEnumerator();
+
+            return _tags.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public string Build()
         {
             if (_tags == null)
@@ -67,19 +80,6 @@ namespace Genbox.SimpleS3.Core.Builders
             _tags.Add(key, value);
 
             return this;
-        }
-
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
-        {
-            if (_tags == null)
-                return Enumerable.Empty<KeyValuePair<string, string>>().GetEnumerator();
-
-            return _tags.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }

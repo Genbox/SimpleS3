@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Enums
 
         [EnumMember(Value = "DOCUMENT")]
         Document,
-     
+
         [EnumMember(Value = "LINES")]
         Lines
     }

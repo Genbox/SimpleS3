@@ -47,7 +47,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public ContentLanguageBuilder ResponseContentLanguage { get; }
         public ContentEncodingBuilder ResponseContentEncoding { get; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
-        public string VersionId { get; set; }
         public byte[] SseCustomerKeyMd5 { get; set; }
 
         public byte[] SseCustomerKey
@@ -71,5 +70,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             if (_sseCustomerKey != null)
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
+
+        public string VersionId { get; set; }
     }
 }

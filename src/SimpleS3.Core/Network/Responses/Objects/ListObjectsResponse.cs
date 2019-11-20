@@ -34,11 +34,12 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         /// <summary>The list of objects</summary>
         public IList<S3Object> Objects { get; internal set; }
 
+        public bool RequestCharged { get; internal set; }
+
         public bool IsTruncated { get; internal set; }
         public EncodingType EncodingType { get; internal set; }
         public string Prefix { get; internal set; }
         public string Delimiter { get; internal set; }
         public IList<string> CommonPrefixes { get; internal set; }
-        public bool RequestCharged { get; internal set; }
     }
 }

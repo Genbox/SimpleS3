@@ -63,13 +63,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public AclBuilder AclGrantReadAcp { get; internal set; }
         public AclBuilder AclGrantWriteAcp { get; internal set; }
         public AclBuilder AclGrantFullControl { get; internal set; }
+        public Payer RequestPayer { get; set; }
         public SseAlgorithm SseAlgorithm { get; set; }
         public string SseKmsKeyId { get; set; }
         public KmsContextBuilder SseContext { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
-        public Payer RequestPayer { get; set; }
         public byte[] SseCustomerKeyMd5 { get; set; }
-        public StorageClass StorageClass { get; set; }
 
         public byte[] SseCustomerKey
         {
@@ -92,5 +91,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             if (_sseCustomerKey != null)
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
+
+        public StorageClass StorageClass { get; set; }
     }
 }

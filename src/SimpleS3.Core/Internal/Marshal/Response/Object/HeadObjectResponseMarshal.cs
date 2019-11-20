@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Genbox.SimpleS3.Abstracts;
@@ -51,7 +52,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Object
             response.LockLegalHold = headers.GetHeader(AmzHeaders.XAmzObjectLockLegalHold) == "ON";
             response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzPartsCount);
 
-            if (HeaderParserHelper.TryParseExpiration(headers, out var data))
+            if (HeaderParserHelper.TryParseExpiration(headers, out (DateTimeOffset expiresOn, string ruleId) data))
             {
                 response.LifeCycleExpiresOn = data.expiresOn;
                 response.LifeCycleRuleId = data.ruleId;

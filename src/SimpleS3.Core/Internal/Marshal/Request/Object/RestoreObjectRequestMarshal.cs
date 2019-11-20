@@ -54,45 +54,45 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
                     switch (request.SelectParameters.InputFormat)
                     {
                         case S3CsvInputFormat csvInput:
-                            {
-                                sb.Append("<CSV>");
+                        {
+                            sb.Append("<CSV>");
 
-                                if (csvInput.HeaderUsage != HeaderUsage.Unknown)
-                                    sb.Append("<FileHeaderInfo>").Append(ValueHelper.EnumToString(csvInput.HeaderUsage)).Append("</FileHeaderInfo>");
+                            if (csvInput.HeaderUsage != HeaderUsage.Unknown)
+                                sb.Append("<FileHeaderInfo>").Append(ValueHelper.EnumToString(csvInput.HeaderUsage)).Append("</FileHeaderInfo>");
 
-                                if (csvInput.CommentCharacter != null)
-                                    sb.Append("<Comments>").Append(ConvertChar(csvInput.CommentCharacter)).Append("</Comments>");
+                            if (csvInput.CommentCharacter != null)
+                                sb.Append("<Comments>").Append(ConvertChar(csvInput.CommentCharacter)).Append("</Comments>");
 
-                                if (csvInput.QuoteEscapeCharacter != null)
-                                    sb.Append("<QuoteEscapeCharacter>").Append(ConvertChar(csvInput.QuoteEscapeCharacter)).Append("</QuoteEscapeCharacter>");
+                            if (csvInput.QuoteEscapeCharacter != null)
+                                sb.Append("<QuoteEscapeCharacter>").Append(ConvertChar(csvInput.QuoteEscapeCharacter)).Append("</QuoteEscapeCharacter>");
 
-                                if (csvInput.RecordDelimiter != null)
-                                    sb.Append("<RecordDelimiter>").Append(ConvertChar(csvInput.RecordDelimiter)).Append("</RecordDelimiter>");
+                            if (csvInput.RecordDelimiter != null)
+                                sb.Append("<RecordDelimiter>").Append(ConvertChar(csvInput.RecordDelimiter)).Append("</RecordDelimiter>");
 
-                                if (csvInput.FieldDelimiter != null)
-                                    sb.Append("<FieldDelimiter>").Append(ConvertChar(csvInput.FieldDelimiter)).Append("</FieldDelimiter>");
+                            if (csvInput.FieldDelimiter != null)
+                                sb.Append("<FieldDelimiter>").Append(ConvertChar(csvInput.FieldDelimiter)).Append("</FieldDelimiter>");
 
-                                if (csvInput.QuoteCharacter != null)
-                                    sb.Append("<QuoteCharacter>").Append(ConvertChar(csvInput.QuoteCharacter)).Append("</QuoteCharacter>");
+                            if (csvInput.QuoteCharacter != null)
+                                sb.Append("<QuoteCharacter>").Append(ConvertChar(csvInput.QuoteCharacter)).Append("</QuoteCharacter>");
 
-                                if (csvInput.AllowQuotedRecordDelimiter != null)
-                                    sb.Append("<AllowQuotedRecordDelimiter>").Append(csvInput.AllowQuotedRecordDelimiter).Append("</AllowQuotedRecordDelimiter>");
+                            if (csvInput.AllowQuotedRecordDelimiter != null)
+                                sb.Append("<AllowQuotedRecordDelimiter>").Append(csvInput.AllowQuotedRecordDelimiter).Append("</AllowQuotedRecordDelimiter>");
 
-                                sb.Append("</CSV>");
+                            sb.Append("</CSV>");
 
-                                break;
-                            }
+                            break;
+                        }
                         case S3JsonInputFormat jsonInput:
-                            {
-                                sb.Append("<JSON>");
+                        {
+                            sb.Append("<JSON>");
 
-                                if (jsonInput.JsonType != JsonType.Unknown)
-                                    sb.Append("<Type>").Append(ValueHelper.EnumToString(jsonInput.JsonType)).Append("</Type>");
+                            if (jsonInput.JsonType != JsonType.Unknown)
+                                sb.Append("<Type>").Append(ValueHelper.EnumToString(jsonInput.JsonType)).Append("</Type>");
 
-                                sb.Append("</JSON>");
+                            sb.Append("</JSON>");
 
-                                break;
-                            }
+                            break;
+                        }
                         case S3ParquetInputFormat _:
                             sb.Append("<Parquet></Parquet>");
                             break;
@@ -114,35 +114,35 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
                     switch (request.SelectParameters.OutputFormat)
                     {
                         case S3CsvOutputFormat csvOutput:
-                            {
-                                sb.Append("<CSV>");
+                        {
+                            sb.Append("<CSV>");
 
-                                if (csvOutput.FieldDelimiter != null)
-                                    sb.Append("<FieldDelimiter>").Append(ConvertChar(csvOutput.FieldDelimiter)).Append("</FieldDelimiter>");
+                            if (csvOutput.FieldDelimiter != null)
+                                sb.Append("<FieldDelimiter>").Append(ConvertChar(csvOutput.FieldDelimiter)).Append("</FieldDelimiter>");
 
-                                if (csvOutput.QuoteCharacter != null)
-                                    sb.Append("<QuoteCharacter>").Append(ConvertChar(csvOutput.QuoteCharacter)).Append("</QuoteCharacter>");
+                            if (csvOutput.QuoteCharacter != null)
+                                sb.Append("<QuoteCharacter>").Append(ConvertChar(csvOutput.QuoteCharacter)).Append("</QuoteCharacter>");
 
-                                if (csvOutput.QuoteEscapeCharacter != null)
-                                    sb.Append("<QuoteEscapeCharacter>").Append(ConvertChar(csvOutput.QuoteEscapeCharacter)).Append("</QuoteEscapeCharacter>");
+                            if (csvOutput.QuoteEscapeCharacter != null)
+                                sb.Append("<QuoteEscapeCharacter>").Append(ConvertChar(csvOutput.QuoteEscapeCharacter)).Append("</QuoteEscapeCharacter>");
 
-                                if (csvOutput.QuoteFields != QuoteFields.Unknown)
-                                    sb.Append("<QuoteFields>").Append(ValueHelper.EnumToString(csvOutput.QuoteFields)).Append("</QuoteFields>");
+                            if (csvOutput.QuoteFields != QuoteFields.Unknown)
+                                sb.Append("<QuoteFields>").Append(ValueHelper.EnumToString(csvOutput.QuoteFields)).Append("</QuoteFields>");
 
-                                if (csvOutput.RecordDelimiter != null)
-                                    sb.Append("<RecordDelimiter>").Append(ConvertChar(csvOutput.RecordDelimiter)).Append("</RecordDelimiter>");
+                            if (csvOutput.RecordDelimiter != null)
+                                sb.Append("<RecordDelimiter>").Append(ConvertChar(csvOutput.RecordDelimiter)).Append("</RecordDelimiter>");
 
-                                sb.Append("</CSV>");
+                            sb.Append("</CSV>");
 
-                                break;
-                            }
+                            break;
+                        }
                         case S3JsonOutputFormat jsonOutput:
-                            {
-                                if (jsonOutput.RecordDelimiter != null)
-                                    sb.Append("<RecordDelimiter>").Append(jsonOutput.RecordDelimiter).Append("</RecordDelimiter>");
+                        {
+                            if (jsonOutput.RecordDelimiter != null)
+                                sb.Append("<RecordDelimiter>").Append(jsonOutput.RecordDelimiter).Append("</RecordDelimiter>");
 
-                                break;
-                            }
+                            break;
+                        }
                     }
 
                     sb.Append("</OutputSerialization>");

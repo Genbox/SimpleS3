@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Internal.Helpers
 {
     internal static class HeaderParserHelper
     {
-        private static Regex expirationRegex = new Regex("expiry-date=\"(.+?)\", rule-id=\"(.+?)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex expirationRegex = new Regex("expiry-date=\"(.+?)\", rule-id=\"(.+?)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public static IDictionary<string, string> ParseMetadata(IDictionary<string, string> headers)
         {

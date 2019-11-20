@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -26,7 +27,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Multipart
             response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSSECustomerAlgorithm);
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-            if (HeaderParserHelper.TryParseExpiration(headers, out var data))
+            if (HeaderParserHelper.TryParseExpiration(headers, out (DateTimeOffset expiresOn, string ruleId) data))
             {
                 response.LifeCycleExpiresOn = data.expiresOn;
                 response.LifeCycleRuleId = data.ruleId;
