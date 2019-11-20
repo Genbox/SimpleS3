@@ -21,6 +21,7 @@ namespace Genbox.SimpleS3.Abstracts.Constants
         public const string XAmzBypassGovernanceRetention = "x-amz-bypass-governance-retention";
         public const string XAmzRequestPayer = "x-amz-request-payer";
         public const string XAmzRequestCharged = "x-amz-request-charged";
+        public const string XAmzRestoreOutputPath = "x-amz-restore-output-path";
 
         #region Requests
 

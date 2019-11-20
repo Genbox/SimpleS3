@@ -57,5 +57,12 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
         Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default);
+
+        /// <summary>Restores an object from Amazon Glacier</summary>
+        /// <param name="bucketName">Name of the bucket</param>
+        /// <param name="objectKey">The key of the object</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token</param>
+        Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest> config = null, CancellationToken token = default);
     }
 }
