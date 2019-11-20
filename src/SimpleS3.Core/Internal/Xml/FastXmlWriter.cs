@@ -1,164 +1,114 @@
 ﻿using System;
-using System.Buffers;
-using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Genbox.SimpleS3.Utils.Helpers;
 
 namespace Genbox.SimpleS3.Core.Internal.Xml
 {
-    public ref struct FastXmlWriter
+    /// <summary>
+    /// A fast optimized XML writer that does not allocate more memory than absolutely needed.
+    /// </summary>
+    public readonly ref struct FastXmlWriter
     {
-        private readonly char[] _backing;
-        private readonly Span<char> _data;
-        private int _position;
-        private bool _used;
+        private readonly StringBuilder _data;
 
+        /// <summary>
+        /// Create a new <see cref="FastXmlWriter"/> with the specified capacity.
+        /// </summary>
+        /// <param name="capacity">The capacity of the XML writer. Note that it does not expand any further.</param>
         public FastXmlWriter(int capacity)
         {
-            _backing = ArrayPool<char>.Shared.Rent(capacity);
-            _data = new Span<char>(_backing);
-            _position = 0;
-            _used = false;
+            _data = new StringBuilder(capacity);
         }
 
-        public void WriteElement(ReadOnlySpan<char> name, ReadOnlySpan<char> value)
+        /// <summary>
+        /// Write a new element with the specified value
+        /// </summary>
+        /// <param name="name">The element name</param>
+        /// <param name="value">The value within the element</param>
+        public void WriteElement(in string name, in string value)
         {
-            if (_used)
-                throw new Exception("This instance is already used.");
-
-            _data[_position++] = '<';
-
-            name.CopyTo(_data.Slice(_position, name.Length));
-            _position += name.Length;
-
-            _data[_position++] = '>';
-
-            Write(value);
-
-            _data[_position++] = '<';
-            _data[_position++] = '/';
-
-            name.CopyTo(_data.Slice(_position, name.Length));
-            _position += name.Length;
-
-            _data[_position++] = '>';
+            WriteStartElement(name);
+            WriteValue(value);
+            WriteEndElement(name);
         }
 
-        public void WriteStartElement(ReadOnlySpan<char> name)
+        /// <summary>
+        /// Write the start of an element
+        /// </summary>
+        /// <param name="name">Name of the element</param>
+        public void WriteStartElement(in string name)
         {
-            if (_used)
-                throw new Exception("This instance is already used.");
-
-            _data[_position++] = '<';
-
-            name.CopyTo(_data.Slice(_position, name.Length));
-            _position += name.Length;
-
-            _data[_position++] = '>';
+            _data.Append('<');
+            _data.Append(name);
+            _data.Append('>');
         }
 
-        public void WriteEndElement(ReadOnlySpan<char> name)
+        /// <summary>
+        /// Write the end of an element
+        /// </summary>
+        /// <param name="name">Name of the element</param>
+        public void WriteEndElement(in string name)
         {
-            if (_used)
-                throw new Exception("This instance is already used.");
-
-            _data[_position++] = '<';
-            _data[_position++] = '/';
-
-            name.CopyTo(_data.Slice(_position, name.Length));
-            _position += name.Length;
-
-            _data[_position++] = '>';
+            _data.Append("</");
+            _data.Append(name);
+            _data.Append('>');
         }
 
-        private void Write(ReadOnlySpan<char> data)
+        private void WriteValue(in string data)
         {
             for (int i = 0; i < data.Length; i++)
             {
                 char c = data[i];
 
                 if (c == '<')
-                    WriteEntityRefImpl("lt".AsSpan());
+                    _data.Append("&lt;");
                 else if (c == '>')
-                    WriteEntityRefImpl("gt".AsSpan());
+                    _data.Append("&gt;");
                 else if (c == '&')
-                    WriteEntityRefImpl("amp".AsSpan());
-                else if (IsValidChar(c))
-                    _data[_position++] = c;
+                    _data.Append("&amp;");
+                else if (CharHelper.InRange(c, '\u0020', '\u007E') //Basic latin
+                         || c == '\u0009' //Tab
+                         || c == '\u000A' //Line feed
+                         || c == '\u000D' //Carriage return
+                         || c == '\u0085' //Next line
+                         || CharHelper.InRange(c, '\u00A0', '\uD7FF')
+                         || CharHelper.InRange(c, '\uE000', '\uFDCF')
+                         || CharHelper.InRange(c, '\uFDF0', '\uFFFD'))
+                {
+                    //See https://www.w3.org/TR/xml/#charsets
+                    _data.Append(c);
+                }
                 else if (char.IsHighSurrogate(c))
                 {
-                    if (i + 1 < data.Length)
-                        WriteSurrogateChar(data[++i], c);
+                    if (i + 1 >= data.Length)
+                        continue;
+
+                    _data.Append(c);
+                    _data.Append(data[++i]);
                 }
                 else
-                    WriteCharEntityImpl(c);
+                {
+                    _data.Append("&#x");
+                    _data.Append(Convert.ToString(c, 16));
+                    _data.Append(';');
+                }
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool IsValidChar(char c)
-        {
-            //See https://www.w3.org/TR/xml/#charsets
-            return c == '\u0009' //Tab
-                   || c == '\u000A' //Line feed
-                   || c == '\u000D' //Carriage return
-                   || CharHelper.InRange(c, '\u0020', '\u007E') //Basic latin
-                   || c == '\u0085' //Next line
-                   || CharHelper.InRange(c, '\u00A0', '\uD7FF')
-                   || CharHelper.InRange(c, '\uE000', '\uFDCF')
-                   || CharHelper.InRange(c, '\uFDF0', '\uFFFD');
-        }
-
-        private void WriteSurrogateChar(char lowChar, char highChar)
-        {
-            _data[_position++] = highChar;
-            _data[_position++] = lowChar;
-        }
-
-        private void WriteEntityRefImpl(ReadOnlySpan<char> val)
-        {
-            _data[_position++] = '&';
-            val.CopyTo(_data.Slice(_position, val.Length));
-            _position += val.Length;
-            _data[_position++] = ';';
-        }
-
-        private void WriteCharEntityImpl(ReadOnlySpan<char> val)
-        {
-            _data[_position++] = '&';
-            _data[_position++] = '#';
-            _data[_position++] = 'x';
-            val.CopyTo(_data.Slice(_position, val.Length));
-            _position += val.Length;
-            _data[_position++] = ';';
-        }
-
-        private void WriteCharEntityImpl(char ch)
-        {
-            WriteCharEntityImpl(((int)ch).ToString("X", NumberFormatInfo.InvariantInfo).AsSpan());
-        }
-
+        /// <summary>
+        /// Return a set of UTF8 encoded bytes
+        /// </summary>
         public byte[] GetBytes()
         {
-            if (_used)
-                throw new Exception("This instance is already used.");
-
-            byte[] array = Encoding.UTF8.GetBytes(_data.ToArray());
-            _used = true;
-            ArrayPool<char>.Shared.Return(_backing);
-            return array;
+            return Encoding.UTF8.GetBytes(_data.ToString());
         }
 
+        /// <summary>
+        /// Gives a string representation of the XML structure
+        /// </summary>
         public override string ToString()
         {
-            if (_used)
-                throw new Exception("This instance is already used.");
-
-            string str = new string(_data.Slice(0, _position).ToArray());
-            _used = true;
-            ArrayPool<char>.Shared.Return(_backing);
-            return str;
+            return _data.ToString();
         }
     }
 }

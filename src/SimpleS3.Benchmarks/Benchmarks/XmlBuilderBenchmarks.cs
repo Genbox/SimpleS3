@@ -14,96 +14,63 @@ namespace Genbox.SimpleS3.Benchmarks.Benchmarks
         [Benchmark]
         public string StringBuilderTest()
         {
-            string s = null;
-            for (int i = 0; i < 1000; i++)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("<rootnode>");
-                sb.Append("<person>");
-                sb.Append("<name>").Append("santa claus").Append("</name>");
-                sb.Append("<age>").Append("800").Append("</age>");
-                sb.Append("<status>").Append("missing").Append("</status>");
-                sb.Append("</person>");
-                sb.Append("</rootnode>");
-                s = sb.ToString();
-            }
-
-            return s;
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<rootnode>");
+            sb.Append("<person>");
+            sb.Append("<name>").Append("santa claus").Append("</name>");
+            sb.Append("<age>").Append("800").Append("</age>");
+            sb.Append("<status>").Append("missing").Append("</status>");
+            sb.Append("<name>").Append("Donald 💩💩💩💩💩\0\0\0\0").Append("</name>");
+            sb.Append("<age>").Append("7").Append("</age>");
+            sb.Append("<status>").Append("present").Append("</status>");
+            sb.Append("</person>");
+            sb.Append("</rootnode>");
+            return sb.ToString();
         }
 
         [Benchmark]
         public string XmlTextWriterTest()
         {
-            string s = null;
-            for (int i = 0; i < 1000; i++)
+            using (StringWriter sw = new StringWriter(CultureInfo.InvariantCulture))
+            using (XmlTextWriter writer = new XmlTextWriter(sw))
             {
-                using (StringWriter sw = new StringWriter(CultureInfo.InvariantCulture))
-                using (XmlTextWriter writer = new XmlTextWriter(sw))
-                {
-                    writer.WriteStartElement("rootnode");
-                    writer.WriteStartElement("person");
+                writer.WriteStartElement("rootnode");
+                writer.WriteStartElement("person");
 
-                    writer.WriteElementString("name", "santa claus");
-                    writer.WriteElementString("age", "800");
-                    writer.WriteElementString("status", "missing");
+                writer.WriteElementString("name", "santa claus");
+                writer.WriteElementString("age", "800");
+                writer.WriteElementString("status", "missing");
 
-                    writer.WriteEndElement();
-                    writer.WriteEndElement();
+                writer.WriteElementString("name", "Donald 💩💩💩💩💩\0\0\0\0");
+                writer.WriteElementString("age", "7");
+                writer.WriteElementString("status", "present");
 
-                    s = sw.ToString();
-                }
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+
+                return sw.ToString();
             }
-
-            return s;
-        }
-
-        [Benchmark]
-        public string XmlTextWriterIndirectionTest()
-        {
-            string s = null;
-            for (int i = 0; i < 1000; i++)
-            {
-                using (StringWriter sw = new StringWriter(CultureInfo.InvariantCulture))
-                using (XmlWriter writer = XmlWriter.Create(sw))
-                {
-                    writer.WriteStartElement("rootnode");
-                    writer.WriteStartElement("person");
-
-                    writer.WriteElementString("name", "santa claus");
-                    writer.WriteElementString("age", "800");
-                    writer.WriteElementString("status", "missing");
-
-                    writer.WriteEndElement();
-                    writer.WriteEndElement();
-
-                    s = sw.ToString();
-                }
-            }
-
-            return s;
         }
 
         [Benchmark]
         public string FastXmlWriterTest()
         {
-            string s = null;
-            for (int i = 0; i < 1000; i++)
-            {
-                FastXmlWriter writer = new FastXmlWriter(100);
-                writer.WriteStartElement("rootnode");
-                writer.WriteStartElement("person");
+            FastXmlWriter writer = new FastXmlWriter(100);
+            writer.WriteStartElement("rootnode");
+            writer.WriteStartElement("person");
 
-                writer.WriteElement("name", "santa claus");
-                writer.WriteElement("age", "800");
-                writer.WriteElement("status", "missing");
+            writer.WriteElement("name", "santa claus");
+            writer.WriteElement("age", "800");
+            writer.WriteElement("status", "missing");
 
-                writer.WriteEndElement("person");
-                writer.WriteEndElement("rootnode");
+            writer.WriteElement("name", "Donald 💩💩💩💩💩\0\0\0\0");
+            writer.WriteElement("age", "7");
+            writer.WriteElement("status", "present");
 
-                s = writer.ToString();
-            }
+            writer.WriteEndElement("person");
+            writer.WriteEndElement("rootnode");
 
-            return s;
+            return writer.ToString();
         }
     }
 }

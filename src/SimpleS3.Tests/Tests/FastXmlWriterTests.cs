@@ -35,6 +35,24 @@ namespace Genbox.SimpleS3.Tests.Tests
         }
 
         [Fact]
+        public void EntityRefXmlValue()
+        {
+            FastXmlWriter writer = new FastXmlWriter(50);
+            writer.WriteElement("Test", "\0");
+
+            string actual = writer.ToString();
+
+            Assert.Equal("<Test>&#x0;</Test>", actual);
+
+            using (StringWriter sw = new StringWriter())
+            using (XmlTextWriter xml = new XmlTextWriter(sw))
+            {
+                xml.WriteElementString("Test", "\0");
+                Assert.Equal(sw.ToString(), actual);
+            }
+        }
+
+        [Fact]
         public void NormalXmlValue()
         {
             FastXmlWriter writer = new FastXmlWriter(50);
