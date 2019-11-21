@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Genbox.SimpleS3.Core.Internal
+namespace Genbox.SimpleS3.Core.Internal.Xml
 {
     internal class XmlSerializerCache
     {

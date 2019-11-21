@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Utils.Helpers;
 
@@ -7,9 +8,9 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
     /// <summary>
     /// A fast optimized XML writer that does not allocate more memory than absolutely needed.
     /// </summary>
-    public readonly ref struct FastXmlWriter
+    public class FastXmlWriter
     {
-        private readonly StringBuilder _data;
+        private readonly StringBuilder _xml;
 
         /// <summary>
         /// Create a new <see cref="FastXmlWriter"/> with the specified capacity.
@@ -17,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
         /// <param name="capacity">The capacity of the XML writer. Note that it does not expand any further.</param>
         public FastXmlWriter(int capacity)
         {
-            _data = new StringBuilder(capacity);
+            _xml = new StringBuilder(capacity);
         }
 
         /// <summary>
@@ -33,14 +34,49 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
         }
 
         /// <summary>
+        /// Write a new element with the specified value
+        /// </summary>
+        /// <param name="name">The element name</param>
+        /// <param name="value">The value within the element</param>
+        public void WriteElement(in string name, in int value)
+        {
+            WriteStartElement(name);
+            WriteValue(value.ToString(NumberFormatInfo.InvariantInfo));
+            WriteEndElement(name);
+        }
+
+        /// <summary>
+        /// Write a new element with the specified value
+        /// </summary>
+        /// <param name="name">The element name</param>
+        /// <param name="value">The value within the element</param>
+        public void WriteElement(in string name, in bool value)
+        {
+            WriteStartElement(name);
+            WriteValue(value.ToString(NumberFormatInfo.InvariantInfo));
+            WriteEndElement(name);
+        }
+
+        public void WriteElement(in string name, in bool? value)
+        {
+            WriteStartElement(name);
+            WriteValue(value.Value.ToString(NumberFormatInfo.InvariantInfo));
+            WriteEndElement(name);
+        }
+
+        /// <summary>
         /// Write the start of an element
         /// </summary>
         /// <param name="name">Name of the element</param>
-        public void WriteStartElement(in string name)
+        public void WriteStartElement(in string name, in string xmlns = null)
         {
-            _data.Append('<');
-            _data.Append(name);
-            _data.Append('>');
+            _xml.Append('<');
+            _xml.Append(name);
+
+            if (xmlns != null)
+                _xml.Append(" xmlns=\"").Append(xmlns).Append("\"");
+
+            _xml.Append('>');
         }
 
         /// <summary>
@@ -49,9 +85,9 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
         /// <param name="name">Name of the element</param>
         public void WriteEndElement(in string name)
         {
-            _data.Append("</");
-            _data.Append(name);
-            _data.Append('>');
+            _xml.Append("</");
+            _xml.Append(name);
+            _xml.Append('>');
         }
 
         private void WriteValue(in string data)
@@ -61,11 +97,11 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
                 char c = data[i];
 
                 if (c == '<')
-                    _data.Append("&lt;");
+                    _xml.Append("&lt;");
                 else if (c == '>')
-                    _data.Append("&gt;");
+                    _xml.Append("&gt;");
                 else if (c == '&')
-                    _data.Append("&amp;");
+                    _xml.Append("&amp;");
                 else if (CharHelper.InRange(c, '\u0020', '\u007E') //Basic latin
                          || c == '\u0009' //Tab
                          || c == '\u000A' //Line feed
@@ -76,21 +112,21 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
                          || CharHelper.InRange(c, '\uFDF0', '\uFFFD'))
                 {
                     //See https://www.w3.org/TR/xml/#charsets
-                    _data.Append(c);
+                    _xml.Append(c);
                 }
                 else if (char.IsHighSurrogate(c))
                 {
                     if (i + 1 >= data.Length)
                         continue;
 
-                    _data.Append(c);
-                    _data.Append(data[++i]);
+                    _xml.Append(c);
+                    _xml.Append(data[++i]);
                 }
                 else
                 {
-                    _data.Append("&#x");
-                    _data.Append(Convert.ToString(c, 16));
-                    _data.Append(';');
+                    _xml.Append("&#x");
+                    _xml.Append(Convert.ToString(c, 16));
+                    _xml.Append(';');
                 }
             }
         }
@@ -100,7 +136,7 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
         /// </summary>
         public byte[] GetBytes()
         {
-            return Encoding.UTF8.GetBytes(_data.ToString());
+            return Encoding.UTF8.GetBytes(_xml.ToString());
         }
 
         /// <summary>
@@ -108,7 +144,12 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
         /// </summary>
         public override string ToString()
         {
-            return _data.ToString();
+            return _xml.ToString();
+        }
+
+        public void Clear()
+        {
+            _xml.Clear();
         }
     }
 }

@@ -1,5 +1,4 @@
 using System.IO;
-using System.Text;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
@@ -7,6 +6,7 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
+using Genbox.SimpleS3.Core.Internal.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using JetBrains.Annotations;
@@ -23,26 +23,26 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             request.AddHeader(AmzHeaders.XAmzBypassGovernanceRetention, request.BypassGovernanceRetention);
             request.AddHeader(AmzHeaders.XAmzRequestPayer, request.RequestPayer == Payer.Requester ? "requester" : null);
 
-            StringBuilder sb = new StringBuilder(512);
-            sb.Append("<Delete>");
+            FastXmlWriter xml = new FastXmlWriter(512);
+            xml.WriteStartElement("Delete");
 
             if (request.Quiet)
-                sb.Append("<Quiet>true</Quiet>");
+                xml.WriteElement("Quiet", true);
 
             foreach (S3DeleteInfo info in request.Objects)
             {
-                sb.Append("<Object>");
-                sb.Append("<Key>").Append(info.Name).Append("</Key>");
+                xml.WriteStartElement("Object");
+                xml.WriteElement("Key", info.Name);
 
                 if (!string.IsNullOrWhiteSpace(info.VersionId))
-                    sb.Append("<VersionId>").Append(info.VersionId).Append("</VersionId>");
+                    xml.WriteElement("VersionId", info.VersionId);
 
-                sb.Append("</Object>");
+                xml.WriteEndElement("Object");
             }
 
-            sb.Append("</Delete>");
+            xml.WriteEndElement("Delete");
 
-            byte[] data = Encoding.UTF8.GetBytes(sb.ToString());
+            byte[] data = xml.GetBytes();
             request.AddHeader(HttpHeaders.ContentMd5, CryptoHelper.Md5Hash(data), BinaryEncoding.Base64);
             return new MemoryStream(data);
         }

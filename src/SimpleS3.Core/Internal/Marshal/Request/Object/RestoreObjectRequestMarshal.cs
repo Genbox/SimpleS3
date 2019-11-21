@@ -7,6 +7,7 @@ using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internal.Helpers;
+using Genbox.SimpleS3.Core.Internal.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using JetBrains.Annotations;
@@ -22,213 +23,219 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             request.AddQueryParameter(AmzHeaders.XAmzVersionId, request.VersionId);
             request.AddHeader(AmzHeaders.XAmzRequestPayer, request.RequestPayer == Payer.Requester ? "requester" : null);
 
-            StringBuilder sb = new StringBuilder(512);
-            sb.Append("<RestoreRequest xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">");
+            FastXmlWriter xml = new FastXmlWriter(512);
+            xml.WriteStartElement("RestoreRequest", "http://s3.amazonaws.com/doc/2006-03-01/");
 
             if (request.Days > 0)
-                sb.Append("<Days>").Append(request.Days).Append("</Days>");
+                xml.WriteElement("Days", request.Days);
 
             if (request.RequestType != RestoreRequestType.Unknown)
-                sb.Append("<Type>").Append(ValueHelper.EnumToString(request.RequestType)).Append("</Type>");
+                xml.WriteElement("Type", ValueHelper.EnumToString(request.RequestType));
 
             if (request.RequestTier != RetrievalTier.Unknown)
-                sb.Append("<Tier>").Append(ValueHelper.EnumToString(request.RequestTier)).Append("</Tier>");
+                xml.WriteElement("Tier", ValueHelper.EnumToString(request.RequestTier));
 
             if (request.GlacierTier != RetrievalTier.Unknown)
-                sb.Append("<GlacierJobParameters><Tier>").Append(ValueHelper.EnumToString(request.GlacierTier)).Append("</Tier></GlacierJobParameters>");
+            {
+                xml.WriteStartElement("GlacierJobParameters");
+                xml.WriteElement("Tier", ValueHelper.EnumToString(request.GlacierTier));
+                xml.WriteEndElement("GlacierJobParameters");
+            }
 
             if (request.Description != null)
-                sb.Append("<Description>").Append(request.Description).Append("</Description>");
+                xml.WriteElement("Description", request.Description);
 
             if (request.SelectParameters.InputFormat != null || request.SelectParameters.OutputFormat != null || request.SelectParameters.Expression != null || request.SelectParameters.ExpressionType != ExpressionType.Unknown)
             {
-                sb.Append("<SelectParameters>");
+                xml.WriteStartElement("SelectParameters");
 
                 if (request.SelectParameters.InputFormat != null)
                 {
-                    sb.Append("<InputSerialization>");
+                    xml.WriteStartElement("InputSerialization");
 
                     if (request.SelectParameters.InputFormat.CompressionType != CompressionType.Unknown)
-                        sb.Append("<CompressionType>").Append(ValueHelper.EnumToString(request.SelectParameters.InputFormat.CompressionType)).Append("</CompressionType>");
+                        xml.WriteElement("CompressionType", ValueHelper.EnumToString(request.SelectParameters.InputFormat.CompressionType));
 
                     switch (request.SelectParameters.InputFormat)
                     {
                         case S3CsvInputFormat csvInput:
-                        {
-                            sb.Append("<CSV>");
+                            {
+                                xml.WriteStartElement("CSV");
 
-                            if (csvInput.HeaderUsage != HeaderUsage.Unknown)
-                                sb.Append("<FileHeaderInfo>").Append(ValueHelper.EnumToString(csvInput.HeaderUsage)).Append("</FileHeaderInfo>");
+                                if (csvInput.HeaderUsage != HeaderUsage.Unknown)
+                                    xml.WriteElement("FileHeaderInfo", ValueHelper.EnumToString(csvInput.HeaderUsage));
 
-                            if (csvInput.CommentCharacter != null)
-                                sb.Append("<Comments>").Append(ConvertChar(csvInput.CommentCharacter)).Append("</Comments>");
+                                if (csvInput.CommentCharacter != null)
+                                    xml.WriteElement("Comments", ConvertChar(csvInput.CommentCharacter));
 
-                            if (csvInput.QuoteEscapeCharacter != null)
-                                sb.Append("<QuoteEscapeCharacter>").Append(ConvertChar(csvInput.QuoteEscapeCharacter)).Append("</QuoteEscapeCharacter>");
+                                if (csvInput.QuoteEscapeCharacter != null)
+                                    xml.WriteElement("QuoteEscapeCharacter", ConvertChar(csvInput.QuoteEscapeCharacter));
 
-                            if (csvInput.RecordDelimiter != null)
-                                sb.Append("<RecordDelimiter>").Append(ConvertChar(csvInput.RecordDelimiter)).Append("</RecordDelimiter>");
+                                if (csvInput.RecordDelimiter != null)
+                                    xml.WriteElement("RecordDelimiter", ConvertChar(csvInput.RecordDelimiter));
 
-                            if (csvInput.FieldDelimiter != null)
-                                sb.Append("<FieldDelimiter>").Append(ConvertChar(csvInput.FieldDelimiter)).Append("</FieldDelimiter>");
+                                if (csvInput.FieldDelimiter != null)
+                                    xml.WriteElement("FieldDelimiter", ConvertChar(csvInput.FieldDelimiter));
 
-                            if (csvInput.QuoteCharacter != null)
-                                sb.Append("<QuoteCharacter>").Append(ConvertChar(csvInput.QuoteCharacter)).Append("</QuoteCharacter>");
+                                if (csvInput.QuoteCharacter != null)
+                                    xml.WriteElement("QuoteCharacter", ConvertChar(csvInput.QuoteCharacter));
 
-                            if (csvInput.AllowQuotedRecordDelimiter != null)
-                                sb.Append("<AllowQuotedRecordDelimiter>").Append(csvInput.AllowQuotedRecordDelimiter).Append("</AllowQuotedRecordDelimiter>");
+                                if (csvInput.AllowQuotedRecordDelimiter != null)
+                                    xml.WriteElement("AllowQuotedRecordDelimiter", csvInput.AllowQuotedRecordDelimiter);
 
-                            sb.Append("</CSV>");
+                                xml.WriteEndElement("CSV");
 
-                            break;
-                        }
+                                break;
+                            }
                         case S3JsonInputFormat jsonInput:
-                        {
-                            sb.Append("<JSON>");
+                            {
+                                xml.WriteStartElement("JSON");
 
-                            if (jsonInput.JsonType != JsonType.Unknown)
-                                sb.Append("<Type>").Append(ValueHelper.EnumToString(jsonInput.JsonType)).Append("</Type>");
+                                if (jsonInput.JsonType != JsonType.Unknown)
+                                    xml.WriteElement("Type", ValueHelper.EnumToString(jsonInput.JsonType));
 
-                            sb.Append("</JSON>");
+                                xml.WriteEndElement("JSON");
 
-                            break;
-                        }
+                                break;
+                            }
                         case S3ParquetInputFormat _:
-                            sb.Append("<Parquet></Parquet>");
+                            xml.WriteElement("Parquet", string.Empty);
                             break;
                     }
 
-                    sb.Append("</InputSerialization>");
+                    xml.WriteEndElement("InputSerialization");
                 }
 
                 if (request.SelectParameters.ExpressionType != ExpressionType.Unknown)
-                    sb.Append("<ExpressionType>").Append(ValueHelper.EnumToString(request.SelectParameters.ExpressionType)).Append("</ExpressionType>");
+                    xml.WriteElement("ExpressionType", ValueHelper.EnumToString(request.SelectParameters.ExpressionType));
 
                 if (request.SelectParameters.Expression != null)
-                    sb.Append("<Expression>").Append(request.SelectParameters.Expression).Append("</Expression>");
+                    xml.WriteElement("Expression", request.SelectParameters.Expression);
 
                 if (request.SelectParameters.OutputFormat != null)
                 {
-                    sb.Append("<OutputSerialization>");
+                    xml.WriteStartElement("OutputSerialization");
 
                     switch (request.SelectParameters.OutputFormat)
                     {
                         case S3CsvOutputFormat csvOutput:
-                        {
-                            sb.Append("<CSV>");
+                            {
+                                xml.WriteStartElement("CSV");
 
-                            if (csvOutput.FieldDelimiter != null)
-                                sb.Append("<FieldDelimiter>").Append(ConvertChar(csvOutput.FieldDelimiter)).Append("</FieldDelimiter>");
+                                if (csvOutput.FieldDelimiter != null)
+                                    xml.WriteElement("FieldDelimiter", ConvertChar(csvOutput.FieldDelimiter));
 
-                            if (csvOutput.QuoteCharacter != null)
-                                sb.Append("<QuoteCharacter>").Append(ConvertChar(csvOutput.QuoteCharacter)).Append("</QuoteCharacter>");
+                                if (csvOutput.QuoteCharacter != null)
+                                    xml.WriteElement("QuoteCharacter", ConvertChar(csvOutput.QuoteCharacter));
 
-                            if (csvOutput.QuoteEscapeCharacter != null)
-                                sb.Append("<QuoteEscapeCharacter>").Append(ConvertChar(csvOutput.QuoteEscapeCharacter)).Append("</QuoteEscapeCharacter>");
+                                if (csvOutput.QuoteEscapeCharacter != null)
+                                    xml.WriteElement("QuoteEscapeCharacter", ConvertChar(csvOutput.QuoteEscapeCharacter));
 
-                            if (csvOutput.QuoteFields != QuoteFields.Unknown)
-                                sb.Append("<QuoteFields>").Append(ValueHelper.EnumToString(csvOutput.QuoteFields)).Append("</QuoteFields>");
+                                if (csvOutput.QuoteFields != QuoteFields.Unknown)
+                                    xml.WriteElement("QuoteFields", ValueHelper.EnumToString(csvOutput.QuoteFields));
 
-                            if (csvOutput.RecordDelimiter != null)
-                                sb.Append("<RecordDelimiter>").Append(ConvertChar(csvOutput.RecordDelimiter)).Append("</RecordDelimiter>");
+                                if (csvOutput.RecordDelimiter != null)
+                                    xml.WriteElement("RecordDelimiter", ConvertChar(csvOutput.RecordDelimiter));
 
-                            sb.Append("</CSV>");
+                                xml.WriteEndElement("CSV");
 
-                            break;
-                        }
+                                break;
+                            }
                         case S3JsonOutputFormat jsonOutput:
-                        {
-                            if (jsonOutput.RecordDelimiter != null)
-                                sb.Append("<RecordDelimiter>").Append(jsonOutput.RecordDelimiter).Append("</RecordDelimiter>");
+                            {
+                                if (jsonOutput.RecordDelimiter != null)
+                                    xml.WriteElement("RecordDelimiter", jsonOutput.RecordDelimiter);
 
-                            break;
-                        }
+                                break;
+                            }
                     }
 
-                    sb.Append("</OutputSerialization>");
+                    xml.WriteEndElement("OutputSerialization");
                 }
 
-                sb.Append("</SelectParameters>");
+                xml.WriteEndElement("SelectParameters");
             }
 
             if (request.OutputLocation != null)
             {
-                sb.Append("<OutputLocation>");
+                xml.WriteStartElement("OutputLocation");
 
                 if (request.OutputLocation is S3OutputLocation s3Out)
                 {
-                    sb.Append("<S3>");
+                    xml.WriteStartElement("S3");
 
                     //These two are required, so we don't check for null
-                    sb.Append("<BucketName>").Append(s3Out.BucketName).Append("</BucketName>");
-                    sb.Append("<Prefix>").Append(s3Out.Prefix).Append("</Prefix>");
+                    xml.WriteElement("BucketName", s3Out.BucketName);
+                    xml.WriteElement("Prefix", s3Out.Prefix);
 
                     if (s3Out.StorageClass != StorageClass.Unknown)
-                        sb.Append("<StorageClass>").Append(ValueHelper.EnumToString(s3Out.StorageClass)).Append("</StorageClass>");
+                        xml.WriteElement("StorageClass", ValueHelper.EnumToString(s3Out.StorageClass));
 
                     if (s3Out.Acl != ObjectCannedAcl.Unknown)
-                        sb.Append("<CannedACL>").Append(ValueHelper.EnumToString(s3Out.Acl)).Append("</CannedACL>");
+                        xml.WriteElement("CannedACL", ValueHelper.EnumToString(s3Out.Acl));
 
                     //TODO: AccessControlList support
 
                     if (s3Out.SseAlgorithm != SseAlgorithm.Unknown)
                     {
-                        sb.Append("<Encryption>");
-                        sb.Append("<EncryptionType>").Append(ValueHelper.EnumToString(s3Out.SseAlgorithm)).Append("<EncryptionType>");
+                        xml.WriteStartElement("Encryption");
+                        xml.WriteElement("EncryptionType", ValueHelper.EnumToString(s3Out.SseAlgorithm));
 
                         string context = s3Out.SseContext.Build();
                         if (context != null)
-                            sb.Append("<KMSContext>").Append(context).Append("<KMSContext>");
+                            xml.WriteElement("KMSContext", context);
 
                         if (s3Out.SseKmsKeyId != null)
-                            sb.Append("<KMSKeyId>").Append(s3Out.SseKmsKeyId).Append("<KMSKeyId>");
+                            xml.WriteElement("KMSKeyId", s3Out.SseKmsKeyId);
 
-                        sb.Append("</Encryption>");
+                        xml.WriteEndElement("Encryption");
                     }
 
                     List<KeyValuePair<string, string>> tags = s3Out.Tags.ToList();
 
                     if (tags.Count > 0)
                     {
-                        sb.Append("<Tagging><TagSet>");
+                        xml.WriteStartElement("Tagging");
+                        xml.WriteStartElement("TagSet");
 
                         foreach (KeyValuePair<string, string> tag in tags)
                         {
-                            sb.Append("<Tag>");
-                            sb.Append("<Key>").Append(tag.Key).Append("</Key>");
-                            sb.Append("<Value>").Append(tag.Value).Append("</Value>");
-                            sb.Append("</Tag>");
+                            xml.WriteStartElement("Tag");
+                            xml.WriteElement("Key", tag.Key);
+                            xml.WriteElement("Value", tag.Value);
+                            xml.WriteEndElement("Tag");
                         }
 
-                        sb.Append("</TagSet></Tagging>");
+                        xml.WriteEndElement("TagSet");
+                        xml.WriteEndElement("Tagging");
                     }
 
                     List<KeyValuePair<string, string>> metadata = s3Out.Metadata.ToList();
 
                     if (metadata.Count > 0)
                     {
-                        sb.Append("<UserMetadata>");
+                        xml.WriteStartElement("UserMetadata");
 
                         foreach (KeyValuePair<string, string> meta in metadata)
                         {
-                            sb.Append("<MetadataEntry>");
-                            sb.Append("<Name>").Append(meta.Key).Append("</Name>");
-                            sb.Append("<Value>").Append(meta.Value).Append("</Value>");
-                            sb.Append("</MetadataEntry>");
+                            xml.WriteStartElement("MetadataEntry");
+                            xml.WriteElement("Name", meta.Key);
+                            xml.WriteElement("Value", meta.Value);
+                            xml.WriteEndElement("MetadataEntry");
                         }
 
-                        sb.Append("</UserMetadata>");
+                        xml.WriteEndElement("UserMetadata");
                     }
 
-                    sb.Append("</S3>");
+                    xml.WriteEndElement("S3");
                 }
 
-                sb.Append("</OutputLocation>");
+                xml.WriteEndElement("OutputLocation");
             }
 
-            sb.Append("</RestoreRequest>");
+            xml.WriteEndElement("RestoreRequest");
 
-            return new MemoryStream(Encoding.UTF8.GetBytes(sb.ToString()));
+            return new MemoryStream(xml.GetBytes());
         }
 
         //Note: This might not be needed. There is lacking documentation on RestoreObject with select, and I can't test it since it is down 99% of the time.
