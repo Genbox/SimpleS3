@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SimpleS3.Core\SimpleS3.Core.csproj" />
-    <ProjectReference Include="..\SimpleS3.Extensions.HttpClient\SimpleS3.Extensions.HttpClient.csproj" />
+    <ProjectReference Include="..\SimpleS3.Extensions.HttpClientFactory\SimpleS3.Extensions.HttpClientFactory.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,5 @@
-﻿using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Core.Misc;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Net.Http;
+using Genbox.SimpleS3.Abstracts;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
@@ -9,17 +8,13 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
     {
         public static IS3ClientBuilder UseHttpClient(this IS3ClientBuilder builder)
         {
-            builder.Services.TryAddSingleton<System.Net.Http.HttpClient>();
+            builder.Services.TryAddSingleton(x =>
+            {
+                SocketsHttpHandler handler = new SocketsHttpHandler();
+                return new System.Net.Http.HttpClient(handler);
+            });
             builder.Services.TryAddSingleton<INetworkDriver, HttpClientNetworkDriver>();
             return builder;
-        }
-
-        public static IHttpClientBuilder UseHttpClientFactory(this IS3ClientBuilder builder)
-        {
-            IHttpClientBuilder httpBuilder = builder.Services.AddHttpClient<INetworkDriver, HttpClientNetworkDriver>((provider, client) =>
-                client.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.DefaultUserAgent));
-
-            return httpBuilder;
         }
     }
 }
