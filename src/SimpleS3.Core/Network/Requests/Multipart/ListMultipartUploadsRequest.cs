@@ -1,5 +1,6 @@
 ﻿using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 {
@@ -13,10 +14,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// object key, then uploads in the response are first sorted by key. Additionally, uploads are sorted in ascending order within each key by the upload
     /// initiation time.
     /// </summary>
-    public class ListMultipartUploadsRequest : BaseRequest
+    public class ListMultipartUploadsRequest : BaseRequest, IHasBucketName
     {
-        public ListMultipartUploadsRequest(string bucketName) : base(HttpMethod.GET, bucketName, null)
+        public ListMultipartUploadsRequest(string bucketName) : base(HttpMethod.GET)
         {
+            BucketName = bucketName;
         }
 
         /// <summary>
@@ -59,5 +61,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         /// have an upload ID lexicographically greater than the specified upload-id-marker.
         /// </summary>
         public string UploadIdMarker { get; set; }
+
+        public string BucketName { get;  set; }
     }
 }

@@ -6,17 +6,13 @@ namespace Genbox.SimpleS3.Abstracts
 {
     public interface IRequest
     {
+        Guid RequestId { get; }
+
         /// <summary>Date of the request</summary>
         DateTimeOffset Date { get; }
 
-        /// <summary>Key of the object</summary>
-        string ObjectKey { get; set; }
-
         /// <summary>The method to use when performing the request</summary>
         HttpMethod Method { get; }
-
-        /// <summary>The bucket (if any) used in the request</summary>
-        string BucketName { get; }
 
         /// <summary>Headers to apply to the request</summary>
         IReadOnlyDictionary<string, string> Headers { get; }

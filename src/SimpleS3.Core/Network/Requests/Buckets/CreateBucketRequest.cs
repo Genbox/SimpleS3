@@ -10,10 +10,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// You can optionally specify a region in the request body. You might choose a region to optimize latency, minimize costs, or address regulatory
     /// requirements.
     /// </summary>
-    public class CreateBucketRequest : BaseRequest, IHasBucketAcl
+    public class CreateBucketRequest : BaseRequest, IHasBucketAcl, IHasBucketName
     {
-        public CreateBucketRequest(string bucketName) : base(HttpMethod.PUT, bucketName, null)
+        public CreateBucketRequest(string bucketName) : base(HttpMethod.PUT)
         {
+            BucketName = bucketName;
             AclGrantRead = new AclBuilder();
             AclGrantWrite = new AclBuilder();
             AclGrantReadAcp = new AclBuilder();
@@ -24,22 +25,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
         /// <summary>Enable object locking on the bucket.</summary>
         public bool? EnableObjectLocking { get; set; }
 
-
         public BucketCannedAcl Acl { get; set; }
-
-
         public AclBuilder AclGrantRead { get; }
-
-
         public AclBuilder AclGrantWrite { get; }
-
-
         public AclBuilder AclGrantReadAcp { get; }
-
-
         public AclBuilder AclGrantWriteAcp { get; }
-
-
         public AclBuilder AclGrantFullControl { get; }
+        public string BucketName { get; set; }
     }
 }

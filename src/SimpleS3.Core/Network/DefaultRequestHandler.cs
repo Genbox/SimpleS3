@@ -16,6 +16,7 @@ using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Errors;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
@@ -58,24 +59,34 @@ namespace Genbox.SimpleS3.Core.Network
 
         public async Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken cancellationToken = default) where TResp : IResponse, new() where TReq : IRequest
         {
-            _logger.LogTrace($"Sending {typeof(TReq)} to bucket '{request.BucketName}' with key '{request.ObjectKey}'");
+            _logger.LogTrace("Sending {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
             Stream requestStream = _marshaller.MarshalRequest(request, _options.Value);
 
             _validator.ValidateAndThrow(request);
 
+            string bucketName = null;
+
+            if (request is IHasBucketName bn)
+                bucketName = bn.BucketName;
+
+            string objectKey = null;
+
+            if (request is IHasObjectKey ok)
+                objectKey = ok.ObjectKey;
+
             //Ensure that the object key is encoded
-            string encodedResource = request.ObjectKey != null ? UrlHelper.UrlPathEncode(request.ObjectKey) : null;
+            string encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
 
             if (_options.Value.Endpoint == null || _options.Value.NamingType == NamingType.PathStyle)
             {
-                if (!string.IsNullOrEmpty(request.BucketName))
-                    request.ObjectKey = request.BucketName + '/' + encodedResource;
+                if (bucketName != null)
+                    objectKey = bucketName + '/' + encodedResource;
                 else
-                    request.ObjectKey = encodedResource;
+                    objectKey = encodedResource;
             }
             else
-                request.ObjectKey = encodedResource;
+                objectKey = encodedResource;
 
             StringBuilder sb = new StringBuilder(512);
 
@@ -85,8 +96,8 @@ namespace Genbox.SimpleS3.Core.Network
             {
                 if (_options.Value.NamingType == NamingType.VirtualHost)
                 {
-                    if (!string.IsNullOrEmpty(request.BucketName))
-                        sb.Append(request.BucketName).Append(".s3.").Append(ValueHelper.EnumToString(_options.Value.Region)).Append(".amazonaws.com");
+                    if (bucketName != null)
+                        sb.Append(bucketName).Append(".s3.").Append(ValueHelper.EnumToString(_options.Value.Region)).Append(".amazonaws.com");
                     else
                         sb.Append("s3.").Append(ValueHelper.EnumToString(_options.Value.Region)).Append(".amazonaws.com");
                 }
@@ -124,7 +135,7 @@ namespace Genbox.SimpleS3.Core.Network
             //We add the authorization header here because we need ALL other headers to be present when we do
             request.AddHeader(HttpHeaders.Authorization, _authBuilder.BuildAuthorization(request));
 
-            sb.Append('/').Append(request.ObjectKey);
+            sb.Append('/').Append(objectKey);
 
             //Map all the parameters on to the url
             if (request.QueryParameters.Count > 0)

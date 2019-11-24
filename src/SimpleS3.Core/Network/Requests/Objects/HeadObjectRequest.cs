@@ -12,12 +12,14 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// only in an object's metadata. To use HEAD, you must have READ access to the object. A HEAD request has the same options as a GET operation on an
     /// object. The response is identical to the GET response except that there is no response body.
     /// </summary>
-    public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId
+    public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId, IHasBucketName, IHasObjectKey
     {
         private byte[] _sseCustomerKey;
 
-        public HeadObjectRequest(string bucketName, string objectKey) : base(HttpMethod.HEAD, bucketName, objectKey)
+        public HeadObjectRequest(string bucketName, string objectKey) : base(HttpMethod.HEAD)
         {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
             Range = new RangeBuilder();
             IfETagMatch = new ETagBuilder();
             IfETagNotMatch = new ETagBuilder();
@@ -72,5 +74,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         }
 
         public string VersionId { get; set; }
+        public string ObjectKey { get; set; }
+        public string BucketName { get; set; }
     }
 }

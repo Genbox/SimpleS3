@@ -13,10 +13,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// keys that you want to delete, then this operation provides a suitable alternative to sending individual delete requests (see DELETE Object), reducing
     /// per-request overhead.
     /// </summary>
-    public class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention
+    public class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention, IHasBucketName
     {
-        public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : base(HttpMethod.POST, bucketName, null)
+        public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : base(HttpMethod.POST)
         {
+            BucketName = bucketName;
             Mfa = new MfaAuthenticationBuilder();
             Objects = resources.ToList();
             Quiet = true;
@@ -33,5 +34,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public bool? BypassGovernanceRetention { get; set; }
         public Payer RequestPayer { get; set; }
+        public string BucketName { get; set; }
     }
 }

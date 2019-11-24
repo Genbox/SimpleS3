@@ -6,10 +6,12 @@ using Genbox.SimpleS3.Core.Network.SharedProperties;
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 {
     /// <summary>This operation lists the parts that have been uploaded for a specific multipart upload.</summary>
-    public class ListPartsRequest : BaseRequest, IHasUploadId, IHasRequestPayer
+    public class ListPartsRequest : BaseRequest, IHasUploadId, IHasRequestPayer, IHasBucketName, IHasObjectKey
     {
-        public ListPartsRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.GET, bucketName, objectKey)
+        public ListPartsRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.GET)
         {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
             UploadId = uploadId;
         }
 
@@ -25,5 +27,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public Payer RequestPayer { get; set; }
 
         public string UploadId { get; }
+        public string ObjectKey { get; set; }
+        public string BucketName { get; set; }
     }
 }

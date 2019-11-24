@@ -9,10 +9,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// (IAM) policy, you must have permissions to perform the s3:ListBucket action. The bucket owner has this permission by default and can grant this
     /// permission to others.
     /// </summary>
-    public class ListObjectsRequest : BaseRequest, IHasRequestPayer
+    public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
     {
-        public ListObjectsRequest(string bucketName) : base(HttpMethod.GET, bucketName, null)
+        public ListObjectsRequest(string bucketName) : base(HttpMethod.GET)
         {
+            BucketName = bucketName;
         }
 
         /// <summary>
@@ -65,5 +66,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public string StartAfter { get; set; }
 
         public Payer RequestPayer { get; set; }
+        public string BucketName { get; set; }
     }
 }

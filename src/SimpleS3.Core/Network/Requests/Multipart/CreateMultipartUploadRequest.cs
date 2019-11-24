@@ -13,12 +13,14 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// multipart upload. You specify this upload ID in each of your subsequent upload part requests (see Upload Part). You also include this upload ID in
     /// the final request to either complete or abort the multipart upload request.
     /// </summary>
-    public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasMetadata, IHasTags, IHasWebsireRedirect
+    public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsireRedirect, IHasMetadata, IHasTags
     {
         private byte[] _sseCustomerKey;
 
-        public CreateMultipartUploadRequest(string bucketName, string objectKey) : base(HttpMethod.POST, bucketName, objectKey)
+        public CreateMultipartUploadRequest(string bucketName, string objectKey) : base(HttpMethod.POST)
         {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
             Tags = new TagBuilder();
             Metadata = new MetadataBuilder();
             CacheControl = new CacheControlBuilder();
@@ -78,5 +80,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         }
 
         public StorageClass StorageClass { get; set; }
+        public string ObjectKey { get; set; }
+        public string BucketName { get; set; }
     }
 }

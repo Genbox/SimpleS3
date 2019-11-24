@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Validation.Validators.Requests.Buckets
 {
-    public class CreateBucketRequestValidator : RequestWithoutObjectKeyBase<CreateBucketRequest>
+    public class CreateBucketRequestValidator : BaseRequestValidator<CreateBucketRequest>
     {
         public CreateBucketRequestValidator(IOptions<S3Config> config) : base(config)
         {

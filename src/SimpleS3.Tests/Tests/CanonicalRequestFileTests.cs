@@ -28,9 +28,9 @@ namespace Genbox.SimpleS3.Tests.Tests
 
             IOptions<S3Config> options = Options.Create(config);
 
-            ISigningKeyBuilder keyBuilder = new SigningKeyBuilder(options, new NullLogger<SigningKeyBuilder>());
+            ISigningKeyBuilder keyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
             _scopeBuilder = new ScopeBuilder(options);
-            _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, new NullLogger<SignatureBuilder>());
+            _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<SignatureBuilder>.Instance, options);
         }
 
         [Theory]
@@ -43,7 +43,7 @@ namespace Genbox.SimpleS3.Tests.Tests
             //Read the canonical request from the test suite
             string encodedUrl = UrlHelper.UrlPathEncode(hh.Target);
 
-            string actualCr = _sigBuilder.CreateCanonicalRequest(hh.Method, encodedUrl, new ReadOnlyDictionary<string, string>(hh.Headers), new ReadOnlyDictionary<string, string>(hh.QueryParameters), CryptoHelper.Sha256Hash(hh.Body).HexEncode());
+            string actualCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, encodedUrl, hh.Method, new ReadOnlyDictionary<string, string>(hh.Headers), new ReadOnlyDictionary<string, string>(hh.QueryParameters), CryptoHelper.Sha256Hash(hh.Body).HexEncode());
 
             Assert.Equal(expectedCr, actualCr);
 

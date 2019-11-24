@@ -26,9 +26,9 @@ namespace Genbox.SimpleS3.Tests.Tests
 
             _options = Options.Create(config);
 
-            SigningKeyBuilder keyBuilder = new SigningKeyBuilder(_options, new NullLogger<SigningKeyBuilder>());
+            SigningKeyBuilder keyBuilder = new SigningKeyBuilder(_options, NullLogger<SigningKeyBuilder>.Instance);
             _scopeBuilder = new ScopeBuilder(_options);
-            _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, new NullLogger<SignatureBuilder>());
+            _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<SignatureBuilder>.Instance, _options);
             _chunkedSigBuilder = new ChunkedSignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);
             _authHeaderBuilder = new AuthorizationHeaderBuilder(_options, _scopeBuilder, _sigBuilder, NullLogger<AuthorizationHeaderBuilder>.Instance);
         }
@@ -80,7 +80,7 @@ namespace Genbox.SimpleS3.Tests.Tests
             //Override the header signing filter and just sign everything
             SigningConstants.ShouldSignHeader += s => true;
 
-            string actualSeedCr = _sigBuilder.CreateCanonicalRequest(HttpMethod.PUT, "/examplebucket/chunkObject.txt", new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(query), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
+            string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethod.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(query), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
             Assert.Equal(expectedSeedCr, actualSeedCr);
 
             string scope = _scopeBuilder.CreateScope("s3", _testDate);
@@ -169,9 +169,9 @@ namespace Genbox.SimpleS3.Tests.Tests
             using (StreamReader sr = new StreamReader(stream, Encoding.UTF8))
             {
                 string expected =
-                    "B;chunk-signature=11c8becc56fc860593b3c4fcf8c9450db27829b5d5d08136f6f0ddde7eccd03d\r\n" +
+                    "B;chunk-signature=b19ac98ea4fa8fbb8430d9699da9b251b3abe8f531241a3db556588b39926530\r\n" +
                     "Hello World\r\n" +
-                    "0;chunk-signature=85ab1d2d5921c65c27ea3b3dedfcd68934f4cb52d8afe0f9315b9f0f6858f732\r\n\r\n";
+                    "0;chunk-signature=4adbbe8f8ff3c209a1161f817517edd99919d10cbded0790e8ecfaf126091404\r\n\r\n";
 
                 string actual = sr.ReadToEnd();
                 Assert.Equal(expected, actual);

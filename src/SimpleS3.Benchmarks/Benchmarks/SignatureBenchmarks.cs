@@ -35,7 +35,7 @@ namespace Genbox.SimpleS3.Benchmarks.Benchmarks
 
             _signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
             IScopeBuilder scopeBuilder = new ScopeBuilder(options);
-            _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<SignatureBuilder>.Instance);
+            _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<SignatureBuilder>.Instance, options);
             _chunkSigBuilder = new ChunkedSignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);
 
             byte[] data = Encoding.UTF8.GetBytes("Hello world");

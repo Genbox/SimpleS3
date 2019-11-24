@@ -9,15 +9,17 @@ using Genbox.SimpleS3.Core.Network.SharedProperties;
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 {
     /// <summary>This operation uploads a part in a multipart upload.</summary>
-    public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5, ISupportStreaming, IHasUploadId, IHasRequestPayer
+    public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5, ISupportStreaming, IHasUploadId, IHasRequestPayer, IHasBucketName, IHasObjectKey
     {
         private byte[] _sseCustomerKey;
 
-        public UploadPartRequest(string bucketName, string objectKey, int partNumber, string uploadId, Stream content) : base(HttpMethod.PUT, bucketName, objectKey)
+        public UploadPartRequest(string bucketName, string objectKey, int partNumber, string uploadId, Stream content) : base(HttpMethod.PUT)
         {
             if (partNumber <= 0 || partNumber > 10_000)
                 throw new ArgumentException("Part number must be between 1 and 10.000 inclusive", nameof(partNumber));
 
+            BucketName = bucketName;
+            ObjectKey = objectKey;
             PartNumber = partNumber;
             UploadId = uploadId;
             Content = content;
@@ -57,5 +59,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         }
 
         public string UploadId { get; }
+        public string ObjectKey { get; set; }
+        public string BucketName { get; set; }
     }
 }

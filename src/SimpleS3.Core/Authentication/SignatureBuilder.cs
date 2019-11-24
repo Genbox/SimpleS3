@@ -10,9 +10,11 @@ using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Internal.Constants;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
+using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Utils;
 using Microsoft.Collections.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Authentication
 {
@@ -40,22 +42,47 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         private readonly ISigningKeyBuilder _keyBuilder;
         private readonly ILogger<SignatureBuilder> _logger;
+        private readonly IOptions<S3Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
 
-        public SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, ILogger<SignatureBuilder> logger)
+        public SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, ILogger<SignatureBuilder> logger, IOptions<S3Config> options)
         {
             _keyBuilder = keyBuilder;
             _scopeBuilder = scopeBuilder;
             _logger = logger;
+            _options = options;
         }
 
         public byte[] CreateSignature(IRequest request)
         {
             Validator.RequireNotNull(request, nameof(request));
 
-            _logger.LogTrace("Creating signature for {ObjectKey}", request.ObjectKey);
+            _logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
 
-            string canonicalRequest = CreateCanonicalRequest(request.Method, request.ObjectKey, request.Headers, request.QueryParameters, request.Headers[AmzHeaders.XAmzContentSha256]);
+            string bucketName = null;
+
+            if (request is IHasBucketName bn)
+                bucketName = bn.BucketName;
+
+            string objectKey = null;
+
+            if (request is IHasObjectKey ok)
+                objectKey = ok.ObjectKey;
+
+            //Ensure that the object key is encoded
+            string encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
+
+            if (_options.Value.Endpoint == null || _options.Value.NamingType == NamingType.PathStyle)
+            {
+                if (bucketName != null)
+                    objectKey = bucketName + '/' + encodedResource;
+                else
+                    objectKey = encodedResource;
+            }
+            else
+                objectKey = encodedResource;
+
+            string canonicalRequest = CreateCanonicalRequest(request.RequestId, objectKey, request.Method, request.Headers, request.QueryParameters, request.Headers[AmzHeaders.XAmzContentSha256]);
             string stringToSign = CreateStringToSign(request.Date, _scopeBuilder.CreateScope("s3", request.Date), canonicalRequest);
             byte[] signature = CreateSignature(request.Date, stringToSign);
 
@@ -72,9 +99,9 @@ namespace Genbox.SimpleS3.Core.Authentication
             return CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date, "s3"));
         }
 
-        internal string CreateCanonicalRequest(HttpMethod method, string objectKey, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
+        internal string CreateCanonicalRequest(Guid requestId, string objectKey, HttpMethod method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
         {
-            _logger.LogTrace("Creating canonical request for {ObjectKey}", objectKey);
+            _logger.LogTrace("Creating canonical request for {RequestId}", requestId);
 
             //Consists of:
             // HTTP Verb + \n

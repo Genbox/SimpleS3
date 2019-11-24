@@ -10,32 +10,18 @@ namespace Genbox.SimpleS3.Core.Network.Requests
         private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>();
 
-        protected BaseRequest(HttpMethod method, string bucketName, string objectKey)
+        protected BaseRequest(HttpMethod method)
         {
-            ObjectKey = objectKey;
-            Date = DateTimeOffset.UtcNow;
             Method = method;
-            BucketName = bucketName;
+            RequestId = Guid.NewGuid();
+            Date = DateTimeOffset.UtcNow;
         }
 
-
+        public Guid RequestId { get; }
         public DateTimeOffset Date { get; internal set; }
-
-
-        public string ObjectKey { get; set; }
-
-
         public HttpMethod Method { get; internal set; }
-
-
-        public string BucketName { get; }
-
-
         public IReadOnlyDictionary<string, string> Headers => _headers;
-
-
         public IReadOnlyDictionary<string, string> QueryParameters => _queryParameters;
-
 
         public void AddQueryParameter(string key, string value)
         {

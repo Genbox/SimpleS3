@@ -6,10 +6,12 @@ using Genbox.SimpleS3.Core.Network.SharedProperties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
-    public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId
+    public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId, IHasBucketName, IHasObjectKey
     {
-        public RestoreObjectRequest(string bucketName, string objectKey) : base(HttpMethod.POST, bucketName, objectKey)
+        public RestoreObjectRequest(string bucketName, string objectKey) : base(HttpMethod.POST)
         {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
             SelectParameters = new S3SelectParameters();
         }
 
@@ -36,5 +38,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public Payer RequestPayer { get; set; }
         public string VersionId { get; }
+        public string ObjectKey { get; set; }
+        public string BucketName { get; set; }
     }
 }
