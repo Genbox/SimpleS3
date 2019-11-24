@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// multipart upload. You specify this upload ID in each of your subsequent upload part requests (see Upload Part). You also include this upload ID in
     /// the final request to either complete or abort the multipart upload request.
     /// </summary>
-    public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer
+    public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasMetadata, IHasTags, IHasWebsireRedirect
     {
         private byte[] _sseCustomerKey;
 
@@ -32,24 +32,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             SseContext = new KmsContextBuilder();
         }
 
-        /// <summary>
-        /// Header starting with this prefix are user-defined metadata. Each one is stored and returned as a set of key-value pairs. Amazon S3 doesn't
-        /// validate or interpret user-defined metadata.
-        /// </summary>
         public MetadataBuilder Metadata { get; internal set; }
-
-        /// <summary>
-        /// Specifies a set of one or more tags to associate with the object. These tags are stored in the tagging subresource that is associated with
-        /// the object. To specify tags on an object, the requester must have s3:PutObjectTagging included in the list of permitted actions in their IAM policy.
-        /// </summary>
         public TagBuilder Tags { get; internal set; }
-
-        /// <summary>
-        /// f the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL.
-        /// Amazon S3 stores the value of this header in the object metadata.
-        /// </summary>
         public string WebsiteRedirectLocation { get; set; }
-
         public CacheControlBuilder CacheControl { get; internal set; }
         public ContentDispositionBuilder ContentDisposition { get; internal set; }
         public ContentEncodingBuilder ContentEncoding { get; internal set; }

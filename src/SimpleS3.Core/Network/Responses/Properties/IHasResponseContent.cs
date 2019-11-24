@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Network.Responses.Properties
 {
     [PublicAPI]
-    public interface IHasResponseContent
+    public interface IHasResponseContent : IHasLastModified
     {
         /// <summary>The MIME type of the content. For example, Content-Type: text/html; charset=utf-8</summary>
         string ContentType { get; }
@@ -29,7 +29,5 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Properties
 
         /// <summary>When this has a value, it indicates the type of partial requests the server supports.</summary>
         string AcceptRanges { get; }
-
-        DateTimeOffset? LastModified { get; }
     }
 }

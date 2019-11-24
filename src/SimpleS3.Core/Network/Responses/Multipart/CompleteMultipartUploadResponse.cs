@@ -22,7 +22,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
         public DateTimeOffset? LifeCycleExpiresOn { get; internal set; }
         public string LifeCycleRuleId { get; internal set; }
         public bool RequestCharged { get; internal set; }
-        public SseAlgorithm SseAlgorithm { get; internal set; }
+        public SseAlgorithm? SseAlgorithm { get; internal set; }
         public string SseKmsKeyId { get; internal set; }
         public string VersionId { get; internal set; }
     }
