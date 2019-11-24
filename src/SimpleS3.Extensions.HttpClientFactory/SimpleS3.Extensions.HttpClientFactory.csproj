@@ -6,11 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SimpleS3.Abstracts\SimpleS3.Abstracts.csproj" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SimpleS3.Core\SimpleS3.Core.csproj" />
   </ItemGroup>
 
 </Project>

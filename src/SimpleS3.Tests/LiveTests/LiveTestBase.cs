@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -46,7 +44,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests
             IConfigurationSection proxySection = _configRoot.GetSection("Proxy");
 
             if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
-                httpClientBuilder.ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler { Proxy = new WebProxy(proxySection["ProxyAddress"]) });
+                httpClientBuilder.WithProxy(proxySection["ProxyAddress"]);
 
             collection.AddLogging(x =>
             {

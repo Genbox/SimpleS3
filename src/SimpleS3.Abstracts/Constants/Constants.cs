@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Misc
+﻿namespace Genbox.SimpleS3.Abstracts.Constants
 {
     public static class Constants
     {

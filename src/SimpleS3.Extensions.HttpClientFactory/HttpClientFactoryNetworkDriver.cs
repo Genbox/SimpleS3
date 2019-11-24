@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Extensions.HttpClientFactory.Internal;
+using Genbox.SimpleS3.Extensions.HttpClient.Internal;
 using Microsoft.Extensions.Logging;
 using HttpMethod = Genbox.SimpleS3.Abstracts.Enums.HttpMethod;
 
@@ -14,10 +14,10 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory
 {
     public class HttpClientFactoryNetworkDriver : INetworkDriver
     {
-        private readonly HttpClient _client;
+        private readonly System.Net.Http.HttpClient _client;
         private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
 
-        public HttpClientFactoryNetworkDriver(ILogger<HttpClientFactoryNetworkDriver> logger, HttpClient client)
+        public HttpClientFactoryNetworkDriver(ILogger<HttpClientFactoryNetworkDriver> logger, System.Net.Http.HttpClient client)
         {
             _logger = logger;
             _client = client;
