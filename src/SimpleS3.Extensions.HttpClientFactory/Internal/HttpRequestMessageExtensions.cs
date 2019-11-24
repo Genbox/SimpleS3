@@ -2,7 +2,7 @@
 using System.Net.Http;
 using Genbox.SimpleS3.Abstracts.Constants;
 
-namespace Genbox.SimpleS3.Extensions.HttpClient.Internal
+namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Internal
 {
     internal static class HttpRequestMessageExtensions
     {
