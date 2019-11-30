@@ -9,7 +9,7 @@
   "AutoUrlDecodeResponses": false,
 
   "Proxy": {
-    "UseProxy": true,
+    "UseProxy": false,
     "ProxyAddress": "http://127.0.0.1:8888"
   },
 
