@@ -35,10 +35,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public S3SelectParameters SelectParameters { get; }
         public OutputLocation OutputLocation { get; set; }
+        public string BucketName { get; set; }
+        public string ObjectKey { get; set; }
 
         public Payer RequestPayer { get; set; }
         public string VersionId { get; }
-        public string ObjectKey { get; set; }
-        public string BucketName { get; set; }
     }
 }

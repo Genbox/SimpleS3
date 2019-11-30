@@ -14,10 +14,10 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory
 {
     public class HttpClientFactoryNetworkDriver : INetworkDriver
     {
-        private readonly System.Net.Http.HttpClient _client;
+        private readonly HttpClient _client;
         private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
 
-        public HttpClientFactoryNetworkDriver(ILogger<HttpClientFactoryNetworkDriver> logger, System.Net.Http.HttpClient client)
+        public HttpClientFactoryNetworkDriver(ILogger<HttpClientFactoryNetworkDriver> logger, HttpClient client)
         {
             _logger = logger;
             _client = client;

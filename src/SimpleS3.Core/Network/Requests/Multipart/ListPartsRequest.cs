@@ -24,10 +24,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         /// <summary>Specifies the part after which listing should begin. Only parts with higher part numbers will be listed.</summary>
         public string PartNumberMarker { get; set; }
 
+        public string BucketName { get; set; }
+        public string ObjectKey { get; set; }
+
         public Payer RequestPayer { get; set; }
 
         public string UploadId { get; }
-        public string ObjectKey { get; set; }
-        public string BucketName { get; set; }
     }
 }

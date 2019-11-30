@@ -45,8 +45,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 
         public string UploadId { get; }
         public IList<S3PartInfo> UploadParts { get; }
-        public Payer RequestPayer { get; set; }
-        public string ObjectKey { get; set; }
         public string BucketName { get; set; }
+        public string ObjectKey { get; set; }
+        public Payer RequestPayer { get; set; }
     }
 }

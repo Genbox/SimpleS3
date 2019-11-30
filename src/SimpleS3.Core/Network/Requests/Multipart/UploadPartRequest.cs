@@ -31,7 +31,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         /// <summary>Content of the part</summary>
         public Stream Content { get; }
 
+        public string BucketName { get; set; }
+
         public byte[] ContentMd5 { get; set; }
+        public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public byte[] SseCustomerKeyMd5 { get; set; }
@@ -59,7 +62,5 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         }
 
         public string UploadId { get; }
-        public string ObjectKey { get; set; }
-        public string BucketName { get; set; }
     }
 }

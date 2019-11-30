@@ -65,7 +65,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// </summary>
         public string StartAfter { get; set; }
 
-        public Payer RequestPayer { get; set; }
         public string BucketName { get; set; }
+
+        public Payer RequestPayer { get; set; }
     }
 }

@@ -34,9 +34,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             SseContext = new KmsContextBuilder();
         }
 
-        public MetadataBuilder Metadata { get; internal set; }
-        public TagBuilder Tags { get; internal set; }
-        public string WebsiteRedirectLocation { get; set; }
+        public string BucketName { get; set; }
         public CacheControlBuilder CacheControl { get; internal set; }
         public ContentDispositionBuilder ContentDisposition { get; internal set; }
         public ContentEncodingBuilder ContentEncoding { get; internal set; }
@@ -45,11 +43,14 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public LockMode LockMode { get; set; }
         public DateTimeOffset? LockRetainUntil { get; set; }
         public bool? LockLegalHold { get; set; }
+
+        public MetadataBuilder Metadata { get; internal set; }
         public ObjectCannedAcl Acl { get; set; }
         public AclBuilder AclGrantRead { get; internal set; }
         public AclBuilder AclGrantReadAcp { get; internal set; }
         public AclBuilder AclGrantWriteAcp { get; internal set; }
         public AclBuilder AclGrantFullControl { get; internal set; }
+        public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
         public SseAlgorithm SseAlgorithm { get; set; }
         public string SseKmsKeyId { get; set; }
@@ -80,7 +81,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         }
 
         public StorageClass StorageClass { get; set; }
-        public string ObjectKey { get; set; }
-        public string BucketName { get; set; }
+        public TagBuilder Tags { get; internal set; }
+        public string WebsiteRedirectLocation { get; set; }
     }
 }

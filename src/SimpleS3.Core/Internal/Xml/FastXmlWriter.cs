@@ -5,25 +5,19 @@ using Genbox.SimpleS3.Utils.Helpers;
 
 namespace Genbox.SimpleS3.Core.Internal.Xml
 {
-    /// <summary>
-    /// A fast optimized XML writer that does not allocate more memory than absolutely needed.
-    /// </summary>
+    /// <summary>A fast optimized XML writer that does not allocate more memory than absolutely needed.</summary>
     public class FastXmlWriter
     {
         private readonly StringBuilder _xml;
 
-        /// <summary>
-        /// Create a new <see cref="FastXmlWriter"/> with the specified capacity.
-        /// </summary>
+        /// <summary>Create a new <see cref="FastXmlWriter" /> with the specified capacity.</summary>
         /// <param name="capacity">The capacity of the XML writer. Note that it does not expand any further.</param>
         public FastXmlWriter(int capacity)
         {
             _xml = new StringBuilder(capacity);
         }
 
-        /// <summary>
-        /// Write a new element with the specified value
-        /// </summary>
+        /// <summary>Write a new element with the specified value</summary>
         /// <param name="name">The element name</param>
         /// <param name="value">The value within the element</param>
         public void WriteElement(in string name, in string value)
@@ -33,9 +27,7 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
             WriteEndElement(name);
         }
 
-        /// <summary>
-        /// Write a new element with the specified value
-        /// </summary>
+        /// <summary>Write a new element with the specified value</summary>
         /// <param name="name">The element name</param>
         /// <param name="value">The value within the element</param>
         public void WriteElement(in string name, in int value)
@@ -45,9 +37,7 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
             WriteEndElement(name);
         }
 
-        /// <summary>
-        /// Write a new element with the specified value
-        /// </summary>
+        /// <summary>Write a new element with the specified value</summary>
         /// <param name="name">The element name</param>
         /// <param name="value">The value within the element</param>
         public void WriteElement(in string name, in bool value)
@@ -64,9 +54,7 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
             WriteEndElement(name);
         }
 
-        /// <summary>
-        /// Write the start of an element
-        /// </summary>
+        /// <summary>Write the start of an element</summary>
         /// <param name="name">Name of the element</param>
         public void WriteStartElement(in string name, in string xmlns = null)
         {
@@ -79,9 +67,7 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
             _xml.Append('>');
         }
 
-        /// <summary>
-        /// Write the end of an element
-        /// </summary>
+        /// <summary>Write the end of an element</summary>
         /// <param name="name">Name of the element</param>
         public void WriteEndElement(in string name)
         {
@@ -131,17 +117,13 @@ namespace Genbox.SimpleS3.Core.Internal.Xml
             }
         }
 
-        /// <summary>
-        /// Return a set of UTF8 encoded bytes
-        /// </summary>
+        /// <summary>Return a set of UTF8 encoded bytes</summary>
         public byte[] GetBytes()
         {
             return Encoding.UTF8.GetBytes(_xml.ToString());
         }
 
-        /// <summary>
-        /// Gives a string representation of the XML structure
-        /// </summary>
+        /// <summary>Gives a string representation of the XML structure</summary>
         public override string ToString()
         {
             return _xml.ToString();

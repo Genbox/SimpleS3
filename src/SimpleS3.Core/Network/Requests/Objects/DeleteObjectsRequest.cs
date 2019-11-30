@@ -32,8 +32,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// <summary>The list of objects</summary>
         public IList<S3DeleteInfo> Objects { get; }
 
+        public string BucketName { get; set; }
+
         public bool? BypassGovernanceRetention { get; set; }
         public Payer RequestPayer { get; set; }
-        public string BucketName { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
     {
         public static IS3ClientBuilder UseHttpClient(this IS3ClientBuilder builder, IOptions<HttpClientConfig> options = null)
         {
-            builder.Services.AddSingleton<HttpClientHandler>(x =>
+            builder.Services.AddSingleton(x =>
             {
                 HttpClientHandler handler = new HttpClientHandler();
                 handler.UseCookies = false;

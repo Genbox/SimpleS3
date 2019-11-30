@@ -62,6 +62,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         /// </summary>
         public string UploadIdMarker { get; set; }
 
-        public string BucketName { get;  set; }
+        public string BucketName { get; set; }
     }
 }

@@ -37,10 +37,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// </summary>
         public int? PartNumber { get; set; }
 
+        public string BucketName { get; set; }
+
         public DateTimeOffset? IfModifiedSince { get; set; }
         public DateTimeOffset? IfUnmodifiedSince { get; set; }
         public ETagBuilder IfETagMatch { get; internal set; }
         public ETagBuilder IfETagNotMatch { get; internal set; }
+        public string ObjectKey { get; set; }
         public RangeBuilder Range { get; internal set; }
         public DateTimeOffset? ResponseExpires { get; set; }
         public CacheControlBuilder ResponseCacheControl { get; }
@@ -74,7 +77,5 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         }
 
         public string VersionId { get; set; }
-        public string ObjectKey { get; set; }
-        public string BucketName { get; set; }
     }
 }
