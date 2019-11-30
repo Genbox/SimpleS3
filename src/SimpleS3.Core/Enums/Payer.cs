@@ -3,6 +3,7 @@
     public enum Payer
     {
         Unknown = 0,
-        Requester
+        Requester,
+        Me
     }
 }
