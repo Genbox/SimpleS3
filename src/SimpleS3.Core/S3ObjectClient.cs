@@ -77,5 +77,13 @@ namespace Genbox.SimpleS3.Core
 
             return ObjectOperations.RestoreObjectsAsync(req, token);
         }
+
+        public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest> config = null, CancellationToken token = default)
+        {
+            CopyObjectRequest req = new CopyObjectRequest(sourceBucketName, sourceObjectKey, destinationBucket, destinationObjectKey);
+            config?.Invoke(req);
+
+            return ObjectOperations.CopyObjectsAsync(req, token);
+        }
     }
 }

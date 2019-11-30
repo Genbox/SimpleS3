@@ -103,6 +103,11 @@ namespace Genbox.SimpleS3
             return _objectClient.RestoreObjectAsync(bucketName, objectKey, config, token);
         }
 
+        public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest> config = null, CancellationToken token = default)
+        {
+            return _objectClient.CopyObjectAsync(sourceBucketName, sourceObjectKey, destinationBucket, destinationObjectKey, config, token);
+        }
+
         public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
         {
             return _bucketClient.CreateBucketAsync(bucketName, config, token);

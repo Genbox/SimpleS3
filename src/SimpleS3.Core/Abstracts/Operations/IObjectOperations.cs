@@ -37,5 +37,10 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
         /// for details
         /// </summary>
         Task<RestoreObjectResponse> RestoreObjectsAsync(RestoreObjectRequest request, CancellationToken token = default);
+
+        /// <summary>
+        /// Copies an object that is already present in an S3 bucket. see https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html
+        /// </summary>
+        Task<CopyObjectResponse> CopyObjectsAsync(CopyObjectRequest request, CancellationToken token = default);
     }
 }

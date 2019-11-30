@@ -76,5 +76,17 @@ namespace Genbox.SimpleS3.Abstracts.Constants
         public const string XAmzGrantFullControl = "x-amz-grant-full-control";
 
         #endregion
+
+        public const string XAmzCopySource = "x-amz-copy-source";
+        public const string XAmzCopySourceIfMatch = "x-amz-copy-source-if-match";
+        public const string XAmzCopySourceIfModifiedSince = "x-amz-copy-source-if-modified-since";
+        public const string XAmzCopySourceIfNoneMatch = "x-amz-copy-source-if-none-match";
+        public const string XAmzCopySourceIfUnmodifiedSince = "x-amz-copy-source-if-unmodified-since";
+        public const string XAmzCopySourceSSECustomerAlgorithm = "x-amz-copy-source-server-side-encryption-customer-algorithm";
+        public const string XAmzCopySourceSSECustomerKey = "x-amz-copy-source-server-side-encryption-customer-key";
+        public const string XAmzCopySourceSSECustomerKeyMd5 = "x-amz-copy-source-server-side-encryption-customer-key-MD5";
+        public const string XAmzTaggingDirective = "x-amz-tagging-directive";
+        public const string XAmzMetadataDirective = "x-amz-metadata-directive";
+        public const string XAmzCopySourceVersionId = "x-amz-copy-source-version-id";
     }
 }

@@ -64,5 +64,14 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
         Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest> config = null, CancellationToken token = default);
+
+        /// <summary>Copies an object already present in an S3 bucket to a new object in the same or another S3 bucket</summary>
+        /// <param name="sourceBucketName">The source bucket</param>
+        /// <param name="sourceObjectKey">The source object key</param>
+        /// <param name="destinationBucket">The destination bucket</param>
+        /// <param name="destinationObjectKey">The destination object key</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token</param>
+        Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest> config = null, CancellationToken token = default);
     }
 }
