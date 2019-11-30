@@ -31,7 +31,32 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
         }
 
         [Fact]
-        public async Task ListMoreThanMaxKeys()
+        public async Task ListObjects()
+        {
+            await CreateTempBucketAsync(async bucket =>
+            {
+                string tempObjName = "object-" + Guid.NewGuid();
+                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
+
+                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket).ConfigureAwait(false);
+                Assert.True(gResp.IsSuccess);
+
+                Assert.Equal(bucket, gResp.BucketName);
+                Assert.Equal(1, gResp.KeyCount);
+                Assert.Equal(1000, gResp.MaxKeys);
+                Assert.False(gResp.IsTruncated);
+
+                S3Object obj = gResp.Objects.First();
+                Assert.Equal(tempObjName, obj.ObjectKey);
+                Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", obj.ETag);
+                Assert.Equal(StorageClass.Standard, obj.StorageClass);
+                Assert.Equal(5, obj.Size);
+                Assert.Equal(DateTime.UtcNow, obj.LastModifiedOn.UtcDateTime, TimeSpan.FromSeconds(5));
+            }).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ListObjectsMoreThanMaxKeys()
         {
             await CreateTempBucketAsync(async bucket =>
             {
@@ -71,33 +96,15 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             }).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task ListStandard()
+        [Fact(Skip = "Require a setup of another AWS account with 'Requester pays' setup")]
+        public async Task ListObjectsRequestPayer()
         {
-            await CreateTempBucketAsync(async bucket =>
-            {
-                string tempObjName = "object-" + Guid.NewGuid();
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
-
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket).ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
-
-                Assert.Equal(bucket, gResp.BucketName);
-                Assert.Equal(1, gResp.KeyCount);
-                Assert.Equal(1000, gResp.MaxKeys);
-                Assert.False(gResp.IsTruncated);
-
-                S3Object obj = gResp.Objects.First();
-                Assert.Equal(tempObjName, obj.ObjectKey);
-                Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", obj.ETag);
-                Assert.Equal(StorageClass.Standard, obj.StorageClass);
-                Assert.Equal(5, obj.Size);
-                Assert.Equal(DateTime.UtcNow, obj.LastModifiedOn.UtcDateTime, TimeSpan.FromSeconds(5));
-            }).ConfigureAwait(false);
+            ListObjectsResponse resp = await ObjectClient.ListObjectsAsync(BucketName, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            Assert.True(resp.RequestCharged);
         }
 
         [Fact]
-        public async Task ListWithDelimiter()
+        public async Task ListObjectsWithDelimiter()
         {
             await CreateTempBucketAsync(async bucket =>
             {
@@ -107,19 +114,19 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.Delimiter = "-").ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
+                ListObjectsResponse resp = await ObjectClient.ListObjectsAsync(bucket, req => req.Delimiter = "-").ConfigureAwait(false);
+                Assert.True(resp.IsSuccess);
 
-                Assert.Equal("-", gResp.Delimiter);
-                Assert.Equal(2, gResp.KeyCount);
-                Assert.Equal(2, gResp.CommonPrefixes.Count);
-                Assert.Equal("object-", gResp.CommonPrefixes[0]);
-                Assert.Equal("something-", gResp.CommonPrefixes[1]);
+                Assert.Equal("-", resp.Delimiter);
+                Assert.Equal(2, resp.KeyCount);
+                Assert.Equal(2, resp.CommonPrefixes.Count);
+                Assert.Equal("object-", resp.CommonPrefixes[0]);
+                Assert.Equal("something-", resp.CommonPrefixes[1]);
             }).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task ListWithEncoding()
+        public async Task ListObjectsWithEncoding()
         {
             await CreateTempBucketAsync(async bucket =>
             {
@@ -127,36 +134,36 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, string.Empty).ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
+                ListObjectsResponse resp = await ObjectClient.ListObjectsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
+                Assert.True(resp.IsSuccess);
 
-                Assert.Equal(EncodingType.Url, gResp.EncodingType);
+                Assert.Equal(EncodingType.Url, resp.EncodingType);
 
-                S3Object obj = Assert.Single(gResp.Objects);
+                S3Object obj = Assert.Single(resp.Objects);
 
                 Assert.Equal("%21%23/%28%29", obj.ObjectKey);
             }).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task ListWithOwner()
+        public async Task ListObjectsWithOwner()
         {
             await CreateTempBucketAsync(async bucket =>
             {
                 string tempObjName = "object-" + Guid.NewGuid();
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello", config: req => req.AclGrantFullControl.AddEmail(TestConstants.TestEmail)).ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.FetchOwner = true).ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
+                ListObjectsResponse resp = await ObjectClient.ListObjectsAsync(bucket, req => req.FetchOwner = true).ConfigureAwait(false);
+                Assert.True(resp.IsSuccess);
 
-                S3Object obj = gResp.Objects.First();
+                S3Object obj = resp.Objects.First();
                 Assert.Equal(TestConstants.TestUsername, obj.Owner.Name);
                 Assert.Equal(TestConstants.TestUserId, obj.Owner.Id);
             }).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task ListWithPrefix()
+        public async Task ListObjectsWithPrefix()
         {
             await CreateTempBucketAsync(async bucket =>
             {
@@ -166,13 +173,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
                 await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
 
-                ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.Prefix = "object").ConfigureAwait(false);
-                Assert.True(gResp.IsSuccess);
+                ListObjectsResponse resp = await ObjectClient.ListObjectsAsync(bucket, req => req.Prefix = "object").ConfigureAwait(false);
+                Assert.True(resp.IsSuccess);
 
-                Assert.Equal(1, gResp.KeyCount);
-                Assert.Equal("object", gResp.Prefix);
+                Assert.Equal(1, resp.KeyCount);
+                Assert.Equal("object", resp.Prefix);
 
-                S3Object obj = Assert.Single(gResp.Objects);
+                S3Object obj = Assert.Single(resp.Objects);
 
                 Assert.Equal(tempObjName, obj.ObjectKey);
             }).ConfigureAwait(false);

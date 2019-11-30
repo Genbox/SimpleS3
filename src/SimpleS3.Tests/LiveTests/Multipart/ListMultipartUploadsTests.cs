@@ -17,18 +17,18 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Multipart
         }
 
         [Fact]
-        public async Task ListMultipartUploadsStandard()
+        public async Task ListMultipartUploads()
         {
             await CreateTempBucketAsync(async bucket =>
             {
-                string objName = nameof(ListMultipartUploadsStandard) + "%";
+                string objName = nameof(ListMultipartUploads) + "%";
 
-                CreateMultipartUploadResponse initResp = await MultipartClient.CreateMultipartUploadAsync(bucket, objName).ConfigureAwait(false);
+                CreateMultipartUploadResponse createResp = await MultipartClient.CreateMultipartUploadAsync(bucket, objName).ConfigureAwait(false);
 
                 byte[] file = new byte[5 * 1024];
 
                 using (MemoryStream ms = new MemoryStream(file))
-                    await MultipartClient.UploadPartAsync(bucket, objName, 1, initResp.UploadId, ms).ConfigureAwait(false);
+                    await MultipartClient.UploadPartAsync(bucket, objName, 1, createResp.UploadId, ms).ConfigureAwait(false);
 
                 ListMultipartUploadsResponse listResp = await MultipartClient.ListMultipartUploadsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
 

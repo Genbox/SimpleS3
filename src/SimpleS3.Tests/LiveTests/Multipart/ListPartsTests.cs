@@ -24,13 +24,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Multipart
                 //We add the special characters at the end to test EncodingType support.
                 string objName = nameof(ListParts) + "%";
 
-                CreateMultipartUploadResponse initResp = await MultipartClient.CreateMultipartUploadAsync(bucket, objName).ConfigureAwait(false);
+                CreateMultipartUploadResponse createResp = await MultipartClient.CreateMultipartUploadAsync(bucket, objName).ConfigureAwait(false);
 
-                ListPartsResponse listResp1 = await MultipartClient.ListPartsAsync(bucket, objName, initResp.UploadId).ConfigureAwait(false);
+                ListPartsResponse listResp1 = await MultipartClient.ListPartsAsync(bucket, objName, createResp.UploadId).ConfigureAwait(false);
 
                 Assert.Equal(bucket, listResp1.BucketName);
                 Assert.Equal(objName, listResp1.ObjectKey);
-                Assert.Equal(initResp.UploadId, listResp1.UploadId);
+                Assert.Equal(createResp.UploadId, listResp1.UploadId);
                 Assert.Equal(StorageClass.Standard, listResp1.StorageClass);
                 Assert.Equal(0, listResp1.PartNumberMarker);
                 Assert.Equal(0, listResp1.NextPartNumberMarker);
@@ -45,13 +45,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Multipart
                 byte[] file = new byte[5 * 1024];
 
                 using (MemoryStream ms = new MemoryStream(file))
-                    uploadResp = await MultipartClient.UploadPartAsync(bucket, objName, 1, initResp.UploadId, ms).ConfigureAwait(false);
+                    uploadResp = await MultipartClient.UploadPartAsync(bucket, objName, 1, createResp.UploadId, ms).ConfigureAwait(false);
 
-                ListPartsResponse listResp2 = await MultipartClient.ListPartsAsync(bucket, objName, initResp.UploadId, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
+                ListPartsResponse listResp2 = await MultipartClient.ListPartsAsync(bucket, objName, createResp.UploadId, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
 
                 Assert.Equal(bucket, listResp2.BucketName);
                 Assert.Equal(WebUtility.UrlEncode(objName), listResp2.ObjectKey); //It should be encoded at this point
-                Assert.Equal(initResp.UploadId, listResp2.UploadId);
+                Assert.Equal(createResp.UploadId, listResp2.UploadId);
                 Assert.Equal(StorageClass.Standard, listResp2.StorageClass);
                 Assert.Equal(0, listResp2.PartNumberMarker);
                 Assert.Equal(1, listResp2.NextPartNumberMarker);
@@ -66,9 +66,9 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Multipart
                 Assert.Equal("\"32ca18808933aa12e979375d07048a11\"", part.ETag);
                 Assert.Equal(file.Length, part.Size);
 
-                await MultipartClient.CompleteMultipartUploadAsync(bucket, objName, initResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
+                await MultipartClient.CompleteMultipartUploadAsync(bucket, objName, createResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
 
-                ListPartsResponse listResp3 = await MultipartClient.ListPartsAsync(bucket, objName, initResp.UploadId).ConfigureAwait(false);
+                ListPartsResponse listResp3 = await MultipartClient.ListPartsAsync(bucket, objName, createResp.UploadId).ConfigureAwait(false);
                 Assert.False(listResp3.IsSuccess);
                 Assert.Equal(404, listResp3.StatusCode);
             }).ConfigureAwait(false);

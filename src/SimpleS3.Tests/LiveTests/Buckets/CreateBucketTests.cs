@@ -14,24 +14,24 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         }
 
         [Fact]
-        public async Task CreateStandard()
+        public async Task CreateBucket()
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName).ConfigureAwait(false);
-            Assert.True(pResp.IsSuccess);
+            CreateBucketResponse resp = await BucketClient.CreateBucketAsync(tempBucketName).ConfigureAwait(false);
+            Assert.True(resp.IsSuccess);
 
             //Delete again to cleanup
             await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task CreateWithCannedAcl()
+        public async Task CreateBucketCannedAcl()
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.Acl = BucketCannedAcl.PublicReadWrite).ConfigureAwait(false);
-            Assert.True(pResp.IsSuccess);
+            CreateBucketResponse resp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.Acl = BucketCannedAcl.PublicReadWrite).ConfigureAwait(false);
+            Assert.True(resp.IsSuccess);
 
             //TODO: Check ACL once we have that functionality
 
@@ -40,11 +40,11 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         }
 
         [Fact]
-        public async Task CreateWithCustomAcl()
+        public async Task CreateBucketCustomAcl()
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, req =>
+            CreateBucketResponse resp = await BucketClient.CreateBucketAsync(tempBucketName, req =>
             {
                 req.AclGrantReadAcp.AddEmail(TestConstants.TestEmail);
                 req.AclGrantWriteAcp.AddEmail(TestConstants.TestEmail);
@@ -52,7 +52,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
                 req.AclGrantWrite.AddEmail(TestConstants.TestEmail);
                 req.AclGrantFullControl.AddEmail(TestConstants.TestEmail);
             }).ConfigureAwait(false);
-            Assert.True(pResp.IsSuccess);
+            Assert.True(resp.IsSuccess);
 
             //TODO: Check ACL once we have that functionality
 
@@ -61,12 +61,12 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         }
 
         [Fact]
-        public async Task CreateWithObjectLocking()
+        public async Task CreateBucketObjectLocking()
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            CreateBucketResponse pResp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.EnableObjectLocking = true).ConfigureAwait(false);
-            Assert.True(pResp.IsSuccess);
+            CreateBucketResponse resp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.EnableObjectLocking = true).ConfigureAwait(false);
+            Assert.True(resp.IsSuccess);
 
             //TODO: Check locking is enabled once we have that functionality
 

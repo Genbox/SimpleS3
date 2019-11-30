@@ -7,13 +7,15 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 {
     public class CopyObjectTests : LiveTestBase
     {
-        public CopyObjectTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+        public CopyObjectTests(ITestOutputHelper outputHelper) : base(outputHelper)
+        {
+        }
 
         [Fact]
-        public async Task CopyObjectTest()
+        public async Task CopyObject()
         {
             //Upload an object to copy
-            string sourceKey = nameof(CopyObjectTest);
+            string sourceKey = nameof(CopyObject);
             string destinationKey = sourceKey + "2";
 
             await UploadAsync(sourceKey).ConfigureAwait(false);

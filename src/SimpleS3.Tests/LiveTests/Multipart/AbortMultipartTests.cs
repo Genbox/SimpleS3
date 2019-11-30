@@ -16,13 +16,13 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Multipart
         {
             string objectKey = nameof(AbortIncompleteUpload);
 
-            CreateMultipartUploadResponse initResp = await MultipartClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
+            CreateMultipartUploadResponse createResp = await MultipartClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
 
-            Assert.Equal(BucketName, initResp.Bucket);
-            Assert.Equal(objectKey, initResp.ObjectKey);
-            Assert.NotNull(initResp.UploadId);
+            Assert.Equal(BucketName, createResp.Bucket);
+            Assert.Equal(objectKey, createResp.ObjectKey);
+            Assert.NotNull(createResp.UploadId);
 
-            AbortMultipartUploadResponse abortResp = await MultipartClient.AbortMultipartUploadAsync(BucketName, objectKey, initResp.UploadId).ConfigureAwait(false);
+            AbortMultipartUploadResponse abortResp = await MultipartClient.AbortMultipartUploadAsync(BucketName, objectKey, createResp.UploadId).ConfigureAwait(false);
 
             Assert.True(abortResp.IsSuccess);
             Assert.Equal(204, abortResp.StatusCode);

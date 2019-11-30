@@ -10,9 +10,9 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 {
-    public class RestoreTests : LiveTestBase
+    public class RestoreObjectTests : LiveTestBase
     {
-        public RestoreTests(ITestOutputHelper outputHelper) : base(outputHelper)
+        public RestoreObjectTests(ITestOutputHelper outputHelper) : base(outputHelper)
         {
         }
 

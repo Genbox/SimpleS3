@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
@@ -9,27 +11,18 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 {
-    public class DeleteTests : LiveTestBase
+    public class DeleteObjectsTests : LiveTestBase
     {
-        public DeleteTests(ITestOutputHelper helper) : base(helper)
+        public DeleteObjectsTests(ITestOutputHelper helper) : base(helper)
         {
         }
 
         [Fact]
-        public async Task DeleteMarker()
-        {
-            await UploadAsync(nameof(DeleteMarker)).ConfigureAwait(false);
-            DeleteObjectResponse resp = await ObjectClient.DeleteObjectAsync(BucketName, nameof(DeleteMarker)).ConfigureAwait(false);
-
-            Assert.True(resp.IsDeleteMarker);
-        }
-
-        [Fact]
-        public async Task DeleteMultiple()
+        public async Task DeleteObjects()
         {
             List<S3DeleteInfo> resources = new List<S3DeleteInfo>(2);
-            resources.Add(new S3DeleteInfo(nameof(DeleteMultiple) + "1"));
-            resources.Add(new S3DeleteInfo(nameof(DeleteMultiple) + "2", "versionnotfound"));
+            resources.Add(new S3DeleteInfo(nameof(DeleteObjects) + "1"));
+            resources.Add(new S3DeleteInfo(nameof(DeleteObjects) + "2", "versionnotfound"));
 
             await UploadAsync(resources[0].Name).ConfigureAwait(false);
             await UploadAsync(resources[1].Name).ConfigureAwait(false);
@@ -47,6 +40,16 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
             Assert.Equal(resources[1].VersionId, errorObj.VersionId);
             Assert.Equal(ErrorCode.NoSuchVersion, errorObj.Code);
             Assert.Equal("The specified version does not exist.", errorObj.Message);
+        }
+
+        [Fact(Skip = "Require a setup of another AWS account with 'Requester pays' setup")]
+        public async Task DeleteObjectsRequestPayer()
+        {
+            PutObjectResponse putResp2 = await ObjectClient.PutObjectAsync(BucketName, nameof(DeleteObjectsRequestPayer), null, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            Assert.True(putResp2.RequestCharged);
+
+            DeleteObjectsResponse delResp2 = await ObjectClient.DeleteObjectsAsync(BucketName, new[] { nameof(DeleteObjectsRequestPayer) }, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            Assert.True(delResp2.RequestCharged);
         }
     }
 }

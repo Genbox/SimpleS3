@@ -19,19 +19,19 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
-            DeleteBucketResponse delete1 = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
-            Assert.False(delete1.IsSuccess);
-            Assert.Equal(ErrorCode.NoSuchBucket, delete1.Error.Code);
+            DeleteBucketResponse deleteResp1 = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
+            Assert.False(deleteResp1.IsSuccess);
+            Assert.Equal(ErrorCode.NoSuchBucket, deleteResp1.Error.Code);
 
             await BucketClient.CreateBucketAsync(tempBucketName).ConfigureAwait(false);
 
-            DeleteBucketResponse delete2 = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
-            Assert.True(delete2.IsSuccess);
-            Assert.Equal(204, delete2.StatusCode);
+            DeleteBucketResponse deleteResp2 = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
+            Assert.True(deleteResp2.IsSuccess);
+            Assert.Equal(204, deleteResp2.StatusCode);
 
-            ListObjectsResponse resp = await ObjectClient.ListObjectsAsync(tempBucketName).ConfigureAwait(false);
-            Assert.False(resp.IsSuccess);
-            Assert.Equal(404, resp.StatusCode);
+            ListObjectsResponse listResp = await ObjectClient.ListObjectsAsync(tempBucketName).ConfigureAwait(false);
+            Assert.False(listResp.IsSuccess);
+            Assert.Equal(404, listResp.StatusCode);
         }
     }
 }
