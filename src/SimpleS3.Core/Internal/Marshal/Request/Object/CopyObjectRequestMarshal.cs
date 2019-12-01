@@ -41,20 +41,20 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
                 request.AddHeader(AmzHeaders.XAmzTaggingDirective, request.TaggingDirective);
             }
 
-            request.AddHeader(AmzHeaders.XAmzCopySourceSSECustomerAlgorithm, request.SseCustomerAlgorithm);
-            request.AddHeader(AmzHeaders.XAmzCopySourceSSECustomerKey, request.SseCustomerKey, BinaryEncoding.Base64);
-            request.AddHeader(AmzHeaders.XAmzCopySourceSSECustomerKeyMd5, request.SseCustomerKeyMd5, BinaryEncoding.Base64);
+            request.AddHeader(AmzHeaders.XAmzCopySourceSseCustomerAlgorithm, request.SseCustomerAlgorithm);
+            request.AddHeader(AmzHeaders.XAmzCopySourceSseCustomerKey, request.SseCustomerKey, BinaryEncoding.Base64);
+            request.AddHeader(AmzHeaders.XAmzCopySourceSseCustomerKeyMd5, request.SseCustomerKeyMd5, BinaryEncoding.Base64);
 
-            request.AddHeader(AmzHeaders.XAmzSSE, request.SseAlgorithm);
-            request.AddHeader(AmzHeaders.XAmzSSEAwsKmsKeyId, request.SseKmsKeyId);
+            request.AddHeader(AmzHeaders.XAmzSse, request.SseAlgorithm);
+            request.AddHeader(AmzHeaders.XAmzSseAwsKmsKeyId, request.SseKmsKeyId);
 
             string sseContext = request.SseContext.Build();
             if (sseContext != null)
-                request.AddHeader(AmzHeaders.XAmzSSEContext, Encoding.UTF8.GetBytes(sseContext), BinaryEncoding.Base64);
+                request.AddHeader(AmzHeaders.XAmzSseContext, Encoding.UTF8.GetBytes(sseContext), BinaryEncoding.Base64);
 
-            request.AddHeader(AmzHeaders.XAmzSSECustomerAlgorithm, request.SseCustomerAlgorithm);
-            request.AddHeader(AmzHeaders.XAmzSSECustomerKey, request.SseCustomerKey, BinaryEncoding.Base64);
-            request.AddHeader(AmzHeaders.XAmzSSECustomerKeyMD5, request.SseCustomerKeyMd5, BinaryEncoding.Base64);
+            request.AddHeader(AmzHeaders.XAmzSseCustomerAlgorithm, request.SseCustomerAlgorithm);
+            request.AddHeader(AmzHeaders.XAmzSseCustomerKey, request.SseCustomerKey, BinaryEncoding.Base64);
+            request.AddHeader(AmzHeaders.XAmzSseCustomerKeyMd5, request.SseCustomerKeyMd5, BinaryEncoding.Base64);
 
             request.AddHeader(AmzHeaders.XAmzGrantFullControl, request.AclGrantFullControl);
             request.AddHeader(AmzHeaders.XAmzGrantRead, request.AclGrantRead);

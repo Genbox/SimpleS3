@@ -21,9 +21,9 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             request.AddHeader(HttpHeaders.IfNoneMatch, request.IfETagNotMatch);
             request.AddHeader(HttpHeaders.IfModifiedSince, request.IfModifiedSince, DateTimeFormat.Rfc1123);
             request.AddHeader(HttpHeaders.IfUnmodifiedSince, request.IfUnmodifiedSince, DateTimeFormat.Rfc1123);
-            request.AddHeader(AmzHeaders.XAmzSSECustomerAlgorithm, request.SseCustomerAlgorithm);
-            request.AddHeader(AmzHeaders.XAmzSSECustomerKey, request.SseCustomerKey, BinaryEncoding.Base64);
-            request.AddHeader(AmzHeaders.XAmzSSECustomerKeyMD5, request.SseCustomerKeyMd5, BinaryEncoding.Base64);
+            request.AddHeader(AmzHeaders.XAmzSseCustomerAlgorithm, request.SseCustomerAlgorithm);
+            request.AddHeader(AmzHeaders.XAmzSseCustomerKey, request.SseCustomerKey, BinaryEncoding.Base64);
+            request.AddHeader(AmzHeaders.XAmzSseCustomerKeyMd5, request.SseCustomerKeyMd5, BinaryEncoding.Base64);
             request.AddQueryParameter(AmzParameters.ResponseCacheControl, request.ResponseCacheControl);
             request.AddQueryParameter(AmzParameters.ResponseExpires, request.ResponseExpires, DateTimeFormat.Rfc1123);
             request.AddQueryParameter(AmzParameters.ResponseContentDisposition, request.ResponseContentDisposition);

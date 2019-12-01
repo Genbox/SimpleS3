@@ -41,13 +41,13 @@ namespace Genbox.SimpleS3.Abstracts.Constants
 
         #region ServerSideEncryption
 
-        public const string XAmzSSE = "x-amz-server-side-encryption";
-        public const string XAmzSSEAwsKmsKeyId = "x-amz-server-side-encryption-aws-kms-key-id";
-        public const string XAmzSSEContext = "x-amz-server-side-encryption-context";
+        public const string XAmzSse = "x-amz-server-side-encryption";
+        public const string XAmzSseAwsKmsKeyId = "x-amz-server-side-encryption-aws-kms-key-id";
+        public const string XAmzSseContext = "x-amz-server-side-encryption-context";
 
-        public const string XAmzSSECustomerAlgorithm = "x-amz-server-side-encryption-customer-algorithm";
-        public const string XAmzSSECustomerKey = "x-amz-server-side-encryption-customer-key";
-        public const string XAmzSSECustomerKeyMD5 = "x-amz-server-side-encryption-customer-key-MD5";
+        public const string XAmzSseCustomerAlgorithm = "x-amz-server-side-encryption-customer-algorithm";
+        public const string XAmzSseCustomerKey = "x-amz-server-side-encryption-customer-key";
+        public const string XAmzSseCustomerKeyMd5 = "x-amz-server-side-encryption-customer-key-MD5";
 
         #endregion
 
@@ -77,16 +77,20 @@ namespace Genbox.SimpleS3.Abstracts.Constants
 
         #endregion
 
+        #region CopyObject
+
         public const string XAmzCopySource = "x-amz-copy-source";
         public const string XAmzCopySourceIfMatch = "x-amz-copy-source-if-match";
         public const string XAmzCopySourceIfModifiedSince = "x-amz-copy-source-if-modified-since";
         public const string XAmzCopySourceIfNoneMatch = "x-amz-copy-source-if-none-match";
         public const string XAmzCopySourceIfUnmodifiedSince = "x-amz-copy-source-if-unmodified-since";
-        public const string XAmzCopySourceSSECustomerAlgorithm = "x-amz-copy-source-server-side-encryption-customer-algorithm";
-        public const string XAmzCopySourceSSECustomerKey = "x-amz-copy-source-server-side-encryption-customer-key";
-        public const string XAmzCopySourceSSECustomerKeyMd5 = "x-amz-copy-source-server-side-encryption-customer-key-MD5";
+        public const string XAmzCopySourceSseCustomerAlgorithm = "x-amz-copy-source-server-side-encryption-customer-algorithm";
+        public const string XAmzCopySourceSseCustomerKey = "x-amz-copy-source-server-side-encryption-customer-key";
+        public const string XAmzCopySourceSseCustomerKeyMd5 = "x-amz-copy-source-server-side-encryption-customer-key-MD5";
         public const string XAmzTaggingDirective = "x-amz-tagging-directive";
         public const string XAmzMetadataDirective = "x-amz-metadata-directive";
         public const string XAmzCopySourceVersionId = "x-amz-copy-source-version-id";
+
+        #endregion
     }
 }

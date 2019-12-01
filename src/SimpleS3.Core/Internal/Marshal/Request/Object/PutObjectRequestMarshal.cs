@@ -31,16 +31,16 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             request.AddHeader(AmzHeaders.XAmzGrantReadAcp, request.AclGrantReadAcp);
             request.AddHeader(AmzHeaders.XAmzGrantWriteAcp, request.AclGrantWriteAcp);
             request.AddHeader(AmzHeaders.XAmzGrantFullControl, request.AclGrantFullControl);
-            request.AddHeader(AmzHeaders.XAmzSSE, request.SseAlgorithm);
-            request.AddHeader(AmzHeaders.XAmzSSEAwsKmsKeyId, request.SseKmsKeyId);
+            request.AddHeader(AmzHeaders.XAmzSse, request.SseAlgorithm);
+            request.AddHeader(AmzHeaders.XAmzSseAwsKmsKeyId, request.SseKmsKeyId);
 
             string sseContext = request.SseContext.Build();
             if (sseContext != null)
-                request.AddHeader(AmzHeaders.XAmzSSEContext, Encoding.UTF8.GetBytes(sseContext), BinaryEncoding.Base64);
+                request.AddHeader(AmzHeaders.XAmzSseContext, Encoding.UTF8.GetBytes(sseContext), BinaryEncoding.Base64);
 
-            request.AddHeader(AmzHeaders.XAmzSSECustomerAlgorithm, request.SseCustomerAlgorithm);
-            request.AddHeader(AmzHeaders.XAmzSSECustomerKey, request.SseCustomerKey, BinaryEncoding.Base64);
-            request.AddHeader(AmzHeaders.XAmzSSECustomerKeyMD5, request.SseCustomerKeyMd5, BinaryEncoding.Base64);
+            request.AddHeader(AmzHeaders.XAmzSseCustomerAlgorithm, request.SseCustomerAlgorithm);
+            request.AddHeader(AmzHeaders.XAmzSseCustomerKey, request.SseCustomerKey, BinaryEncoding.Base64);
+            request.AddHeader(AmzHeaders.XAmzSseCustomerKeyMd5, request.SseCustomerKeyMd5, BinaryEncoding.Base64);
             request.AddHeader(HttpHeaders.Expires, request.ExpiresOn, DateTimeFormat.Rfc1123);
             request.AddHeader(HttpHeaders.ContentDisposition, request.ContentDisposition);
             request.AddHeader(HttpHeaders.ContentEncoding, request.ContentEncoding);
