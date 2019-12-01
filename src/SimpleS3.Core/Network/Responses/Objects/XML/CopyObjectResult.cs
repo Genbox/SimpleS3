@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects.Xml
     public sealed class CopyObjectResult
     {
         [XmlElement]
-        public string ETag{ get; set; }
+        public string ETag { get; set; }
 
         [XmlElement]
         public DateTime LastModified { get; set; }
