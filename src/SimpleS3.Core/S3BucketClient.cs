@@ -42,5 +42,13 @@ namespace Genbox.SimpleS3.Core
 
             return BucketOperations.ListBucketsAsync(request, token);
         }
+
+        public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest> config = null, CancellationToken token = default)
+        {
+            HeadBucketRequest request = new HeadBucketRequest(bucketName);
+            config?.Invoke(request);
+
+            return BucketOperations.HeadBucketAsync(request, token);
+        }
     }
 }

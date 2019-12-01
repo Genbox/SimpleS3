@@ -32,5 +32,10 @@ namespace Genbox.SimpleS3.Core.Operations
         {
             return _requestHandler.SendRequestAsync<ListBucketsRequest, ListBucketsResponse>(request, token);
         }
+
+        public Task<HeadBucketResponse> HeadBucketAsync(HeadBucketRequest request, CancellationToken token = default)
+        {
+            return _requestHandler.SendRequestAsync<HeadBucketRequest, HeadBucketResponse>(request, token);
+        }
     }
 }

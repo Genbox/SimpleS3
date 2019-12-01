@@ -138,6 +138,11 @@ namespace Genbox.SimpleS3
             return _bucketClient.ListBucketsAsync(config, token);
         }
 
+        public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest> config = null, CancellationToken token = default)
+        {
+            return _bucketClient.HeadBucketAsync(bucketName, config, token);
+        }
+
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest> config = null, CancellationToken token = default)
         {
             return _objectClient.DeleteObjectAsync(bucketName, objectKey, config, token);

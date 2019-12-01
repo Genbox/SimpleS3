@@ -20,5 +20,8 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
         /// https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_ListBuckets.html for details
         /// </summary>
         Task<ListBucketsResponse> ListBucketsAsync(ListBucketsRequest request, CancellationToken token = default);
+
+        /// <summary>Check to see if a bucket exists. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadBucket.html</summary>
+        Task<HeadBucketResponse> HeadBucketAsync(HeadBucketRequest request, CancellationToken token = default);
     }
 }
