@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Response.Multipart
     {
         public void MarshalResponse(IS3Config config, UploadPartRequest request, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.PartNumber = request.PartNumber;
+            response.PartNumber = request.PartNumber.Value;
             response.ETag = headers.GetHeader(HttpHeaders.ETag);
             response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);

@@ -2,10 +2,6 @@ using System.IO;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Marshal;
-using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Internal.Enums;
-using Genbox.SimpleS3.Core.Internal.Extensions;
-using Genbox.SimpleS3.Core.Internal.Helpers;
 using Genbox.SimpleS3.Core.Internal.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -19,9 +15,6 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
         public Stream MarshalRequest(DeleteObjectsRequest request, IS3Config config)
         {
             request.AddQueryParameter(AmzParameters.Delete, string.Empty);
-            request.AddHeader(AmzHeaders.XAmzMfa, request.Mfa);
-            request.AddHeader(AmzHeaders.XAmzBypassGovernanceRetention, request.BypassGovernanceRetention);
-            request.AddHeader(AmzHeaders.XAmzRequestPayer, request.RequestPayer == Payer.Requester ? "requester" : null);
 
             FastXmlWriter xml = new FastXmlWriter(512);
             xml.WriteStartElement("Delete");
@@ -41,10 +34,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
             }
 
             xml.WriteEndElement("Delete");
-
-            byte[] data = xml.GetBytes();
-            request.AddHeader(HttpHeaders.ContentMd5, CryptoHelper.Md5Hash(data), BinaryEncoding.Base64);
-            return new MemoryStream(data);
+            return new MemoryStream(xml.GetBytes());
         }
     }
 }

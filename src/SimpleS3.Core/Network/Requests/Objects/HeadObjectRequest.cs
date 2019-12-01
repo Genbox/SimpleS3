@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using Genbox.HttpBuilders;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
-using Genbox.SimpleS3.Core.Network.SharedProperties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
@@ -12,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// only in an object's metadata. To use HEAD, you must have READ access to the object. A HEAD request has the same options as a GET operation on an
     /// object. The response is identical to the GET response except that there is no response body.
     /// </summary>
-    public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId, IHasBucketName, IHasObjectKey
+    public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId, IHasBucketName, IHasObjectKey, IHasPartNumber
     {
         private byte[] _sseCustomerKey;
 
@@ -30,20 +29,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             ResponseContentEncoding = new ContentEncodingBuilder();
         }
 
-        /// <summary>
-        /// Part number of the object part being read. This is a positive integer between 1 and the maximum number of parts supported. Only objects
-        /// uploaded using the multipart upload API have part numbers. For information about multipart uploads, see Multipart Upload Overview in the Amazon
-        /// Simple Storage Service Developer Guide.
-        /// </summary>
-        public int? PartNumber { get; set; }
-
         public string BucketName { get; set; }
-
         public DateTimeOffset? IfModifiedSince { get; set; }
         public DateTimeOffset? IfUnmodifiedSince { get; set; }
         public ETagBuilder IfETagMatch { get; internal set; }
         public ETagBuilder IfETagNotMatch { get; internal set; }
         public string ObjectKey { get; set; }
+        public int? PartNumber { get; set; }
         public RangeBuilder Range { get; internal set; }
         public DateTimeOffset? ResponseExpires { get; set; }
         public CacheControlBuilder ResponseCacheControl { get; }

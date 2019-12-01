@@ -19,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// the connection from timing out. Because a request could fail after the initial 200 OK response has been sent, it is important that you check the
     /// response body to determine whether the request succeeded.
     /// </summary>
-    public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey
+    public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId
     {
         private CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.POST)
         {
@@ -43,10 +43,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
                 UploadParts.Add(new S3PartInfo(part.ETag, part.PartNumber));
         }
 
-        public string UploadId { get; }
         public IList<S3PartInfo> UploadParts { get; }
         public string BucketName { get; set; }
         public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
+        public string UploadId { get; set; }
     }
 }

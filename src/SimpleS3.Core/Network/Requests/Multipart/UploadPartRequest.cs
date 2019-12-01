@@ -4,12 +4,11 @@ using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
-using Genbox.SimpleS3.Core.Network.SharedProperties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 {
     /// <summary>This operation uploads a part in a multipart upload.</summary>
-    public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5, ISupportStreaming, IHasUploadId, IHasRequestPayer, IHasBucketName, IHasObjectKey
+    public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5, ISupportStreaming, IHasUploadId, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasPartNumber, IHasContent
     {
         private byte[] _sseCustomerKey;
 
@@ -25,16 +24,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             Content = content;
         }
 
-        /// <summary>The part number</summary>
-        public int PartNumber { get; }
-
-        /// <summary>Content of the part</summary>
-        public Stream Content { get; }
-
         public string BucketName { get; set; }
-
+        public Stream Content { get; }
         public byte[] ContentMd5 { get; set; }
         public string ObjectKey { get; set; }
+
+        public int? PartNumber { get; set; }
         public Payer RequestPayer { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public byte[] SseCustomerKeyMd5 { get; set; }
@@ -61,6 +56,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
 
-        public string UploadId { get; }
+        public string UploadId { get; set; }
     }
 }

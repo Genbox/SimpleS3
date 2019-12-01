@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
 
@@ -16,6 +17,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         {
             Method = HttpMethod.PUT;
             Content = data;
+            ForceContentMd5 = () => LockLegalHold.HasValue && LockLegalHold.Value || LockMode != LockMode.Unknown;
         }
 
         public Stream Content { get; set; }

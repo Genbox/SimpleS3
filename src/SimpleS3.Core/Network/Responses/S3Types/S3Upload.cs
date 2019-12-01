@@ -1,6 +1,6 @@
 ﻿using System;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Network.SharedProperties;
+using Genbox.SimpleS3.Core.Network.Responses.Properties;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
 {

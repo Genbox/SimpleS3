@@ -4,7 +4,6 @@ using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
-using Genbox.SimpleS3.Core.Network.SharedProperties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 {
@@ -13,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// multipart upload. You specify this upload ID in each of your subsequent upload part requests (see Upload Part). You also include this upload ID in
     /// the final request to either complete or abort the multipart upload request.
     /// </summary>
-    public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsireRedirect, IHasMetadata, IHasTags
+    public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsiteRedirect, IHasMetadata, IHasTags
     {
         private byte[] _sseCustomerKey;
 
@@ -43,7 +42,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public LockMode LockMode { get; set; }
         public DateTimeOffset? LockRetainUntil { get; set; }
         public bool? LockLegalHold { get; set; }
-
         public MetadataBuilder Metadata { get; internal set; }
         public ObjectCannedAcl Acl { get; set; }
         public AclBuilder AclGrantRead { get; internal set; }

@@ -4,15 +4,15 @@ using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
-using Genbox.SimpleS3.Core.Network.SharedProperties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
     /// <summary>
-    /// Creates a copy of an object that is already stored in Amazon S3.
-    /// When copying an object, you can preserve all metadata (default) or specify new metadata. However, the ACL is not preserved and is set to private for the user making the request. To override the default ACL setting, specify a new ACL when generating a copy request.
+    /// Creates a copy of an object that is already stored in Amazon S3. When copying an object, you can preserve all metadata (default) or specify
+    /// new metadata. However, the ACL is not preserved and is set to private for the user making the request. To override the default ACL setting, specify a
+    /// new ACL when generating a copy request.
     /// </summary>
-    public class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsireRedirect, IHasVersionId,IHasBucketName,IHasObjectKey
+    public class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey
     {
         public CopyObjectRequest(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey) : base(HttpMethod.PUT)
         {
@@ -39,22 +39,24 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public string SourceObjectKey { get; set; }
         public string DestinationBucketName { get; }
         public string DestinationObjectKey { get; }
+        public MetadataDirective MetadataDirective { get; set; }
+        public TaggingDirective TaggingDirective { get; set; }
+        string IHasBucketName.BucketName { get => DestinationBucketName; set => throw new NotSupportedException(); }
+        public DateTimeOffset? IfModifiedSince { get; set; }
+        public DateTimeOffset? IfUnmodifiedSince { get; set; }
+        public ETagBuilder IfETagMatch { get; }
+        public ETagBuilder IfETagNotMatch { get; }
+        public LockMode LockMode { get; set; }
+        public DateTimeOffset? LockRetainUntil { get; set; }
+        public bool? LockLegalHold { get; set; }
+        public MetadataBuilder Metadata { get; }
         public ObjectCannedAcl Acl { get; set; }
         public AclBuilder AclGrantRead { get; }
         public AclBuilder AclGrantReadAcp { get; }
         public AclBuilder AclGrantWriteAcp { get; }
         public AclBuilder AclGrantFullControl { get; }
-        public DateTimeOffset? IfModifiedSince { get; set; }
-        public DateTimeOffset? IfUnmodifiedSince { get; set; }
-        public ETagBuilder IfETagMatch { get; }
-        public ETagBuilder IfETagNotMatch { get; }
-        public MetadataBuilder Metadata { get; }
-        public MetadataDirective MetadataDirective { get; set; }
-        public TagBuilder Tags { get; }
-        public TaggingDirective TaggingDirective { get; set; }
-        public LockMode LockMode { get; set; }
-        public DateTimeOffset? LockRetainUntil { get; set; }
-        public bool? LockLegalHold { get; set; }
+        string IHasObjectKey.ObjectKey { get => DestinationObjectKey; set => throw new NotSupportedException(); }
+        public Payer RequestPayer { get; set; }
         public SseAlgorithm SseAlgorithm { get; set; }
         public string SseKmsKeyId { get; set; }
         public KmsContextBuilder SseContext { get; set; }
@@ -68,12 +70,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public byte[] SseCustomerKey { get; set; }
         public byte[] SseCustomerKeyMd5 { get; set; }
-        public StorageClass StorageClass { get; }
-        public Payer RequestPayer { get; set; }
+        public StorageClass StorageClass { get; set; }
+        public TagBuilder Tags { get; }
+        public string VersionId { get; set; }
         public string WebsiteRedirectLocation { get; set; }
-        public string VersionId { get; }
-
-        string IHasBucketName.BucketName { get => DestinationBucketName; set => throw new NotSupportedException(); }
-        string IHasObjectKey.ObjectKey { get => DestinationObjectKey; set => throw new NotSupportedException(); }
     }
 }

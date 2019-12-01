@@ -1,7 +1,6 @@
 ﻿using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
-using Genbox.SimpleS3.Core.Network.SharedProperties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 {
@@ -26,9 +25,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 
         public string BucketName { get; set; }
         public string ObjectKey { get; set; }
-
         public Payer RequestPayer { get; set; }
-
-        public string UploadId { get; }
+        public string UploadId { get; set; }
     }
 }

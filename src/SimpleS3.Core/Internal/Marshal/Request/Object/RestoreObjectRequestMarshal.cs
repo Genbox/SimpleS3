@@ -19,8 +19,6 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Object
         public Stream MarshalRequest(RestoreObjectRequest request, IS3Config config)
         {
             request.AddQueryParameter("restore", string.Empty);
-            request.AddQueryParameter(AmzHeaders.XAmzVersionId, request.VersionId);
-            request.AddHeader(AmzHeaders.XAmzRequestPayer, request.RequestPayer == Payer.Requester ? "requester" : null);
 
             FastXmlWriter xml = new FastXmlWriter(512);
             xml.WriteStartElement("RestoreRequest", "http://s3.amazonaws.com/doc/2006-03-01/");

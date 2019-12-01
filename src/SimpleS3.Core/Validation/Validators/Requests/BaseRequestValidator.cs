@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Utils;
@@ -12,6 +13,15 @@ namespace Genbox.SimpleS3.Core.Validation.Validators.Requests
         protected BaseRequestValidator(IOptions<S3Config> config)
         {
             RuleFor(x => x.Method).IsInEnum().Must(x => x != HttpMethod.Unknown);
+
+            When(x => x is IHasUploadId, () => RuleFor(x => ((IHasUploadId)x).UploadId).NotEmpty());
+
+            When(x => x is IHasSseCustomerKey key && key.SseCustomerAlgorithm != SseCustomerAlgorithm.Unknown, () =>
+            {
+                RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerAlgorithm).NotEmpty();
+                RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerKey).NotNull().Must(x => x.Length == 32);
+                RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerKeyMd5).NotNull().Must(x => x.Length == 16);
+            });
 
             //See https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
             //- Can contain multiple DNS labels, which must start with lowercase letter or digit

@@ -6,6 +6,8 @@ namespace Genbox.SimpleS3.Abstracts
 {
     public interface IRequest
     {
+        Func<bool> ForceContentMd5 { get; }
+
         Guid RequestId { get; }
 
         /// <summary>Date of the request</summary>

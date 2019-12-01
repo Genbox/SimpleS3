@@ -50,5 +50,8 @@ namespace Genbox.SimpleS3.Abstracts
 
         /// <summary>If a response has EncodingType set to Url, SimpleS3 will automatically URL decode the encoded part of the response if this setting is true.</summary>
         bool AutoUrlDecodeResponses { get; set; }
+
+        /// <summary>When enabled, SimpleS3 will automatically calculate the ContentMD5 property before sending the request</summary>
+        bool AutoCalculateContentMd5 { get; set; }
     }
 }

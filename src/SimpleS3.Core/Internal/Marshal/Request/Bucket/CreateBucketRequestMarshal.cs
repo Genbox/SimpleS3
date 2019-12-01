@@ -16,12 +16,6 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Bucket
         public Stream MarshalRequest(CreateBucketRequest request, IS3Config config)
         {
             request.AddHeader(AmzHeaders.XAmzBucketObjectLockEnabled, request.EnableObjectLocking);
-            request.AddHeader(AmzHeaders.XAmzAcl, request.Acl);
-            request.AddHeader(AmzHeaders.XAmzGrantRead, request.AclGrantRead);
-            request.AddHeader(AmzHeaders.XAmzGrantReadAcp, request.AclGrantReadAcp);
-            request.AddHeader(AmzHeaders.XAmzGrantWrite, request.AclGrantWrite);
-            request.AddHeader(AmzHeaders.XAmzGrantWriteAcp, request.AclGrantWriteAcp);
-            request.AddHeader(AmzHeaders.XAmzGrantFullControl, request.AclGrantFullControl);
 
             //Hardcore the LocationConstraint to the region from the config
             FastXmlWriter writer = new FastXmlWriter(128);

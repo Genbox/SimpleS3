@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// consumed by all parts. To verify that all parts have been removed, so you don't get charged for the part storage, you should call the List Parts
     /// operation and ensure the parts list is empty.
     /// </summary>
-    public class AbortMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey
+    public class AbortMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId
     {
         public AbortMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.DELETE)
         {
@@ -20,10 +20,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             UploadId = uploadId;
         }
 
-        public string UploadId { get; }
         public string BucketName { get; set; }
         public string ObjectKey { get; set; }
-
         public Payer RequestPayer { get; set; }
+        public string UploadId { get; set; }
     }
 }

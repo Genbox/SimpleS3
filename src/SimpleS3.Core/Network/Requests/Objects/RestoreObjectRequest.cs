@@ -2,7 +2,6 @@
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
-using Genbox.SimpleS3.Core.Network.SharedProperties;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
@@ -37,8 +36,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public OutputLocation OutputLocation { get; set; }
         public string BucketName { get; set; }
         public string ObjectKey { get; set; }
-
         public Payer RequestPayer { get; set; }
-        public string VersionId { get; }
+        public string VersionId { get; set; }
     }
 }

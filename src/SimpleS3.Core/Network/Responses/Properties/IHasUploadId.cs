@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Network.SharedProperties
+﻿namespace Genbox.SimpleS3.Core.Network.Responses.Properties
 {
     public interface IHasUploadId
     {

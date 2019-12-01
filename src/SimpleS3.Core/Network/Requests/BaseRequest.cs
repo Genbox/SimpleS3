@@ -17,6 +17,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests
             Date = DateTimeOffset.UtcNow;
         }
 
+        public Func<bool> ForceContentMd5 { get; internal set; }
         public Guid RequestId { get; }
         public DateTimeOffset Date { get; internal set; }
         public HttpMethod Method { get; internal set; }
