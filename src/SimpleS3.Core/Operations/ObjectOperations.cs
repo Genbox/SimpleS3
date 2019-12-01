@@ -86,5 +86,15 @@ namespace Genbox.SimpleS3.Core.Operations
         {
             return _requestHandler.SendRequestAsync<CopyObjectRequest, CopyObjectResponse>(request, token);
         }
+
+        public Task<PutObjectAclResponse> PutObjectAclAsync(PutObjectAclRequest request, CancellationToken token = default)
+        {
+            return _requestHandler.SendRequestAsync<PutObjectAclRequest, PutObjectAclResponse>(request, token);
+        }
+
+        public Task<GetObjectAclResponse> GetObjectAclAsync(GetObjectAclRequest request, CancellationToken token = default)
+        {
+            return _requestHandler.SendRequestAsync<GetObjectAclRequest, GetObjectAclResponse>(request, token);
+        }
     }
 }

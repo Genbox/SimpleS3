@@ -29,5 +29,6 @@ namespace Genbox.SimpleS3.Abstracts.Constants
         public const string PartNumber = "partNumber";
         public const string Uploads = "uploads";
         public const string Restore = "restore";
+        public const string Acl = "acl";
     }
 }
