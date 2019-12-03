@@ -91,5 +91,24 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
         Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest> config = null, CancellationToken token = default);
+
+        /// <summary>
+        /// Gets an object's current Legal Hold status.
+        /// </summary>
+        /// <param name="bucketName">Name of the bucket</param>
+        /// <param name="objectKey">The key of the object</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token</param>
+        Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest> config = null, CancellationToken token = default);
+
+        /// <summary>
+        /// Applies a Legal Hold configuration to the specified object.
+        /// </summary>
+        /// <param name="bucketName">Name of the bucket</param>
+        /// <param name="objectKey">The key of the object</param>
+        /// <param name="lockStatus">Set to true if you want to lock the object, otherwise, set to false to disable a lock</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token</param>
+        Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest> config = null, CancellationToken token = default);
     }
 }

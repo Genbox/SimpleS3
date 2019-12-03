@@ -30,5 +30,6 @@ namespace Genbox.SimpleS3.Abstracts.Constants
         public const string Uploads = "uploads";
         public const string Restore = "restore";
         public const string Acl = "acl";
+        public const string LegalHold = "legal-hold";
     }
 }

@@ -96,5 +96,15 @@ namespace Genbox.SimpleS3.Core.Operations
         {
             return _requestHandler.SendRequestAsync<GetObjectAclRequest, GetObjectAclResponse>(request, token);
         }
+
+        public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(GetObjectLegalHoldRequest request, CancellationToken token = default)
+        {
+            return _requestHandler.SendRequestAsync<GetObjectLegalHoldRequest, GetObjectLegalHoldResponse>(request, token);
+        }
+
+        public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(PutObjectLegalHoldRequest request, CancellationToken token = default)
+        {
+            return _requestHandler.SendRequestAsync<PutObjectLegalHoldRequest, PutObjectLegalHoldResponse>(request, token);
+        }
     }
 }

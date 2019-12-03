@@ -43,5 +43,11 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
 
         /// <summary>Returns the access control list (ACL) of an object. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html for details</summary>
         Task<GetObjectAclResponse> GetObjectAclAsync(GetObjectAclRequest request, CancellationToken token = default);
+
+        /// <summary>Gets an object's current Legal Hold status. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectLegalHold.html for details</summary>
+        Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(GetObjectLegalHoldRequest request, CancellationToken token = default);
+
+        /// <summary>Applies a Legal Hold configuration to the specified object. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectLegalHold.html for details</summary>
+        Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(PutObjectLegalHoldRequest request, CancellationToken token = default);
     }
 }

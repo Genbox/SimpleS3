@@ -101,5 +101,21 @@ namespace Genbox.SimpleS3.Core
 
             return ObjectOperations.GetObjectAclAsync(req, token);
         }
+
+        public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest> config = null, CancellationToken token = default)
+        {
+            GetObjectLegalHoldRequest req = new GetObjectLegalHoldRequest(bucketName, objectKey);
+            config?.Invoke(req);
+
+            return ObjectOperations.GetObjectLegalHoldAsync(req, token);
+        }
+
+        public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest> config = null, CancellationToken token = default)
+        {
+            PutObjectLegalHoldRequest req = new PutObjectLegalHoldRequest(bucketName, objectKey, lockStatus);
+            config?.Invoke(req);
+
+            return ObjectOperations.PutObjectLegalHoldAsync(req, token);
+        }
     }
 }
