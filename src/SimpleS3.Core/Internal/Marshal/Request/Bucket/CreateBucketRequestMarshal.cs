@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request.Bucket
         {
             request.AddHeader(AmzHeaders.XAmzBucketObjectLockEnabled, request.EnableObjectLocking);
 
-            //Hardcore the LocationConstraint to the region from the config
+            //Hard-code the LocationConstraint to the region from the config
             FastXmlWriter writer = new FastXmlWriter(128);
             writer.WriteStartElement("CreateBucketConfiguration");
             writer.WriteElement("LocationConstraint", ValueHelper.EnumToString(config.Region));
