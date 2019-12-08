@@ -11,6 +11,7 @@ using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
@@ -161,6 +162,16 @@ namespace Genbox.SimpleS3
         public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest> config = null, CancellationToken token = default)
         {
             return _bucketClient.HeadBucketAsync(bucketName, config, token);
+        }
+
+        public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, LockMode lockMode, DateTimeOffset lockRemainUntil, Action<PutBucketLockConfigurationRequest> config = null, CancellationToken token = default)
+        {
+            return _bucketClient.PutBucketLockConfigurationAsync(bucketName, lockMode, lockRemainUntil, config, token);
+        }
+
+        public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest> config = null, CancellationToken token = default)
+        {
+            return _bucketClient.GetBucketLockConfigurationAsync(bucketName, config, token);
         }
 
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest> config = null, CancellationToken token = default)

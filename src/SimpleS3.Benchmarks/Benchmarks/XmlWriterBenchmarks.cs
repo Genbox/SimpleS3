@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Benchmarks.Benchmarks
 {
     [InProcess]
     [MemoryDiagnoser]
-    public class XmlBuilderBenchmarks
+    public class XmlWriterBenchmarks
     {
         [Benchmark]
         public string StringBuilderTest()

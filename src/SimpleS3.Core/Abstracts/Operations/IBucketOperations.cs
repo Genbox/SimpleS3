@@ -21,7 +21,20 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
         /// </summary>
         Task<ListBucketsResponse> ListBucketsAsync(ListBucketsRequest request, CancellationToken token = default);
 
-        /// <summary>Check to see if a bucket exists. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadBucket.html</summary>
+        /// <summary>Check to see if a bucket exists. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadBucket.html for details</summary>
         Task<HeadBucketResponse> HeadBucketAsync(HeadBucketRequest request, CancellationToken token = default);
+
+        /// <summary>
+        /// Places an Object Lock configuration on the specified bucket. The rule specified in the Object Lock configuration will be applied by default
+        /// to every new object placed in the specified bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectLockConfiguration.html for
+        /// details
+        /// </summary>
+        Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(PutBucketLockConfigurationRequest request, CancellationToken token = default);
+
+        /// <summary>
+        /// Gets the Object Lock configuration for a bucket. The rule specified in the Object Lock configuration will be applied by default to every new
+        /// object placed in the specified bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectLockConfiguration.html for details
+        /// </summary>
+        Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(GetBucketLockConfigurationRequest request, CancellationToken token = default);
     }
 }

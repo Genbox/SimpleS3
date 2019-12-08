@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using JetBrains.Annotations;
@@ -49,6 +50,22 @@ namespace Genbox.SimpleS3.Core
             config?.Invoke(request);
 
             return BucketOperations.HeadBucketAsync(request, token);
+        }
+
+        public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, LockMode lockMode, DateTimeOffset lockRemainUntil, Action<PutBucketLockConfigurationRequest> config = null, CancellationToken token = default)
+        {
+            PutBucketLockConfigurationRequest request = new PutBucketLockConfigurationRequest(bucketName, lockMode, lockRemainUntil);
+            config?.Invoke(request);
+
+            return BucketOperations.PutBucketLockConfigurationAsync(request, token);
+        }
+
+        public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest> config = null, CancellationToken token = default)
+        {
+            GetBucketLockConfigurationRequest request = new GetBucketLockConfigurationRequest(bucketName);
+            config?.Invoke(request);
+
+            return BucketOperations.GetBucketLockConfigurationAsync(request, token);
         }
     }
 }
