@@ -51,8 +51,10 @@ namespace Genbox.SimpleS3.Core.Internal.Marshal.Request
             {
                 req.AddHeader(AmzHeaders.XAmzObjectLockMode, hasLock.LockMode);
                 req.AddHeader(AmzHeaders.XAmzObjectLockRetainUntilDate, hasLock.LockRetainUntil, DateTimeFormat.Iso8601DateTimeExt);
-                req.AddHeader(AmzHeaders.XAmzObjectLockLegalHold, hasLock.LockLegalHold);
             }
+
+            if (req is IHasLegalHold hasLegalHold)
+                req.AddHeader(AmzHeaders.XAmzObjectLockLegalHold, hasLegalHold.LockLegalHold);
 
             if (req is IHasMetadata hasMetadata)
             {

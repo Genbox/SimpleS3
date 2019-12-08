@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// new metadata. However, the ACL is not preserved and is set to private for the user making the request. To override the default ACL setting, specify a
     /// new ACL when generating a copy request.
     /// </summary>
-    public class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey
+    public class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey, IHasLegalHold
     {
         public CopyObjectRequest(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey) : base(HttpMethod.PUT)
         {
