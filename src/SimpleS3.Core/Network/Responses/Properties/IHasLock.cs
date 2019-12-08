@@ -17,6 +17,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Properties
         /// The date and time when the Object Lock retention period expires. This header is only returned if the requester has the s3:GetObjectRetention
         /// permission.
         /// </summary>
-        DateTimeOffset LockRetainUntil { get; }
+        DateTimeOffset? LockRetainUntil { get; }
     }
 }

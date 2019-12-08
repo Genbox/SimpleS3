@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public string LifeCycleRuleId { get; internal set; }
         public DateTimeOffset? ExpiresOn { get; internal set; }
         public LockMode LockMode { get; internal set; }
-        public DateTimeOffset LockRetainUntil { get; internal set; }
+        public DateTimeOffset? LockRetainUntil { get; internal set; }
         public bool LockLegalHold { get; internal set; }
         public IDictionary<string, string> Metadata { get; internal set; }
         public ReplicationStatus ReplicationStatus { get; internal set; }

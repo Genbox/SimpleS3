@@ -48,7 +48,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Objects
 
             GetObjectResponse resp = await AssertAsync(objectKey).ConfigureAwait(false);
             Assert.Equal(lockMode, resp.LockMode);
-            Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntil.DateTime, TimeSpan.FromSeconds(1));
+            Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntil.Value.DateTime, TimeSpan.FromSeconds(1));
         }
 
         [Theory]
