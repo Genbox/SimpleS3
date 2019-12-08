@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Properties;
@@ -13,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// keys that you want to delete, then this operation provides a suitable alternative to sending individual delete requests (see DELETE Object), reducing
     /// per-request overhead.
     /// </summary>
-    public class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention, IHasBucketName, IHasMfa, IHasContentMd5
+    public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention, IHasBucketName, IHasMfa, IHasContentMd5, IContentMd5Config
     {
         public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : base(HttpMethod.POST)
         {
@@ -21,7 +23,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             Mfa = new MfaAuthenticationBuilder();
             Objects = resources.ToList();
             Quiet = true;
-            ForceContentMd5 = () => true;
         }
 
         /// <summary>In quiet mode the response includes only keys where the delete operation encountered an error.</summary>
@@ -35,5 +36,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public byte[] ContentMd5 { get; set; }
         public MfaAuthenticationBuilder Mfa { get; }
         public Payer RequestPayer { get; set; }
+        Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
     }
 }

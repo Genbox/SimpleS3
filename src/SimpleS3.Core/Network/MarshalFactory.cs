@@ -6,6 +6,7 @@ using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Abstracts.Constants;
 using Genbox.SimpleS3.Abstracts.Factories;
 using Genbox.SimpleS3.Abstracts.Marshal;
+using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Internal.Enums;
 using Genbox.SimpleS3.Core.Internal.Extensions;
 using Genbox.SimpleS3.Core.Internal.Helpers;
@@ -59,7 +60,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             if (request is IHasContentMd5 hasContentMd5)
             {
-                if (config.AutoCalculateContentMd5 || request.ForceContentMd5 != null && request.ForceContentMd5())
+                if (config.AutoCalculateContentMd5 || request is IContentMd5Config md5Config && md5Config.ForceContentMd5())
                 {
                     string md5Hash = content == null ? "1B2M2Y8AsgTpgAmY7PhCfg==" : Convert.ToBase64String(CryptoHelper.Md5Hash(content, true));
                     request.AddHeader(HttpHeaders.ContentMd5, md5Hash);
