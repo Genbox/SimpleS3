@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
@@ -40,8 +40,10 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
 
         /// <summary>Places an Object Lock configuration on the specified bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the specified bucket.</summary>
         /// <param name="bucketName">The bucket name</param>
+        /// <param name="lockRemainUntil">The time until which the lock should stop being effective.</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token </param>
+        /// <param name="lockMode">The lock mode</param>
         Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, LockMode lockMode, DateTimeOffset lockRemainUntil, Action<PutBucketLockConfigurationRequest> config = null, CancellationToken token = default);
 
         /// <summary>Gets the Object Lock configuration for a bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the specified bucket.</summary>
