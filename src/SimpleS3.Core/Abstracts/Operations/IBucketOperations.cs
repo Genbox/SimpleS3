@@ -36,5 +36,20 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
         /// object placed in the specified bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectLockConfiguration.html for details
         /// </summary>
         Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(GetBucketLockConfigurationRequest request, CancellationToken token = default);
+
+        /// <summary>
+        /// Returns the tag set associated with the bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketTagging.html for details
+        /// </summary>
+        Task<GetBucketTaggingResponse> GetBucketTaggingAsync(GetBucketTaggingRequest request, CancellationToken token = default);
+
+        /// <summary>
+        /// Sets the tags for a bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketTagging.html for details.
+        /// </summary>
+        Task<PutBucketTaggingResponse> PutBucketTaggingAsync(PutBucketTaggingRequest request, CancellationToken token = default);
+
+        /// <summary>
+        /// Deletes the tags from the bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucketTagging.html for details
+        /// </summary>
+        Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(DeleteBucketTaggingRequest request, CancellationToken token = default);
     }
 }

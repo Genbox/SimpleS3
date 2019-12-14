@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -66,6 +67,30 @@ namespace Genbox.SimpleS3.Core
             config?.Invoke(request);
 
             return BucketOperations.GetBucketLockConfigurationAsync(request, token);
+        }
+
+        public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest> config = null, CancellationToken token = default)
+        {
+            GetBucketTaggingRequest request = new GetBucketTaggingRequest(bucketName);
+            config?.Invoke(request);
+
+            return BucketOperations.GetBucketTaggingAsync(request, token);
+        }
+
+        public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest> config = null, CancellationToken token = default)
+        {
+            PutBucketTaggingRequest request = new PutBucketTaggingRequest(bucketName, tags);
+            config?.Invoke(request);
+
+            return BucketOperations.PutBucketTaggingAsync(request, token);
+        }
+
+        public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest> config = null, CancellationToken token = default)
+        {
+            DeleteBucketTaggingRequest request = new DeleteBucketTaggingRequest(bucketName);
+            config?.Invoke(request);
+
+            return BucketOperations.DeleteBucketTaggingAsync(request, token);
         }
     }
 }

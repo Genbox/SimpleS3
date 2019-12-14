@@ -174,6 +174,21 @@ namespace Genbox.SimpleS3
             return _bucketClient.GetBucketLockConfigurationAsync(bucketName, config, token);
         }
 
+        public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest> config = null, CancellationToken token = default)
+        {
+            return _bucketClient.GetBucketTaggingAsync(bucketName, config, token);
+        }
+
+        public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest> config = null, CancellationToken token = default)
+        {
+            return _bucketClient.PutBucketTaggingAsync(bucketName, tags, config, token);
+        }
+
+        public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest> config = null, CancellationToken token = default)
+        {
+            return _bucketClient.DeleteBucketTaggingAsync(bucketName, config, token);
+        }
+
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest> config = null, CancellationToken token = default)
         {
             return _objectClient.DeleteObjectAsync(bucketName, objectKey, config, token);

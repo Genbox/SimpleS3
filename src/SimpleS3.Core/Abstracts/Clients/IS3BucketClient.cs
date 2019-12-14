@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
@@ -51,5 +52,24 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token </param>
         Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest> config = null, CancellationToken token = default);
+
+        /// <summary>Get the tags associated with the bucket.</summary>
+        /// <param name="bucketName">The bucket name</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token </param>
+        Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest> config = null, CancellationToken token = default);
+
+        /// <summary>Set tags associated with the bucket. This can be used to track bucket usage on your invoices.</summary>
+        /// <param name="bucketName">The bucket name</param>
+        /// <param name="tags">The tags</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token </param>
+        Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest> config = null, CancellationToken token = default);
+
+        /// <summary>Delete tags associated with a bucket</summary>
+        /// <param name="bucketName">The bucket name</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token </param>
+        Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest> config = null, CancellationToken token = default);
     }
 }
