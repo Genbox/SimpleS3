@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Tests.LiveTests.Buckets
         [Theory]
         [InlineData(LockMode.Compliance)]
         [InlineData(LockMode.Governance)]
-        public async Task GetPutObjectConfiguration(LockMode mode)
+        public async Task GetPutBucketLockConfiguration(LockMode mode)
         {
             string tempBucketName = "testbucket-" + Guid.NewGuid();
 
