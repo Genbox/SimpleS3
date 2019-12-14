@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public string Build()
         {
-            if (_tags == null)
+            if (!HasData())
                 return null;
 
             return string.Join("&", _tags.Select(x => x.Key + '=' + x.Value));
@@ -36,7 +36,12 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public void Reset()
         {
-            _tags = null;
+            _tags?.Clear();
+        }
+
+        public bool HasData()
+        {
+            return _tags != null && _tags.Count > 0;
         }
 
         public string HeaderName => null;

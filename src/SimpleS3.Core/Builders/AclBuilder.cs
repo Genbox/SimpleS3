@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public string Build()
         {
-            if (_emails == null && _ids == null && _uris == null)
+            if (!HasData())
                 return null;
 
             int count = 0;
@@ -40,7 +40,7 @@ namespace Genbox.SimpleS3.Core.Builders
             else
                 _sb.Clear();
 
-            if (_emails != null)
+            if (_emails != null && _emails.Count > 0)
             {
                 foreach (string email in _emails)
                 {
@@ -51,7 +51,7 @@ namespace Genbox.SimpleS3.Core.Builders
                 }
             }
 
-            if (_ids != null)
+            if (_ids != null && _ids.Count > 0)
             {
                 foreach (string id in _ids)
                 {
@@ -62,7 +62,7 @@ namespace Genbox.SimpleS3.Core.Builders
                 }
             }
 
-            if (_uris != null)
+            if (_uris != null && _uris.Count > 0)
             {
                 foreach (string uri in _uris)
                 {
@@ -81,6 +81,11 @@ namespace Genbox.SimpleS3.Core.Builders
             _emails?.Clear();
             _ids?.Clear();
             _uris?.Clear();
+        }
+
+        public bool HasData()
+        {
+            return _emails != null && _emails.Count > 0 || _ids != null && _ids.Count > 0 || _uris != null && _uris.Count > 0;
         }
 
         public string HeaderName => null;

@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public string Build()
         {
-            if (_dict == null)
+            if (!HasData())
                 return null;
 
             return JsonHelper.EncodeJson(_dict);
@@ -30,6 +30,11 @@ namespace Genbox.SimpleS3.Core.Builders
         public void Reset()
         {
             _dict?.Clear();
+        }
+
+        public bool HasData()
+        {
+            return _dict != null && _dict.Count > 0;
         }
 
         public string HeaderName => null;

@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public string Build()
         {
-            if (_serialNumber == null)
+            if (!HasData())
                 return null;
 
             return $"{_serialNumber} {_value}";
@@ -19,6 +19,11 @@ namespace Genbox.SimpleS3.Core.Builders
         {
             _serialNumber = null;
             _value = null;
+        }
+
+        public bool HasData()
+        {
+            return _serialNumber != null;
         }
 
         public string HeaderName => null;
