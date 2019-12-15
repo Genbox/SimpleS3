@@ -5,17 +5,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders;
 using Genbox.HttpBuilders.Enums;
-using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Internal.Helpers;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Core.Fluent
 {

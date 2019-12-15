@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
-using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Internal.Constants;
-using Genbox.SimpleS3.Core.Internal.Extensions;
-using Genbox.SimpleS3.Core.Internal.Helpers;
-using Genbox.SimpleS3.Utils;
+using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Internals.Constants;
+using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace Genbox.SimpleS3.Core.Authentication

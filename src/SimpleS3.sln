@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core", "SimpleS3.Core\SimpleS3.Core.csproj", "{C9E0C330-EE8C-4478-8E5E-6A9A7860EDD4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Tests", "SimpleS3.Tests\SimpleS3.Tests.csproj", "{22C62A1F-29CA-4938-8C15-0A5277395C4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core.Tests", "SimpleS3.Core.Tests\SimpleS3.Core.Tests.csproj", "{22C62A1F-29CA-4938-8C15-0A5277395C4C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Examples", "SimpleS3.Examples\SimpleS3.Examples.csproj", "{6C2BD045-9FB3-485B-91CC-83B7A36DD0E0}"
 EndProject
@@ -16,19 +16,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{7C26C924
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Benchmarks", "SimpleS3.Benchmarks\SimpleS3.Benchmarks.csproj", "{C35C127C-BE44-4991-B7E3-56E9A2F77D25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core.Benchmarks", "SimpleS3.Core.Benchmarks\SimpleS3.Core.Benchmarks.csproj", "{C35C127C-BE44-4991-B7E3-56E9A2F77D25}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3", "SimpleS3\SimpleS3.csproj", "{491E17B3-D66D-4C79-8E6A-E71F421FA6F6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{5F231AF0-BA65-4AE0-959F-A29E76CC6DFD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Abstracts", "SimpleS3.Abstracts\SimpleS3.Abstracts.csproj", "{69BAC41D-D8A2-4EDA-B77E-FC4C3DCF2B6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core.Abstracts", "SimpleS3.Core.Abstracts\SimpleS3.Core.Abstracts.csproj", "{69BAC41D-D8A2-4EDA-B77E-FC4C3DCF2B6C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.ProfileManager", "SimpleS3.Extensions.ProfileManager\SimpleS3.Extensions.ProfileManager.csproj", "{8E38F589-5A86-4D9E-A807-E91758E48D2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Utils", "SimpleS3.Utils\SimpleS3.Utils.csproj", "{861ACA87-A790-4D62-8DF9-8B8ACBF869DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core.Common", "SimpleS3.Core.Common\SimpleS3.Core.Common.csproj", "{861ACA87-A790-4D62-8DF9-8B8ACBF869DF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Utils.Tests", "SimpleS3.Utils.Tests\SimpleS3.Utils.Tests.csproj", "{43F7AAA1-C8BE-4E7A-8FF4-81554902B34E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core.Common.Tests", "SimpleS3.Core.Common.Tests\SimpleS3.Core.Common.Tests.csproj", "{43F7AAA1-C8BE-4E7A-8FF4-81554902B34E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cli", "Cli", "{31075536-B63C-4DF5-B800-09ABB3F04B07}"
 EndProject
@@ -41,6 +41,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.HttpClient", "SimpleS3.Extensions.HttpClient\SimpleS3.Extensions.HttpClient.csproj", "{74653220-1744-4AD0-8B17-4C5C649EA6D3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.HttpClientFactory", "SimpleS3.Extensions.HttpClientFactory\SimpleS3.Extensions.HttpClientFactory.csproj", "{E28C255C-633D-4A3F-9AA6-9FBA8339F3E9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Tests", "SimpleS3.Tests\SimpleS3.Tests.csproj", "{4183D55C-956D-4CD7-9FEB-C5D771D54973}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +106,10 @@ Global
 		{E28C255C-633D-4A3F-9AA6-9FBA8339F3E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E28C255C-633D-4A3F-9AA6-9FBA8339F3E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E28C255C-633D-4A3F-9AA6-9FBA8339F3E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4183D55C-956D-4CD7-9FEB-C5D771D54973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4183D55C-956D-4CD7-9FEB-C5D771D54973}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4183D55C-956D-4CD7-9FEB-C5D771D54973}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4183D55C-956D-4CD7-9FEB-C5D771D54973}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

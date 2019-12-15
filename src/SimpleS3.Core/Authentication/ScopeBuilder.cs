@@ -1,7 +1,7 @@
 ﻿using System;
-using Genbox.SimpleS3.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Internal.Enums;
-using Genbox.SimpleS3.Core.Internal.Helpers;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Internals.Enums;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Authentication

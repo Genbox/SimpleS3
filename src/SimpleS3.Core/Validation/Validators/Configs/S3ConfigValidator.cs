@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Genbox.SimpleS3.Abstracts.Authentication;
-using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Validation.Validators.Configs
 {

@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Network.Responses.Properties;
+﻿using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
 {

@@ -1,9 +1,9 @@
 ﻿using System;
-using Genbox.SimpleS3.Abstracts.Authentication;
-using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
-using Genbox.SimpleS3.Utils;
-using Genbox.SimpleS3.Utils.Helpers;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager

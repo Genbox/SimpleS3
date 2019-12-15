@@ -2,10 +2,10 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Genbox.SimpleS3.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Internal.Constants;
-using Genbox.SimpleS3.Core.Internal.Helpers;
-using Genbox.SimpleS3.Utils.Helpers;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.Internals.Constants;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

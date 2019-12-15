@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
-using Genbox.SimpleS3.Utils;
+using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Cli.Core.Helpers
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Network.Responses.Properties;
+using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Multipart

@@ -1,5 +1,5 @@
 ﻿using System;
-using Genbox.SimpleS3.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 

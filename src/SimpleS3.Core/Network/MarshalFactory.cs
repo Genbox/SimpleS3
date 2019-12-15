@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Abstracts.Constants;
-using Genbox.SimpleS3.Abstracts.Factories;
-using Genbox.SimpleS3.Abstracts.Marshal;
+using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Constants;
+using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
-using Genbox.SimpleS3.Core.Internal.Enums;
-using Genbox.SimpleS3.Core.Internal.Extensions;
-using Genbox.SimpleS3.Core.Internal.Helpers;
-using Genbox.SimpleS3.Core.Internal.Marshal.Request;
-using Genbox.SimpleS3.Core.Network.Requests.Properties;
+using Genbox.SimpleS3.Core.Abstracts.Marshallers;
+using Genbox.SimpleS3.Core.Internals.Enums;
+using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Internals.Marshallers.Requests;
+using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network

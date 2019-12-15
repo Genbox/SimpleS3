@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Genbox.SimpleS3.Cli.Core.Enums;
-using Genbox.SimpleS3.Utils.Extensions;
+using Genbox.SimpleS3.Core.Common.Extensions;
 
 namespace Genbox.SimpleS3.Cli.Core.Helpers
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Genbox.SimpleS3.Abstracts.Constants;
+using Genbox.SimpleS3.Core.Abstracts.Constants;
 
 namespace Genbox.SimpleS3.Core.Authentication
 {

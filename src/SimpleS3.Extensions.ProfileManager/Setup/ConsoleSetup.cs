@@ -4,11 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
-using Genbox.SimpleS3.Abstracts.Enums;
-using Genbox.SimpleS3.Abstracts.Extensions;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers;
-using Genbox.SimpleS3.Utils;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Network.Requests
 {

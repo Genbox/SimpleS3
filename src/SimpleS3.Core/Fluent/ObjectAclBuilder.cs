@@ -1,5 +1,5 @@
 ﻿using EnumsNET;
-using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Builders;
 
 namespace Genbox.SimpleS3.Core.Fluent

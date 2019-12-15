@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Cli.Commands.Buckets;
 using Genbox.SimpleS3.Cli.Commands.Objects;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using McMaster.Extensions.CommandLineUtils;
 using ListCommand = Genbox.SimpleS3.Cli.Commands.Objects.ListCommand;
 

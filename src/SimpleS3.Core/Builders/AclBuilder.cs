@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using EnumsNET;
 using Genbox.HttpBuilders.Abstracts;
-using Genbox.SimpleS3.Abstracts.Enums;
-using Genbox.SimpleS3.Utils;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Builders
 {

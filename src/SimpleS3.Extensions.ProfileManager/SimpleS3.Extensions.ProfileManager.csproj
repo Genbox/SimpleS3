@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SimpleS3.Abstracts\SimpleS3.Abstracts.csproj" />
     <ProjectReference Include="..\SimpleS3.Core\SimpleS3.Core.csproj" />
   </ItemGroup>
 

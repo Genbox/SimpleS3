@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Examples.Clients.Simple
 {

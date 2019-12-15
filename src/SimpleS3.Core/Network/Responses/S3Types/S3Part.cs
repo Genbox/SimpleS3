@@ -1,5 +1,5 @@
 ﻿using System;
-using Genbox.SimpleS3.Core.Network.Responses.Properties;
+using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
 {

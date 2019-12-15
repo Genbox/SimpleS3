@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Abstracts.Authentication;
+﻿using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.DataProtection

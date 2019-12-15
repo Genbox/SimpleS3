@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
-using Genbox.SimpleS3.Abstracts.Enums;
 using Genbox.SimpleS3.Core;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
 
 namespace Genbox.SimpleS3.Examples.Clients.Simple

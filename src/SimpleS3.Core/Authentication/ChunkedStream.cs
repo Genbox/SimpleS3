@@ -2,10 +2,10 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Internal.Extensions;
-using Genbox.SimpleS3.Utils;
+using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Internals.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Authentication

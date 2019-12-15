@@ -1,7 +1,7 @@
 ﻿using System;
-using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Abstracts.Authentication;
-using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core

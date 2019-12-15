@@ -1,25 +1,25 @@
 ﻿using System;
 using FluentValidation;
-using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Abstracts.Authentication;
-using Genbox.SimpleS3.Abstracts.Factories;
-using Genbox.SimpleS3.Abstracts.Marshal;
-using Genbox.SimpleS3.Abstracts.Wrappers;
+using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Factories;
+using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Network;
 using Genbox.SimpleS3.Core.Network.RequestWrappers;
 using Genbox.SimpleS3.Core.Operations;
 using Genbox.SimpleS3.Core.Validation;
-using Genbox.SimpleS3.Utils.Extensions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using IValidatorFactory = Genbox.SimpleS3.Abstracts.Factories.IValidatorFactory;
+using IValidatorFactory = Genbox.SimpleS3.Core.Abstracts.Factories.IValidatorFactory;
 
 namespace Genbox.SimpleS3.Core.Extensions
 {

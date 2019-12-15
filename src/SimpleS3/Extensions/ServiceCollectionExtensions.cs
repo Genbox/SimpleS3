@@ -3,9 +3,10 @@ using System.Net;
 using System.Net.Http;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core;
+using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
-using Genbox.SimpleS3.Utils.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Extensions

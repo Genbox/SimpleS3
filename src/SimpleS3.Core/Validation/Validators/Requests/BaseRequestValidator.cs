@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using Genbox.SimpleS3.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests;
-using Genbox.SimpleS3.Core.Network.Requests.Properties;
-using Genbox.SimpleS3.Utils;
+using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Validation.Validators.Requests
