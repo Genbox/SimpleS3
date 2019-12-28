@@ -6,9 +6,9 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Core.Tests.LiveTests.Buckets
 {
-    public class GetPutDeleteBucketTaggingTests : LiveTestBase
+    public class BucketTaggingTests : LiveTestBase
     {
-        public GetPutDeleteBucketTaggingTests(ITestOutputHelper helper) : base(helper)
+        public BucketTaggingTests(ITestOutputHelper helper) : base(helper)
         {
         }
 

@@ -5,9 +5,9 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Core.Tests.LiveTests.Objects
 {
-    public class PutGetObjectLegalHoldTests : LiveTestBase
+    public class ObjectLegalHoldTests : LiveTestBase
     {
-        public PutGetObjectLegalHoldTests(ITestOutputHelper outputHelper) : base(outputHelper)
+        public ObjectLegalHoldTests(ITestOutputHelper outputHelper) : base(outputHelper)
         {
         }
 

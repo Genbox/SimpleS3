@@ -7,9 +7,9 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Core.Tests.LiveTests.Buckets
 {
-    public class GetPutBucketLockConfigurationTests : LiveTestBase
+    public class BucketLockConfigurationTests : LiveTestBase
     {
-        public GetPutBucketLockConfigurationTests(ITestOutputHelper helper) : base(helper)
+        public BucketLockConfigurationTests(ITestOutputHelper helper) : base(helper)
         {
         }
 
