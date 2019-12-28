@@ -51,5 +51,15 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
         /// Deletes the tags from the bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucketTagging.html for details
         /// </summary>
         Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(DeleteBucketTaggingRequest request, CancellationToken token = default);
+
+        /// <summary>
+        /// Sets the accelerate configuration of an existing bucket. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to perform faster data transfers to Amazon S3.
+        /// </summary>
+        Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(PutBucketAccelerateConfigurationRequest request, CancellationToken token = default);
+
+        /// <summary>
+        /// Returns the Transfer Acceleration state of a bucket, which is either Enabled or Suspended. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to perform faster data transfers to and from Amazon S3.
+        /// </summary>
+        Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(GetBucketAccelerateConfigurationRequest request, CancellationToken token = default);
     }
 }

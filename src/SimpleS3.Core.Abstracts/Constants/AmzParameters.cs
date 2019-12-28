@@ -33,5 +33,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Constants
         public const string LegalHold = "legal-hold";
         public const string ObjectLock = "object-lock";
         public const string Tagging = "tagging";
+        public const string Accelerate = "accelerate";
     }
 }

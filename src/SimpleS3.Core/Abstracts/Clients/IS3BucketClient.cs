@@ -71,5 +71,18 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token </param>
         Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest> config = null, CancellationToken token = default);
+
+        /// <summary>Sets the accelerate configuration of an existing bucket. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to perform faster data transfers to Amazon S3.</summary>
+        /// <param name="bucketName">The bucket name</param>
+        /// <param name="enabled">Set to true to enable acceleration. Set to false to disable it.</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token </param>
+        Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest> config = null, CancellationToken token = default);
+
+        /// <summary>Returns the Transfer Acceleration state of a bucket, which is either Enabled or Suspended. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to perform faster data transfers to and from Amazon S3.</summary>
+        /// <param name="bucketName">The bucket name</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token </param>
+        Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest> config = null, CancellationToken token = default);
     }
 }

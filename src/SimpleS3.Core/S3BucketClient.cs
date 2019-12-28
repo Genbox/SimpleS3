@@ -92,5 +92,21 @@ namespace Genbox.SimpleS3.Core
 
             return BucketOperations.DeleteBucketTaggingAsync(request, token);
         }
+
+        public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest> config = null, CancellationToken token = default)
+        {
+            PutBucketAccelerateConfigurationRequest request = new PutBucketAccelerateConfigurationRequest(bucketName, enabled);
+            config?.Invoke(request);
+
+            return BucketOperations.PutBucketAccelerateConfigurationAsync(request, token);
+        }
+
+        public Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest> config = null, CancellationToken token = default)
+        {
+            GetBucketAccelerateConfigurationRequest request = new GetBucketAccelerateConfigurationRequest(bucketName);
+            config?.Invoke(request);
+
+            return BucketOperations.GetBucketAccelerateConfigurationAsync(request, token);
+        }
     }
 }
