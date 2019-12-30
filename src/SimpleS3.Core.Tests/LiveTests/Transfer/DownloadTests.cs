@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;

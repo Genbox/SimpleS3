@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Internals.Extensions;
-using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -41,7 +41,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
                 yield break;
 
             if (!initResp.IsSuccess)
-                throw new RequestException(initResp.StatusCode, "CreateMultipartUploadRequest was unsuccessful");
+                throw new S3RequestException(initResp.StatusCode, "CreateMultipartUploadRequest was unsuccessful");
 
             Queue<Task<UploadPartResponse>> uploads = new Queue<Task<UploadPartResponse>>();
 
@@ -84,7 +84,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
                 CompleteMultipartUploadResponse completeResp = await operations.CompleteMultipartUploadAsync(completeReq, token).ConfigureAwait(false);
 
                 if (!completeResp.IsSuccess)
-                    throw new RequestException(completeResp.StatusCode, "CompleteMultipartUploadRequest was unsuccessful");
+                    throw new S3RequestException(completeResp.StatusCode, "CompleteMultipartUploadRequest was unsuccessful");
             }
         }
 
