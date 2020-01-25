@@ -166,13 +166,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
 
             Assert.Equal(SseCustomerAlgorithm.Aes256, pResp.SseCustomerAlgorithm);
 
-            //TODO: Missing support for Transfer Download
-            //await AssertAsync(nameof(UploadServerSideEncryptionCustomerKey), request =>
-            //{
-            //    request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
-            //    request.SseCustomerKey = key;
-            //    request.SseCustomerKeyMd5 = keyHash;
-            //}).ConfigureAwait(false);
+            await AssertTransferAsync(nameof(UploadServerSideEncryptionCustomerKey), download => download.WithEncryptionCustomerKey(key)).ConfigureAwait(false);
         }
 
         [Fact]
