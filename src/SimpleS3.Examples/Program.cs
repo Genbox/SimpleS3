@@ -76,13 +76,12 @@ namespace Genbox.SimpleS3.Examples
             Console.WriteLine("Using the fluent API");
 
             //Upload string
-            Upload upload = client.Transfer
-                .UploadString(bucketName, objectName, "Hello World!", Encoding.UTF8)
+            Upload upload = client.Transfer.Upload(bucketName, objectName)
                 .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
                 .WithCacheControl(CacheControlType.NoCache)
                 .WithEncryption();
 
-            PutObjectResponse resp = await upload.ExecuteAsync().ConfigureAwait(false);
+            PutObjectResponse resp = await upload.UploadStringAsync("Hello World!", Encoding.UTF8).ConfigureAwait(false);
 
             if (resp.IsSuccess)
             {
@@ -93,7 +92,7 @@ namespace Genbox.SimpleS3.Examples
                     .Download(bucketName, objectName)
                     .WithRange(0, 10); //Adjust this to return only part of the string
 
-                GetObjectResponse resp2 = await download.ExecuteAsync().ConfigureAwait(false);
+                GetObjectResponse resp2 = await download.DownloadAsync().ConfigureAwait(false);
 
                 if (resp2.IsSuccess)
                 {

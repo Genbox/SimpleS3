@@ -1,12 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
-using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
 {
-    public class MultipartTests: OnlineTestBase
+    public class MultipartTests : OnlineTestBase
     {
         public MultipartTests(ITestOutputHelper outputHelper) : base(outputHelper)
         {
@@ -20,15 +20,21 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
             for (int i = 0; i < data.Length; i++)
                 data[i] = (byte)(i % 255);
 
-            MultipartUploadStatus resp = await Transfer.UploadData(BucketName, nameof(UploadDownloadMultipart), data)
-                .ExecuteMultipartAsync()
+            MultipartUploadStatus ulStatus = await Transfer.Upload(BucketName, nameof(UploadDownloadMultipart))
+                .UploadMultipartAsync(new MemoryStream(data))
                 .ConfigureAwait(false);
 
-            Assert.Equal(MultipartUploadStatus.Ok, resp);
+            Assert.Equal(MultipartUploadStatus.Ok, ulStatus);
 
-            GetObjectResponse getResp = await Transfer.Download(BucketName, nameof(UploadDownloadMultipart)).ExecuteAsync().ConfigureAwait(false);
-            Assert.True(getResp.IsSuccess);
-            Assert.Equal(data, await getResp.Content.AsDataAsync());
+            using (MemoryStream ms = new MemoryStream())
+            {
+                MultipartDownloadStatus dlStatus = await Transfer.Download(BucketName, nameof(UploadDownloadMultipart))
+                    .DownloadMultipartAsync(ms)
+                    .ConfigureAwait(false);
+
+                Assert.Equal(MultipartDownloadStatus.Ok, dlStatus);
+                Assert.Equal(data, ms.ToArray());
+            }
         }
     }
 }

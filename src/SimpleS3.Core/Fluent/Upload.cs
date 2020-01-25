@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders;
@@ -12,7 +13,6 @@ using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -23,15 +23,14 @@ namespace Genbox.SimpleS3.Core.Fluent
     {
         private readonly IMultipartOperations _multipartOperations;
         private readonly IObjectOperations _objectOperations;
-        private readonly bool _ownStream;
         private readonly PutObjectRequest _request;
 
-        internal Upload(IObjectOperations objectOperations, IMultipartOperations multipartOperations, string bucket, string objectKey, Stream stream, bool ownStream = false)
+        internal Upload(IObjectOperations objectOperations, IMultipartOperations multipartOperations, string bucket, string objectKey)
         {
-            _request = new PutObjectRequest(bucket, objectKey, stream);
             _objectOperations = objectOperations;
             _multipartOperations = multipartOperations;
-            _ownStream = ownStream;
+
+            _request = new PutObjectRequest(bucket, objectKey, null);
         }
 
         public Upload WithCacheControl(CacheControlBuilder cacheControl)
@@ -192,12 +191,12 @@ namespace Genbox.SimpleS3.Core.Fluent
             return this;
         }
 
-        public async Task<MultipartUploadStatus> ExecuteMultipartAsync(CancellationToken token = default)
+        public async Task<MultipartUploadStatus> UploadMultipartAsync(Stream data, CancellationToken token = default)
         {
-            CreateMultipartUploadRequest initReq = _request;
-            initReq.Method = HttpMethod.POST;
+            _request.Method = HttpMethod.POST;
+            _request.Content = null;
 
-            IAsyncEnumerable<UploadPartResponse> async = MultipartHelper.MultipartUploadAsync(_multipartOperations, initReq, _request.Content, token: token);
+            IAsyncEnumerable<UploadPartResponse> async = MultipartHelper.MultipartUploadAsync(_multipartOperations, _request, data, token: token);
 
             await foreach (UploadPartResponse resp in async.WithCancellation(token))
             {
@@ -208,14 +207,22 @@ namespace Genbox.SimpleS3.Core.Fluent
             return MultipartUploadStatus.Ok;
         }
 
-        public async Task<PutObjectResponse> ExecuteAsync(CancellationToken token = default)
+        public Task<PutObjectResponse> UploadAsync(Stream data, CancellationToken token = default)
         {
-            PutObjectResponse response = await _objectOperations.PutObjectAsync(_request, token).ConfigureAwait(false);
+            _request.Method = HttpMethod.PUT;
+            _request.Content = data;
 
-            if (_ownStream)
-                _request.Content.Dispose();
+            return _objectOperations.PutObjectAsync(_request, token);
+        }
 
-            return response;
+        public Task<PutObjectResponse> UploadDataAsync(byte[] data, CancellationToken token = default)
+        {
+            return UploadAsync(new MemoryStream(data), token);
+        }
+
+        public Task<PutObjectResponse> UploadStringAsync(string data, Encoding encoding = null, CancellationToken token = default)
+        {
+            return UploadDataAsync(encoding.GetBytes(data), token);
         }
 
         public Upload WithWebsiteRedirectLocation(string url)

@@ -24,7 +24,7 @@ namespace Genbox.SimpleS3.Core.Fluent
             _objectOperations = objectOperations;
         }
 
-        public async Task<MultipartDownloadStatus> ExecuteMultipartAsync(Stream output, CancellationToken token = default)
+        public async Task<MultipartDownloadStatus> DownloadMultipartAsync(Stream output, CancellationToken token = default)
         {
             IAsyncEnumerable<GetObjectResponse> async = MultipartHelper.MultipartDownloadAsync(_objectOperations, _request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
 
@@ -98,7 +98,7 @@ namespace Genbox.SimpleS3.Core.Fluent
             req.PartNumber = partNum;
         }
 
-        public Task<GetObjectResponse> ExecuteAsync(CancellationToken token = default)
+        public Task<GetObjectResponse> DownloadAsync(CancellationToken token = default)
         {
             return _objectOperations.GetObjectAsync(_request, token);
         }

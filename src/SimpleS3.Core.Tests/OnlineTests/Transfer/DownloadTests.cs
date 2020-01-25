@@ -19,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
 
             GetObjectResponse resp = await Transfer.Download(BucketName, nameof(DownloadContentRange))
                 .WithRange(0, 10)
-                .ExecuteAsync()
+                .DownloadAsync()
                 .ConfigureAwait(false);
 
             Assert.Equal(206, resp.StatusCode);
