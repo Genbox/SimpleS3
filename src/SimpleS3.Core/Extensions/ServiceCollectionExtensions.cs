@@ -40,6 +40,7 @@ namespace Genbox.SimpleS3.Core.Extensions
 
         public static IS3ClientBuilder AddSimpleS3Core(this IServiceCollection collection)
         {
+            collection.AddLogging();
             collection.AddOptions();
             collection.TryAddSingleton<ISigningKeyBuilder, SigningKeyBuilder>();
             collection.TryAddSingleton<IScopeBuilder, ScopeBuilder>();
