@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
     [UsedImplicitly]
     internal class GetBucketTaggingResponseMarshal : IResponseMarshal<GetBucketTaggingRequest, GetBucketTaggingResponse>
     {
-        public void MarshalResponse(IS3Config config, GetBucketTaggingRequest request, GetBucketTaggingResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, GetBucketTaggingRequest request, GetBucketTaggingResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.Tags = new Dictionary<string, string>();
 

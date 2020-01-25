@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     [UsedImplicitly]
     internal class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectRequest, CopyObjectResponse>
     {
-        public void MarshalResponse(IS3Config config, CopyObjectRequest request, CopyObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, CopyObjectRequest request, CopyObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.NewVersionId = headers.GetHeader(AmzHeaders.XAmzCopySourceVersionId);
 

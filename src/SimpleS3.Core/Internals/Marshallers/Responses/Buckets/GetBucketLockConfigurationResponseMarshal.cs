@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
     [UsedImplicitly]
     internal class GetBucketLockConfigurationResponseMarshal : IResponseMarshal<GetBucketLockConfigurationRequest, GetBucketLockConfigurationResponse>
     {
-        public void MarshalResponse(IS3Config config, GetBucketLockConfigurationRequest request, GetBucketLockConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, GetBucketLockConfigurationRequest request, GetBucketLockConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {

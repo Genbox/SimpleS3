@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Cli
         private CliManager(string profileName, AwsRegion region)
         {
             ServiceCollection services = new ServiceCollection();
-            IS3ClientBuilder builder = services.AddSimpleS3();
+            IClientBuilder builder = services.AddSimpleS3();
 
             builder.UseProfileManager()
                 .UseDataProtection();
@@ -38,12 +38,12 @@ namespace Genbox.SimpleS3.Cli
 
             IProfile profile = ProfileManager.GetProfile(profileName) ?? ConsoleSetup.SetupProfile(ProfileManager, profileName);
 
-            S3Client = provider.GetRequiredService<IS3Client>();
+            S3Client = provider.GetRequiredService<IClient>();
             BucketManager = provider.GetRequiredService<BucketManager>();
             ObjectManager = provider.GetRequiredService<ObjectManager>();
         }
 
-        private IS3Client S3Client { get; }
+        private IClient S3Client { get; }
         public BucketManager BucketManager { get; }
         public ObjectManager ObjectManager { get; }
         public IProfileManager ProfileManager { get; }

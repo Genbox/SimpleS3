@@ -28,11 +28,11 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3
 {
     /// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
-    public sealed class S3Client : IDisposable, IS3Client
+    public sealed class S3Client : IDisposable, IClient
     {
-        private readonly IS3BucketClient _bucketClient;
-        private readonly IS3MultipartClient _multipartClient;
-        private readonly IS3ObjectClient _objectClient;
+        private readonly IBucketClient _bucketClient;
+        private readonly IMultipartClient _multipartClient;
+        private readonly IObjectClient _objectClient;
         private readonly ServiceProvider _provider;
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
@@ -66,14 +66,14 @@ namespace Genbox.SimpleS3
             services.AddSingleton(x => Options.Create(config));
             services.AddSimpleS3(null, messageHandler);
             _provider = services.BuildServiceProvider();
-            _objectClient = _provider.GetRequiredService<IS3ObjectClient>();
-            _bucketClient = _provider.GetRequiredService<IS3BucketClient>();
-            _multipartClient = _provider.GetRequiredService<IS3MultipartClient>();
+            _objectClient = _provider.GetRequiredService<IObjectClient>();
+            _bucketClient = _provider.GetRequiredService<IBucketClient>();
+            _multipartClient = _provider.GetRequiredService<IMultipartClient>();
 
             Transfer = new Transfer(_objectClient.ObjectOperations, _multipartClient.MultipartOperations);
         }
 
-        public S3Client(IS3ObjectClient objectClient, IS3BucketClient bucketClient, IS3MultipartClient multipartClient)
+        public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient)
         {
             _objectClient = objectClient;
             _bucketClient = bucketClient;

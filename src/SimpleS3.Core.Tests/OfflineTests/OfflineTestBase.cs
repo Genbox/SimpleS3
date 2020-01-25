@@ -41,9 +41,9 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
             BucketName = _configRoot["BucketName"] ?? "main-test-bucket-2019";
 
             Config = Services.GetRequiredService<IOptions<S3Config>>().Value;
-            ObjectClient = Services.GetRequiredService<IS3ObjectClient>();
-            BucketClient = Services.GetRequiredService<IS3BucketClient>();
-            MultipartClient = Services.GetRequiredService<IS3MultipartClient>();
+            ObjectClient = Services.GetRequiredService<IObjectClient>();
+            BucketClient = Services.GetRequiredService<IBucketClient>();
+            MultipartClient = Services.GetRequiredService<IMultipartClient>();
             Transfer = Services.GetRequiredService<Transfer>();
         }
 
@@ -51,9 +51,9 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
 
         protected S3Config Config { get; }
         protected string BucketName { get; }
-        protected IS3ObjectClient ObjectClient { get; }
-        protected IS3BucketClient BucketClient { get; }
-        protected IS3MultipartClient MultipartClient { get; }
+        protected IObjectClient ObjectClient { get; }
+        protected IBucketClient BucketClient { get; }
+        protected IMultipartClient MultipartClient { get; }
         protected Transfer Transfer { get; }
 
         public void Dispose()

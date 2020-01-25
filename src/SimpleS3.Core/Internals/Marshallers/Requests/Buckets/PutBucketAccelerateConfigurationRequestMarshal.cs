@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     [UsedImplicitly]
     internal class PutBucketAccelerateConfigurationRequestMarshal : IRequestMarshal<PutBucketAccelerateConfigurationRequest>
     {
-        public Stream MarshalRequest(PutBucketAccelerateConfigurationRequest request, IS3Config config)
+        public Stream MarshalRequest(PutBucketAccelerateConfigurationRequest request, IConfig config)
         {
             request.AddQueryParameter(AmzParameters.Accelerate, string.Empty);
 

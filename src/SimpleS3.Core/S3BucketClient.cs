@@ -12,7 +12,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core
 {
     [PublicAPI]
-    public class S3BucketClient : IS3BucketClient
+    public class S3BucketClient : IBucketClient
     {
         public S3BucketClient(IBucketOperations bucketOperations)
         {

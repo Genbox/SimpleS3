@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
 {
     public static class S3ClientBuilderExtensions
     {
-        public static IHttpClientBuilder UseHttpClientFactory(this IS3ClientBuilder clientBuilder, Action<HttpClientFactoryConfig> config = null)
+        public static IHttpClientBuilder UseHttpClientFactory(this IClientBuilder clientBuilder, Action<HttpClientFactoryConfig> config = null)
         {
             clientBuilder.Services.AddHttpClient();
 

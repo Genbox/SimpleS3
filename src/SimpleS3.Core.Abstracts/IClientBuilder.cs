@@ -2,7 +2,7 @@
 
 namespace Genbox.SimpleS3.Core.Abstracts
 {
-    public interface IS3ClientBuilder
+    public interface IClientBuilder
     {
         IServiceCollection Services { get; }
     }

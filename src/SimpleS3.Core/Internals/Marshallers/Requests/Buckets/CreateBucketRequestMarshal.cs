@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     [UsedImplicitly]
     internal class CreateBucketRequestMarshal : IRequestMarshal<CreateBucketRequest>
     {
-        public Stream MarshalRequest(CreateBucketRequest request, IS3Config config)
+        public Stream MarshalRequest(CreateBucketRequest request, IConfig config)
         {
             //We only enable object locking on creation. We can't disable it, so there is no "false" option
             if (request.EnableObjectLocking.HasValue && request.EnableObjectLocking.Value)

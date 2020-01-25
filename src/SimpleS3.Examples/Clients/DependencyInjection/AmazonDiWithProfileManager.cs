@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Examples.Clients.DependencyInjection
             ServiceCollection services = new ServiceCollection();
 
             //Here we setup our S3Client
-            IS3ClientBuilder builder = services.AddSimpleS3();
+            IClientBuilder builder = services.AddSimpleS3();
 
             //Here we enable in-memory encryption using Microsoft Data Protection
             builder.UseProfileManager()

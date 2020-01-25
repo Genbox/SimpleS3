@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     [UsedImplicitly]
     internal class GetBucketTaggingRequestMarshal : IRequestMarshal<GetBucketTaggingRequest>
     {
-        public Stream MarshalRequest(GetBucketTaggingRequest request, IS3Config config)
+        public Stream MarshalRequest(GetBucketTaggingRequest request, IConfig config)
         {
             request.AddQueryParameter(AmzParameters.Tagging, string.Empty);
             return null;

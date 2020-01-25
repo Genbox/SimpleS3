@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
     [UsedImplicitly]
     internal class UploadPartResponseMarshal : IResponseMarshal<UploadPartRequest, UploadPartResponse>
     {
-        public void MarshalResponse(IS3Config config, UploadPartRequest request, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, UploadPartRequest request, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.PartNumber = request.PartNumber.Value;
             response.ETag = headers.GetHeader(HttpHeaders.ETag);

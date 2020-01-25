@@ -17,9 +17,9 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
 {
     public class ObjectManager
     {
-        private readonly IS3Client _client;
+        private readonly IClient _client;
 
-        public ObjectManager(IS3Client client)
+        public ObjectManager(IClient client)
         {
             _client = client;
         }

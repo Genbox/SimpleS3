@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
 {
     public static class S3ClientBuilderExtensions
     {
-        public static IS3ClientBuilder UseHttpClient(this IS3ClientBuilder builder, IOptions<HttpClientConfig> options = null)
+        public static IClientBuilder UseHttpClient(this IClientBuilder builder, IOptions<HttpClientConfig> options = null)
         {
             builder.Services.AddSingleton(x =>
             {

@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     [UsedImplicitly]
     internal class PutObjectResponseMarshal : IResponseMarshal<PutObjectRequest, PutObjectResponse>
     {
-        public void MarshalResponse(IS3Config config, PutObjectRequest request, PutObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, PutObjectRequest request, PutObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
 

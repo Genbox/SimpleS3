@@ -37,7 +37,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             configBuilder.AddUserSecrets(GetType().Assembly);
             _configRoot = configBuilder.Build();
 
-            IS3ClientBuilder builder = collection.AddSimpleS3Core(ConfigureS3);
+            IClientBuilder builder = collection.AddSimpleS3Core(ConfigureS3);
             IHttpClientBuilder httpClientBuilder = builder.UseHttpClientFactory();
 
             IConfigurationSection proxySection = _configRoot.GetSection("Proxy");
@@ -60,9 +60,9 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             BucketName = _configRoot["BucketName"] ?? "main-test-bucket-2019";
 
             Config = Services.GetRequiredService<IOptions<S3Config>>().Value;
-            ObjectClient = Services.GetRequiredService<IS3ObjectClient>();
-            BucketClient = Services.GetRequiredService<IS3BucketClient>();
-            MultipartClient = Services.GetRequiredService<IS3MultipartClient>();
+            ObjectClient = Services.GetRequiredService<IObjectClient>();
+            BucketClient = Services.GetRequiredService<IBucketClient>();
+            MultipartClient = Services.GetRequiredService<IMultipartClient>();
             Transfer = Services.GetRequiredService<Core.Fluent.Transfer>();
 
             //foreach (S3Bucket bucket in BucketClient.ListAllBucketsAsync().ToListAsync().Result)
@@ -76,9 +76,9 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
 
         protected S3Config Config { get; }
         protected string BucketName { get; }
-        protected IS3ObjectClient ObjectClient { get; }
-        protected IS3BucketClient BucketClient { get; }
-        protected IS3MultipartClient MultipartClient { get; }
+        protected IObjectClient ObjectClient { get; }
+        protected IBucketClient BucketClient { get; }
+        protected IMultipartClient MultipartClient { get; }
         protected Core.Fluent.Transfer Transfer { get; }
 
         public void Dispose()

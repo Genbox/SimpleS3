@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     [UsedImplicitly]
     internal class DeleteObjectResponseMarshal : IResponseMarshal<DeleteObjectRequest, DeleteObjectResponse>
     {
-        public void MarshalResponse(IS3Config config, DeleteObjectRequest request, DeleteObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, DeleteObjectRequest request, DeleteObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.IsDeleteMarker = headers.GetHeaderBool(AmzHeaders.XAmzDeleteMarker);
             response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);

@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
     [UsedImplicitly]
     internal class CompleteMultipartUploadRequestMarshal : IRequestMarshal<CompleteMultipartUploadRequest>
     {
-        public Stream MarshalRequest(CompleteMultipartUploadRequest request, IS3Config config)
+        public Stream MarshalRequest(CompleteMultipartUploadRequest request, IConfig config)
         {
             //build the XML required to describe each part
             FastXmlWriter xml = new FastXmlWriter(512);

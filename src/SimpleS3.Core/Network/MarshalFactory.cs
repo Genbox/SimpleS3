@@ -43,7 +43,7 @@ namespace Genbox.SimpleS3.Core.Network
             }, x => x);
         }
 
-        public Stream MarshalRequest<T>(T request, IS3Config config) where T : IRequest
+        public Stream MarshalRequest<T>(T request, IConfig config) where T : IRequest
         {
             //Auto map common properties
             GenericRequestMapper.Map(request);
@@ -72,7 +72,7 @@ namespace Genbox.SimpleS3.Core.Network
             return content;
         }
 
-        public void MarshalResponse<TRequest, TResponse>(IS3Config config, TRequest request, TResponse response, IDictionary<string, string> headers, Stream responseStream) where TRequest : IRequest where TResponse : IResponse
+        public void MarshalResponse<TRequest, TResponse>(IConfig config, TRequest request, TResponse response, IDictionary<string, string> headers, Stream responseStream) where TRequest : IRequest where TResponse : IResponse
         {
             if (_responseMarshals.TryGetValue(typeof(TResponse), out IResponseMarshal marshaller))
                 ((IResponseMarshal<TRequest, TResponse>)marshaller).MarshalResponse(config, request, response, headers, responseStream);

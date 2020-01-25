@@ -12,7 +12,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Abstracts.Clients
 {
     [PublicAPI]
-    public interface IS3ObjectClient
+    public interface IObjectClient
     {
         IObjectOperations ObjectOperations { get; }
 

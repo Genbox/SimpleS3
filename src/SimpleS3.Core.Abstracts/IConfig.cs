@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Abstracts
 {
-    public interface IS3Config
+    public interface IConfig
     {
         /// <summary>The credentials to use when communicating with S3.</summary>
         IAccessKey Credentials { get; set; }

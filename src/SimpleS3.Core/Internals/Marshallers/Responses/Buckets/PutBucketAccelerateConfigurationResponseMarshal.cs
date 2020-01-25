@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
     [UsedImplicitly]
     internal class PutBucketAccelerateConfigurationResponseMarshal : IResponseMarshal<PutBucketAccelerateConfigurationRequest, PutBucketAccelerateConfigurationResponse>
     {
-        public void MarshalResponse(IS3Config config, PutBucketAccelerateConfigurationRequest request, PutBucketAccelerateConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, PutBucketAccelerateConfigurationRequest request, PutBucketAccelerateConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
         }
     }

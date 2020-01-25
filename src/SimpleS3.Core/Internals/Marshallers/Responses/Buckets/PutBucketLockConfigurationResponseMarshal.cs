@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
     [UsedImplicitly]
     internal class PutBucketLockConfigurationResponseMarshal : IResponseMarshal<PutBucketLockConfigurationRequest, PutBucketLockConfigurationResponse>
     {
-        public void MarshalResponse(IS3Config config, PutBucketLockConfigurationRequest request, PutBucketLockConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, PutBucketLockConfigurationRequest request, PutBucketLockConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
         }

@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
     [UsedImplicitly]
     internal class CreateMultipartUploadRequestMarshal : IRequestMarshal<CreateMultipartUploadRequest>
     {
-        public Stream MarshalRequest(CreateMultipartUploadRequest request, IS3Config config)
+        public Stream MarshalRequest(CreateMultipartUploadRequest request, IConfig config)
         {
             //This is required for multipart uploads
             request.AddQueryParameter(AmzParameters.Uploads, string.Empty);

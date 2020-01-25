@@ -23,7 +23,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
     [UsedImplicitly]
     internal class ListPartsResponseMarshal : IResponseMarshal<ListPartsRequest, ListPartsResponse>
     {
-        public void MarshalResponse(IS3Config config, ListPartsRequest request, ListPartsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, ListPartsRequest request, ListPartsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Iso8601DateTimeExt);
             response.AbortRuleId = headers.GetHeader(AmzHeaders.XAmzAbortRuleId);

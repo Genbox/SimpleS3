@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
     [UsedImplicitly]
     internal class PutObjectLegalHoldRequestMarshal : IRequestMarshal<PutObjectLegalHoldRequest>
     {
-        public Stream MarshalRequest(PutObjectLegalHoldRequest request, IS3Config config)
+        public Stream MarshalRequest(PutObjectLegalHoldRequest request, IConfig config)
         {
             request.AddQueryParameter(AmzParameters.LegalHold, string.Empty);
 

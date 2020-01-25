@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
     [UsedImplicitly]
     internal class GetBucketAccelerateConfigurationResponseMarshal : IResponseMarshal<GetBucketAccelerateConfigurationRequest, GetBucketAccelerateConfigurationResponse>
     {
-        public void MarshalResponse(IS3Config config, GetBucketAccelerateConfigurationRequest request, GetBucketAccelerateConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, GetBucketAccelerateConfigurationRequest request, GetBucketAccelerateConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {

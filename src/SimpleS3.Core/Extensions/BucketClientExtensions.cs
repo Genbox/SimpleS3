@@ -11,10 +11,10 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Extensions
 {
-    public static class S3BucketClientExtensions
+    public static class BucketClientExtensions
     {
         /// <summary>Delete a bucket</summary>
-        public static Task<DeleteBucketResponse> DeleteBucketAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
+        public static Task<DeleteBucketResponse> DeleteBucketAsync(this IBucketClient client, string bucketName, CancellationToken token = default)
         {
             //Note: This method only exists to give a cleaner API. It provides no extra functionality.
 
@@ -25,7 +25,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
 
         /// <summary>Create a bucket</summary>
-        public static Task<CreateBucketResponse> CreateBucketAsync(this IS3BucketClient client, string bucketName, CancellationToken token = default)
+        public static Task<CreateBucketResponse> CreateBucketAsync(this IBucketClient client, string bucketName, CancellationToken token = default)
         {
             //Note: This method only exists to give a cleaner API. It provides no extra functionality.
 
@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
 
         /// <summary>List all buckets</summary>
-        public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(this IS3BucketClient client, Action<ListBucketsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(this IBucketClient client, Action<ListBucketsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             ListBucketsResponse response = await client.ListBucketsAsync(config, token).ConfigureAwait(false);
 

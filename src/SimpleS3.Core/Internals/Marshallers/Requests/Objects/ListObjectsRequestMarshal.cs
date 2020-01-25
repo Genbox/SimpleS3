@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
     [UsedImplicitly]
     internal class ListObjectsRequestMarshal : IRequestMarshal<ListObjectsRequest>
     {
-        public Stream MarshalRequest(ListObjectsRequest request, IS3Config config)
+        public Stream MarshalRequest(ListObjectsRequest request, IConfig config)
         {
             request.AddQueryParameter(AmzParameters.Delimiter, request.Delimiter);
             request.AddQueryParameter(AmzParameters.EncodingType, request.EncodingType);

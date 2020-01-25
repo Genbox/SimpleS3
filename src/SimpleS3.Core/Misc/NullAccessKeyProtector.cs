@@ -2,7 +2,7 @@
 
 namespace Genbox.SimpleS3.Core.Misc
 {
-    public class NullAccesKeyProtector : IAccessKeyProtector
+    public class NullAccessKeyProtector : IAccessKeyProtector
     {
         public byte[] ProtectKey(byte[] key)
         {

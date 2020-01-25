@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core
 {
     [PublicAPI]
-    public class S3Config : IS3Config
+    public class S3Config : IConfig
     {
         public S3Config()
         {

@@ -26,19 +26,19 @@ namespace Genbox.SimpleS3.Core.Extensions
     [PublicAPI]
     public static class ServiceCollectionExtensions
     {
-        public static IS3ClientBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3)
+        public static IClientBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3)
         {
             collection?.Configure(configureS3);
             return AddSimpleS3Core(collection);
         }
 
-        public static IS3ClientBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config> configureS3)
+        public static IClientBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config> configureS3)
         {
             collection?.Configure(configureS3);
             return AddSimpleS3Core(collection);
         }
 
-        public static IS3ClientBuilder AddSimpleS3Core(this IServiceCollection collection)
+        public static IClientBuilder AddSimpleS3Core(this IServiceCollection collection)
         {
             collection.AddLogging();
             collection.AddOptions();
@@ -51,9 +51,9 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.TryAddSingleton<IObjectOperations, ObjectOperations>();
             collection.TryAddSingleton<IBucketOperations, BucketOperations>();
             collection.TryAddSingleton<IMultipartOperations, MultipartOperations>();
-            collection.TryAddSingleton<IS3ObjectClient, S3ObjectClient>();
-            collection.TryAddSingleton<IS3BucketClient, S3BucketClient>();
-            collection.TryAddSingleton<IS3MultipartClient, S3MultipartClient>();
+            collection.TryAddSingleton<IObjectClient, S3ObjectClient>();
+            collection.TryAddSingleton<IBucketClient, S3BucketClient>();
+            collection.TryAddSingleton<IMultipartClient, S3MultipartClient>();
             collection.TryAddSingleton<IRequestHandler, DefaultRequestHandler>();
             collection.TryAddSingleton<IValidatorFactory, ValidatorFactory>();
             collection.TryAddSingleton<IMarshalFactory, MarshalFactory>();
@@ -74,7 +74,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                 .AsSelfWithInterfaces()
                 .WithSingletonLifetime());
 
-            return new S3ClientBuilder(collection);
+            return new ClientBuilder(collection);
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Validation.Validators.Configs
 {
+    [UsedImplicitly]
     public class S3ConfigValidator : AbstractValidator<S3Config>
     {
         public S3ConfigValidator(IValidator<IAccessKey> validator)

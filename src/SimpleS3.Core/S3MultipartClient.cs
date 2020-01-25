@@ -15,7 +15,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core
 {
     [PublicAPI]
-    public class S3MultipartClient : IS3MultipartClient
+    public class S3MultipartClient : IMultipartClient
     {
         private readonly IObjectOperations _objectOperations;
 

@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
     [UsedImplicitly]
     internal class CreateMultipartUploadResponseMarshal : IResponseMarshal<CreateMultipartUploadRequest, CreateMultipartUploadResponse>
     {
-        public void MarshalResponse(IS3Config config, CreateMultipartUploadRequest request, CreateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, CreateMultipartUploadRequest request, CreateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Rfc1123);
             response.AbortRuleId = headers.GetHeader(AmzHeaders.XAmzAbortRuleId);

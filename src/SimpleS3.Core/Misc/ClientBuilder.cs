@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Core.Misc
 {
-    public class S3ClientBuilder : IS3ClientBuilder
+    public class ClientBuilder : IClientBuilder
     {
-        public S3ClientBuilder(IServiceCollection services)
+        public ClientBuilder(IServiceCollection services)
         {
             Services = services;
         }

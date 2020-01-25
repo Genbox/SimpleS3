@@ -9,7 +9,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Clients
 {
-    public interface IS3BucketClient
+    public interface IBucketClient
     {
         IBucketOperations BucketOperations { get; }
 

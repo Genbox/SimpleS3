@@ -18,9 +18,9 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Extensions
 {
-    public static class S3ObjectClientExtensions
+    public static class ObjectClientExtensions
     {
-        public static async Task<DeleteObjectResponse> DeleteObjectAsync(this IS3ObjectClient client, string bucketName, string objectKey, string versionId = null, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
+        public static async Task<DeleteObjectResponse> DeleteObjectAsync(this IObjectClient client, string bucketName, string objectKey, string versionId = null, MfaAuthenticationBuilder mfa = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
@@ -35,7 +35,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return resp;
         }
 
-        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IS3ObjectClient client, string bucketName, IEnumerable<string> objectKeys, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
+        public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IObjectClient client, string bucketName, IEnumerable<string> objectKeys, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
@@ -45,7 +45,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
 
         /// <summary>Delete all objects within the bucket</summary>
-        public static async Task<DeleteAllObjectsStatus> DeleteAllObjectsAsync(this IS3ObjectClient client, string bucketName, CancellationToken token = default)
+        public static async Task<DeleteAllObjectsStatus> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, CancellationToken token = default)
         {
             string continuationToken = null;
             ListObjectsResponse response;
@@ -78,7 +78,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return DeleteAllObjectsStatus.Ok;
         }
 
-        public static async Task<PutObjectResponse> PutObjectDataAsync(this IS3ObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest> config = null, CancellationToken token = default)
+        public static async Task<PutObjectResponse> PutObjectDataAsync(this IObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest> config = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
@@ -88,7 +88,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                 return await client.PutObjectAsync(bucketName, objectKey, ms, config, token).ConfigureAwait(false);
         }
 
-        public static Task<PutObjectResponse> PutObjectStringAsync(this IS3ObjectClient client, string bucketName, string objectKey, string content, Encoding encoding = null, Action<PutObjectRequest> config = null, CancellationToken token = default)
+        public static Task<PutObjectResponse> PutObjectStringAsync(this IObjectClient client, string bucketName, string objectKey, string content, Encoding encoding = null, Action<PutObjectRequest> config = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
@@ -100,7 +100,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return client.PutObjectDataAsync(bucketName, objectKey, encoding.GetBytes(content), config, token);
         }
 
-        public static async Task<PutObjectResponse> PutObjectFileAsync(this IS3ObjectClient client, string bucketName, string objectKey, string file, Action<PutObjectRequest> config = null, CancellationToken token = default)
+        public static async Task<PutObjectResponse> PutObjectFileAsync(this IObjectClient client, string bucketName, string objectKey, string file, Action<PutObjectRequest> config = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
@@ -113,7 +113,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                 return await client.PutObjectAsync(bucketName, objectKey, fs, config, token).ConfigureAwait(false);
         }
 
-        public static async Task<ContentReader> GetObjectContentAsync(this IS3ObjectClient client, string bucketName, string objectKey, Action<GetObjectRequest> config = null, CancellationToken token = default)
+        public static async Task<ContentReader> GetObjectContentAsync(this IObjectClient client, string bucketName, string objectKey, Action<GetObjectRequest> config = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
@@ -127,7 +127,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             return null;
         }
 
-        public static async Task<string> GetObjectStringAsync(this IS3ObjectClient client, string bucketName, string objectKey, Encoding encoding = null, Action<GetObjectRequest> config = null, CancellationToken token = default)
+        public static async Task<string> GetObjectStringAsync(this IObjectClient client, string bucketName, string objectKey, Encoding encoding = null, Action<GetObjectRequest> config = null, CancellationToken token = default)
         {
             ContentReader content = await GetObjectContentAsync(client, bucketName, objectKey, config, token).ConfigureAwait(false);
 
@@ -142,7 +142,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
         /// <param name="getOwnerInfo">Set to true if you want to get object owner information as well.</param>
         /// <param name="token">A cancellation token</param>
-        public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IS3ObjectClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));

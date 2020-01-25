@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
 {
     public static class RequestHelper
     {
-        public static async Task<T> ExecuteRequestAsync<T>(IS3Client client, Func<IS3Client, Task<T>> func) where T : BaseResponse
+        public static async Task<T> ExecuteRequestAsync<T>(IClient client, Func<IClient, Task<T>> func) where T : BaseResponse
         {
             Validator.RequireNotNull(func, nameof(func));
 
@@ -35,7 +35,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
             throw new Exception(sb.ToString());
         }
 
-        public static IAsyncEnumerable<T> ExecuteAsyncEnumerable<T>(IS3Client client, Func<IS3Client, IAsyncEnumerable<T>> func)
+        public static IAsyncEnumerable<T> ExecuteAsyncEnumerable<T>(IClient client, Func<IClient, IAsyncEnumerable<T>> func)
         {
             Validator.RequireNotNull(func, nameof(func));
 

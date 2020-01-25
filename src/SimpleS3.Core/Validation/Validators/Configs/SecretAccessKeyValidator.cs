@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Validation.Validators.Configs
 {
+    [UsedImplicitly]
     public class SecretAccessKeyValidator : AbstractValidator<IAccessKey>
     {
         public SecretAccessKeyValidator()

@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
 {
     public static class S3ConfigExtensions
     {
-        public static void UseProfile(this IS3Config config, IProfileManager profileManager, string profileName = ProfileManager.DefaultProfile)
+        public static void UseProfile(this IConfig config, IProfileManager profileManager, string profileName = ProfileManager.DefaultProfile)
         {
             IProfile profile = profileManager.GetProfile(profileName);
 
