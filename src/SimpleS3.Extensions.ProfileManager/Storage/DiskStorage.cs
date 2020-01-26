@@ -38,6 +38,8 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Storage
                 else
                     throw new Exception($"Cannot overwrite existing profile {name} because {nameof(DiskStorageOptions.OverwriteExisting)} is {_options.Value.OverwriteExisting}");
             }
+            else
+                File.WriteAllBytes(path, data);
 
             return path;
         }

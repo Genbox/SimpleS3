@@ -20,7 +20,6 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
                 builder.Services.Configure(config);
 
             ProfileManagerBuilder managerBuilder = new ProfileManagerBuilder(builder.Services);
-            managerBuilder.BindConfigToProfile(ProfileManager.DefaultProfile);
             return managerBuilder;
         }
     }
