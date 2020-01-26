@@ -31,7 +31,7 @@ namespace Genbox.SimpleS3.Examples.Clients.DependencyInjection
 
             //If profile is null, then we do not yet have a profile stored on disk. We use ConsoleSetup as an easy and secure way of asking for credentials
             if (profile == null)
-                ConsoleSetup.SetupProfile(manager);
+                ConsoleSetup.SetupProfile(manager, "MyProfile");
 
             return serviceProvider.GetRequiredService<S3Client>();
         }

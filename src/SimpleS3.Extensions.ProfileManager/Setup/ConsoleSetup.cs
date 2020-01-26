@@ -14,7 +14,12 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
 {
     public static class ConsoleSetup
     {
-        public static IProfile SetupProfile(IProfileManager profileManager, string profileName = ProfileManager.DefaultProfile, bool persist = true)
+        public static IProfile SetupDefaultProfile(IProfileManager profileManager, bool persist = true)
+        {
+            return SetupProfile(profileManager, ProfileManager.DefaultProfile, persist);
+        }
+
+        public static IProfile SetupProfile(IProfileManager profileManager, string profileName, bool persist = true)
         {
             start:
             Console.WriteLine();

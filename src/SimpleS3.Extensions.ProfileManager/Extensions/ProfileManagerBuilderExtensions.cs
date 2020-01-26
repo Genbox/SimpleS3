@@ -22,5 +22,11 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
             builder.Services.PostConfigure<S3Config>((x, y) => x.UseProfile(y.GetRequiredService<IProfileManager>(), profileName));
             return builder;
         }
+
+        public static IProfileManagerBuilder BindConfigToDefaultProfile(this IProfileManagerBuilder builder)
+        {
+            builder.Services.PostConfigure<S3Config>((x, y) => x.UseDefaultProfile(y.GetRequiredService<IProfileManager>()));
+            return builder;
+        }
     }
 }

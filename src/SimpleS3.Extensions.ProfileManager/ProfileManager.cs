@@ -26,7 +26,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
             _protector = protector;
         }
 
-        public IProfile GetProfile(string name = DefaultProfile)
+        public IProfile GetProfile(string name)
         {
             byte[] data;
 

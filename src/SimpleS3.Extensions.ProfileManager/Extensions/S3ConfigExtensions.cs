@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
 {
     public static class S3ConfigExtensions
     {
-        public static void UseProfile(this IConfig config, IProfileManager profileManager, string profileName = ProfileManager.DefaultProfile)
+        public static void UseProfile(this IConfig config, IProfileManager profileManager, string profileName)
         {
             IProfile profile = profileManager.GetProfile(profileName);
 
@@ -16,6 +16,11 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
 
             config.Credentials = new AccessKey(profile.KeyId, profile.AccessKey);
             config.Region = profile.Region;
+        }
+
+        public static void UseDefaultProfile(this IConfig config, IProfileManager profileManager)
+        {
+            UseProfile(config,profileManager, ProfileManager.DefaultProfile);
         }
     }
 }
