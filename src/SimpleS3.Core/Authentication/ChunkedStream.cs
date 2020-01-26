@@ -6,6 +6,7 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Pools;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Authentication
@@ -178,14 +179,19 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         private static byte[] CreateChunkHeader(byte[] chunkSignature, int contentLength)
         {
-            StringBuilder chunkHeader = new StringBuilder();
+            StringBuilder chunkHeader = StringBuilderPool.Shared.Rent(100);
+
             chunkHeader
                 .Append(contentLength.ToString("X", CultureInfo.InvariantCulture))
                 .Append(_chunkSignature)
                 .Append(chunkSignature.HexEncode())
                 .Append(_newlineStr);
 
-            return Encoding.UTF8.GetBytes(chunkHeader.ToString());
+            string value = chunkHeader.ToString();
+
+            StringBuilderPool.Shared.Return(chunkHeader);
+
+            return Encoding.UTF8.GetBytes(value);
         }
     }
 }

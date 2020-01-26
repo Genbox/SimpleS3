@@ -7,6 +7,7 @@ using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Internals.Pools;
 using Microsoft.Extensions.Logging;
 
 namespace Genbox.SimpleS3.Core.Authentication
@@ -41,7 +42,8 @@ namespace Genbox.SimpleS3.Core.Authentication
         {
             _logger.LogTrace("Creating chunked StringToSign");
 
-            StringBuilder sb = new StringBuilder(512);
+            StringBuilder sb = StringBuilderPool.Shared.Rent(300);
+
             sb.Append(SigningConstants.ChunkedAlgorithmTag).Append(SigningConstants.Newline);
             sb.Append(dateTime.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo)).Append(SigningConstants.Newline);
             sb.Append(scope).Append(SigningConstants.Newline);
@@ -50,6 +52,9 @@ namespace Genbox.SimpleS3.Core.Authentication
             sb.Append(CryptoHelper.Sha256Hash(content, contentLength).HexEncode());
 
             string sts = sb.ToString();
+
+            StringBuilderPool.Shared.Return(sb);
+
             _logger.LogDebug("Chunked StringToSign: {StringToSign}", sts);
             return sts;
         }

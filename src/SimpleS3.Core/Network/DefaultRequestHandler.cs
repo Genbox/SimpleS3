@@ -17,6 +17,7 @@ using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
@@ -91,7 +92,7 @@ namespace Genbox.SimpleS3.Core.Network
             else
                 objectKey = encodedResource;
 
-            StringBuilder sb = new StringBuilder(512);
+            StringBuilder sb = StringBuilderPool.Shared.Rent(100);
 
             if (_options.Value.Endpoint != null)
                 sb.Append(_options.Value.Endpoint.Host);
@@ -142,6 +143,8 @@ namespace Genbox.SimpleS3.Core.Network
                 sb.Append('?').Append(UrlHelper.CreateQueryString(request.QueryParameters));
 
             string fullUrl = "https://" + sb;
+
+            StringBuilderPool.Shared.Return(sb);
 
             _logger.LogDebug("Building request for {Url}", fullUrl);
 

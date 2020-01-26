@@ -8,6 +8,7 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Pools;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -41,13 +42,14 @@ namespace Genbox.SimpleS3.Core.Builders
 
             string scope = _scopeBuilder.CreateScope("s3", date);
 
-            StringBuilder header = new StringBuilder(512);
+            StringBuilder header = StringBuilderPool.Shared.Rent(250);
             header.Append(SigningConstants.AlgorithmTag);
             header.AppendFormat(CultureInfo.InvariantCulture, " Credential={0}/{1},", _options.Value.Credentials.KeyId, scope);
             header.AppendFormat(CultureInfo.InvariantCulture, "SignedHeaders={0},", string.Join(";", FilterHeaders(headers)));
             header.AppendFormat(CultureInfo.InvariantCulture, "Signature={0}", signature.HexEncode());
 
             string authHeader = header.ToString();
+            StringBuilderPool.Shared.Return(header);
             _logger.LogDebug("AuthHeader: {AuthHeader}", authHeader);
             return authHeader;
         }

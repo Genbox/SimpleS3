@@ -11,6 +11,7 @@ using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using Microsoft.Collections.Extensions;
 using Microsoft.Extensions.Logging;
@@ -111,7 +112,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             // Signed Headers + \n
             // Sha256 Content Hash
 
-            StringBuilder sb = new StringBuilder(512);
+            StringBuilder sb = StringBuilderPool.Shared.Rent(300);
             sb.Append(method.ToString()).Append(SigningConstants.Newline);
             sb.Append(CanonicalizeUri(objectKey)).Append(SigningConstants.Newline);
             sb.Append(CanonicalizeQueryParameters(query)).Append(SigningConstants.Newline);
@@ -132,6 +133,9 @@ namespace Genbox.SimpleS3.Core.Authentication
             sb.Append(contentHash);
 
             string canonicalRequest = sb.ToString();
+            
+            StringBuilderPool.Shared.Return(sb);
+
             _logger.LogDebug("CanonicalRequest: {CanonicalRequest}", canonicalRequest);
             return canonicalRequest;
         }
@@ -146,13 +150,15 @@ namespace Genbox.SimpleS3.Core.Authentication
             // Scope + \n
             // Hex(SHA256(Canonical Request))
 
-            StringBuilder sb = new StringBuilder(512);
+            StringBuilder sb = StringBuilderPool.Shared.Rent(150);
             sb.Append(SigningConstants.AlgorithmTag).Append(SigningConstants.Newline);
             sb.Append(dateTime.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo)).Append(SigningConstants.Newline); //See https://docs.aws.amazon.com/general/latest/gr/sigv4-date-handling.html
             sb.Append(scope).Append(SigningConstants.Newline);
             sb.Append(CryptoHelper.Sha256Hash(Encoding.UTF8.GetBytes(canonicalRequest)).HexEncode());
 
             string sts = sb.ToString();
+
+            StringBuilderPool.Shared.Return(sb);
 
             _logger.LogDebug("StringToSign: {StringToSign}", sts);
             return sts;
@@ -194,7 +200,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             //2. Header names must be in lowercase.
             //3. You must sort the header names alphabetically
 
-            StringBuilder sb = new StringBuilder(512);
+            StringBuilder sb = StringBuilderPool.Shared.Rent(200);
 
             foreach (KeyValuePair<string, string> item in headers)
             {
@@ -204,7 +210,9 @@ namespace Genbox.SimpleS3.Core.Authentication
                     .Append(SigningConstants.Newline);
             }
 
-            return sb.ToString();
+            string value = sb.ToString();
+            StringBuilderPool.Shared.Return(sb);
+            return value;
         }
 
         private static string CanonicalizeHeaderNames(IReadOnlyDictionary<string, string> headers)
@@ -215,7 +223,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             //Source: https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
             //1. Alphabetically sorted, semicolon-separated list of lowercase request header names
 
-            StringBuilder sb = new StringBuilder(512);
+            StringBuilder sb = StringBuilderPool.Shared.Rent(50);
 
             foreach (KeyValuePair<string, string> item in headers)
             {
@@ -225,7 +233,9 @@ namespace Genbox.SimpleS3.Core.Authentication
                 sb.Append(item.Key);
             }
 
-            return sb.ToString();
+            string value = sb.ToString();
+            StringBuilderPool.Shared.Return(sb);
+            return value;
         }
     }
 }
