@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
@@ -17,6 +17,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         {
             BucketName = bucketName;
             ObjectKey = objectKey;
+
+            AclGrantRead = new AclBuilder();
+            AclGrantReadAcp = new AclBuilder();
+            AclGrantWriteAcp = new AclBuilder();
+            AclGrantFullControl = new AclBuilder();
         }
 
         public byte[] ContentMd5 { get; set; }
