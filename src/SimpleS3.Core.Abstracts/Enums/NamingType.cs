@@ -2,6 +2,7 @@
 {
     public enum NamingType
     {
+        Unknown = 0,
         VirtualHost,
         PathStyle
     }

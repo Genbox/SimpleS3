@@ -2,6 +2,8 @@
 {
     public enum ErrorCode
     {
+        Unknown = 0,
+
         /// <summary>Access Denied</summary>
         AccessDenied,
 
