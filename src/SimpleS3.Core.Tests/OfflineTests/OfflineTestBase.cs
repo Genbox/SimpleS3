@@ -1,6 +1,7 @@
 ﻿using System;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
@@ -27,7 +28,14 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
             //Set the configuration from the config file
             _configRoot = configBuilder.Build();
 
-            collection.AddSimpleS3Core(ConfigureS3);
+            collection.AddSimpleS3Core(config =>
+            {
+                //Set the configuration from the config file
+                _configRoot.Bind(config);
+                config.Region = AwsRegion.EuWest1;
+                config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
+            });
+
             collection.AddSingleton<INetworkDriver, NullNetworkDriver>();
 
             collection.AddLogging(x =>
@@ -60,14 +68,6 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
         {
             Services?.Dispose();
             GC.SuppressFinalize(this);
-        }
-
-        private void ConfigureS3(S3Config config)
-        {
-            //Set the configuration from the config file
-            _configRoot.Bind(config);
-
-            config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
         }
     }
 }

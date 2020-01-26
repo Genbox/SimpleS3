@@ -2,6 +2,7 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Authentication;
@@ -33,19 +34,15 @@ namespace Genbox.SimpleS3.Core.Network.RequestWrappers
 
         public bool IsSupported(IRequest request)
         {
-            if (_config.Value.EnablePayloadSigning)
-                return false;
-
-            if (!_config.Value.EnableStreaming)
-                return false;
-
-            return request is ISupportStreaming;
+            return _config.Value.PayloadSignatureType == SignatureType.StreamingSignature && request is ISupportStreaming;
         }
 
         public Stream Wrap(Stream input, IRequest request)
         {
-            Validator.RequireNotNull(input, nameof(input));
             Validator.RequireNotNull(request, nameof(request));
+
+            if (input == null)
+                return null;
 
             //See https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
             request.SetHeader(HttpHeaders.ContentEncoding, "aws-chunked");

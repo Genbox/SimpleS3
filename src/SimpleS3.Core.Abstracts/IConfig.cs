@@ -12,16 +12,13 @@ namespace Genbox.SimpleS3.Core.Abstracts
         /// <summary>This defines the region we use for communicating with S3. If you specify your own endpoint, this value is only used for signatures.</summary>
         AwsRegion Region { get; set; }
 
-        /// <summary>This enables payload signing, which means we hash data before sending it to Amazon.</summary>
-        bool EnablePayloadSigning { get; set; }
-
         /// <summary>
-        /// Enables support for streaming signatures. When uploading data, Amazon S3 expects a hash of the data before the upload begins. This either
-        /// means we have to load everything into memory to hash it, or fully read a stream twice. Both solutions result in bad performance. With streaming, we
-        /// read a smaller chunk of the data, hash it and send it to amazon. This gives much better performance, with a small overhead of having to send
-        /// streaming chunk headers.
+        /// There are 3 different signing modes:
+        /// 1. Unsigned - means the request will be sent without a signature at all.
+        /// 2. FullSignature - Means the full payload will be hashed before sending. This option is better when you are only sending small objects (up to 32 MB).
+        /// 3. StreamingSignature - Means the payload will be hashed in chunks and streamed to the server. This option is better when you also send large objects (up to 5 TB).
         /// </summary>
-        bool EnableStreaming { get; set; }
+        SignatureType PayloadSignatureType { get; set; }
 
         /// <summary>
         /// This is the number of bytes we read into memory, hash and send as a chunk to S3. Larger size means lower network overhead, but more memory

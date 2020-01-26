@@ -111,7 +111,7 @@ namespace Genbox.SimpleS3.Core.Network
             request.SetHeader(HttpHeaders.Host, sb.ToString());
             request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
 
-            if (requestStream != null && _requestStreamWrappers != null)
+            if (requestStream != null)
             {
                 foreach (IRequestStreamWrapper wrapper in _requestStreamWrappers)
                 {
@@ -120,9 +120,17 @@ namespace Genbox.SimpleS3.Core.Network
                 }
             }
 
-            //If the payload is not signed and streaming is not enabled, tell S3 this is an unsigned request
-            if (!request.Headers.ContainsKey(AmzHeaders.XAmzContentSha256))
-                request.SetHeader(AmzHeaders.XAmzContentSha256, "UNSIGNED-PAYLOAD");
+            if (!request.Headers.TryGetValue(AmzHeaders.XAmzContentSha256, out string contentHash))
+            {
+                if (_options.Value.PayloadSignatureType == SignatureType.Unsigned)
+                    contentHash = "UNSIGNED-PAYLOAD";
+                else
+                    contentHash = requestStream == null ? "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" : CryptoHelper.Sha256Hash(requestStream, true).HexEncode();
+
+                request.SetHeader(AmzHeaders.XAmzContentSha256, contentHash);
+            }
+
+            _logger.LogDebug("ContentSha256 is {ContentSha256}", contentHash);
 
             //We add the authorization header here because we need ALL other headers to be present when we do
             request.SetHeader(HttpHeaders.Authorization, _authBuilder.BuildAuthorization(request));

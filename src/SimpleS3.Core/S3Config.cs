@@ -21,9 +21,8 @@ namespace Genbox.SimpleS3.Core
 
         public IAccessKey Credentials { get; set; }
         public AwsRegion Region { get; set; }
-        public bool EnablePayloadSigning { get; set; } = true;
-        public bool EnableStreaming { get; set; } = true;
-        public int StreamingChunkSize { get; set; } = 8 * 1024 * 1024; //8 Mb
+        public SignatureType PayloadSignatureType { get; set; } = SignatureType.StreamingSignature;
+        public int StreamingChunkSize { get; set; } = 32 * 1024 * 1024; //32 Mb
         public NamingType NamingType { get; set; } = NamingType.PathStyle;
         public Uri Endpoint { get; set; }
         public bool EnableBucketNameValidation { get; set; } = true;
