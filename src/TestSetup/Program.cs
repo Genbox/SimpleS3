@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
@@ -10,7 +9,7 @@ namespace Genbox.TestSetup
 {
     internal class Program
     {
-        private static async Task Main(string[] args)
+        private static void Main(string[] args)
         {
             ServiceCollection services = new ServiceCollection();
 
