@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Genbox.SimpleS3;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Extensions;
@@ -62,9 +63,14 @@ namespace Genbox.TestCleanup
                     if (!bucket.Name.StartsWith("testbucket", StringComparison.OrdinalIgnoreCase))
                         continue;
 
-                    await client.DeleteAllObjectsAsync(bucket.Name).ConfigureAwait(false);
-                    await client.DeleteBucketAsync(bucket.Name).ConfigureAwait(false);
+                    DeleteAllObjectsStatus objDelResp = await client.DeleteAllObjectsAsync(bucket.Name).ConfigureAwait(false);
+
+                    if (objDelResp == DeleteAllObjectsStatus.Ok)
+                        await client.DeleteBucketAsync(bucket.Name).ConfigureAwait(false);
                 }
+
+                //Empty the main test bucket
+                await client.DeleteAllObjectsAsync(configRoot["BucketName"]).ConfigureAwait(false);
             }
         }
     }
