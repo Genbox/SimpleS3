@@ -67,7 +67,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
             //Set the configuration from the config file
             _configRoot.Bind(config);
 
-            config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "offlineaccesskey");
+            config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
         }
     }
 }

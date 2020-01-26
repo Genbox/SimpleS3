@@ -1,7 +1,6 @@
 ﻿using System;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Builders;
-using Genbox.SimpleS3.Core.Tests.OnlineTests;
 using Xunit;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests.S3Builders

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Authentication
 {
@@ -10,6 +11,8 @@ namespace Genbox.SimpleS3.Core.Authentication
     {
         public StringAccessKey(string keyId, string accessKey) : base(keyId, Encoding.UTF8.GetBytes(accessKey))
         {
+            InputValidator.ValidateKeyId(keyId);
+            InputValidator.ValidateAccessKey(Encoding.UTF8.GetBytes(accessKey));
         }
     }
 }

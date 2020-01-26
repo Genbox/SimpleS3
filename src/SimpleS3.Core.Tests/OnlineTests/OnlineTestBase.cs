@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
-using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
@@ -12,6 +11,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
+using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -24,30 +24,36 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
 {
     public abstract class OnlineTestBase : IDisposable
     {
-        private readonly IConfigurationRoot _configRoot;
-
         protected OnlineTestBase(ITestOutputHelper outputHelper)
         {
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
             configBuilder.AddJsonFile("Config.json", false);
 
+            //Set the configuration from the config file
+            IConfigurationRoot configRoot = configBuilder.Build();
+
             ServiceCollection collection = new ServiceCollection();
 
-            //Set the configuration from the config file
-            configBuilder.AddUserSecrets(GetType().Assembly);
-            _configRoot = configBuilder.Build();
+            IClientBuilder builder = collection.AddSimpleS3Core(config =>
+            {
+                //Set the configuration from the config file
+                configRoot.Bind(config);
+            });
 
-            IClientBuilder builder = collection.AddSimpleS3Core(ConfigureS3);
+            builder.UseProfileManager()
+                .BindConfigToDefaultProfile()
+                .UseDataProtection();
+
             IHttpClientBuilder httpClientBuilder = builder.UseHttpClientFactory();
 
-            IConfigurationSection proxySection = _configRoot.GetSection("Proxy");
+            IConfigurationSection proxySection = configRoot.GetSection("Proxy");
 
             if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
                 httpClientBuilder.WithProxy(proxySection["ProxyAddress"]);
 
             collection.AddLogging(x =>
             {
-                x.AddConfiguration(_configRoot.GetSection("Logging"));
+                x.AddConfiguration(configRoot.GetSection("Logging"));
                 x.AddXUnit(outputHelper);
             });
 
@@ -57,7 +63,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
 
             Services = collection.BuildServiceProvider();
 
-            BucketName = _configRoot["BucketName"] ?? "main-test-bucket-2019";
+            BucketName = configRoot["BucketName"] ?? "main-test-bucket-2019";
 
             Config = Services.GetRequiredService<IOptions<S3Config>>().Value;
             ObjectClient = Services.GetRequiredService<IObjectClient>();
@@ -79,22 +85,6 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
         {
             Services?.Dispose();
             GC.SuppressFinalize(this);
-        }
-
-        private void ConfigureS3(S3Config config)
-        {
-            //Set the configuration from the config file
-            _configRoot.Bind(config);
-
-            StringAccessKey secret = new StringAccessKey(_configRoot[nameof(StringAccessKey.KeyId)], _configRoot[nameof(StringAccessKey.AccessKey)]);
-
-            if (string.IsNullOrWhiteSpace(secret.KeyId))
-                throw new Exception("Did you forget to set a KeyId? See Readme.txt on how to run live tests");
-
-            if (secret.AccessKey == null)
-                throw new Exception("Did you forget to set a secret key? See Readme.txt on how to run live tests");
-
-            config.Credentials = secret;
         }
 
         protected async Task<PutObjectResponse> UploadAsync(string bucketName, string objectKey, Action<PutObjectRequest> config = null, bool assumeSuccess = true)
