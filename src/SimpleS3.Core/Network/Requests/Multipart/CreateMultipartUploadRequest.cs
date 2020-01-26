@@ -16,10 +16,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     {
         private byte[] _sseCustomerKey;
 
-        public CreateMultipartUploadRequest(string bucketName, string objectKey) : base(HttpMethod.POST)
+        internal CreateMultipartUploadRequest() : base(HttpMethod.POST)
         {
-            BucketName = bucketName;
-            ObjectKey = objectKey;
             Tags = new TagBuilder();
             Metadata = new MetadataBuilder();
             CacheControl = new CacheControlBuilder();
@@ -31,6 +29,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             AclGrantWriteAcp = new AclBuilder();
             AclGrantFullControl = new AclBuilder();
             SseContext = new KmsContextBuilder();
+        }
+
+        public CreateMultipartUploadRequest(string bucketName, string objectKey) : this()
+        {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
         }
 
         public string BucketName { get; set; }
@@ -81,5 +85,37 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public StorageClass StorageClass { get; set; }
         public TagBuilder Tags { get; internal set; }
         public string WebsiteRedirectLocation { get; set; }
+
+        public override void Reset()
+        {
+            Tags.Reset();
+            Metadata.Reset();
+            CacheControl.Reset();
+            ContentDisposition.Reset();
+            ContentEncoding.Reset();
+            ContentType.Reset();
+            AclGrantRead.Reset();
+            AclGrantReadAcp.Reset();
+            AclGrantWriteAcp.Reset();
+            AclGrantFullControl.Reset();
+            SseContext.Reset();
+            ExpiresOn = null;
+            LockMode = LockMode.Unknown;
+            LockRetainUntil = null;
+            LockLegalHold = null;
+            Acl = ObjectCannedAcl.Unknown;
+            RequestPayer = Payer.Unknown;
+            SseAlgorithm = SseAlgorithm.Unknown;
+            SseKmsKeyId = null;
+            SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
+            SseCustomerKey = null;
+            SseCustomerKeyMd5 = null;
+            BucketName = null;
+            ObjectKey = null;
+            WebsiteRedirectLocation = null;
+            StorageClass = StorageClass.Unknown;
+
+            base.Reset();
+        }
     }
 }

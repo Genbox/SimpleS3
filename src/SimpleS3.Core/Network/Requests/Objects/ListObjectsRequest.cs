@@ -11,7 +11,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
     {
-        public ListObjectsRequest(string bucketName) : base(HttpMethod.GET)
+        internal ListObjectsRequest() : base(HttpMethod.GET)
+        {
+        }
+
+        public ListObjectsRequest(string bucketName) : this()
         {
             BucketName = bucketName;
         }
@@ -68,5 +72,20 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public string BucketName { get; set; }
 
         public Payer RequestPayer { get; set; }
+
+        public override void Reset()
+        {
+            BucketName = null;
+            Delimiter = null;
+            MaxKeys = null;
+            EncodingType = EncodingType.Unknown;
+            Prefix = null;
+            ContinuationToken = null;
+            FetchOwner = null;
+            StartAfter = null;
+            RequestPayer = Payer.Unknown;
+
+            base.Reset();
+        }
     }
 }

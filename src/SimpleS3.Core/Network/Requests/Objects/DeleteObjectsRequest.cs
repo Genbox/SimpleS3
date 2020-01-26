@@ -17,19 +17,23 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention, IHasBucketName, IHasMfa, IHasContentMd5, IContentMd5Config
     {
-        public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : base(HttpMethod.POST)
+        internal DeleteObjectsRequest() : base(HttpMethod.POST)
+        {
+            Mfa = new MfaAuthenticationBuilder();
+            Quiet = true;
+        }
+
+        public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : this()
         {
             BucketName = bucketName;
-            Mfa = new MfaAuthenticationBuilder();
             Objects = resources.ToList();
-            Quiet = true;
         }
 
         /// <summary>In quiet mode the response includes only keys where the delete operation encountered an error.</summary>
         public bool Quiet { get; set; }
 
         /// <summary>The list of objects</summary>
-        public IList<S3DeleteInfo> Objects { get; }
+        public IList<S3DeleteInfo> Objects { get; internal set; }
 
         public string BucketName { get; set; }
         public bool? BypassGovernanceRetention { get; set; }
@@ -37,5 +41,18 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public MfaAuthenticationBuilder Mfa { get; }
         public Payer RequestPayer { get; set; }
         Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
+
+        public override void Reset()
+        {
+            BucketName = null;
+            Objects = null;
+            Mfa.Reset();
+            Quiet = true;
+            BypassGovernanceRetention = null;
+            ContentMd5 = null;
+            RequestPayer = Payer.Unknown;
+
+            base.Reset();
+        }
     }
 }

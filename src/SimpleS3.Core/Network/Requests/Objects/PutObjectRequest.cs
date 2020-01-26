@@ -14,14 +14,28 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public sealed class PutObjectRequest : CreateMultipartUploadRequest, IHasContent, ISupportStreaming, IHasContentMd5, IContentMd5Config
     {
-        public PutObjectRequest(string bucketName, string objectKey, Stream data) : base(bucketName, objectKey)
+        internal PutObjectRequest()
         {
             Method = HttpMethod.PUT;
+        }
+
+        public PutObjectRequest(string bucketName, string objectKey, Stream data) : this()
+        {
             Content = data;
+            BucketName = bucketName;
+            ObjectKey = objectKey;
         }
 
         public Stream Content { get; set; }
         public byte[] ContentMd5 { get; set; }
         Func<bool> IContentMd5Config.ForceContentMd5 => () => LockLegalHold.HasValue && LockLegalHold.Value || LockMode != LockMode.Unknown;
+
+        public override void Reset()
+        {
+            Content = null;
+            ContentMd5 = null;
+
+            base.Reset();
+        }
     }
 }

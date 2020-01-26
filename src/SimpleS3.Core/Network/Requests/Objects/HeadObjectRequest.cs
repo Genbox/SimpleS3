@@ -15,10 +15,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     {
         private byte[] _sseCustomerKey;
 
-        public HeadObjectRequest(string bucketName, string objectKey) : base(HttpMethod.HEAD)
+        internal HeadObjectRequest() : base(HttpMethod.HEAD)
         {
-            BucketName = bucketName;
-            ObjectKey = objectKey;
             Range = new RangeBuilder();
             IfETagMatch = new ETagBuilder();
             IfETagNotMatch = new ETagBuilder();
@@ -27,6 +25,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             ResponseContentDisposition = new ContentDispositionBuilder();
             ResponseContentLanguage = new ContentLanguageBuilder();
             ResponseContentEncoding = new ContentEncodingBuilder();
+        }
+
+        public HeadObjectRequest(string bucketName, string objectKey) : this()
+        {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
         }
 
         public string BucketName { get; set; }
@@ -69,5 +73,29 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         }
 
         public string VersionId { get; set; }
+
+        public override void Reset()
+        {
+            Range.Reset();
+            IfETagMatch.Reset();
+            IfETagNotMatch.Reset();
+            ResponseCacheControl.Reset();
+            ResponseContentType.Reset();
+            ResponseContentDisposition.Reset();
+            ResponseContentLanguage.Reset();
+            ResponseContentEncoding.Reset();
+            VersionId = null;
+            IfModifiedSince = null;
+            IfUnmodifiedSince = null;
+            PartNumber = null;
+            SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
+            SseCustomerKey = null;
+            SseCustomerKeyMd5 = null;
+            ResponseExpires = null;
+            BucketName = null;
+            ObjectKey = null;
+
+            base.Reset();
+        }
     }
 }

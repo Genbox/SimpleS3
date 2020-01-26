@@ -7,11 +7,15 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
     public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId, IHasBucketName, IHasObjectKey
     {
-        public RestoreObjectRequest(string bucketName, string objectKey) : base(HttpMethod.POST)
+        internal RestoreObjectRequest() : base(HttpMethod.POST)
+        {
+            SelectParameters = new S3SelectParameters();
+        }
+
+        public RestoreObjectRequest(string bucketName, string objectKey) : this()
         {
             BucketName = bucketName;
             ObjectKey = objectKey;
-            SelectParameters = new S3SelectParameters();
         }
 
         /// <summary>
@@ -32,11 +36,28 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// <summary>The optional description for the job.</summary>
         public string Description { get; set; }
 
-        public S3SelectParameters SelectParameters { get; }
+        public S3SelectParameters SelectParameters { get; private set; }
         public OutputLocation OutputLocation { get; set; }
         public string BucketName { get; set; }
         public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
         public string VersionId { get; set; }
+
+        public override void Reset()
+        {
+            BucketName = null;
+            ObjectKey = null;
+            SelectParameters = new S3SelectParameters(); //TODO: Reset better
+            Days = 0;
+            GlacierTier = RetrievalTier.Unknown;
+            RequestTier = RetrievalTier.Unknown;
+            RequestType = RestoreRequestType.Unknown;
+            Description = null;
+            OutputLocation = null;
+            RequestPayer = Payer.Unknown;
+            VersionId = null;
+
+            base.Reset();
+        }
     }
 }

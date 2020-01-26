@@ -63,13 +63,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             ObjectClient = Services.GetRequiredService<IObjectClient>();
             BucketClient = Services.GetRequiredService<IBucketClient>();
             MultipartClient = Services.GetRequiredService<IMultipartClient>();
-            Transfer = Services.GetRequiredService<Core.Fluent.Transfer>();
-
-            //foreach (S3Bucket bucket in BucketClient.ListAllBucketsAsync().ToListAsync().Result)
-            //{
-            //    if (bucket.Name.Contains("test", StringComparison.OrdinalIgnoreCase))
-            //        BucketClient.DeleteBucketRecursiveAsync(bucket.Name).Wait();
-            //}
+            Transfer = Services.GetRequiredService<Fluent.Transfer>();
         }
 
         public ServiceProvider Services { get; }
@@ -79,7 +73,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
         protected IObjectClient ObjectClient { get; }
         protected IBucketClient BucketClient { get; }
         protected IMultipartClient MultipartClient { get; }
-        protected Core.Fluent.Transfer Transfer { get; }
+        protected Fluent.Transfer Transfer { get; }
 
         public void Dispose()
         {

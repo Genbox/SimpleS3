@@ -1,4 +1,4 @@
-using Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
@@ -13,15 +13,18 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasObjectAcl, IHasVersionId, IHasContentMd5, IHasRequestPayer
     {
-        public PutObjectAclRequest(string bucketName, string objectKey) : base(HttpMethod.PUT)
+        internal PutObjectAclRequest() : base(HttpMethod.PUT)
         {
-            BucketName = bucketName;
-            ObjectKey = objectKey;
-
             AclGrantRead = new AclBuilder();
             AclGrantReadAcp = new AclBuilder();
             AclGrantWriteAcp = new AclBuilder();
             AclGrantFullControl = new AclBuilder();
+        }
+
+        public PutObjectAclRequest(string bucketName, string objectKey) : this()
+        {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
         }
 
         public byte[] ContentMd5 { get; set; }
@@ -34,5 +37,21 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public string VersionId { get; set; }
         public string BucketName { get; set; }
         public string ObjectKey { get; set; }
+
+        public override void Reset()
+        {
+            ContentMd5 = null;
+            Acl = ObjectCannedAcl.Unknown;
+            AclGrantRead.Reset();
+            AclGrantReadAcp.Reset();
+            AclGrantWriteAcp.Reset();
+            AclGrantFullControl.Reset();
+            RequestPayer = Payer.Unknown;
+            VersionId = null;
+            BucketName = null;
+            ObjectKey = null;
+
+            base.Reset();
+        }
     }
 }

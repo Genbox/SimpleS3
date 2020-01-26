@@ -14,13 +14,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey, IHasLegalHold
     {
-        public CopyObjectRequest(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey) : base(HttpMethod.PUT)
+        internal CopyObjectRequest() : base(HttpMethod.PUT)
         {
-            SourceBucketName = sourceBucketName;
-            SourceObjectKey = sourceObjectKey;
-            DestinationBucketName = destinationBucketName;
-            DestinationObjectKey = destinationObjectKey;
-
             MetadataDirective = MetadataDirective.Copy;
             TaggingDirective = TaggingDirective.Copy;
 
@@ -35,10 +30,18 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             SseContext = new KmsContextBuilder();
         }
 
-        public string SourceBucketName { get; set; }
-        public string SourceObjectKey { get; set; }
-        public string DestinationBucketName { get; }
-        public string DestinationObjectKey { get; }
+        public CopyObjectRequest(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey) : this()
+        {
+            SourceBucketName = sourceBucketName;
+            SourceObjectKey = sourceObjectKey;
+            DestinationBucketName = destinationBucketName;
+            DestinationObjectKey = destinationObjectKey;
+        }
+
+        public string SourceBucketName { get; internal set; }
+        public string SourceObjectKey { get; internal set; }
+        public string DestinationBucketName { get; internal set; }
+        public string DestinationObjectKey { get; internal set; }
         public MetadataDirective MetadataDirective { get; set; }
         public TaggingDirective TaggingDirective { get; set; }
         string IHasBucketName.BucketName { get => DestinationBucketName; set => throw new NotSupportedException(); }
@@ -74,5 +77,41 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public TagBuilder Tags { get; }
         public string VersionId { get; set; }
         public string WebsiteRedirectLocation { get; set; }
+
+        public override void Reset()
+        {
+            SourceBucketName = null;
+            SourceObjectKey = null;
+            DestinationBucketName = null;
+            DestinationObjectKey = null;
+            MetadataDirective = MetadataDirective.Unknown;
+            TaggingDirective = TaggingDirective.Unknown;
+            IfModifiedSince = null;
+            IfUnmodifiedSince = null;
+            IfETagMatch.Reset();
+            IfETagNotMatch.Reset();
+            LockMode = LockMode.Unknown;
+            LockRetainUntil = null;
+            LockLegalHold = null;
+            Metadata.Reset();
+            Acl = ObjectCannedAcl.Unknown;
+            AclGrantRead.Reset();
+            AclGrantReadAcp.Reset();
+            AclGrantWriteAcp.Reset();
+            AclGrantFullControl.Reset();
+            RequestPayer = Payer.Unknown;
+            SseAlgorithm = SseAlgorithm.Unknown;
+            SseKmsKeyId = null;
+            SseContext = null;
+            SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
+            SseCustomerKey = null;
+            SseCustomerKeyMd5 = null;
+            StorageClass = StorageClass.Unknown;
+            Tags.Reset();
+            VersionId = null;
+            WebsiteRedirectLocation = null;
+
+            base.Reset();
+        }
     }
 }

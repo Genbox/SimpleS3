@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Internals.Pools;
 
 namespace Genbox.SimpleS3.Core.Network.Requests
 {
-    public abstract class BaseRequest : IRequest
+    public abstract class BaseRequest : IRequest, IPooledObject
     {
         private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>();
@@ -17,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests
             Date = DateTimeOffset.UtcNow;
         }
 
-        public Guid RequestId { get; }
+        public Guid RequestId { get; private set; }
         public DateTimeOffset Date { get; internal set; }
         public HttpMethod Method { get; internal set; }
         public IReadOnlyDictionary<string, string> Headers => _headers;
@@ -46,6 +47,14 @@ namespace Genbox.SimpleS3.Core.Network.Requests
 
             if (!_headers.ContainsKey(key))
                 _headers.Add(key.ToLowerInvariant(), value);
+        }
+
+        public virtual void Reset()
+        {
+            _headers.Clear();
+            _queryParameters.Clear();
+            RequestId = Guid.NewGuid();
+            Date = DateTimeOffset.UtcNow;
         }
     }
 }
