@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
     {
         public Stream MarshalRequest(PutObjectLegalHoldRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.LegalHold, string.Empty);
+            request.SetQueryParameter(AmzParameters.LegalHold, string.Empty);
 
             FastXmlWriter xml = new FastXmlWriter(512);
             xml.WriteStartElement("LegalHold", "http://s3.amazonaws.com/doc/2006-03-01/");

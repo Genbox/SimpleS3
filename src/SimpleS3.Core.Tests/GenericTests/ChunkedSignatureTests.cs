@@ -159,8 +159,8 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
         public void StreamTest()
         {
             UploadPartRequest req = new UploadPartRequest("examplebucket", "myresource", 1, "someid", new MemoryStream(Encoding.UTF8.GetBytes("Hello World")));
-            req.Date = new DateTimeOffset(2019, 1, 1, 12, 0, 0, TimeSpan.Zero);
-            req.AddHeader(AmzHeaders.XAmzContentSha256, "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
+            req.Timestamp = new DateTimeOffset(2019, 1, 1, 12, 0, 0, TimeSpan.Zero);
+            req.SetHeader(AmzHeaders.XAmzContentSha256, "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
 
             byte[] seedSignature = _sigBuilder.CreateSignature(req);
 

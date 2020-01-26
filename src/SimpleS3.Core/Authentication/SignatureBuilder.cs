@@ -83,8 +83,8 @@ namespace Genbox.SimpleS3.Core.Authentication
                 objectKey = encodedResource;
 
             string canonicalRequest = CreateCanonicalRequest(request.RequestId, objectKey, request.Method, request.Headers, request.QueryParameters, request.Headers[AmzHeaders.XAmzContentSha256]);
-            string stringToSign = CreateStringToSign(request.Date, _scopeBuilder.CreateScope("s3", request.Date), canonicalRequest);
-            byte[] signature = CreateSignature(request.Date, stringToSign);
+            string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), canonicalRequest);
+            byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
             _logger.LogDebug("Signature: {signature}", signature);
             return signature;

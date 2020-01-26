@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     {
         public Stream MarshalRequest(PutBucketAccelerateConfigurationRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.Accelerate, string.Empty);
+            request.SetQueryParameter(AmzParameters.Accelerate, string.Empty);
 
             FastXmlWriter writer = new FastXmlWriter(150);
             writer.WriteStartElement("AccelerateConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");

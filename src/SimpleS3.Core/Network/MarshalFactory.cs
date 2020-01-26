@@ -63,10 +63,10 @@ namespace Genbox.SimpleS3.Core.Network
                 if (config.AutoCalculateContentMd5 || request is IContentMd5Config md5Config && md5Config.ForceContentMd5())
                 {
                     string md5Hash = content == null ? "1B2M2Y8AsgTpgAmY7PhCfg==" : Convert.ToBase64String(CryptoHelper.Md5Hash(content, true));
-                    request.AddHeader(HttpHeaders.ContentMd5, md5Hash);
+                    request.SetHeader(HttpHeaders.ContentMd5, md5Hash);
                 }
                 else if (hasContentMd5.ContentMd5 != null)
-                    request.AddHeader(HttpHeaders.ContentMd5, hasContentMd5.ContentMd5, BinaryEncoding.Base64);
+                    request.SetHeader(HttpHeaders.ContentMd5, hasContentMd5.ContentMd5, BinaryEncoding.Base64);
             }
 
             return content;

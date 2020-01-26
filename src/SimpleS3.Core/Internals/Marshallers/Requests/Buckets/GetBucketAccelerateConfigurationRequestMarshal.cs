@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     {
         public Stream MarshalRequest(GetBucketAccelerateConfigurationRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.Accelerate, string.Empty);
+            request.SetQueryParameter(AmzParameters.Accelerate, string.Empty);
             return null;
         }
     }

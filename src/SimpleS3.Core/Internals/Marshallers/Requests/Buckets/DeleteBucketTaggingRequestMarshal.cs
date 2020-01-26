@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     {
         public Stream MarshalRequest(DeleteBucketTaggingRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.Tagging, string.Empty);
+            request.SetQueryParameter(AmzParameters.Tagging, string.Empty);
             return null;
         }
     }

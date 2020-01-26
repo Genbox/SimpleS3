@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
     {
         public Stream MarshalRequest(DeleteObjectsRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.Delete, string.Empty);
+            request.SetQueryParameter(AmzParameters.Delete, string.Empty);
 
             FastXmlWriter xml = new FastXmlWriter(512);
             xml.WriteStartElement("Delete");

@@ -13,6 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\..\Config.json" Link="Config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.2.0" />
@@ -31,12 +37,6 @@
   <ItemGroup>
     <ProjectReference Include="..\SimpleS3.Core\SimpleS3.Core.csproj" />
     <ProjectReference Include="..\SimpleS3.Extensions.HttpClientFactory\SimpleS3.Extensions.HttpClientFactory.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="TestConfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

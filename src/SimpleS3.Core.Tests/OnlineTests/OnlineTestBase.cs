@@ -29,7 +29,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
         protected OnlineTestBase(ITestOutputHelper outputHelper)
         {
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
-            configBuilder.AddJsonFile("TestConfig.json", false);
+            configBuilder.AddJsonFile("Config.json", false);
 
             ServiceCollection collection = new ServiceCollection();
 

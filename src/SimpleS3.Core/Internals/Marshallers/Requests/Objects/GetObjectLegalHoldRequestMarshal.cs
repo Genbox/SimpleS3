@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
     {
         public Stream MarshalRequest(GetObjectLegalHoldRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.LegalHold, string.Empty);
+            request.SetQueryParameter(AmzParameters.LegalHold, string.Empty);
             return null;
         }
     }

@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     {
         public Stream MarshalRequest(GetBucketLockConfigurationRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.ObjectLock, string.Empty);
+            request.SetQueryParameter(AmzParameters.ObjectLock, string.Empty);
             return null;
         }
     }

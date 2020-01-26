@@ -13,13 +13,13 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
     {
         public Stream MarshalRequest(ListMultipartUploadsRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.Uploads, string.Empty);
-            request.AddQueryParameter(AmzParameters.Delimiter, request.Delimiter);
-            request.AddQueryParameter(AmzParameters.EncodingType, request.EncodingType);
-            request.AddQueryParameter(AmzParameters.MaxUploads, request.MaxUploads);
-            request.AddQueryParameter(AmzParameters.KeyMarker, request.KeyMarker);
-            request.AddQueryParameter(AmzParameters.Prefix, request.Prefix);
-            request.AddQueryParameter(AmzParameters.UploadIdMarker, request.UploadIdMarker);
+            request.SetQueryParameter(AmzParameters.Uploads, string.Empty);
+            request.SetQueryParameter(AmzParameters.Delimiter, request.Delimiter);
+            request.SetQueryParameter(AmzParameters.EncodingType, request.EncodingType);
+            request.SetQueryParameter(AmzParameters.MaxUploads, request.MaxUploads);
+            request.SetQueryParameter(AmzParameters.KeyMarker, request.KeyMarker);
+            request.SetQueryParameter(AmzParameters.Prefix, request.Prefix);
+            request.SetQueryParameter(AmzParameters.UploadIdMarker, request.UploadIdMarker);
             return null;
         }
     }

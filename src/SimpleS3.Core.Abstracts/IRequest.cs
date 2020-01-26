@@ -6,10 +6,10 @@ namespace Genbox.SimpleS3.Core.Abstracts
 {
     public interface IRequest
     {
-        Guid RequestId { get; }
+        Guid RequestId { get; set; }
 
         /// <summary>Date of the request</summary>
-        DateTimeOffset Date { get; }
+        DateTimeOffset Timestamp { get; set; }
 
         /// <summary>The method to use when performing the request</summary>
         HttpMethod Method { get; }
@@ -23,11 +23,11 @@ namespace Genbox.SimpleS3.Core.Abstracts
         /// <summary>Adds a query parameter</summary>
         /// <param name="key">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
-        void AddQueryParameter(string key, string value);
+        void SetQueryParameter(string key, string value);
 
         /// <summary>Adds a header</summary>
         /// <param name="key">Name of the header</param>
         /// <param name="value">Value of the header</param>
-        void AddHeader(string key, string value);
+        void SetHeader(string key, string value);
     }
 }

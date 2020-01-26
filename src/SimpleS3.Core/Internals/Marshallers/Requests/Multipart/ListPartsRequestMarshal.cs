@@ -13,9 +13,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
     {
         public Stream MarshalRequest(ListPartsRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.EncodingType, request.EncodingType);
-            request.AddQueryParameter(AmzParameters.MaxParts, request.MaxParts);
-            request.AddQueryParameter(AmzParameters.PartNumberMarker, request.PartNumberMarker);
+            request.SetQueryParameter(AmzParameters.EncodingType, request.EncodingType);
+            request.SetQueryParameter(AmzParameters.MaxParts, request.MaxParts);
+            request.SetQueryParameter(AmzParameters.PartNumberMarker, request.PartNumberMarker);
             return null;
         }
     }

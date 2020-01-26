@@ -40,7 +40,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
             byte[] data = Encoding.UTF8.GetBytes("Hello world");
 
             _req = new PutObjectRequest("examplebucket", "benchmark", new MemoryStream(data));
-            _req.AddHeader(AmzHeaders.XAmzContentSha256, CryptoHelper.Sha256Hash(data).HexEncode());
+            _req.SetHeader(AmzHeaders.XAmzContentSha256, CryptoHelper.Sha256Hash(data).HexEncode());
 
             _date = DateTimeOffset.UtcNow;
         }

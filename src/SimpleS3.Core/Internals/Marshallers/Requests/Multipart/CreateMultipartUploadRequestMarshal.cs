@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
         public Stream MarshalRequest(CreateMultipartUploadRequest request, IConfig config)
         {
             //This is required for multipart uploads
-            request.AddQueryParameter(AmzParameters.Uploads, string.Empty);
+            request.SetQueryParameter(AmzParameters.Uploads, string.Empty);
             return null;
         }
     }

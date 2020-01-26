@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     {
         public Stream MarshalRequest(PutBucketLockConfigurationRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.ObjectLock, string.Empty);
+            request.SetQueryParameter(AmzParameters.ObjectLock, string.Empty);
 
             FastXmlWriter writer = new FastXmlWriter(128);
             writer.WriteStartElement("ObjectLockConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");

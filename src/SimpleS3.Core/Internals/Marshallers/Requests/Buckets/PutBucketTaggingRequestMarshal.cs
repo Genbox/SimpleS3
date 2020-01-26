@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     {
         public Stream MarshalRequest(PutBucketTaggingRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.Tagging, string.Empty);
+            request.SetQueryParameter(AmzParameters.Tagging, string.Empty);
 
             if (!request.Tags.HasData())
                 return null;

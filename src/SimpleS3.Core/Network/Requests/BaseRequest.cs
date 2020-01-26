@@ -14,17 +14,15 @@ namespace Genbox.SimpleS3.Core.Network.Requests
         protected BaseRequest(HttpMethod method)
         {
             Method = method;
-            RequestId = Guid.NewGuid();
-            Date = DateTimeOffset.UtcNow;
         }
 
-        public Guid RequestId { get; private set; }
-        public DateTimeOffset Date { get; internal set; }
+        public Guid RequestId { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
         public HttpMethod Method { get; internal set; }
         public IReadOnlyDictionary<string, string> Headers => _headers;
         public IReadOnlyDictionary<string, string> QueryParameters => _queryParameters;
 
-        public void AddQueryParameter(string key, string value)
+        public void SetQueryParameter(string key, string value)
         {
             if (string.IsNullOrWhiteSpace(key))
                 return;
@@ -32,12 +30,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests
             if (value == null)
                 return;
 
-            if (!_queryParameters.ContainsKey(key))
-                _queryParameters.Add(key, value);
+            _queryParameters[key] = value;
         }
 
-
-        public void AddHeader(string key, string value)
+        public void SetHeader(string key, string value)
         {
             if (string.IsNullOrWhiteSpace(key))
                 return;
@@ -45,16 +41,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests
             if (string.IsNullOrWhiteSpace(value))
                 return;
 
-            if (!_headers.ContainsKey(key))
-                _headers.Add(key.ToLowerInvariant(), value);
+            _headers[key.ToLowerInvariant()] = value;
         }
 
         public virtual void Reset()
         {
             _headers.Clear();
             _queryParameters.Clear();
-            RequestId = Guid.NewGuid();
-            Date = DateTimeOffset.UtcNow;
         }
     }
 }

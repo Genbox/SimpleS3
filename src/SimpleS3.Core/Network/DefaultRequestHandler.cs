@@ -59,6 +59,9 @@ namespace Genbox.SimpleS3.Core.Network
 
         public async Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken cancellationToken = default) where TResp : IResponse, new() where TReq : IRequest
         {
+            request.Timestamp = DateTimeOffset.UtcNow;
+            request.RequestId = Guid.NewGuid();
+
             _logger.LogTrace("Sending {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
             Stream requestStream = _marshaller.MarshalRequest(request, _options.Value);
@@ -105,8 +108,8 @@ namespace Genbox.SimpleS3.Core.Network
                     sb.Append("s3.").Append(ValueHelper.EnumToString(_options.Value.Region)).Append(".amazonaws.com");
             }
 
-            request.AddHeader(HttpHeaders.Host, sb.ToString());
-            request.AddHeader(AmzHeaders.XAmzDate, request.Date, DateTimeFormat.Iso8601DateTime);
+            request.SetHeader(HttpHeaders.Host, sb.ToString());
+            request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
 
             if (requestStream != null && _requestStreamWrappers != null)
             {
@@ -117,23 +120,12 @@ namespace Genbox.SimpleS3.Core.Network
                 }
             }
 
-            //We check if it was already added here because it might have been due to streaming support
+            //If the payload is not signed and streaming is not enabled, tell S3 this is an unsigned request
             if (!request.Headers.ContainsKey(AmzHeaders.XAmzContentSha256))
-            {
-                string contentHash;
-
-                if (!_options.Value.EnablePayloadSigning)
-                    contentHash = "UNSIGNED-PAYLOAD";
-                else
-                    contentHash = requestStream == null ? "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" : CryptoHelper.Sha256Hash(requestStream, true).HexEncode();
-
-                _logger.LogDebug("ContentSha256 is {ContentSha256}", contentHash);
-
-                request.AddHeader(AmzHeaders.XAmzContentSha256, contentHash);
-            }
+                request.SetHeader(AmzHeaders.XAmzContentSha256, "UNSIGNED-PAYLOAD");
 
             //We add the authorization header here because we need ALL other headers to be present when we do
-            request.AddHeader(HttpHeaders.Authorization, _authBuilder.BuildAuthorization(request));
+            request.SetHeader(HttpHeaders.Authorization, _authBuilder.BuildAuthorization(request));
 
             sb.Append('/').Append(objectKey);
 

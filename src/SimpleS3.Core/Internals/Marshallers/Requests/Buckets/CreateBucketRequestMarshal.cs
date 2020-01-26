@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
         {
             //We only enable object locking on creation. We can't disable it, so there is no "false" option
             if (request.EnableObjectLocking.HasValue && request.EnableObjectLocking.Value)
-                request.AddHeader(AmzHeaders.XAmzBucketObjectLockEnabled, request.EnableObjectLocking.Value ? "TRUE" : string.Empty);
+                request.SetHeader(AmzHeaders.XAmzBucketObjectLockEnabled, request.EnableObjectLocking.Value ? "TRUE" : string.Empty);
 
             //Hard-code the LocationConstraint to the region from the config
             FastXmlWriter writer = new FastXmlWriter(128);

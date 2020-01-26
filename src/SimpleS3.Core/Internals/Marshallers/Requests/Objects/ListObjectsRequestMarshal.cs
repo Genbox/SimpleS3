@@ -13,14 +13,14 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
     {
         public Stream MarshalRequest(ListObjectsRequest request, IConfig config)
         {
-            request.AddQueryParameter(AmzParameters.Delimiter, request.Delimiter);
-            request.AddQueryParameter(AmzParameters.EncodingType, request.EncodingType);
-            request.AddQueryParameter(AmzParameters.MaxKeys, request.MaxKeys);
-            request.AddQueryParameter(AmzParameters.Prefix, request.Prefix);
-            request.AddQueryParameter(AmzParameters.ContinuationToken, request.ContinuationToken);
-            request.AddQueryParameter(AmzParameters.FetchOwner, request.FetchOwner);
-            request.AddQueryParameter(AmzParameters.StartAfter, request.StartAfter);
-            request.AddQueryParameter(AmzParameters.ListType, 2);
+            request.SetQueryParameter(AmzParameters.Delimiter, request.Delimiter);
+            request.SetQueryParameter(AmzParameters.EncodingType, request.EncodingType);
+            request.SetQueryParameter(AmzParameters.MaxKeys, request.MaxKeys);
+            request.SetQueryParameter(AmzParameters.Prefix, request.Prefix);
+            request.SetQueryParameter(AmzParameters.ContinuationToken, request.ContinuationToken);
+            request.SetQueryParameter(AmzParameters.FetchOwner, request.FetchOwner);
+            request.SetQueryParameter(AmzParameters.StartAfter, request.StartAfter);
+            request.SetQueryParameter(AmzParameters.ListType, 2);
             return null;
         }
     }

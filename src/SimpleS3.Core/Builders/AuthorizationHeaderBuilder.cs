@@ -32,7 +32,7 @@ namespace Genbox.SimpleS3.Core.Builders
         {
             Validator.RequireNotNull(request, nameof(request));
 
-            return BuildHeader(request.Date, request.Headers, _signatureBuilder.CreateSignature(request));
+            return BuildHeader(request.Timestamp, request.Headers, _signatureBuilder.CreateSignature(request));
         }
 
         internal string BuildHeader(DateTimeOffset date, IReadOnlyDictionary<string, string> headers, byte[] signature)

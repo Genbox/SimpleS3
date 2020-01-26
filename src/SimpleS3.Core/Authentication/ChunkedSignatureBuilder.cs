@@ -30,8 +30,8 @@ namespace Genbox.SimpleS3.Core.Authentication
 
             _logger.LogTrace("Creating chunk signature for {RequestId}", request.RequestId);
 
-            string stringToSign = CreateStringToSign(request.Date, _scopeBuilder.CreateScope("s3", request.Date), previousSignature, content, contentLength);
-            byte[] signature = CreateSignature(request.Date, stringToSign);
+            string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, content, contentLength);
+            byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
             _logger.LogDebug("Chunk signature: {signature}", signature);
             return signature;
