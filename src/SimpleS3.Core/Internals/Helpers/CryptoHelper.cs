@@ -20,9 +20,9 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
             return Sha256.ComputeHash(data);
         }
 
-        public static byte[] Sha256Hash(byte[] data, int length)
+        public static byte[] Sha256Hash(byte[] data, int offset, int length)
         {
-            return Sha256.ComputeHash(data, 0, length);
+            return Sha256.ComputeHash(data, offset, length);
         }
 
         public static byte[] Sha256Hash(Stream data, bool restorePosition)

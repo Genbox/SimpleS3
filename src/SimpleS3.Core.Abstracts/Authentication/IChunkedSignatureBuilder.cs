@@ -2,6 +2,6 @@
 {
     public interface IChunkedSignatureBuilder
     {
-        byte[] CreateChunkSignature(IRequest request, byte[] previousSignature, byte[] content, int contentLength);
+        byte[] CreateChunkSignature(IRequest request, byte[] previousSignature, byte[] content, int offset, int length);
     }
 }
