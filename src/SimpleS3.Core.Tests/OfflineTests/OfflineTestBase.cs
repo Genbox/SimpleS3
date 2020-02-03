@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
     {
         private readonly IConfigurationRoot _configRoot;
 
-        protected OfflineTestBase(ITestOutputHelper outputHelper)
+        protected OfflineTestBase(ITestOutputHelper outputHelper, Action<S3Config> customConfig = null)
         {
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
             configBuilder.AddJsonFile("Config.json", false);
@@ -34,6 +34,8 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
                 _configRoot.Bind(config);
                 config.Region = AwsRegion.EuWest1;
                 config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
+
+                customConfig?.Invoke(config);
             });
 
             collection.AddSingleton<INetworkDriver, NullNetworkDriver>();
