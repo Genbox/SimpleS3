@@ -82,7 +82,7 @@ namespace Genbox.SimpleS3.Core.Network
             //Ensure that the object key is encoded
             string encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
 
-            if (_options.Value.Endpoint == null || _options.Value.NamingType == NamingType.PathStyle)
+            if (_options.Value.Endpoint == null || _options.Value.NamingMode == NamingMode.PathStyle)
             {
                 if (bucketName != null)
                     objectKey = bucketName + '/' + encodedResource;
@@ -98,7 +98,7 @@ namespace Genbox.SimpleS3.Core.Network
                 sb.Append(_options.Value.Endpoint.Host);
             else
             {
-                if (_options.Value.NamingType == NamingType.VirtualHost)
+                if (_options.Value.NamingMode == NamingMode.VirtualHost)
                 {
                     if (bucketName != null)
                         sb.Append(bucketName).Append(".s3.").Append(ValueHelper.EnumToString(_options.Value.Region)).Append(".amazonaws.com");
@@ -123,7 +123,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             if (!request.Headers.TryGetValue(AmzHeaders.XAmzContentSha256, out string contentHash))
             {
-                if (_options.Value.PayloadSignatureType == SignatureType.Unsigned)
+                if (_options.Value.PayloadSignatureMode == SignatureMode.Unsigned)
                     contentHash = "UNSIGNED-PAYLOAD";
                 else
                     contentHash = requestStream == null ? "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" : CryptoHelper.Sha256Hash(requestStream, true).HexEncode();

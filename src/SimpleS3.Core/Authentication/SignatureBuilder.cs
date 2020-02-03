@@ -73,7 +73,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             //Ensure that the object key is encoded
             string encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
 
-            if (_options.Value.Endpoint == null || _options.Value.NamingType == NamingType.PathStyle)
+            if (_options.Value.Endpoint == null || _options.Value.NamingMode == NamingMode.PathStyle)
             {
                 if (bucketName != null)
                     objectKey = bucketName + '/' + encodedResource;

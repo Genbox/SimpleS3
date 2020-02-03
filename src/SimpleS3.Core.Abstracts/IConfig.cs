@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Abstracts
         /// 2. FullSignature - Means the full payload will be hashed before sending. This option is better when you are only sending small objects (up to 32 MB).
         /// 3. StreamingSignature - Means the payload will be hashed in chunks and streamed to the server. This option is better when you also send large objects (up to 5 TB).
         /// </summary>
-        SignatureType PayloadSignatureType { get; set; }
+        SignatureMode PayloadSignatureMode { get; set; }
 
         /// <summary>
         /// This is the number of bytes we read into memory, hash and send as a chunk to S3. Larger size means lower network overhead, but more memory
@@ -31,7 +31,7 @@ namespace Genbox.SimpleS3.Core.Abstracts
         /// setting only makes sense if you don't use a custom endpoint. See https://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html for more
         /// details.
         /// </summary>
-        NamingType NamingType { get; set; }
+        NamingMode NamingMode { get; set; }
 
         /// <summary>Use this to set a custom endpoint. For example, when using minio, you can set it to https://miniohost.com/</summary>
         Uri Endpoint { get; set; }
@@ -48,7 +48,7 @@ namespace Genbox.SimpleS3.Core.Abstracts
         /// <summary>If a response has EncodingType set to Url, SimpleS3 will automatically URL decode the encoded part of the response if this setting is true.</summary>
         bool AutoUrlDecodeResponses { get; set; }
 
-        /// <summary>When enabled, SimpleS3 will automatically calculate the ContentMD5 property before sending the request</summary>
-        bool AutoCalculateContentMd5 { get; set; }
+        /// <summary>When enabled, SimpleS3 will always calculate the ContentMD5 property before sending the request</summary>
+        bool AlwaysCalculateContentMd5 { get; set; }
     }
 }

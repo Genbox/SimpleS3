@@ -1,6 +1,6 @@
 ﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums
 {
-    public enum SignatureType : byte
+    public enum SignatureMode : byte
     {
         Unknown = 0,
         Unsigned,

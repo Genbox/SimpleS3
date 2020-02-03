@@ -34,7 +34,7 @@ namespace Genbox.SimpleS3.Core.Network.RequestWrappers
 
         public bool IsSupported(IRequest request)
         {
-            return _config.Value.PayloadSignatureType == SignatureType.StreamingSignature && request is ISupportStreaming;
+            return _config.Value.PayloadSignatureMode == SignatureMode.StreamingSignature && request is ISupportStreaming;
         }
 
         public Stream Wrap(Stream input, IRequest request)

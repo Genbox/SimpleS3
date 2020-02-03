@@ -21,13 +21,13 @@ namespace Genbox.SimpleS3.Core
 
         public IAccessKey Credentials { get; set; }
         public AwsRegion Region { get; set; }
-        public SignatureType PayloadSignatureType { get; set; } = SignatureType.StreamingSignature;
+        public SignatureMode PayloadSignatureMode { get; set; } = SignatureMode.StreamingSignature;
         public int StreamingChunkSize { get; set; } = 32 * 1024 * 1024; //32 Mb
-        public NamingType NamingType { get; set; } = NamingType.PathStyle;
+        public NamingMode NamingMode { get; set; } = NamingMode.PathStyle;
         public Uri Endpoint { get; set; }
         public bool EnableBucketNameValidation { get; set; } = true;
         public KeyValidationMode ObjectKeyValidationMode { get; set; } = KeyValidationMode.AsciiMode;
         public bool AutoUrlDecodeResponses { get; set; } = true;
-        public bool AutoCalculateContentMd5 { get; set; }
+        public bool AlwaysCalculateContentMd5 { get; set; }
     }
 }
