@@ -60,7 +60,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
         [Benchmark]
         public byte[] ChunkedSignatureBuilder()
         {
-            return _chunkSigBuilder.CreateChunkSignature(_req, new byte[32], new byte[32], 32);
+            return _chunkSigBuilder.CreateChunkSignature(_req, new byte[32], new byte[32], 0, 32);
         }
     }
 }

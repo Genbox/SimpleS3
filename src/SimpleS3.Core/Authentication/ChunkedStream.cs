@@ -20,16 +20,16 @@ namespace Genbox.SimpleS3.Core.Authentication
         private readonly IChunkedSignatureBuilder _chunkedSigBuilder;
         private readonly int _chunkSize;
 
-        private readonly byte[] _inputBuffer;
+        private readonly byte[] _buffer;
         private readonly Stream _originalStream;
-        private readonly byte[] _outputBuffer;
         private readonly IRequest _request;
         private bool _inputStreamConsumed;
 
         private bool _outputBufferIsTerminatingChunk;
 
-        private int _outputBufferLength = -1;
-        private int _outputBufferPosition = -1;
+        private int _headerSize;
+        private int _bufferLength = -1;
+        private int _bufferPosition = -1;
         private byte[] _previousSignature;
 
         public ChunkedStream(IOptions<S3Config> options, IChunkedSignatureBuilder chunkedSigBuilder, IRequest request, byte[] seedSignature, Stream originalStream)
@@ -47,14 +47,14 @@ namespace Genbox.SimpleS3.Core.Authentication
 
             _chunkSize = options.Value.StreamingChunkSize;
 
-            _inputBuffer = new byte[_chunkSize];
-            _outputBuffer = new byte[CalculateChunkHeaderLength(_chunkSize, seedSignature.Length * 2)];
+            _headerSize = CalculateChunkHeaderLength(_chunkSize, seedSignature.Length * 2);
+            _buffer = new byte[_chunkSize + _headerSize + Newline.Length];
         }
 
         public override bool CanRead => true;
         public override bool CanSeek => false;
         public override bool CanWrite => false;
-        public override long Length => ComputeChunkedContentLength(_originalStream.Length);
+        public override long Length => throw new NotSupportedException();
         public override long Position { get; set; }
 
         public override void Flush()
@@ -64,73 +64,55 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (_outputBufferPosition == -1)
+            if (_bufferPosition == -1)
             {
                 if (_inputStreamConsumed && _outputBufferIsTerminatingChunk)
                     return 0;
 
-                int bytesRead = FillInputBuffer();
-                FillOutputBuffer(bytesRead);
-                _outputBufferIsTerminatingChunk = _inputStreamConsumed && bytesRead == 0;
+                int totalRead = 0;
+                if (!_inputStreamConsumed)
+                {
+                    while (_headerSize + totalRead < _chunkSize && !_inputStreamConsumed)
+                    {
+                        int remaining = Math.Min(_chunkSize, _buffer.Length - totalRead - _headerSize);
+                        int read = _originalStream.Read(_buffer, totalRead, remaining);
+
+                        if (read == 0)
+                            _inputStreamConsumed = true;
+                        else
+                            totalRead += read;
+                    }
+                }
+
+                // Calculate header, and place in buffers beginning
+                _previousSignature = _chunkedSigBuilder.CreateChunkSignature(_request, _previousSignature, _buffer, _headerSize, totalRead);
+                int headerSize = CreateChunkHeader(_previousSignature, totalRead, _buffer);
+
+                // Append final newline
+                Buffer.BlockCopy(Newline, 0, _buffer, _headerSize + totalRead, Newline.Length);
+
+                // Move data payload in buffer, if header is smaller than expected
+                if (_headerSize != headerSize)
+                    Buffer.BlockCopy(_buffer, _headerSize, _buffer, headerSize, totalRead + Newline.Length);
+
+                _bufferLength = headerSize + totalRead + Newline.Length;
+                _bufferPosition = 0;
+
+                // Fill buffer from N (header size) position to its full length
+                _outputBufferIsTerminatingChunk = _inputStreamConsumed && totalRead == 0;
             }
 
             //Use the smaller of either data we have remaining, or the count being asked for
-            count = Math.Min(_outputBufferLength - _outputBufferPosition, count);
+            count = Math.Min(_bufferLength - _bufferPosition, count);
 
             //Copy part of our output buffer into buffer
-            Buffer.BlockCopy(_outputBuffer, _outputBufferPosition, buffer, offset, count);
-            _outputBufferPosition += count;
+            Buffer.BlockCopy(_buffer, _bufferPosition, buffer, offset, count);
+            _bufferPosition += count;
 
-            if (_outputBufferPosition >= _outputBufferLength)
-                _outputBufferPosition = -1;
+            if (_bufferPosition >= _bufferLength)
+                _bufferPosition = -1;
 
             return count;
-        }
-
-        private void FillOutputBuffer(int bytesRead)
-        {
-            //Create signature and header
-            _previousSignature = _chunkedSigBuilder.CreateChunkSignature(_request, _previousSignature, _inputBuffer, bytesRead);
-            byte[] chunkHeader = CreateChunkHeader(_previousSignature, bytesRead);
-
-            _outputBufferLength = 0;
-            _outputBufferPosition = 0;
-
-            //Copy the chunk header
-            Buffer.BlockCopy(chunkHeader, 0, _outputBuffer, _outputBufferLength, chunkHeader.Length);
-            _outputBufferLength += chunkHeader.Length;
-
-            //Copy the input buffer (if any)
-            if (bytesRead > 0)
-            {
-                Buffer.BlockCopy(_inputBuffer, 0, _outputBuffer, _outputBufferLength, bytesRead);
-                _outputBufferLength += bytesRead;
-            }
-
-            //Copy the final newline
-            Buffer.BlockCopy(Newline, 0, _outputBuffer, _outputBufferLength, Newline.Length);
-            _outputBufferLength += Newline.Length;
-        }
-
-        private int FillInputBuffer()
-        {
-            if (_inputStreamConsumed)
-                return 0;
-
-            int totalRead = 0;
-
-            while (totalRead < _inputBuffer.Length && !_inputStreamConsumed)
-            {
-                int remaining = Math.Min(_chunkSize, _inputBuffer.Length - totalRead);
-                int bytesRead = _originalStream.Read(_inputBuffer, totalRead, remaining);
-
-                if (bytesRead == 0)
-                    _inputStreamConsumed = true;
-                else
-                    totalRead += bytesRead;
-            }
-
-            return totalRead;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -148,36 +130,15 @@ namespace Genbox.SimpleS3.Core.Authentication
             throw new NotSupportedException();
         }
 
-        /// <summary>
-        /// Computes the total size of the data payload, including the chunk metadata. Called externally so as to be able to set the correct
-        /// Content-Length header value.
-        /// </summary>
-        private long ComputeChunkedContentLength(long originalLength)
-        {
-            if (originalLength < 0)
-                throw new ArgumentOutOfRangeException(nameof(originalLength), "Expected 0 or greater value for originalLength.");
-
-            if (originalLength == 0)
-                return CalculateChunkHeaderLength(0, 64);
-
-            long maxSizeChunks = originalLength / _chunkSize;
-            long remainingBytes = originalLength % _chunkSize;
-            return maxSizeChunks * CalculateChunkHeaderLength(_chunkSize, 64)
-                   + (remainingBytes > 0 ? CalculateChunkHeaderLength(remainingBytes, 64) : 0)
-                   + CalculateChunkHeaderLength(0, 64);
-        }
-
-        private static long CalculateChunkHeaderLength(long chunkSize, int signatureLength)
+        private static int CalculateChunkHeaderLength(int chunkSize, int signatureLength)
         {
             return chunkSize.ToString("X", NumberFormatInfo.InvariantInfo).Length
                    + _chunkSignature.Length
                    + signatureLength
-                   + Newline.Length
-                   + chunkSize
                    + Newline.Length;
         }
 
-        private static byte[] CreateChunkHeader(byte[] chunkSignature, int contentLength)
+        private static int CreateChunkHeader(byte[] chunkSignature, int contentLength, byte[] buffer)
         {
             StringBuilder chunkHeader = StringBuilderPool.Shared.Rent(100);
 
@@ -191,7 +152,7 @@ namespace Genbox.SimpleS3.Core.Authentication
 
             StringBuilderPool.Shared.Return(chunkHeader);
 
-            return Encoding.UTF8.GetBytes(value);
+            return Encoding.UTF8.GetBytes(value, 0, value.Length, buffer, 0);
         }
     }
 }

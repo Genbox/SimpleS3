@@ -25,20 +25,20 @@ namespace Genbox.SimpleS3.Core.Authentication
             _logger = logger;
         }
 
-        public byte[] CreateChunkSignature(IRequest request, byte[] previousSignature, byte[] content, int contentLength)
+        public byte[] CreateChunkSignature(IRequest request, byte[] previousSignature, byte[] content, int offset, int length)
         {
             Validator.RequireNotNull(request, nameof(request));
 
             _logger.LogTrace("Creating chunk signature for {RequestId}", request.RequestId);
 
-            string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, content, contentLength);
+            string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, content, offset, length);
             byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
             _logger.LogDebug("Chunk signature: {signature}", signature);
             return signature;
         }
 
-        internal string CreateStringToSign(DateTimeOffset dateTime, string scope, byte[] previousSignature, byte[] content, int contentLength)
+        internal string CreateStringToSign(DateTimeOffset dateTime, string scope, byte[] previousSignature, byte[] content, int offset, int length)
         {
             _logger.LogTrace("Creating chunked StringToSign");
 
@@ -49,7 +49,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             sb.Append(scope).Append(SigningConstants.Newline);
             sb.Append(previousSignature.HexEncode()).Append(SigningConstants.Newline);
             sb.Append("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855").Append(SigningConstants.Newline);
-            sb.Append(CryptoHelper.Sha256Hash(content, contentLength).HexEncode());
+            sb.Append(CryptoHelper.Sha256Hash(content, offset, length).HexEncode());
 
             string sts = sb.ToString();
 
