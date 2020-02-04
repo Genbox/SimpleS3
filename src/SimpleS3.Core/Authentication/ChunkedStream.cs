@@ -30,7 +30,9 @@ namespace Genbox.SimpleS3.Core.Authentication
         private int _headerSize;
         private int _bufferLength = -1;
         private int _bufferPosition = -1;
+        private byte[] _seedSignature;
         private byte[] _previousSignature;
+        private long _position;
 
         public ChunkedStream(IOptions<S3Config> options, IChunkedSignatureBuilder chunkedSigBuilder, IRequest request, byte[] seedSignature, Stream originalStream)
         {
@@ -43,6 +45,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             _originalStream = originalStream;
             _chunkedSigBuilder = chunkedSigBuilder;
             _request = request;
+            _seedSignature = seedSignature;
             _previousSignature = seedSignature;
 
             _chunkSize = options.Value.StreamingChunkSize;
@@ -52,10 +55,15 @@ namespace Genbox.SimpleS3.Core.Authentication
         }
 
         public override bool CanRead => true;
-        public override bool CanSeek => false;
+        public override bool CanSeek => _originalStream.CanSeek;
         public override bool CanWrite => false;
-        public override long Length => throw new NotSupportedException();
-        public override long Position { get; set; }
+        public override long Length => ComputeChunkedContentLength(_originalStream.Length);
+
+        public override long Position
+        {
+            get => _position;
+            set => Seek(value, SeekOrigin.Begin);
+        }
 
         public override void Flush()
         {
@@ -117,7 +125,28 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            throw new NotSupportedException();
+            if (!CanSeek)
+                throw new NotSupportedException("ChunkedStream cannot seek, as the base stream cannot seek");
+
+            if (offset != 0 && origin != SeekOrigin.Begin)
+                throw new NotSupportedException("ChunkedStream can only seek to position 0");
+
+            // Reset position
+            _originalStream.Seek(0, SeekOrigin.Begin);
+            _position = 0;
+
+            // Reset EOF markers
+            _outputBufferIsTerminatingChunk = false;
+            _inputStreamConsumed = false;
+
+            // Clear buffers
+            _bufferPosition = -1;
+            _bufferLength = -1;
+
+            // Reset signature
+            _previousSignature = _seedSignature;
+
+            return 0;
         }
 
         public override void SetLength(long value)
@@ -136,6 +165,25 @@ namespace Genbox.SimpleS3.Core.Authentication
                    + _chunkSignature.Length
                    + signatureLength
                    + Newline.Length;
+        }
+
+        /// <summary>
+        /// Computes the total size of the data payload, including the chunk metadata. Called externally so as to be able to set the correct
+        /// Content-Length header value.
+        /// </summary>
+        private long ComputeChunkedContentLength(long originalLength)
+        {
+            if (originalLength < 0)
+                throw new ArgumentOutOfRangeException(nameof(originalLength), "Expected 0 or greater value for originalLength.");
+
+            if (originalLength == 0)
+                return CalculateChunkHeaderLength(0, 64);
+
+            long maxSizeChunks = originalLength / _chunkSize;
+            long remainingBytes = originalLength % _chunkSize;
+            return maxSizeChunks * (CalculateChunkHeaderLength(_chunkSize, 64) + _chunkSize + Newline.Length)
+                   + (remainingBytes > 0 ? CalculateChunkHeaderLength((int)remainingBytes, 64) + remainingBytes + Newline.Length : 0)
+                   + CalculateChunkHeaderLength(0, 64) + Newline.Length;
         }
 
         private static int CreateChunkHeader(byte[] chunkSignature, int contentLength, byte[] buffer)
