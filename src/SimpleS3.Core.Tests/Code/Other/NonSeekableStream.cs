@@ -40,7 +40,7 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Other
         public override bool CanRead => true;
         public override bool CanSeek => false;
         public override bool CanWrite => false;
-        public override long Length => throw new NotSupportedException();
+        public override long Length => _backingStream.Length;
 
         public override long Position
         {
