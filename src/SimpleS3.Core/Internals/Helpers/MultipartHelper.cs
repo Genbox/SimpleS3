@@ -56,13 +56,18 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
                     if (token.IsCancellationRequested)
                         break;
 
+                    // TODO: Remove .Length requirement
                     long remaining = data.Length - offset;
                     long bufferSize = Math.Min(remaining, partSize);
 
                     byte[] partData = new byte[bufferSize];
+                    // BUG: Read may provide less than length
                     await data.ReadAsync(partData, 0, partData.Length, token).ConfigureAwait(false);
 
-                    uploads.Enqueue(UploadPartAsync(operations, bucket, objectKey, partData, i, initResp.UploadId, semaphore, token));
+                    TaskCompletionSource<UploadPartResponse> completionSource = new TaskCompletionSource<UploadPartResponse>();
+                    uploads.Enqueue(completionSource.Task);
+
+                    UploadPartAsync(completionSource, operations, bucket, objectKey, partData, i, initResp.UploadId, semaphore, token);
 
                     offset += partSize;
                 }
@@ -185,15 +190,21 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
             }
         }
 
-        private static async Task<UploadPartResponse> UploadPartAsync(IMultipartOperations operations, string bucketName, string objectKey, byte[] data, int partNumber, string uploadId, SemaphoreSlim semaphore, CancellationToken token)
+        private static async Task UploadPartAsync(TaskCompletionSource<UploadPartResponse> completionSource, IMultipartOperations operations, string bucketName, string objectKey, byte[] data, int partNumber, string uploadId, SemaphoreSlim semaphore, CancellationToken token)
         {
             try
             {
                 using (MemoryStream ms = new MemoryStream(data))
                 {
-                    UploadPartRequest req = new UploadPartRequest(bucketName, objectKey, partNumber, uploadId, ms);
-                    return await operations.UploadPartAsync(req, token).ConfigureAwait(false);
+                    var result = await operations.UploadPartAsync(new UploadPartRequest(bucketName, objectKey, partNumber, uploadId, ms), token)
+                        .ConfigureAwait(false);
+
+                    completionSource.SetResult(result);
                 }
+            }
+            catch (Exception ex)
+            {
+                completionSource.SetException(ex);
             }
             finally
             {
