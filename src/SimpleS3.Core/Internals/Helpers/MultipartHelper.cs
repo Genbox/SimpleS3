@@ -128,7 +128,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
                         if (token.IsCancellationRequested)
                             yield break;
 
-                        queue.Enqueue(DownloadPartAsync(operations, bucketName, objectKey, output, headResp.ContentLength, i, bufferSize, semaphore, mutex, token, config));
+                        queue.Enqueue(DownloadPartAsync(operations, bucketName, objectKey, output, headResp.ContentLength, i, bufferSize, semaphore, mutex, config, token));
                     }
 
                     while (queue.TryDequeue(out Task<GetObjectResponse> task))
@@ -143,7 +143,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
             }
         }
 
-        private static async Task<GetObjectResponse> DownloadPartAsync(IObjectOperations operations, string bucketName, string objectKey, Stream output, long partSize, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, CancellationToken token, Action<GetObjectRequest> config)
+        private static async Task<GetObjectResponse> DownloadPartAsync(IObjectOperations operations, string bucketName, string objectKey, Stream output, long partSize, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, Action<GetObjectRequest> config, CancellationToken token)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
                 config?.Invoke(getReq);
 
                 GetObjectResponse getResp = await operations.GetObjectAsync(getReq, token).ConfigureAwait(false);
-
+                
                 using (Stream stream = getResp.Content.AsStream())
                 {
                     long offset = (partNumber - 1) * partSize;
@@ -160,7 +160,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
 
                     while (true)
                     {
-                        int read = stream.ReadUpTo(buffer, 0, bufferSize);
+                        int read = await stream.ReadUpToAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
 
                         if (read > 0)
                         {
