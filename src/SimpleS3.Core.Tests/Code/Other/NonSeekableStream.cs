@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Other
 
         public override void Flush()
         {
-            _backingStream.Flush();
+            throw new NotSupportedException();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -45,7 +45,7 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Other
         public override long Position
         {
             get => _backingStream.Position;
-            set => _backingStream.Position = value;
+            set => throw new NotSupportedException();
         }
     }
 }
