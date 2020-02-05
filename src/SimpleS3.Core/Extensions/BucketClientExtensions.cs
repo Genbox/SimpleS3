@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
-using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
@@ -13,28 +11,6 @@ namespace Genbox.SimpleS3.Core.Extensions
 {
     public static class BucketClientExtensions
     {
-        /// <summary>Delete a bucket</summary>
-        public static Task<DeleteBucketResponse> DeleteBucketAsync(this IBucketClient client, string bucketName, CancellationToken token = default)
-        {
-            //Note: This method only exists to give a cleaner API. It provides no extra functionality.
-
-            Validator.RequireNotNull(client, nameof(client));
-            Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
-
-            return client.DeleteBucketAsync(bucketName, null, token);
-        }
-
-        /// <summary>Create a bucket</summary>
-        public static Task<CreateBucketResponse> CreateBucketAsync(this IBucketClient client, string bucketName, CancellationToken token = default)
-        {
-            //Note: This method only exists to give a cleaner API. It provides no extra functionality.
-
-            Validator.RequireNotNull(client, nameof(client));
-            Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
-
-            return client.CreateBucketAsync(bucketName, null, token);
-        }
-
         /// <summary>List all buckets</summary>
         public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(this IBucketClient client, Action<ListBucketsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
