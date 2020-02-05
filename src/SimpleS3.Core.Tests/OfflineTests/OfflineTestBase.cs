@@ -8,6 +8,7 @@ using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Misc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Xunit.Abstractions;
@@ -18,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
     {
         private readonly IConfigurationRoot _configRoot;
 
-        protected OfflineTestBase(ITestOutputHelper outputHelper, Action<S3Config> customConfig = null)
+        protected OfflineTestBase(ITestOutputHelper outputHelper)
         {
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
             configBuilder.AddJsonFile("Config.json", false);
@@ -28,23 +29,27 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
             //Set the configuration from the config file
             _configRoot = configBuilder.Build();
 
-            collection.AddSimpleS3Core(config =>
+            IClientBuilder coreBuilder = collection.AddSimpleS3Core(config =>
             {
                 //Set the configuration from the config file
                 _configRoot.Bind(config);
                 config.Region = AwsRegion.EuWest1;
                 config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
 
-                customConfig?.Invoke(config);
+                ConfigureConfig(config);
             });
 
-            collection.AddSingleton<INetworkDriver, NullNetworkDriver>();
+            ConfigureClientBuilder(coreBuilder);
+
+            collection.TryAddSingleton<INetworkDriver, NullNetworkDriver>();
 
             collection.AddLogging(x =>
             {
                 x.AddConfiguration(_configRoot.GetSection("Logging"));
                 x.AddXUnit(outputHelper);
             });
+
+            ConfigureServices(collection);
 
             Services = collection.BuildServiceProvider();
 
@@ -55,6 +60,18 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
             BucketClient = Services.GetRequiredService<IBucketClient>();
             MultipartClient = Services.GetRequiredService<IMultipartClient>();
             Transfer = Services.GetRequiredService<Transfer>();
+        }
+
+        protected virtual void ConfigureConfig(S3Config config)
+        {
+        }
+
+        protected virtual void ConfigureClientBuilder(IClientBuilder builder)
+        {
+        }
+
+        protected virtual void ConfigureServices(IServiceCollection collection)
+        {
         }
 
         public ServiceProvider Services { get; }
