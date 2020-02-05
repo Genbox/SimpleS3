@@ -2,9 +2,9 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 
-namespace Genbox.SimpleS3.Core.Tests.Code.Other
+namespace Genbox.SimpleS3.Retry
 {
-    public class RetryableBufferingStreamWrapper : IRequestStreamWrapper
+    internal class RetryableBufferingStreamWrapper : IRequestStreamWrapper
     {
         public bool IsSupported(IRequest request)
         {

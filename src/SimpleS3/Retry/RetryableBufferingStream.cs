@@ -2,13 +2,13 @@
 using System.IO;
 using Genbox.SimpleS3.Core.Common;
 
-namespace Genbox.SimpleS3.Core.Tests.Code.Other
+namespace Genbox.SimpleS3.Retry
 {
     /// <summary>
     /// Stream that will buffer / record data as it's read, and be able to seek in it afterwards
     /// Used for retrying forward-only streams
     /// </summary>
-    public class RetryableBufferingStream : Stream
+    internal class RetryableBufferingStream : Stream
     {
         private readonly Stream _underlyingStream;
         private readonly MemoryStream _bufferStream;
