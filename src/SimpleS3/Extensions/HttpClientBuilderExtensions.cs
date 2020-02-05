@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
@@ -11,6 +12,13 @@ namespace Genbox.SimpleS3.Extensions
     public static class HttpClientBuilderExtensions
     {
         public delegate TimeSpan BackoffTime(int retryAttempt);
+
+        private static readonly Func<HttpResponseMessage, bool> TransientHttpStatusCodePredicate = (response) =>
+        {
+            // Polly default transient codes: >500 & 408
+            // https://github.com/App-vNext/Polly.Extensions.Http/blob/master/src/Polly.Extensions.Http/HttpPolicyExtensions.cs
+            return (int)response.StatusCode >= 500 || response.StatusCode == HttpStatusCode.RequestTimeout;
+        };
 
         public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, IWebProxy proxy)
         {
@@ -36,7 +44,18 @@ namespace Genbox.SimpleS3.Extensions
 
         public static IHttpClientBuilder AddRetryPolicy(this IHttpClientBuilder builder, int retries, BackoffTime backoffTime)
         {
-            builder.AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt)));
+            // Add a policy that will handle transient HTTP & Networking errors
+            var exceptionPolicy = Policy<HttpResponseMessage>
+                // Handle network errors
+                .Handle<IOException>()
+                // Handle other HttpClient errors
+                .Or<HttpRequestException>()
+                // Handle transient-error status codes
+                .OrResult(TransientHttpStatusCodePredicate)
+                // Action
+                .WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt));
+
+            builder.AddPolicyHandler(exceptionPolicy);
 
             // TODO: Add this first, before chunked streamer?
             builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();

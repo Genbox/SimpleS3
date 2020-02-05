@@ -42,8 +42,11 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
             Assert.Equal(1, _handler.RequestCounter);
 
             // Second request should fail with a network error
-            // TODO: Is this correct?
+            // TODO: Should this throw exceptions?
             await Assert.ThrowsAsync<IOException>(async () => await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-1", ms).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // Because network errors are transient, they should be retried
+            Assert.Equal(5, _handler.RequestCounter);
         }
     }
 }
