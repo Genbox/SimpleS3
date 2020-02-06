@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// keys that you want to delete, then this operation provides a suitable alternative to sending individual delete requests (see DELETE Object), reducing
     /// per-request overhead.
     /// </summary>
-    public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention, IHasBucketName, IHasMfa, IHasContentMd5, IContentMd5Config
+    public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention, IHasBucketName, IHasMfa, IContentMd5Config
     {
         internal DeleteObjectsRequest() : base(HttpMethod.POST)
         {

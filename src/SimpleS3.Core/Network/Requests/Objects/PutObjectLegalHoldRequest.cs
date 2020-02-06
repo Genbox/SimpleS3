@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
     /// <summary>Sets an object's current Legal Hold status.</summary>
-    public sealed class PutObjectLegalHoldRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasVersionId, IHasRequestPayer, IHasContentMd5, IContentMd5Config, IHasLegalHold
+    public sealed class PutObjectLegalHoldRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasVersionId, IHasRequestPayer, IContentMd5Config, IHasLegalHold
     {
         internal PutObjectLegalHoldRequest() : base(HttpMethod.PUT)
         {
