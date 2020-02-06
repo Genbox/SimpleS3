@@ -202,7 +202,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 
             //Test lifecycle expiration (yes, we add 2 days. I don't know why Amazon works like this)
             Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
-            Assert.Equal("AllExpire", putResp.LifeCycleRuleId);
+            Assert.Equal("ExpireAll", putResp.LifeCycleRuleId);
         }
 
         [Fact]

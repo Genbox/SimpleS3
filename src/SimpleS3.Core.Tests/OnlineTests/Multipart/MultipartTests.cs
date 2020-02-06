@@ -137,7 +137,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
 
             //Test lifecycle expiration
             Assert.Equal(DateTime.UtcNow.AddDays(2).Date, createResp.AbortsOn.Value.UtcDateTime.Date);
-            Assert.Equal("AllExpire", createResp.AbortRuleId);
+            Assert.Equal("ExpireAll", createResp.AbortRuleId);
 
             byte[] file = new byte[1024 * 1024 * 5];
             file[0] = (byte)'a';
@@ -153,7 +153,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
 
             //Test lifecycle expiration
             Assert.Equal(DateTime.UtcNow.AddDays(2).Date, completeResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
-            Assert.Equal("AllExpire", completeResp.LifeCycleRuleId);
+            Assert.Equal("ExpireAll", completeResp.LifeCycleRuleId);
         }
 
         [Fact]
