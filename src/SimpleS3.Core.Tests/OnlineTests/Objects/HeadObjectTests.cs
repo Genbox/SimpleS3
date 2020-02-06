@@ -42,7 +42,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 
             //Expiration should work on head too
             Assert.Equal(DateTime.UtcNow.AddDays(2).Date, headResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
-            Assert.Equal("AllExpire", headResp.LifeCycleRuleId);
+            Assert.Equal("ExpireAll", headResp.LifeCycleRuleId);
         }
 
         [Fact]

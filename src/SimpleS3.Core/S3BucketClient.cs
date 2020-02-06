@@ -6,6 +6,7 @@ using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using JetBrains.Annotations;
 
@@ -107,6 +108,14 @@ namespace Genbox.SimpleS3.Core
             config?.Invoke(request);
 
             return BucketOperations.GetBucketAccelerateConfigurationAsync(request, token);
+        }
+
+        public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest> config = null, CancellationToken token = default)
+        {
+            PutBucketLifecycleConfigurationRequest request = new PutBucketLifecycleConfigurationRequest(bucketName, rules);
+            config?.Invoke(request);
+
+            return BucketOperations.PutBucketLifecycleConfigurationAsync(request, token);
         }
     }
 }

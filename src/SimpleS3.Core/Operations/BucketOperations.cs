@@ -72,5 +72,10 @@ namespace Genbox.SimpleS3.Core.Operations
         {
             return _requestHandler.SendRequestAsync<GetBucketAccelerateConfigurationRequest, GetBucketAccelerateConfigurationResponse>(request, token);
         }
+
+        public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(PutBucketLifecycleConfigurationRequest request, CancellationToken token = default)
+        {
+            return _requestHandler.SendRequestAsync<PutBucketLifecycleConfigurationRequest, PutBucketLifecycleConfigurationResponse>(request, token);
+        }
     }
 }

@@ -61,5 +61,10 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
         /// Returns the Transfer Acceleration state of a bucket, which is either Enabled or Suspended. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to perform faster data transfers to and from Amazon S3.
         /// </summary>
         Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(GetBucketAccelerateConfigurationRequest request, CancellationToken token = default);
+
+        /// <summary>
+        /// Creates a new lifecycle configuration for the bucket or replaces an existing lifecycle configuration. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketLifecycleConfiguration.html for details
+        /// </summary>
+        Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(PutBucketLifecycleConfigurationRequest request, CancellationToken token = default);
     }
 }
