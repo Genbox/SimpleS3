@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -151,7 +151,7 @@ namespace Genbox.SimpleS3
 
         public Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, CancellationToken token = default)
         {
-            return MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, token);
+            return _multipartClient.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, token);
         }
 
         public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
