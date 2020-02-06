@@ -53,9 +53,9 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.HeadBucketAsync(request, token);
         }
 
-        public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, LockMode lockMode, DateTimeOffset lockRemainUntil, Action<PutBucketLockConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest> config = null, CancellationToken token = default)
         {
-            PutBucketLockConfigurationRequest request = new PutBucketLockConfigurationRequest(bucketName, lockMode, lockRemainUntil);
+            PutBucketLockConfigurationRequest request = new PutBucketLockConfigurationRequest(bucketName, enabled);
             config?.Invoke(request);
 
             return BucketOperations.PutBucketLockConfigurationAsync(request, token);

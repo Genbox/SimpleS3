@@ -23,7 +23,11 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
             CreateBucketResponse createResp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.EnableObjectLocking = true).ConfigureAwait(false);
             Assert.True(createResp.IsSuccess);
 
-            PutBucketLockConfigurationResponse putResp = await BucketClient.PutBucketLockConfigurationAsync(tempBucketName, mode, DateTimeOffset.UtcNow.AddDays(2)).ConfigureAwait(false);
+            PutBucketLockConfigurationResponse putResp = await BucketClient.PutBucketLockConfigurationAsync(tempBucketName, true, x =>
+            {
+                x.LockMode = mode;
+                x.LockRetainUntil = DateTimeOffset.UtcNow.AddDays(2);
+            }).ConfigureAwait(false);
             Assert.True(putResp.IsSuccess);
 
             GetBucketLockConfigurationResponse getResp = await BucketClient.GetBucketLockConfigurationAsync(tempBucketName).ConfigureAwait(false);
@@ -72,7 +76,11 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
             CreateBucketResponse createResp = await BucketClient.CreateBucketAsync(tempBucketName, req => req.EnableObjectLocking = true).ConfigureAwait(false);
             Assert.True(createResp.IsSuccess);
 
-            PutBucketLockConfigurationResponse putResp = await BucketClient.PutBucketLockConfigurationAsync(tempBucketName, LockMode.Compliance, DateTimeOffset.UtcNow.AddDays(2)).ConfigureAwait(false);
+            PutBucketLockConfigurationResponse putResp = await BucketClient.PutBucketLockConfigurationAsync(tempBucketName, true, x =>
+            {
+                x.LockMode = LockMode.Compliance;
+                x.LockRetainUntil = DateTimeOffset.UtcNow.AddDays(2);
+            }).ConfigureAwait(false);
             Assert.True(putResp.IsSuccess);
 
             GetBucketLockConfigurationResponse getResp = await BucketClient.GetBucketLockConfigurationAsync(tempBucketName).ConfigureAwait(false);
@@ -80,7 +88,11 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
             Assert.Equal(LockMode.Compliance, getResp.LockMode);
             Assert.Equal(DateTimeOffset.UtcNow.AddDays(2 - 1).DateTime, getResp.LockRetainUntil.Value.DateTime, TimeSpan.FromMinutes(1));
 
-            PutBucketLockConfigurationResponse putResp2 = await BucketClient.PutBucketLockConfigurationAsync(tempBucketName, LockMode.Governance, DateTimeOffset.UtcNow.AddDays(5)).ConfigureAwait(false);
+            PutBucketLockConfigurationResponse putResp2 = await BucketClient.PutBucketLockConfigurationAsync(tempBucketName, true, x =>
+                 {
+                     x.LockMode = LockMode.Governance;
+                     x.LockRetainUntil = DateTimeOffset.UtcNow.AddDays(5);
+                 }).ConfigureAwait(false);
             Assert.True(putResp2.IsSuccess);
 
             GetBucketLockConfigurationResponse getResp2 = await BucketClient.GetBucketLockConfigurationAsync(tempBucketName).ConfigureAwait(false);

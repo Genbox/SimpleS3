@@ -12,13 +12,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public sealed class PutBucketLockConfigurationRequest : BaseRequest, IHasBucketName, IHasRequestPayer, IHasLock, IContentMd5Config, IAutoMapConfig
     {
-        public PutBucketLockConfigurationRequest(string bucketName, LockMode lockMode, DateTimeOffset lockRemainUntil) : base(HttpMethod.PUT)
+        public PutBucketLockConfigurationRequest(string bucketName, bool enabled) : base(HttpMethod.PUT)
         {
             BucketName = bucketName;
-            LockMode = lockMode;
-            LockRetainUntil = lockRemainUntil;
+            Enabled = enabled;
         }
 
+        public bool Enabled { get; set; }
         public string LockToken { get; set; }
         public string BucketName { get; set; }
         public LockMode LockMode { get; set; }
