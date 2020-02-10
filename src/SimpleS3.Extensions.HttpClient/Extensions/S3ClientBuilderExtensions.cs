@@ -21,7 +21,14 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
                 return handler;
             });
 
-            builder.Services.AddSingleton<System.Net.Http.HttpClient>();
+            builder.Services.AddSingleton(serviceProvider =>
+            {
+                System.Net.Http.HttpClient client = ActivatorUtilities.CreateInstance<System.Net.Http.HttpClient>(serviceProvider);
+                client.DefaultRequestHeaders.TransferEncodingChunked = false;
+
+                return client;
+            });
+
             builder.Services.AddSingleton<INetworkDriver, HttpClientNetworkDriver>();
             return builder;
         }

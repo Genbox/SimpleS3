@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Security.Authentication;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -25,7 +25,11 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
                     IOptions<HttpClientFactoryConfig> o = x.GetService<IOptions<HttpClientFactoryConfig>>();
                     options.HandlerLifetime = o.Value.HandlerLifetime;
 
-                    options.HttpClientActions.Add(client => client.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.DefaultUserAgent));
+                    options.HttpClientActions.Add(client =>
+                    {
+                        client.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.DefaultUserAgent);
+                        client.DefaultRequestHeaders.TransferEncodingChunked = false;
+                    });
                 });
             });
 
