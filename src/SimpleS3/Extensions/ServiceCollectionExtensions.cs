@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Extensions
             builder.UseS3Client();
 
             IHttpClientBuilder httpBuilder = builder.UseHttpClientFactory();
-            httpBuilder.AddDefaultRetryPolicy();
+            httpBuilder.AddDefaultHttpPolicy();
 
             if (configureS3 != null)
                 collection.Configure(configureS3);
@@ -37,7 +37,7 @@ namespace Genbox.SimpleS3.Extensions
             builder.UseS3Client();
 
             IHttpClientBuilder httpBuilder = builder.UseHttpClientFactory();
-            httpBuilder.AddDefaultRetryPolicy();
+            httpBuilder.AddDefaultHttpPolicy();
 
             if (handler != null)
                 httpBuilder.ConfigurePrimaryHttpMessageHandler(() => handler);

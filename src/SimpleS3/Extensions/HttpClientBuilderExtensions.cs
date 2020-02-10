@@ -1,13 +1,12 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Retry;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly;
+using Polly.Retry;
 using Polly.Timeout;
 
 namespace Genbox.SimpleS3.Extensions
@@ -28,7 +27,10 @@ namespace Genbox.SimpleS3.Extensions
             return builder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { Proxy = proxy });
         }
 
-        public static IHttpClientBuilder AddDefaultRetryPolicy(this IHttpClientBuilder builder)
+        /// <summary>
+        /// Adds a retry policy with 3 retries. Also adds a timeout policy that waits for 10 minutes before it terminates a request.
+        /// </summary>
+        public static IHttpClientBuilder AddDefaultHttpPolicy(this IHttpClientBuilder builder)
         {
             return builder.AddRetryPolicy(3).AddTimeoutPolicy(TimeSpan.FromMinutes(10));
         }
@@ -48,7 +50,7 @@ namespace Genbox.SimpleS3.Extensions
         public static IHttpClientBuilder AddRetryPolicy(this IHttpClientBuilder builder, int retries, BackoffTime backoffTime)
         {
             // Add a policy that will handle transient HTTP & Networking errors
-            var exceptionPolicy = Policy<HttpResponseMessage>
+            RetryPolicy<HttpResponseMessage> exceptionPolicy = Policy<HttpResponseMessage>
                 // Handle network errors
                 .Handle<IOException>()
                 // Handle other HttpClient errors
@@ -61,22 +63,15 @@ namespace Genbox.SimpleS3.Extensions
                 .WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt));
 
             builder.AddPolicyHandler(exceptionPolicy);
-
-            // TODO: Add this first, before chunked streamer?
             builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
-
             return builder;
         }
 
         public static IHttpClientBuilder AddTimeoutPolicy(this IHttpClientBuilder builder, TimeSpan timeout)
         {
             TimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(timeout);
-
             builder.AddPolicyHandler(timeoutPolicy);
-
-            // TODO: Add this first, before chunked streamer?
             builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
-
             return builder;
         }
     }

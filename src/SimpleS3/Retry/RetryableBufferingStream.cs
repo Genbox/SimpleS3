@@ -26,7 +26,6 @@ namespace Genbox.SimpleS3.Retry
 
         private void ReadSource()
         {
-            // TODO: Async? .. Perhaps do on Read(), Seek(), Length and Position?
             _underlyingStream.CopyTo(_bufferStream);
             _bufferStream.Seek(0, SeekOrigin.Begin);
         }

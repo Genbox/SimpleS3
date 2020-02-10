@@ -27,17 +27,14 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Other
         {
             await ConsumeRequestAsync(request).ConfigureAwait(false);
 
+            // After N requests we should succeed
             if (++RequestCounter % _successRate == 0)
-            {
-                // Success
                 return CreateResponse(request, HttpStatusCode.OK);
-            }
 
-            // Delayed
+            // Delay for some time to let timeout occur
             await Task.Delay(_delay, cancellationToken).ConfigureAwait(false);
 
-            // TODO: Return timeouts?
-            return CreateResponse(request, HttpStatusCode.OK);
+            return CreateResponse(request, HttpStatusCode.RequestTimeout);
         }
     }
 }
