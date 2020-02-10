@@ -11,6 +11,7 @@ using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Tests.Code.Extensions;
+using Genbox.SimpleS3.Core.Tests.GenericTests.S3Builders;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
@@ -155,10 +156,19 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             Assert.Equal(thirdExpectedSig, thirdActualSig);
         }
 
-        [Fact]
-        public void StreamTest()
+        [Theory]
+        [InlineData(0, "9bd7be022acc19c03c9d92444bf41f22dee2b55936b8e62d30ae8ebaa62dc2f6")]
+        [InlineData(2 * 1024 * 1024 - 1, "776a15e31144b3afa01f30363d9f12c2ef6534bed015e717f44bbd4133a0295a", "12f1544daedf1d08455147e747a2229433fa185246d9a52b3b6fa7b7386aa80e")]
+        [InlineData(2 * 1024 * 1024, "c298ca9cba464386868042538031b658d2d38f546fb54606aa62b24c5f04f468", "442ad8d84ea709ac4ff0f6816b33de4a3c082697b4ec4f0e382414353c56236d")]   // Default chunk size
+        [InlineData(2 * 1024 * 1024 + 1, "c298ca9cba464386868042538031b658d2d38f546fb54606aa62b24c5f04f468", "c0b2226be4478d602bf80cb978db6fa0b9bb5e6889bda464b9b21134851e58de", "d8e3996880128b6de2d6d7044617a4e0f015d216544c92dc31fec936cf43b524")]
+        public void StreamTest(int dataSize, params string[] expectedSignatures)
         {
-            UploadPartRequest req = new UploadPartRequest("examplebucket", "myresource", 1, "someid", new MemoryStream(Encoding.UTF8.GetBytes("Hello World")));
+            byte[] originalData = new byte[dataSize];
+            Array.Fill(originalData, (byte)'N');
+
+            using MemoryStream memoryStream = new MemoryStream(originalData);
+
+            UploadPartRequest req = new UploadPartRequest("examplebucket", "myresource", 1, "someid", memoryStream);
             req.Timestamp = new DateTimeOffset(2019, 1, 1, 12, 0, 0, TimeSpan.Zero);
             req.SetHeader(AmzHeaders.XAmzContentSha256, "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
 
@@ -167,10 +177,24 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             using (ChunkedStream stream = new ChunkedStream(_options, _chunkedSigBuilder, req, seedSignature, req.Content))
             using (StreamReader sr = new StreamReader(stream, Encoding.UTF8))
             {
-                string expected =
-                    "B;chunk-signature=b19ac98ea4fa8fbb8430d9699da9b251b3abe8f531241a3db556588b39926530\r\n" +
-                    "Hello World\r\n" +
-                    "0;chunk-signature=4adbbe8f8ff3c209a1161f817517edd99919d10cbded0790e8ecfaf126091404\r\n\r\n";
+                StringBuilder sbExpected = new StringBuilder();
+
+                int remaining = dataSize;
+                for (int i = 0; i < expectedSignatures.Length; i++)
+                {
+                    int size = Math.Min(_options.Value.StreamingChunkSize, remaining);
+                    remaining -= size;
+
+                    sbExpected.Append(size.ToString("X"));
+                    sbExpected.Append(";chunk-signature=");
+                    sbExpected.Append(expectedSignatures[i]);
+                    sbExpected.Append("\r\n");
+
+                    sbExpected.Append(new string('N', size));
+                    sbExpected.Append("\r\n");
+                }
+
+                string expected = sbExpected.ToString();
 
                 string actual = sr.ReadToEnd();
                 Assert.Equal(expected, actual);

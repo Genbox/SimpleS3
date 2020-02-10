@@ -83,7 +83,7 @@ namespace Genbox.SimpleS3.Core.Authentication
                     while (_headerSize + totalRead < _chunkSize && !_inputStreamConsumed)
                     {
                         int remaining = Math.Min(_chunkSize, _buffer.Length - totalRead - _headerSize);
-                        int read = _originalStream.Read(_buffer, totalRead, remaining);
+                        int read = _originalStream.Read(_buffer, _headerSize + totalRead, remaining);
 
                         if (read == 0)
                             _inputStreamConsumed = true;
@@ -177,7 +177,7 @@ namespace Genbox.SimpleS3.Core.Authentication
                 throw new ArgumentOutOfRangeException(nameof(originalLength), "Expected 0 or greater value for originalLength.");
 
             if (originalLength == 0)
-                return CalculateChunkHeaderLength(0, 64);
+                return CalculateChunkHeaderLength(0, 64) + Newline.Length;
 
             long maxSizeChunks = originalLength / _chunkSize;
             long remainingBytes = originalLength % _chunkSize;
