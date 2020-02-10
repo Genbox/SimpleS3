@@ -12,7 +12,6 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Genbox.TestCleanup
 {
@@ -20,19 +19,11 @@ namespace Genbox.TestCleanup
     {
         private static async Task Main(string[] args)
         {
+            IConfigurationRoot root = new ConfigurationBuilder()
+                .AddJsonFile("Config.json", false)
+                .Build();
+
             ServiceCollection services = new ServiceCollection();
-
-            ConfigurationBuilder configBuilder = new ConfigurationBuilder();
-            configBuilder.AddJsonFile("Config.json", false);
-            IConfigurationRoot root = configBuilder.Build();
-
-            services.AddLogging(x =>
-            {
-                x.AddConsole();
-                x.AddConfiguration(root.GetSection("Logging"));
-            });
-
-            IConfigurationRoot configRoot = configBuilder.Build();
 
             IClientBuilder builder = services.AddSimpleS3((s3Config, provider) => root.Bind(s3Config));
 
@@ -42,7 +33,7 @@ namespace Genbox.TestCleanup
                 .BindConfigToDefaultProfile()
                 .UseDataProtection();
 
-            IConfigurationSection proxySection = configRoot.GetSection("Proxy");
+            IConfigurationSection proxySection = root.GetSection("Proxy");
 
             if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
                 httpClientBuilder.WithProxy(proxySection["ProxyAddress"]);
@@ -70,7 +61,7 @@ namespace Genbox.TestCleanup
                 }
 
                 //Empty the main test bucket
-                await client.DeleteAllObjectsAsync(configRoot["BucketName"]).ConfigureAwait(false);
+                await client.DeleteAllObjectsAsync(root["BucketName"]).ConfigureAwait(false);
             }
         }
     }

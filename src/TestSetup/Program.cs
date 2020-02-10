@@ -28,13 +28,18 @@ namespace Genbox.TestSetup
 
             ServiceCollection services = new ServiceCollection();
 
-            IClientBuilder s3Builder = services.AddSimpleS3Core();
+            IClientBuilder builder = services.AddSimpleS3Core();
 
-            s3Builder.UseProfileManager()
+            IHttpClientBuilder httpClientBuilder = builder.UseHttpClientFactory();
+
+            builder.UseProfileManager()
                 .BindConfigToDefaultProfile()
                 .UseDataProtection();
 
-            s3Builder.UseHttpClientFactory().WithProxy("http://127.0.0.1:8888");
+            IConfigurationSection proxySection = root.GetSection("Proxy");
+
+            if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
+                httpClientBuilder.WithProxy(proxySection["ProxyAddress"]);
 
             using (ServiceProvider provider = services.BuildServiceProvider())
             {
