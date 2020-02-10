@@ -31,7 +31,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
                 .ConfigurePrimaryHttpMessageHandler(() => _handler)
                 .AddRetryPolicy(3, attempt => TimeSpan.Zero)
                 // Set an extraordinary timeout
-                .ConfigureHttpClient(x => x.Timeout = TimeSpan.FromSeconds(3));
+                .AddTimeoutPolicy(TimeSpan.FromSeconds(3));
         }
 
         [Fact]
@@ -39,21 +39,12 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
         {
             using MemoryStream ms = new MemoryStream(new byte[4096]);
             using CancellationTokenSource tcs = new CancellationTokenSource();
-            
+
             var task = ObjectClient.PutObjectAsync(BucketName, nameof(TestClientCancellationToken), ms, token: tcs.Token);
             tcs.CancelAfter(500);
 
             Stopwatch sw = Stopwatch.StartNew();
-            try
-            {
-                await task.ConfigureAwait(false);
-
-                // Explicit failure
-                Assert.False(true);
-            }
-            catch (TaskCanceledException ex)
-            {
-            }
+            await Assert.ThrowsAsync<TaskCanceledException>(async () => await task.ConfigureAwait(false)).ConfigureAwait(false);
             sw.Stop();
 
             // We should have canceled within 750ms
@@ -68,11 +59,11 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
             using MemoryStream ms = new MemoryStream(new byte[4096]);
 
             // TODO: Evaluate why this throws TaskCanceledException
-            PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError) + "-0", ms).ConfigureAwait(false);
+            PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError), ms).ConfigureAwait(false);
 
             // Request should succeed after N tries
             Assert.True(response.IsSuccess);
-            Assert.Equal(3, _handler.RequestCounter);
+            Assert.Equal(2, _handler.RequestCounter);
         }
 
         [Fact]
@@ -81,11 +72,11 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
             using NonSeekableStream ms = new NonSeekableStream(new byte[4096]);
 
             // TODO: Evaluate why this throws TaskCanceledException
-            PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError) + "-0", ms).ConfigureAwait(false);
+            PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError_NonSeekableStream), ms).ConfigureAwait(false);
 
             // Request should succeed after N tries
             Assert.True(response.IsSuccess);
-            Assert.Equal(3, _handler.RequestCounter);
+            Assert.Equal(2, _handler.RequestCounter);
         }
     }
 }
