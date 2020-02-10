@@ -60,6 +60,8 @@ namespace Genbox.SimpleS3.Core.Network
 
         public async Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken cancellationToken = default) where TResp : IResponse, new() where TReq : IRequest
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             request.Timestamp = DateTimeOffset.UtcNow;
             request.RequestId = Guid.NewGuid();
 
