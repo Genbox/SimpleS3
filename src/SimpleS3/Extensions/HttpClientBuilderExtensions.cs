@@ -2,10 +2,13 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Retry;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly;
+using Polly.Timeout;
 
 namespace Genbox.SimpleS3.Extensions
 {
@@ -27,7 +30,7 @@ namespace Genbox.SimpleS3.Extensions
 
         public static IHttpClientBuilder AddDefaultRetryPolicy(this IHttpClientBuilder builder)
         {
-            return builder.AddRetryPolicy(3);
+            return builder.AddRetryPolicy(3).AddTimeoutPolicy(TimeSpan.FromMinutes(10));
         }
 
         public static IHttpClientBuilder AddRetryPolicy(this IHttpClientBuilder builder, int retries)
@@ -50,12 +53,26 @@ namespace Genbox.SimpleS3.Extensions
                 .Handle<IOException>()
                 // Handle other HttpClient errors
                 .Or<HttpRequestException>()
+                // Handle Polly timeouts
+                .Or<TimeoutRejectedException>()
                 // Handle transient-error status codes
                 .OrResult(TransientHttpStatusCodePredicate)
                 // Action
                 .WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt));
 
             builder.AddPolicyHandler(exceptionPolicy);
+
+            // TODO: Add this first, before chunked streamer?
+            builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
+
+            return builder;
+        }
+
+        public static IHttpClientBuilder AddTimeoutPolicy(this IHttpClientBuilder builder, TimeSpan timeout)
+        {
+            TimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(timeout);
+
+            builder.AddPolicyHandler(timeoutPolicy);
 
             // TODO: Add this first, before chunked streamer?
             builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
