@@ -51,7 +51,7 @@ namespace Genbox.TestCleanup
 
                 await foreach (S3Bucket bucket in client.ListAllBucketsAsync())
                 {
-                    if (!bucket.Name.StartsWith("testbucket", StringComparison.OrdinalIgnoreCase))
+                    if (!bucket.Name.StartsWith("testbucket-", StringComparison.OrdinalIgnoreCase))
                         continue;
 
                     DeleteAllObjectsStatus objDelResp = await client.DeleteAllObjectsAsync(bucket.Name).ConfigureAwait(false);
