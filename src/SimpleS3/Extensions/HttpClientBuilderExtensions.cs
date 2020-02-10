@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -71,7 +71,6 @@ namespace Genbox.SimpleS3.Extensions
         {
             TimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(timeout);
             builder.AddPolicyHandler(timeoutPolicy);
-            builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
             return builder;
         }
     }
