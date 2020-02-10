@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 
@@ -24,7 +24,7 @@ namespace Genbox.SimpleS3.Core.Abstracts
         /// This is the number of bytes we read into memory, hash and send as a chunk to S3. Larger size means lower network overhead, but more memory
         /// usage.
         /// </summary>
-        int StreamingChunkSize { get; set; } //8 Mb
+        int StreamingChunkSize { get; set; }
 
         /// <summary>
         /// Controls if we use virtual hosts (bucketname.s3.eu-east-1.amazonaws.com) or sub-resources (s3.eu-east-1.amazonaws.com/bucketname) This
