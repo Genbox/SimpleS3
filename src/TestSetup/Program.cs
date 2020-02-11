@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Extensions;
@@ -24,6 +25,8 @@ namespace Genbox.TestSetup
                 .Build();
 
             ServiceCollection services = new ServiceCollection();
+
+            services.Configure<S3Config>(root);
 
             IClientBuilder builder = services.AddSimpleS3Core();
 
