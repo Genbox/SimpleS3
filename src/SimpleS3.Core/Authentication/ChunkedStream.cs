@@ -2,6 +2,8 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Common;
@@ -67,10 +69,10 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         public override void Flush()
         {
-            //Do nothing
+            // Do nothing
         }
 
-        public override int Read(byte[] buffer, int offset, int count)
+        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             if (_bufferPosition == -1)
             {
@@ -83,7 +85,7 @@ namespace Genbox.SimpleS3.Core.Authentication
                     while (_headerSize + totalRead < _chunkSize && !_inputStreamConsumed)
                     {
                         int remaining = Math.Min(_chunkSize, _buffer.Length - totalRead - _headerSize);
-                        int read = _originalStream.Read(_buffer, _headerSize + totalRead, remaining);
+                        int read = await _originalStream.ReadAsync(_buffer, _headerSize + totalRead, remaining, cancellationToken).ConfigureAwait(false);
 
                         if (read == 0)
                             _inputStreamConsumed = true;
@@ -121,6 +123,11 @@ namespace Genbox.SimpleS3.Core.Authentication
                 _bufferPosition = -1;
 
             return count;
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            return ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
