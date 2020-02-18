@@ -181,21 +181,24 @@ namespace Genbox.SimpleS3.Core.Network
                                    || statusCode == 409 //Conflict
                                    || statusCode == 503); //ServiceUnavailable
 
-            if (!response.IsSuccess)
+            //Only marshal successful responses
+            if (response.IsSuccess)
+                _marshaller.MarshalResponse(_options.Value, request, response, headers, responseStream);
+            else
             {
-                //Don't know why, but ContentLength seems to be 0 sometimes, even though it is in the headers
-                if (response.ContentLength > 0 || responseStream.CanSeek && responseStream.Length > 0)
+                MemoryStream ms = new MemoryStream();
+                responseStream.CopyTo(ms);
+
+                if (ms.Length > 0)
                 {
+                    ms.Seek(0, SeekOrigin.Begin);
+
                     using (responseStream)
-                        response.Error = ErrorHandler.Create(responseStream);
+                        response.Error = ErrorHandler.Create(ms);
 
                     _logger.LogError("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetExtraData());
                 }
             }
-
-            //Only marshal successful responses
-            if (response.IsSuccess)
-                _marshaller.MarshalResponse(_options.Value, request, response, headers, responseStream);
 
             return response;
         }

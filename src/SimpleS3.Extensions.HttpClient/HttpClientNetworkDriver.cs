@@ -37,7 +37,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
 
                 _logger.LogTrace("Sending HTTP request");
 
-                httpResponse = await _client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+                httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
             }
 
             _logger.LogDebug("Got an {status} response with {Code}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
