@@ -6,12 +6,10 @@
 A C# implementation of Amazon's S3 API with a focus on simplicity, security and performance. Download or upload an object with a single line of code.
 
 ### Support for S3 features
-* Support for GET, PUT, and DELETE on objects and buckets
-* Support listing all buckets you own
 * Streaming chunked encoding support
 * Server-side encryption with customer keys
 * Support for path and virtual host style buckets
-* See the [S3 API status page](https://github.com/Genbox/SimpleS3/wiki/S3-API-status) for a full list
+* Support most S3 functions. See the [S3 API status page](https://github.com/Genbox/SimpleS3/wiki/S3-API-status). Something missing? You can help by [contributing](https://github.com/Genbox/SimpleS3/wiki/Extending-SimpleS3).
 
 ### API features
 These are the features provided by this API implementation.
