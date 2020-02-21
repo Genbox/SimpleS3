@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Retry
@@ -12,6 +14,7 @@ namespace Genbox.SimpleS3.Retry
     {
         private readonly Stream _underlyingStream;
         private readonly MemoryStream _bufferStream;
+        private bool _buffered;
 
         public RetryableBufferingStream(Stream underlyingStream)
         {
@@ -20,19 +23,30 @@ namespace Genbox.SimpleS3.Retry
 
             _underlyingStream = underlyingStream;
             _bufferStream = new MemoryStream();
-
-            ReadSource();
         }
 
-        private void ReadSource()
+        private async Task ReadSourceAsync()
         {
-            _underlyingStream.CopyTo(_bufferStream);
+            await _underlyingStream.CopyToAsync(_bufferStream).ConfigureAwait(false);
             _bufferStream.Seek(0, SeekOrigin.Begin);
+
+            _buffered = true;
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
+            if (!_buffered)
+                ReadSourceAsync().GetAwaiter().GetResult();
+
             return _bufferStream.Read(buffer, offset, count);
+        }
+
+        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            if (!_buffered)
+                await ReadSourceAsync().ConfigureAwait(false);
+
+            return await _bufferStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
         }
 
         public override long Seek(long offset, SeekOrigin origin)

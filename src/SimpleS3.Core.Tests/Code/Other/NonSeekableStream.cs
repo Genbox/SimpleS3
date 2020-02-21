@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Genbox.SimpleS3.Core.Tests.Code.Other
 {
@@ -20,6 +22,11 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Other
         public override int Read(byte[] buffer, int offset, int count)
         {
             return _backingStream.Read(buffer, offset, count);
+        }
+
+        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            return _backingStream.ReadAsync(buffer, offset, count, cancellationToken);
         }
 
         public override long Seek(long offset, SeekOrigin origin)
