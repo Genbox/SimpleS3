@@ -1,0 +1,18 @@
+﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+
+namespace Genbox.SimpleS3.Core.Network.Requests.%ApiType%s
+{
+    /// <summary>
+    /// %ApiName%
+    /// </summary>
+    public class %ApiName%Request : BaseRequest, IHas%ApiType%Name
+    {
+        public %ApiName%Request(string %ApiTypeLower%Name) : base(HttpMethod.)
+        {
+            %ApiType%Name = %ApiTypeLower%Name;
+        }
+
+        public string %ApiType%Name { get; set; }
+    }
+}

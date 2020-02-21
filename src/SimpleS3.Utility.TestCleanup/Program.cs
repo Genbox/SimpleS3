@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Genbox.SimpleS3;
 using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
@@ -14,7 +13,7 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.TestCleanup
+namespace Genbox.SimpleS3.Utility.TestCleanup
 {
     internal class Program
     {

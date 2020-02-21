@@ -14,7 +14,7 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.TestSetup
+namespace Genbox.SimpleS3.Utility.TestSetup
 {
     internal class Program
     {
