@@ -14,11 +14,11 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
-namespace Genbox.SimpleS3.Core.Internals.Helpers
+namespace Genbox.SimpleS3.Core.Extensions
 {
-    internal static class MultipartHelper
+    public static class MultipartOperationsExtensions
     {
-        public static async IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(IMultipartOperations operations, CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(this IMultipartOperations operations, CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(req, nameof(req));
             Validator.RequireNotNull(data, nameof(data));
@@ -88,7 +88,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
             }
         }
 
-        public static async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(IObjectOperations operations, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectOperations operations, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(output, nameof(output));
 

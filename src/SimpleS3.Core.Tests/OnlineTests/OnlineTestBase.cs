@@ -26,6 +26,8 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
     {
         protected OnlineTestBase(ITestOutputHelper outputHelper)
         {
+            Output = outputHelper;
+
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
             configBuilder.AddJsonFile("Config.json", false);
 
@@ -71,6 +73,8 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             MultipartClient = Services.GetRequiredService<IMultipartClient>();
             Transfer = Services.GetRequiredService<Fluent.Transfer>();
         }
+
+        public ITestOutputHelper Output { get; }
 
         public ServiceProvider Services { get; }
 

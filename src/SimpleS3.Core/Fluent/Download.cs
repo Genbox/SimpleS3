@@ -7,6 +7,7 @@ using Genbox.HttpBuilders;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
+using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -26,7 +27,7 @@ namespace Genbox.SimpleS3.Core.Fluent
 
         public async Task<MultipartDownloadStatus> DownloadMultipartAsync(Stream output, CancellationToken token = default)
         {
-            IAsyncEnumerable<GetObjectResponse> async = MultipartHelper.MultipartDownloadAsync(_objectOperations, _request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
+            IAsyncEnumerable<GetObjectResponse> async = _objectOperations.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
 
             await foreach (GetObjectResponse resp in async.WithCancellation(token))
             {

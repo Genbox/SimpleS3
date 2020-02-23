@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
+using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Errors;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -270,6 +272,29 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
 
             HeadObjectResponse headResp = await ObjectClient.HeadObjectAsync(BucketName, nameof(MultipartViaClient), req => req.PartNumber = 1).ConfigureAwait(false);
             Assert.Equal(2, headResp.NumberOfParts);
+        }
+
+        [Fact]
+        public async Task MultipartViaExtensions()
+        {
+            byte[] data = new byte[100 * 1024 * 1024]; //100 Mb
+
+            for (int i = 0; i < data.Length; i++)
+                data[i] = (byte)'A';
+
+            CreateMultipartUploadRequest createRequest = new CreateMultipartUploadRequest(BucketName, nameof(MultipartViaExtensions));
+
+            int count = 0;
+            using (MemoryStream ms = new MemoryStream(data))
+            {
+                await foreach (UploadPartResponse resp in MultipartClient.MultipartOperations.MultipartUploadAsync(createRequest, ms, 10 * 1024 * 1024, 1))
+                {
+                    count++;
+                    Assert.True(resp.IsSuccess);
+                }
+            }
+
+            Assert.Equal(10, count);
         }
     }
 }

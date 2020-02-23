@@ -12,6 +12,7 @@ using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
+using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -196,7 +197,7 @@ namespace Genbox.SimpleS3.Core.Fluent
             _request.Method = HttpMethod.POST;
             _request.Content = null;
 
-            IAsyncEnumerable<UploadPartResponse> async = MultipartHelper.MultipartUploadAsync(_multipartOperations, _request, data, token: token);
+            IAsyncEnumerable<UploadPartResponse> async = _multipartOperations.MultipartUploadAsync(_request, data, token: token);
 
             await foreach (UploadPartResponse resp in async.WithCancellation(token))
             {
