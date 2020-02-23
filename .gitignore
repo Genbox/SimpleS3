@@ -54,3 +54,5 @@ ServiceFabricBackup/
 
 # MSBuild
 *.binlog
+
+TempRelease
