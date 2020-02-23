@@ -2,6 +2,7 @@
 using System.Text;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Serializers
 {
@@ -16,6 +17,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Serializers
             s.NullValueHandling = NullValueHandling.Ignore; //We don't need to keep null values
             s.DateTimeZoneHandling = DateTimeZoneHandling.Utc; //Handle the dates as UTC
             s.ContractResolver = new ProfileContractResolver();
+            s.Converters.Add(new StringEnumConverter());
             _serializer = JsonSerializer.Create(s);
         }
 
