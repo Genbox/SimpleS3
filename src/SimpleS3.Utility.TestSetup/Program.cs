@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
             services.Configure<S3Config>(root);
 
-            IClientBuilder builder = services.AddSimpleS3Core();
+            IClientBuilder builder = services.AddSimpleS3();
 
             IHttpClientBuilder httpClientBuilder = builder.UseHttpClientFactory();
 
