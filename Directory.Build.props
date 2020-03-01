@@ -4,7 +4,7 @@
     <Authors>Ian Qvist</Authors>
     <Copyright>Copyright 2020, by Ian Qvist. All rights reserved.</Copyright>
     <Description>A simple, secure and high-performance client for Amazon S3</Description>
-    <Version>0.1.0-alpha8</Version>
+    <Version>0.1.0-alpha9</Version>
 
     <!-- Set copying files etc. to timeout faster -->
     <CopyRetryCount>2</CopyRetryCount>
