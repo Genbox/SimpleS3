@@ -36,22 +36,22 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
 
             ServiceCollection collection = new ServiceCollection();
 
-            IClientBuilder builder = collection.AddSimpleS3Core(config =>
+            ICoreBuilder coreBuilder = collection.AddSimpleS3Core(config =>
             {
                 //Set the configuration from the config file
                 configRoot.Bind(config);
             });
 
-            builder.UseProfileManager()
-                .BindConfigToDefaultProfile()
-                .UseDataProtection();
+            coreBuilder.UseProfileManager()
+                       .BindConfigToDefaultProfile()
+                       .UseDataProtection();
 
-            IHttpClientBuilder httpClientBuilder = builder.UseHttpClientFactory();
+            IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
 
             IConfigurationSection proxySection = configRoot.GetSection("Proxy");
 
             if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
-                httpClientBuilder.WithProxy(proxySection["ProxyAddress"]);
+                httpBuilder.WithProxy(proxySection["ProxyAddress"]);
 
             collection.AddLogging(x =>
             {

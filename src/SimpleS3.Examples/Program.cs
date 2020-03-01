@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Examples
 
             //Uncomment this line if you want to use it against your own bucket
             //using (S3Client client = AmazonDiClientWithProxy.Create("MyKeyId", "MyAccessKey", AwsRegion.UsEast1))
-            using (S3Client client = MinioPlaygroundClient.Create())
+            using (S3Client client = MinioClient.Create())
             {
                 const string bucketName = "simple-s3-test";
                 const string objectName = "some-object";
@@ -35,7 +35,6 @@ namespace Genbox.SimpleS3.Examples
                 await UploadDownloadWithFluent(client, bucketName, objectName).ConfigureAwait(false);
             }
         }
-
 
         private static async Task UploadDownloadWithNormalApi(S3Client client, string bucketName, string objectName)
         {

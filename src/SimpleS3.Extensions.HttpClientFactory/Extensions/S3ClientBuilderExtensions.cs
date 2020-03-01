@@ -12,11 +12,11 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
 {
     public static class S3ClientBuilderExtensions
     {
-        public static IHttpClientBuilder UseHttpClientFactory(this IClientBuilder clientBuilder, Action<HttpClientFactoryConfig> config = null)
+        public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig> config = null)
         {
-            clientBuilder.Services.AddHttpClient();
+            CustomHttpClientFactoryBuilder builder = new CustomHttpClientFactoryBuilder(clientBuilder.Services);
 
-            CustomHttpClientBuilder builder = new CustomHttpClientBuilder(clientBuilder.Services);
+            builder.Services.AddHttpClient(); //Contrary to the naming, this does not add a HttpClient to the services. It is the factories etc. necessary for HttpClientFactory to work.
 
             builder.Services.AddSingleton<IConfigureOptions<HttpClientFactoryOptions>>(x =>
             {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
@@ -10,6 +12,7 @@ using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common.Extensions;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Network;
@@ -26,19 +29,19 @@ namespace Genbox.SimpleS3.Core.Extensions
     [PublicAPI]
     public static class ServiceCollectionExtensions
     {
-        public static IClientBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3)
+        public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3)
         {
             collection?.Configure(configureS3);
             return AddSimpleS3Core(collection);
         }
 
-        public static IClientBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config> configureS3)
+        public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config> configureS3)
         {
             collection?.Configure(configureS3);
             return AddSimpleS3Core(collection);
         }
 
-        public static IClientBuilder AddSimpleS3Core(this IServiceCollection collection)
+        public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection)
         {
             collection.AddLogging();
             collection.AddOptions();
@@ -59,22 +62,21 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.TryAddSingleton<IMarshalFactory, MarshalFactory>();
             collection.TryAddSingleton<Transfer>();
 
-            collection.Scan(scan => scan.FromAssemblyOf<S3Config>()
-                .AddClasses(x => x.AssignableTo(typeof(IValidator<>)))
-                .AsSelfWithInterfaces()
-                .WithSingletonLifetime());
+            Assembly assembly = typeof(S3Config).Assembly; //Needs to be the assembly that contains the types
 
-            collection.Scan(scan => scan.FromAssemblyOf<S3Config>()
-                .AddClasses(x => x.AssignableTo(typeof(IRequestMarshal)))
-                .AsSelfWithInterfaces()
-                .WithSingletonLifetime());
+            collection.Add(CreateRegistrations(typeof(IValidator), assembly));
+            collection.Add(CreateRegistrations(typeof(IRequestMarshal), assembly));
+            collection.Add(CreateRegistrations(typeof(IResponseMarshal), assembly));
 
-            collection.Scan(scan => scan.FromAssemblyOf<S3Config>()
-                .AddClasses(x => x.AssignableTo(typeof(IResponseMarshal)))
-                .AsSelfWithInterfaces()
-                .WithSingletonLifetime());
+            return new CoreBuilder(collection);
+        }
 
-            return new ClientBuilder(collection);
+        private static IEnumerable<ServiceDescriptor> CreateRegistrations(Type abstractType, Assembly assembly)
+        {
+            foreach (Type type in TypeHelper.GetInstanceTypesInheritedFrom(abstractType, assembly))
+            {
+                yield return ServiceDescriptor.Singleton(abstractType, type);
+            }
         }
     }
 }

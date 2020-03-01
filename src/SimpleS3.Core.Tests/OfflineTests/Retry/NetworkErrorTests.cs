@@ -23,11 +23,11 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
         {
         }
 
-        protected override void ConfigureClientBuilder(IClientBuilder builder)
+        protected override void ConfigureCoreBuilder(ICoreBuilder builder)
         {
             builder.UseHttpClientFactory()
-                .ConfigurePrimaryHttpMessageHandler(() => _handler)
-                .AddRetryPolicy(3, attempt => TimeSpan.Zero);
+                   .ConfigurePrimaryHttpMessageHandler(() => _handler)
+                   .UseRetryPolicy(3, attempt => TimeSpan.Zero);
         }
 
         [Fact]

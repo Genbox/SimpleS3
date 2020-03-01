@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
+namespace Genbox.SimpleS3.Extensions.HttpClient
 {
     public class HttpClientConfig
     {

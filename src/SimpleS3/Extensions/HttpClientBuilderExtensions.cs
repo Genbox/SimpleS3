@@ -30,24 +30,24 @@ namespace Genbox.SimpleS3.Extensions
         /// <summary>
         /// Adds a retry policy with 3 retries. Also adds a timeout policy that waits for 10 minutes before it terminates a request.
         /// </summary>
-        public static IHttpClientBuilder AddDefaultHttpPolicy(this IHttpClientBuilder builder)
+        public static IHttpClientBuilder UseDefaultHttpPolicy(this IHttpClientBuilder builder)
         {
-            return builder.AddRetryPolicy(3).AddTimeoutPolicy(TimeSpan.FromMinutes(10));
+            return builder.UseRetryPolicy(3).UseTimeoutPolicy(TimeSpan.FromMinutes(10));
         }
 
-        public static IHttpClientBuilder AddRetryPolicy(this IHttpClientBuilder builder, int retries)
+        public static IHttpClientBuilder UseRetryPolicy(this IHttpClientBuilder builder, int retries)
         {
             Random random = new Random();
 
             // Policy is:
             // Retries: 3
             // Timeout: 2^attempt seconds (2, 4, 8 seconds) + -100 to 100 ms jitter
-            return builder.AddRetryPolicy(retries, retryAttempt =>
+            return builder.UseRetryPolicy(retries, retryAttempt =>
                                                     TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) +
                                                     TimeSpan.FromMilliseconds(random.Next(-100, 100)));
         }
 
-        public static IHttpClientBuilder AddRetryPolicy(this IHttpClientBuilder builder, int retries, BackoffTime backoffTime)
+        public static IHttpClientBuilder UseRetryPolicy(this IHttpClientBuilder builder, int retries, BackoffTime backoffTime)
         {
             // Add a policy that will handle transient HTTP & Networking errors
             RetryPolicy<HttpResponseMessage> exceptionPolicy = Policy<HttpResponseMessage>
@@ -67,7 +67,7 @@ namespace Genbox.SimpleS3.Extensions
             return builder;
         }
 
-        public static IHttpClientBuilder AddTimeoutPolicy(this IHttpClientBuilder builder, TimeSpan timeout)
+        public static IHttpClientBuilder UseTimeoutPolicy(this IHttpClientBuilder builder, TimeSpan timeout)
         {
             TimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(timeout);
             builder.AddPolicyHandler(timeoutPolicy);

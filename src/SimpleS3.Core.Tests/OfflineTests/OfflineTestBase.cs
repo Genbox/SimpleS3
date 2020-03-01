@@ -29,7 +29,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
             //Set the configuration from the config file
             _configRoot = configBuilder.Build();
 
-            IClientBuilder coreBuilder = collection.AddSimpleS3Core(config =>
+            ICoreBuilder coreBuilder = collection.AddSimpleS3Core(config =>
             {
                 //Set the configuration from the config file
                 _configRoot.Bind(config);
@@ -39,7 +39,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
                 ConfigureConfig(config);
             });
 
-            ConfigureClientBuilder(coreBuilder);
+            ConfigureCoreBuilder(coreBuilder);
 
             collection.TryAddSingleton<INetworkDriver, NullNetworkDriver>();
 
@@ -66,7 +66,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
         {
         }
 
-        protected virtual void ConfigureClientBuilder(IClientBuilder builder)
+        protected virtual void ConfigureCoreBuilder(ICoreBuilder builder)
         {
         }
 

@@ -1,18 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core;
+using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Factories;
+using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Fluent;
+using Genbox.SimpleS3.Core.Network;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
@@ -20,26 +32,30 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Extensions;
+using Genbox.SimpleS3.Core.Operations;
+using Genbox.SimpleS3.Core.Validation;
+using Genbox.SimpleS3.Extensions.HttpClientFactory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3
 {
     /// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
-    public sealed class S3Client : IDisposable, IClient
+    public sealed class S3Client : IClient, IDisposable
     {
-        private readonly IBucketClient _bucketClient;
-        private readonly IMultipartClient _multipartClient;
-        private readonly IObjectClient _objectClient;
-        private readonly ServiceProvider _provider;
+        private IBucketClient _bucketClient;
+        private IMultipartClient _multipartClient;
+        private IObjectClient _objectClient;
+        private IList<IDisposable> _disposables;
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="keyId">The key id</param>
         /// <param name="accessKey">The secret access key</param>
         /// <param name="region">The region you wish to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(string keyId, byte[] accessKey, AwsRegion region, WebProxy proxy = null) : this(new S3Config(new AccessKey(keyId, accessKey), region), proxy)
+        public S3Client(string keyId, byte[] accessKey, AwsRegion region, IWebProxy proxy = null) : this(new S3Config(new AccessKey(keyId, accessKey), region), proxy)
         {
         }
 
@@ -48,28 +64,43 @@ namespace Genbox.SimpleS3
         /// <param name="accessKey">The secret access key</param>
         /// <param name="region">The region you wish to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(string keyId, string accessKey, AwsRegion region, WebProxy proxy = null) : this(new S3Config(new StringAccessKey(keyId, accessKey), region), proxy)
+        public S3Client(string keyId, string accessKey, AwsRegion region, IWebProxy proxy = null) : this(new S3Config(new StringAccessKey(keyId, accessKey), region), proxy)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="S3Client" />
+        /// </summary>
+        /// <param name="credentials">The credentials to use</param>
+        /// <param name="region">The region you wish to use</param>
+        /// <param name="proxy">A web proxy (optional)</param>
+        public S3Client(IAccessKey credentials, AwsRegion region, IWebProxy proxy = null) : this(new S3Config(credentials, region), proxy)
         {
         }
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="config">The configuration you want to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(S3Config config, IWebProxy proxy = null) : this(config, new HttpClientHandler { Proxy = proxy })
+        public S3Client(S3Config config, IWebProxy proxy = null) : this(Options.Create(config), proxy)
         {
         }
 
-        public S3Client(S3Config config, HttpMessageHandler messageHandler)
+        public S3Client(IOptions<S3Config> options, IWebProxy proxy = null)
         {
-            ServiceCollection services = new ServiceCollection();
-            services.AddSingleton(x => Options.Create(config));
-            services.AddSimpleS3(null, messageHandler);
-            _provider = services.BuildServiceProvider();
-            _objectClient = _provider.GetRequiredService<IObjectClient>();
-            _bucketClient = _provider.GetRequiredService<IBucketClient>();
-            _multipartClient = _provider.GetRequiredService<IMultipartClient>();
+            ILoggerFactory nullLogger = NullLoggerFactory.Instance;
 
-            Transfer = new Transfer(_objectClient.ObjectOperations, _multipartClient.MultipartOperations);
+            HttpClientHandler handler = new HttpClientHandler { Proxy = proxy, UseProxy = proxy != null };
+            HttpClient client = new HttpClient(handler);
+
+            _disposables = new List<IDisposable> { handler, client };
+
+            INetworkDriver driver = new HttpClientFactoryNetworkDriver(nullLogger.CreateLogger<HttpClientFactoryNetworkDriver>(), client);
+            Initialize(options, driver, nullLogger);
+        }
+
+        public S3Client(IOptions<S3Config> options, INetworkDriver networkDriver, ILoggerFactory loggerFactory)
+        {
+            Initialize(options, networkDriver, loggerFactory);
         }
 
         public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient)
@@ -81,17 +112,49 @@ namespace Genbox.SimpleS3
             Transfer = new Transfer(_objectClient.ObjectOperations, _multipartClient.MultipartOperations);
         }
 
-        public Transfer Transfer { get; }
-
-        public void Dispose()
-        {
-            _provider?.Dispose();
-        }
+        public Transfer Transfer { get; private set; }
 
         public IObjectOperations ObjectOperations => _objectClient.ObjectOperations;
         public IBucketOperations BucketOperations => _bucketClient.BucketOperations;
         public IMultipartOperations MultipartOperations => _multipartClient.MultipartOperations;
 
+        private void Initialize(IOptions<S3Config> options, INetworkDriver networkDriver, ILoggerFactory loggerFactory)
+        {
+            Assembly assembly = typeof(S3Config).Assembly;
+
+            SimpleServiceProvider provider = new SimpleServiceProvider(new Tuple<Type, object>(typeof(IOptions<S3Config>), options));
+
+            IEnumerable<IValidator> validators = CreateInstances<IValidator>(assembly, provider);
+            IEnumerable<IRequestMarshal> requestMarshals = CreateInstances<IRequestMarshal>(assembly, provider);
+            IEnumerable<IResponseMarshal> responseMarshals = CreateInstances<IResponseMarshal>(assembly, provider);
+
+            ValidatorFactory validatorFactory = new ValidatorFactory(validators);
+            IMarshalFactory marshalFactory = new MarshalFactory(requestMarshals, responseMarshals);
+            IScopeBuilder scopeBuilder = new ScopeBuilder(options);
+            ISigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, loggerFactory.CreateLogger<SigningKeyBuilder>());
+            ISignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, loggerFactory.CreateLogger<SignatureBuilder>(), options);
+            IAuthorizationBuilder authorizationBuilder = new AuthorizationHeaderBuilder(options, scopeBuilder, signatureBuilder, loggerFactory.CreateLogger<AuthorizationHeaderBuilder>());
+            DefaultRequestHandler requestHandler = new DefaultRequestHandler(options, validatorFactory, marshalFactory, networkDriver, authorizationBuilder, Enumerable.Empty<IRequestStreamWrapper>(), loggerFactory.CreateLogger<DefaultRequestHandler>());
+
+            ObjectOperations objectOperations = new ObjectOperations(requestHandler, Enumerable.Empty<IRequestWrapper>(), Enumerable.Empty<IResponseWrapper>());
+            _objectClient = new S3ObjectClient(objectOperations);
+
+            BucketOperations bucketOperations = new BucketOperations(requestHandler);
+            _bucketClient = new S3BucketClient(bucketOperations);
+
+            MultipartOperations multipartOperations = new MultipartOperations(requestHandler, Enumerable.Empty<IRequestWrapper>(), Enumerable.Empty<IResponseWrapper>());
+            _multipartClient = new S3MultipartClient(multipartOperations, objectOperations);
+
+            Transfer = new Transfer(objectOperations, multipartOperations);
+        }
+
+        private static IEnumerable<T> CreateInstances<T>(Assembly assembly, IServiceProvider provider)
+        {
+            foreach (Type type in TypeHelper.GetInstanceTypesInheritedFrom<T>(assembly))
+            {
+                yield return (T)ActivatorUtilities.CreateInstance(provider, type);
+            }
+        }
 
         public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
         {
@@ -251,6 +314,17 @@ namespace Genbox.SimpleS3
         public Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream data, Action<PutObjectRequest> config = null, CancellationToken token = default)
         {
             return _objectClient.PutObjectAsync(bucketName, objectKey, data, config, token);
+        }
+
+        public void Dispose()
+        {
+            if (_disposables == null)
+                return;
+
+            foreach (IDisposable disposable in _disposables)
+            {
+                disposable.Dispose();
+            }
         }
     }
 }

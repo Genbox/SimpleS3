@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Extensions;
@@ -12,13 +11,17 @@ namespace Genbox.SimpleS3.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3 = null)
+        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3 = null)
         {
-            IClientBuilder builder = collection.AddSimpleS3Core();
-            builder.UseS3Client();
+            S3ClientBuilder builder = new S3ClientBuilder(collection);
 
-            IHttpClientBuilder httpBuilder = builder.UseHttpClientFactory();
-            httpBuilder.AddDefaultHttpPolicy();
+            ICoreBuilder clientBuilder = collection.AddSimpleS3Core();
+            clientBuilder.UseS3Client();
+            builder.CoreBuilder = clientBuilder;
+
+            IHttpClientBuilder httpBuilder = clientBuilder.UseHttpClientFactory();
+            httpBuilder.UseDefaultHttpPolicy();
+            builder.HttpBuilder = httpBuilder;
 
             if (configureS3 != null)
                 collection.Configure(configureS3);
@@ -26,31 +29,22 @@ namespace Genbox.SimpleS3.Extensions
             return builder;
         }
 
-        public static IClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config> configureS3)
+        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config> configureS3)
         {
-            return collection.AddSimpleS3((config, provider) => configureS3(config));
-        }
+            S3ClientBuilder builder = new S3ClientBuilder(collection);
 
-        public static IClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config> configureS3, HttpMessageHandler handler)
-        {
-            IClientBuilder builder = collection.AddSimpleS3Core();
-            builder.UseS3Client();
+            ICoreBuilder clientBuilder = collection.AddSimpleS3Core();
+            clientBuilder.UseS3Client();
+            builder.CoreBuilder = clientBuilder;
 
-            IHttpClientBuilder httpBuilder = builder.UseHttpClientFactory();
-            httpBuilder.AddDefaultHttpPolicy();
-
-            if (handler != null)
-                httpBuilder.ConfigurePrimaryHttpMessageHandler(() => handler);
+            IHttpClientBuilder httpBuilder = clientBuilder.UseHttpClientFactory();
+            httpBuilder.UseDefaultHttpPolicy();
+            builder.HttpBuilder = httpBuilder;
 
             if (configureS3 != null)
                 collection.Configure(configureS3);
 
             return builder;
-        }
-
-        public static IClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config> configureS3, IWebProxy proxy)
-        {
-            return collection.AddSimpleS3(configureS3, new HttpClientHandler { Proxy = proxy });
         }
     }
 }

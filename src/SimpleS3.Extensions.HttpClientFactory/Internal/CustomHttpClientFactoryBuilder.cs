@@ -2,9 +2,9 @@
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Internal
 {
-    internal class CustomHttpClientBuilder : IHttpClientBuilder
+    internal class CustomHttpClientFactoryBuilder : IHttpClientBuilder
     {
-        public CustomHttpClientBuilder(IServiceCollection services)
+        public CustomHttpClientFactoryBuilder(IServiceCollection services)
         {
             Services = services;
         }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Genbox.SimpleS3.Core.Internals.Xml
+﻿namespace Genbox.SimpleS3.Core.Internals.Xml
 {
     internal enum XmlCharMode
     {

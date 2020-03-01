@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core;
-using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
@@ -28,18 +28,16 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
             services.Configure<S3Config>(root);
 
-            IClientBuilder builder = services.AddSimpleS3();
+            IS3ClientBuilder clientBuilder = services.AddSimpleS3();
 
-            IHttpClientBuilder httpClientBuilder = builder.UseHttpClientFactory();
-
-            builder.UseProfileManager()
-                .BindConfigToDefaultProfile()
-                .UseDataProtection();
+            clientBuilder.CoreBuilder.UseProfileManager()
+                                     .BindConfigToDefaultProfile()
+                                     .UseDataProtection();
 
             IConfigurationSection proxySection = root.GetSection("Proxy");
 
             if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
-                httpClientBuilder.WithProxy(proxySection["ProxyAddress"]);
+                clientBuilder.HttpBuilder.WithProxy(proxySection["ProxyAddress"]);
 
             using (ServiceProvider provider = services.BuildServiceProvider())
             {

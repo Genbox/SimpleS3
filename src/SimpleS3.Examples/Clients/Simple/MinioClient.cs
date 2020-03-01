@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Authentication;
 
 namespace Genbox.SimpleS3.Examples.Clients.Simple
 {
-    public static class MinioPlaygroundClient
+    public static class MinioClient
     {
         public static S3Client Create(IWebProxy proxy = null)
         {

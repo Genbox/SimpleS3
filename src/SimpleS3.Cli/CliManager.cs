@@ -1,7 +1,6 @@
 ﻿using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Cli.Core.Managers;
 using Genbox.SimpleS3.Core;
-using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -18,10 +17,10 @@ namespace Genbox.SimpleS3.Cli
         private CliManager(string profileName, AwsRegion region)
         {
             ServiceCollection services = new ServiceCollection();
-            IClientBuilder builder = services.AddSimpleS3();
+            IS3ClientBuilder builder = services.AddSimpleS3();
 
-            builder.UseProfileManager()
-                .UseDataProtection();
+            builder.CoreBuilder.UseProfileManager()
+                               .UseDataProtection();
 
             //Override the region if it is set via commandline
             builder.Services.PostConfigure<S3Config>(config =>
