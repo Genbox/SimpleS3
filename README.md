@@ -15,12 +15,19 @@ A C# implementation of Amazon's S3 API with a focus on simplicity, security and 
 These are the features provided by this API implementation.
 * Supports a fluent API to make it easy to download/upload an object
 * Uses [HttpClientFactory](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests) for optimal performance and flexibility
-* Dependency injection friendly
+* Dependency injection friendly. By default uses [Microsoft.Extensions.DependencyInjection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/)
 * Supports configuration binding via [Microsoft.Extensions.Configuration](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-2.2)
 * Extensive unit tests ensure correctness and stability
 * Support for uploading/downloading multiparts in parallel
 * Support for third-party servers like [Minio](https://min.io/) and [Wasabi](https://wasabi.com/)
 * ProfileManager to securely manage credentials
+
+## Extensions
+SimpleS3 is very extensible and has multiple different network drivers and addons you can use. Click on the extension below for more information.
+
+* [SimpleS3.Extensions.HttpClient](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClient)
+* [SimpleS3.Extensions.HttpClientFactory](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClientFactory)
+* [SimpleS3.Extensions.ProfileManager](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.ProfileManager)
 
 ## Examples
 
