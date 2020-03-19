@@ -67,7 +67,9 @@ namespace Genbox.SimpleS3.Core.Network
 
             _logger.LogTrace("Sending {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
-            Stream requestStream = _marshaller.MarshalRequest(request, _options.Value);
+            S3Config config = _options.Value;
+
+            Stream requestStream = _marshaller.MarshalRequest(request, config);
 
             _validator.ValidateAndThrow(request);
 
@@ -84,7 +86,7 @@ namespace Genbox.SimpleS3.Core.Network
             //Ensure that the object key is encoded
             string encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
 
-            if (_options.Value.Endpoint == null || _options.Value.NamingMode == NamingMode.PathStyle)
+            if (config.Endpoint == null || config.NamingMode == NamingMode.PathStyle)
             {
                 if (bucketName != null)
                     objectKey = bucketName + '/' + encodedResource;
@@ -96,19 +98,21 @@ namespace Genbox.SimpleS3.Core.Network
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(100);
 
-            if (_options.Value.Endpoint != null)
-                sb.Append(_options.Value.Endpoint);
+            Uri endpoint = config.Endpoint;
+
+            if (endpoint != null)
+                sb.Append(endpoint.ToString().TrimEnd('/'));
             else
             {
-                if (_options.Value.NamingMode == NamingMode.VirtualHost)
+                if (config.NamingMode == NamingMode.VirtualHost)
                 {
                     if (bucketName != null)
-                        sb.Append(bucketName).Append(".s3.").Append(ValueHelper.EnumToString(_options.Value.Region)).Append(".amazonaws.com");
+                        sb.Append(bucketName).Append(".s3.").Append(ValueHelper.EnumToString(config.Region)).Append(".amazonaws.com");
                     else
-                        sb.Append("s3.").Append(ValueHelper.EnumToString(_options.Value.Region)).Append(".amazonaws.com");
+                        sb.Append("s3.").Append(ValueHelper.EnumToString(config.Region)).Append(".amazonaws.com");
                 }
                 else
-                    sb.Append("s3.").Append(ValueHelper.EnumToString(_options.Value.Region)).Append(".amazonaws.com");
+                    sb.Append("s3.").Append(ValueHelper.EnumToString(config.Region)).Append(".amazonaws.com");
             }
 
             request.SetHeader(HttpHeaders.Host, sb.ToString());
@@ -125,7 +129,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             if (!request.Headers.TryGetValue(AmzHeaders.XAmzContentSha256, out string contentHash))
             {
-                if (_options.Value.PayloadSignatureMode == SignatureMode.Unsigned)
+                if (config.PayloadSignatureMode == SignatureMode.Unsigned)
                     contentHash = "UNSIGNED-PAYLOAD";
                 else
                     contentHash = requestStream == null ? "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" : CryptoHelper.Sha256Hash(requestStream, true).HexEncode();
@@ -144,7 +148,8 @@ namespace Genbox.SimpleS3.Core.Network
             if (request.QueryParameters.Count > 0)
                 sb.Append('?').Append(UrlHelper.CreateQueryString(request.QueryParameters));
 
-            string fullUrl = "https://" + sb;
+            string scheme = endpoint == null ? config.UseTLS ? "https://" : "http://" : null;
+            string fullUrl = scheme + sb;
 
             StringBuilderPool.Shared.Return(sb);
 
@@ -183,7 +188,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             //Only marshal successful responses
             if (response.IsSuccess)
-                _marshaller.MarshalResponse(_options.Value, request, response, headers, responseStream);
+                _marshaller.MarshalResponse(config, request, response, headers, responseStream);
             else
             {
                 MemoryStream ms = new MemoryStream();

@@ -10,6 +10,7 @@ using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Microsoft.Extensions.Configuration;
@@ -47,6 +48,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
                        .UseDataProtection();
 
             IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
+            httpBuilder.UseTimeoutPolicy(TimeSpan.FromMinutes(10));
 
             IConfigurationSection proxySection = configRoot.GetSection("Proxy");
 
