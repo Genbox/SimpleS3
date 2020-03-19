@@ -97,7 +97,7 @@ namespace Genbox.SimpleS3.Core.Network
             StringBuilder sb = StringBuilderPool.Shared.Rent(100);
 
             if (_options.Value.Endpoint != null)
-                sb.Append(_options.Value.Endpoint.Host);
+                sb.Append(_options.Value.Endpoint);
             else
             {
                 if (_options.Value.NamingMode == NamingMode.VirtualHost)
