@@ -101,7 +101,12 @@ namespace Genbox.SimpleS3.Core.Network
             Uri endpoint = config.Endpoint;
 
             if (endpoint != null)
-                sb.Append(endpoint.ToString().TrimEnd('/'));
+            {
+                sb.Append(endpoint.Host);
+
+                if (!endpoint.IsDefaultPort)
+                    sb.Append(':').Append(endpoint.Port);
+            }
             else
             {
                 if (config.NamingMode == NamingMode.VirtualHost)
@@ -148,8 +153,8 @@ namespace Genbox.SimpleS3.Core.Network
             if (request.QueryParameters.Count > 0)
                 sb.Append('?').Append(UrlHelper.CreateQueryString(request.QueryParameters));
 
-            string scheme = endpoint == null ? config.UseTLS ? "https://" : "http://" : null;
-            string fullUrl = scheme + sb;
+            string scheme = endpoint == null ? config.UseTLS ? "https" : "http" : endpoint.Scheme;
+            string fullUrl = scheme + "://" + sb;
 
             StringBuilderPool.Shared.Return(sb);
 
