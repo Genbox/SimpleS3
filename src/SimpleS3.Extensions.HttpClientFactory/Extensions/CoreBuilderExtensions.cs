@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
 {
-    public static class S3ClientBuilderExtensions
+    public static class CoreBuilderExtensions
     {
         public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig> config = null)
         {

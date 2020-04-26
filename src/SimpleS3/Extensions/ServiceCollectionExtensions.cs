@@ -11,25 +11,33 @@ namespace Genbox.SimpleS3.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config, IServiceProvider> configureS3 = null)
+        /// <summary>
+        /// Add SimpleS3 services to a service collection.
+        /// </summary>
+        /// <param name="collection">The service collection</param>
+        /// <param name="config">The configuration delegate</param>
+        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config, IServiceProvider> config)
         {
-            S3ClientBuilder builder = new S3ClientBuilder(collection);
-
-            ICoreBuilder clientBuilder = collection.AddSimpleS3Core();
-            clientBuilder.UseS3Client();
-            builder.CoreBuilder = clientBuilder;
-
-            IHttpClientBuilder httpBuilder = clientBuilder.UseHttpClientFactory();
-            httpBuilder.UseDefaultHttpPolicy();
-            builder.HttpBuilder = httpBuilder;
-
-            if (configureS3 != null)
-                collection.Configure(configureS3);
-
-            return builder;
+            collection.Configure(config);
+            return AddSimpleS3(collection);
         }
 
-        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config> configureS3)
+        /// <summary>
+        /// Add SimpleS3 services to a service collection.
+        /// </summary>
+        /// <param name="collection">The service collection</param>
+        /// <param name="config">The configuration delegate</param>
+        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config> config)
+        {
+            collection.Configure(config);
+            return AddSimpleS3(collection);
+        }
+
+        /// <summary>
+        /// Add SimpleS3 services to a service collection.
+        /// </summary>
+        /// <param name="collection">The service collection</param>
+        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection)
         {
             S3ClientBuilder builder = new S3ClientBuilder(collection);
 
@@ -40,9 +48,6 @@ namespace Genbox.SimpleS3.Extensions
             IHttpClientBuilder httpBuilder = clientBuilder.UseHttpClientFactory();
             httpBuilder.UseDefaultHttpPolicy();
             builder.HttpBuilder = httpBuilder;
-
-            if (configureS3 != null)
-                collection.Configure(configureS3);
 
             return builder;
         }

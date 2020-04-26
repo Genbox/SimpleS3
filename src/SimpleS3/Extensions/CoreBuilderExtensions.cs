@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Genbox.SimpleS3.Extensions
 {
-    public static class ClientBuilderExtensions
+    public static class CoreBuilderExtensions
     {
         public static ICoreBuilder UseS3Client(this ICoreBuilder builder)
         {

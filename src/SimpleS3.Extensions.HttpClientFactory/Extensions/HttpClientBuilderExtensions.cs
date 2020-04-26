@@ -5,7 +5,7 @@ using Microsoft.Extensions.Http;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
 {
-    public static class HttpClientFactoryBuilderExtensions
+    public static class HttpClientBuilderExtensions
     {
         public static IHttpClientBuilder WithProxy(this IHttpClientBuilder builder, IWebProxy proxy)
         {
