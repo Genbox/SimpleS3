@@ -2,11 +2,12 @@
 using System.Text;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Examples.Clients.Simple;
+using Genbox.SimpleS3.Examples.Clients.WithoutDepInjection;
 
 namespace Genbox.SimpleS3.Examples
 {
@@ -19,8 +20,7 @@ namespace Genbox.SimpleS3.Examples
             //
 
             //Uncomment this line if you want to use it against your own bucket
-            //using (S3Client client = AmazonDiClientWithProxy.Create("MyKeyId", "MyAccessKey", AwsRegion.UsEast1))
-            using (S3Client client = MinioClient.Create())
+            using (S3Client client = SimpleClient.Create("MyKeyId", "MyAccessKey", AwsRegion.UsEast1))
             {
                 const string bucketName = "simple-s3-test";
                 const string objectName = "some-object";
