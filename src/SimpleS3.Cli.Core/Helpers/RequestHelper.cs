@@ -26,7 +26,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
 
             if (!(resp.Error is GenericError))
             {
-                string extraData = resp.Error.GetExtraData();
+                string extraData = resp.Error.GetErrorDetails();
 
                 if (!string.IsNullOrWhiteSpace(extraData))
                     sb.Append("Details: ").Append(extraData).AppendLine();

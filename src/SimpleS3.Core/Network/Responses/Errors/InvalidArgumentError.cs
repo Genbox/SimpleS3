@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
         public string ArgumentName { get; }
         public string ArgumentValue { get; }
 
-        public override string GetExtraData()
+        public override string GetErrorDetails()
         {
             return $"Argument: {ArgumentName} - Value: {ArgumentValue}";
         }

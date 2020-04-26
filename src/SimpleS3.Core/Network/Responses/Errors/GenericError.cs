@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common;
@@ -16,12 +17,23 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
 
             Code = ValueHelper.ParseEnum<ErrorCode>(lookup["Code"]);
             Message = lookup["Message"];
+
+            Data = new Dictionary<string, string>(lookup.Count, StringComparer.OrdinalIgnoreCase);
+
+            foreach (KeyValuePair<string, string> pair in lookup)
+            {
+                if (pair.Key == "Message" || pair.Key == "Code")
+                    continue;
+
+                Data.Add(pair);
+            }
         }
 
         public ErrorCode Code { get; }
         public string Message { get; }
+        public IDictionary<string, string> Data { get; }
 
-        public virtual string GetExtraData()
+        public virtual string GetErrorDetails()
         {
             return string.Empty;
         }

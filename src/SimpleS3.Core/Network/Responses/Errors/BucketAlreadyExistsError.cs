@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
 
         public string BucketName { get; }
 
-        public override string GetExtraData()
+        public override string GetErrorDetails()
         {
             return "BucketName: " + BucketName;
         }

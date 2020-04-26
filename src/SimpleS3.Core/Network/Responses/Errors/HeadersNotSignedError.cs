@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
 
         public string HeadersNotSigned { get; }
 
-        public override string GetExtraData()
+        public override string GetErrorDetails()
         {
             return "Headers not signed: " + HeadersNotSigned;
         }

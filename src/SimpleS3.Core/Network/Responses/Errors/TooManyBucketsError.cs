@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
         public int CurrentNumberOfBuckets { get; }
         public int AllowedNumberOfBuckets { get; }
 
-        public override string GetExtraData()
+        public override string GetErrorDetails()
         {
             return $"CurrentNumberOfBuckets: {CurrentNumberOfBuckets} - AllowedNumberOfBuckets: {AllowedNumberOfBuckets}";
         }

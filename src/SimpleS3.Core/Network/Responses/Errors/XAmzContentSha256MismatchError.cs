@@ -19,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
         public string RequestId { get; }
         public string HostId { get; }
 
-        public override string GetExtraData()
+        public override string GetErrorDetails()
         {
             return $"Client SHA256: {ClientSha256} S3Sha256: {S3Sha256}";
         }
