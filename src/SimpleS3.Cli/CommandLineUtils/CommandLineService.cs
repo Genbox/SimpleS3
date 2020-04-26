@@ -21,14 +21,13 @@ namespace Genbox.SimpleS3.Cli.CommandLineUtils
         /// <param name="logger">A logger</param>
         /// <param name="state">The command line state</param>
         /// <param name="serviceProvider">The DI service provider</param>
-        public CommandLineService(ILogger<CommandLineService<T>> logger, CommandLineState state,
-            IServiceProvider serviceProvider)
+        public CommandLineService(ILogger<CommandLineService<T>> logger, CommandLineState state, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _state = state;
 
             logger.LogDebug("Constructing CommandLineApplication<{type}> with args [{args}]", typeof(T).FullName, string.Join(",", state.Arguments));
-            _application = new CommandLineApplication<T>(state.Console, state.WorkingDirectory, true);
+            _application = new CommandLineApplication<T>(state.Console, state.WorkingDirectory);
             _application.Conventions
                 .UseAttributes()
                 //.SetAppNameFromEntryAssembly()
