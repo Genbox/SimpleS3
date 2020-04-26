@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using FluentValidation;
@@ -64,9 +64,9 @@ namespace Genbox.SimpleS3.Core.Extensions
 
             Assembly assembly = typeof(S3Config).Assembly; //Needs to be the assembly that contains the types
 
-            collection.Add(CreateRegistrations(typeof(IValidator), assembly));
-            collection.Add(CreateRegistrations(typeof(IRequestMarshal), assembly));
-            collection.Add(CreateRegistrations(typeof(IResponseMarshal), assembly));
+            collection.TryAddEnumerable(CreateRegistrations(typeof(IValidator), assembly));
+            collection.TryAddEnumerable(CreateRegistrations(typeof(IRequestMarshal), assembly));
+            collection.TryAddEnumerable(CreateRegistrations(typeof(IResponseMarshal), assembly));
 
             return new CoreBuilder(collection);
         }
