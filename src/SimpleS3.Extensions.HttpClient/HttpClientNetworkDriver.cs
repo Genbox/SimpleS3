@@ -12,7 +12,7 @@ using HttpMethod = Genbox.SimpleS3.Core.Abstracts.Enums.HttpMethod;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient
 {
-    public class HttpClientNetworkDriver : INetworkDriver
+    public class HttpClientNetworkDriver : INetworkDriver, IDisposable
     {
         private readonly System.Net.Http.HttpClient _client;
         private readonly ILogger<HttpClientNetworkDriver> _logger;
@@ -73,6 +73,12 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
                 default:
                     throw new ArgumentOutOfRangeException(nameof(method), method, null);
             }
+        }
+
+        public void Dispose()
+        {
+            _client?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
