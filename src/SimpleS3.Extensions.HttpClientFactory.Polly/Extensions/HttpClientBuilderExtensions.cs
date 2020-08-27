@@ -3,24 +3,22 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
-using Genbox.SimpleS3.Retry;
+using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly;
 using Polly.Retry;
 using Polly.Timeout;
 
-namespace Genbox.SimpleS3.Extensions
+namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions
 {
     public static class HttpClientBuilderExtensions
     {
         public delegate TimeSpan BackoffTime(int retryAttempt);
 
-        private static readonly Func<HttpResponseMessage, bool> TransientHttpStatusCodePredicate = (response) =>
-        {
-            // Polly default transient codes: >500 & 408
-            // https://github.com/App-vNext/Polly.Extensions.Http/blob/master/src/Polly.Extensions.Http/HttpPolicyExtensions.cs
-            return (int)response.StatusCode >= 500 || response.StatusCode == HttpStatusCode.RequestTimeout;
-        };
+        // Polly default transient codes: >500 & 408
+        // https://github.com/App-vNext/Polly.Extensions.Http/blob/master/src/Polly.Extensions.Http/HttpPolicyExtensions.cs
+        private static readonly Func<HttpResponseMessage, bool> TransientHttpStatusCodePredicate = resp => (int)resp.StatusCode >= 500 || resp.StatusCode == HttpStatusCode.RequestTimeout;
 
         public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, IWebProxy proxy)
         {
@@ -63,7 +61,7 @@ namespace Genbox.SimpleS3.Extensions
                 .WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt));
 
             builder.AddPolicyHandler(exceptionPolicy);
-            builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
+            builder.Services.TryAddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
             return builder;
         }
 

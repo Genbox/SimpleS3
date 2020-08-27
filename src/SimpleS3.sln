@@ -53,6 +53,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Utility.TestCleanu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Utility.TestSetup", "SimpleS3.Utility.TestSetup\SimpleS3.Utility.TestSetup.csproj", "{029A981C-05EF-4556-8DEC-4A8FAA43E6AB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.HttpClientFactory.Polly", "SimpleS3.Extensions.HttpClientFactory.Polly\SimpleS3.Extensions.HttpClientFactory.Polly.csproj", "{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,10 @@ Global
 		{029A981C-05EF-4556-8DEC-4A8FAA43E6AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{029A981C-05EF-4556-8DEC-4A8FAA43E6AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{029A981C-05EF-4556-8DEC-4A8FAA43E6AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +151,7 @@ Global
 		{BA25CF13-24B1-40B1-97E5-2EBF90ED1A24} = {8374F15C-AE00-4F9E-AC9C-23F98189334A}
 		{20C8CD34-EACA-4284-9368-277CAFA3B9C3} = {8374F15C-AE00-4F9E-AC9C-23F98189334A}
 		{029A981C-05EF-4556-8DEC-4A8FAA43E6AB} = {8374F15C-AE00-4F9E-AC9C-23F98189334A}
+		{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02} = {5F231AF0-BA65-4AE0-959F-A29E76CC6DFD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EB716AC-1004-4514-8045-DAFF9636F0C5}

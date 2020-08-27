@@ -2,10 +2,12 @@
 using System.Net.Http;
 using System.Security.Authentication;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClient.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
 {
@@ -34,12 +36,20 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
                 handler.MaxAutomaticRedirections = 3;
                 handler.SslProtocols = SslProtocols.None; //Let the OS handle the protocol to use
 
-                HttpClientConfig conf = x.GetRequiredService<HttpClientConfig>();
-                handler.UseProxy = conf.UseProxy;
-                handler.Proxy = conf.Proxy;
+                IOptions<HttpClientConfig> options = x.GetService<IOptions<HttpClientConfig>>();
+
+                if (options != null)
+                {
+                    handler.UseProxy = options.Value.UseProxy;
+                    handler.Proxy = options.Value.Proxy;
+                }
 
                 ILogger<HttpClientNetworkDriver> logger = x.GetRequiredService<ILogger<HttpClientNetworkDriver>>();
+
                 System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(handler);
+                client.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.DefaultUserAgent);
+                client.DefaultRequestHeaders.TransferEncodingChunked = false;
+
                 return new HttpClientNetworkDriver(logger, client);
             });
 

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Common;
 
-namespace Genbox.SimpleS3.Retry
+namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry
 {
     /// <summary>
     /// Stream that will buffer / record data as it's read, and be able to seek in it afterwards

@@ -2,7 +2,7 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 
-namespace Genbox.SimpleS3.Retry
+namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry
 {
     internal class RetryableBufferingStreamWrapper : IRequestStreamWrapper
     {
