@@ -76,7 +76,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
         public string ASV4()
         {
             // Build the canonical request
-            (string canonicalRequest, string signedHeaders) = CanonicalRequest.BuildAsync(_request2, null).Result;
+            (string canonicalRequest, string signedHeaders) = CanonicalRequest.Build("s3", _request2, null, null);
 
             // Build the string to sign
             (string stringToSign, string credentialScope) = StringToSign.Build(
