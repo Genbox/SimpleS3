@@ -63,14 +63,7 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Helpers
                     }
                 }
 
-                string name;
-                if (valuePos == -1)
-                {
-                    name = null;
-                    valuePos = namePos;
-                }
-                else
-                    name = HttpUtility.UrlDecode(query.Substring(namePos, valuePos - namePos - 1), Encoding.UTF8);
+                string name = HttpUtility.UrlDecode(query.Substring(namePos, valuePos - namePos - 1), Encoding.UTF8);
 
                 if (valueEnd < 0)
                     valueEnd = query.Length;

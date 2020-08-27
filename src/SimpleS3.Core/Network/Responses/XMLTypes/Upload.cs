@@ -10,9 +10,9 @@ namespace Genbox.SimpleS3.Core.Network.Responses.XmlTypes
     {
         public string Key { get; set; }
         public string UploadId { get; set; }
-        public Initiator Initiator { get; set; }
-        public Owner Owner { get; set; }
-        public string StorageClass { get; set; }
+        public Initiator? Initiator { get; set; }
+        public Owner? Owner { get; set; }
+        public string? StorageClass { get; set; }
         public DateTime Initiated { get; set; }
     }
 }

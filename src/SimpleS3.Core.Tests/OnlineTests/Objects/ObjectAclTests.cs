@@ -25,7 +25,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             GetObjectAclResponse getResp = await ObjectClient.GetObjectAclAsync(BucketName, objectKey).ConfigureAwait(false);
             Assert.True(getResp.IsSuccess);
 
-            S3Grant grant = Assert.Single(getResp.Grants);
+            S3Grant? grant = Assert.Single(getResp.Grants);
             Assert.Equal(TestConstants.TestUserId, grant.Id);
             Assert.Equal(TestConstants.TestUsername, grant.Name);
             Assert.Equal(Permission.FullControl, grant.Permission);

@@ -15,9 +15,9 @@ namespace Genbox.SimpleS3.Core.Authentication
     {
         private readonly ILogger<SigningKeyBuilder> _logger;
         private readonly IOptions<S3Config> _options;
-        private readonly IAccessKeyProtector _protector;
+        private readonly IAccessKeyProtector? _protector;
 
-        public SigningKeyBuilder(IOptions<S3Config> options, ILogger<SigningKeyBuilder> logger, IAccessKeyProtector protector = null)
+        public SigningKeyBuilder(IOptions<S3Config> options, ILogger<SigningKeyBuilder> logger, IAccessKeyProtector? protector = null)
         {
             _options = options;
             _logger = logger;

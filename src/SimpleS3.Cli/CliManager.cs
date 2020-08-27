@@ -47,7 +47,7 @@ namespace Genbox.SimpleS3.Cli
         public ObjectManager ObjectManager { get; }
         public IProfileManager ProfileManager { get; }
 
-        public static CliManager GetCliManager(string profile, AwsRegion region)
+        public static CliManager GetCliManager(string? profile, AwsRegion region)
         {
             return _cliManager ??= new CliManager(profile ?? Extensions.ProfileManager.ProfileManager.DefaultProfile, region);
         }

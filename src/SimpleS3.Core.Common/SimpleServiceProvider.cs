@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Common
             _obj = obj.ToDictionary(x => x.Item1, y => y.Item2);
         }
 
-        public object GetService(Type serviceType)
+        public object? GetService(Type serviceType)
         {
             if (_obj.TryGetValue(serviceType, out object value))
                 return value;

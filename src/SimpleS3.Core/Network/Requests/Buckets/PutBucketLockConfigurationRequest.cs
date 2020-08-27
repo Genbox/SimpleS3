@@ -23,7 +23,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
         public string BucketName { get; set; }
         public LockMode LockMode { get; set; }
         public DateTimeOffset? LockRetainUntil { get; set; }
-        public byte[] ContentMd5 { get; set; }
+        public byte[]? ContentMd5 { get; set; }
         public Payer RequestPayer { get; set; }
         Func<Type, bool> IAutoMapConfig.AutoMapDisabledFor => x => x == typeof(IHasLock);
         Func<bool> IContentMd5Config.ForceContentMd5 => () => true;

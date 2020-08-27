@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Extensions
     public static class BucketClientExtensions
     {
         /// <summary>List all buckets</summary>
-        public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(this IBucketClient client, Action<ListBucketsRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(this IBucketClient client, Action<ListBucketsRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             ListBucketsResponse response = await client.ListBucketsAsync(config, token).ConfigureAwait(false);
 

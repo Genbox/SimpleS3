@@ -34,7 +34,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
             Assert.True(getResp.IsSuccess);
 
             Assert.Equal(mode, getResp.LockMode);
-            Assert.Equal(DateTimeOffset.UtcNow.AddDays(2 - 1).DateTime, getResp.LockRetainUntil.Value.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.AddDays(2 - 1).DateTime, getResp.LockRetainUntil!.Value.DateTime, TimeSpan.FromMinutes(1));
 
             //Delete again to cleanup
             await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
@@ -86,7 +86,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
             GetBucketLockConfigurationResponse getResp = await BucketClient.GetBucketLockConfigurationAsync(tempBucketName).ConfigureAwait(false);
             Assert.True(getResp.IsSuccess);
             Assert.Equal(LockMode.Compliance, getResp.LockMode);
-            Assert.Equal(DateTimeOffset.UtcNow.AddDays(2 - 1).DateTime, getResp.LockRetainUntil.Value.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.AddDays(2 - 1).DateTime, getResp.LockRetainUntil!.Value.DateTime, TimeSpan.FromMinutes(1));
 
             PutBucketLockConfigurationResponse putResp2 = await BucketClient.PutBucketLockConfigurationAsync(tempBucketName, true, x =>
                  {
@@ -98,7 +98,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
             GetBucketLockConfigurationResponse getResp2 = await BucketClient.GetBucketLockConfigurationAsync(tempBucketName).ConfigureAwait(false);
             Assert.True(getResp2.IsSuccess);
             Assert.Equal(LockMode.Governance, getResp2.LockMode);
-            Assert.Equal(DateTimeOffset.UtcNow.AddDays(5 - 1).DateTime, getResp2.LockRetainUntil.Value.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.AddDays(5 - 1).DateTime, getResp2.LockRetainUntil!.Value.DateTime, TimeSpan.FromMinutes(1));
 
             //Delete again to cleanup
             await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);

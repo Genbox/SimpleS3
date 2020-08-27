@@ -8,6 +8,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces
         DateTimeOffset? LifeCycleExpiresOn { get; }
 
         /// <summary>The rule id used for expiration</summary>
-        string LifeCycleRuleId { get; }
+        string? LifeCycleRuleId { get; }
     }
 }

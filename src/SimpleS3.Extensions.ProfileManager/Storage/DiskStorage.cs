@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Storage
             _options = options;
         }
 
-        public byte[] Get(string name)
+        public byte[]? Get(string name)
         {
             string path = Path.Combine(_options.Value.ProfileLocation, name);
 

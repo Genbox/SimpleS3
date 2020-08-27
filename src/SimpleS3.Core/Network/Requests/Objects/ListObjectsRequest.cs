@@ -26,7 +26,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// don't specify the prefix parameter, the substring starts at the beginning of the key. The keys that are grouped under the CommonPrefixes result
         /// element are not returned elsewhere in the response.
         /// </summary>
-        public string Delimiter { get; set; }
+        public string? Delimiter { get; set; }
 
         /// <summary>
         /// An object key can contain any Unicode character. However, XML 1.0 parsers cannot parse some characters, such as characters with an ASCII
@@ -47,14 +47,14 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// Limits the response to keys that begin with the specified prefix. You can use prefixes to separate a bucket into different groupings of
         /// keys. You can think of using prefix to make groups in the same way you'd use a folder in a file system.
         /// </summary>
-        public string Prefix { get; set; }
+        public string? Prefix { get; set; }
 
         /// <summary>
         /// When the response to this API call is truncated - that is, the IsTruncated response element value is true, the response also includes the
         /// NextContinuationToken element. To list the next set of objects, you can use the NextContinuationToken element in the next request as the
         /// continuation-token.
         /// </summary>
-        public string ContinuationToken { get; set; }
+        public string? ContinuationToken { get; set; }
 
         /// <summary>
         /// By default, the API does not return the Owner information in the response. If you want the owner information in the response, you can
@@ -67,7 +67,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         /// in UTF-8 character encoding in lexicographical order. This parameter is valid only in your first request. If the response is truncated, you can
         /// specify this parameter along with the continuation-token parameter, and then Amazon S3 ignores this parameter.
         /// </summary>
-        public string StartAfter { get; set; }
+        public string? StartAfter { get; set; }
 
         public string BucketName { get; set; }
 
@@ -75,7 +75,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public override void Reset()
         {
-            BucketName = null;
+            BucketName = null!;
             Delimiter = null;
             MaxKeys = null;
             EncodingType = EncodingType.Unknown;

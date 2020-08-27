@@ -18,5 +18,14 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
 
         /// <summary>Value used to delimit records</summary>
         public char? RecordDelimiter { get; set; }
+
+        internal override void Reset()
+        {
+            FieldDelimiter = null;
+            QuoteCharacter = null;
+            QuoteEscapeCharacter = null;
+            QuoteFields = QuoteFields.Unknown;
+            RecordDelimiter = null;
+        }
     }
 }

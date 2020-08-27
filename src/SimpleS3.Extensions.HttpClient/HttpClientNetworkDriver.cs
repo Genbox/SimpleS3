@@ -23,7 +23,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
             _client = client;
         }
 
-        public async Task<(int statusCode, IDictionary<string, string> headers, Stream responseStream)> SendRequestAsync(HttpMethod method, string url, IReadOnlyDictionary<string, string> headers, Stream dataStream, CancellationToken cancellationToken = default)
+        public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethod method, string url, IReadOnlyDictionary<string, string> headers, Stream? dataStream, CancellationToken cancellationToken = default)
         {
             HttpResponseMessage httpResponse;
             using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(method), url))
@@ -47,13 +47,17 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
             foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Headers)
                 responseHeaders.Add(header.Key, header.Value.First());
 
+            Stream? responseStream = null;
+
             if (httpResponse.Content != null)
             {
                 foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
                     responseHeaders.Add(header.Key, header.Value.First());
+
+                responseStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
             }
 
-            return ((int)httpResponse.StatusCode, responseHeaders, await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false));
+            return ((int)httpResponse.StatusCode, responseHeaders, responseStream);
         }
 
         private static System.Net.Http.HttpMethod ConvertToMethod(HttpMethod method)

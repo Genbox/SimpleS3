@@ -8,7 +8,6 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Misc;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using JetBrains.Annotations;
@@ -53,7 +52,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             response.LockRetainUntil = headers.GetHeaderDate(AmzHeaders.XAmzObjectLockRetainUntilDate, DateTimeFormat.Iso8601DateTimeExt);
             response.LockLegalHold = headers.GetHeader(AmzHeaders.XAmzObjectLockLegalHold) == "ON";
             response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzPartsCount);
-            response.Content = new ContentReader(responseStream);
+            response.Content = responseStream;
 
             if (HeaderParserHelper.TryParseExpiration(headers, out (DateTimeOffset expiresOn, string ruleId) data))
             {

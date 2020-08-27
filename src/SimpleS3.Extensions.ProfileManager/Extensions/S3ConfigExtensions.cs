@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
     {
         public static void UseProfile(this IConfig config, IProfileManager profileManager, string profileName)
         {
-            IProfile profile = profileManager.GetProfile(profileName);
+            IProfile? profile = profileManager.GetProfile(profileName);
 
             if (profile == null)
                 throw new Exception("The profile " + profileName + " does not exist.");

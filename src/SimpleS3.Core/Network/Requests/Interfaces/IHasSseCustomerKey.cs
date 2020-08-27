@@ -18,12 +18,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces
         /// Specifies the customer-provided encryption key to use to decrypt the requested object. This value is used to perform the decryption and then
         /// it is discarded; Amazon does not store the key.
         /// </summary>
-        byte[] SseCustomerKey { get; set; }
+        byte[]? SseCustomerKey { get; set; }
 
         /// <summary>
         /// Specifies the 128-bit MD5 digest of the customer-provided encryption key according to RFC 1321. If this header is included in your request,
         /// Amazon S3 uses it for a message integrity check to ensure that the encryption key was transmitted without error.
         /// </summary>
-        byte[] SseCustomerKeyMd5 { get; set; }
+        byte[]? SseCustomerKeyMd5 { get; set; }
     }
 }

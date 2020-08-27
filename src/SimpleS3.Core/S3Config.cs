@@ -25,7 +25,7 @@ namespace Genbox.SimpleS3.Core
         public int StreamingChunkSize { get; set; } = 2 * 1024 * 1024; // 2 Mb
         public NamingMode NamingMode { get; set; } = NamingMode.PathStyle;
         public bool UseTLS { get; set; } = true;
-        public Uri Endpoint { get; set; }
+        public Uri? Endpoint { get; set; }
         public bool EnableBucketNameValidation { get; set; } = true;
         public KeyValidationMode ObjectKeyValidationMode { get; set; } = KeyValidationMode.AsciiMode;
         public bool AutoUrlDecodeResponses { get; set; } = true;

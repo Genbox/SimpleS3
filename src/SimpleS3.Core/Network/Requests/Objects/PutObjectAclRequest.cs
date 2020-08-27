@@ -27,14 +27,14 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             ObjectKey = objectKey;
         }
 
-        public byte[] ContentMd5 { get; set; }
+        public byte[]? ContentMd5 { get; set; }
         public ObjectCannedAcl Acl { get; set; }
         public AclBuilder AclGrantRead { get; }
         public AclBuilder AclGrantReadAcp { get; }
         public AclBuilder AclGrantWriteAcp { get; }
         public AclBuilder AclGrantFullControl { get; }
         public Payer RequestPayer { get; set; }
-        public string VersionId { get; set; }
+        public string? VersionId { get; set; }
         public string BucketName { get; set; }
         public string ObjectKey { get; set; }
 
@@ -48,8 +48,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             AclGrantFullControl.Reset();
             RequestPayer = Payer.Unknown;
             VersionId = null;
-            BucketName = null;
-            ObjectKey = null;
+            BucketName = null!;
+            ObjectKey = null!;
 
             base.Reset();
         }

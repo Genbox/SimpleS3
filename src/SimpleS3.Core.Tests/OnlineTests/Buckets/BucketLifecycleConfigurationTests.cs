@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
             {
                 IList<S3Rule> rules = new List<S3Rule>
                 {
-                    new S3Rule(true, "Transition logs after 30 days to StandardIa and after 60 days to OneZoneIa")
+                    new S3Rule("Transition logs after 30 days to StandardIa and after 60 days to OneZoneIa", true)
                     {
                         Transitions = new List<S3Transition>
                         {
@@ -30,7 +30,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
                         },
                         Filter = new S3Filter { Prefix = "logs/" }
                     },
-                    new S3Rule(true, "Expire temp folder after 5 days")
+                    new S3Rule("Expire temp folder after 5 days", true)
                     {
                         Expiration = new S3Expiration(5),
                         Filter = new S3Filter { Prefix = "temp/" }

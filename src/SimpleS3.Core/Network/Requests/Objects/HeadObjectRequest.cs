@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId, IHasBucketName, IHasObjectKey, IHasPartNumber
     {
-        private byte[] _sseCustomerKey;
+        private byte[]? _sseCustomerKey;
 
         internal HeadObjectRequest() : base(HttpMethod.HEAD)
         {
@@ -48,9 +48,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public ContentLanguageBuilder ResponseContentLanguage { get; }
         public ContentEncodingBuilder ResponseContentEncoding { get; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
-        public byte[] SseCustomerKeyMd5 { get; set; }
+        public byte[]? SseCustomerKeyMd5 { get; set; }
 
-        public byte[] SseCustomerKey
+        public byte[]? SseCustomerKey
         {
             get => _sseCustomerKey;
             set
@@ -72,7 +72,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
         }
 
-        public string VersionId { get; set; }
+        public string? VersionId { get; set; }
 
         public override void Reset()
         {
@@ -92,8 +92,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             SseCustomerKey = null;
             SseCustomerKeyMd5 = null;
             ResponseExpires = null;
-            BucketName = null;
-            ObjectKey = null;
+            BucketName = null!;
+            ObjectKey = null!;
 
             base.Reset();
         }

@@ -39,11 +39,6 @@ namespace Genbox.SimpleS3.Core.Network.RequestWrappers
 
         public Stream Wrap(Stream input, IRequest request)
         {
-            Validator.RequireNotNull(request, nameof(request));
-
-            if (input == null)
-                return null;
-
             //See https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
             request.SetHeader(HttpHeaders.ContentEncoding, "aws-chunked");
             request.SetHeader(AmzHeaders.XAmzDecodedContentLength, input.Length);

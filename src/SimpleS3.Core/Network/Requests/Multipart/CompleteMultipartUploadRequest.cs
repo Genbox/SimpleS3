@@ -36,8 +36,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         {
             Validator.RequireNotNull(parts, nameof(parts));
 
-            if (UploadParts == null)
-                UploadParts = new List<S3PartInfo>();
+            UploadParts = new List<S3PartInfo>();
 
             foreach (UploadPartResponse part in parts)
                 UploadParts.Add(new S3PartInfo(part.ETag, part.PartNumber));

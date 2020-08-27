@@ -11,15 +11,15 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
     [UsedImplicitly]
     internal class ListObjectsRequestMarshal : IRequestMarshal<ListObjectsRequest>
     {
-        public Stream MarshalRequest(ListObjectsRequest request, IConfig config)
+        public Stream? MarshalRequest(ListObjectsRequest request, IConfig config)
         {
-            request.SetQueryParameter(AmzParameters.Delimiter, request.Delimiter);
+            request.SetOptionalQueryParameter(AmzParameters.Delimiter, request.Delimiter);
             request.SetQueryParameter(AmzParameters.EncodingType, request.EncodingType);
             request.SetQueryParameter(AmzParameters.MaxKeys, request.MaxKeys);
-            request.SetQueryParameter(AmzParameters.Prefix, request.Prefix);
-            request.SetQueryParameter(AmzParameters.ContinuationToken, request.ContinuationToken);
+            request.SetOptionalQueryParameter(AmzParameters.Prefix, request.Prefix);
+            request.SetOptionalQueryParameter(AmzParameters.ContinuationToken, request.ContinuationToken);
             request.SetQueryParameter(AmzParameters.FetchOwner, request.FetchOwner);
-            request.SetQueryParameter(AmzParameters.StartAfter, request.StartAfter);
+            request.SetOptionalQueryParameter(AmzParameters.StartAfter, request.StartAfter);
             request.SetQueryParameter(AmzParameters.ListType, 2);
             return null;
         }

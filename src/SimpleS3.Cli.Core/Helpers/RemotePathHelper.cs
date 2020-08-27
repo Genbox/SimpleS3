@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
 {
     public static class RemotePathHelper
     {
-        public static string Combine(params string[] components)
+        public static string Combine(params string?[] components)
         {
             Validator.RequireNotNullOrEmpty(components, nameof(components));
             Validator.RequireThat(components.Any(x => x != null), nameof(components));
@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
 
             for (int i = 0; i < components.Length; i++)
             {
-                string component = components[i];
+                string component = components[i]!;
 
                 if (component.Length == 0)
                     continue;

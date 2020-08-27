@@ -25,7 +25,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             if (response.StorageClass == StorageClass.Unknown)
                 response.StorageClass = StorageClass.Standard;
 
-            response.ETag = headers.GetHeader(HttpHeaders.ETag);
+            response.ETag = headers.GetRequiredHeader(HttpHeaders.ETag);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
             response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSseAwsKmsKeyId);
             response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSseCustomerAlgorithm);

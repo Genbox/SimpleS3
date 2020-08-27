@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Builders
     {
         private const string _metadataHeader = "x-amz-meta-";
         private readonly ISet<byte> _allowed;
-        private IDictionary<string, string> _metadata;
+        private IDictionary<string, string>? _metadata;
         private int _totalSize;
 
         public MetadataBuilder()

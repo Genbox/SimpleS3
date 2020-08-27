@@ -23,13 +23,10 @@ namespace Genbox.SimpleS3.Core.Extensions
             Validator.RequireNotNull(req, nameof(req));
             Validator.RequireNotNull(data, nameof(data));
 
-            if (operations.RequestWrappers != null)
+            foreach (IRequestWrapper wrapper in operations.RequestWrappers)
             {
-                foreach (IRequestWrapper wrapper in operations.RequestWrappers)
-                {
-                    if (wrapper.IsSupported(req))
-                        data = wrapper.Wrap(data, req);
-                }
+                if (wrapper.IsSupported(req))
+                    data = wrapper.Wrap(data, req);
             }
 
             string bucket = req.BucketName;
@@ -69,12 +66,12 @@ namespace Genbox.SimpleS3.Core.Extensions
 
                 Queue<UploadPartResponse> responses = new Queue<UploadPartResponse>(uploads.Count);
 
-                while (uploads.TryDequeue(out Task<UploadPartResponse> task))
+                while (uploads.TryDequeue(out Task<UploadPartResponse>? task))
                 {
                     if (token.IsCancellationRequested)
                         yield break;
 
-                    UploadPartResponse response = await task.ConfigureAwait(false);
+                    UploadPartResponse response = await task!.ConfigureAwait(false);
                     responses.Enqueue(response);
 
                     yield return response;
@@ -88,7 +85,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             }
         }
 
-        public static async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectOperations operations, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest> config = null, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectOperations operations, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(output, nameof(output));
 
@@ -110,7 +107,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                 if (!getResp.IsSuccess)
                     throw new Exception();
 
-                await getResp.Content.CopyToAsync(output, token: token).ConfigureAwait(false);
+                await getResp.Content.CopyToAsync(output, 81920, token).ConfigureAwait(false);
 
                 yield return getResp;
             }
@@ -131,19 +128,19 @@ namespace Genbox.SimpleS3.Core.Extensions
                         queue.Enqueue(DownloadPartAsync(operations, bucketName, objectKey, output, headResp.ContentLength, i, bufferSize, semaphore, mutex, config, token));
                     }
 
-                    while (queue.TryDequeue(out Task<GetObjectResponse> task))
+                    while (queue.TryDequeue(out Task<GetObjectResponse>? task))
                     {
                         if (token.IsCancellationRequested)
                             yield break;
 
-                        GetObjectResponse response = await task.ConfigureAwait(false);
+                        GetObjectResponse response = await task!.ConfigureAwait(false);
                         yield return response;
                     }
                 }
             }
         }
 
-        private static async Task<GetObjectResponse> DownloadPartAsync(IObjectOperations operations, string bucketName, string objectKey, Stream output, long partSize, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, Action<GetObjectRequest> config, CancellationToken token)
+        private static async Task<GetObjectResponse> DownloadPartAsync(IObjectOperations operations, string bucketName, string objectKey, Stream output, long partSize, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, Action<GetObjectRequest>? config, CancellationToken token)
         {
             try
             {
@@ -152,8 +149,8 @@ namespace Genbox.SimpleS3.Core.Extensions
                 config?.Invoke(getReq);
 
                 GetObjectResponse getResp = await operations.GetObjectAsync(getReq, token).ConfigureAwait(false);
-                
-                using (Stream stream = getResp.Content.AsStream())
+
+                using (Stream stream = getResp.Content)
                 {
                     long offset = (partNumber - 1) * partSize;
                     byte[] buffer = new byte[bufferSize];

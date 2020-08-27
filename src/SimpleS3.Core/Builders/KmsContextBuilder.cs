@@ -8,9 +8,9 @@ namespace Genbox.SimpleS3.Core.Builders
 {
     public class KmsContextBuilder : IHttpHeaderBuilder
     {
-        private IDictionary<string, string> _dict;
+        private IDictionary<string, string>? _dict;
 
-        public KmsContextBuilder(IDictionary<string, string> dict = null)
+        public KmsContextBuilder(IDictionary<string, string>? dict = null)
         {
             if (dict == null)
                 return;
@@ -19,12 +19,12 @@ namespace Genbox.SimpleS3.Core.Builders
                 AddEntry(pair.Key, pair.Value);
         }
 
-        public string Build()
+        public string? Build()
         {
             if (!HasData())
                 return null;
 
-            return JsonHelper.EncodeJson(_dict);
+            return JsonHelper.EncodeJson(_dict!);
         }
 
         public void Reset()
@@ -37,7 +37,7 @@ namespace Genbox.SimpleS3.Core.Builders
             return _dict != null && _dict.Count > 0;
         }
 
-        public string HeaderName => null;
+        public string? HeaderName => null;
 
         public void AddEntry(string key, string value)
         {

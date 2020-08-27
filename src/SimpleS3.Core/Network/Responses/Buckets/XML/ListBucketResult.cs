@@ -12,9 +12,9 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Buckets.Xml
         public string Delimiter { get; set; }
 
         [XmlElement]
-        public List<CommonPrefix> CommonPrefixes { get; set; }
+        public List<CommonPrefix>? CommonPrefixes { get; set; }
 
-        public string EncodingType { get; set; }
+        public string? EncodingType { get; set; }
         public string ContinuationToken { get; set; }
         public string NextContinuationToken { get; set; }
         public string StartAfter { get; set; }
@@ -23,6 +23,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Buckets.Xml
         public bool IsTruncated { get; set; }
 
         [XmlElement]
-        public List<Content> Contents { get; set; }
+        public List<Content>? Contents { get; set; }
     }
 }

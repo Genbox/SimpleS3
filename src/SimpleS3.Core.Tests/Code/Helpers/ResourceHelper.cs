@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Helpers
     public static class ResourceHelper
     {
         [ThreadStatic]
-        private static Assembly _cachedAssembly;
+        private static Assembly? _cachedAssembly;
 
         private static Assembly _assembly => _cachedAssembly ??= typeof(ResourceHelper).Assembly;
 
@@ -30,8 +30,11 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Helpers
         public static string GetResource(string name)
         {
             using (MemoryStream ms = new MemoryStream())
-            using (Stream s = _assembly.GetManifestResourceStream(name))
+            using (Stream? s = _assembly.GetManifestResourceStream(name))
             {
+                if (s == null)
+                    return string.Empty;
+
                 s.CopyTo(ms);
 
                 return Encoding.UTF8.GetString(ms.ToArray());

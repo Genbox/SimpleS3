@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
 
         public static IProfile SetupProfile(IProfileManager profileManager, string profileName, bool persist = true)
         {
-            start:
+        start:
             Console.WriteLine();
             Console.WriteLine("You don't have a profile set up yet. Please enter your API credentials.");
             Console.WriteLine("You can create a new API key at https://console.aws.amazon.com/iam/home?#/security_credentials");
@@ -66,7 +66,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
 
         private static string GetKeyId()
         {
-            string enteredKeyId;
+            string? enteredKeyId;
             bool validKeyId = true;
 
             Console.WriteLine();
@@ -83,13 +83,13 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
                     enteredKeyId = enteredKeyId.Trim();
             } while (!(validKeyId = InputValidator.TryValidateKeyId(enteredKeyId, out _)));
 
-            return enteredKeyId;
+            return enteredKeyId!;
         }
 
         private static byte[] GetAccessKey()
         {
-            char[] enteredAccessKey = null;
-            byte[] utf8AccessKey = null;
+            char[]? enteredAccessKey = null;
+            byte[]? utf8AccessKey = null;
             bool validAccessKey = true;
 
             Console.WriteLine();
@@ -100,8 +100,8 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
                 if (!validAccessKey)
                 {
                     Console.Error.WriteLine("Invalid access key. Try again.");
-                    Array.Clear(enteredAccessKey, 0, enteredAccessKey.Length);
-                    Array.Clear(utf8AccessKey, 0, utf8AccessKey.Length);
+                    Array.Clear(enteredAccessKey!, 0, enteredAccessKey!.Length);
+                    Array.Clear(utf8AccessKey!, 0, utf8AccessKey!.Length);
                 }
 
                 enteredAccessKey = ConsoleHelper.ReadSecret(40);
@@ -161,7 +161,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
                 Console.WriteLine("{0,-8}{1,-20}{2}", (int)region, GetEnumMember(region), region.GetRegionName());
             }
 
-            string enteredRegion;
+            string? enteredRegion;
             bool validRegion = true;
             AwsRegion parsedRegion;
 

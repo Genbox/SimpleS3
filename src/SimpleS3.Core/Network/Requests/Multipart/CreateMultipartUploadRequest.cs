@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// </summary>
     public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsiteRedirect, IHasMetadata, IHasTags, IHasLegalHold
     {
-        private byte[] _sseCustomerKey;
+        private byte[]? _sseCustomerKey;
 
         internal CreateMultipartUploadRequest() : base(HttpMethod.POST)
         {
@@ -55,12 +55,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
         public SseAlgorithm SseAlgorithm { get; set; }
-        public string SseKmsKeyId { get; set; }
+        public string? SseKmsKeyId { get; set; }
         public KmsContextBuilder SseContext { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
-        public byte[] SseCustomerKeyMd5 { get; set; }
+        public byte[]? SseCustomerKeyMd5 { get; set; }
 
-        public byte[] SseCustomerKey
+        public byte[]? SseCustomerKey
         {
             get => _sseCustomerKey;
             set
@@ -84,7 +84,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 
         public StorageClass StorageClass { get; set; }
         public TagBuilder Tags { get; internal set; }
-        public string WebsiteRedirectLocation { get; set; }
+        public string? WebsiteRedirectLocation { get; set; }
 
         public override void Reset()
         {
@@ -110,8 +110,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
             SseCustomerKey = null;
             SseCustomerKeyMd5 = null;
-            BucketName = null;
-            ObjectKey = null;
+            BucketName = null!;
+            ObjectKey = null!;
             WebsiteRedirectLocation = null;
             StorageClass = StorageClass.Unknown;
 

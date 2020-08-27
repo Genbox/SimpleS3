@@ -21,28 +21,28 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="objectKey">The key of the object</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest> config = null, CancellationToken token = default);
+        Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default);
 
         /// <summary>Delete multiple objects</summary>
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="objectKeys">A list of object keys</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest> config = null, CancellationToken token = default);
+        Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default);
 
         /// <summary>Head an object. Can be used to check if an object exists without downloading the content of it.</summary>
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="objectKey">The key of the object</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest> config = null, CancellationToken token = default);
+        Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest>? config = null, CancellationToken token = default);
 
         /// <summary>Get (download) an object</summary>
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="objectKey">The key of the object</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<GetObjectResponse> GetObjectAsync(string bucketName, string objectKey, Action<GetObjectRequest> config = null, CancellationToken token = default);
+        Task<GetObjectResponse> GetObjectAsync(string bucketName, string objectKey, Action<GetObjectRequest>? config = null, CancellationToken token = default);
 
         /// <summary>Put (upload) an object</summary>
         /// <param name="bucketName">Name of the bucket</param>
@@ -50,20 +50,20 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="data">The content of the object</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream data, Action<PutObjectRequest> config = null, CancellationToken token = default);
+        Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream? data, Action<PutObjectRequest>? config = null, CancellationToken token = default);
 
         /// <summary>List all objects within a bucket</summary>
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default);
+        Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default);
 
         /// <summary>Restores an object from Amazon Glacier</summary>
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="objectKey">The key of the object</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest> config = null, CancellationToken token = default);
+        Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default);
 
         /// <summary>Copies an object already present in an S3 bucket to a new object in the same or another S3 bucket</summary>
         /// <param name="sourceBucketName">The source bucket</param>
@@ -72,7 +72,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="destinationObjectKey">The destination object key</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest> config = null, CancellationToken token = default);
+        Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest>? config = null, CancellationToken token = default);
 
         /// <summary>
         /// Set the access control list (ACL) permissions for an object that already exists in a bucket. You must have WRITE_ACP permission to set the ACL of an object.
@@ -81,7 +81,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="objectKey">The key of the object</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest> config = null, CancellationToken token = default);
+        Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest>? config = null, CancellationToken token = default);
 
         /// <summary>
         /// Returns the access control list (ACL) of an object. To use this operation, you must have READ_ACP access to the object.
@@ -90,7 +90,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="objectKey">The key of the object</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest> config = null, CancellationToken token = default);
+        Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest>? config = null, CancellationToken token = default);
 
         /// <summary>
         /// Gets an object's current Legal Hold status.
@@ -99,7 +99,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="objectKey">The key of the object</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest> config = null, CancellationToken token = default);
+        Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default);
 
         /// <summary>
         /// Applies a Legal Hold configuration to the specified object.
@@ -109,6 +109,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="lockStatus">Set to true if you want to lock the object, otherwise, set to false to disable a lock</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
-        Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest> config = null, CancellationToken token = default);
+        Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default);
     }
 }

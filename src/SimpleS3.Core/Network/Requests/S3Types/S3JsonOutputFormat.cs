@@ -2,6 +2,16 @@
 {
     public class S3JsonOutputFormat : OutputFormat
     {
+        public S3JsonOutputFormat(string recordDelimiter)
+        {
+            RecordDelimiter = recordDelimiter;
+        }
+
         public string RecordDelimiter { get; set; }
+
+        internal override void Reset()
+        {
+            RecordDelimiter = string.Empty;
+        }
     }
 }

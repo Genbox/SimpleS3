@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
@@ -33,13 +34,13 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             Assert.Equal(200, putResp.StatusCode);
 
             //Test lifecycle expiration (yes, we add 2 days. I don't know why Amazon works like this)
-            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
             Assert.Equal("ExpireAll", putResp.LifeCycleRuleId);
 
             GetObjectResponse getResp = await AssertAsync(nameof(GetObjectLifecycle)).ConfigureAwait(false);
 
             //Test lifecycle expiration
-            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, getResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, getResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
             Assert.Equal("ExpireAll", getResp.LifeCycleRuleId);
         }
     }

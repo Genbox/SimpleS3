@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     [UsedImplicitly]
     internal class DeleteBucketTaggingRequestMarshal : IRequestMarshal<DeleteBucketTaggingRequest>
     {
-        public Stream MarshalRequest(DeleteBucketTaggingRequest request, IConfig config)
+        public Stream? MarshalRequest(DeleteBucketTaggingRequest request, IConfig config)
         {
             request.SetQueryParameter(AmzParameters.Tagging, string.Empty);
             return null;

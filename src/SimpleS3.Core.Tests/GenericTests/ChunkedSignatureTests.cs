@@ -173,7 +173,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
 
             byte[] seedSignature = _sigBuilder.CreateSignature(req);
 
-            using (ChunkedStream stream = new ChunkedStream(_options, _chunkedSigBuilder, req, seedSignature, req.Content))
+            using (ChunkedStream stream = new ChunkedStream(_options, _chunkedSigBuilder, req, seedSignature, req.Content!))
             using (StreamReader sr = new StreamReader(stream, Encoding.UTF8))
             {
                 StringBuilder sbExpected = new StringBuilder();

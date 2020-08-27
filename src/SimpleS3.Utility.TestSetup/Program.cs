@@ -42,7 +42,7 @@ namespace Genbox.SimpleS3.Utility.TestSetup
             using (ServiceProvider provider = services.BuildServiceProvider())
             {
                 IProfileManager manager = provider.GetRequiredService<IProfileManager>();
-                IProfile profile = manager.GetDefaultProfile();
+                IProfile? profile = manager.GetDefaultProfile();
 
                 //If profile is null, then we do not yet have a profile stored on disk. We use ConsoleSetup as an easy and secure way of asking for credentials
                 if (profile == null)
@@ -86,7 +86,7 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
                 List<S3Rule> rules = new List<S3Rule>
                 {
-                    new S3Rule(true, "ExpireAll")
+                    new S3Rule("ExpireAll", true)
                     {
                         AbortIncompleteMultipartUploadDays = 1,
                         NonCurrentVersionExpirationDays = 1,

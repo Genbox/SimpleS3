@@ -8,9 +8,9 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects.Xml
     public sealed class DeleteResult
     {
         [XmlElement]
-        public List<Deleted> Deleted { get; set; }
+        public List<Deleted>? Deleted { get; set; }
 
         [XmlElement]
-        public List<Error> Error { get; set; }
+        public List<Error>? Error { get; set; }
     }
 }

@@ -12,9 +12,9 @@ namespace Genbox.SimpleS3.Core.Network.Responses.XmlTypes
         public DateTime LastModified { get; set; }
         public string ETag { get; set; }
         public long Size { get; set; }
-        public string StorageClass { get; set; }
+        public string? StorageClass { get; set; }
 
         [XmlElement]
-        public Owner Owner { get; set; }
+        public Owner? Owner { get; set; }
     }
 }

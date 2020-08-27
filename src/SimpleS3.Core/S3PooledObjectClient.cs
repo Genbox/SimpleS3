@@ -27,7 +27,7 @@ namespace Genbox.SimpleS3.Core
 
         public IObjectOperations ObjectOperations { get; }
 
-        public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest> config = null, CancellationToken token = default)
+        public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default)
         {
             void Setup(DeleteObjectRequest req)
             {
@@ -41,7 +41,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<DeleteObjectRequest>.Shared.RentAndUse(Setup, Action);
         }
 
-        public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
+        public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default)
         {
             void Setup(DeleteObjectsRequest req)
             {
@@ -53,7 +53,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<DeleteObjectsRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.DeleteObjectsAsync(request, token));
         }
 
-        public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest> config = null, CancellationToken token = default)
+        public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest>? config = null, CancellationToken token = default)
         {
             void Setup(HeadObjectRequest req)
             {
@@ -65,7 +65,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<HeadObjectRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.HeadObjectAsync(request, token));
         }
 
-        public Task<GetObjectResponse> GetObjectAsync(string bucketName, string objectKey, Action<GetObjectRequest> config = null, CancellationToken token = default)
+        public Task<GetObjectResponse> GetObjectAsync(string bucketName, string objectKey, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
             void Setup(GetObjectRequest req)
             {
@@ -77,7 +77,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<GetObjectRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.GetObjectAsync(request, token));
         }
 
-        public Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream data, Action<PutObjectRequest> config = null, CancellationToken token = default)
+        public Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream? data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
         {
             void Setup(PutObjectRequest req)
             {
@@ -90,7 +90,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<PutObjectRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.PutObjectAsync(request, token));
         }
 
-        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
+        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
         {
             void Setup(ListObjectsRequest req)
             {
@@ -101,7 +101,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<ListObjectsRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.ListObjectsAsync(request, token));
         }
 
-        public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest> config = null, CancellationToken token = default)
+        public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default)
         {
             void Setup(RestoreObjectRequest req)
             {
@@ -113,7 +113,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<RestoreObjectRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.RestoreObjectsAsync(request, token));
         }
 
-        public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest> config = null, CancellationToken token = default)
+        public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest>? config = null, CancellationToken token = default)
         {
             void Setup(CopyObjectRequest req)
             {
@@ -127,7 +127,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<CopyObjectRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.CopyObjectsAsync(request, token));
         }
 
-        public Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest> config = null, CancellationToken token = default)
+        public Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest>? config = null, CancellationToken token = default)
         {
             void Setup(PutObjectAclRequest req)
             {
@@ -139,7 +139,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<PutObjectAclRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.PutObjectAclAsync(request, token));
         }
 
-        public Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest> config = null, CancellationToken token = default)
+        public Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest>? config = null, CancellationToken token = default)
         {
             void Setup(GetObjectAclRequest req)
             {
@@ -151,7 +151,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<GetObjectAclRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.GetObjectAclAsync(request, token));
         }
 
-        public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest> config = null, CancellationToken token = default)
+        public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default)
         {
             void Setup(GetObjectLegalHoldRequest req)
             {
@@ -163,7 +163,7 @@ namespace Genbox.SimpleS3.Core
             return ObjectPool<GetObjectLegalHoldRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.GetObjectLegalHoldAsync(request, token));
         }
 
-        public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest> config = null, CancellationToken token = default)
+        public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default)
         {
             void Setup(PutObjectLegalHoldRequest req)
             {

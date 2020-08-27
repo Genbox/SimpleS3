@@ -27,7 +27,7 @@ namespace Genbox.SimpleS3.Core
 
         public IMultipartOperations MultipartOperations { get; }
 
-        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default)
         {
             CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, objectKey);
             config?.Invoke(req);
@@ -35,7 +35,7 @@ namespace Genbox.SimpleS3.Core
             return MultipartOperations.CreateMultipartUploadAsync(req, token);
         }
 
-        public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest> config = null, CancellationToken token = default)
+        public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default)
         {
             UploadPartRequest req = new UploadPartRequest(bucketName, objectKey, partNumber, uploadId, content);
             config?.Invoke(req);
@@ -43,7 +43,7 @@ namespace Genbox.SimpleS3.Core
             return MultipartOperations.UploadPartAsync(req, token);
         }
 
-        public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest> config = null, CancellationToken token = default)
+        public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default)
         {
             ListPartsRequest req = new ListPartsRequest(bucketName, objectKey, uploadId);
             config?.Invoke(req);
@@ -51,7 +51,7 @@ namespace Genbox.SimpleS3.Core
             return MultipartOperations.ListPartsAsync(req, token);
         }
 
-        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default)
         {
             CompleteMultipartUploadRequest req = new CompleteMultipartUploadRequest(bucketName, objectKey, uploadId, parts);
             config?.Invoke(req);
@@ -59,7 +59,7 @@ namespace Genbox.SimpleS3.Core
             return MultipartOperations.CompleteMultipartUploadAsync(req, token);
         }
 
-        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default)
         {
             AbortMultipartUploadRequest req = new AbortMultipartUploadRequest(bucketName, objectKey, uploadId);
             config?.Invoke(req);
@@ -67,7 +67,7 @@ namespace Genbox.SimpleS3.Core
             return MultipartOperations.AbortMultipartUploadAsync(req, token);
         }
 
-        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest> config = null, CancellationToken token = default)
+        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default)
         {
             ListMultipartUploadsRequest request = new ListMultipartUploadsRequest(bucketName);
             config?.Invoke(request);
@@ -75,7 +75,7 @@ namespace Genbox.SimpleS3.Core
             return MultipartOperations.ListMultipartUploadsAsync(request, token);
         }
 
-        public async Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
+        public async Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default)
         {
             CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, objectKey);
             config?.Invoke(req);

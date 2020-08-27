@@ -66,11 +66,11 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
                     response.Initiator.Id = listResult.Initiator.Id;
                 }
 
-                if (listResult.Part != null)
+                if (listResult.Parts != null)
                 {
-                    response.Parts = new List<S3Part>(listResult.Part.Count);
+                    response.Parts = new List<S3Part>(listResult.Parts.Count);
 
-                    foreach (Part part in listResult.Part)
+                    foreach (Part part in listResult.Parts)
                     {
                         S3Part s3Part = new S3Part();
                         s3Part.ETag = part.ETag;

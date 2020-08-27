@@ -12,18 +12,18 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Buckets.Xml
         public string UploadIdMarker { get; set; }
         public string NextKeyMarker { get; set; }
         public string NextUploadIdMarker { get; set; }
-        public string EncodingType { get; set; }
+        public string? EncodingType { get; set; }
 
         public int MaxUploads { get; set; }
         public bool IsTruncated { get; set; }
 
         [XmlElement("Upload")]
-        public List<Upload> Uploads { get; set; }
+        public List<Upload>? Uploads { get; set; }
 
         public string Prefix { get; set; }
         public string Delimiter { get; set; }
 
         [XmlElement]
-        public List<CommonPrefix> CommonPrefixes { get; set; }
+        public List<CommonPrefix>? CommonPrefixes { get; set; }
     }
 }

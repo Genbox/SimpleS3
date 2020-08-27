@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     [UsedImplicitly]
     internal class PutBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<PutBucketLifecycleConfigurationRequest>
     {
-        public Stream MarshalRequest(PutBucketLifecycleConfigurationRequest request, IConfig config)
+        public Stream? MarshalRequest(PutBucketLifecycleConfigurationRequest request, IConfig config)
         {
             request.SetQueryParameter(AmzParameters.Lifecycle, string.Empty);
 
@@ -94,7 +94,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
                 foreach (S3NonCurrentVersionTransition transition in rule.NonCurrentVersionTransitions)
                 {
                     writer.WriteStartElement("NoncurrentVersionTransition");
-                    writer.WriteElement("NoncurrentDays", transition.NonCurrentDays.Value);
+                    writer.WriteElement("NoncurrentDays", transition.NonCurrentDays);
                     writer.WriteElement("StorageClass", ValueHelper.EnumToString(transition.StorageClass));
                     writer.WriteEndElement("NoncurrentVersionTransition");
                 }

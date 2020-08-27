@@ -22,7 +22,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
             ListBucketsResponse listResp = await BucketClient.ListBucketsAsync().ConfigureAwait(false);
             Assert.True(listResp.Buckets.Count > 0);
 
-            S3Bucket bucketObj = Assert.Single(listResp.Buckets, bucket => bucket.Name == tempBucketName);
+            S3Bucket? bucketObj = Assert.Single(listResp.Buckets, bucket => bucket.Name == tempBucketName);
             Assert.Equal(bucketObj.CreatedOn.UtcDateTime, DateTime.UtcNow, TimeSpan.FromSeconds(5));
         }
     }

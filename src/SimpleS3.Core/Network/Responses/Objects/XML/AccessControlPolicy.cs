@@ -7,9 +7,9 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects.Xml
     public sealed class AccessControlPolicy
     {
         [XmlElement]
-        public Owner Owner { get; set; }
+        public Owner? Owner { get; set; }
 
         [XmlElement]
-        public AccessControlList AccessControlList { get; set; }
+        public AccessControlList? AccessControlList { get; set; }
     }
 }

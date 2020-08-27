@@ -8,14 +8,14 @@ namespace Genbox.SimpleS3.Core.Common.Tests
         [Fact]
         public void RequireNotNullOrEmptyTest()
         {
-            Assert.Throws<ArgumentNullException>(() => Validator.RequireNotNullOrEmpty((string)null, "prop"));
+            Assert.Throws<ArgumentNullException>(() => Validator.RequireNotNullOrEmpty((string)null!, "prop"));
             Assert.Throws<ArgumentNullException>(() => Validator.RequireNotNullOrEmpty(string.Empty, "prop"));
         }
 
         [Fact]
         public void RequireNotNullTest()
         {
-            object obj = null;
+            object? obj = null;
             Assert.Throws<ArgumentNullException>(() => Validator.RequireNotNull(obj, "prop"));
         }
 

@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core
 
         public IBucketOperations BucketOperations { get; }
 
-        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
+        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default)
         {
             CreateBucketRequest request = new CreateBucketRequest(bucketName);
             config?.Invoke(request);
@@ -29,7 +29,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.CreateBucketAsync(request, token);
         }
 
-        public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)
+        public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest>? config = null, CancellationToken token = default)
         {
             DeleteBucketRequest request = new DeleteBucketRequest(bucketName);
             config?.Invoke(request);
@@ -37,7 +37,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.DeleteBucketAsync(request, token);
         }
 
-        public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
+        public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest>? config = null, CancellationToken token = default)
         {
             ListBucketsRequest request = new ListBucketsRequest();
             config?.Invoke(request);
@@ -45,7 +45,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.ListBucketsAsync(request, token);
         }
 
-        public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest> config = null, CancellationToken token = default)
+        public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest>? config = null, CancellationToken token = default)
         {
             HeadBucketRequest request = new HeadBucketRequest(bucketName);
             config?.Invoke(request);
@@ -53,7 +53,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.HeadBucketAsync(request, token);
         }
 
-        public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
         {
             PutBucketLockConfigurationRequest request = new PutBucketLockConfigurationRequest(bucketName, enabled);
             config?.Invoke(request);
@@ -61,7 +61,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.PutBucketLockConfigurationAsync(request, token);
         }
 
-        public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
         {
             GetBucketLockConfigurationRequest request = new GetBucketLockConfigurationRequest(bucketName);
             config?.Invoke(request);
@@ -69,7 +69,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.GetBucketLockConfigurationAsync(request, token);
         }
 
-        public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest> config = null, CancellationToken token = default)
+        public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
             GetBucketTaggingRequest request = new GetBucketTaggingRequest(bucketName);
             config?.Invoke(request);
@@ -77,7 +77,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.GetBucketTaggingAsync(request, token);
         }
 
-        public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest> config = null, CancellationToken token = default)
+        public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
             PutBucketTaggingRequest request = new PutBucketTaggingRequest(bucketName, tags);
             config?.Invoke(request);
@@ -85,7 +85,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.PutBucketTaggingAsync(request, token);
         }
 
-        public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest> config = null, CancellationToken token = default)
+        public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
             DeleteBucketTaggingRequest request = new DeleteBucketTaggingRequest(bucketName);
             config?.Invoke(request);
@@ -93,7 +93,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.DeleteBucketTaggingAsync(request, token);
         }
 
-        public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
         {
             PutBucketAccelerateConfigurationRequest request = new PutBucketAccelerateConfigurationRequest(bucketName, enabled);
             config?.Invoke(request);
@@ -101,7 +101,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.PutBucketAccelerateConfigurationAsync(request, token);
         }
 
-        public Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
         {
             GetBucketAccelerateConfigurationRequest request = new GetBucketAccelerateConfigurationRequest(bucketName);
             config?.Invoke(request);
@@ -109,7 +109,7 @@ namespace Genbox.SimpleS3.Core
             return BucketOperations.GetBucketAccelerateConfigurationAsync(request, token);
         }
 
-        public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
         {
             PutBucketLifecycleConfigurationRequest request = new PutBucketLifecycleConfigurationRequest(bucketName, rules);
             config?.Invoke(request);

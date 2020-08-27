@@ -48,14 +48,14 @@ namespace Genbox.SimpleS3
         private IBucketClient _bucketClient;
         private IMultipartClient _multipartClient;
         private IObjectClient _objectClient;
-        private IList<IDisposable> _disposables;
+        private IList<IDisposable>? _disposables;
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="keyId">The key id</param>
         /// <param name="accessKey">The secret access key</param>
         /// <param name="region">The region you wish to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(string keyId, byte[] accessKey, AwsRegion region, IWebProxy proxy = null) : this(new S3Config(new AccessKey(keyId, accessKey), region), proxy)
+        public S3Client(string keyId, byte[] accessKey, AwsRegion region, IWebProxy? proxy = null) : this(new S3Config(new AccessKey(keyId, accessKey), region), proxy)
         {
         }
 
@@ -64,7 +64,7 @@ namespace Genbox.SimpleS3
         /// <param name="accessKey">The secret access key</param>
         /// <param name="region">The region you wish to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(string keyId, string accessKey, AwsRegion region, IWebProxy proxy = null) : this(new S3Config(new StringAccessKey(keyId, accessKey), region), proxy)
+        public S3Client(string keyId, string accessKey, AwsRegion region, IWebProxy? proxy = null) : this(new S3Config(new StringAccessKey(keyId, accessKey), region), proxy)
         {
         }
 
@@ -74,18 +74,18 @@ namespace Genbox.SimpleS3
         /// <param name="credentials">The credentials to use</param>
         /// <param name="region">The region you wish to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(IAccessKey credentials, AwsRegion region, IWebProxy proxy = null) : this(new S3Config(credentials, region), proxy)
+        public S3Client(IAccessKey credentials, AwsRegion region, IWebProxy? proxy = null) : this(new S3Config(credentials, region), proxy)
         {
         }
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="config">The configuration you want to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(S3Config config, IWebProxy proxy = null) : this(Options.Create(config), proxy)
+        public S3Client(S3Config config, IWebProxy? proxy = null) : this(Options.Create(config), proxy)
         {
         }
 
-        public S3Client(IOptions<S3Config> options, IWebProxy proxy = null)
+        public S3Client(IOptions<S3Config> options, IWebProxy? proxy = null)
         {
             ILoggerFactory nullLogger = NullLoggerFactory.Instance;
 
@@ -134,7 +134,7 @@ namespace Genbox.SimpleS3
             ISigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, loggerFactory.CreateLogger<SigningKeyBuilder>());
             ISignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, loggerFactory.CreateLogger<SignatureBuilder>(), options);
             IAuthorizationBuilder authorizationBuilder = new AuthorizationHeaderBuilder(options, scopeBuilder, signatureBuilder, loggerFactory.CreateLogger<AuthorizationHeaderBuilder>());
-            DefaultRequestHandler requestHandler = new DefaultRequestHandler(options, validatorFactory, marshalFactory, networkDriver, authorizationBuilder, Enumerable.Empty<IRequestStreamWrapper>(), loggerFactory.CreateLogger<DefaultRequestHandler>());
+            DefaultRequestHandler requestHandler = new DefaultRequestHandler(options, validatorFactory, marshalFactory, networkDriver, authorizationBuilder, loggerFactory.CreateLogger<DefaultRequestHandler>(), Enumerable.Empty<IRequestStreamWrapper>());
 
             ObjectOperations objectOperations = new ObjectOperations(requestHandler, Enumerable.Empty<IRequestWrapper>(), Enumerable.Empty<IResponseWrapper>());
             _objectClient = new S3ObjectClient(objectOperations);
@@ -156,57 +156,57 @@ namespace Genbox.SimpleS3
             }
         }
 
-        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest> config = null, CancellationToken token = default)
+        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.ListObjectsAsync(bucketName, config, token);
         }
 
-        public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest> config = null, CancellationToken token = default)
+        public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.RestoreObjectAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest> config = null, CancellationToken token = default)
+        public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.CopyObjectAsync(sourceBucketName, sourceObjectKey, destinationBucket, destinationObjectKey, config, token);
         }
 
-        public Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest> config = null, CancellationToken token = default)
+        public Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.PutObjectAclAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest> config = null, CancellationToken token = default)
+        public Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.GetObjectAclAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest> config = null, CancellationToken token = default)
+        public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.GetObjectLegalHoldAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest> config = null, CancellationToken token = default)
+        public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.PutObjectLegalHoldAsync(bucketName, objectKey, lockStatus, config, token);
         }
 
-        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest> config = null, CancellationToken token = default)
+        public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.CreateBucketAsync(bucketName, config, token);
         }
 
-        public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest> config = null, CancellationToken token = default)
+        public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.DeleteBucketAsync(bucketName, config, token);
         }
 
-        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest> config = null, CancellationToken token = default)
+        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default)
         {
             return _multipartClient.ListMultipartUploadsAsync(bucketName, config, token);
         }
 
-        public Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default)
         {
             return _multipartClient.MultipartUploadAsync(bucketName, objectKey, data, partSize, numParallelParts, config, token);
         }
@@ -216,102 +216,102 @@ namespace Genbox.SimpleS3
             return _multipartClient.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, token);
         }
 
-        public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest> config = null, CancellationToken token = default)
+        public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.ListBucketsAsync(config, token);
         }
 
-        public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest> config = null, CancellationToken token = default)
+        public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.HeadBucketAsync(bucketName, config, token);
         }
 
-        public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.PutBucketLockConfigurationAsync(bucketName, enabled, config, token);
         }
 
-        public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.GetBucketLockConfigurationAsync(bucketName, config, token);
         }
 
-        public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest> config = null, CancellationToken token = default)
+        public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.GetBucketTaggingAsync(bucketName, config, token);
         }
 
-        public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest> config = null, CancellationToken token = default)
+        public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.PutBucketTaggingAsync(bucketName, tags, config, token);
         }
 
-        public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest> config = null, CancellationToken token = default)
+        public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.DeleteBucketTaggingAsync(bucketName, config, token);
         }
 
-        public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.PutBucketAccelerateConfigurationAsync(bucketName, enabled, config, token);
         }
 
-        public Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.GetBucketAccelerateConfigurationAsync(bucketName, config, token);
         }
 
-        public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest> config = null, CancellationToken token = default)
+        public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.PutBucketLifecycleConfigurationAsync(bucketName, rules, config, token);
         }
 
-        public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest> config = null, CancellationToken token = default)
+        public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.DeleteObjectAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest> config = null, CancellationToken token = default)
+        public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.DeleteObjectsAsync(bucketName, objectKeys, config, token);
         }
 
-        public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest> config = null, CancellationToken token = default)
+        public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.HeadObjectAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default)
         {
             return _multipartClient.CreateMultipartUploadAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest> config = null, CancellationToken token = default)
+        public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default)
         {
             return _multipartClient.UploadPartAsync(bucketName, objectKey, partNumber, uploadId, content, config, token);
         }
 
-        public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest> config = null, CancellationToken token = default)
+        public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default)
         {
             return _multipartClient.ListPartsAsync(bucketName, objectKey, uploadId, config, token);
         }
 
-        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default)
         {
             return _multipartClient.CompleteMultipartUploadAsync(bucketName, objectKey, uploadId, parts, config, token);
         }
 
-        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest> config = null, CancellationToken token = default)
+        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default)
         {
             return _multipartClient.AbortMultipartUploadAsync(bucketName, objectKey, uploadId, config, token);
         }
 
-        public Task<GetObjectResponse> GetObjectAsync(string bucketName, string objectKey, Action<GetObjectRequest> config = null, CancellationToken token = default)
+        public Task<GetObjectResponse> GetObjectAsync(string bucketName, string objectKey, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.GetObjectAsync(bucketName, objectKey, config, token);
         }
 
-        public Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream data, Action<PutObjectRequest> config = null, CancellationToken token = default)
+        public Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream? data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.PutObjectAsync(bucketName, objectKey, data, config, token);
         }

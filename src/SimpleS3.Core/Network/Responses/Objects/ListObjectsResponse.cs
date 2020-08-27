@@ -38,8 +38,8 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
 
         public bool IsTruncated { get; internal set; }
         public EncodingType EncodingType { get; internal set; }
-        public string Prefix { get; internal set; }
-        public string Delimiter { get; internal set; }
-        public IList<string> CommonPrefixes { get; internal set; }
+        public string? Prefix { get; internal set; }
+        public string? Delimiter { get; internal set; }
+        public IList<string>? CommonPrefixes { get; internal set; }
     }
 }

@@ -8,18 +8,18 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Multipart.Xml
     public sealed class ListPartsResult
     {
         public string Bucket { get; set; }
-        public string EncodingType { get; set; }
+        public string? EncodingType { get; set; }
         public string Key { get; set; }
         public string UploadId { get; set; }
-        public Initiator Initiator { get; set; }
-        public Owner Owner { get; set; }
-        public string StorageClass { get; set; }
+        public Initiator? Initiator { get; set; }
+        public Owner? Owner { get; set; }
+        public string? StorageClass { get; set; }
         public int PartNumberMarker { get; set; }
         public int NextPartNumberMarker { get; set; }
         public int MaxParts { get; set; }
         public bool IsTruncated { get; set; }
 
         [XmlElement("Part")]
-        public List<Part> Part { get; set; }
+        public List<Part>? Parts { get; set; }
     }
 }

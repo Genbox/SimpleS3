@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
 {
     public static class ResourceHelper
     {
-        public static bool TryParseResource(in string resource, out (string bucket, string resource, LocationType locationType, ResourceType resourceType) data)
+        public static bool TryParseResource(in string resource, out (string? bucket, string resource, LocationType locationType, ResourceType resourceType) data)
         {
             if (string.IsNullOrEmpty(resource))
             {

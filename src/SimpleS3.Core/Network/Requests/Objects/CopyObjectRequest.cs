@@ -61,7 +61,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         string IHasObjectKey.ObjectKey { get => DestinationObjectKey; set => throw new NotSupportedException(); }
         public Payer RequestPayer { get; set; }
         public SseAlgorithm SseAlgorithm { get; set; }
-        public string SseKmsKeyId { get; set; }
+        public string? SseKmsKeyId { get; set; }
         public KmsContextBuilder SseContext { get; set; }
 
         public void ClearSensitiveMaterial()
@@ -71,19 +71,19 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         }
 
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
-        public byte[] SseCustomerKey { get; set; }
-        public byte[] SseCustomerKeyMd5 { get; set; }
+        public byte[]? SseCustomerKey { get; set; }
+        public byte[]? SseCustomerKeyMd5 { get; set; }
         public StorageClass StorageClass { get; set; }
         public TagBuilder Tags { get; }
-        public string VersionId { get; set; }
-        public string WebsiteRedirectLocation { get; set; }
+        public string? VersionId { get; set; }
+        public string? WebsiteRedirectLocation { get; set; }
 
         public override void Reset()
         {
-            SourceBucketName = null;
-            SourceObjectKey = null;
-            DestinationBucketName = null;
-            DestinationObjectKey = null;
+            SourceBucketName = null!;
+            SourceObjectKey = null!;
+            DestinationBucketName = null!;
+            DestinationObjectKey = null!;
             MetadataDirective = MetadataDirective.Unknown;
             TaggingDirective = TaggingDirective.Unknown;
             IfModifiedSince = null;
@@ -102,7 +102,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             RequestPayer = Payer.Unknown;
             SseAlgorithm = SseAlgorithm.Unknown;
             SseKmsKeyId = null;
-            SseContext = null;
+            SseContext.Reset();
             SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
             SseCustomerKey = null;
             SseCustomerKeyMd5 = null;

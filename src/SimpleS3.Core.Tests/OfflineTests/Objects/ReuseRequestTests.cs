@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Objects
             req.PartNumber = 5;
             req.VersionId = "versionid";
 
-            string prevHeader = null;
+            string? prevHeader = null;
 
             for (int i = 0; i < 2; i++)
             {
@@ -54,7 +54,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Objects
             req.PartNumber = 5;
             req.VersionId = "versionid";
 
-            string prevHeader = null;
+            string? prevHeader = null;
 
             for (int i = 0; i < 10; i++)
             {

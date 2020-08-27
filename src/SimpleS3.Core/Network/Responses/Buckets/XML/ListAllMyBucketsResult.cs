@@ -8,9 +8,9 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Buckets.Xml
     public sealed class ListAllMyBucketsResult
     {
         [XmlElement]
-        public Owner Owner { get; set; }
+        public Owner? Owner { get; set; }
 
         [XmlArrayItem("Bucket", IsNullable = false)]
-        public List<Bucket> Buckets { get; set; }
+        public List<Bucket>? Buckets { get; set; }
     }
 }

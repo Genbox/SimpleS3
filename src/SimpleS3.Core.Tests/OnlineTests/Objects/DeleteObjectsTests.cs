@@ -29,12 +29,12 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 
             DeleteObjectsResponse resp = await ObjectClient.DeleteObjectsAsync(BucketName, resources, req => req.Quiet = false).ConfigureAwait(false);
 
-            S3DeletedObject delObj = Assert.Single(resp.Deleted);
+            S3DeletedObject? delObj = Assert.Single(resp.Deleted);
             Assert.Equal(resources[0].Name, delObj.ObjectKey);
             Assert.True(delObj.IsDeleteMarker);
             Assert.NotEmpty(delObj.DeleteMarkerVersionId);
 
-            S3DeleteError errorObj = Assert.Single(resp.Errors);
+            S3DeleteError? errorObj = Assert.Single(resp.Errors);
 
             Assert.Equal(resources[1].Name, errorObj.ObjectKey);
             Assert.Equal(resources[1].VersionId, errorObj.VersionId);

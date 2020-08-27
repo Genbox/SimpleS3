@@ -27,12 +27,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public MfaAuthenticationBuilder Mfa { get; internal set; }
         public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
-        public string VersionId { get; set; }
+        public string? VersionId { get; set; }
 
         public override void Reset()
         {
-            BucketName = null;
-            ObjectKey = null;
+            BucketName = null!;
+            ObjectKey = null!;
             Mfa.Reset();
             BypassGovernanceRetention = null;
             RequestPayer = Payer.Unknown;

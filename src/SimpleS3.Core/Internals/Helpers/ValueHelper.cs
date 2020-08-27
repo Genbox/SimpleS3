@@ -9,27 +9,27 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
 {
     internal static class ValueHelper
     {
-        public static T ParseEnum<T>(string value) where T : struct, Enum
+        public static T ParseEnum<T>(string? value) where T : struct, Enum
         {
             return EnumsNET.Enums.TryParse(value, true, out T parsedValue, EnumFormat.EnumMemberValue, EnumFormat.Name, EnumFormat.UnderlyingValue) ? parsedValue : default;
         }
 
-        public static int ParseInt(string value)
+        public static int ParseInt(string? value)
         {
             return int.TryParse(value, NumberStyles.None, NumberFormatInfo.InvariantInfo, out int result) ? result : 0;
         }
 
-        public static long ParseLong(string value)
+        public static long ParseLong(string? value)
         {
             return long.TryParse(value, NumberStyles.None, NumberFormatInfo.InvariantInfo, out long result) ? result : 0;
         }
 
-        public static bool ParseBool(string value)
+        public static bool ParseBool(string? value)
         {
             return bool.TryParse(value, out bool result) && result;
         }
 
-        public static DateTimeOffset ParseDate(string value, DateTimeFormat format)
+        public static DateTimeOffset ParseDate(string? value, DateTimeFormat format)
         {
             switch (format)
             {
@@ -46,8 +46,11 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
             }
         }
 
-        public static byte[] ParseByteArray(string value, BinaryEncoding encoding)
+        public static byte[]? ParseByteArray(string? value, BinaryEncoding encoding)
         {
+            if (value == null)
+                return null;
+
             switch (encoding)
             {
                 case BinaryEncoding.Hex:
@@ -61,7 +64,12 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
 
         public static string EnumToString<T>(T value) where T : struct, Enum
         {
-            return value.AsString(EnumFormat.EnumMemberValue, EnumFormat.Name);
+            string? str = value.AsString(EnumFormat.EnumMemberValue, EnumFormat.Name);
+
+            if (str == null)
+                throw new Exception("Unable to parse enum");
+
+            return str;
         }
 
         public static string BoolToString(bool value)

@@ -42,17 +42,17 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         /// The first builder is stored in a dedicated field, because we expect to be able to satisfy
         /// most requests from it.
         /// </remarks>
-        private StringBuilder _firstBuilder;
+        private StringBuilder? _firstBuilder;
 
         /// <summary>
         /// Array of the retained builders.
         /// </summary>
-        private readonly StringBuilder[] _builders;
+        private readonly StringBuilder?[] _builders;
 
         /// <summary>
         /// The lazily-initialized shared pool instance.
         /// </summary>
-        private static StringBuilderPool _sharedInstance;
+        private static StringBuilderPool? _sharedInstance;
 
         /// <summary>
         /// Retrieves a shared <see cref="StringBuilderPool"/> instance.
@@ -70,7 +70,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         private static StringBuilderPool EnsureSharedCreated()
         {
             Interlocked.CompareExchange(ref _sharedInstance, new StringBuilderPool(), null);
-            return _sharedInstance;
+            return _sharedInstance!;
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             // Examine the first builder.
             // If that fails, then `RentViaScan` method will look at the remaining builders.
-            StringBuilder builder = _firstBuilder;
+            StringBuilder? builder = _firstBuilder;
             if (builder == null || builder != Interlocked.CompareExchange(ref _firstBuilder, null, builder))
                 builder = RentViaScan();
 
@@ -145,12 +145,12 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private StringBuilder RentViaScan()
         {
-            StringBuilder[] builders = _builders;
+            StringBuilder?[] builders = _builders;
             int builderCount = builders.Length;
 
             for (int builderIndex = 0; builderIndex < builderCount; builderIndex++)
             {
-                StringBuilder builder = builders[builderIndex];
+                StringBuilder? builder = builders[builderIndex];
                 if (builder != null && builder == Interlocked.CompareExchange(ref builders[builderIndex], null, builder))
                     return builder;
             }
@@ -160,7 +160,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
 
         public void Return(StringBuilder builder)
         {
-            if (builder == null || builder.Capacity > _maxBuilderCapacity)
+            if (builder.Capacity > _maxBuilderCapacity)
                 return;
 
             if (_firstBuilder == null)
@@ -175,7 +175,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ReturnViaScan(StringBuilder builder)
         {
-            StringBuilder[] builders = _builders;
+            StringBuilder?[] builders = _builders;
             int builderCount = builders.Length;
 
             for (int builderIndex = 0; builderIndex < builderCount; builderIndex++)

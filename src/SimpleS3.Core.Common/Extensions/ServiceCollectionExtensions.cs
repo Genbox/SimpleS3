@@ -1,11 +1,9 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Common.Extensions
 {
-    [PublicAPI]
     public static class ServiceCollectionExtensions
     {
         //The extensions here add the ability to get the IServiceProvider when binding options

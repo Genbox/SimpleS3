@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Builders
     public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, string>>
     {
         private readonly Regex _validChar = new Regex(@"^[a-z0-9 \+\-=\._:/]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private IDictionary<string, string> _tags;
+        private IDictionary<string, string>? _tags;
 
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
@@ -26,12 +26,12 @@ namespace Genbox.SimpleS3.Core.Builders
             return GetEnumerator();
         }
 
-        public string Build()
+        public string? Build()
         {
             if (!HasData())
                 return null;
 
-            return string.Join("&", _tags.Select(x => x.Key + '=' + x.Value));
+            return string.Join("&", _tags!.Select(x => x.Key + '=' + x.Value));
         }
 
         public void Reset()
@@ -44,7 +44,7 @@ namespace Genbox.SimpleS3.Core.Builders
             return _tags != null && _tags.Count > 0;
         }
 
-        public string HeaderName => null;
+        public string? HeaderName => null;
 
         //From https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html
         // - The maximum key length is 128 Unicode characters.

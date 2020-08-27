@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     [UsedImplicitly]
     internal class PutBucketLockConfigurationRequestMarshal : IRequestMarshal<PutBucketLockConfigurationRequest>
     {
-        public Stream MarshalRequest(PutBucketLockConfigurationRequest request, IConfig config)
+        public Stream? MarshalRequest(PutBucketLockConfigurationRequest request, IConfig config)
         {
             request.SetQueryParameter(AmzParameters.ObjectLock, string.Empty);
 
@@ -27,7 +27,10 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
                 writer.WriteStartElement("Rule");
                 writer.WriteStartElement("DefaultRetention");
                 writer.WriteElement("Mode", ValueHelper.EnumToString(request.LockMode));
-                writer.WriteElement("Days", (request.LockRetainUntil.Value - DateTimeOffset.UtcNow).Days);
+                
+                if (request.LockRetainUntil.HasValue)
+                    writer.WriteElement("Days", (request.LockRetainUntil.Value - DateTimeOffset.UtcNow).Days);
+
                 writer.WriteEndElement("DefaultRetention");
                 writer.WriteEndElement("Rule");
             }

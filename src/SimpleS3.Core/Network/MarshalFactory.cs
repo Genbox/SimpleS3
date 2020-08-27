@@ -43,12 +43,12 @@ namespace Genbox.SimpleS3.Core.Network
             }, x => x);
         }
 
-        public Stream MarshalRequest<T>(T request, IConfig config) where T : IRequest
+        public Stream? MarshalRequest<T>(T request, IConfig config) where T : IRequest
         {
             //Auto map common properties
             GenericRequestMapper.Map(request);
 
-            Stream content = null;
+            Stream? content = null;
 
             //Map specific properties. Get the content if there is any.
             if (_requestMarshals.TryGetValue(typeof(T), out IRequestMarshal marshaller))

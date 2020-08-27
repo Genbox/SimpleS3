@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
             return Path.GetFileName(path);
         }
 
-        public static string GetDirectoryName(string path)
+        public static string? GetDirectoryName(string path)
         {
             return Path.GetFileName(Path.GetDirectoryName(Path.GetFullPath(path)));
         }

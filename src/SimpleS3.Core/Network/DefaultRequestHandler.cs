@@ -37,14 +37,13 @@ namespace Genbox.SimpleS3.Core.Network
         private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
         private readonly IValidatorFactory _validator;
 
-        public DefaultRequestHandler(IOptions<S3Config> options, IValidatorFactory validator, IMarshalFactory marshaller, INetworkDriver networkDriver, IAuthorizationBuilder authBuilder, IEnumerable<IRequestStreamWrapper> requestStreamWrappers, ILogger<DefaultRequestHandler> logger)
+        public DefaultRequestHandler(IOptions<S3Config> options, IValidatorFactory validator, IMarshalFactory marshaller, INetworkDriver networkDriver, IAuthorizationBuilder authBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));
             Validator.RequireNotNull(marshaller, nameof(marshaller));
             Validator.RequireNotNull(networkDriver, nameof(networkDriver));
             Validator.RequireNotNull(authBuilder, nameof(authBuilder));
-            Validator.RequireNotNull(requestStreamWrappers, nameof(requestStreamWrappers));
             Validator.RequireNotNull(logger, nameof(logger));
 
             validator.ValidateAndThrow(options.Value);
@@ -54,8 +53,12 @@ namespace Genbox.SimpleS3.Core.Network
             _networkDriver = networkDriver;
             _authBuilder = authBuilder;
             _marshaller = marshaller;
-            _requestStreamWrappers = requestStreamWrappers.ToList();
             _logger = logger;
+
+            if (requestStreamWrappers == null)
+                _requestStreamWrappers = Array.Empty<IRequestStreamWrapper>();
+            else
+                _requestStreamWrappers = requestStreamWrappers.ToList();
         }
 
         public async Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken cancellationToken = default) where TResp : IResponse, new() where TReq : IRequest
@@ -69,22 +72,22 @@ namespace Genbox.SimpleS3.Core.Network
 
             S3Config config = _options.Value;
 
-            Stream requestStream = _marshaller.MarshalRequest(request, config);
+            Stream? requestStream = _marshaller.MarshalRequest(request, config);
 
             _validator.ValidateAndThrow(request);
 
-            string bucketName = null;
+            string? bucketName = null;
 
             if (request is IHasBucketName bn)
                 bucketName = bn.BucketName;
 
-            string objectKey = null;
+            string? objectKey = null;
 
             if (request is IHasObjectKey ok)
                 objectKey = ok.ObjectKey;
 
             //Ensure that the object key is encoded
-            string encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
+            string? encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
 
             if (config.Endpoint == null || config.NamingMode == NamingMode.PathStyle)
             {
@@ -98,7 +101,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(100);
 
-            Uri endpoint = config.Endpoint;
+            Uri? endpoint = config.Endpoint;
 
             if (endpoint != null)
             {
@@ -160,7 +163,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             _logger.LogDebug("Building request for {Url}", fullUrl);
 
-            (int statusCode, IDictionary<string, string> headers, Stream responseStream) = await _networkDriver.SendRequestAsync(request.Method, fullUrl, request.Headers, requestStream, cancellationToken).ConfigureAwait(false);
+            (int statusCode, IDictionary<string, string> headers, Stream? responseStream) = await _networkDriver.SendRequestAsync(request.Method, fullUrl, request.Headers, requestStream, cancellationToken).ConfigureAwait(false);
 
             //Clear sensitive material from the request
             if (request is IContainSensitiveMaterial sensitive)
@@ -171,9 +174,21 @@ namespace Genbox.SimpleS3.Core.Network
             response.ContentLength = headers.GetHeaderLong(HttpHeaders.ContentLength);
             response.ConnectionClosed = "closed".Equals(headers.GetHeader(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
             response.Date = headers.GetHeaderDate(HttpHeaders.Date, DateTimeFormat.Rfc1123);
-            response.Server = headers.GetHeader(HttpHeaders.Server);
-            response.ResponseId = headers.GetHeader(AmzHeaders.XAmzId2);
-            response.RequestId = headers.GetHeader(AmzHeaders.XAmzRequestId);
+
+            if (headers.TryGetHeader(HttpHeaders.Server, out string? serverHeader))
+                response.Server = serverHeader!;
+            else
+                throw new Exception($"Expected {HttpHeaders.Server} header");
+
+            if (headers.TryGetHeader(AmzHeaders.XAmzId2, out string? id2))
+                response.ResponseId = id2!;
+            else
+                throw new Exception($"Expected {AmzHeaders.XAmzId2} header");
+
+            if (headers.TryGetHeader(AmzHeaders.XAmzRequestId, out string? requestId))
+                response.RequestId = requestId!;
+            else
+                throw new Exception($"Expected {AmzHeaders.XAmzRequestId} header");
 
             // https://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
             response.IsSuccess = !(statusCode == 403 //Forbidden
@@ -193,20 +208,24 @@ namespace Genbox.SimpleS3.Core.Network
 
             //Only marshal successful responses
             if (response.IsSuccess)
-                _marshaller.MarshalResponse(config, request, response, headers, responseStream);
-            else
             {
-                MemoryStream ms = new MemoryStream();
-                responseStream.CopyTo(ms);
-
-                if (ms.Length > 0)
+                _marshaller.MarshalResponse(config, request, response, headers, responseStream ?? Stream.Null);
+            }
+            else if (responseStream != null)
+            {
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    ms.Seek(0, SeekOrigin.Begin);
+                    await responseStream.CopyToAsync(ms, 81920, cancellationToken).ConfigureAwait(false);
 
-                    using (responseStream)
-                        response.Error = ErrorHandler.Create(ms);
+                    if (ms.Length > 0)
+                    {
+                        ms.Seek(0, SeekOrigin.Begin);
 
-                    _logger.LogError("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
+                        using (responseStream)
+                            response.Error = ErrorHandler.Create(ms);
+
+                        _logger.LogError("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
+                    }
                 }
             }
 

@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
     [UsedImplicitly]
     internal class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjectRequest>
     {
-        public Stream MarshalRequest(RestoreObjectRequest request, IConfig config)
+        public Stream? MarshalRequest(RestoreObjectRequest request, IConfig config)
         {
             request.SetQueryParameter(AmzParameters.Restore, string.Empty);
 
@@ -42,7 +42,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
             if (request.Description != null)
                 xml.WriteElement("Description", request.Description);
 
-            if (request.SelectParameters.InputFormat != null || request.SelectParameters.OutputFormat != null || request.SelectParameters.Expression != null || request.SelectParameters.ExpressionType != ExpressionType.Unknown)
+            if (request.SelectParameters != null)
             {
                 xml.WriteStartElement("SelectParameters");
 
@@ -56,45 +56,45 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
                     switch (request.SelectParameters.InputFormat)
                     {
                         case S3CsvInputFormat csvInput:
-                        {
-                            xml.WriteStartElement("CSV");
+                            {
+                                xml.WriteStartElement("CSV");
 
-                            if (csvInput.HeaderUsage != HeaderUsage.Unknown)
-                                xml.WriteElement("FileHeaderInfo", ValueHelper.EnumToString(csvInput.HeaderUsage));
+                                if (csvInput.HeaderUsage != HeaderUsage.Unknown)
+                                    xml.WriteElement("FileHeaderInfo", ValueHelper.EnumToString(csvInput.HeaderUsage));
 
-                            if (csvInput.CommentCharacter != null)
-                                xml.WriteElement("Comments", ConvertChar(csvInput.CommentCharacter));
+                                if (csvInput.CommentCharacter != null)
+                                    xml.WriteElement("Comments", ConvertChar(csvInput.CommentCharacter));
 
-                            if (csvInput.QuoteEscapeCharacter != null)
-                                xml.WriteElement("QuoteEscapeCharacter", ConvertChar(csvInput.QuoteEscapeCharacter));
+                                if (csvInput.QuoteEscapeCharacter != null)
+                                    xml.WriteElement("QuoteEscapeCharacter", ConvertChar(csvInput.QuoteEscapeCharacter));
 
-                            if (csvInput.RecordDelimiter != null)
-                                xml.WriteElement("RecordDelimiter", ConvertChar(csvInput.RecordDelimiter));
+                                if (csvInput.RecordDelimiter != null)
+                                    xml.WriteElement("RecordDelimiter", ConvertChar(csvInput.RecordDelimiter));
 
-                            if (csvInput.FieldDelimiter != null)
-                                xml.WriteElement("FieldDelimiter", ConvertChar(csvInput.FieldDelimiter));
+                                if (csvInput.FieldDelimiter != null)
+                                    xml.WriteElement("FieldDelimiter", ConvertChar(csvInput.FieldDelimiter));
 
-                            if (csvInput.QuoteCharacter != null)
-                                xml.WriteElement("QuoteCharacter", ConvertChar(csvInput.QuoteCharacter));
+                                if (csvInput.QuoteCharacter != null)
+                                    xml.WriteElement("QuoteCharacter", ConvertChar(csvInput.QuoteCharacter));
 
-                            if (csvInput.AllowQuotedRecordDelimiter != null)
-                                xml.WriteElement("AllowQuotedRecordDelimiter", csvInput.AllowQuotedRecordDelimiter);
+                                if (csvInput.AllowQuotedRecordDelimiter != null)
+                                    xml.WriteElement("AllowQuotedRecordDelimiter", csvInput.AllowQuotedRecordDelimiter);
 
-                            xml.WriteEndElement("CSV");
+                                xml.WriteEndElement("CSV");
 
-                            break;
-                        }
+                                break;
+                            }
                         case S3JsonInputFormat jsonInput:
-                        {
-                            xml.WriteStartElement("JSON");
+                            {
+                                xml.WriteStartElement("JSON");
 
-                            if (jsonInput.JsonType != JsonType.Unknown)
-                                xml.WriteElement("Type", ValueHelper.EnumToString(jsonInput.JsonType));
+                                if (jsonInput.JsonType != JsonType.Unknown)
+                                    xml.WriteElement("Type", ValueHelper.EnumToString(jsonInput.JsonType));
 
-                            xml.WriteEndElement("JSON");
+                                xml.WriteEndElement("JSON");
 
-                            break;
-                        }
+                                break;
+                            }
                         case S3ParquetInputFormat _:
                             xml.WriteElement("Parquet", string.Empty);
                             break;
@@ -116,7 +116,6 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
                     switch (request.SelectParameters.OutputFormat)
                     {
                         case S3CsvOutputFormat csvOutput:
-                        {
                             xml.WriteStartElement("CSV");
 
                             if (csvOutput.FieldDelimiter != null)
@@ -137,14 +136,10 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
                             xml.WriteEndElement("CSV");
 
                             break;
-                        }
                         case S3JsonOutputFormat jsonOutput:
-                        {
-                            if (jsonOutput.RecordDelimiter != null)
-                                xml.WriteElement("RecordDelimiter", jsonOutput.RecordDelimiter);
+                            xml.WriteElement("RecordDelimiter", jsonOutput.RecordDelimiter);
 
                             break;
-                        }
                     }
 
                     xml.WriteEndElement("OutputSerialization");
@@ -163,7 +158,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
 
                     //These two are required, so we don't check for null
                     xml.WriteElement("BucketName", s3Out.BucketName);
-                    xml.WriteElement("Prefix", s3Out.Prefix);
+
+                    if (s3Out.Prefix != null)
+                        xml.WriteElement("Prefix", s3Out.Prefix);
 
                     if (s3Out.StorageClass != StorageClass.Unknown)
                         xml.WriteElement("StorageClass", ValueHelper.EnumToString(s3Out.StorageClass));
@@ -178,7 +175,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
                         xml.WriteStartElement("Encryption");
                         xml.WriteElement("EncryptionType", ValueHelper.EnumToString(s3Out.SseAlgorithm));
 
-                        string context = s3Out.SseContext.Build();
+                        string? context = s3Out.SseContext.Build();
                         if (context != null)
                             xml.WriteElement("KMSContext", context);
 

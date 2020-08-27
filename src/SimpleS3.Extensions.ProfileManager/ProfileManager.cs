@@ -13,12 +13,12 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
         public const string DefaultProfile = "DefaultProfile";
         public const AwsRegion DefaultRegion = AwsRegion.UsEast1;
         private readonly IOptions<ProfileManagerOptions> _options;
-        private readonly IAccessKeyProtector _protector;
+        private readonly IAccessKeyProtector? _protector;
 
         private readonly IProfileSerializer _serializer;
         private readonly IStorage _storage;
 
-        public ProfileManager(IProfileSerializer serializer, IStorage storage, IOptions<ProfileManagerOptions> options, IAccessKeyProtector protector = null)
+        public ProfileManager(IProfileSerializer serializer, IStorage storage, IOptions<ProfileManagerOptions> options, IAccessKeyProtector? protector = null)
         {
             _serializer = serializer;
             _storage = storage;
@@ -26,9 +26,9 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
             _protector = protector;
         }
 
-        public IProfile GetProfile(string name)
+        public IProfile? GetProfile(string name)
         {
-            byte[] data;
+            byte[]? data;
 
             try
             {
@@ -45,13 +45,13 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
             IProfile profile = _serializer.Deserialize<Profile>(data);
 
             //Check if the we have the right protector
-            string protector = profile.GetTag("Protector");
+            string? protector = profile.GetTag("Protector");
 
-            if (!string.IsNullOrEmpty(protector))
-            {
-                if (_protector == null || !protector.Equals(_protector.GetType().Name, StringComparison.OrdinalIgnoreCase))
-                    throw new Exception("The access key is protected with " + protector + " but it was not available");
-            }
+            string profileProtector = protector != null ? protector.GetType().Name : string.Empty;
+            string userProtector = _protector != null ? _protector.GetType().Name : string.Empty;
+
+            if (!string.Equals(profileProtector, userProtector, StringComparison.OrdinalIgnoreCase))
+                throw new Exception("The access key is protected with " + protector + " but it was not available");
 
             return profile;
         }

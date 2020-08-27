@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Validation.Validators.Configs
     [UsedImplicitly]
     public class S3ConfigValidator : AbstractValidator<S3Config>
     {
-        public S3ConfigValidator(IValidator<IAccessKey> validator = null)
+        public S3ConfigValidator(IValidator<IAccessKey>? validator = null)
         {
             RuleFor(x => x.Region).IsInEnum().Must(x => x != AwsRegion.Unknown).WithMessage("You must provide a region.");
             RuleFor(x => x.PayloadSignatureMode).IsInEnum().Must(x => x != SignatureMode.Unknown).WithMessage("You must provide a valid payload signature mode.");

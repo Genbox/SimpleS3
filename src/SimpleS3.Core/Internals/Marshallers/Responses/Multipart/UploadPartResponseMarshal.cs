@@ -17,8 +17,10 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
     {
         public void MarshalResponse(IConfig config, UploadPartRequest request, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.PartNumber = request.PartNumber.Value;
-            response.ETag = headers.GetHeader(HttpHeaders.ETag);
+            if (request.PartNumber.HasValue)
+                response.PartNumber = request.PartNumber.Value;
+
+            response.ETag = headers.GetRequiredHeader(HttpHeaders.ETag);
             response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
             response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSseAwsKmsKeyId);

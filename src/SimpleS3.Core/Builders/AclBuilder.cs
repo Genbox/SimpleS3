@@ -14,12 +14,12 @@ namespace Genbox.SimpleS3.Core.Builders
     /// </summary>
     public class AclBuilder : IHttpHeaderBuilder
     {
-        private ISet<string> _emails;
-        private ISet<string> _ids;
-        private StringBuilder _sb;
-        private ISet<string> _uris;
+        private ISet<string>? _emails;
+        private ISet<string>? _ids;
+        private StringBuilder? _sb;
+        private ISet<string>? _uris;
 
-        public string Build()
+        public string? Build()
         {
             if (!HasData())
                 return null;
@@ -88,7 +88,7 @@ namespace Genbox.SimpleS3.Core.Builders
             return _emails != null && _emails.Count > 0 || _ids != null && _ids.Count > 0 || _uris != null && _uris.Count > 0;
         }
 
-        public string HeaderName => null;
+        public string? HeaderName => null;
 
         /// <summary>
         /// Add an email to the ACL. Note that email support is only in these AWS regions:
@@ -153,7 +153,11 @@ namespace Genbox.SimpleS3.Core.Builders
         /// <param name="group">One of Amazon's predefined groups</param>
         public AclBuilder AddGroup(PredefinedGroup group)
         {
-            return AddGroup(group.AsString(EnumFormat.EnumMemberValue));
+            string? groupStr = group.AsString(EnumFormat.EnumMemberValue);
+            
+            Validator.RequireNotNull(groupStr,nameof(group), "Bug: PredefinedGroup is missing EnumValue");
+            
+            return AddGroup(groupStr!);
         }
     }
 }

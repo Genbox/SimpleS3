@@ -6,6 +6,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces
     [PublicAPI]
     public interface IHasContent
     {
-        Stream Content { get; }
+        Stream? Content { get; }
     }
 }

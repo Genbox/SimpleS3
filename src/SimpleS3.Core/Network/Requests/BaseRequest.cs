@@ -24,24 +24,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests
 
         public void SetQueryParameter(string key, string value)
         {
-            if (string.IsNullOrWhiteSpace(key))
-                return;
-
-            if (value == null)
-                return;
-
             _queryParameters[key] = value;
         }
 
         public void SetHeader(string key, string value)
         {
-            if (string.IsNullOrWhiteSpace(key))
-                return;
-
-            if (string.IsNullOrWhiteSpace(value))
-                return;
-
-            _headers[key.ToLowerInvariant()] = value;
+            _headers[key.ToLowerInvariant()] = value!;
         }
 
         public virtual void Reset()

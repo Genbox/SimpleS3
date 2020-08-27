@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Serializers
             if (prop.Writable)
                 return prop;
 
-            PropertyInfo property = member as PropertyInfo;
+            PropertyInfo? property = member as PropertyInfo;
 
             if (property == null)
                 return prop;

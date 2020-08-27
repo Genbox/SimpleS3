@@ -27,7 +27,7 @@ namespace Genbox.SimpleS3.Examples.Clients.WithDepInjection
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             IProfileManager manager = serviceProvider.GetRequiredService<IProfileManager>();
-            IProfile profile = manager.GetProfile(profileName);
+            IProfile? profile = manager.GetProfile(profileName);
 
             //If profile is null, then we do not yet have a profile stored on disk. We use ConsoleSetup as an easy and secure way of asking for credentials
             if (profile == null)

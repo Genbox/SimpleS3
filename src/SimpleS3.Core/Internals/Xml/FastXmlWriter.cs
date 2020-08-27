@@ -65,14 +65,14 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
         public void WriteElement(in string name, in bool? value)
         {
             WriteStartElement(name);
-            WriteValue(value.Value.ToString(NumberFormatInfo.InvariantInfo));
+            WriteValue(value!.Value.ToString(NumberFormatInfo.InvariantInfo));
             WriteEndElement(name);
         }
 
         /// <summary>Write the start of an element</summary>
         /// <param name="name">Name of the element</param>
         /// <param name="xmlns">Namespace to include in the element (if any)</param>
-        public void WriteStartElement(in string name, in string xmlns = null)
+        public void WriteStartElement(in string name, in string? xmlns = null)
         {
             _xml.Append('<');
             _xml.Append(name);

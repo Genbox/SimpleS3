@@ -7,6 +7,8 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
 {
     public class Profile : IProfile
     {
+        private IDictionary<string, string>? _tags; 
+
         internal Profile()
         {
         }
@@ -23,22 +25,20 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
 
         public DateTimeOffset CreatedOn { get; internal set; }
 
-        public IDictionary<string, string> Tags { get; private set; }
-
         public void AddTag(string key, string value)
         {
-            if (Tags == null)
-                Tags = new Dictionary<string, string>(1);
+            if (_tags == null)
+                _tags = new Dictionary<string, string>(1);
 
-            Tags.Add(key, value);
+            _tags.Add(key, value);
         }
 
-        public string GetTag(string key)
+        public string? GetTag(string key)
         {
-            if (Tags == null)
+            if (_tags == null)
                 return null;
 
-            return Tags.TryGetValue(key, out string value) ? value : null;
+            return _tags.TryGetValue(key, out string value) ? value : null;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Validation
             _validators = validators.ToDictionary(x =>
             {
                 Type type = x.GetType();
-                Type baseType = type.BaseType;
+                Type? baseType = type.BaseType;
 
                 Validator.RequireNotNull(baseType, nameof(baseType));
 

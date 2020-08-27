@@ -39,7 +39,7 @@ namespace Genbox.SimpleS3.Core.Abstracts
         bool UseTLS { get; set; }
 
         /// <summary>Use this to set a custom endpoint. For example, when using minio, you can set it to https://miniohost.com/</summary>
-        Uri Endpoint { get; set; }
+        Uri? Endpoint { get; set; }
 
         /// <summary>
         /// If enabled, bucket names are validated to ensure they are valid DNS names. This is to ensure you can always access your bucket using virtual

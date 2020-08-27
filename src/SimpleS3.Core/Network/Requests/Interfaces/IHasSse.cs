@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces
         /// encryption key that was used for the object. Note that if you do not provide a <see cref="SseKmsKeyId" /> Amazon S3 uses the default AWS KMS key to
         /// protect the data.
         /// </summary>
-        string SseKmsKeyId { get; set; }
+        string? SseKmsKeyId { get; set; }
 
         /// <summary>
         /// If <see cref="Enums.SseAlgorithm" /> has a value of AwsKms, this property specifies the encryption context for the object. The key/value

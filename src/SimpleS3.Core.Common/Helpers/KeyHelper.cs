@@ -5,7 +5,7 @@ namespace Genbox.SimpleS3.Core.Common.Helpers
 {
     public static class KeyHelper
     {
-        public static byte[] ProtectKey(byte[] key, IAccessKeyProtector protector, bool clearKey = true)
+        public static byte[] ProtectKey(byte[] key, IAccessKeyProtector? protector, bool clearKey = true)
         {
             if (protector == null)
                 return key;
@@ -19,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Common.Helpers
             return key;
         }
 
-        public static byte[] UnprotectKey(byte[] key, IAccessKeyProtector protector)
+        public static byte[] UnprotectKey(byte[] key, IAccessKeyProtector? protector)
         {
             if (protector == null)
                 return key;

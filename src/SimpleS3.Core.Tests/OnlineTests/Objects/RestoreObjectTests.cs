@@ -47,20 +47,14 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
                 req.Description = "This is a description";
                 req.RequestTier = RetrievalTier.Standard;
 
-                req.SelectParameters.ExpressionType = ExpressionType.Sql;
-                req.SelectParameters.Expression = "SELECT * FROM object WHERE age > 7";
+                S3CsvInputFormat inputFormat = new S3CsvInputFormat();
+                inputFormat.HeaderUsage = HeaderUsage.Use;
 
-                req.SelectParameters.InputFormat = new S3CsvInputFormat
-                {
-                    HeaderUsage = HeaderUsage.Use
-                };
+                S3CsvOutputFormat outputFormat = new S3CsvOutputFormat();
+                req.SelectParameters = new S3SelectParameters("SELECT * FROM object WHERE age > 7", inputFormat, outputFormat);
 
-                req.SelectParameters.OutputFormat = new S3CsvOutputFormat();
-
-                req.OutputLocation = new S3OutputLocation(BucketName, "outputJob")
-                {
-                    StorageClass = StorageClass.Standard
-                };
+                req.OutputLocation = new S3OutputLocation(BucketName, "outputJob");
+                req.OutputLocation.StorageClass = StorageClass.Standard;
             }).ConfigureAwait(false);
 
             Assert.Equal(202, restoreResp.StatusCode);

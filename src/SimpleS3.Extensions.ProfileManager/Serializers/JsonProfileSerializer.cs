@@ -42,7 +42,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Serializers
             using (MemoryStream ms = new MemoryStream(data))
             using (StreamReader sr = new StreamReader(ms))
             using (JsonTextReader jsonTextReader = new JsonTextReader(sr))
-                return _serializer.Deserialize<T>(jsonTextReader);
+                return _serializer.Deserialize<T>(jsonTextReader)!;
         }
     }
 }

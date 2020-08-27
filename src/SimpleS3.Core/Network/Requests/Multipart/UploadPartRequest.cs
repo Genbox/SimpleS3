@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// <summary>This operation uploads a part in a multipart upload.</summary>
     public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5, ISupportStreaming, IHasUploadId, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasPartNumber, IHasContent
     {
-        private byte[] _sseCustomerKey;
+        private byte[]? _sseCustomerKey;
 
         public UploadPartRequest(string bucketName, string objectKey, int partNumber, string uploadId, Stream content) : base(HttpMethod.PUT)
         {
@@ -25,16 +25,16 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         }
 
         public string BucketName { get; set; }
-        public Stream Content { get; }
-        public byte[] ContentMd5 { get; set; }
+        public Stream? Content { get; }
+        public byte[]? ContentMd5 { get; set; }
         public string ObjectKey { get; set; }
 
         public int? PartNumber { get; set; }
         public Payer RequestPayer { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
-        public byte[] SseCustomerKeyMd5 { get; set; }
+        public byte[]? SseCustomerKeyMd5 { get; set; }
 
-        public byte[] SseCustomerKey
+        public byte[]? SseCustomerKey
         {
             get => _sseCustomerKey;
             set

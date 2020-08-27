@@ -2,5 +2,6 @@
 {
     public abstract class OutputFormat
     {
+        internal abstract void Reset();
     }
 }

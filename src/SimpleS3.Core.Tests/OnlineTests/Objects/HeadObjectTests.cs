@@ -41,7 +41,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             HeadObjectResponse headResp = await ObjectClient.HeadObjectAsync(BucketName, nameof(HeadObjectLifecycle)).ConfigureAwait(false);
 
             //Expiration should work on head too
-            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, headResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, headResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
             Assert.Equal("ExpireAll", headResp.LifeCycleRuleId);
         }
 
@@ -78,7 +78,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             Assert.Equal("attachment; filename*=\"filename.txt\"", response.ContentDisposition);
             Assert.Equal("da-DK", response.ContentLanguage);
             Assert.Equal("text/html; charset=utf-8", response.ContentType);
-            Assert.Equal(DateTime.UtcNow, response.ExpiresOn.Value.DateTime, TimeSpan.FromSeconds(5));
+            Assert.Equal(DateTime.UtcNow, response.ExpiresOn!.Value.DateTime, TimeSpan.FromSeconds(5));
         }
 
         [Fact]

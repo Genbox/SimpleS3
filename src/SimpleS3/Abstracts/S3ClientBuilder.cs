@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Abstracts
         {
         }
 
-        public IHttpClientBuilder HttpBuilder { get; set; }
-        public ICoreBuilder CoreBuilder { get; set; }
+        public IHttpClientBuilder? HttpBuilder { get; set; }
+        public ICoreBuilder? CoreBuilder { get; set; }
     }
 }

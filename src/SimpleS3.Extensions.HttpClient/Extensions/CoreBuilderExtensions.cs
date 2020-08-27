@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Security.Authentication;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Constants;
+using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClient.Internal;
 using Microsoft.Extensions.DependencyInjection;

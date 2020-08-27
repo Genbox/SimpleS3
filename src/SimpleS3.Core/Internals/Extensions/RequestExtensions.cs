@@ -10,6 +10,14 @@ namespace Genbox.SimpleS3.Core.Internals.Extensions
 {
     internal static class RequestExtensions
     {
+        public static void SetOptionalHeader(this IRequest request, string key, string? value)
+        {
+            if (value == null)
+                return;
+
+            request.SetHeader(key, value);
+        }
+
         public static void SetHeader(this IRequest request, string key, bool? value, string falseLabel = "OFF", string trueLabel = "ON")
         {
             if (value == null)
@@ -39,7 +47,7 @@ namespace Genbox.SimpleS3.Core.Internals.Extensions
             }
         }
 
-        public static void SetHeader(this IRequest request, string key, byte[] data, BinaryEncoding encoding)
+        public static void SetHeader(this IRequest request, string key, byte[]? data, BinaryEncoding encoding)
         {
             if (data == null)
                 return;
@@ -73,12 +81,22 @@ namespace Genbox.SimpleS3.Core.Internals.Extensions
             request.SetHeader(key, ValueHelper.LongToString(value.Value));
         }
 
-        public static void SetHeader(this IRequest request, string key, IHttpHeaderBuilder builder)
+        public static void SetHeader(this IRequest request, string key, IHttpHeaderBuilder? builder)
         {
-            if (builder == null)
+            string? value = builder?.Build();
+
+            if (value == null)
                 return;
 
-            request.SetHeader(key, builder.Build());
+            request.SetHeader(key, value);
+        }
+
+        public static void SetOptionalQueryParameter(this IRequest request, string key, string? value)
+        {
+            if (value == null)
+                return;
+
+            request.SetQueryParameter(key, value);
         }
 
         public static void SetQueryParameter(this IRequest request, string key, DateTimeOffset? date, DateTimeFormat format)
@@ -123,12 +141,14 @@ namespace Genbox.SimpleS3.Core.Internals.Extensions
             request.SetQueryParameter(key, ValueHelper.BoolToString(value.Value));
         }
 
-        public static void SetQueryParameter(this IRequest request, string key, IHttpHeaderBuilder builder)
+        public static void SetQueryParameter(this IRequest request, string key, IHttpHeaderBuilder? builder)
         {
-            if (builder == null)
+            string? value = builder?.Build();
+
+            if (value == null)
                 return;
 
-            request.SetQueryParameter(key, builder.Build());
+            request.SetQueryParameter(key, value);
         }
     }
 }

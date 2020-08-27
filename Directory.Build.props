@@ -10,7 +10,7 @@
     <CopyRetryCount>2</CopyRetryCount>
     <CopyRetryDelayMilliseconds>500</CopyRetryDelayMilliseconds>
 
-    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <DebugType>portable</DebugType>
     <WarningsAsErrors>CS0108,CS0109,CS0114,CS0162,CS0251,CS0659,CS0660,CS1717,CS1718</WarningsAsErrors>

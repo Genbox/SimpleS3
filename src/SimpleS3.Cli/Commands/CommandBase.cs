@@ -15,14 +15,17 @@ namespace Genbox.SimpleS3.Cli.Commands
 
         internal async Task<int> OnExecuteAsync(CommandLineApplication app, CancellationToken token)
         {
-            S3Cli mainParent = null;
+            S3Cli? mainParent = null;
 
             if (app is CommandLineApplication<S3Cli> cliApp)
                 mainParent = cliApp.Model;
             else if (app.Parent is CommandLineApplication<S3Cli> cliApp2)
                 mainParent = cliApp2.Model;
-            else if (app.Parent.Parent is CommandLineApplication<S3Cli> cliApp3)
+            else if (app.Parent != null && app.Parent.Parent is CommandLineApplication<S3Cli> cliApp3)
                 mainParent = cliApp3.Model;
+
+            if (mainParent == null)
+                throw new Exception("Unable to find parent.");
 
             Manager = CliManager.GetCliManager(mainParent.ProfileName, mainParent.Region);
 
@@ -31,7 +34,7 @@ namespace Genbox.SimpleS3.Cli.Commands
                 await ExecuteAsync(app, token).ConfigureAwait(false);
                 return 0;
             }
-            catch (Exception e)
+            catch
             {
                 return 1;
             }

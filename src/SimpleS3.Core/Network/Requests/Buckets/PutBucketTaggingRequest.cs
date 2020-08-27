@@ -17,9 +17,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
             BucketName = bucketName;
             Tags = new TagBuilder();
 
-            if (tags == null)
-                return;
-
             foreach (KeyValuePair<string, string> pair in tags)
             {
                 Tags.Add(pair.Key, pair.Value);
@@ -27,7 +24,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
         }
 
         public string BucketName { get; set; }
-        public byte[] ContentMd5 { get; set; }
+        public byte[]? ContentMd5 { get; set; }
         public Func<bool> ForceContentMd5 => () => true;
         public TagBuilder Tags { get; }
     }

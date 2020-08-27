@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Tests
 {
     public class FakeNetworkDriver : INetworkDriver
     {
-        public async Task<(int statusCode, IDictionary<string, string> headers, Stream responseStream)> SendRequestAsync(HttpMethod method, string url, IReadOnlyDictionary<string, string> headers, Stream dataStream, CancellationToken cancellationToken = default)
+        public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethod method, string url, IReadOnlyDictionary<string, string> headers, Stream? dataStream, CancellationToken cancellationToken = default)
         {
             SendResource = url;
             return (200, new Dictionary<string, string>(), new MemoryStream(new byte[] { 1, 2, 3 }));

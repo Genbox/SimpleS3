@@ -22,9 +22,6 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Internal
 
         public static void AddHeader(this HttpRequestMessage request, string key, string value)
         {
-            if (value == null)
-                return;
-
             string keyLowered = key.ToLowerInvariant();
 
             if (_contentHeaders.Contains(keyLowered))

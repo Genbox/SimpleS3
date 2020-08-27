@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Common
 {
     public static class InputValidator
     {
-        public static bool TryValidateKeyId(string keyId, out ValidationStatus status)
+        public static bool TryValidateKeyId(string? keyId, out ValidationStatus status)
         {
             if (string.IsNullOrEmpty(keyId))
             {
@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Common
                 return false;
             }
 
-            if (keyId.Length != 20)
+            if (keyId!.Length != 20)
             {
                 status = ValidationStatus.WrongLength;
                 return false;
@@ -37,25 +37,21 @@ namespace Genbox.SimpleS3.Core.Common
             return true;
         }
 
-        public static void ValidateKeyId(string keyId)
+        public static void ValidateKeyId(string? keyId)
         {
-            Validator.RequireNotNull(keyId, nameof(keyId));
-
             if (TryValidateKeyId(keyId, out ValidationStatus status))
                 return;
 
-            switch (status)
+            throw status switch
             {
-                case ValidationStatus.WrongLength:
-                    throw new ArgumentException("Key id must be 20 in length", nameof(keyId));
-                case ValidationStatus.WrongFormat:
-                    throw new ArgumentException("Key id must be all upper case and consist of A to Z and 0 to 9", nameof(keyId));
-                default:
-                    throw new ArgumentException("Failed to validate key id");
-            }
+                ValidationStatus.WrongLength => new ArgumentException("Key id must be 20 in length", nameof(keyId)),
+                ValidationStatus.WrongFormat => new ArgumentException("Key id must be all upper case and consist of A to Z and 0 to 9", nameof(keyId)),
+                ValidationStatus.NullInput => new ArgumentNullException(nameof(keyId)),
+                _ => new ArgumentException("Failed to validate key id")
+            };
         }
 
-        public static bool TryValidateAccessKey(byte[] accessKey, out ValidationStatus status)
+        public static bool TryValidateAccessKey(byte[]? accessKey, out ValidationStatus status)
         {
             if (accessKey == null)
             {
@@ -73,23 +69,20 @@ namespace Genbox.SimpleS3.Core.Common
             return true;
         }
 
-        public static void ValidateAccessKey(byte[] accessKey)
+        public static void ValidateAccessKey(byte[]? accessKey)
         {
-            Validator.RequireNotNull(accessKey, nameof(accessKey));
-
             if (TryValidateAccessKey(accessKey, out ValidationStatus status))
                 return;
 
-            switch (status)
+            throw status switch
             {
-                case ValidationStatus.WrongLength:
-                    throw new ArgumentException("Access key must be 40 in length", nameof(accessKey));
-                default:
-                    throw new ArgumentException("Failed to validate access key");
-            }
+                ValidationStatus.WrongLength => new ArgumentException("Access key must be 40 in length", nameof(accessKey)),
+                ValidationStatus.NullInput => new ArgumentNullException(nameof(accessKey)),
+                _ => new ArgumentException("Failed to validate access key")
+            };
         }
 
-        public static bool TryValidateObjectKey(string objectKey, KeyValidationMode mode, out ValidationStatus status)
+        public static bool TryValidateObjectKey(string? objectKey, KeyValidationMode mode, out ValidationStatus status)
         {
             if (string.IsNullOrEmpty(objectKey))
             {
@@ -97,7 +90,7 @@ namespace Genbox.SimpleS3.Core.Common
                 return false;
             }
 
-            if (objectKey.Length > 1024)
+            if (objectKey!.Length > 1024)
             {
                 status = ValidationStatus.WrongLength;
                 return false;
@@ -166,22 +159,18 @@ namespace Genbox.SimpleS3.Core.Common
             return true;
         }
 
-        public static void ValidateObjectKey(string bucketName, KeyValidationMode mode)
+        public static void ValidateObjectKey(string? bucketName, KeyValidationMode mode)
         {
-            Validator.RequireNotNull(bucketName, nameof(bucketName));
-
             if (TryValidateObjectKey(bucketName, mode, out ValidationStatus status))
                 return;
 
-            switch (status)
+            throw status switch
             {
-                case ValidationStatus.WrongLength:
-                    throw new ArgumentException("Object keys must be less than 1024 characters in length", nameof(bucketName));
-                case ValidationStatus.WrongFormat:
-                    throw new ArgumentException("Invalid character in object key. Only a-z, A-Z, 0-9 and !, -, _, ., *, ', ( and ) are allowed", nameof(bucketName));
-                default:
-                    throw new ArgumentException("Failed to validate key id");
-            }
+                ValidationStatus.WrongLength => new ArgumentException("Object keys must be less than 1024 characters in length", nameof(bucketName)),
+                ValidationStatus.WrongFormat => new ArgumentException("Invalid character in object key. Only a-z, A-Z, 0-9 and !, -, _, ., *, ', ( and ) are allowed", nameof(bucketName)),
+                ValidationStatus.NullInput => new ArgumentNullException(nameof(bucketName)),
+                _ => new ArgumentException("Failed to validate key id")
+            };
         }
 
         /// <summary>
@@ -191,7 +180,7 @@ namespace Genbox.SimpleS3.Core.Common
         /// <param name="bucketName">The bucket name</param>
         /// <param name="status">Contains the error if validation failed</param>
         /// <returns>True if validation succeeded, false otherwise</returns>
-        public static bool TryValidateBucketName(string bucketName, out ValidationStatus status)
+        public static bool TryValidateBucketName(string? bucketName, out ValidationStatus status)
         {
             if (bucketName == null)
             {
@@ -255,41 +244,18 @@ namespace Genbox.SimpleS3.Core.Common
             return true;
         }
 
-        public static void ValidateBucketName(string bucketName)
+        public static void ValidateBucketName(string? bucketName)
         {
-            Validator.RequireNotNull(bucketName, nameof(bucketName));
-
             if (TryValidateBucketName(bucketName, out ValidationStatus status))
                 return;
 
-            switch (status)
+            throw status switch
             {
-                case ValidationStatus.WrongLength:
-                    throw new ArgumentException("Bucket names must be less than 64 in length", nameof(bucketName));
-                case ValidationStatus.WrongFormat:
-                    throw new ArgumentException("Invalid character in object key. Only a-z, 0-9, . and - are allowed", nameof(bucketName));
-                default:
-                    throw new ArgumentException("Failed to validate key id");
-            }
-        }
-
-        public static bool ContainsInvalidXml(string xml)
-        {
-            if (string.IsNullOrEmpty(xml))
-                return false;
-
-            foreach (char c in xml)
-            {
-                //Invalid 
-                if (c == '\"' || c == '\'' || c == '<' || c == '>' || c == '&' || c == '\uFFFE' || c == '\uFFFF')
-                    return true;
-
-                //See https://www.w3.org/TR/unicode-xml/#Noncharacters
-                if (CharHelper.InRange(c, '\uFDD0', '\uFDEF'))
-                    return true;
-            }
-
-            return false;
+                ValidationStatus.WrongLength => new ArgumentException("Bucket names must be less than 64 in length", nameof(bucketName)),
+                ValidationStatus.WrongFormat => new ArgumentException("Invalid character in object key. Only a-z, 0-9, . and - are allowed", nameof(bucketName)),
+                ValidationStatus.NullInput => new ArgumentNullException(nameof(bucketName)),
+                _ => new ArgumentException("Failed to validate key id")
+            };
         }
     }
 }

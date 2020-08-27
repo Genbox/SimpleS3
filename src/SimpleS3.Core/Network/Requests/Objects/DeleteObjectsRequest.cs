@@ -37,15 +37,15 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public string BucketName { get; set; }
         public bool? BypassGovernanceRetention { get; set; }
-        public byte[] ContentMd5 { get; set; }
+        public byte[]? ContentMd5 { get; set; }
         public MfaAuthenticationBuilder Mfa { get; }
         public Payer RequestPayer { get; set; }
         Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
 
         public override void Reset()
         {
-            BucketName = null;
-            Objects = null;
+            BucketName = null!;
+            Objects = null!;
             Mfa.Reset();
             Quiet = true;
             BypassGovernanceRetention = null;

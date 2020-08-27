@@ -10,7 +10,6 @@ using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
@@ -94,7 +93,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             GC.SuppressFinalize(this);
         }
 
-        protected async Task<PutObjectResponse> UploadAsync(string bucketName, string objectKey, Action<PutObjectRequest> config = null, bool assumeSuccess = true)
+        protected async Task<PutObjectResponse> UploadAsync(string bucketName, string objectKey, Action<PutObjectRequest>? config = null, bool assumeSuccess = true)
         {
             PutObjectResponse resp = await ObjectClient.PutObjectStringAsync(bucketName, objectKey, "test", Encoding.UTF8, config).ConfigureAwait(false);
 
@@ -106,12 +105,12 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             return resp;
         }
 
-        protected Task<PutObjectResponse> UploadAsync(string objectKey, Action<PutObjectRequest> config = null, bool assumeSuccess = true)
+        protected Task<PutObjectResponse> UploadAsync(string objectKey, Action<PutObjectRequest>? config = null, bool assumeSuccess = true)
         {
             return UploadAsync(BucketName, objectKey, config, assumeSuccess);
         }
 
-        protected async Task<PutObjectResponse> UploadTransferAsync(string bucketName, string objectKey, Action<Upload> action = null, bool assumeSuccess = true)
+        protected async Task<PutObjectResponse> UploadTransferAsync(string bucketName, string objectKey, Action<Upload>? action = null, bool assumeSuccess = true)
         {
             Upload upload = Transfer.Upload(bucketName, objectKey);
             action?.Invoke(upload);
@@ -126,30 +125,30 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             return resp;
         }
 
-        protected Task<PutObjectResponse> UploadTransferAsync(string objectKey, Action<Upload> action = null, bool assumeSuccess = true)
+        protected Task<PutObjectResponse> UploadTransferAsync(string objectKey, Action<Upload>? action = null, bool assumeSuccess = true)
         {
             return UploadTransferAsync(BucketName, objectKey, action, assumeSuccess);
         }
 
-        protected async Task<GetObjectResponse> AssertAsync(string bucketName, string objectKey, Action<GetObjectRequest> config = null, bool assumeSuccess = true)
+        protected async Task<GetObjectResponse> AssertAsync(string bucketName, string objectKey, Action<GetObjectRequest>? config = null, bool assumeSuccess = true)
         {
             GetObjectResponse resp = await ObjectClient.GetObjectAsync(bucketName, objectKey, config).ConfigureAwait(false);
 
             if (assumeSuccess)
             {
                 Assert.True(resp.IsSuccess);
-                Assert.Equal("test", await resp.Content.AsStringAsync().ConfigureAwait(false));
+                Assert.Equal("test", await resp.Content!.AsStringAsync().ConfigureAwait(false));
             }
 
             return resp;
         }
 
-        protected Task<GetObjectResponse> AssertAsync(string objectKey, Action<GetObjectRequest> config = null, bool assumeSuccess = true)
+        protected Task<GetObjectResponse> AssertAsync(string objectKey, Action<GetObjectRequest>? config = null, bool assumeSuccess = true)
         {
             return AssertAsync(BucketName, objectKey, config, assumeSuccess);
         }
 
-        protected async Task<GetObjectResponse> AssertTransferAsync(string bucketName, string objectKey, Action<Download> config = null, bool assumeSuccess = true)
+        protected async Task<GetObjectResponse> AssertTransferAsync(string bucketName, string objectKey, Action<Download>? config = null, bool assumeSuccess = true)
         {
             Download download = Transfer.Download(bucketName, objectKey);
             config?.Invoke(download);
@@ -158,13 +157,13 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             if (assumeSuccess)
             {
                 Assert.True(resp.IsSuccess);
-                Assert.Equal("test", await resp.Content.AsStringAsync().ConfigureAwait(false));
+                Assert.Equal("test", await resp.Content!.AsStringAsync().ConfigureAwait(false));
             }
 
             return resp;
         }
 
-        protected Task<GetObjectResponse> AssertTransferAsync(string objectKey, Action<Download> config = null, bool assumeSuccess = true)
+        protected Task<GetObjectResponse> AssertTransferAsync(string objectKey, Action<Download>? config = null, bool assumeSuccess = true)
         {
             return AssertTransferAsync(BucketName, objectKey, config, assumeSuccess);
         }
@@ -178,7 +177,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
 
             try
             {
-                await (action?.Invoke(tempBucketName)).ConfigureAwait(false);
+                await action(tempBucketName).ConfigureAwait(false);
             }
             finally
             {

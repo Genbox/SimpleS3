@@ -10,13 +10,14 @@ using Genbox.SimpleS3.Extensions.HttpClient.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using IHttpClientBuilder = Genbox.SimpleS3.Extensions.HttpClient.IHttpClientBuilder;
 
 namespace Genbox.SimpleS3.Examples.Clients.WithDepInjection
 {
     /// <summary>This is an example that shows the full capabilities of SimpleS3.</summary>
     public static class FullClient
     {
-        public static S3Client Create(string keyId, string accessKey, AwsRegion region, IWebProxy proxy = null)
+        public static S3Client Create(string keyId, string accessKey, AwsRegion region, IWebProxy? proxy = null)
         {
             //In this example we are using using Microsoft's Dependency Injection (DI) framework
             ServiceCollection services = new ServiceCollection();
@@ -46,8 +47,10 @@ namespace Genbox.SimpleS3.Examples.Clients.WithDepInjection
             });
 
             //The default client is HttpClientFactory, but to show how we can change this, we use HttpClient here.
-            coreBuilder.UseHttpClient()
-                       .WithProxy(proxy);
+            IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClient();
+
+            if (proxy != null)
+                httpBuilder.WithProxy(proxy);
 
             //This adds the S3Client service. This service combines ObjectClient, MultipartClient and BucketClient into a single client. Makes it easier for new people to use the library.
             coreBuilder.UseS3Client();

@@ -48,7 +48,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 
             GetObjectResponse resp = await AssertAsync(objectKey).ConfigureAwait(false);
             Assert.Equal(lockMode, resp.LockMode);
-            Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntil.Value.DateTime, TimeSpan.FromSeconds(1));
+            Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntil!.Value.DateTime, TimeSpan.FromSeconds(1));
         }
 
         [Theory]
@@ -166,7 +166,6 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             Assert.Equal(304, getResp2.StatusCode);
         }
 
-
         [Fact]
         public async Task PutObjectLargeMetadata()
         {
@@ -179,7 +178,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             }).ConfigureAwait(false);
 
             GetObjectResponse gResp = await AssertAsync(nameof(PutObjectMultipleMetadata)).ConfigureAwait(false);
-            Assert.Equal(value, gResp.Metadata["a"]);
+            Assert.Equal(value, gResp.Metadata!["a"]);
         }
 
         [Fact]
@@ -201,7 +200,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             Assert.Equal(200, putResp.StatusCode);
 
             //Test lifecycle expiration (yes, we add 2 days. I don't know why Amazon works like this)
-            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
             Assert.Equal("ExpireAll", putResp.LifeCycleRuleId);
         }
 
@@ -221,7 +220,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             }).ConfigureAwait(false);
 
             GetObjectResponse resp = await AssertAsync(nameof(PutObjectMultipleMetadata)).ConfigureAwait(false);
-            Assert.Equal(10, resp.Metadata.Count);
+            Assert.Equal(10, resp.Metadata!.Count);
         }
 
         [Fact]
@@ -268,7 +267,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             Assert.Equal("gzip", resp.ContentEncoding);
             Assert.Equal("da-DK", resp.ContentLanguage);
             Assert.Equal("text/html; charset=utf-8", resp.ContentType);
-            Assert.Equal(DateTime.UtcNow, resp.ExpiresOn.Value.DateTime, TimeSpan.FromSeconds(5));
+            Assert.Equal(DateTime.UtcNow, resp.ExpiresOn!.Value.DateTime, TimeSpan.FromSeconds(5));
         }
 
         [Fact]
@@ -303,7 +302,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             await UploadAsync(nameof(PutObjectSingleMetadata), req => req.Metadata.Add("mykey", "myvalue")).ConfigureAwait(false);
 
             GetObjectResponse resp = await AssertAsync(nameof(PutObjectSingleMetadata)).ConfigureAwait(false);
-            Assert.Equal("myvalue", resp.Metadata["mykey"]);
+            Assert.Equal("myvalue", resp.Metadata!["mykey"]);
         }
 
         [Fact]

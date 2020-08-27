@@ -51,7 +51,7 @@ namespace Genbox.SimpleS3.Cli.CommandLineUtils
                 });
 
             using IHost host = hostBuilder.Build();
-            await host.RunAsync(cancellationToken);
+            await host.RunAsync(cancellationToken).ConfigureAwait(false);
 
             if (exceptionHandler.StoredException != null)
                 ExceptionDispatchInfo.Capture(exceptionHandler.StoredException).Throw();

@@ -60,7 +60,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         /// upload-id-marker parameter is ignored. Otherwise, any multipart uploads for a key equal to the key-marker might be included in the list only if they
         /// have an upload ID lexicographically greater than the specified upload-id-marker.
         /// </summary>
-        public string UploadIdMarker { get; set; }
+        public string? UploadIdMarker { get; set; }
 
         public string BucketName { get; set; }
     }

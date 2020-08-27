@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
     [UsedImplicitly]
     internal class DeleteObjectsRequestMarshal : IRequestMarshal<DeleteObjectsRequest>
     {
-        public Stream MarshalRequest(DeleteObjectsRequest request, IConfig config)
+        public Stream? MarshalRequest(DeleteObjectsRequest request, IConfig config)
         {
             request.SetQueryParameter(AmzParameters.Delete, string.Empty);
 
@@ -27,7 +27,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
                 xml.WriteStartElement("Object");
                 xml.WriteElement("Key", info.Name);
 
-                if (!string.IsNullOrWhiteSpace(info.VersionId))
+                if (info.VersionId != null)
                     xml.WriteElement("VersionId", info.VersionId);
 
                 xml.WriteEndElement("Object");

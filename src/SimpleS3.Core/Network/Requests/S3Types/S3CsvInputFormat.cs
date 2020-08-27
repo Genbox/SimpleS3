@@ -27,5 +27,16 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
         /// this value to TRUE may lower performance.
         /// </summary>
         public bool? AllowQuotedRecordDelimiter { get; set; }
+
+        internal override void Reset()
+        {
+            HeaderUsage = HeaderUsage.Unknown;
+            CommentCharacter = null;
+            QuoteEscapeCharacter = null;
+            RecordDelimiter = null;
+            FieldDelimiter = null;
+            QuoteCharacter = null;
+            AllowQuotedRecordDelimiter = null;
+        }
     }
 }

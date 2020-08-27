@@ -65,11 +65,8 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests
 
             if (req is IHasMetadata hasMetadata && !disabledFor(typeof(IHasMetadata)))
             {
-                if (hasMetadata.Metadata != null)
-                {
-                    foreach (KeyValuePair<string, string> item in hasMetadata.Metadata.GetPrefixed())
-                        req.SetHeader(item.Key, item.Value);
-                }
+                foreach (KeyValuePair<string, string> item in hasMetadata.Metadata.GetPrefixed())
+                    req.SetHeader(item.Key, item.Value);
             }
 
             if (req is IHasMfa hasMfa && !disabledFor(typeof(IHasMfa)))
@@ -91,7 +88,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests
                 req.SetHeader(HttpHeaders.Range, hasRange.Range);
 
             if (req is IHasRequestPayer hasRequestPayer && !disabledFor(typeof(IHasRequestPayer)))
-                req.SetHeader(AmzHeaders.XAmzRequestPayer, hasRequestPayer.RequestPayer == Payer.Requester ? "requester" : null);
+                req.SetOptionalHeader(AmzHeaders.XAmzRequestPayer, hasRequestPayer.RequestPayer == Payer.Requester ? "requester" : null);
 
             if (req is IHasResponseHeader hasResponseHeader && !disabledFor(typeof(IHasResponseHeader)))
             {
@@ -106,9 +103,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests
             if (req is IHasSse hasSse && !disabledFor(typeof(IHasSse)))
             {
                 req.SetHeader(AmzHeaders.XAmzSse, hasSse.SseAlgorithm);
-                req.SetHeader(AmzHeaders.XAmzSseAwsKmsKeyId, hasSse.SseKmsKeyId);
+                req.SetOptionalHeader(AmzHeaders.XAmzSseAwsKmsKeyId, hasSse.SseKmsKeyId);
 
-                string sseContext = hasSse.SseContext.Build();
+                string? sseContext = hasSse.SseContext.Build();
 
                 if (sseContext != null)
                     req.SetHeader(AmzHeaders.XAmzSseContext, Encoding.UTF8.GetBytes(sseContext), BinaryEncoding.Base64);
@@ -131,10 +128,10 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests
                 req.SetQueryParameter(AmzParameters.UploadId, hasUploadId.UploadId);
 
             if (req is IHasVersionId hasVersionId && !disabledFor(typeof(IHasVersionId)))
-                req.SetQueryParameter(AmzParameters.VersionId, hasVersionId.VersionId);
+                req.SetOptionalQueryParameter(AmzParameters.VersionId, hasVersionId.VersionId);
 
             if (req is IHasWebsiteRedirect hasWebsiteRedirect && !disabledFor(typeof(IHasWebsiteRedirect)))
-                req.SetHeader(AmzHeaders.XAmzWebsiteRedirectLocation, hasWebsiteRedirect.WebsiteRedirectLocation);
+                req.SetOptionalHeader(AmzHeaders.XAmzWebsiteRedirectLocation, hasWebsiteRedirect.WebsiteRedirectLocation);
         }
     }
 }

@@ -60,18 +60,18 @@ namespace Genbox.SimpleS3.Core.Authentication
 
             _logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
 
-            string bucketName = null;
+            string? bucketName = null;
 
             if (request is IHasBucketName bn)
                 bucketName = bn.BucketName;
 
-            string objectKey = null;
+            string? objectKey = null;
 
             if (request is IHasObjectKey ok)
                 objectKey = ok.ObjectKey;
 
             //Ensure that the object key is encoded
-            string encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
+            string? encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
 
             if (_options.Value.Endpoint == null || _options.Value.NamingMode == NamingMode.PathStyle)
             {
@@ -100,7 +100,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             return CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date, "s3"));
         }
 
-        internal string CreateCanonicalRequest(Guid requestId, string objectKey, HttpMethod method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
+        internal string CreateCanonicalRequest(Guid requestId, string? objectKey, HttpMethod method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
         {
             _logger.LogTrace("Creating canonical request for {RequestId}", requestId);
 
@@ -164,7 +164,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             return sts;
         }
 
-        private static string CanonicalizeUri(string resourcePath)
+        private static string CanonicalizeUri(string? resourcePath)
         {
             if (resourcePath == null)
                 return SigningConstants.SlashStr;
@@ -177,7 +177,7 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         private static string CanonicalizeQueryParameters(IReadOnlyDictionary<string, string> parameters)
         {
-            if (parameters == null || parameters.Count == 0)
+            if (parameters.Count == 0)
                 return string.Empty;
 
             //Source: https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
@@ -192,7 +192,7 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         private static string CanonicalizeHeaders(IReadOnlyDictionary<string, string> headers)
         {
-            if (headers == null || headers.Count == 0)
+            if (headers.Count == 0)
                 return string.Empty;
 
             //Source: https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
@@ -217,7 +217,7 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         private static string CanonicalizeHeaderNames(IReadOnlyDictionary<string, string> headers)
         {
-            if (headers == null || headers.Count == 0)
+            if (headers.Count == 0)
                 return string.Empty;
 
             //Source: https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html

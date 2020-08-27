@@ -138,7 +138,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
             Assert.NotNull(createResp.UploadId);
 
             //Test lifecycle expiration
-            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, createResp.AbortsOn.Value.UtcDateTime.Date);
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, createResp.AbortsOn!.Value.UtcDateTime.Date);
             Assert.Equal("ExpireAll", createResp.AbortRuleId);
 
             byte[] file = new byte[1024 * 1024 * 5];
@@ -154,7 +154,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
             Assert.NotNull(completeResp.VersionId);
 
             //Test lifecycle expiration
-            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, completeResp.LifeCycleExpiresOn.Value.UtcDateTime.Date);
+            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, completeResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
             Assert.Equal("ExpireAll", completeResp.LifeCycleRuleId);
         }
 
@@ -235,8 +235,8 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
             GetObjectResponse gResp2 = await ObjectClient.GetObjectAsync(BucketName, nameof(MultipartUpload), req => req.PartNumber = 1).ConfigureAwait(false);
 
             Assert.True(gResp2.IsSuccess);
-            Assert.Equal(file.Length / 2, (await gResp2.Content.AsDataAsync().ConfigureAwait(false)).Length);
-            Assert.Equal(file, await getResp.Content.AsDataAsync().ConfigureAwait(false));
+            Assert.Equal(file.Length / 2, (await gResp2.Content!.AsDataAsync().ConfigureAwait(false)).Length);
+            Assert.Equal(file, await getResp.Content!.AsDataAsync().ConfigureAwait(false));
         }
 
         [Fact]

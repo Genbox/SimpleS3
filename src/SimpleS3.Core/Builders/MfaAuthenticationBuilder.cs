@@ -4,10 +4,10 @@ namespace Genbox.SimpleS3.Core.Builders
 {
     public class MfaAuthenticationBuilder : IHttpHeaderBuilder
     {
-        private string _serialNumber;
-        private string _value;
+        private string? _serialNumber;
+        private string? _value;
 
-        public string Build()
+        public string? Build()
         {
             if (!HasData())
                 return null;
@@ -26,7 +26,7 @@ namespace Genbox.SimpleS3.Core.Builders
             return _serialNumber != null;
         }
 
-        public string HeaderName => null;
+        public string? HeaderName => null;
 
         public void SetAuth(string serialNumber, string value)
         {

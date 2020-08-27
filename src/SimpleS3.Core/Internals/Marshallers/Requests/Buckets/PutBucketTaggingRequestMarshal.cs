@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     [UsedImplicitly]
     internal class PutBucketTaggingRequestMarshal : IRequestMarshal<PutBucketTaggingRequest>
     {
-        public Stream MarshalRequest(PutBucketTaggingRequest request, IConfig config)
+        public Stream? MarshalRequest(PutBucketTaggingRequest request, IConfig config)
         {
             request.SetQueryParameter(AmzParameters.Tagging, string.Empty);
 

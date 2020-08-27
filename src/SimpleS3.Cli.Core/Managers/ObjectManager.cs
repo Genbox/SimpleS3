@@ -70,7 +70,7 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
                                 case ResourceType.Directory:
                                     foreach (string file in Directory.GetFiles(parsedSource.resource))
                                     {
-                                        string directory = LocalPathHelper.GetDirectoryName(file);
+                                        string? directory = LocalPathHelper.GetDirectoryName(file);
                                         string name = LocalPathHelper.GetFileName(file);
                                         string objectKey = RemotePathHelper.Combine(parsedDestination.resource, directory, name);
 
@@ -117,11 +117,9 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
 
                             GetObjectResponse resp = await RequestHelper.ExecuteRequestAsync(_client, c => c.GetObjectAsync(parsedSource.bucket, parsedSource.resource)).ConfigureAwait(false);
 
-                            using (Stream s = resp.Content.AsStream())
-                            {
-                                using (FileStream fs = File.OpenWrite(localFile))
-                                    await s.CopyToAsync(fs).ConfigureAwait(false);
-                            }
+                            using (Stream s = resp.Content)
+                            using (FileStream fs = File.OpenWrite(localFile))
+                                await s.CopyToAsync(fs).ConfigureAwait(false);
 
                             return;
                         }
@@ -185,12 +183,12 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
                         await RequestHelper.ExecuteRequestAsync(_client, c => c.DeleteObjectAsync(parsed.bucket, parsed.resource)).ConfigureAwait(false);
                         break;
                     case ResourceType.Directory:
-                        string continuationToken = null;
+                        string? continuationToken = null;
                         ListObjectsResponse response;
 
                         do
                         {
-                            string cToken = continuationToken;
+                            string? cToken = continuationToken;
                             response = await RequestHelper.ExecuteRequestAsync(_client, c => c.ListObjectsAsync(parsed.bucket, req =>
                             {
                                 req.ContinuationToken = cToken;

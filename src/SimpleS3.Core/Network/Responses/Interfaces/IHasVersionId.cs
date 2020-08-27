@@ -2,6 +2,6 @@
 {
     public interface IHasVersionId
     {
-        string VersionId { get; }
+        string? VersionId { get; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,15 +17,19 @@ namespace Genbox.SimpleS3.Core.Operations
     {
         private readonly IRequestHandler _requestHandler;
 
-        public MultipartOperations(IRequestHandler requestHandler, IEnumerable<IRequestWrapper> requestWrappers, IEnumerable<IResponseWrapper> responseWrappers)
+        public MultipartOperations(IRequestHandler requestHandler, IEnumerable<IRequestWrapper>? requestWrappers = null, IEnumerable<IResponseWrapper>? responseWrappers = null)
         {
             _requestHandler = requestHandler;
 
             if (requestWrappers != null)
                 RequestWrappers = requestWrappers.ToList();
+            else
+                RequestWrappers = Array.Empty<IRequestWrapper>();
 
             if (responseWrappers != null)
                 ResponseWrappers = responseWrappers.ToList();
+            else
+                ResponseWrappers = Array.Empty<IResponseWrapper>();
         }
 
         public IList<IRequestWrapper> RequestWrappers { get; }

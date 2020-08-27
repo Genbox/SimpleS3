@@ -45,7 +45,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
         public IList<S3Part> Parts { get; internal set; }
 
         public DateTimeOffset? AbortsOn { get; internal set; }
-        public string AbortRuleId { get; internal set; }
+        public string? AbortRuleId { get; internal set; }
         public bool RequestCharged { get; internal set; }
         public StorageClass StorageClass { get; internal set; }
         public bool IsTruncated { get; internal set; }

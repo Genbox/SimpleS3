@@ -9,9 +9,6 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
     {
         public static IHttpClientBuilder WithProxy(this IHttpClientBuilder builder, IWebProxy proxy)
         {
-            if (proxy == null)
-                return builder;
-
             builder.Services.Configure<HttpClientFactoryOptions>(builder.Name, options =>
             {
                 options.HttpMessageHandlerBuilderActions.Add(b =>
@@ -28,9 +25,6 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
 
         public static IHttpClientBuilder WithProxy(this IHttpClientBuilder builder, string proxyUrl)
         {
-            if (string.IsNullOrEmpty(proxyUrl))
-                return builder;
-
             builder.Services.Configure<HttpClientFactoryOptions>(builder.Name, options =>
             {
                 options.HttpMessageHandlerBuilderActions.Add(b =>

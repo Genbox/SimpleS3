@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
 
             FastXmlWriter xml = new FastXmlWriter(512);
             xml.WriteStartElement("LegalHold", "http://s3.amazonaws.com/doc/2006-03-01/");
-            xml.WriteElement("Status", request.LockLegalHold.Value ? "ON" : "OFF");
+            xml.WriteElement("Status", request.LockLegalHold!.Value ? "ON" : "OFF");
             xml.WriteEndElement("LegalHold");
 
             return new MemoryStream(xml.GetBytes());

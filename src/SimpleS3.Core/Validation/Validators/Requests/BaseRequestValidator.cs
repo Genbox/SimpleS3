@@ -19,8 +19,8 @@ namespace Genbox.SimpleS3.Core.Validation.Validators.Requests
             When(x => x is IHasSseCustomerKey key && key.SseCustomerAlgorithm != SseCustomerAlgorithm.Unknown, () =>
             {
                 RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerAlgorithm).NotEmpty();
-                RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerKey).NotNull().Must(x => x.Length == 32);
-                RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerKeyMd5).NotNull().Must(x => x.Length == 16);
+                RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerKey).NotNull().Must(x => x!.Length == 32);
+                RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerKeyMd5).NotNull().Must(x => x!.Length == 16);
             });
 
             //See https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html

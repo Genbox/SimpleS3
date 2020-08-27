@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="config">The configuration delegate</param>
         public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config, IServiceProvider> config)
         {
-            collection?.Configure(config);
+            collection.Configure(config);
             return AddSimpleS3Core(collection);
         }
 
@@ -47,7 +47,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="config">The configuration delegate</param>
         public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config> config)
         {
-            collection?.Configure(config);
+            collection.Configure(config);
             return AddSimpleS3Core(collection);
         }
 

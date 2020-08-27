@@ -6,12 +6,12 @@ namespace Genbox.SimpleS3.Core.Common.Helpers
 {
     public static class TypeHelper
     {
-        public static IEnumerable<Type> GetInstanceTypesInheritedFrom<T>(Assembly assembly = null)
+        public static IEnumerable<Type> GetInstanceTypesInheritedFrom<T>(Assembly? assembly = null)
         {
             return GetInstanceTypesInheritedFrom(typeof(T), assembly);
         }
 
-        public static IEnumerable<Type> GetInstanceTypesInheritedFrom(Type type, Assembly assembly = null)
+        public static IEnumerable<Type> GetInstanceTypesInheritedFrom(Type type, Assembly? assembly = null)
         {
             if (assembly == null)
                 assembly = type.Assembly;
@@ -31,7 +31,7 @@ namespace Genbox.SimpleS3.Core.Common.Helpers
             }
         }
 
-        public static IEnumerable<Type> GetTypesInheritedFrom(Type type, Assembly assembly = null)
+        public static IEnumerable<Type> GetTypesInheritedFrom(Type type, Assembly? assembly = null)
         {
             if (assembly == null)
                 assembly = type.Assembly;

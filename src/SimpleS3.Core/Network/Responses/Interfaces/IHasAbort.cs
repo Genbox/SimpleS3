@@ -15,6 +15,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces
         /// This header is returned along with the x-amz-abort-date header. It identifies the applicable lifecycle configuration rule that defines the
         /// action to abort incomplete multipart uploads.
         /// </summary>
-        string AbortRuleId { get; }
+        string? AbortRuleId { get; }
     }
 }

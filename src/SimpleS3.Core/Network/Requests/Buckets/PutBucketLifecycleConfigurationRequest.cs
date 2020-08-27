@@ -22,6 +22,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
         public string BucketName { get; set; }
         public IList<S3Rule> Rules { get; }
         public Func<bool> ForceContentMd5 => () => true;
-        public byte[] ContentMd5 { get; set; }
+        public byte[]? ContentMd5 { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNull(bucketName, nameof(bucketName));
 
-            string uploadIdMarker = null;
+            string? uploadIdMarker = null;
             ListMultipartUploadsResponse response;
 
             do
@@ -24,7 +24,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                 if (token.IsCancellationRequested)
                     break;
 
-                string marker = uploadIdMarker;
+                string? marker = uploadIdMarker;
                 response = await client.ListMultipartUploadsAsync(bucketName, req => req.UploadIdMarker = marker, token).ConfigureAwait(false);
 
                 foreach (S3Upload responseObject in response.Uploads)

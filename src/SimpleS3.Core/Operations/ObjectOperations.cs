@@ -20,12 +20,8 @@ namespace Genbox.SimpleS3.Core.Operations
         public ObjectOperations(IRequestHandler requestHandler, IEnumerable<IRequestWrapper> requestWrappers, IEnumerable<IResponseWrapper> responseWrappers)
         {
             _requestHandler = requestHandler;
-
-            if (requestWrappers != null)
-                RequestWrappers = requestWrappers.ToList();
-
-            if (responseWrappers != null)
-                ResponseWrappers = responseWrappers.ToList();
+            RequestWrappers = requestWrappers.ToList();
+            ResponseWrappers = responseWrappers.ToList();
         }
 
         public IList<IRequestWrapper> RequestWrappers { get; }
@@ -50,7 +46,7 @@ namespace Genbox.SimpleS3.Core.Operations
         {
             Validator.RequireNotNull(request, nameof(request));
 
-            if (RequestWrappers != null)
+            if (request.Content != null)
             {
                 foreach (IRequestWrapper wrapper in RequestWrappers)
                 {
@@ -67,7 +63,7 @@ namespace Genbox.SimpleS3.Core.Operations
             GetObjectResponse response = await _requestHandler.SendRequestAsync<GetObjectRequest, GetObjectResponse>(request, token).ConfigureAwait(false);
 
             foreach (IResponseWrapper wrapper in ResponseWrappers)
-                response.Content.InputStream = wrapper.Wrap(response.Content.AsStream(), response);
+                response.Content = wrapper.Wrap(response.Content, response);
 
             return response;
         }

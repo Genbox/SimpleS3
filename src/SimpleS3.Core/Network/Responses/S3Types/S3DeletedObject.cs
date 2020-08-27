@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
         public bool IsDeleteMarker { get; internal set; }
 
         /// <summary>The version ID of the deleted object.</summary>
-        public string VersionId { get; internal set; }
+        public string? VersionId { get; internal set; }
 
         public override string ToString()
         {

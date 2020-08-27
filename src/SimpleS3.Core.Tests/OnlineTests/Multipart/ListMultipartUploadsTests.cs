@@ -38,7 +38,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
                 Assert.Equal(1000, listResp.MaxUploads);
                 Assert.False(listResp.IsTruncated);
 
-                S3Upload upload = Assert.Single(listResp.Uploads);
+                S3Upload? upload = Assert.Single(listResp.Uploads);
 
                 Assert.Equal(listResp.NextKeyMarker, upload.ObjectKey);
                 Assert.Equal(listResp.NextUploadIdMarker, upload.UploadId);

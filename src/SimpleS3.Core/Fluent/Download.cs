@@ -78,17 +78,25 @@ namespace Genbox.SimpleS3.Core.Fluent
             return this;
         }
 
-        public Download WithEtagConditional(ETagBuilder ifETagMatch = null, ETagBuilder ifETagNotMatch = null)
+        public Download WithEtagConditional(ETagBuilder? ifETagMatch = null, ETagBuilder? ifETagNotMatch = null)
         {
-            _request.IfETagMatch = ifETagMatch;
-            _request.IfETagNotMatch = ifETagNotMatch;
+            if (ifETagMatch != null)
+                _request.IfETagMatch = ifETagMatch;
+
+            if (ifETagNotMatch != null)
+                _request.IfETagNotMatch = ifETagNotMatch;
+
             return this;
         }
 
-        public Download WithEtagConditional(string ifETagMatch = null, string ifETagNotMatch = null)
+        public Download WithEtagConditional(string? ifETagMatch = null, string? ifETagNotMatch = null)
         {
-            _request.IfETagMatch.Set(ifETagMatch);
-            _request.IfETagNotMatch.Set(ifETagNotMatch);
+            if (ifETagMatch != null)
+                _request.IfETagMatch.Set(ifETagMatch);
+
+            if (ifETagNotMatch != null)
+                _request.IfETagNotMatch.Set(ifETagNotMatch);
+
             return this;
         }
 

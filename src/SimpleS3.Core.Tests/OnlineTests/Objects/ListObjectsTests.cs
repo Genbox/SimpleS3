@@ -119,7 +119,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 
                 Assert.Equal("-", resp.Delimiter);
                 Assert.Equal(2, resp.KeyCount);
-                Assert.Equal(2, resp.CommonPrefixes.Count);
+                Assert.Equal(2, resp.CommonPrefixes!.Count);
                 Assert.Equal("object-", resp.CommonPrefixes[0]);
                 Assert.Equal("something-", resp.CommonPrefixes[1]);
             }).ConfigureAwait(false);
@@ -139,7 +139,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 
                 Assert.Equal(EncodingType.Url, resp.EncodingType);
 
-                S3Object obj = Assert.Single(resp.Objects);
+                S3Object? obj = Assert.Single(resp.Objects);
 
                 Assert.Equal("%21%23/%28%29", obj.ObjectKey);
             }).ConfigureAwait(false);
@@ -157,7 +157,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
                 Assert.True(resp.IsSuccess);
 
                 S3Object obj = resp.Objects.First();
-                Assert.Equal(TestConstants.TestUsername, obj.Owner.Name);
+                Assert.Equal(TestConstants.TestUsername, obj.Owner!.Name);
                 Assert.Equal(TestConstants.TestUserId, obj.Owner.Id);
             }).ConfigureAwait(false);
         }
@@ -179,7 +179,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
                 Assert.Equal(1, resp.KeyCount);
                 Assert.Equal("object", resp.Prefix);
 
-                S3Object obj = Assert.Single(resp.Objects);
+                S3Object? obj = Assert.Single(resp.Objects);
 
                 Assert.Equal(tempObjName, obj.ObjectKey);
             }).ConfigureAwait(false);

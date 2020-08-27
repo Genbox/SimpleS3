@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
 {
-    public class S3OutputLocation : OutputLocation, IHasSse, IHasObjectAcl, IHasStorageClass
+    public class S3OutputLocation : IHasSse, IHasObjectAcl, IHasStorageClass, IHasBucketName
     {
         public S3OutputLocation(string bucketName, string prefix)
         {
@@ -18,6 +18,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
 
             Tags = new TagBuilder();
             Metadata = new MetadataBuilder();
+            SseContext = new KmsContextBuilder();
         }
 
         /// <summary>
@@ -33,10 +34,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
         public TagBuilder Tags { get; internal set; }
 
         /// <summary>The name of the bucket where the restore results will be placed.</summary>
-        public string BucketName { get; }
+        public string BucketName { get; set; }
 
         /// <summary>The prefix that is prepended to the restore results for this request.</summary>
-        public string Prefix { get; }
+        public string? Prefix { get; internal set; }
 
         public ObjectCannedAcl Acl { get; set; }
         public AclBuilder AclGrantRead { get; internal set; }
@@ -44,8 +45,24 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
         public AclBuilder AclGrantWriteAcp { get; internal set; }
         public AclBuilder AclGrantFullControl { get; internal set; }
         public SseAlgorithm SseAlgorithm { get; set; }
-        public string SseKmsKeyId { get; set; }
+        public string? SseKmsKeyId { get; set; }
         public KmsContextBuilder SseContext { get; set; }
         public StorageClass StorageClass { get; set; }
+
+        internal void Reset()
+        {
+            Metadata.Reset();
+            Tags.Reset();
+            Prefix = null;
+            Acl = ObjectCannedAcl.Unknown;
+            AclGrantRead.Reset();
+            AclGrantReadAcp.Reset();
+            AclGrantWriteAcp.Reset();
+            AclGrantFullControl.Reset();
+            SseAlgorithm = SseAlgorithm.Unknown;
+            SseKmsKeyId = null;
+            SseContext.Reset();
+            StorageClass = StorageClass.Unknown;
+        }
     }
 }

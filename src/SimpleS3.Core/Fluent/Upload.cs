@@ -52,7 +52,7 @@ namespace Genbox.SimpleS3.Core.Fluent
             return this;
         }
 
-        public Upload WithContentDisposition(ContentDispositionType type, string filename = null)
+        public Upload WithContentDisposition(ContentDispositionType type, string? filename = null)
         {
             _request.ContentDisposition.Set(type, filename);
             return this;
@@ -64,13 +64,13 @@ namespace Genbox.SimpleS3.Core.Fluent
             return this;
         }
 
-        public Upload WithContentType(string mediaType, string charset = null, string boundary = null)
+        public Upload WithContentType(string mediaType, string? charset = null, string? boundary = null)
         {
             _request.ContentType.Set(mediaType, charset, boundary);
             return this;
         }
 
-        public Upload WithContentType(MediaType mediaType, Charset charset = Charset.Utf_8, string boundary = null)
+        public Upload WithContentType(MediaType mediaType, Charset charset = Charset.Utf_8, string? boundary = null)
         {
             _request.ContentType.Set(mediaType, charset, boundary);
             return this;
@@ -98,7 +98,7 @@ namespace Genbox.SimpleS3.Core.Fluent
         /// <summary>Enables Server Side Encryption (SSE) with Amazon's Key Management Service (KMS)</summary>
         /// <param name="kmsKeyId">You can use this this specify which KMS master key you want to use.</param>
         /// <param name="kmsContext">Here you can specify the encryption context.</param>
-        public Upload WithEncryptionKms(string kmsKeyId = null, KmsContextBuilder kmsContext = null)
+        public Upload WithEncryptionKms(string? kmsKeyId = null, KmsContextBuilder? kmsContext = null)
         {
             _request.SseAlgorithm = SseAlgorithm.AwsKms;
 
@@ -169,7 +169,7 @@ namespace Genbox.SimpleS3.Core.Fluent
 
         public Upload CalculateContentMd5()
         {
-            _request.ContentMd5 = CryptoHelper.Md5Hash(_request.Content, true);
+            _request.ContentMd5 = _request.Content == null ? Constants.EmptyMd5Bytes : CryptoHelper.Md5Hash(_request.Content, true);
             return this;
         }
 
@@ -221,8 +221,11 @@ namespace Genbox.SimpleS3.Core.Fluent
             return UploadAsync(new MemoryStream(data), token);
         }
 
-        public Task<PutObjectResponse> UploadStringAsync(string data, Encoding encoding = null, CancellationToken token = default)
+        public Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default)
         {
+            if (encoding == null)
+                encoding = Constants.Utf8NoBom;
+
             return UploadDataAsync(encoding.GetBytes(data), token);
         }
 

@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using EnumsNET;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 
@@ -9,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
     public class EnumToStringBenchmarks
     {
         [Benchmark]
-        public string EnumsDotNet()
+        public string? EnumsDotNet()
         {
             return AwsRegion.ApEast1.AsString(EnumFormat.EnumMemberValue);
         }
@@ -17,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
         [Benchmark]
         public string DotNet()
         {
-            return AwsRegion.ApEast1.ToString(CultureInfo.InvariantCulture);
+            return AwsRegion.ApEast1.ToString();
         }
 
         [Benchmark]

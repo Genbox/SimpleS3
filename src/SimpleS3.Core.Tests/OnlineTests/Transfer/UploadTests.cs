@@ -29,7 +29,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
 
             GetObjectResponse resp = await AssertAsync(objectKey).ConfigureAwait(false);
             Assert.Equal(lockMode, resp.LockMode);
-            Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntil.Value.DateTime, TimeSpan.FromSeconds(1));
+            Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntil!.Value.DateTime, TimeSpan.FromSeconds(1));
         }
 
         [Theory]
@@ -116,7 +116,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
             }).ConfigureAwait(false);
 
             GetObjectResponse gResp = await AssertAsync(nameof(UploadMetadata)).ConfigureAwait(false);
-            Assert.Equal(10, gResp.Metadata.Count);
+            Assert.Equal(10, gResp.Metadata!.Count);
         }
 
         [Fact]

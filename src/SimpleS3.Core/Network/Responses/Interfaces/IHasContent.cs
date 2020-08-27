@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Misc;
+﻿using System.IO;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces
@@ -6,6 +6,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces
     [PublicAPI]
     public interface IHasContent
     {
-        ContentReader Content { get; }
+        Stream Content { get; }
     }
 }
