@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +54,7 @@ namespace Genbox.SimpleS3.Core.Builders
                     throw new ArgumentException($"Invalid character '{b}' in metadata");
             }
 
-            _totalSize = utf8Bytes.Length;
+            _totalSize += utf8Bytes.Length;
 
             if (_totalSize > 2048)
                 throw new ArgumentException("Metadata too large");
