@@ -19,6 +19,13 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
 {
     public class ChunkedSignatureTests
     {
+        private readonly SignatureBuilder _sigBuilder;
+        private readonly ChunkedSignatureBuilder _chunkedSigBuilder;
+        private readonly ScopeBuilder _scopeBuilder;
+        private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
+        private readonly HeaderAuthorizationBuilder _authBuilder;
+        private readonly IOptions<S3Config> _options;
+
         public ChunkedSignatureTests()
         {
             S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
@@ -29,15 +36,8 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             _scopeBuilder = new ScopeBuilder(_options);
             _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<SignatureBuilder>.Instance, _options);
             _chunkedSigBuilder = new ChunkedSignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);
-            _authHeaderBuilder = new AuthorizationHeaderBuilder(_options, _scopeBuilder, _sigBuilder, NullLogger<AuthorizationHeaderBuilder>.Instance);
+            _authBuilder = new HeaderAuthorizationBuilder(_options, _scopeBuilder, _sigBuilder, NullLogger<HeaderAuthorizationBuilder>.Instance);
         }
-
-        private readonly SignatureBuilder _sigBuilder;
-        private readonly ChunkedSignatureBuilder _chunkedSigBuilder;
-        private readonly ScopeBuilder _scopeBuilder;
-        private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
-        private readonly AuthorizationHeaderBuilder _authHeaderBuilder;
-        private readonly IOptions<S3Config> _options;
 
         [Fact]
         public void AmazonTestSuite()
@@ -89,7 +89,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             string expectedAuthHeader = "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request,SignedHeaders=content-encoding;content-length;host;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length;x-amz-storage-class,Signature=4f232c4386841ef735655705268965c44a0e4690baa4adea153f7db9fa80a0a9";
 
             byte[] seedSignature = _sigBuilder.CreateSignature(_testDate, actualSts);
-            string actualAuthHeader = _authHeaderBuilder.BuildHeader(_testDate, headers, seedSignature);
+            string actualAuthHeader = _authBuilder.BuildInternal(_testDate, headers, seedSignature);
             Assert.Equal(expectedAuthHeader, actualAuthHeader);
 
             //Now we test the actual chunks

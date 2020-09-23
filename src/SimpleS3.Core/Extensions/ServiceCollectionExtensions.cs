@@ -64,7 +64,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.TryAddSingleton<ISignatureBuilder, SignatureBuilder>();
             collection.TryAddSingleton<IChunkedSignatureBuilder, ChunkedSignatureBuilder>();
             collection.TryAddSingleton<IRequestStreamWrapper, ChunkedContentRequestStreamWrapper>();
-            collection.TryAddSingleton<IAuthorizationBuilder, AuthorizationHeaderBuilder>();
+            collection.TryAddSingleton<IAuthorizationBuilder, HeaderAuthorizationBuilder>();
             collection.TryAddSingleton<IObjectOperations, ObjectOperations>();
             collection.TryAddSingleton<IBucketOperations, BucketOperations>();
             collection.TryAddSingleton<IMultipartOperations, MultipartOperations>();

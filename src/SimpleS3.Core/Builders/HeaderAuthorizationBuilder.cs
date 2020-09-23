@@ -14,14 +14,14 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Builders
 {
-    public class AuthorizationHeaderBuilder : IAuthorizationBuilder
+    public class HeaderAuthorizationBuilder : IAuthorizationBuilder
     {
-        private readonly ILogger<AuthorizationHeaderBuilder> _logger;
+        private readonly ILogger<HeaderAuthorizationBuilder> _logger;
         private readonly IOptions<S3Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
         private readonly ISignatureBuilder _signatureBuilder;
 
-        public AuthorizationHeaderBuilder(IOptions<S3Config> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<AuthorizationHeaderBuilder> logger)
+        public HeaderAuthorizationBuilder(IOptions<S3Config> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<HeaderAuthorizationBuilder> logger)
         {
             _options = options;
             _scopeBuilder = scopeBuilder;
@@ -33,36 +33,25 @@ namespace Genbox.SimpleS3.Core.Builders
         {
             Validator.RequireNotNull(request, nameof(request));
 
-            return BuildHeader(request.Timestamp, request.Headers, _signatureBuilder.CreateSignature(request));
+            return BuildInternal(request.Timestamp, request.Headers, _signatureBuilder.CreateSignature(request));
         }
 
-        internal string BuildHeader(DateTimeOffset date, IReadOnlyDictionary<string, string> headers, byte[] signature)
+        internal string BuildInternal(DateTimeOffset date, IReadOnlyDictionary<string, string> headers, byte[] signature)
         {
-            _logger.LogTrace("Building auth header");
+            _logger.LogTrace("Building header based authorization");
 
             string scope = _scopeBuilder.CreateScope("s3", date);
 
             StringBuilder header = StringBuilderPool.Shared.Rent(250);
             header.Append(SigningConstants.AlgorithmTag);
             header.AppendFormat(CultureInfo.InvariantCulture, " Credential={0}/{1},", _options.Value.Credentials.KeyId, scope);
-            header.AppendFormat(CultureInfo.InvariantCulture, "SignedHeaders={0},", string.Join(";", FilterHeaders(headers)));
+            header.AppendFormat(CultureInfo.InvariantCulture, "SignedHeaders={0},", string.Join(";", SigningConstants.FilterHeaders(headers).Select(x => x.Key)));
             header.AppendFormat(CultureInfo.InvariantCulture, "Signature={0}", signature.HexEncode());
 
             string authHeader = header.ToString();
             StringBuilderPool.Shared.Return(header);
             _logger.LogDebug("AuthHeader: {AuthHeader}", authHeader);
             return authHeader;
-        }
-
-        private static IEnumerable<string> FilterHeaders(IReadOnlyDictionary<string, string> headers)
-        {
-            foreach (string key in headers.Select(x => x.Key).OrderBy(x => x, StringComparer.OrdinalIgnoreCase))
-            {
-                string loweredKey = key.ToLowerInvariant();
-
-                if (SigningConstants.ShouldSignHeader(loweredKey))
-                    yield return loweredKey;
-            }
         }
     }
 }

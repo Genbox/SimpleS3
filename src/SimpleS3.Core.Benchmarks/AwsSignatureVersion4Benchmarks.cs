@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
     [InProcess]
     public class AwsSignatureVersion4Benchmarks
     {
-        private AuthorizationHeaderBuilder _headerBuilder;
+        private HeaderAuthorizationBuilder _builder;
         private DummyRequest _request;
         private HttpRequestMessage _request2;
         private ImmutableCredentials _credentials;
@@ -47,7 +47,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
                 ScopeBuilder scopeBuilder = new ScopeBuilder(options);
                 SignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, NullLogger<SignatureBuilder>.Instance, options);
 
-                _headerBuilder = new AuthorizationHeaderBuilder(options, scopeBuilder, signatureBuilder, NullLogger<AuthorizationHeaderBuilder>.Instance);
+                _builder = new HeaderAuthorizationBuilder(options, scopeBuilder, signatureBuilder, NullLogger<HeaderAuthorizationBuilder>.Instance);
 
                 _request = new DummyRequest();
                 _request.SetHeader(AmzHeaders.XAmzContentSha256, "UNSIGNED-PAYLOAD");
@@ -69,7 +69,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
         [Benchmark]
         public string SimpleS3()
         {
-            return _headerBuilder.BuildAuthorization(_request);
+            return _builder.BuildAuthorization(_request);
         }
 
         [Benchmark]

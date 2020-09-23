@@ -118,15 +118,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             sb.Append(CanonicalizeQueryParameters(query)).Append(SigningConstants.Newline);
 
             //Headers needs to be ordered by key
-            OrderedDictionary<string, string> orderedHeaders = new OrderedDictionary<string, string>(headers.Count);
-
-            foreach (KeyValuePair<string, string> item in headers.OrderBy(x => x.Key, StringComparer.OrdinalIgnoreCase))
-            {
-                string loweredKey = item.Key.ToLowerInvariant();
-
-                if (SigningConstants.ShouldSignHeader(loweredKey))
-                    orderedHeaders.Add(loweredKey, item.Value);
-            }
+            OrderedDictionary<string, string> orderedHeaders = new OrderedDictionary<string, string>(SigningConstants.FilterHeaders(headers));
 
             sb.Append(CanonicalizeHeaders(orderedHeaders)).Append(SigningConstants.Newline);
             sb.Append(CanonicalizeHeaderNames(orderedHeaders)).Append(SigningConstants.Newline);
