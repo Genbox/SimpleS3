@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Authentication
 {
@@ -18,7 +19,8 @@ namespace Genbox.SimpleS3.Core.Authentication
         internal const char Colon = ':';
         internal const char SemiColon = ';';
 
-        private static readonly ISet<string> HeaderWhitelist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        [PublicAPI]
+        public static readonly ISet<string> HeaderWhitelist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             HttpHeaders.Host,
             HttpHeaders.ContentType,
