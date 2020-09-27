@@ -20,10 +20,11 @@ namespace Genbox.SimpleS3.Core.Authentication
         internal const char Colon = ':';
         internal const char SemiColon = ';';
 
+        //These headers are always signed
         [PublicAPI]
         public static readonly ISet<string> HeaderWhitelist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            //HttpHeaders.Host, //disabled for now because it is needed by presigned urls
+            HttpHeaders.Host,
             HttpHeaders.ContentType,
             HttpHeaders.ContentMd5
         };
@@ -33,7 +34,10 @@ namespace Genbox.SimpleS3.Core.Authentication
         private static bool DefaultHeaderCheck(string header)
         {
             //Only amz headers: https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
-            return header.StartsWith(_amazonHeaderPrefix, StringComparison.Ordinal) || HeaderWhitelist.Contains(header);
+            if (header.StartsWith(_amazonHeaderPrefix, StringComparison.Ordinal))
+                return true;
+
+            return HeaderWhitelist.Contains(header);
         }
 
         public static IEnumerable<KeyValuePair<string, string>> FilterHeaders(IEnumerable<KeyValuePair<string, string>> headers)
