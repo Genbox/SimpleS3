@@ -11,13 +11,12 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Objects
         public PreSignedClient(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
-        public async Task UseClient()
+        public async Task PreSignedObjectOperationsTest()
         {
             GetObjectRequest req = new GetObjectRequest("mybucket", "myobject");
             req.ResponseContentDisposition.Set(ContentDispositionType.Attachment, "test.zip");
 
             string url = await PreSignedObjectOperations.SignGetObjectAsync(req).ConfigureAwait(false);
-
         }
     }
 }

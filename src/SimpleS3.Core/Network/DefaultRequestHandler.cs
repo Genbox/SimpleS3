@@ -99,7 +99,7 @@ namespace Genbox.SimpleS3.Core.Network
             _logger.LogDebug("ContentSha256 is {ContentSha256}", contentHash);
 
             //We add the authorization header here because we need ALL other headers to be present when we do
-            request.SetHeader(HttpHeaders.Authorization, _authBuilder.BuildAuthorization(request, contentHash));
+            request.SetHeader(HttpHeaders.Authorization, _authBuilder.BuildAuthorization(request));
 
             _logger.LogDebug("Sending request to {Url}", url);
 

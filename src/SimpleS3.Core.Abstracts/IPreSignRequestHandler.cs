@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Genbox.SimpleS3.Core.Abstracts.Operations
+namespace Genbox.SimpleS3.Core.Abstracts
 {
     public interface IPreSignRequestHandler
     {

@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -7,10 +6,7 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
-using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Common;
-using Genbox.SimpleS3.Core.Internals.Enums;
-using Genbox.SimpleS3.Core.Internals.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -58,8 +54,9 @@ namespace Genbox.SimpleS3.Core.Network
             (string? host, string? url) = RequestHelper.BuildEndpointData(config, request);
 
             request.SetHeader(HttpHeaders.Host, host);
+            request.SetHeader(AmzHeaders.XAmzContentSha256, "UNSIGNED-PAYLOAD");
 
-            string authorization = url + "&" + _authBuilder.BuildAuthorization(request, "UNSIGNED-PAYLOAD");
+            string authorization = url + "&" + _authBuilder.BuildAuthorization(request);
 
             //Clear sensitive material from the request
             if (request is IContainSensitiveMaterial sensitive)

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
@@ -10,7 +9,7 @@ using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
-using Genbox.SimpleS3.Core.Internals.Pools;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -44,15 +43,14 @@ namespace Genbox.SimpleS3.Core.Builders
 
             string scope = _scopeBuilder.CreateScope("s3", date);
 
-            StringBuilder sb = StringBuilderPool.Shared.Rent(250);
-            sb.AppendFormat(CultureInfo.InvariantCulture, "{0}={1}", AmzHeaders.XAmzAlgorithm, SigningConstants.AlgorithmTag);
-            sb.AppendFormat(CultureInfo.InvariantCulture, "&{0}={1}/{2}", AmzHeaders.XAmzCredential, _options.Value.Credentials.KeyId, scope);
-            sb.AppendFormat(CultureInfo.InvariantCulture, "&{0}={1}", AmzHeaders.XAmzDate, date.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
-            sb.AppendFormat(CultureInfo.InvariantCulture, "&{0}={1}", AmzHeaders.XAmzSignedHeaders, string.Join(";", SigningConstants.FilterHeaders(headers).Select(x => x.Key)));
-            sb.AppendFormat(CultureInfo.InvariantCulture, "&{0}={1}", AmzHeaders.XAmzSignature, signature.HexEncode());
+            List<KeyValuePair<string, string>> paramBuilder = new List<KeyValuePair<string, string>>(5);
+            paramBuilder.Add(new KeyValuePair<string, string>(AmzHeaders.XAmzAlgorithm, SigningConstants.AlgorithmTag));
+            paramBuilder.Add(new KeyValuePair<string, string>(AmzHeaders.XAmzCredential, _options.Value.Credentials.KeyId + '/' + scope));
+            paramBuilder.Add(new KeyValuePair<string, string>(AmzHeaders.XAmzDate, date.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo)));
+            paramBuilder.Add(new KeyValuePair<string, string>(AmzHeaders.XAmzSignedHeaders, string.Join(";", SigningConstants.FilterHeaders(headers).Select(x => x.Key))));
+            paramBuilder.Add(new KeyValuePair<string, string>(AmzHeaders.XAmzSignature, signature.HexEncode()));
 
-            string parameters = sb.ToString();
-            StringBuilderPool.Shared.Return(sb);
+            string parameters = UrlHelper.CreateQueryString(paramBuilder);
             _logger.LogDebug("Auth parameters: {AuthParameters}", parameters);
             return parameters;
         }

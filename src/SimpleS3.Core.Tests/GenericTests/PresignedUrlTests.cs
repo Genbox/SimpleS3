@@ -50,10 +50,11 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
 
             byte[] signature = _sigBuilder.CreateSignature(_testDate, stringToSign);
 
+            Assert.Equal("aeeed9bbccd4d02ee5c0109b86d86835f995330da4c265957d157751f604d404", signature.HexEncode());
+
             //TODO: Perhaps reverse the responsibility so that the authbuilders manipulate the request? Otherwise I'd have to parse the url here to add it to the full request url
             string? queryUrl = _authBuilder.BuildInternal(_testDate, request.Headers, signature);
 
-            Assert.Equal("aeeed9bbccd4d02ee5c0109b86d86835f995330da4c265957d157751f604d404", signature.HexEncode());
         }
     }
 }
