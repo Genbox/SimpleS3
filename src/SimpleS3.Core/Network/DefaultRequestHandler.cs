@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -17,8 +16,6 @@ using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Internals.Pools;
-using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -68,62 +65,16 @@ namespace Genbox.SimpleS3.Core.Network
             request.Timestamp = DateTimeOffset.UtcNow;
             request.RequestId = Guid.NewGuid();
 
-            _logger.LogTrace("Sending {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
+            _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
             S3Config config = _options.Value;
-
             Stream? requestStream = _marshaller.MarshalRequest(request, config);
 
             _validator.ValidateAndThrow(request);
 
-            string? bucketName = null;
+            (string? host, string? url) = RequestHelper.BuildEndpointData(config, request);
 
-            if (request is IHasBucketName bn)
-                bucketName = bn.BucketName;
-
-            string? objectKey = null;
-
-            if (request is IHasObjectKey ok)
-                objectKey = ok.ObjectKey;
-
-            //Ensure that the object key is encoded
-            string? encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
-
-            if (config.Endpoint == null || config.NamingMode == NamingMode.PathStyle)
-            {
-                if (bucketName != null)
-                    objectKey = bucketName + '/' + encodedResource;
-                else
-                    objectKey = encodedResource;
-            }
-            else
-                objectKey = encodedResource;
-
-            StringBuilder sb = StringBuilderPool.Shared.Rent(100);
-
-            Uri? endpoint = config.Endpoint;
-
-            if (endpoint != null)
-            {
-                sb.Append(endpoint.Host);
-
-                if (!endpoint.IsDefaultPort)
-                    sb.Append(':').Append(endpoint.Port);
-            }
-            else
-            {
-                if (config.NamingMode == NamingMode.VirtualHost)
-                {
-                    if (bucketName != null)
-                        sb.Append(bucketName).Append(".s3.").Append(ValueHelper.EnumToString(config.Region)).Append(".amazonaws.com");
-                    else
-                        sb.Append("s3.").Append(ValueHelper.EnumToString(config.Region)).Append(".amazonaws.com");
-                }
-                else
-                    sb.Append("s3.").Append(ValueHelper.EnumToString(config.Region)).Append(".amazonaws.com");
-            }
-
-            request.SetHeader(HttpHeaders.Host, sb.ToString());
+            request.SetHeader(HttpHeaders.Host, host);
             request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
 
             if (requestStream != null)
@@ -148,22 +99,11 @@ namespace Genbox.SimpleS3.Core.Network
             _logger.LogDebug("ContentSha256 is {ContentSha256}", contentHash);
 
             //We add the authorization header here because we need ALL other headers to be present when we do
-            request.SetHeader(HttpHeaders.Authorization, _authBuilder.BuildAuthorization(request));
+            request.SetHeader(HttpHeaders.Authorization, _authBuilder.BuildAuthorization(request, contentHash));
 
-            sb.Append('/').Append(objectKey);
+            _logger.LogDebug("Sending request to {Url}", url);
 
-            //Map all the parameters on to the url
-            if (request.QueryParameters.Count > 0)
-                sb.Append('?').Append(UrlHelper.CreateQueryString(request.QueryParameters));
-
-            string scheme = endpoint == null ? config.UseTLS ? "https" : "http" : endpoint.Scheme;
-            string fullUrl = scheme + "://" + sb;
-
-            StringBuilderPool.Shared.Return(sb);
-
-            _logger.LogDebug("Building request for {Url}", fullUrl);
-
-            (int statusCode, IDictionary<string, string> headers, Stream? responseStream) = await _networkDriver.SendRequestAsync(request.Method, fullUrl, request.Headers, requestStream, cancellationToken).ConfigureAwait(false);
+            (int statusCode, IDictionary<string, string> headers, Stream? responseStream) = await _networkDriver.SendRequestAsync(request.Method, url, request.Headers, requestStream, cancellationToken).ConfigureAwait(false);
 
             //Clear sensitive material from the request
             if (request is IContainSensitiveMaterial sensitive)

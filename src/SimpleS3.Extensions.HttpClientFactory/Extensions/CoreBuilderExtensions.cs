@@ -30,8 +30,9 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
             CustomHttpClientFactoryBuilder builder = new CustomHttpClientFactoryBuilder(clientBuilder.Services, "SimpleS3");
 
             //Contrary to the naming, this does not add a HttpClient to the services. It is the factories etc. necessary for HttpClientFactory to work.
-            //It also bind the HttpClient to HttpClientFactoryNetworkDriver instead of adding it directly to the service collection
-            builder.Services.AddHttpClient<INetworkDriver, HttpClientFactoryNetworkDriver>();
+            //It also bind the HttpClient to HttpClientFactoryNetworkDriver instead of adding it directly to the service collection.
+            //Note that it adds INetworkDriver as a transient service in order to change out the HttpClient.
+            builder.Services.AddHttpClient<INetworkDriver, HttpClientFactoryNetworkDriver>(builder.Name);
 
             builder.Services.Configure<HttpClientFactoryOptions>(builder.Name, (options, x) =>
             {
@@ -56,8 +57,6 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
                     b.PrimaryHandler = handler;
                 });
             });
-
-            builder.Services.AddSingleton<INetworkDriver, HttpClientFactoryNetworkDriver>();
 
             return builder;
         }
