@@ -13,10 +13,9 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
             {
                 options.HttpMessageHandlerBuilderActions.Add(b =>
                 {
-                    HttpClientHandler handler = b.Services.GetRequiredService<HttpClientHandler>();
+                    HttpClientHandler handler = (HttpClientHandler)b.PrimaryHandler;
                     handler.Proxy = proxy;
                     handler.UseProxy = true;
-                    b.PrimaryHandler = handler;
                 });
             });
 
@@ -29,10 +28,9 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
             {
                 options.HttpMessageHandlerBuilderActions.Add(b =>
                 {
-                    HttpClientHandler handler = b.Services.GetRequiredService<HttpClientHandler>();
+                    HttpClientHandler handler = (HttpClientHandler)b.PrimaryHandler;
                     handler.Proxy = new WebProxy(proxyUrl);
                     handler.UseProxy = true;
-                    b.PrimaryHandler = handler;
                 });
             });
 
