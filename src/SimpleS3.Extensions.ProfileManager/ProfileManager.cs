@@ -47,7 +47,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
             //Check if the we have the right protector
             string? protector = profile.GetTag("Protector");
 
-            string profileProtector = protector != null ? protector.GetType().Name : string.Empty;
+            string profileProtector = protector ?? string.Empty;
             string userProtector = _protector != null ? _protector.GetType().Name : string.Empty;
 
             if (!string.Equals(profileProtector, userProtector, StringComparison.OrdinalIgnoreCase))
