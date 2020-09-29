@@ -2,6 +2,6 @@
 {
     public interface ISignatureBuilder
     {
-        byte[] CreateSignature(IRequest request);
+        byte[] CreateSignature(IRequest request, bool enablePayloadSignature = true);
     }
 }

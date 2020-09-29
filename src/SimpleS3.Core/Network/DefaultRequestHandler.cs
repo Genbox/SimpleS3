@@ -11,6 +11,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
+using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Errors;
@@ -34,7 +35,7 @@ namespace Genbox.SimpleS3.Core.Network
         private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
         private readonly IValidatorFactory _validator;
 
-        public DefaultRequestHandler(IOptions<S3Config> options, IValidatorFactory validator, IMarshalFactory marshaller, INetworkDriver networkDriver, IAuthorizationBuilder authBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
+        public DefaultRequestHandler(IOptions<S3Config> options, IValidatorFactory validator, IMarshalFactory marshaller, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));
@@ -72,7 +73,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             _validator.ValidateAndThrow(request);
 
-            (string? host, string? url) = RequestHelper.BuildEndpointData(config, request);
+            string host = RequestHelper.BuildHost(config, request);
 
             request.SetHeader(HttpHeaders.Host, host);
             request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
@@ -99,7 +100,9 @@ namespace Genbox.SimpleS3.Core.Network
             _logger.LogDebug("ContentSha256 is {ContentSha256}", contentHash);
 
             //We add the authorization header here because we need ALL other headers to be present when we do
-            request.SetHeader(HttpHeaders.Authorization, _authBuilder.BuildAuthorization(request));
+            _authBuilder.BuildAuthorization(request);
+
+            string url = RequestHelper.BuildUrl(host, config, request);
 
             _logger.LogDebug("Sending request to {Url}", url);
 

@@ -35,5 +35,17 @@ namespace Genbox.SimpleS3.Core.Abstracts.Constants
         public const string Tagging = "tagging";
         public const string Accelerate = "accelerate";
         public const string Lifecycle = "lifecycle";
+
+        #region Presigning
+
+        //Note: These are actually case-sensitive
+        public const string XAmzAlgorithm = "X-Amz-Algorithm";
+        public const string XAmzCredential = "X-Amz-Credential";
+        public const string XAmzSignedHeaders = "X-Amz-SignedHeaders";
+        public const string XAmzSignature = "X-Amz-Signature";
+        public const string XAmzExpires = "X-Amz-Expires";
+        public const string XAmzDate = "X-Amz-Date";
+
+        #endregion
     }
 }

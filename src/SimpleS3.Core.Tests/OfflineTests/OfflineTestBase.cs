@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
                 //Set the configuration from the config file
                 _configRoot.Bind(config);
                 config.Region = AwsRegion.EuWest1;
-                config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
+                config.Credentials = new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
 
                 ConfigureConfig(config);
             });

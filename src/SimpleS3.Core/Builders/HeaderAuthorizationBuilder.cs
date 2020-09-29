@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Internals.Extensions;
@@ -29,11 +30,13 @@ namespace Genbox.SimpleS3.Core.Builders
             _logger = logger;
         }
 
-        public string BuildAuthorization(IRequest request)
+        public void BuildAuthorization(IRequest request)
         {
             Validator.RequireNotNull(request, nameof(request));
 
-            return BuildInternal(request.Timestamp, request.Headers, _signatureBuilder.CreateSignature(request));
+            string? auth = BuildInternal(request.Timestamp, request.Headers, _signatureBuilder.CreateSignature(request));
+
+            request.SetHeader(HttpHeaders.Authorization, auth);
         }
 
         internal string BuildInternal(DateTimeOffset date, IReadOnlyDictionary<string, string> headers, byte[] signature)

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
@@ -15,9 +16,24 @@ namespace Genbox.SimpleS3.Core.Operations
             _requestHandler = requestHandler;
         }
 
-        public Task<string> SignGetObjectAsync(GetObjectRequest request, CancellationToken token = default)
+        public Task<string> SignGetObjectAsync(GetObjectRequest request, TimeSpan expiresIn, CancellationToken token = default)
         {
-            return _requestHandler.SignRequestAsync(request, token);
+            return _requestHandler.SignRequestAsync(request, expiresIn, token);
+        }
+
+        public Task<string> SignDeleteObjectAsync(DeleteObjectRequest request, TimeSpan expiresIn, CancellationToken token = default)
+        {
+            return _requestHandler.SignRequestAsync(request, expiresIn, token);
+        }
+
+        public Task<string> SignPutObjectAsync(PutObjectRequest request, TimeSpan expiresIn, CancellationToken token = default)
+        {
+            return _requestHandler.SignRequestAsync(request, expiresIn, token);
+        }
+
+        public Task<string> SignHeadObjectAsync(HeadObjectRequest request, TimeSpan expiresIn, CancellationToken token = default)
+        {
+            return _requestHandler.SignRequestAsync(request, expiresIn, token);
         }
     }
 }

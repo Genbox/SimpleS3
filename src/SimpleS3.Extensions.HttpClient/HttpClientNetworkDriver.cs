@@ -23,7 +23,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
             _client = client;
         }
 
-        public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethod method, string url, IReadOnlyDictionary<string, string> headers, Stream? dataStream, CancellationToken cancellationToken = default)
+        public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethod method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
         {
             HttpResponseMessage httpResponse;
             using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(method), url))
@@ -32,8 +32,11 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
                     httpRequest.Content = new StreamContent(dataStream);
 
                 //Map all the headers to the HTTP request headers. We have to do this after setting the content as some headers are related to content
-                foreach (KeyValuePair<string, string> item in headers)
-                    httpRequest.AddHeader(item.Key, item.Value);
+                if (headers != null)
+                {
+                    foreach (KeyValuePair<string, string> item in headers)
+                        httpRequest.AddHeader(item.Key, item.Value);
+                }
 
                 _logger.LogTrace("Sending HTTP request");
 
