@@ -4,10 +4,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
 {
     public class S3SelectParameters
     {
-        public S3SelectParameters()
-        {
-            
-        }
+        public S3SelectParameters() { }
 
         public S3SelectParameters(string expression, InputFormat inputFormat, OutputFormat outputFormat)
         {

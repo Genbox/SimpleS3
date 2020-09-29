@@ -27,7 +27,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
                 writer.WriteStartElement("Rule");
                 writer.WriteStartElement("DefaultRetention");
                 writer.WriteElement("Mode", ValueHelper.EnumToString(request.LockMode));
-                
+
                 if (request.LockRetainUntil.HasValue)
                     writer.WriteElement("Days", (request.LockRetainUntil.Value - DateTimeOffset.UtcNow).Days);
 

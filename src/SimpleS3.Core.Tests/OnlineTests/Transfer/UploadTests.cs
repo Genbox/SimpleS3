@@ -11,9 +11,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
 {
     public class UploadTests : OnlineTestBase
     {
-        public UploadTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public UploadTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Theory]
         [InlineData(LockMode.Compliance)]
@@ -112,7 +110,9 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
             await UploadTransferAsync(nameof(UploadMetadata), upload =>
             {
                 for (int i = 0; i < 10; i++)
+                {
                     upload.WithMetadata("mykey" + i, "myvalue" + i);
+                }
             }).ConfigureAwait(false);
 
             GetObjectResponse gResp = await AssertAsync(nameof(UploadMetadata)).ConfigureAwait(false);

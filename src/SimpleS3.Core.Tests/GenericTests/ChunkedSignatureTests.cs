@@ -19,12 +19,12 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
 {
     public class ChunkedSignatureTests
     {
-        private readonly SignatureBuilder _sigBuilder;
-        private readonly ChunkedSignatureBuilder _chunkedSigBuilder;
-        private readonly ScopeBuilder _scopeBuilder;
-        private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
         private readonly HeaderAuthorizationBuilder _authBuilder;
+        private readonly ChunkedSignatureBuilder _chunkedSigBuilder;
         private readonly IOptions<S3Config> _options;
+        private readonly ScopeBuilder _scopeBuilder;
+        private readonly SignatureBuilder _sigBuilder;
+        private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
 
         public ChunkedSignatureTests()
         {
@@ -161,7 +161,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
         [Theory]
         [InlineData(0, "9bd7be022acc19c03c9d92444bf41f22dee2b55936b8e62d30ae8ebaa62dc2f6")]
         [InlineData(2 * 1024 * 1024 - 1, "776a15e31144b3afa01f30363d9f12c2ef6534bed015e717f44bbd4133a0295a", "12f1544daedf1d08455147e747a2229433fa185246d9a52b3b6fa7b7386aa80e")]
-        [InlineData(2 * 1024 * 1024, "c298ca9cba464386868042538031b658d2d38f546fb54606aa62b24c5f04f468", "442ad8d84ea709ac4ff0f6816b33de4a3c082697b4ec4f0e382414353c56236d")]   // Default chunk size
+        [InlineData(2 * 1024 * 1024, "c298ca9cba464386868042538031b658d2d38f546fb54606aa62b24c5f04f468", "442ad8d84ea709ac4ff0f6816b33de4a3c082697b4ec4f0e382414353c56236d")] // Default chunk size
         [InlineData(2 * 1024 * 1024 + 1, "c298ca9cba464386868042538031b658d2d38f546fb54606aa62b24c5f04f468", "c0b2226be4478d602bf80cb978db6fa0b9bb5e6889bda464b9b21134851e58de", "d8e3996880128b6de2d6d7044617a4e0f015d216544c92dc31fec936cf43b524")]
         public void StreamTest(int dataSize, params string[] expectedSignatures)
         {

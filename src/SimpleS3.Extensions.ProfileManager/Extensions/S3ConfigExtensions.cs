@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
 
         public static void UseDefaultProfile(this IConfig config, IProfileManager profileManager)
         {
-            UseProfile(config,profileManager, ProfileManager.DefaultProfile);
+            UseProfile(config, profileManager, ProfileManager.DefaultProfile);
         }
     }
 }

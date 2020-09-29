@@ -8,9 +8,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 {
     public class DeleteObjectTests : OnlineTestBase
     {
-        public DeleteObjectTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public DeleteObjectTests(ITestOutputHelper helper) : base(helper) { }
 
         [Fact]
         public async Task DeleteObject()

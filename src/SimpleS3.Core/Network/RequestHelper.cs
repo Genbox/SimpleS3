@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Network
             AppendScheme(sb, config);
             AppendHost(sb, config, request);
             AppendUrl(sb, config, request);
-            AppendQueryParameters(sb,request);
+            AppendQueryParameters(sb, request);
 
             string url = sb.ToString();
             StringBuilderPool.Shared.Return(sb);

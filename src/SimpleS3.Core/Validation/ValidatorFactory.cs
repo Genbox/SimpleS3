@@ -5,11 +5,12 @@ using FluentValidation;
 using FluentValidation.Results;
 using Genbox.SimpleS3.Core.Common;
 using JetBrains.Annotations;
+using IValidatorFactory = Genbox.SimpleS3.Core.Abstracts.Factories.IValidatorFactory;
 
 namespace Genbox.SimpleS3.Core.Validation
 {
     [PublicAPI]
-    public class ValidatorFactory : Abstracts.Factories.IValidatorFactory
+    public class ValidatorFactory : IValidatorFactory
     {
         private readonly IDictionary<Type, IValidator> _validators;
 

@@ -67,7 +67,6 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
             PreSignedObjectOperations = Services.GetRequiredService<IPreSignedObjectOperations>();
         }
 
-        
         public ServiceProvider Services { get; }
 
         protected S3Config Config { get; }
@@ -78,22 +77,16 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
         protected Transfer Transfer { get; }
         public IPreSignedObjectOperations PreSignedObjectOperations { get; set; }
 
-        protected virtual void ConfigureConfig(S3Config config)
-        {
-        }
-
-        protected virtual void ConfigureCoreBuilder(ICoreBuilder builder)
-        {
-        }
-
-        protected virtual void ConfigureServices(IServiceCollection collection)
-        {
-        }
-
         public void Dispose()
         {
             Services?.Dispose();
             GC.SuppressFinalize(this);
         }
+
+        protected virtual void ConfigureConfig(S3Config config) { }
+
+        protected virtual void ConfigureCoreBuilder(ICoreBuilder builder) { }
+
+        protected virtual void ConfigureServices(IServiceCollection collection) { }
     }
 }

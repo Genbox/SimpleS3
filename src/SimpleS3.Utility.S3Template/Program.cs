@@ -5,14 +5,14 @@ using Genbox.SimpleS3.Utility.S3Template.Enums;
 
 namespace Genbox.SimpleS3.Utility.S3Template
 {
-    class Program
+    internal class Program
     {
-        private static readonly IDictionary<DataType, (string, string)> Data = new Dictionary<DataType, (string, string)>()
+        private static readonly IDictionary<DataType, (string, string)> Data = new Dictionary<DataType, (string, string)>
         {
-            { DataType.Request, ("Network/Requests/%Type%s/","Request.cs")},
-            { DataType.RequestMarshal, ("Internals/Marshallers/Requests/%Type%s/","RequestMarshal.cs")},
-            { DataType.Response, ("Network/Responses/%Type%s/","Response.cs")},
-            { DataType.ResponseMarshal, ("Internals/Marshallers/Responses/%Type%s/","ResponseMarshal.cs")},
+            { DataType.Request, ("Network/Requests/%Type%s/", "Request.cs") },
+            { DataType.RequestMarshal, ("Internals/Marshallers/Requests/%Type%s/", "RequestMarshal.cs") },
+            { DataType.Response, ("Network/Responses/%Type%s/", "Response.cs") },
+            { DataType.ResponseMarshal, ("Internals/Marshallers/Responses/%Type%s/", "ResponseMarshal.cs") },
         };
 
         private static readonly string RequestTemplate = File.ReadAllText("Templates/RequestTemplate.txt");
@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Utility.S3Template
         private static readonly string ResponseTemplate = File.ReadAllText("Templates/ResponseTemplate.txt");
         private static readonly string ResponseMarshalTemplate = File.ReadAllText("Templates/ResponseMarshalTemplate.txt");
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             //This is here so you can run the utility from Visual Studio
             if (args.Length == 0)
@@ -100,9 +100,9 @@ namespace Genbox.SimpleS3.Utility.S3Template
             }
 
             return template
-                .Replace("%ApiName%", apiName)
-                .Replace("%ApiType%", apiType.ToString())
-                .Replace("%ApiTypeLower%", apiType.ToString().ToLower());
+                   .Replace("%ApiName%", apiName)
+                   .Replace("%ApiType%", apiType.ToString())
+                   .Replace("%ApiTypeLower%", apiType.ToString().ToLower());
         }
     }
 }

@@ -50,7 +50,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                     response.CommonPrefixes = new List<string>(bucketResult.CommonPrefixes.Count);
 
                     foreach (CommonPrefix prefix in bucketResult.CommonPrefixes)
+                    {
                         response.CommonPrefixes.Add(prefix.Prefix);
+                    }
                 }
                 else
                     response.CommonPrefixes = Array.Empty<string>();

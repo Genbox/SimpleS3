@@ -63,7 +63,9 @@ namespace Genbox.SimpleS3.Core.Operations
             GetObjectResponse response = await _requestHandler.SendRequestAsync<GetObjectRequest, GetObjectResponse>(request, token).ConfigureAwait(false);
 
             foreach (IResponseWrapper wrapper in ResponseWrappers)
+            {
                 response.Content = wrapper.Wrap(response.Content, response);
+            }
 
             return response;
         }

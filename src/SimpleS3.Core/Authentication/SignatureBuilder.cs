@@ -171,9 +171,9 @@ namespace Genbox.SimpleS3.Core.Authentication
             foreach (KeyValuePair<string, string> item in headers)
             {
                 sb.Append(item.Key)
-                    .Append(SigningConstants.Colon)
-                    .Append(item.Value)
-                    .Append(SigningConstants.Newline);
+                  .Append(SigningConstants.Colon)
+                  .Append(item.Value)
+                  .Append(SigningConstants.Newline);
             }
 
             string value = sb.ToString();

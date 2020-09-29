@@ -14,10 +14,10 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
 {
     public class PreSignedUrlTests
     {
-        private readonly SignatureBuilder _sigBuilder;
-        private readonly ScopeBuilder _scopeBuilder;
-        private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
         private readonly IOptions<S3Config> _options;
+        private readonly ScopeBuilder _scopeBuilder;
+        private readonly SignatureBuilder _sigBuilder;
+        private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
 
         public PreSignedUrlTests()
         {

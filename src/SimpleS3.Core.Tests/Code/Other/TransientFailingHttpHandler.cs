@@ -6,9 +6,7 @@ using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Tests.Code.Other
 {
-    /// <summary>
-    /// HTTP handler that fails with transient HTTP errors, except for each N requests
-    /// </summary>
+    /// <summary>HTTP handler that fails with transient HTTP errors, except for each N requests</summary>
     internal class TransientFailingHttpHandler : BaseFailingHttpHandler
     {
         private readonly int _successRate;

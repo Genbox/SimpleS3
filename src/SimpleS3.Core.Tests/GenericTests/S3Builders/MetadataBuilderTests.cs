@@ -15,7 +15,12 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests.S3Builders
             string invalidChars = "\t\0\n";
 
             foreach (char invalidChar in invalidChars)
-                Assert.Throws<ArgumentException>(() => { b.Add("a", invalidChar.ToString(CultureInfo.InvariantCulture)); });
+            {
+                Assert.Throws<ArgumentException>(() =>
+                {
+                    b.Add("a", invalidChar.ToString(CultureInfo.InvariantCulture));
+                });
+            }
         }
     }
 }

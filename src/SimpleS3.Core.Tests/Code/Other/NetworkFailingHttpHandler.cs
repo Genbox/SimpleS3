@@ -7,9 +7,7 @@ using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Tests.Code.Other
 {
-    /// <summary>
-    /// HTTP handler that fails with network errors after N requests
-    /// </summary>
+    /// <summary>HTTP handler that fails with network errors after N requests</summary>
     internal class NetworkFailingHttpHandler : BaseFailingHttpHandler
     {
         private readonly int _afterNRequests;

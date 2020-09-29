@@ -14,22 +14,19 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
 {
-    /// <summary>
-    /// Tests when the requests time out
-    /// </summary>
+    /// <summary>Tests when the requests time out</summary>
     public class TimeoutTests : OfflineTestBase
     {
         private readonly BaseFailingHttpHandler _handler = new SlowHttpHandler(2, TimeSpan.FromSeconds(5));
 
-        public TimeoutTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public TimeoutTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         protected override void ConfigureCoreBuilder(ICoreBuilder builder)
         {
             builder.UseHttpClientFactory()
                    .ConfigurePrimaryHttpMessageHandler(() => _handler)
                    .UseRetryPolicy(3, attempt => TimeSpan.Zero)
+
                    // Set an extraordinary timeout
                    .UseTimeoutPolicy(TimeSpan.FromSeconds(3));
         }

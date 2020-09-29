@@ -27,7 +27,6 @@ namespace Genbox.SimpleS3.Extensions
             return builder;
         }
 
-
         public static ICoreBuilder UsePreSigned(this ICoreBuilder builder)
         {
             builder.Services.TryAddSingleton<IPreSignedObjectOperations, PreSignedObjectOperations>();

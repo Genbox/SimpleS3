@@ -28,9 +28,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             UploadId = uploadId;
         }
 
-        public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, params UploadPartResponse[] parts) : this(bucketName, objectKey, uploadId, (IEnumerable<UploadPartResponse>)parts)
-        {
-        }
+        public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, params UploadPartResponse[] parts) : this(bucketName, objectKey, uploadId, (IEnumerable<UploadPartResponse>)parts) { }
 
         public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts) : this(bucketName, objectKey, uploadId)
         {
@@ -39,7 +37,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             UploadParts = new List<S3PartInfo>();
 
             foreach (UploadPartResponse part in parts)
+            {
                 UploadParts.Add(new S3PartInfo(part.ETag, part.PartNumber));
+            }
         }
 
         public IList<S3PartInfo> UploadParts { get; }

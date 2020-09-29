@@ -33,9 +33,7 @@ namespace Genbox.SimpleS3.Core.Abstracts
         /// </summary>
         NamingMode NamingMode { get; set; }
 
-        /// <summary>
-        /// Set to true if you want to use an encrypted connection.
-        /// </summary>
+        /// <summary>Set to true if you want to use an encrypted connection.</summary>
         bool UseTLS { get; set; }
 
         /// <summary>Use this to set a custom endpoint. For example, when using minio, you can set it to https://miniohost.com/</summary>

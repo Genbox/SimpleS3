@@ -7,9 +7,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 {
     public class CopyObjectTests : OnlineTestBase
     {
-        public CopyObjectTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public CopyObjectTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task CopyObject()

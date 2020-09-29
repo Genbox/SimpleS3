@@ -76,9 +76,9 @@ namespace Genbox.SimpleS3.Examples
 
             //Upload string
             Upload upload = client.Transfer.Upload(bucketName, objectName)
-                .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
-                .WithCacheControl(CacheControlType.NoCache)
-                .WithEncryption();
+                                           .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
+                                           .WithCacheControl(CacheControlType.NoCache)
+                                           .WithEncryption();
 
             PutObjectResponse resp = await upload.UploadStringAsync("Hello World!", Encoding.UTF8).ConfigureAwait(false);
 
@@ -87,9 +87,8 @@ namespace Genbox.SimpleS3.Examples
                 Console.WriteLine("Successfully uploaded the object");
 
                 //Download string
-                Download download = client.Transfer
-                    .Download(bucketName, objectName)
-                    .WithRange(0, 10); //Adjust this to return only part of the string
+                Download download = client.Transfer.Download(bucketName, objectName)
+                                                   .WithRange(0, 10); //Adjust this to return only part of the string
 
                 GetObjectResponse resp2 = await download.DownloadAsync().ConfigureAwait(false);
 

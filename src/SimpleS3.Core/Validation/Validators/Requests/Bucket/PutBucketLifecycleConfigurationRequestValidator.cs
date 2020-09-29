@@ -14,12 +14,12 @@ namespace Genbox.SimpleS3.Core.Validation.Validators.Requests.Bucket
                 .ChildRules(x2 =>
                 {
                     x2.RuleForEach(x3 => x3.Transitions)
-                        .ChildRules(x4 =>
-                        {
-                            x4.RuleFor(x5 => x5.TransitionAfterDays)
-                                .GreaterThanOrEqualTo(30)
-                                .When(x5 => x5.StorageClass == StorageClass.OneZoneIa);
-                        });
+                      .ChildRules(x4 =>
+                      {
+                          x4.RuleFor(x5 => x5.TransitionAfterDays)
+                            .GreaterThanOrEqualTo(30)
+                            .When(x5 => x5.StorageClass == StorageClass.OneZoneIa);
+                      });
                 });
         }
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -25,9 +25,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions
             return builder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { Proxy = proxy });
         }
 
-        /// <summary>
-        /// Adds a retry policy with 3 retries. Also adds a timeout policy that waits for 10 minutes before it terminates a request.
-        /// </summary>
+        /// <summary>Adds a retry policy with 3 retries. Also adds a timeout policy that waits for 10 minutes before it terminates a request.</summary>
         public static IHttpClientBuilder UseDefaultHttpPolicy(this IHttpClientBuilder builder)
         {
             return builder.UseRetryPolicy(3).UseTimeoutPolicy(TimeSpan.FromMinutes(10));

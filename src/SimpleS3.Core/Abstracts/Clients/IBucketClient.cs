@@ -39,14 +39,20 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="token">A cancellation token </param>
         Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest>? config = null, CancellationToken token = default);
 
-        /// <summary>Places an Object Lock configuration on the specified bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the specified bucket.</summary>
+        /// <summary>
+        /// Places an Object Lock configuration on the specified bucket. The rule specified in the Object Lock configuration will be applied by default
+        /// to every new object placed in the specified bucket.
+        /// </summary>
         /// <param name="bucketName">The bucket name</param>
         /// <param name="enabled">A boolean indicating if locking is enabled or not</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token </param>
         Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default);
 
-        /// <summary>Gets the Object Lock configuration for a bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the specified bucket.</summary>
+        /// <summary>
+        /// Gets the Object Lock configuration for a bucket. The rule specified in the Object Lock configuration will be applied by default to every new
+        /// object placed in the specified bucket.
+        /// </summary>
         /// <param name="bucketName">The bucket name</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token </param>
@@ -71,14 +77,20 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="token">A cancellation token </param>
         Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default);
 
-        /// <summary>Sets the accelerate configuration of an existing bucket. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to perform faster data transfers to Amazon S3.</summary>
+        /// <summary>
+        /// Sets the accelerate configuration of an existing bucket. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to
+        /// perform faster data transfers to Amazon S3.
+        /// </summary>
         /// <param name="bucketName">The bucket name</param>
         /// <param name="enabled">Set to true to enable acceleration. Set to false to disable it.</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token </param>
         Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default);
 
-        /// <summary>Returns the Transfer Acceleration state of a bucket, which is either Enabled or Suspended. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to perform faster data transfers to and from Amazon S3.</summary>
+        /// <summary>
+        /// Returns the Transfer Acceleration state of a bucket, which is either Enabled or Suspended. Amazon S3 Transfer Acceleration is a bucket-level
+        /// feature that enables you to perform faster data transfers to and from Amazon S3.
+        /// </summary>
         /// <param name="bucketName">The bucket name</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token </param>

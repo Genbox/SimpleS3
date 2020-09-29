@@ -12,7 +12,10 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Other
     {
         public int RequestCounter { get; set; }
 
-        protected HttpContent GetEmptyXmlContent() => new StringContent(string.Empty, Encoding.UTF8, MediaTypeNames.Application.Xml);
+        protected HttpContent GetEmptyXmlContent()
+        {
+            return new StringContent(string.Empty, Encoding.UTF8, MediaTypeNames.Application.Xml);
+        }
 
         protected async Task ConsumeRequestAsync(HttpRequestMessage request)
         {

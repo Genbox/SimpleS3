@@ -5,102 +5,50 @@ using System.Threading;
 
 namespace Genbox.SimpleS3.Core.Internals.Pools
 {
-    /// <summary>
-    /// Provides a default implementation of the string builder pool.
-    /// </summary>
+    /// <summary>Provides a default implementation of the string builder pool.</summary>
     internal sealed class StringBuilderPool
     {
-        /// <summary>
-        /// The default initial capacity of builder.
-        /// </summary>
+        /// <summary>The default initial capacity of builder.</summary>
         private const int DefaultInitialBuilderCapacity = 100;
 
-        /// <summary>
-        /// The default maximum capacity of builder.
-        /// </summary>
+        /// <summary>The default maximum capacity of builder.</summary>
         private const int DefaultMaxBuilderCapacity = 8 * 1024;
 
-        /// <summary>
-        /// Number of builders per processor.
-        /// </summary>
+        /// <summary>Number of builders per processor.</summary>
         private const int BuilderCountPerProcessor = 5;
 
-        /// <summary>
-        /// Initial capacity of builder.
-        /// </summary>
-        private readonly int _initialBuilderCapacity;
-
-        /// <summary>
-        /// Maximum capacity of builder.
-        /// </summary>
-        private readonly int _maxBuilderCapacity;
-
-        /// <summary>
-        /// First builder.
-        /// </summary>
-        /// <remarks>
-        /// The first builder is stored in a dedicated field, because we expect to be able to satisfy
-        /// most requests from it.
-        /// </remarks>
-        private StringBuilder? _firstBuilder;
-
-        /// <summary>
-        /// Array of the retained builders.
-        /// </summary>
-        private readonly StringBuilder?[] _builders;
-
-        /// <summary>
-        /// The lazily-initialized shared pool instance.
-        /// </summary>
+        /// <summary>The lazily-initialized shared pool instance.</summary>
         private static StringBuilderPool? _sharedInstance;
 
-        /// <summary>
-        /// Retrieves a shared <see cref="StringBuilderPool"/> instance.
-        /// </summary>
-        public static StringBuilderPool Shared
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Volatile.Read(ref _sharedInstance) ?? EnsureSharedCreated();
-        }
+        /// <summary>Array of the retained builders.</summary>
+        private readonly StringBuilder?[] _builders;
 
-        /// <summary>
-        /// Ensures that <see cref="_sharedInstance"/> has been initialized to a pool and returns it.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static StringBuilderPool EnsureSharedCreated()
-        {
-            Interlocked.CompareExchange(ref _sharedInstance, new StringBuilderPool(), null);
-            return _sharedInstance!;
-        }
+        /// <summary>Initial capacity of builder.</summary>
+        private readonly int _initialBuilderCapacity;
 
-        /// <summary>
-		/// Constructs an instance of the default pool of string builders using the default configuration settings.
-		/// </summary>
-		internal StringBuilderPool()
-            : this(DefaultInitialBuilderCapacity, DefaultMaxBuilderCapacity, Environment.ProcessorCount * BuilderCountPerProcessor)
-        { }
+        /// <summary>Maximum capacity of builder.</summary>
+        private readonly int _maxBuilderCapacity;
 
-        /// <summary>
-        /// Constructs an instance of the default pool of string builders using the specified pool size.
-        /// </summary>
+        /// <summary>First builder.</summary>
+        /// <remarks>The first builder is stored in a dedicated field, because we expect to be able to satisfy most requests from it.</remarks>
+        private StringBuilder? _firstBuilder;
+
+        /// <summary>Constructs an instance of the default pool of string builders using the default configuration settings.</summary>
+        internal StringBuilderPool()
+            : this(DefaultInitialBuilderCapacity, DefaultMaxBuilderCapacity, Environment.ProcessorCount * BuilderCountPerProcessor) { }
+
+        /// <summary>Constructs an instance of the default pool of string builders using the specified pool size.</summary>
         /// <param name="poolSize">Maximum number of builders stored in the pool.</param>
         internal StringBuilderPool(int poolSize)
-            : this(DefaultInitialBuilderCapacity, DefaultMaxBuilderCapacity, poolSize)
-        { }
+            : this(DefaultInitialBuilderCapacity, DefaultMaxBuilderCapacity, poolSize) { }
 
-        /// <summary>
-        /// Constructs an instance of the default pool of string builders using the specified capacity settings.
-        /// </summary>
+        /// <summary>Constructs an instance of the default pool of string builders using the specified capacity settings.</summary>
         /// <param name="initialBuilderCapacity">Initial capacity of builder.</param>
         /// <param name="maxBuilderCapacity">Maximum capacity of builder.</param>
         internal StringBuilderPool(int initialBuilderCapacity, int maxBuilderCapacity)
-            : this(initialBuilderCapacity, maxBuilderCapacity, Environment.ProcessorCount * BuilderCountPerProcessor)
-        { }
+            : this(initialBuilderCapacity, maxBuilderCapacity, Environment.ProcessorCount * BuilderCountPerProcessor) { }
 
-        /// <summary>
-        /// Constructs an instance of the default pool of string builders using the specified capacity settings and
-        /// pool size.
-        /// </summary>
+        /// <summary>Constructs an instance of the default pool of string builders using the specified capacity settings and pool size.</summary>
         /// <param name="initialBuilderCapacity">Initial capacity of builder.</param>
         /// <param name="maxBuilderCapacity">Maximum capacity of builder.</param>
         /// <param name="poolSize">Maximum number of builders stored in the pool.</param>
@@ -121,6 +69,21 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
             _initialBuilderCapacity = initialBuilderCapacity;
             _maxBuilderCapacity = maxBuilderCapacity;
             _builders = new StringBuilder[poolSize - 1];
+        }
+
+        /// <summary>Retrieves a shared <see cref="StringBuilderPool" /> instance.</summary>
+        public static StringBuilderPool Shared
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Volatile.Read(ref _sharedInstance) ?? EnsureSharedCreated();
+        }
+
+        /// <summary>Ensures that <see cref="_sharedInstance" /> has been initialized to a pool and returns it.</summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static StringBuilderPool EnsureSharedCreated()
+        {
+            Interlocked.CompareExchange(ref _sharedInstance, new StringBuilderPool(), null);
+            return _sharedInstance!;
         }
 
         public StringBuilder Rent()

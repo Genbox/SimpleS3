@@ -12,9 +12,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 {
     public class RestoreObjectTests : OnlineTestBase
     {
-        public RestoreObjectTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public RestoreObjectTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task Restore()

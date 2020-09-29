@@ -8,9 +8,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
 {
     public class HeadBucketTests : OnlineTestBase
     {
-        public HeadBucketTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public HeadBucketTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task ListBuckets()

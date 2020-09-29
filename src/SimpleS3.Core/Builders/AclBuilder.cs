@@ -154,9 +154,9 @@ namespace Genbox.SimpleS3.Core.Builders
         public AclBuilder AddGroup(PredefinedGroup group)
         {
             string? groupStr = group.AsString(EnumFormat.EnumMemberValue);
-            
-            Validator.RequireNotNull(groupStr,nameof(group), "Bug: PredefinedGroup is missing EnumValue");
-            
+
+            Validator.RequireNotNull(groupStr, nameof(group), "Bug: PredefinedGroup is missing EnumValue");
+
             return AddGroup(groupStr!);
         }
     }

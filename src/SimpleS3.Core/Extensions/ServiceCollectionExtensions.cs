@@ -30,7 +30,8 @@ namespace Genbox.SimpleS3.Core.Extensions
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
+        /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this
+        /// method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
         /// </summary>
         /// <param name="collection">The service collection</param>
         /// <param name="config">The configuration delegate</param>
@@ -41,7 +42,8 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
 
         /// <summary>
-        /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
+        /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this
+        /// method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
         /// </summary>
         /// <param name="collection">The service collection</param>
         /// <param name="config">The configuration delegate</param>
@@ -52,7 +54,8 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
 
         /// <summary>
-        /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
+        /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this
+        /// method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
         /// </summary>
         /// <param name="collection">The service collection</param>
         public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection)

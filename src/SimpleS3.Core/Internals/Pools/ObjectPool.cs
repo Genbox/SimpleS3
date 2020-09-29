@@ -8,10 +8,9 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
 {
     internal class ObjectPool<T> where T : IPooledObject
     {
+        public static readonly ObjectPool<T> Shared = new ObjectPool<T>();
         private readonly int _maxCapacity;
         private readonly ConcurrentBag<T> _pool;
-
-        public static readonly ObjectPool<T> Shared = new ObjectPool<T>();
 
         public ObjectPool(int maxCapacity = 32)
         {

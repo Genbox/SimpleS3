@@ -48,7 +48,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
                     response.CommonPrefixes = new List<string>(listResult.CommonPrefixes.Count);
 
                     foreach (CommonPrefix prefix in listResult.CommonPrefixes)
+                    {
                         response.CommonPrefixes.Add(prefix.Prefix);
+                    }
                 }
                 else
                     response.CommonPrefixes = Array.Empty<string>();

@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
                 if (rule.Expiration != null)
                 {
                     writer.WriteStartElement("Expiration");
-                 
+
                     if (rule.Expiration.ExpireOnDate.HasValue)
                         writer.WriteElement("Date", ValueHelper.DateToString(rule.Expiration.ExpireOnDate.Value, DateTimeFormat.Iso8601Date));
 
@@ -45,7 +45,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
 
                     if (rule.Expiration.ExpireObjectDeleteMarker.HasValue)
                         writer.WriteElement("ExpiredObjectDeleteMarker", rule.Expiration.ExpireObjectDeleteMarker.Value);
-            
+
                     writer.WriteEndElement("Expiration");
                 }
 

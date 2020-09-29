@@ -10,9 +10,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
 {
     public class BucketLifecycleConfigurationTests : OnlineTestBase
     {
-        public BucketLifecycleConfigurationTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public BucketLifecycleConfigurationTests(ITestOutputHelper helper) : base(helper) { }
 
         [Fact]
         public async Task PutLifecycleConfigurationTest()

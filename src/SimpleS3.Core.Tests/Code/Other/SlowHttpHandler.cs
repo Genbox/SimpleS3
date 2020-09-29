@@ -7,13 +7,11 @@ using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Tests.Code.Other
 {
-    /// <summary>
-    /// HTTP handler that delays all request, except each N requests
-    /// </summary>
+    /// <summary>HTTP handler that delays all request, except each N requests</summary>
     internal class SlowHttpHandler : BaseFailingHttpHandler
     {
-        private readonly int _successRate;
         private readonly TimeSpan _delay;
+        private readonly int _successRate;
 
         public SlowHttpHandler(int successRate, TimeSpan delay)
         {

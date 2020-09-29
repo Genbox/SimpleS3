@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,9 +14,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core
 {
-    /// <summary>
-    /// This client pools all request objects to minimize the pressure on the garbage collector and free up memory.
-    /// </summary>
+    /// <summary>This client pools all request objects to minimize the pressure on the garbage collector and free up memory.</summary>
     [PublicAPI]
     public class S3PooledObjectClient : IObjectClient
     {

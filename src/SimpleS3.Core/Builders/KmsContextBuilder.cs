@@ -16,7 +16,9 @@ namespace Genbox.SimpleS3.Core.Builders
                 return;
 
             foreach (KeyValuePair<string, string> pair in dict)
+            {
                 AddEntry(pair.Key, pair.Value);
+            }
         }
 
         public string? Build()

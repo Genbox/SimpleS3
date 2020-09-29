@@ -9,9 +9,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 {
     public class HeadObjectTests : OnlineTestBase
     {
-        public HeadObjectTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public HeadObjectTests(ITestOutputHelper helper) : base(helper) { }
 
         [Fact]
         public async Task HeadObject()

@@ -9,10 +9,10 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
     /// <summary>A fast optimized XML 1.1 standard compliant writer that does not allocate more memory than absolutely needed.</summary>
     internal class FastXmlWriter
     {
-        private readonly XmlStandard _xmlStandard;
-        private readonly XmlCharMode _invalidCharMode;
         private readonly XmlCharMode _discouragedCharMode;
+        private readonly XmlCharMode _invalidCharMode;
         private readonly StringBuilder _xml;
+        private readonly XmlStandard _xmlStandard;
 
         /// <summary>Create a new <see cref="FastXmlWriter" /> with the specified capacity.</summary>
         /// <param name="capacity">The capacity of the XML writer. Note that it does not expand any further.</param>
@@ -27,7 +27,6 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
             _xmlStandard = xmlStandard;
             _invalidCharMode = invalidChars;
             _discouragedCharMode = discouragedChars;
-
 
             _xml = new StringBuilder(capacity);
         }
@@ -152,17 +151,17 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
             if (_xmlStandard == XmlStandard.Xml10)
             {
                 return c == '\u0009'
-                    || c == '\u000A'
-                    || c == '\u000D'
-                    || CharHelper.InRange(c, '\u0020', '\uD7FF')
-                    || CharHelper.InRange(c, '\uE000', '\uFFFD');
+                       || c == '\u000A'
+                       || c == '\u000D'
+                       || CharHelper.InRange(c, '\u0020', '\uD7FF')
+                       || CharHelper.InRange(c, '\uE000', '\uFFFD');
             }
 
             // According to https://www.w3.org/TR/xml11/#charsets [#x1-#xD7FF] | [#xE000-#xFFFD] are valid characters
             if (_xmlStandard == XmlStandard.Xml11)
             {
                 return CharHelper.InRange(c, '\u0001', '\uD7FF')
-                    || CharHelper.InRange(c, '\uE000', '\uFFFD');
+                       || CharHelper.InRange(c, '\uE000', '\uFFFD');
             }
 
             throw new Exception("Invalid XML standard");
@@ -174,19 +173,19 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
             if (_xmlStandard == XmlStandard.Xml10)
             {
                 return CharHelper.InRange(c, '\u007F', '\u0084')
-                    || CharHelper.InRange(c, '\u0086', '\u009F')
-                    || CharHelper.InRange(c, '\uFDD0', '\uFDEF'); //Unicode non-characters
+                       || CharHelper.InRange(c, '\u0086', '\u009F')
+                       || CharHelper.InRange(c, '\uFDD0', '\uFDEF'); //Unicode non-characters
             }
 
             // According to https://www.w3.org/TR/xml11/#charsets [#x1-#x8] | [#xB-#xC] | [#xE-#x1F] | [#x7F-#x84] | [#x86-#x9F] are discouraged
             if (_xmlStandard == XmlStandard.Xml11)
             {
                 return CharHelper.InRange(c, '\u0001', '\u0008')
-                    || CharHelper.InRange(c, '\u000B', '\u000C')
-                    || CharHelper.InRange(c, '\u000E', '\u001F')
-                    || CharHelper.InRange(c, '\u007F', '\u0084')
-                    || CharHelper.InRange(c, '\u0086', '\u009F')
-                    || CharHelper.InRange(c, '\uFDD0', '\uFDEF'); //Unicode non-characters
+                       || CharHelper.InRange(c, '\u000B', '\u000C')
+                       || CharHelper.InRange(c, '\u000E', '\u001F')
+                       || CharHelper.InRange(c, '\u007F', '\u0084')
+                       || CharHelper.InRange(c, '\u0086', '\u009F')
+                       || CharHelper.InRange(c, '\uFDD0', '\uFDEF'); //Unicode non-characters
             }
 
             throw new Exception("Invalid XML standard");

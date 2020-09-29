@@ -2,7 +2,5 @@
 
 namespace Genbox.SimpleS3.Abstracts
 {
-    public interface IClient : IBucketClient, IObjectClient, IMultipartClient
-    {
-    }
+    public interface IClient : IBucketClient, IObjectClient, IMultipartClient { }
 }

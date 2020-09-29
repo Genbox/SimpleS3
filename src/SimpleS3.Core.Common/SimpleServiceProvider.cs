@@ -4,9 +4,7 @@ using System.Linq;
 
 namespace Genbox.SimpleS3.Core.Common
 {
-    /// <summary>
-    /// A very simple service provider
-    /// </summary>
+    /// <summary>A very simple service provider</summary>
     public class SimpleServiceProvider : IServiceProvider
     {
         private readonly Dictionary<Type, object> _obj;

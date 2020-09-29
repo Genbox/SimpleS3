@@ -10,9 +10,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Objects
 {
     public class NonSeekableStreamTests : OfflineTestBase
     {
-        public NonSeekableStreamTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public NonSeekableStreamTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         protected override void ConfigureConfig(S3Config config)
         {

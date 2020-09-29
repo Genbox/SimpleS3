@@ -42,7 +42,7 @@ namespace Genbox.SimpleS3.Core.Common
             if (!condition)
                 throw new ArgumentException(message, parameterName);
         }
-        
+
         public static void RequireThat<T>(bool condition, Func<T>? func = null) where T : Exception, new()
         {
             if (condition)

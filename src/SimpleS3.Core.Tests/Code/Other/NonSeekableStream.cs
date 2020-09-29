@@ -14,6 +14,17 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Other
             _backingStream = new MemoryStream(data);
         }
 
+        public override bool CanRead => true;
+        public override bool CanSeek => false;
+        public override bool CanWrite => false;
+        public override long Length => _backingStream.Length;
+
+        public override long Position
+        {
+            get => _backingStream.Position;
+            set => throw new NotSupportedException();
+        }
+
         public override void Flush()
         {
             throw new NotSupportedException();
@@ -42,17 +53,6 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Other
         public override void Write(byte[] buffer, int offset, int count)
         {
             throw new NotSupportedException();
-        }
-
-        public override bool CanRead => true;
-        public override bool CanSeek => false;
-        public override bool CanWrite => false;
-        public override long Length => _backingStream.Length;
-
-        public override long Position
-        {
-            get => _backingStream.Position;
-            set => throw new NotSupportedException();
         }
     }
 }

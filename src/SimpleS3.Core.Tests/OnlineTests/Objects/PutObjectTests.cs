@@ -13,9 +13,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 {
     public class PutObjectTests : OnlineTestBase
     {
-        public PutObjectTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public PutObjectTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Theory]
         [InlineData(ObjectCannedAcl.AuthenticatedRead)]
@@ -216,7 +214,9 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             await UploadAsync(nameof(PutObjectMultipleMetadata), req =>
             {
                 for (int i = 0; i < 10; i++)
+                {
                     req.Metadata.Add("mykey" + i, "myvalue" + i);
+                }
             }).ConfigureAwait(false);
 
             GetObjectResponse resp = await AssertAsync(nameof(PutObjectMultipleMetadata)).ConfigureAwait(false);
@@ -311,7 +311,9 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             await Assert.ThrowsAsync<Exception>(async () => await ObjectClient.PutObjectStringAsync(BucketName, nameof(PutObjectTooManyTags), "data", null, request =>
             {
                 for (int i = 0; i < 51; i++)
+                {
                     request.Tags.Add(i.ToString(NumberFormatInfo.InvariantInfo), i.ToString(NumberFormatInfo.InvariantInfo));
+                }
             }).ConfigureAwait(false)).ConfigureAwait(false);
         }
 

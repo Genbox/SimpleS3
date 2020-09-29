@@ -9,9 +9,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
 {
     public class BucketLockConfigurationTests : OnlineTestBase
     {
-        public BucketLockConfigurationTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public BucketLockConfigurationTests(ITestOutputHelper helper) : base(helper) { }
 
         [Theory]
         [InlineData(LockMode.Compliance)]
@@ -89,10 +87,10 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
             Assert.Equal(DateTimeOffset.UtcNow.AddDays(2 - 1).DateTime, getResp.LockRetainUntil!.Value.DateTime, TimeSpan.FromMinutes(1));
 
             PutBucketLockConfigurationResponse putResp2 = await BucketClient.PutBucketLockConfigurationAsync(tempBucketName, true, x =>
-                 {
-                     x.LockMode = LockMode.Governance;
-                     x.LockRetainUntil = DateTimeOffset.UtcNow.AddDays(5);
-                 }).ConfigureAwait(false);
+            {
+                x.LockMode = LockMode.Governance;
+                x.LockRetainUntil = DateTimeOffset.UtcNow.AddDays(5);
+            }).ConfigureAwait(false);
             Assert.True(putResp2.IsSuccess);
 
             GetBucketLockConfigurationResponse getResp2 = await BucketClient.GetBucketLockConfigurationAsync(tempBucketName).ConfigureAwait(false);

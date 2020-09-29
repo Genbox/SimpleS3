@@ -12,8 +12,8 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces
 
         /// <summary>
         /// Encoding type used by Amazon S3 to encode object key names in the XML response. If you specify the encoding-type request parameter, Amazon
-        /// S3 includes this element in the response, and returns encoded key name values in the following response elements: <see cref="IHasTruncatedExt.Delimiter" />,
-        /// and <see cref="IHasTruncatedExt.Prefix" />
+        /// S3 includes this element in the response, and returns encoded key name values in the following response elements:
+        /// <see cref="IHasTruncatedExt.Delimiter" />, and <see cref="IHasTruncatedExt.Prefix" />
         /// </summary>
         EncodingType EncodingType { get; }
     }

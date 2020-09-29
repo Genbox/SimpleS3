@@ -14,9 +14,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 {
     public class ListObjectsTests : OnlineTestBase
     {
-        public ListObjectsTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public ListObjectsTests(ITestOutputHelper helper) : base(helper) { }
 
         private async Task UploadString(string bucketName, string objName, SemaphoreSlim semaphore)
         {

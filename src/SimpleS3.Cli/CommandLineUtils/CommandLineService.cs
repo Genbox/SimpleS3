@@ -29,20 +29,24 @@ namespace Genbox.SimpleS3.Cli.CommandLineUtils
             logger.LogDebug("Constructing CommandLineApplication<{type}> with args [{args}]", typeof(T).FullName, string.Join(",", state.Arguments));
             _application = new CommandLineApplication<T>(state.Console, state.WorkingDirectory);
             _application.Conventions
-                .UseAttributes()
-                //.SetAppNameFromEntryAssembly()
-                //.SetRemainingArgsPropertyOnModel()
-                .SetSubcommandPropertyOnModel()
-                .SetParentPropertyOnModel()
-                .UseOnExecuteMethodFromModel()
-                //.UseOnValidateMethodFromModel()
-                //.UseOnValidationErrorMethodFromModel()
-                .UseDefaultHelpOption()
-                .UseCommandNameFromModelType()
-                .UseConstructorInjection(serviceProvider);
+                        .UseAttributes()
+
+                        //.SetAppNameFromEntryAssembly()
+                        //.SetRemainingArgsPropertyOnModel()
+                        .SetSubcommandPropertyOnModel()
+                        .SetParentPropertyOnModel()
+                        .UseOnExecuteMethodFromModel()
+
+                        //.UseOnValidateMethodFromModel()
+                        //.UseOnValidationErrorMethodFromModel()
+                        .UseDefaultHelpOption()
+                        .UseCommandNameFromModelType()
+                        .UseConstructorInjection(serviceProvider);
 
             foreach (IConvention convention in serviceProvider.GetServices<IConvention>())
+            {
                 _application.Conventions.AddConvention(convention);
+            }
         }
 
         public async Task<int> RunAsync(CancellationToken cancellationToken)

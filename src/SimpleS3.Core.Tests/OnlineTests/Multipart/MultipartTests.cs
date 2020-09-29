@@ -18,9 +18,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
 {
     public class MultipartTests : OnlineTestBase
     {
-        public MultipartTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public MultipartTests(ITestOutputHelper helper) : base(helper) { }
 
         [Theory]
         [InlineData(SseAlgorithm.Aes256)]
@@ -245,7 +243,9 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
             byte[] data = new byte[10 * 1024 * 1024]; //10 Mb
 
             for (int i = 0; i < data.Length; i++)
+            {
                 data[i] = (byte)(i % 255);
+            }
 
             using (MemoryStream ms = new MemoryStream(data))
             {
@@ -280,7 +280,9 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
             byte[] data = new byte[100 * 1024 * 1024]; //100 Mb
 
             for (int i = 0; i < data.Length; i++)
+            {
                 data[i] = (byte)'A';
+            }
 
             CreateMultipartUploadRequest createRequest = new CreateMultipartUploadRequest(BucketName, nameof(MultipartViaExtensions));
 

@@ -22,7 +22,9 @@ namespace Genbox.SimpleS3.Core.Builders
             byte[] bytes = Encoding.UTF8.GetBytes("! \"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
 
             foreach (byte b in bytes)
+            {
                 _allowed.Add(b);
+            }
         }
 
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
@@ -36,6 +38,11 @@ namespace Genbox.SimpleS3.Core.Builders
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public void Reset()
+        {
+            _metadata?.Clear();
         }
 
         public MetadataBuilder Add(string key, string value)
@@ -67,12 +74,9 @@ namespace Genbox.SimpleS3.Core.Builders
         internal IEnumerable<KeyValuePair<string, string>> GetPrefixed()
         {
             foreach (KeyValuePair<string, string> item in this)
+            {
                 yield return new KeyValuePair<string, string>(_metadataHeader + item.Key, item.Value);
-        }
-
-        public void Reset()
-        {
-            _metadata?.Clear();
+            }
         }
     }
 }

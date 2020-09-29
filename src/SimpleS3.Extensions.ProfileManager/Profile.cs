@@ -7,9 +7,9 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
 {
     public class Profile : IProfile
     {
-        internal Profile()
-        {
-        }
+        internal Profile() { }
+
+        public IDictionary<string, string>? Tags { get; private set; }
 
         public string Name { get; internal set; }
 
@@ -22,8 +22,6 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
         public string Location { get; internal set; }
 
         public DateTimeOffset CreatedOn { get; internal set; }
-
-        public IDictionary<string, string>? Tags { get; private set; }
 
         public void AddTag(string key, string value)
         {

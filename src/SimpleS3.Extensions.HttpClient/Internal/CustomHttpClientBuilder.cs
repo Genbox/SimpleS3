@@ -5,8 +5,6 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Internal
 {
     internal class CustomHttpClientBuilder : ServiceBuilderBase, IHttpClientBuilder
     {
-        public CustomHttpClientBuilder(IServiceCollection services) : base(services)
-        {
-        }
+        public CustomHttpClientBuilder(IServiceCollection services) : base(services) { }
     }
 }

@@ -36,7 +36,6 @@ namespace Genbox.SimpleS3.Cli.CommandLineUtils
             _blockProcessExit.Set();
         }
 
-
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
@@ -74,6 +73,7 @@ namespace Genbox.SimpleS3.Cli.CommandLineUtils
             AppDomain.CurrentDomain.ProcessExit += (_, __) =>
             {
                 _applicationLifetime.StopApplication();
+
                 // Ensures services are disposed before the application exits.
                 _blockProcessExit.WaitOne();
             };

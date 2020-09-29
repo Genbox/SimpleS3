@@ -6,9 +6,7 @@ using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Tests.Code.Other
 {
-    /// <summary>
-    /// HTTP handler that fails with non transient HTTP errors after N requests
-    /// </summary>
+    /// <summary>HTTP handler that fails with non transient HTTP errors after N requests</summary>
     internal class NonTransientFailingHttpHandler : BaseFailingHttpHandler
     {
         private readonly int _afterNRequests;

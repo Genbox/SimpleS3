@@ -66,7 +66,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests
             if (req is IHasMetadata hasMetadata && !disabledFor(typeof(IHasMetadata)))
             {
                 foreach (KeyValuePair<string, string> item in hasMetadata.Metadata.GetPrefixed())
+                {
                     req.SetHeader(item.Key, item.Value);
+                }
             }
 
             if (req is IHasMfa hasMfa && !disabledFor(typeof(IHasMfa)))

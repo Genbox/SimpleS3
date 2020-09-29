@@ -7,9 +7,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
 {
     public class BucketAccelerateConfigurationTests : OnlineTestBase
     {
-        public BucketAccelerateConfigurationTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public BucketAccelerateConfigurationTests(ITestOutputHelper helper) : base(helper) { }
 
         [Fact]
         public async Task PutGetBucketAccelerateConfiguration()

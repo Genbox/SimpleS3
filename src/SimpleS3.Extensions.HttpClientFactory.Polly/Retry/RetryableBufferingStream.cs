@@ -6,14 +6,11 @@ using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry
 {
-    /// <summary>
-    /// Stream that will buffer / record data as it's read, and be able to seek in it afterwards
-    /// Used for retrying forward-only streams
-    /// </summary>
+    /// <summary>Stream that will buffer / record data as it's read, and be able to seek in it afterwards Used for retrying forward-only streams</summary>
     internal class RetryableBufferingStream : Stream
     {
-        private readonly Stream _underlyingStream;
         private readonly MemoryStream _bufferStream;
+        private readonly Stream _underlyingStream;
         private bool _buffered;
 
         public RetryableBufferingStream(Stream underlyingStream)
@@ -23,6 +20,17 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry
 
             _underlyingStream = underlyingStream;
             _bufferStream = new MemoryStream();
+        }
+
+        public override bool CanRead => true;
+        public override bool CanSeek => true;
+        public override bool CanWrite => false;
+        public override long Length => _bufferStream.Length;
+
+        public override long Position
+        {
+            get => _bufferStream.Position;
+            set => _bufferStream.Position = value;
         }
 
         private async Task ReadSourceAsync()
@@ -67,16 +75,6 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry
         public override void Write(byte[] buffer, int offset, int count)
         {
             throw new NotSupportedException();
-        }
-
-        public override bool CanRead => true;
-        public override bool CanSeek => true;
-        public override bool CanWrite => false;
-        public override long Length => _bufferStream.Length;
-        public override long Position
-        {
-            get => _bufferStream.Position;
-            set => _bufferStream.Position = value;
         }
     }
 }

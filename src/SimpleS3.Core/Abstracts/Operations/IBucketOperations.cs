@@ -37,33 +37,30 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
         /// </summary>
         Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(GetBucketLockConfigurationRequest request, CancellationToken token = default);
 
-        /// <summary>
-        /// Returns the tag set associated with the bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketTagging.html for details
-        /// </summary>
+        /// <summary>Returns the tag set associated with the bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketTagging.html for details</summary>
         Task<GetBucketTaggingResponse> GetBucketTaggingAsync(GetBucketTaggingRequest request, CancellationToken token = default);
 
-        /// <summary>
-        /// Sets the tags for a bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketTagging.html for details.
-        /// </summary>
+        /// <summary>Sets the tags for a bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketTagging.html for details.</summary>
         Task<PutBucketTaggingResponse> PutBucketTaggingAsync(PutBucketTaggingRequest request, CancellationToken token = default);
 
-        /// <summary>
-        /// Deletes the tags from the bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucketTagging.html for details
-        /// </summary>
+        /// <summary>Deletes the tags from the bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucketTagging.html for details</summary>
         Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(DeleteBucketTaggingRequest request, CancellationToken token = default);
 
         /// <summary>
-        /// Sets the accelerate configuration of an existing bucket. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to perform faster data transfers to Amazon S3.
+        /// Sets the accelerate configuration of an existing bucket. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to
+        /// perform faster data transfers to Amazon S3.
         /// </summary>
         Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(PutBucketAccelerateConfigurationRequest request, CancellationToken token = default);
 
         /// <summary>
-        /// Returns the Transfer Acceleration state of a bucket, which is either Enabled or Suspended. Amazon S3 Transfer Acceleration is a bucket-level feature that enables you to perform faster data transfers to and from Amazon S3.
+        /// Returns the Transfer Acceleration state of a bucket, which is either Enabled or Suspended. Amazon S3 Transfer Acceleration is a bucket-level
+        /// feature that enables you to perform faster data transfers to and from Amazon S3.
         /// </summary>
         Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(GetBucketAccelerateConfigurationRequest request, CancellationToken token = default);
 
         /// <summary>
-        /// Creates a new lifecycle configuration for the bucket or replaces an existing lifecycle configuration. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketLifecycleConfiguration.html for details
+        /// Creates a new lifecycle configuration for the bucket or replaces an existing lifecycle configuration. See
+        /// https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketLifecycleConfiguration.html for details
         /// </summary>
         Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(PutBucketLifecycleConfigurationRequest request, CancellationToken token = default);
     }

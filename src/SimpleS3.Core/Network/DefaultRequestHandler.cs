@@ -152,9 +152,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             //Only marshal successful responses
             if (response.IsSuccess)
-            {
                 _marshaller.MarshalResponse(config, request, response, headers, responseStream ?? Stream.Null);
-            }
             else if (responseStream != null)
             {
                 using (MemoryStream ms = new MemoryStream())

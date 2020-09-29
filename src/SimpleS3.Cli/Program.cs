@@ -11,8 +11,8 @@ namespace Genbox.SimpleS3.Cli
         private static Task<int> Main(string[] args)
         {
             return new HostBuilder()
-                .ConfigureLogging((context, builder) => builder.AddConsole())
-                .RunCommandLineApplicationAsync<S3Cli>(args);
+                   .ConfigureLogging((context, builder) => builder.AddConsole())
+                   .RunCommandLineApplicationAsync<S3Cli>(args);
         }
     }
 }

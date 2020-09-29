@@ -21,8 +21,8 @@ namespace Genbox.SimpleS3.Utility.TestSetup
         private static async Task Main(string[] args)
         {
             IConfigurationRoot root = new ConfigurationBuilder()
-                .AddJsonFile("Config.json", false)
-                .Build();
+                                      .AddJsonFile("Config.json", false)
+                                      .Build();
 
             ServiceCollection services = new ServiceCollection();
 
@@ -31,8 +31,8 @@ namespace Genbox.SimpleS3.Utility.TestSetup
             IS3ClientBuilder clientBuilder = services.AddSimpleS3();
 
             clientBuilder.CoreBuilder.UseProfileManager()
-                                     .BindConfigToDefaultProfile()
-                                     .UseDataProtection();
+                         .BindConfigToDefaultProfile()
+                         .UseDataProtection();
 
             IConfigurationSection proxySection = root.GetSection("Proxy");
 

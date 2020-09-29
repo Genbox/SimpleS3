@@ -12,9 +12,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
 {
     public class ListMultipartUploadsTests : OnlineTestBase
     {
-        public ListMultipartUploadsTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public ListMultipartUploadsTests(ITestOutputHelper helper) : base(helper) { }
 
         [Fact]
         public async Task ListMultipartUploads()

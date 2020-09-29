@@ -7,9 +7,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 {
     public class ObjectLegalHoldTests : OnlineTestBase
     {
-        public ObjectLegalHoldTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public ObjectLegalHoldTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task PutGetObjectLegalHold()

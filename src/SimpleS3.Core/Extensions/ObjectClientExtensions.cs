@@ -119,7 +119,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
         /// <param name="getOwnerInfo">Set to true if you want to get object owner information as well.</param>
         /// <param name="token">A cancellation token</param>
-        public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
@@ -147,7 +147,9 @@ namespace Genbox.SimpleS3.Core.Extensions
                     throw new Exception("Request failed");
 
                 foreach (S3Object responseObject in response.Objects)
+                {
                     yield return responseObject;
+                }
 
                 continuationToken = response.NextContinuationToken;
             } while (response.IsTruncated);

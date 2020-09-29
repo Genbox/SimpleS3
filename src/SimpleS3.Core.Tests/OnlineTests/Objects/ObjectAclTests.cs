@@ -9,9 +9,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 {
     public class ObjectAclTests : OnlineTestBase
     {
-        public ObjectAclTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public ObjectAclTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task PutGetObjectAcl()

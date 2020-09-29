@@ -16,9 +16,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
     {
         private readonly BaseFailingHttpHandler _handler = new TransientFailingHttpHandler();
 
-        public TransientNetworkErrorTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public TransientNetworkErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         protected override void ConfigureCoreBuilder(ICoreBuilder builder)
         {

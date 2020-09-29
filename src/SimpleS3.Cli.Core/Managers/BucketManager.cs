@@ -42,12 +42,14 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
             await _client.DeleteBucketAsync(bucketName).ConfigureAwait(false);
         }
 
-        public async IAsyncEnumerable<S3Bucket> ListAsync([EnumeratorCancellation] CancellationToken token)
+        public async IAsyncEnumerable<S3Bucket> ListAsync([EnumeratorCancellation]CancellationToken token)
         {
             ListBucketsResponse resp = await RequestHelper.ExecuteRequestAsync(_client, c => c.ListBucketsAsync(null, token)).ConfigureAwait(false);
 
             foreach (S3Bucket respBucket in resp.Buckets)
+            {
                 yield return respBucket;
+            }
         }
     }
 }

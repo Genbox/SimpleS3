@@ -12,9 +12,7 @@ namespace Genbox.SimpleS3.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        /// <summary>
-        /// Add SimpleS3 services to a service collection.
-        /// </summary>
+        /// <summary>Add SimpleS3 services to a service collection.</summary>
         /// <param name="collection">The service collection</param>
         /// <param name="config">The configuration delegate</param>
         public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config, IServiceProvider> config)
@@ -23,9 +21,7 @@ namespace Genbox.SimpleS3.Extensions
             return AddSimpleS3(collection);
         }
 
-        /// <summary>
-        /// Add SimpleS3 services to a service collection.
-        /// </summary>
+        /// <summary>Add SimpleS3 services to a service collection.</summary>
         /// <param name="collection">The service collection</param>
         /// <param name="config">The configuration delegate</param>
         public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config> config)
@@ -34,9 +30,7 @@ namespace Genbox.SimpleS3.Extensions
             return AddSimpleS3(collection);
         }
 
-        /// <summary>
-        /// Add SimpleS3 services to a service collection.
-        /// </summary>
+        /// <summary>Add SimpleS3 services to a service collection.</summary>
         /// <param name="collection">The service collection</param>
         public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection)
         {

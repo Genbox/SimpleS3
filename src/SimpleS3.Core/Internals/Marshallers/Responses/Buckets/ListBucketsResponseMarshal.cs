@@ -9,6 +9,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets.Xml;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.XmlTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
@@ -37,7 +38,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
                 {
                     response.Buckets = new List<S3Bucket>(listResult.Buckets.Count);
 
-                    foreach (Network.Responses.XmlTypes.Bucket lb in listResult.Buckets)
+                    foreach (Bucket lb in listResult.Buckets)
                     {
                         S3Bucket b = new S3Bucket();
                         b.Name = lb.Name;

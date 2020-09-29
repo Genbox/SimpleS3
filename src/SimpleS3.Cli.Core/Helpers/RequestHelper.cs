@@ -42,6 +42,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
             //IAsyncEnumerator<T> enumerator = func(client).GetAsyncEnumerator();
 
             return func(client);
+
             //bool next;
 
             //do

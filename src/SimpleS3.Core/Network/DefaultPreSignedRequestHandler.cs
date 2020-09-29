@@ -26,8 +26,8 @@ namespace Genbox.SimpleS3.Core.Network
         private readonly ILogger<DefaultPreSignedRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
         private readonly IOptions<S3Config> _options;
-        private readonly IValidatorFactory _validator;
         private readonly IScopeBuilder _scopeBuilder;
+        private readonly IValidatorFactory _validator;
 
         public DefaultPreSignedRequestHandler(IOptions<S3Config> options, IScopeBuilder scopeBuilder, IValidatorFactory validator, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, ILogger<DefaultPreSignedRequestHandler> logger)
         {

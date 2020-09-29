@@ -6,8 +6,6 @@
     /// </summary>
     public class AccessKey : AccessKeyBase
     {
-        public AccessKey(string keyId, byte[] accessKey) : base(keyId, accessKey)
-        {
-        }
+        public AccessKey(string keyId, byte[] accessKey) : base(keyId, accessKey) { }
     }
 }

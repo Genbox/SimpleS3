@@ -8,9 +8,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
 {
     public class BucketTaggingTests : OnlineTestBase
     {
-        public BucketTaggingTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public BucketTaggingTests(ITestOutputHelper helper) : base(helper) { }
 
         [Fact]
         public async Task GetPutDeleteBucketTagging()

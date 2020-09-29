@@ -9,9 +9,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
 {
     public class GetObjectTests : OnlineTestBase
     {
-        public GetObjectTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public GetObjectTests(ITestOutputHelper helper) : base(helper) { }
 
         [Fact]
         public async Task GetObjectContentRange()

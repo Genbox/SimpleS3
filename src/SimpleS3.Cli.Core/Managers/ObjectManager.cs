@@ -37,54 +37,54 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
                 switch (parsedSource.resourceType)
                 {
                     case ResourceType.File:
+                    {
+                        string objectKey;
+
+                        switch (parsedDestination.resourceType)
                         {
-                            string objectKey;
+                            //Source: Local file - Destination: remote file
+                            case ResourceType.File:
+                                objectKey = parsedDestination.resource;
+                                break;
 
-                            switch (parsedDestination.resourceType)
-                            {
-                                //Source: Local file - Destination: remote file
-                                case ResourceType.File:
-                                    objectKey = parsedDestination.resource;
-                                    break;
+                            //Source: Local file - Destination: remote directory
+                            case ResourceType.Directory:
+                                objectKey = RemotePathHelper.Combine(parsedDestination.resource, LocalPathHelper.GetFileName(parsedSource.resource));
+                                break;
 
-                                //Source: Local file - Destination: remote directory
-                                case ResourceType.Directory:
-                                    objectKey = RemotePathHelper.Combine(parsedDestination.resource, LocalPathHelper.GetFileName(parsedSource.resource));
-                                    break;
-
-                                //We don't support expand on the destination
-                                default:
-                                    throw new ArgumentOutOfRangeException();
-                            }
-
-                            using (FileStream fs = File.OpenRead(parsedSource.resource))
-                                await RequestHelper.ExecuteRequestAsync(_client, c => c.PutObjectAsync(parsedDestination.bucket, objectKey, fs)).ConfigureAwait(false);
-
-                            return;
+                            //We don't support expand on the destination
+                            default:
+                                throw new ArgumentOutOfRangeException();
                         }
+
+                        using (FileStream fs = File.OpenRead(parsedSource.resource))
+                            await RequestHelper.ExecuteRequestAsync(_client, c => c.PutObjectAsync(parsedDestination.bucket, objectKey, fs)).ConfigureAwait(false);
+
+                        return;
+                    }
                     case ResourceType.Directory:
+                    {
+                        switch (parsedDestination.resourceType)
                         {
-                            switch (parsedDestination.resourceType)
-                            {
-                                //Source: Local directory - Destination: remote directory
-                                case ResourceType.Directory:
-                                    foreach (string file in Directory.GetFiles(parsedSource.resource))
-                                    {
-                                        string? directory = LocalPathHelper.GetDirectoryName(file);
-                                        string name = LocalPathHelper.GetFileName(file);
-                                        string objectKey = RemotePathHelper.Combine(parsedDestination.resource, directory, name);
+                            //Source: Local directory - Destination: remote directory
+                            case ResourceType.Directory:
+                                foreach (string file in Directory.GetFiles(parsedSource.resource))
+                                {
+                                    string? directory = LocalPathHelper.GetDirectoryName(file);
+                                    string name = LocalPathHelper.GetFileName(file);
+                                    string objectKey = RemotePathHelper.Combine(parsedDestination.resource, directory, name);
 
-                                        using (FileStream fs = File.OpenRead(file))
-                                            await RequestHelper.ExecuteRequestAsync(_client, c => c.PutObjectAsync(parsedDestination.bucket, objectKey, fs)).ConfigureAwait(false);
-                                    }
+                                    using (FileStream fs = File.OpenRead(file))
+                                        await RequestHelper.ExecuteRequestAsync(_client, c => c.PutObjectAsync(parsedDestination.bucket, objectKey, fs)).ConfigureAwait(false);
+                                }
 
-                                    return;
+                                return;
 
-                                //We don't support files or expand on the destination
-                                default:
-                                    throw new ArgumentOutOfRangeException();
-                            }
+                            //We don't support files or expand on the destination
+                            default:
+                                throw new ArgumentOutOfRangeException();
                         }
+                    }
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -95,55 +95,59 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
                 switch (parsedSource.resourceType)
                 {
                     case ResourceType.File:
+                    {
+                        string localFile;
+
+                        switch (parsedDestination.resourceType)
                         {
-                            string localFile;
+                            //Source: remote file - Destination: local file
+                            case ResourceType.File:
+                                localFile = parsedDestination.resource;
+                                break;
 
-                            switch (parsedDestination.resourceType)
-                            {
-                                //Source: remote file - Destination: local file
-                                case ResourceType.File:
-                                    localFile = parsedDestination.resource;
-                                    break;
+                            //Source: remote file - Destination: local directory
+                            case ResourceType.Directory:
+                                localFile = LocalPathHelper.Combine(parsedDestination.resource, RemotePathHelper.GetFileName(parsedSource.resource));
+                                break;
 
-                                //Source: remote file - Destination: local directory
-                                case ResourceType.Directory:
-                                    localFile = LocalPathHelper.Combine(parsedDestination.resource, RemotePathHelper.GetFileName(parsedSource.resource));
-                                    break;
-
-                                //We don't support expand on the destination
-                                default:
-                                    throw new ArgumentOutOfRangeException();
-                            }
-
-                            GetObjectResponse resp = await RequestHelper.ExecuteRequestAsync(_client, c => c.GetObjectAsync(parsedSource.bucket, parsedSource.resource)).ConfigureAwait(false);
-
-                            using (Stream s = resp.Content)
-                            using (FileStream fs = File.OpenWrite(localFile))
-                                await s.CopyToAsync(fs).ConfigureAwait(false);
-
-                            return;
+                            //We don't support expand on the destination
+                            default:
+                                throw new ArgumentOutOfRangeException();
                         }
+
+                        GetObjectResponse resp = await RequestHelper.ExecuteRequestAsync(_client, c => c.GetObjectAsync(parsedSource.bucket, parsedSource.resource)).ConfigureAwait(false);
+
+                        using (Stream s = resp.Content)
+                        using (FileStream fs = File.OpenWrite(localFile))
+                            await s.CopyToAsync(fs).ConfigureAwait(false);
+
+                        return;
+                    }
                     case ResourceType.Directory:
+                    {
+                        switch (parsedDestination.resourceType)
                         {
-                            switch (parsedDestination.resourceType)
-                            {
-                                //Source: remote directory - Destination: local directory
-                                case ResourceType.Directory:
-                                    await foreach (S3Object s3Object in RequestHelper.ExecuteAsyncEnumerable(_client, c => c.ListAllObjectsAsync(parsedSource.bucket, config: req => { req.Prefix = parsedSource.resource; })))
-                                    {
-                                        string destFolder = parsedDestination.resource;
-                                        string destFile = LocalPathHelper.Combine(destFolder, parsedDestination.resource, s3Object.ObjectKey);
+                            //Source: remote directory - Destination: local directory
+                            case ResourceType.Directory:
+                                await foreach (S3Object s3Object in RequestHelper.ExecuteAsyncEnumerable(_client, c => c.ListAllObjectsAsync(parsedSource.bucket, config: req =>
+                                {
+                                    req.Prefix = parsedSource.resource;
+                                })))
+                                {
+                                    string destFolder = parsedDestination.resource;
+                                    string destFile = LocalPathHelper.Combine(destFolder, parsedDestination.resource, s3Object.ObjectKey);
 
-                                        GetObjectResponse resp = await RequestHelper.ExecuteRequestAsync(_client, c => c.GetObjectAsync(parsedSource.bucket, s3Object.ObjectKey)).ConfigureAwait(false);
-                                        await resp.Content.CopyToFileAsync(destFile).ConfigureAwait(false);
-                                    }
+                                    GetObjectResponse resp = await RequestHelper.ExecuteRequestAsync(_client, c => c.GetObjectAsync(parsedSource.bucket, s3Object.ObjectKey)).ConfigureAwait(false);
+                                    await resp.Content.CopyToFileAsync(destFile).ConfigureAwait(false);
+                                }
 
-                                    return;
-                                //We don't support file or expand on the destination
-                                default:
-                                    throw new ArgumentOutOfRangeException();
-                            }
+                                return;
+
+                            //We don't support file or expand on the destination
+                            default:
+                                throw new ArgumentOutOfRangeException();
                         }
+                    }
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

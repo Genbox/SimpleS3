@@ -5,8 +5,6 @@ namespace Genbox.SimpleS3.Core.Misc
 {
     public class CoreBuilder : ServiceBuilderBase, ICoreBuilder
     {
-        public CoreBuilder(IServiceCollection services) : base(services)
-        {
-        }
+        public CoreBuilder(IServiceCollection services) : base(services) { }
     }
 }

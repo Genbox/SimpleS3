@@ -9,9 +9,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
 {
     public class ListBucketsTests : OnlineTestBase
     {
-        public ListBucketsTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public ListBucketsTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task ListBuckets()

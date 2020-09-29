@@ -19,9 +19,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
 
     public class DummyRequest : BaseRequest
     {
-        public DummyRequest() : base(HttpMethod.GET)
-        {
-        }
+        public DummyRequest() : base(HttpMethod.GET) { }
     }
 
     [MemoryDiagnoser]
@@ -29,9 +27,9 @@ namespace Genbox.SimpleS3.Core.Benchmarks
     public class AwsSignatureVersion4Benchmarks
     {
         private HeaderAuthorizationBuilder _builder;
+        private ImmutableCredentials _credentials;
         private DummyRequest _request;
         private HttpRequestMessage _request2;
-        private ImmutableCredentials _credentials;
 
         [GlobalSetup]
         public void Setup()

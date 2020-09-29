@@ -7,9 +7,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
 {
     public class AbortMultipartTests : OnlineTestBase
     {
-        public AbortMultipartTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public AbortMultipartTests(ITestOutputHelper helper) : base(helper) { }
 
         [Fact]
         public async Task AbortIncompleteUpload()

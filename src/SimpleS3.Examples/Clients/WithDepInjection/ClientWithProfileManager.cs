@@ -19,9 +19,10 @@ namespace Genbox.SimpleS3.Examples.Clients.WithDepInjection
             IS3ClientBuilder builder = services.AddSimpleS3();
 
             //Here we enable in-memory encryption using Microsoft Data Protection
-            builder.CoreBuilder.UseProfileManager()
-                               .BindConfigToProfile(profileName)
-                               .UseDataProtection();
+            builder.CoreBuilder
+                   .UseProfileManager()
+                   .BindConfigToProfile(profileName)
+                   .UseDataProtection();
 
             //Finally we build the service provider and return the S3Client
             IServiceProvider serviceProvider = services.BuildServiceProvider();

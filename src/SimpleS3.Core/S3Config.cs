@@ -9,9 +9,7 @@ namespace Genbox.SimpleS3.Core
     [PublicAPI]
     public class S3Config : IConfig
     {
-        public S3Config()
-        {
-        }
+        public S3Config() { }
 
         public S3Config(IAccessKey credentials, AwsRegion region)
         {

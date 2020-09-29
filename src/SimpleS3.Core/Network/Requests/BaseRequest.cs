@@ -16,6 +16,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests
             Method = method;
         }
 
+        public virtual void Reset()
+        {
+            _headers.Clear();
+            _queryParameters.Clear();
+        }
+
         public Guid RequestId { get; set; }
         public DateTimeOffset Timestamp { get; set; }
         public HttpMethod Method { get; internal set; }
@@ -30,12 +36,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests
         public void SetHeader(string key, string value)
         {
             _headers[key.ToLowerInvariant()] = value!;
-        }
-
-        public virtual void Reset()
-        {
-            _headers.Clear();
-            _queryParameters.Clear();
         }
     }
 }

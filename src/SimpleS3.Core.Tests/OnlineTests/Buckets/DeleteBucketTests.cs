@@ -10,9 +10,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
 {
     public class DeleteBucketTests : OnlineTestBase
     {
-        public DeleteBucketTests(ITestOutputHelper helper) : base(helper)
-        {
-        }
+        public DeleteBucketTests(ITestOutputHelper helper) : base(helper) { }
 
         [Fact]
         public async Task DeleteBucket()

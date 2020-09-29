@@ -12,16 +12,12 @@ using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
 {
-    /// <summary>
-    /// Tests when the network works, but the API is responding with server errors
-    /// </summary>
+    /// <summary>Tests when the network works, but the API is responding with server errors</summary>
     public class NonTransientServerErrorTests : OfflineTestBase
     {
         private readonly BaseFailingHttpHandler _handler = new NonTransientFailingHttpHandler(1);
 
-        public NonTransientServerErrorTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+        public NonTransientServerErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         protected override void ConfigureCoreBuilder(ICoreBuilder builder)
         {

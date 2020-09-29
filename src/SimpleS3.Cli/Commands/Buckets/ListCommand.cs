@@ -15,7 +15,9 @@ namespace Genbox.SimpleS3.Cli.Commands.Buckets
             Console.WriteLine("{0,-21}{1}", "Created on", "Name");
 
             await foreach (S3Bucket bucket in Manager.BucketManager.ListAsync(token))
+            {
                 Console.WriteLine("{0,-21}{1}", bucket.CreatedOn.ToString("yyy-MM-dd hh:mm:ss", DateTimeFormatInfo.InvariantInfo), bucket.Name);
+            }
         }
     }
 }

@@ -23,6 +23,12 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
             _client = client;
         }
 
+        public void Dispose()
+        {
+            _client?.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
         public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethod method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
         {
             HttpResponseMessage httpResponse;
@@ -35,7 +41,9 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
                 if (headers != null)
                 {
                     foreach (KeyValuePair<string, string> item in headers)
+                    {
                         httpRequest.AddHeader(item.Key, item.Value);
+                    }
                 }
 
                 _logger.LogTrace("Sending HTTP request");
@@ -48,14 +56,18 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
             IDictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Headers)
+            {
                 responseHeaders.Add(header.Key, header.Value.First());
+            }
 
             Stream? responseStream = null;
 
             if (httpResponse.Content != null)
             {
                 foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
+                {
                     responseHeaders.Add(header.Key, header.Value.First());
+                }
 
                 responseStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
             }
@@ -80,12 +92,6 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
                 default:
                     throw new ArgumentOutOfRangeException(nameof(method), method, null);
             }
-        }
-
-        public void Dispose()
-        {
-            _client?.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }

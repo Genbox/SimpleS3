@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -131,7 +131,9 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
 
                     int count = 0;
                     for (int i = start; i < end + 1; i++, count++)
+                    {
                         trimmed[count] = enteredAccessKey[i];
+                    }
 
                     Array.Clear(enteredAccessKey, 0, enteredAccessKey.Length);
 
