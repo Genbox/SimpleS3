@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -17,6 +18,7 @@ using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Internals.Pools;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -73,7 +75,10 @@ namespace Genbox.SimpleS3.Core.Network
 
             _validator.ValidateAndThrow(request);
 
-            string host = RequestHelper.BuildHost(config, request);
+            StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+            RequestHelper.AppendHost(sb, config, request);
+
+            string host = sb.ToString();
 
             request.SetHeader(HttpHeaders.Host, host);
             request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
@@ -102,8 +107,16 @@ namespace Genbox.SimpleS3.Core.Network
             //We add the authorization header here because we need ALL other headers to be present when we do
             _authBuilder.BuildAuthorization(request);
 
-            string url = RequestHelper.BuildUrl(host, config, request);
+            //We need to clear the StringBuilder to prepend the scheme
+            sb.Clear();
 
+            RequestHelper.AppendScheme(sb, config);
+            sb.Append(host);
+            RequestHelper.AppendUrl(sb, config, request);
+            RequestHelper.AppendQueryParameters(sb, request);
+            string url = sb.ToString();
+
+            StringBuilderPool.Shared.Return(sb);
             _logger.LogDebug("Sending request to {Url}", url);
 
             (int statusCode, IDictionary<string, string> headers, Stream? responseStream) = await _networkDriver.SendRequestAsync(request.Method, url, request.Headers, requestStream, cancellationToken).ConfigureAwait(false);

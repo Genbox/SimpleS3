@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -13,6 +14,7 @@ using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Internals.Constants;
+using Genbox.SimpleS3.Core.Internals.Pools;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -59,7 +61,10 @@ namespace Genbox.SimpleS3.Core.Network
 
             _validator.ValidateAndThrow(request);
 
-            string host = RequestHelper.BuildHost(config, request);
+            StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+            RequestHelper.AppendHost(sb, config, request);
+
+            string host = sb.ToString();
             request.SetHeader(HttpHeaders.Host, host);
 
             string scope = _scopeBuilder.CreateScope("s3", request.Timestamp);
@@ -84,7 +89,16 @@ namespace Genbox.SimpleS3.Core.Network
             if (request is IContainSensitiveMaterial sensitive)
                 sensitive.ClearSensitiveMaterial();
 
-            string url = RequestHelper.BuildUrl(host, config, request);
+            //We need to clear the StringBuilder as we need ot prepend the scheme
+            sb.Clear();
+
+            RequestHelper.AppendScheme(sb, config);
+            sb.Append(host);
+            RequestHelper.AppendUrl(sb, config, request);
+            RequestHelper.AppendQueryParameters(sb, request);
+
+            string url = sb.ToString();
+            StringBuilderPool.Shared.Return(sb);
             return Task.FromResult(url);
         }
     }

@@ -3,10 +3,8 @@ using System.Globalization;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
-using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
-using Genbox.SimpleS3.Core.Network;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -14,15 +12,14 @@ using Xunit;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests
 {
-    public class PresignedUrlTests
+    public class PreSignedUrlTests
     {
         private readonly SignatureBuilder _sigBuilder;
         private readonly ScopeBuilder _scopeBuilder;
         private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
-        private readonly QueryParameterAuthorizationBuilder _authBuilder;
         private readonly IOptions<S3Config> _options;
 
-        public PresignedUrlTests()
+        public PreSignedUrlTests()
         {
             //See https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-query-string-auth.html
             S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
@@ -32,7 +29,6 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             SigningKeyBuilder keyBuilder = new SigningKeyBuilder(_options, NullLogger<SigningKeyBuilder>.Instance);
             _scopeBuilder = new ScopeBuilder(_options);
             _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<SignatureBuilder>.Instance, _options);
-            _authBuilder = new QueryParameterAuthorizationBuilder(_sigBuilder, NullLogger<QueryParameterAuthorizationBuilder>.Instance);
         }
 
         [Fact]
@@ -48,7 +44,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             request.SetQueryParameter(AmzParameters.XAmzExpires, "86400");
             request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, "host");
 
-            string canonicalRequest = _sigBuilder.CreateCanonicalRequest(request.RequestId, request.ObjectKey, request.Method, request.Headers, request.QueryParameters, "UNSIGNED-PAYLOAD");
+            string canonicalRequest = _sigBuilder.CreateCanonicalRequest(request.RequestId, '/' + request.ObjectKey, request.Method, request.Headers, request.QueryParameters, "UNSIGNED-PAYLOAD");
 
             string expectedCanonicalRequest = "GET" + SigningConstants.Newline +
                                               "/test.txt" + SigningConstants.Newline +
@@ -72,12 +68,6 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             byte[] signature = _sigBuilder.CreateSignature(_testDate, stringToSign);
 
             Assert.Equal("aeeed9bbccd4d02ee5c0109b86d86835f995330da4c265957d157751f604d404", signature.HexEncode());
-
-            var url = RequestHelper.BuildUrl("examplebucket.s3.amazonaws.com", _options.Value, request);
-
-            //string fullUrl = url + _authBuilder.BuildInternal(_testDate, request.Headers, signature);
-
-            //string expectedUrl = "https://examplebucket.s3.amazonaws.com/test.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20130524%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20130524T000000Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=aeeed9bbccd4d02ee5c0109b86d86835f995330da4c265957d157751f604d404";
         }
     }
 }
