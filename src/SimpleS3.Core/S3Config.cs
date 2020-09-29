@@ -23,7 +23,7 @@ namespace Genbox.SimpleS3.Core
         public AwsRegion Region { get; set; }
         public SignatureMode PayloadSignatureMode { get; set; } = SignatureMode.StreamingSignature;
         public int StreamingChunkSize { get; set; } = 2 * 1024 * 1024; // 2 Mb
-        public NamingMode NamingMode { get; set; } = NamingMode.PathStyle;
+        public NamingMode NamingMode { get; set; } = NamingMode.VirtualHost; //Amazon recommends virtual host. Path style urls was deprecated on 2020-09-30
         public bool UseTLS { get; set; } = true;
         public Uri? Endpoint { get; set; }
         public bool EnableBucketNameValidation { get; set; } = true;

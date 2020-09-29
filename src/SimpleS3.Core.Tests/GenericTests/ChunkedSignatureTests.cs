@@ -30,6 +30,9 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
         {
             S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
 
+            //The tests here have signatures built using path style
+            config.NamingMode = NamingMode.PathStyle;
+
             _options = Options.Create(config);
 
             SigningKeyBuilder keyBuilder = new SigningKeyBuilder(_options, NullLogger<SigningKeyBuilder>.Instance);
