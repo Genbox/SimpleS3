@@ -1,8 +1,10 @@
 using System;
 using Genbox.HttpBuilders;
+using Genbox.HttpBuilders.BuilderOptions;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 {
@@ -22,7 +24,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             IfETagNotMatch = new ETagBuilder();
             ResponseCacheControl = new CacheControlBuilder();
             ResponseContentType = new ContentTypeBuilder();
-            ResponseContentDisposition = new ContentDispositionBuilder();
+
+            //Amazon does not support the extended filename RFC in their presigned requests
+            ContentDispositionOptions contentDisp = new ContentDispositionOptions();
+            contentDisp.UseExtendedFilename = false;
+
+            ResponseContentDisposition = new ContentDispositionBuilder(Options.Create(contentDisp));
             ResponseContentLanguage = new ContentLanguageBuilder();
             ResponseContentEncoding = new ContentEncodingBuilder();
         }

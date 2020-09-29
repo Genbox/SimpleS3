@@ -2,6 +2,6 @@
 {
     public interface IAuthorizationBuilder
     {
-        string BuildAuthorization(IRequest request);
+        void BuildAuthorization(IRequest request);
     }
 }

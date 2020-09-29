@@ -10,30 +10,12 @@ namespace Genbox.SimpleS3.Core.Network
 {
     public static class RequestHelper
     {
-        public static (string host, string url) BuildEndpointData<TReq>(S3Config config, TReq request) where TReq : IRequest
+        public static string BuildHost<TReq>(S3Config config, TReq request) where TReq : IRequest
         {
             string? bucketName = null;
 
             if (request is IHasBucketName bn)
                 bucketName = bn.BucketName;
-
-            string? objectKey = null;
-
-            if (request is IHasObjectKey ok)
-                objectKey = ok.ObjectKey;
-
-            //Ensure that the object key is encoded
-            string? encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
-
-            if (config.Endpoint == null || config.NamingMode == NamingMode.PathStyle)
-            {
-                if (bucketName != null)
-                    objectKey = bucketName + '/' + encodedResource;
-                else
-                    objectKey = encodedResource;
-            }
-            else
-                objectKey = encodedResource;
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(100);
 
@@ -46,28 +28,53 @@ namespace Genbox.SimpleS3.Core.Network
                 if (!endpoint.IsDefaultPort)
                     sb.Append(':').Append(endpoint.Port);
             }
-            else if (config.NamingMode == NamingMode.VirtualHost)
-            {
-                if (bucketName != null)
-                    sb.Append(bucketName).Append(".s3.").Append(ValueHelper.EnumToString(config.Region)).Append(".amazonaws.com");
-                else
-                    sb.Append("s3.").Append(ValueHelper.EnumToString(config.Region)).Append(".amazonaws.com");
-            }
+            else if (bucketName != null && config.NamingMode == NamingMode.VirtualHost)
+                sb.Append(bucketName).Append(".s3.").Append(ValueHelper.EnumToString(config.Region)).Append(".amazonaws.com");
             else
                 sb.Append("s3.").Append(ValueHelper.EnumToString(config.Region)).Append(".amazonaws.com");
 
             string host = sb.ToString();
+            StringBuilderPool.Shared.Return(sb);
+            return host;
+        }
 
-            sb.Append('/').Append(objectKey);
+        public static string BuildUrl<TReq>(string host, S3Config config, TReq request) where TReq : IRequest
+        {
+            string? bucketName = null;
+
+            if (request is IHasBucketName bn)
+                bucketName = bn.BucketName;
+
+            string? objectKey = null;
+
+            if (request is IHasObjectKey ok)
+                objectKey = ok.ObjectKey;
+
+            StringBuilder sb = StringBuilderPool.Shared.Rent(100);
+
+            if (config.Endpoint == null)
+                sb.Append(config.UseTLS ? "https" : "http");
+            else
+                sb.Append(config.Endpoint.Scheme);
+
+            sb.Append("://");
+            sb.Append(host);
+            sb.Append('/');
+
+            if (bucketName != null && config.NamingMode == NamingMode.PathStyle)
+                sb.Append(bucketName).Append('/');
+
+            //Ensure that the object key is encoded
+            if (objectKey != null)
+                sb.Append(UrlHelper.UrlPathEncode(objectKey));
 
             //Map all the parameters on to the url
             if (request.QueryParameters.Count > 0)
                 sb.Append('?').Append(UrlHelper.CreateQueryString(request.QueryParameters));
 
-            string fullUrl = (config.Endpoint == null ? config.UseTLS ? "https" : "http" : config.Endpoint.Scheme) + "://" + sb;
-
+            string url = sb.ToString();
             StringBuilderPool.Shared.Return(sb);
-            return (host, fullUrl);
+            return url;
         }
     }
 }

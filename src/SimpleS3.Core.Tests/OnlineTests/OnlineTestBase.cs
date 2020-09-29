@@ -4,12 +4,15 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
@@ -17,7 +20,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,10 +27,10 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
 {
     public abstract class OnlineTestBase : IDisposable
     {
+        private readonly ServiceProvider _services;
+
         protected OnlineTestBase(ITestOutputHelper outputHelper)
         {
-            Output = outputHelper;
-
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
             configBuilder.AddJsonFile("Config.json", false);
 
@@ -46,6 +48,8 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             coreBuilder.UseProfileManager()
                        .BindConfigToDefaultProfile()
                        .UseDataProtection();
+
+            coreBuilder.UsePreSigned();
 
             IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
             httpBuilder.UseTimeoutPolicy(TimeSpan.FromMinutes(10));
@@ -65,31 +69,29 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             collection.RemoveAll(typeof(IValidator<>));
             collection.RemoveAll<IValidator>();
 
-            Services = collection.BuildServiceProvider();
+            _services = collection.BuildServiceProvider();
 
             BucketName = configRoot["BucketName"] ?? "main-test-bucket-2019";
 
-            Config = Services.GetRequiredService<IOptions<S3Config>>().Value;
-            ObjectClient = Services.GetRequiredService<IObjectClient>();
-            BucketClient = Services.GetRequiredService<IBucketClient>();
-            MultipartClient = Services.GetRequiredService<IMultipartClient>();
-            Transfer = Services.GetRequiredService<Fluent.Transfer>();
+            ObjectClient = _services.GetRequiredService<IObjectClient>();
+            BucketClient = _services.GetRequiredService<IBucketClient>();
+            MultipartClient = _services.GetRequiredService<IMultipartClient>();
+            Transfer = _services.GetRequiredService<Fluent.Transfer>();
+            PreSignedObjectOperations = _services.GetRequiredService<IPreSignedObjectOperations>();
+            NetworkDriver = _services.GetRequiredService<INetworkDriver>();
         }
 
-        public ITestOutputHelper Output { get; }
-
-        public ServiceProvider Services { get; }
-
-        protected S3Config Config { get; }
+        protected INetworkDriver NetworkDriver { get; }
         protected string BucketName { get; }
         protected IObjectClient ObjectClient { get; }
         protected IBucketClient BucketClient { get; }
         protected IMultipartClient MultipartClient { get; }
         protected Fluent.Transfer Transfer { get; }
+        protected IPreSignedObjectOperations PreSignedObjectOperations { get; }
 
         public void Dispose()
         {
-            Services?.Dispose();
+            _services?.Dispose();
             GC.SuppressFinalize(this);
         }
 

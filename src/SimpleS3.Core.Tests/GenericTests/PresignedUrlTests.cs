@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Globalization;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Network;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -29,7 +32,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             SigningKeyBuilder keyBuilder = new SigningKeyBuilder(_options, NullLogger<SigningKeyBuilder>.Instance);
             _scopeBuilder = new ScopeBuilder(_options);
             _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<SignatureBuilder>.Instance, _options);
-            _authBuilder = new QueryParameterAuthorizationBuilder(_options, _scopeBuilder, _sigBuilder, NullLogger<QueryParameterAuthorizationBuilder>.Instance);
+            _authBuilder = new QueryParameterAuthorizationBuilder(_sigBuilder, NullLogger<QueryParameterAuthorizationBuilder>.Instance);
         }
 
         [Fact]
@@ -38,22 +41,43 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             string scope = _scopeBuilder.CreateScope("s3", _testDate);
 
             GetObjectRequest request = new GetObjectRequest("examplebucket", "test.txt");
-            request.SetHeader(AmzHeaders.XAmzContentSha256, "UNSIGNED-PAYLOAD");
             request.SetHeader("host", "examplebucket.s3.amazonaws.com");
-            //request.SetHeader("X-Amz-Algorithm", "AWS4-HMAC-SHA256");
-            //request.SetHeader("X-Amz-Credential", scope);
-            //request.SetHeader("X-Amz-Date", _testDate.ToString(DateTimeFormats.Iso8601Date));
-            //request.SetHeader("X-Amz-Expires", "1000");
+            request.SetQueryParameter(AmzParameters.XAmzAlgorithm, SigningConstants.AlgorithmTag);
+            request.SetQueryParameter(AmzParameters.XAmzCredential, _options.Value.Credentials.KeyId + '/' + scope);
+            request.SetQueryParameter(AmzParameters.XAmzDate, _testDate.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
+            request.SetQueryParameter(AmzParameters.XAmzExpires, "86400");
+            request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, "host");
 
             string canonicalRequest = _sigBuilder.CreateCanonicalRequest(request.RequestId, request.ObjectKey, request.Method, request.Headers, request.QueryParameters, "UNSIGNED-PAYLOAD");
+
+            string expectedCanonicalRequest = "GET" + SigningConstants.Newline +
+                                              "/test.txt" + SigningConstants.Newline +
+                                              "X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20130524%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20130524T000000Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host" + SigningConstants.Newline +
+                                              "host:examplebucket.s3.amazonaws.com" + SigningConstants.Newline +
+                                              "" + SigningConstants.Newline +
+                                              "host" + SigningConstants.Newline +
+                                              "UNSIGNED-PAYLOAD";
+
+            Assert.Equal(expectedCanonicalRequest, canonicalRequest);
+
             string stringToSign = _sigBuilder.CreateStringToSign(_testDate, scope, canonicalRequest);
+
+            string expectedStringtoSign = "AWS4-HMAC-SHA256" + SigningConstants.Newline +
+                                          "20130524T000000Z" + SigningConstants.Newline +
+                                          "20130524/us-east-1/s3/aws4_request" + SigningConstants.Newline +
+                                          "3bfa292879f6447bbcda7001decf97f4a54dc650c8942174ae0a9121cf58ad04";
+
+            Assert.Equal(expectedStringtoSign, stringToSign);
 
             byte[] signature = _sigBuilder.CreateSignature(_testDate, stringToSign);
 
-            //TODO: Perhaps reverse the responsibility so that the authbuilders manipulate the request? Otherwise I'd have to parse the url here to add it to the full request url
-            string? queryUrl = _authBuilder.BuildInternal(_testDate, request.Headers, signature);
-
             Assert.Equal("aeeed9bbccd4d02ee5c0109b86d86835f995330da4c265957d157751f604d404", signature.HexEncode());
+
+            var url = RequestHelper.BuildUrl("examplebucket.s3.amazonaws.com", _options.Value, request);
+
+            //string fullUrl = url + _authBuilder.BuildInternal(_testDate, request.Headers, signature);
+
+            //string expectedUrl = "https://examplebucket.s3.amazonaws.com/test.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20130524%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20130524T000000Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=aeeed9bbccd4d02ee5c0109b86d86835f995330da4c265957d157751f604d404";
         }
     }
 }

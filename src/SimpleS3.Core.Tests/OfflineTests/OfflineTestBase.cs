@@ -2,10 +2,12 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Misc;
+using Genbox.SimpleS3.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -34,10 +36,12 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
                 //Set the configuration from the config file
                 _configRoot.Bind(config);
                 config.Region = AwsRegion.EuWest1;
-                config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
+                config.Credentials = new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
 
                 ConfigureConfig(config);
             });
+
+            coreBuilder.UsePreSigned();
 
             ConfigureCoreBuilder(coreBuilder);
 
@@ -60,7 +64,19 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
             BucketClient = Services.GetRequiredService<IBucketClient>();
             MultipartClient = Services.GetRequiredService<IMultipartClient>();
             Transfer = Services.GetRequiredService<Transfer>();
+            PreSignedObjectOperations = Services.GetRequiredService<IPreSignedObjectOperations>();
         }
+
+        
+        public ServiceProvider Services { get; }
+
+        protected S3Config Config { get; }
+        protected string BucketName { get; }
+        protected IObjectClient ObjectClient { get; }
+        protected IBucketClient BucketClient { get; }
+        protected IMultipartClient MultipartClient { get; }
+        protected Transfer Transfer { get; }
+        public IPreSignedObjectOperations PreSignedObjectOperations { get; set; }
 
         protected virtual void ConfigureConfig(S3Config config)
         {
@@ -73,15 +89,6 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
         protected virtual void ConfigureServices(IServiceCollection collection)
         {
         }
-
-        public ServiceProvider Services { get; }
-
-        protected S3Config Config { get; }
-        protected string BucketName { get; }
-        protected IObjectClient ObjectClient { get; }
-        protected IBucketClient BucketClient { get; }
-        protected IMultipartClient MultipartClient { get; }
-        protected Transfer Transfer { get; }
 
         public void Dispose()
         {

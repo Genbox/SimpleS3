@@ -1,6 +1,9 @@
 ﻿using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Network;
+using Genbox.SimpleS3.Core.Operations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -21,6 +24,14 @@ namespace Genbox.SimpleS3.Extensions
 
             //Add the client as the interface too
             builder.Services.TryAddSingleton<IClient>(x => x.GetRequiredService<S3Client>());
+            return builder;
+        }
+
+
+        public static ICoreBuilder UsePreSigned(this ICoreBuilder builder)
+        {
+            builder.Services.TryAddSingleton<IPreSignedObjectOperations, PreSignedObjectOperations>();
+            builder.Services.TryAddSingleton<IPreSignRequestHandler, DefaultPreSignedRequestHandler>();
             return builder;
         }
     }

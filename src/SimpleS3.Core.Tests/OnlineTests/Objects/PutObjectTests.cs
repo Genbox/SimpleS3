@@ -263,7 +263,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             }).ConfigureAwait(false);
 
             Assert.Equal("max-age=42", resp.CacheControl);
-            Assert.Equal("attachment; filename*=\"filename.txt\"", resp.ContentDisposition);
+            Assert.Equal("attachment; filename=\"filename.txt\"", resp.ContentDisposition);
             Assert.Equal("gzip", resp.ContentEncoding);
             Assert.Equal("da-DK", resp.ContentLanguage);
             Assert.Equal("text/html; charset=utf-8", resp.ContentType);

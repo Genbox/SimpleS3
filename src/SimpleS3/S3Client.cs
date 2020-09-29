@@ -133,7 +133,7 @@ namespace Genbox.SimpleS3
             IScopeBuilder scopeBuilder = new ScopeBuilder(options);
             ISigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, loggerFactory.CreateLogger<SigningKeyBuilder>());
             ISignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, loggerFactory.CreateLogger<SignatureBuilder>(), options);
-            IAuthorizationBuilder authorizationBuilder = new HeaderAuthorizationBuilder(options, scopeBuilder, signatureBuilder, loggerFactory.CreateLogger<HeaderAuthorizationBuilder>());
+            HeaderAuthorizationBuilder authorizationBuilder = new HeaderAuthorizationBuilder(options, scopeBuilder, signatureBuilder, loggerFactory.CreateLogger<HeaderAuthorizationBuilder>());
             DefaultRequestHandler requestHandler = new DefaultRequestHandler(options, validatorFactory, marshalFactory, networkDriver, authorizationBuilder, loggerFactory.CreateLogger<DefaultRequestHandler>(), Enumerable.Empty<IRequestStreamWrapper>());
 
             ObjectOperations objectOperations = new ObjectOperations(requestHandler, Enumerable.Empty<IRequestWrapper>(), Enumerable.Empty<IResponseWrapper>());

@@ -67,9 +67,9 @@ namespace Genbox.SimpleS3.Core.Benchmarks
         }
 
         [Benchmark]
-        public string SimpleS3()
+        public void SimpleS3()
         {
-            return _builder.BuildAuthorization(_request);
+            _builder.BuildAuthorization(_request);
         }
 
         [Benchmark]

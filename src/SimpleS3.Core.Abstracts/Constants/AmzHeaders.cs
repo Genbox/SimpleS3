@@ -92,14 +92,5 @@ namespace Genbox.SimpleS3.Core.Abstracts.Constants
         public const string XAmzCopySourceVersionId = "x-amz-copy-source-version-id";
 
         #endregion
-
-        #region Presigning
-
-        public const string XAmzAlgorithm = "x-amz-algorithm";
-        public const string XAmzCredential = "x-amz-credential";
-        public const string XAmzSignedHeaders = "x-amz-signedheaders";
-        public const string XAmzSignature = "x-amz-signature";
-
-        #endregion
     }
 }

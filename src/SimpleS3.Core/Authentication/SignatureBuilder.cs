@@ -54,7 +54,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             _options = options;
         }
 
-        public byte[] CreateSignature(IRequest request)
+        public byte[] CreateSignature(IRequest request, bool enablePayloadSignature = true)
         {
             Validator.RequireNotNull(request, nameof(request));
 
@@ -83,7 +83,9 @@ namespace Genbox.SimpleS3.Core.Authentication
             else
                 objectKey = encodedResource;
 
-            string canonicalRequest = CreateCanonicalRequest(request.RequestId, objectKey, request.Method, request.Headers, request.QueryParameters, request.Headers[AmzHeaders.XAmzContentSha256]);
+            string payloadSignature = enablePayloadSignature ? request.Headers[AmzHeaders.XAmzContentSha256] : "UNSIGNED-PAYLOAD";
+
+            string canonicalRequest = CreateCanonicalRequest(request.RequestId, objectKey, request.Method, request.Headers, request.QueryParameters, payloadSignature);
             string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), canonicalRequest);
             byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
@@ -125,7 +127,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             sb.Append(contentHash);
 
             string canonicalRequest = sb.ToString();
-            
+
             StringBuilderPool.Shared.Return(sb);
 
             _logger.LogDebug("CanonicalRequest: {CanonicalRequest}", canonicalRequest);
@@ -179,7 +181,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             //4. The query string in the following URI example is prefix=somePrefix&marker=someMarker&max-keys=20:
             //5. If the URI does not include a '?', there is no query string in the request, and you set the canonical query string to an empty string (""). You will still need to include the "\n".
 
-            return UrlHelper.CreateQueryString(parameters.OrderBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase), outputEqualOnEmpty: true);
+            return UrlHelper.CreateQueryString(parameters.OrderBy(kvp => kvp.Key, StringComparer.Ordinal), outputEqualOnEmpty: true);
         }
 
         private static string CanonicalizeHeaders(IReadOnlyDictionary<string, string> headers)
