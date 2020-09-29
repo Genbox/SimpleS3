@@ -6,7 +6,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
 {
     public class PutObjectResponse : BaseResponse, IHasExpiresOn, IHasETag, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestCharged, IHasVersionId, IHasSseContext, IHasExpiration
     {
-        public string ETag { get; internal set; }
+        public string? ETag { get; internal set; }
         public DateTimeOffset? LifeCycleExpiresOn { get; internal set; }
         public string? LifeCycleRuleId { get; internal set; }
         public DateTimeOffset? ExpiresOn { get; internal set; }

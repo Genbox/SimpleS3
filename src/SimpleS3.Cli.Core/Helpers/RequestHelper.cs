@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Network.Responses;
-using Genbox.SimpleS3.Core.Network.Responses.Errors;
 
 namespace Genbox.SimpleS3.Cli.Core.Helpers
 {
@@ -22,10 +21,11 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
 
             StringBuilder sb = new StringBuilder();
             sb.Append("Request failed with error ").Append(resp.StatusCode).AppendLine();
-            sb.Append("Message: ").Append(resp.Error.Message).AppendLine();
 
-            if (!(resp.Error is GenericError))
+            if (resp.Error != null)
             {
+                sb.Append("Message: ").Append(resp.Error.Message).AppendLine();
+
                 string extraData = resp.Error.GetErrorDetails();
 
                 if (!string.IsNullOrWhiteSpace(extraData))

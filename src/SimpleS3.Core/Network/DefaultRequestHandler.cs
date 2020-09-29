@@ -117,21 +117,9 @@ namespace Genbox.SimpleS3.Core.Network
             response.ContentLength = headers.GetHeaderLong(HttpHeaders.ContentLength);
             response.ConnectionClosed = "closed".Equals(headers.GetHeader(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
             response.Date = headers.GetHeaderDate(HttpHeaders.Date, DateTimeFormat.Rfc1123);
-
-            if (headers.TryGetHeader(HttpHeaders.Server, out string? serverHeader))
-                response.Server = serverHeader!;
-            else
-                throw new Exception($"Expected {HttpHeaders.Server} header");
-
-            if (headers.TryGetHeader(AmzHeaders.XAmzId2, out string? id2))
-                response.ResponseId = id2!;
-            else
-                throw new Exception($"Expected {AmzHeaders.XAmzId2} header");
-
-            if (headers.TryGetHeader(AmzHeaders.XAmzRequestId, out string? requestId))
-                response.RequestId = requestId!;
-            else
-                throw new Exception($"Expected {AmzHeaders.XAmzRequestId} header");
+            response.Server = headers.GetHeader(HttpHeaders.Server);
+            response.ResponseId = headers.GetHeader(AmzHeaders.XAmzId2);
+            response.RequestId = headers.GetHeader(AmzHeaders.XAmzRequestId);
 
             // https://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
             response.IsSuccess = !(statusCode == 403 //Forbidden

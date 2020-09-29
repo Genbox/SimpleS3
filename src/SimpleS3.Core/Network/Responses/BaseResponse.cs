@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses
     {
         public int StatusCode { get; set; }
 
-        public IError Error { get; set; }
+        public IError? Error { get; set; }
 
         public long ContentLength { get; set; }
 
@@ -15,11 +15,11 @@ namespace Genbox.SimpleS3.Core.Network.Responses
 
         public DateTimeOffset Date { get; set; }
 
-        public string Server { get; set; }
+        public string? Server { get; set; }
 
-        public string ResponseId { get; set; }
+        public string? ResponseId { get; set; }
 
-        public string RequestId { get; set; }
+        public string? RequestId { get; set; }
 
         public bool IsSuccess { get; set; }
     }

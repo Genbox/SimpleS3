@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
 
             DeleteBucketResponse deleteResp1 = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
             Assert.False(deleteResp1.IsSuccess);
-            Assert.Equal(ErrorCode.NoSuchBucket, deleteResp1.Error.Code);
+            Assert.Equal(ErrorCode.NoSuchBucket, deleteResp1.Error?.Code);
 
             await BucketClient.CreateBucketAsync(tempBucketName).ConfigureAwait(false);
 

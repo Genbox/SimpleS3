@@ -14,13 +14,13 @@ namespace Genbox.SimpleS3.Core.Abstracts
         DateTimeOffset Date { get; set; }
 
         /// <summary>The name of the server that created the response.</summary>
-        string Server { get; set; }
+        string? Server { get; set; }
 
         /// <summary>A special token that is used together with the <see cref="RequestId" /> to help troubleshoot problems.</summary>
-        string ResponseId { get; set; }
+        string? ResponseId { get; set; }
 
         /// <summary>A value created by S3 that uniquely identifies the request.</summary>
-        string RequestId { get; set; }
+        string? RequestId { get; set; }
 
         /// <summary>Return true if the request was successfully processed.</summary>
         bool IsSuccess { get; set; }
