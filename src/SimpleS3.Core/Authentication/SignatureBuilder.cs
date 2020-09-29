@@ -12,7 +12,7 @@ using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Pools;
-using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+using Genbox.SimpleS3.Core.Network;
 using Microsoft.Collections.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -60,32 +60,15 @@ namespace Genbox.SimpleS3.Core.Authentication
 
             _logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
 
-            string? bucketName = null;
+            StringBuilder sb = StringBuilderPool.Shared.Rent(100);
+            RequestHelper.AppendUrl(sb, _options.Value, request);
+            string url = sb.ToString();
 
-            if (request is IHasBucketName bn)
-                bucketName = bn.BucketName;
-
-            string? objectKey = null;
-
-            if (request is IHasObjectKey ok)
-                objectKey = ok.ObjectKey;
-
-            //Ensure that the object key is encoded
-            string? encodedResource = objectKey != null ? UrlHelper.UrlPathEncode(objectKey) : null;
-
-            if (_options.Value.Endpoint == null || _options.Value.NamingMode == NamingMode.PathStyle)
-            {
-                if (bucketName != null)
-                    objectKey = bucketName + '/' + encodedResource;
-                else
-                    objectKey = encodedResource;
-            }
-            else
-                objectKey = encodedResource;
+            StringBuilderPool.Shared.Return(sb);
 
             string payloadSignature = enablePayloadSignature ? request.Headers[AmzHeaders.XAmzContentSha256] : "UNSIGNED-PAYLOAD";
 
-            string canonicalRequest = CreateCanonicalRequest(request.RequestId, objectKey, request.Method, request.Headers, request.QueryParameters, payloadSignature);
+            string canonicalRequest = CreateCanonicalRequest(request.RequestId, url, request.Method, request.Headers, request.QueryParameters, payloadSignature);
             string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), canonicalRequest);
             byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
@@ -102,7 +85,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             return CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date, "s3"));
         }
 
-        internal string CreateCanonicalRequest(Guid requestId, string? objectKey, HttpMethod method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
+        internal string CreateCanonicalRequest(Guid requestId, string url, HttpMethod method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
         {
             _logger.LogTrace("Creating canonical request for {RequestId}", requestId);
 
@@ -116,7 +99,7 @@ namespace Genbox.SimpleS3.Core.Authentication
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(300);
             sb.Append(method.ToString()).Append(SigningConstants.Newline);
-            sb.Append(CanonicalizeUri(objectKey)).Append(SigningConstants.Newline);
+            sb.Append(url).Append(SigningConstants.Newline);
             sb.Append(CanonicalizeQueryParameters(query)).Append(SigningConstants.Newline);
 
             //Headers needs to be ordered by key
@@ -156,17 +139,6 @@ namespace Genbox.SimpleS3.Core.Authentication
 
             _logger.LogDebug("StringToSign: {StringToSign}", sts);
             return sts;
-        }
-
-        private static string CanonicalizeUri(string? resourcePath)
-        {
-            if (resourcePath == null)
-                return SigningConstants.SlashStr;
-
-            if (!resourcePath.StartsWith(SigningConstants.SlashStr, StringComparison.Ordinal))
-                resourcePath = SigningConstants.Slash + resourcePath;
-
-            return resourcePath;
         }
 
         private static string CanonicalizeQueryParameters(IReadOnlyDictionary<string, string> parameters)
