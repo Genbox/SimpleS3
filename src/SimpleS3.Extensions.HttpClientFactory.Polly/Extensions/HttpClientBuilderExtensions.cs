@@ -59,7 +59,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions
                 .WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt));
 
             builder.AddPolicyHandler(exceptionPolicy);
-            builder.Services.TryAddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
+            builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
             return builder;
         }
 
