@@ -67,7 +67,6 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.TryAddSingleton<ISignatureBuilder, SignatureBuilder>();
             collection.TryAddSingleton<IChunkedSignatureBuilder, ChunkedSignatureBuilder>();
             collection.TryAddSingleton<HeaderAuthorizationBuilder>();
-            collection.TryAddSingleton<QueryParameterAuthorizationBuilder>();
             collection.TryAddSingleton<IObjectOperations, ObjectOperations>();
             collection.TryAddSingleton<IBucketOperations, BucketOperations>();
             collection.TryAddSingleton<IMultipartOperations, MultipartOperations>();
@@ -78,8 +77,13 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.TryAddSingleton<IValidatorFactory, ValidatorFactory>();
             collection.TryAddSingleton<IMarshalFactory, MarshalFactory>();
             collection.TryAddSingleton<Transfer>();
-            
-            collection.AddSingleton<IRequestStreamWrapper, ChunkedContentRequestStreamWrapper>();
+
+            //PreSigning
+            collection.TryAddSingleton<IPreSignedObjectOperations, PreSignedObjectOperations>();
+            collection.TryAddSingleton<IPreSignRequestHandler, DefaultPreSignedRequestHandler>();
+            collection.TryAddSingleton<QueryParameterAuthorizationBuilder>();
+
+            collection.AddSingleton<IRequestStreamWrapper, ChunkedContentRequestStreamWrapper>(); //This has to be added using AddSingleton
 
             Assembly assembly = typeof(S3Config).Assembly; //Needs to be the assembly that contains the types
 

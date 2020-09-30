@@ -48,8 +48,6 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
                        .BindConfigToDefaultProfile()
                        .UseDataProtection();
 
-            coreBuilder.UsePreSigned();
-
             IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
             httpBuilder.UseTimeoutPolicy(TimeSpan.FromMinutes(10));
 

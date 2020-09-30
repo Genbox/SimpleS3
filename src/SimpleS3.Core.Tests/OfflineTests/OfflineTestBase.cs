@@ -41,8 +41,6 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
                 ConfigureConfig(config);
             });
 
-            coreBuilder.UsePreSigned();
-
             ConfigureCoreBuilder(coreBuilder);
 
             collection.TryAddSingleton<INetworkDriver, NullNetworkDriver>();

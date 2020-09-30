@@ -26,12 +26,5 @@ namespace Genbox.SimpleS3.Extensions
             builder.Services.TryAddSingleton<IClient>(x => x.GetRequiredService<S3Client>());
             return builder;
         }
-
-        public static ICoreBuilder UsePreSigned(this ICoreBuilder builder)
-        {
-            builder.Services.TryAddSingleton<IPreSignedObjectOperations, PreSignedObjectOperations>();
-            builder.Services.TryAddSingleton<IPreSignRequestHandler, DefaultPreSignedRequestHandler>();
-            return builder;
-        }
     }
 }
