@@ -12,10 +12,10 @@ namespace Genbox.SimpleS3.Tests
             (FakeNetworkDriver driver, S3Client client) = StaticClientHelper.CreateFakeClient();
 
             await client.PutObjectStringAsync("testbucket", "PutAsync", "data").ConfigureAwait(false);
-            Assert.Equal("https://s3.us-east-1.amazonaws.com/testbucket/PutAsync", driver.SendResource);
+            Assert.Equal("https://testbucket.s3.us-east-1.amazonaws.com/PutAsync", driver.SendResource);
 
             await client.GetObjectAsync("testbucket", "GetObjectAsync").ConfigureAwait(false);
-            Assert.Equal("https://s3.us-east-1.amazonaws.com/testbucket/GetObjectAsync", driver.SendResource);
+            Assert.Equal("https://testbucket.s3.us-east-1.amazonaws.com/GetObjectAsync", driver.SendResource);
         }
     }
 }
