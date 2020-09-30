@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 namespace Genbox.SimpleS3.Core.Internals.PostMappers
 {
-    internal class UploadPartPostMapper:IPostMapper<UploadPartRequest, UploadPartResponse>
+    internal class UploadPartPostMapper : IPostMapper<UploadPartRequest, UploadPartResponse>
     {
         public void PostMap(IConfig config, UploadPartRequest request, UploadPartResponse response)
         {
