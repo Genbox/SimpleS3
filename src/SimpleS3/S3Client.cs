@@ -288,6 +288,9 @@ namespace Genbox.SimpleS3
             IEnumerable<IRequestMarshal> requestMarshals = CreateInstances<IRequestMarshal>(assembly, provider);
             IEnumerable<IResponseMarshal> responseMarshals = CreateInstances<IResponseMarshal>(assembly, provider);
             IEnumerable<IPostMapper> postMappers = CreateInstances<IPostMapper>(assembly, provider);
+            IEnumerable<IRequestStreamWrapper> requestStreamWrappers = CreateInstances<IRequestStreamWrapper>(assembly, provider);
+            IEnumerable<IRequestWrapper> requestWrappers = CreateInstances<IRequestWrapper>(assembly, provider).ToList();
+            IEnumerable<IResponseWrapper> responseWrappers = CreateInstances<IResponseWrapper>(assembly, provider).ToList();
 
             ValidatorFactory validatorFactory = new ValidatorFactory(validators);
             IMarshalFactory marshalFactory = new MarshalFactory(requestMarshals, responseMarshals);
@@ -296,15 +299,15 @@ namespace Genbox.SimpleS3
             ISigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, loggerFactory.CreateLogger<SigningKeyBuilder>());
             ISignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, loggerFactory.CreateLogger<SignatureBuilder>(), options);
             HeaderAuthorizationBuilder authorizationBuilder = new HeaderAuthorizationBuilder(options, scopeBuilder, signatureBuilder, loggerFactory.CreateLogger<HeaderAuthorizationBuilder>());
-            DefaultRequestHandler requestHandler = new DefaultRequestHandler(options, validatorFactory, marshalFactory, postMapperFactory, networkDriver, authorizationBuilder, loggerFactory.CreateLogger<DefaultRequestHandler>(), Enumerable.Empty<IRequestStreamWrapper>());
+            DefaultRequestHandler requestHandler = new DefaultRequestHandler(options, validatorFactory, marshalFactory, postMapperFactory, networkDriver, authorizationBuilder, loggerFactory.CreateLogger<DefaultRequestHandler>(), requestStreamWrappers);
 
-            ObjectOperations objectOperations = new ObjectOperations(requestHandler, Enumerable.Empty<IRequestWrapper>(), Enumerable.Empty<IResponseWrapper>());
+            ObjectOperations objectOperations = new ObjectOperations(requestHandler, requestWrappers, responseWrappers);
             _objectClient = new S3ObjectClient(objectOperations);
 
             BucketOperations bucketOperations = new BucketOperations(requestHandler);
             _bucketClient = new S3BucketClient(bucketOperations);
 
-            MultipartOperations multipartOperations = new MultipartOperations(requestHandler, Enumerable.Empty<IRequestWrapper>(), Enumerable.Empty<IResponseWrapper>());
+            MultipartOperations multipartOperations = new MultipartOperations(requestHandler, requestWrappers, responseWrappers);
             _multipartClient = new S3MultipartClient(multipartOperations, objectOperations);
 
             Transfer = new Transfer(objectOperations, multipartOperations);
