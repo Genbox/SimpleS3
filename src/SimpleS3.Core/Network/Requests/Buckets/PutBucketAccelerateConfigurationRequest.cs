@@ -17,5 +17,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
         }
 
         public string BucketName { get; set; }
+        public bool AccelerationEnabled { get; set; }
     }
 }
