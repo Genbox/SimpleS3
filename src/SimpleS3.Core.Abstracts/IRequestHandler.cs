@@ -5,6 +5,6 @@ namespace Genbox.SimpleS3.Core.Abstracts
 {
     public interface IRequestHandler
     {
-        Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken cancellationToken = default) where TResp : IResponse, new() where TReq : IRequest;
+        Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken token = default) where TResp : IResponse, new() where TReq : IRequest;
     }
 }

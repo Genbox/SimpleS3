@@ -6,10 +6,8 @@ using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets.Xml;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
@@ -19,9 +17,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 {
     [UsedImplicitly]
-    internal class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsRequest, ListObjectsResponse>
+    internal class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsResponse>
     {
-        public void MarshalResponse(IConfig config, ListObjectsRequest request, ListObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, ListObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             XmlSerializer s = new XmlSerializer(typeof(ListBucketResult));
 

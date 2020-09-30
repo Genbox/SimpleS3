@@ -5,10 +5,8 @@ using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets.Xml;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
@@ -18,9 +16,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
 {
     [UsedImplicitly]
-    internal class ListMultipartUploadsResponseMarshal : IResponseMarshal<ListMultipartUploadsRequest, ListMultipartUploadsResponse>
+    internal class ListMultipartUploadsResponseMarshal : IResponseMarshal<ListMultipartUploadsResponse>
     {
-        public void MarshalResponse(IConfig config, ListMultipartUploadsRequest request, ListMultipartUploadsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, ListMultipartUploadsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             XmlSerializer s = new XmlSerializer(typeof(ListMultipartUploadsResult));
 

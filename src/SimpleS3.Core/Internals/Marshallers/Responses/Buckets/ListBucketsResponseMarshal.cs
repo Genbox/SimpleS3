@@ -4,8 +4,6 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
-using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets.Xml;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
@@ -15,9 +13,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
 {
     [UsedImplicitly]
-    internal class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsRequest, ListBucketsResponse>
+    internal class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsResponse>
     {
-        public void MarshalResponse(IConfig config, ListBucketsRequest request, ListBucketsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, ListBucketsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             XmlSerializer s = new XmlSerializer(typeof(ListAllMyBucketsResult));
 

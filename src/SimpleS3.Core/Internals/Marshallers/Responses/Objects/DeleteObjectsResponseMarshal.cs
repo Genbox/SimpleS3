@@ -6,9 +6,7 @@ using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects.Xml;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
@@ -18,9 +16,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 {
     [UsedImplicitly]
-    internal class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObjectsRequest, DeleteObjectsResponse>
+    internal class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObjectsResponse>
     {
-        public void MarshalResponse(IConfig config, DeleteObjectsRequest request, DeleteObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, DeleteObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 

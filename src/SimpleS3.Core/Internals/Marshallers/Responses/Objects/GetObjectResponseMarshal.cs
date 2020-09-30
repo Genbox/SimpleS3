@@ -3,21 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 {
     [UsedImplicitly]
-    internal class GetObjectResponseMarshal : IResponseMarshal<GetObjectRequest, GetObjectResponse>
+    internal class GetObjectResponseMarshal : IResponseMarshal<GetObjectResponse>
     {
-        public void MarshalResponse(IConfig config, GetObjectRequest request, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.Metadata = HeaderParserHelper.ParseMetadata(headers);
             response.ETag = headers.GetHeader(HttpHeaders.ETag);

@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Genbox.SimpleS3.Core.Abstracts.Marshallers
+namespace Genbox.SimpleS3.Core.Abstracts
 {
     public interface IRequestMarshal { }
 

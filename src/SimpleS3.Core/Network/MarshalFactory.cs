@@ -6,7 +6,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
@@ -39,7 +38,7 @@ namespace Genbox.SimpleS3.Core.Network
                 Type iType = type.GetInterfaces().First();
                 Type[] args = iType.GetGenericArguments();
 
-                return args[1];
+                return args[0];
             }, x => x);
         }
 
@@ -72,10 +71,10 @@ namespace Genbox.SimpleS3.Core.Network
             return content;
         }
 
-        public void MarshalResponse<TRequest, TResponse>(IConfig config, TRequest request, TResponse response, IDictionary<string, string> headers, Stream responseStream) where TRequest : IRequest where TResponse : IResponse
+        public void MarshalResponse<TResponse>(IConfig config, TResponse response, IDictionary<string, string> headers, Stream responseStream) where TResponse : IResponse
         {
             if (_responseMarshals.TryGetValue(typeof(TResponse), out IResponseMarshal marshaller))
-                ((IResponseMarshal<TRequest, TResponse>)marshaller).MarshalResponse(config, request, response, headers, responseStream);
+                ((IResponseMarshal<TResponse>)marshaller).MarshalResponse(config, response, headers, responseStream);
         }
     }
 }

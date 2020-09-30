@@ -6,7 +6,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Authentication;
@@ -62,26 +61,36 @@ namespace Genbox.SimpleS3.Core.Extensions
         {
             collection.AddLogging();
             collection.AddOptions();
+
+            //Authentication
             collection.TryAddSingleton<ISigningKeyBuilder, SigningKeyBuilder>();
             collection.TryAddSingleton<IScopeBuilder, ScopeBuilder>();
             collection.TryAddSingleton<ISignatureBuilder, SignatureBuilder>();
             collection.TryAddSingleton<IChunkedSignatureBuilder, ChunkedSignatureBuilder>();
             collection.TryAddSingleton<HeaderAuthorizationBuilder>();
+            collection.TryAddSingleton<IPreSignRequestHandler, DefaultPreSignedRequestHandler>();
+            collection.TryAddSingleton<QueryParameterAuthorizationBuilder>();
+
+            //Operations
             collection.TryAddSingleton<IObjectOperations, ObjectOperations>();
             collection.TryAddSingleton<IBucketOperations, BucketOperations>();
             collection.TryAddSingleton<IMultipartOperations, MultipartOperations>();
+            collection.TryAddSingleton<IPreSignedObjectOperations, PreSignedObjectOperations>();
+
+            //Clients
             collection.TryAddSingleton<IObjectClient, S3ObjectClient>();
             collection.TryAddSingleton<IBucketClient, S3BucketClient>();
             collection.TryAddSingleton<IMultipartClient, S3MultipartClient>();
+            collection.TryAddSingleton<IPreSignedObjectClient, S3PreSignedObjectClient>();
+
+            //Misc
             collection.TryAddSingleton<IRequestHandler, DefaultRequestHandler>();
             collection.TryAddSingleton<IValidatorFactory, ValidatorFactory>();
             collection.TryAddSingleton<IMarshalFactory, MarshalFactory>();
-            collection.TryAddSingleton<Transfer>();
+            collection.TryAddSingleton<IPostMapperFactory, PostMapperFactory>();
 
-            //PreSigning
-            collection.TryAddSingleton<IPreSignedObjectOperations, PreSignedObjectOperations>();
-            collection.TryAddSingleton<IPreSignRequestHandler, DefaultPreSignedRequestHandler>();
-            collection.TryAddSingleton<QueryParameterAuthorizationBuilder>();
+            //Fluent
+            collection.TryAddSingleton<Transfer>();
 
             collection.AddSingleton<IRequestStreamWrapper, ChunkedContentRequestStreamWrapper>(); //This has to be added using AddSingleton
 
@@ -90,6 +99,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.TryAddEnumerable(CreateRegistrations(typeof(IValidator), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IRequestMarshal), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IResponseMarshal), assembly));
+            collection.TryAddEnumerable(CreateRegistrations(typeof(IPostMapper), assembly));
 
             return new CoreBuilder(collection);
         }

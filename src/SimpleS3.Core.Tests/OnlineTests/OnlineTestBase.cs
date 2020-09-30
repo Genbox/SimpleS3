@@ -4,14 +4,12 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
-using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
@@ -74,17 +72,15 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             BucketClient = _services.GetRequiredService<IBucketClient>();
             MultipartClient = _services.GetRequiredService<IMultipartClient>();
             Transfer = _services.GetRequiredService<Fluent.Transfer>();
-            PreSignedObjectOperations = _services.GetRequiredService<IPreSignedObjectOperations>();
-            NetworkDriver = _services.GetRequiredService<INetworkDriver>();
+            PreSignedObjectClient = _services.GetRequiredService<IPreSignedObjectClient>();
         }
 
-        protected INetworkDriver NetworkDriver { get; }
         protected string BucketName { get; }
         protected IObjectClient ObjectClient { get; }
         protected IBucketClient BucketClient { get; }
         protected IMultipartClient MultipartClient { get; }
         protected Fluent.Transfer Transfer { get; }
-        protected IPreSignedObjectOperations PreSignedObjectOperations { get; }
+        protected IPreSignedObjectClient PreSignedObjectClient { get; }
 
         public void Dispose()
         {

@@ -5,7 +5,6 @@ using System.Net.Http;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly;
 using Polly.Retry;
 using Polly.Timeout;

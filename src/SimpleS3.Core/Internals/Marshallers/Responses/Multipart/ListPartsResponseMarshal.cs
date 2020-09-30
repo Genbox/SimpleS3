@@ -6,12 +6,10 @@ using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart.Xml;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
@@ -21,9 +19,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
 {
     [UsedImplicitly]
-    internal class ListPartsResponseMarshal : IResponseMarshal<ListPartsRequest, ListPartsResponse>
+    internal class ListPartsResponseMarshal : IResponseMarshal<ListPartsResponse>
     {
-        public void MarshalResponse(IConfig config, ListPartsRequest request, ListPartsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, ListPartsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Iso8601DateTimeExt);
             response.AbortRuleId = headers.GetHeader(AmzHeaders.XAmzAbortRuleId);

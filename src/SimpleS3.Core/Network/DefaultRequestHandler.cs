@@ -19,6 +19,7 @@ using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Pools;
+using Genbox.SimpleS3.Core.Network.Requests;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -32,12 +33,13 @@ namespace Genbox.SimpleS3.Core.Network
         private readonly IAuthorizationBuilder _authBuilder;
         private readonly ILogger<DefaultRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
+        private readonly IPostMapperFactory _postMapper;
         private readonly INetworkDriver _networkDriver;
         private readonly IOptions<S3Config> _options;
         private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
         private readonly IValidatorFactory _validator;
 
-        public DefaultRequestHandler(IOptions<S3Config> options, IValidatorFactory validator, IMarshalFactory marshaller, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
+        public DefaultRequestHandler(IOptions<S3Config> options, IValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));
@@ -53,6 +55,7 @@ namespace Genbox.SimpleS3.Core.Network
             _networkDriver = networkDriver;
             _authBuilder = authBuilder;
             _marshaller = marshaller;
+            _postMapper = postMapper;
             _logger = logger;
 
             if (requestStreamWrappers == null)
@@ -61,10 +64,24 @@ namespace Genbox.SimpleS3.Core.Network
                 _requestStreamWrappers = requestStreamWrappers.ToList();
         }
 
-        public async Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken cancellationToken = default) where TResp : IResponse, new() where TReq : IRequest
+        public Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken token = default) where TResp : IResponse, new() where TReq : IRequest
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            token.ThrowIfCancellationRequested();
 
+            if (request is PreSignedBaseRequest preSigned)
+                return SendPreSigned<TResp>(preSigned, token);
+
+            return SendRequest<TReq, TResp>(request, token);
+        }
+
+        private Task<TResp> SendPreSigned<TResp>(PreSignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
+        {
+            Stream? requestStream = _marshaller.MarshalRequest(preSigned, _options.Value);
+            return HandleResponse<PreSignedBaseRequest, TResp>(preSigned, preSigned.Url, requestStream, token);
+        }
+
+        private Task<TResp> SendRequest<TReq, TResp>(TReq request, CancellationToken token) where TResp : IResponse, new() where TReq : IRequest
+        {
             request.Timestamp = DateTimeOffset.UtcNow;
             request.RequestId = Guid.NewGuid();
 
@@ -110,11 +127,16 @@ namespace Genbox.SimpleS3.Core.Network
             RequestHelper.AppendUrl(sb, config, request);
             RequestHelper.AppendQueryParameters(sb, request);
             string url = sb.ToString();
-
             StringBuilderPool.Shared.Return(sb);
+
+            return HandleResponse<TReq, TResp>(request, url, requestStream, token);
+        }
+
+        public async Task<TResp> HandleResponse<TReq, TResp>(TReq request, string url, Stream? requestStream, CancellationToken token) where TResp : IResponse, new() where TReq : IRequest
+        {
             _logger.LogDebug("Sending request to {Url}", url);
 
-            (int statusCode, IDictionary<string, string> headers, Stream? responseStream) = await _networkDriver.SendRequestAsync(request.Method, url, request.Headers, requestStream, cancellationToken).ConfigureAwait(false);
+            (int statusCode, IDictionary<string, string> headers, Stream? responseStream) = await _networkDriver.SendRequestAsync(request.Method, url, request.Headers, requestStream, token).ConfigureAwait(false);
 
             //Clear sensitive material from the request
             if (request is IContainSensitiveMaterial sensitive)
@@ -147,12 +169,12 @@ namespace Genbox.SimpleS3.Core.Network
 
             //Only marshal successful responses
             if (response.IsSuccess)
-                _marshaller.MarshalResponse(config, request, response, headers, responseStream ?? Stream.Null);
+                _marshaller.MarshalResponse(_options.Value, response, headers, responseStream ?? Stream.Null);
             else if (responseStream != null)
             {
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    await responseStream.CopyToAsync(ms, 81920, cancellationToken).ConfigureAwait(false);
+                    await responseStream.CopyToAsync(ms, 81920, token).ConfigureAwait(false);
 
                     if (ms.Length > 0)
                     {
@@ -166,6 +188,8 @@ namespace Genbox.SimpleS3.Core.Network
                 }
             }
 
+            //We always map even if the request is not successful
+            _postMapper.PostMap(_options.Value, request, response);
             return response;
         }
     }

@@ -2,17 +2,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
-using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
 {
     [UsedImplicitly]
-    internal class GetBucketTaggingResponseMarshal : IResponseMarshal<GetBucketTaggingRequest, GetBucketTaggingResponse>
+    internal class GetBucketTaggingResponseMarshal : IResponseMarshal<GetBucketTaggingResponse>
     {
-        public void MarshalResponse(IConfig config, GetBucketTaggingRequest request, GetBucketTaggingResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, GetBucketTaggingResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.Tags = new Dictionary<string, string>();
 

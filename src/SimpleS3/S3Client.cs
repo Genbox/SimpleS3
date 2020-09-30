@@ -15,7 +15,6 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Authentication;
@@ -288,14 +287,16 @@ namespace Genbox.SimpleS3
             IEnumerable<IValidator> validators = CreateInstances<IValidator>(assembly, provider);
             IEnumerable<IRequestMarshal> requestMarshals = CreateInstances<IRequestMarshal>(assembly, provider);
             IEnumerable<IResponseMarshal> responseMarshals = CreateInstances<IResponseMarshal>(assembly, provider);
+            IEnumerable<IPostMapper> postMappers = CreateInstances<IPostMapper>(assembly, provider);
 
             ValidatorFactory validatorFactory = new ValidatorFactory(validators);
             IMarshalFactory marshalFactory = new MarshalFactory(requestMarshals, responseMarshals);
+            IPostMapperFactory postMapperFactory = new PostMapperFactory(postMappers);
             IScopeBuilder scopeBuilder = new ScopeBuilder(options);
             ISigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, loggerFactory.CreateLogger<SigningKeyBuilder>());
             ISignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, loggerFactory.CreateLogger<SignatureBuilder>(), options);
             HeaderAuthorizationBuilder authorizationBuilder = new HeaderAuthorizationBuilder(options, scopeBuilder, signatureBuilder, loggerFactory.CreateLogger<HeaderAuthorizationBuilder>());
-            DefaultRequestHandler requestHandler = new DefaultRequestHandler(options, validatorFactory, marshalFactory, networkDriver, authorizationBuilder, loggerFactory.CreateLogger<DefaultRequestHandler>(), Enumerable.Empty<IRequestStreamWrapper>());
+            DefaultRequestHandler requestHandler = new DefaultRequestHandler(options, validatorFactory, marshalFactory, postMapperFactory, networkDriver, authorizationBuilder, loggerFactory.CreateLogger<DefaultRequestHandler>(), Enumerable.Empty<IRequestStreamWrapper>());
 
             ObjectOperations objectOperations = new ObjectOperations(requestHandler, Enumerable.Empty<IRequestWrapper>(), Enumerable.Empty<IResponseWrapper>());
             _objectClient = new S3ObjectClient(objectOperations);

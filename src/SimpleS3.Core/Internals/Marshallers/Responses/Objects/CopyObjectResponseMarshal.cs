@@ -5,12 +5,10 @@ using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
-using Genbox.SimpleS3.Core.Abstracts.Marshallers;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects.Xml;
 using JetBrains.Annotations;
@@ -18,9 +16,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 {
     [UsedImplicitly]
-    internal class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectRequest, CopyObjectResponse>
+    internal class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectResponse>
     {
-        public void MarshalResponse(IConfig config, CopyObjectRequest request, CopyObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(IConfig config, CopyObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.NewVersionId = headers.GetHeader(AmzHeaders.XAmzCopySourceVersionId);
 
