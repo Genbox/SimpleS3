@@ -48,10 +48,8 @@ namespace Genbox.SimpleS3.Core.Network
             _scopeBuilder = scopeBuilder;
         }
 
-        public Task<string> SignRequestAsync<TReq>(TReq request, TimeSpan expiresIn, CancellationToken cancellationToken = default) where TReq : IRequest
+        public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             request.Timestamp = DateTimeOffset.UtcNow;
             request.RequestId = Guid.NewGuid();
 
@@ -96,7 +94,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             string url = sb.ToString();
             StringBuilderPool.Shared.Return(sb);
-            return Task.FromResult(url);
+            return url;
         }
     }
 }

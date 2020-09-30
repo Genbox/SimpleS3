@@ -19,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.PreSign
             int expireIn = 100;
 
             PutObjectRequest putReq = new PutObjectRequest(BucketName, "test.zip", null);
-            string url = await PreSignedObjectOperations.SignPutObjectAsync(putReq, TimeSpan.FromSeconds(expireIn)).ConfigureAwait(false);
+            string url = PreSignedObjectOperations.SignPutObject(putReq, TimeSpan.FromSeconds(expireIn));
 
             using (MemoryStream ms = new MemoryStream(Encoding.ASCII.GetBytes("hello world")))
             {
@@ -28,19 +28,19 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.PreSign
             }
 
             GetObjectRequest getReq = new GetObjectRequest(BucketName, "test.zip");
-            url = await PreSignedObjectOperations.SignGetObjectAsync(getReq, TimeSpan.FromSeconds(expireIn)).ConfigureAwait(false);
+            url = PreSignedObjectOperations.SignGetObject(getReq, TimeSpan.FromSeconds(expireIn));
 
             (int getStatus, _, _) = await NetworkDriver.SendRequestAsync(HttpMethod.GET, url).ConfigureAwait(false);
             Assert.Equal(200, getStatus);
 
             DeleteObjectRequest req = new DeleteObjectRequest(BucketName, "test.zip");
-            url = await PreSignedObjectOperations.SignDeleteObjectAsync(req, TimeSpan.FromSeconds(expireIn)).ConfigureAwait(false);
+            url = PreSignedObjectOperations.SignDeleteObject(req, TimeSpan.FromSeconds(expireIn));
 
             (int deleteStatus, _, _) = await NetworkDriver.SendRequestAsync(HttpMethod.DELETE, url).ConfigureAwait(false);
             Assert.Equal(204, deleteStatus);
 
             HeadObjectRequest headReq = new HeadObjectRequest(BucketName, "test.zip");
-            url = await PreSignedObjectOperations.SignHeadObjectAsync(headReq, TimeSpan.FromSeconds(expireIn)).ConfigureAwait(false);
+            url = PreSignedObjectOperations.SignHeadObject(headReq, TimeSpan.FromSeconds(expireIn));
 
             (int headStatus, _, _) = await NetworkDriver.SendRequestAsync(HttpMethod.HEAD, url).ConfigureAwait(false);
             Assert.Equal(404, headStatus);
