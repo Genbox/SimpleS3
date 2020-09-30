@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
@@ -62,10 +63,11 @@ namespace Genbox.SimpleS3.Core.Network
             _validator.ValidateAndThrow(request);
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+            RequestHelper.AppendScheme(sb, config);
+            int schemeLength = sb.Length;
             RequestHelper.AppendHost(sb, config, request);
 
-            string host = sb.ToString();
-            request.SetHeader(HttpHeaders.Host, host);
+            request.SetHeader(HttpHeaders.Host, sb.ToString(schemeLength, sb.Length - schemeLength));
 
             string scope = _scopeBuilder.CreateScope("s3", request.Timestamp);
             request.SetQueryParameter(AmzParameters.XAmzAlgorithm, SigningConstants.AlgorithmTag);
@@ -89,11 +91,6 @@ namespace Genbox.SimpleS3.Core.Network
             if (request is IContainSensitiveMaterial sensitive)
                 sensitive.ClearSensitiveMaterial();
 
-            //We need to clear the StringBuilder as we need ot prepend the scheme
-            sb.Clear();
-
-            RequestHelper.AppendScheme(sb, config);
-            sb.Append(host);
             RequestHelper.AppendUrl(sb, config, request);
             RequestHelper.AppendQueryParameters(sb, request);
 

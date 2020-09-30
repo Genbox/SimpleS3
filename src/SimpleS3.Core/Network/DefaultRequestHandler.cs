@@ -76,11 +76,11 @@ namespace Genbox.SimpleS3.Core.Network
             _validator.ValidateAndThrow(request);
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+            RequestHelper.AppendScheme(sb, config);
+            int schemeLength = sb.Length;
             RequestHelper.AppendHost(sb, config, request);
 
-            string host = sb.ToString();
-
-            request.SetHeader(HttpHeaders.Host, host);
+            request.SetHeader(HttpHeaders.Host, sb.ToString(schemeLength, sb.Length - schemeLength));
             request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
 
             if (requestStream != null)
@@ -107,11 +107,6 @@ namespace Genbox.SimpleS3.Core.Network
             //We add the authorization header here because we need ALL other headers to be present when we do
             _authBuilder.BuildAuthorization(request);
 
-            //We need to clear the StringBuilder to prepend the scheme
-            sb.Clear();
-
-            RequestHelper.AppendScheme(sb, config);
-            sb.Append(host);
             RequestHelper.AppendUrl(sb, config, request);
             RequestHelper.AppendQueryParameters(sb, request);
             string url = sb.ToString();
