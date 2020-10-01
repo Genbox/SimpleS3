@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Common
     {
         private readonly Dictionary<Type, object> _obj;
 
-        public SimpleServiceProvider(params Tuple<Type, object>[] obj)
+        public SimpleServiceProvider(params (Type, object)[] obj)
         {
             _obj = obj.ToDictionary(x => x.Item1, y => y.Item2);
         }
