@@ -78,7 +78,7 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
             _xml.Append(name);
 
             if (xmlns != null)
-                _xml.Append(" xmlns=\"").Append(xmlns).Append('\\');
+                _xml.Append(" xmlns=\"").Append(xmlns).Append('"');
 
             _xml.Append('>');
         }

@@ -308,7 +308,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
         [Fact]
         public async Task PutObjectTooManyTags()
         {
-            await Assert.ThrowsAsync<Exception>(async () => await ObjectClient.PutObjectStringAsync(BucketName, nameof(PutObjectTooManyTags), "data", null, request =>
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await ObjectClient.PutObjectStringAsync(BucketName, nameof(PutObjectTooManyTags), "data", null, request =>
             {
                 for (int i = 0; i < 51; i++)
                 {

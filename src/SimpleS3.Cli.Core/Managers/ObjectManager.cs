@@ -8,6 +8,7 @@ using Genbox.SimpleS3.Cli.Core.Enums;
 using Genbox.SimpleS3.Cli.Core.Exceptions;
 using Genbox.SimpleS3.Cli.Core.Helpers;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -26,10 +27,10 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
 
         public async Task CopyAsync(string source, string destination)
         {
-            if (!ResourceHelper.TryParseResource(source, out (string bucket, string resource, LocationType locationType, ResourceType resourceType) parsedSource))
+            if (!ResourceHelper.TryParseResource(source, out (string? bucket, string resource, LocationType locationType, ResourceType resourceType) parsedSource))
                 throw new CommandException(ErrorType.Argument, $"Failed to parse source: {source}");
 
-            if (!ResourceHelper.TryParseResource(destination, out (string bucket, string resource, LocationType locationType, ResourceType resourceType) parsedDestination))
+            if (!ResourceHelper.TryParseResource(destination, out (string? bucket, string resource, LocationType locationType, ResourceType resourceType) parsedDestination))
                 throw new CommandException(ErrorType.Argument, $"Failed to parse destination: {destination}");
 
             if (parsedSource.bucket == null)
@@ -168,7 +169,7 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
 
         public async Task DeleteAsync(string resource)
         {
-            if (!ResourceHelper.TryParseResource(resource, out (string bucket, string resource, LocationType locationType, ResourceType resourceType) parsed))
+            if (!ResourceHelper.TryParseResource(resource, out (string? bucket, string resource, LocationType locationType, ResourceType resourceType) parsed))
                 throw new CommandException(ErrorType.Argument, $"Failed to parse resource: {resource}");
 
             if (parsed.bucket == null)
