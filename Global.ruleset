@@ -113,6 +113,7 @@
     <Rule Id="CA1040" Action="Info" />
     <Rule Id="CA1041" Action="Error" />
     <Rule Id="CA1054" Action="None" />
+    <Rule Id="CA1056" Action="None" />
     <Rule Id="CA1062" Action="None" />
     <Rule Id="CA1707" Action="None" />
     <Rule Id="CA1712" Action="Info" />
@@ -182,6 +183,7 @@
     <Rule Id="RCS1161" Action="None" />
     <Rule Id="RCS1163" Action="None" />
     <Rule Id="RCS1174" Action="Error" />
+    <Rule Id="RCS1194" Action="None" />
     <Rule Id="RCS1203" Action="Error" />
     <Rule Id="RCS1210" Action="Error" />
     <Rule Id="RCS1214" Action="Warning" />
@@ -189,5 +191,9 @@
   </Rules>
   <Rules AnalyzerId="SerilogAnalyzer" RuleNamespace="SerilogAnalyzer">
     <Rule Id="Serilog001" Action="Error" />
+  </Rules>
+  <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
+    <Rule Id="S1128" Action="None" />
+    <Rule Id="S3925" Action="None" />
   </Rules>
 </RuleSet>
