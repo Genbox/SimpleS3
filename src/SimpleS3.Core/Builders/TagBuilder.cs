@@ -68,7 +68,7 @@ namespace Genbox.SimpleS3.Core.Builders
                 _tags = new Dictionary<string, string>();
 
             if (_tags.Count == 50)
-                throw new Exception("Only 50 tags allowed per. object");
+                throw new InvalidOperationException("Only 50 tags allowed per. object");
 
             if (key.Length > 128)
                 throw new ArgumentException("Keys can only be up to 128 characters", nameof(key));

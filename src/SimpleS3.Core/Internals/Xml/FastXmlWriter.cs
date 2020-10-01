@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Xml;
 using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 
 namespace Genbox.SimpleS3.Core.Internals.Xml
 {
@@ -34,7 +35,7 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
         /// <summary>Write a new element with the specified value</summary>
         /// <param name="name">The element name</param>
         /// <param name="value">The value within the element</param>
-        public void WriteElement(in string name, in string value)
+        public void WriteElement(string name, string value)
         {
             WriteStartElement(name);
             WriteValue(value);
@@ -44,7 +45,7 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
         /// <summary>Write a new element with the specified value</summary>
         /// <param name="name">The element name</param>
         /// <param name="value">The value within the element</param>
-        public void WriteElement(in string name, in int value)
+        public void WriteElement(string name, int value)
         {
             WriteStartElement(name);
             WriteValue(value.ToString(NumberFormatInfo.InvariantInfo));
@@ -54,14 +55,14 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
         /// <summary>Write a new element with the specified value</summary>
         /// <param name="name">The element name</param>
         /// <param name="value">The value within the element</param>
-        public void WriteElement(in string name, in bool value)
+        public void WriteElement(string name, bool value)
         {
             WriteStartElement(name);
             WriteValue(value.ToString(NumberFormatInfo.InvariantInfo));
             WriteEndElement(name);
         }
 
-        public void WriteElement(in string name, in bool? value)
+        public void WriteElement(string name, bool? value)
         {
             WriteStartElement(name);
             WriteValue(value!.Value.ToString(NumberFormatInfo.InvariantInfo));
@@ -71,27 +72,27 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
         /// <summary>Write the start of an element</summary>
         /// <param name="name">Name of the element</param>
         /// <param name="xmlns">Namespace to include in the element (if any)</param>
-        public void WriteStartElement(in string name, in string? xmlns = null)
+        public void WriteStartElement(string name, string? xmlns = null)
         {
             _xml.Append('<');
             _xml.Append(name);
 
             if (xmlns != null)
-                _xml.Append(" xmlns=\"").Append(xmlns).Append("\"");
+                _xml.Append(" xmlns=\"").Append(xmlns).Append('\\');
 
             _xml.Append('>');
         }
 
         /// <summary>Write the end of an element</summary>
         /// <param name="name">Name of the element</param>
-        public void WriteEndElement(in string name)
+        public void WriteEndElement(string name)
         {
             _xml.Append("</");
             _xml.Append(name);
             _xml.Append('>');
         }
 
-        private void WriteValue(in string data)
+        private void WriteValue(string data)
         {
             // According to https://www.w3.org/TR/xml11/#syntax <, & and > must be escaped
             // According to https://www.unicode.org/versions/Unicode12.0.0/UnicodeStandard-12.0.pdf section 2.4 0xFDD0-0xFDEF, 0xFFFE and 0xFFFF are non-characters
@@ -164,7 +165,7 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
                        || CharHelper.InRange(c, '\uE000', '\uFFFD');
             }
 
-            throw new Exception("Invalid XML standard");
+            throw new S3Exception("Invalid XML standard");
         }
 
         private bool IsDiscouraged(char c)
@@ -188,7 +189,7 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
                        || CharHelper.InRange(c, '\uFDD0', '\uFDEF'); //Unicode non-characters
             }
 
-            throw new Exception("Invalid XML standard");
+            throw new S3Exception("Invalid XML standard");
         }
 
         /// <summary>Return a set of UTF8 encoded bytes</summary>

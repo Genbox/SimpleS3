@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Network.Responses;
 
 namespace Genbox.SimpleS3.Cli.Core.Helpers
@@ -32,7 +33,7 @@ namespace Genbox.SimpleS3.Cli.Core.Helpers
                     sb.Append("Details: ").Append(extraData).AppendLine();
             }
 
-            throw new Exception(sb.ToString());
+            throw new S3Exception(sb.ToString());
         }
 
         public static IAsyncEnumerable<T> ExecuteAsyncEnumerable<T>(IClient client, Func<IClient, IAsyncEnumerable<T>> func)

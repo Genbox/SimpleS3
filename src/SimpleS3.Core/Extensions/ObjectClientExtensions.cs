@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -144,7 +145,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                 }, token).ConfigureAwait(false);
 
                 if (!response.IsSuccess)
-                    throw new Exception("Request failed");
+                    throw new S3RequestException(response.StatusCode, "Request failed");
 
                 foreach (S3Object responseObject in response.Objects)
                 {

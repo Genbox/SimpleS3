@@ -2,7 +2,7 @@
 
 namespace Genbox.SimpleS3.Core.Benchmarks
 {
-    internal class Program
+    internal static class Program
     {
         private static void Main(string[] args)
         {

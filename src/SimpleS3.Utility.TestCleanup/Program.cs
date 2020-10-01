@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Utility.TestCleanup
 {
-    internal class Program
+    internal static class Program
     {
         private static async Task Main(string[] args)
         {

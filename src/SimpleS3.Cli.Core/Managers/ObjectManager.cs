@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,6 +31,12 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
 
             if (!ResourceHelper.TryParseResource(destination, out (string bucket, string resource, LocationType locationType, ResourceType resourceType) parsedDestination))
                 throw new CommandException(ErrorType.Argument, $"Failed to parse destination: {destination}");
+
+            if (parsedSource.bucket == null)
+                throw new S3Exception("Unable to parse bucket in source");
+
+            if (parsedDestination.bucket == null)
+                throw new S3Exception("Unable to parse bucket in destination");
 
             if (parsedSource.locationType == LocationType.Local && parsedDestination.locationType == LocationType.Remote)
             {
@@ -164,6 +170,9 @@ namespace Genbox.SimpleS3.Cli.Core.Managers
         {
             if (!ResourceHelper.TryParseResource(resource, out (string bucket, string resource, LocationType locationType, ResourceType resourceType) parsed))
                 throw new CommandException(ErrorType.Argument, $"Failed to parse resource: {resource}");
+
+            if (parsed.bucket == null)
+                throw new S3Exception("Unable to parse bucket");
 
             if (parsed.locationType == LocationType.Local)
             {

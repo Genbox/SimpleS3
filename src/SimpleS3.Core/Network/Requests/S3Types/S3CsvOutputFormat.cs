@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
         public char? QuoteEscapeCharacter { get; set; }
 
         /// <summary>Indicates whether or not all output fields should be quoted</summary>
-        public QuoteFields QuoteFields { get; set; }
+        public QuoteField QuoteFields { get; set; }
 
         /// <summary>Value used to delimit records</summary>
         public char? RecordDelimiter { get; set; }
@@ -24,7 +24,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
             FieldDelimiter = null;
             QuoteCharacter = null;
             QuoteEscapeCharacter = null;
-            QuoteFields = QuoteFields.Unknown;
+            QuoteFields = QuoteField.Unknown;
             RecordDelimiter = null;
         }
     }

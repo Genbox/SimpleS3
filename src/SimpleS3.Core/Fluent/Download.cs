@@ -27,9 +27,9 @@ namespace Genbox.SimpleS3.Core.Fluent
 
         public async Task<MultipartDownloadStatus> DownloadMultipartAsync(Stream output, CancellationToken token = default)
         {
-            IAsyncEnumerable<GetObjectResponse> async = _objectOperations.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
+            IAsyncEnumerable<GetObjectResponse> getResp = _objectOperations.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
 
-            await foreach (GetObjectResponse resp in async.WithCancellation(token))
+            await foreach (GetObjectResponse resp in getResp.WithCancellation(token))
             {
                 if (!resp.IsSuccess)
                     return MultipartDownloadStatus.Incomplete;

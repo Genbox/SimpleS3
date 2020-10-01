@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Microsoft.Extensions.Options;
 
@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Storage
                 if (_options.Value.OverwriteExisting)
                     File.WriteAllBytes(path, data);
                 else
-                    throw new Exception($"Cannot overwrite existing profile {name} because {nameof(DiskStorageOptions.OverwriteExisting)} is {_options.Value.OverwriteExisting}");
+                    throw new S3Exception($"Cannot overwrite existing profile {name} because {nameof(DiskStorageOptions.OverwriteExisting)} is {_options.Value.OverwriteExisting}");
             }
             else
                 File.WriteAllBytes(path, data);

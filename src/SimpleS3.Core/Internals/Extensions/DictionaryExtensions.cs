@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 
@@ -17,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Internals.Extensions
             if (response.TryGetValue(key, out string value))
                 return value;
 
-            throw new Exception($"Failed to get required header '{key}'");
+            throw new S3Exception($"Failed to get required header '{key}'");
         }
 
         public static bool TryGetHeader(this IDictionary<string, string> response, string key, out string? value)

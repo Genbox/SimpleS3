@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
@@ -12,12 +13,12 @@ namespace Genbox.SimpleS3.Core.Extensions
     public static class BucketClientExtensions
     {
         /// <summary>List all buckets</summary>
-        public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(this IBucketClient client, Action<ListBucketsRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
+        public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(this IBucketClient client, Action<ListBucketsRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             ListBucketsResponse response = await client.ListBucketsAsync(config, token).ConfigureAwait(false);
 
             if (!response.IsSuccess)
-                throw new Exception($"Request failed with status code {response.StatusCode}");
+                throw new S3RequestException(response.StatusCode, "Request failed");
 
             if (token.IsCancellationRequested)
                 yield break;

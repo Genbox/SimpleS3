@@ -1,6 +1,6 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace Genbox.SimpleS3.Cli.Commands
@@ -25,7 +25,7 @@ namespace Genbox.SimpleS3.Cli.Commands
                 mainParent = cliApp3.Model;
 
             if (mainParent == null)
-                throw new Exception("Unable to find parent.");
+                throw new S3Exception("Unable to find parent.");
 
             Manager = CliManager.GetCliManager(mainParent.ProfileName, mainParent.Region);
 

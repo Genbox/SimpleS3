@@ -34,17 +34,13 @@ namespace Genbox.SimpleS3.Extensions
         /// <param name="collection">The service collection</param>
         public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection)
         {
-            S3ClientBuilder builder = new S3ClientBuilder(collection);
+            ICoreBuilder coreBuilder = collection.AddSimpleS3Core();
+            coreBuilder.UseS3Client();
 
-            ICoreBuilder clientBuilder = collection.AddSimpleS3Core();
-            clientBuilder.UseS3Client();
-            builder.CoreBuilder = clientBuilder;
-
-            IHttpClientBuilder httpBuilder = clientBuilder.UseHttpClientFactory();
+            IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
             httpBuilder.UseDefaultHttpPolicy();
-            builder.HttpBuilder = httpBuilder;
 
-            return builder;
+            return new S3ClientBuilder(collection, httpBuilder, coreBuilder);
         }
     }
 }

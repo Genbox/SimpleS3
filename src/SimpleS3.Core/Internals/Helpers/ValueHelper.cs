@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using EnumsNET;
+using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
@@ -31,6 +33,8 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
 
         public static DateTimeOffset ParseDate(string? value, DateTimeFormat format)
         {
+            Validator.RequireNotNull(value, nameof(value));
+
             switch (format)
             {
                 case DateTimeFormat.Iso8601Date:
@@ -67,7 +71,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
             string? str = value.AsString(EnumFormat.EnumMemberValue, EnumFormat.Name);
 
             if (str == null)
-                throw new Exception("Unable to parse enum");
+                throw new S3Exception("Unable to parse enum");
 
             return str;
         }

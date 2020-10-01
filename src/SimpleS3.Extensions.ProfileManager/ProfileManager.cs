@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Microsoft.Extensions.Options;
 
@@ -51,7 +52,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
             string userProtector = _protector != null ? _protector.GetType().Name : string.Empty;
 
             if (!string.Equals(profileProtector, userProtector, StringComparison.OrdinalIgnoreCase))
-                throw new Exception("The access key is protected with " + protector + " but it was not available");
+                throw new S3Exception("The access key is protected with " + protector + " but it was not available");
 
             return profile;
         }

@@ -27,6 +27,6 @@ namespace Genbox.SimpleS3.Core.Abstracts
 
         int StatusCode { get; set; }
 
-        IError Error { get; set; }
+        IError? Error { get; set; }
     }
 }

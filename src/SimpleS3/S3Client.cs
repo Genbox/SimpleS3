@@ -46,7 +46,7 @@ namespace Genbox.SimpleS3
     public sealed class S3Client : IClient, IDisposable
     {
         private IBucketClient _bucketClient;
-        private IList<IDisposable>? _disposables;
+        private readonly IList<IDisposable>? _disposables;
         private IMultipartClient _multipartClient;
         private IObjectClient _objectClient;
 

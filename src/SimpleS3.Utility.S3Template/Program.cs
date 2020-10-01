@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Utility.S3Template.Enums;
 
 namespace Genbox.SimpleS3.Utility.S3Template
 {
-    internal class Program
+    internal static class Program
     {
         private static readonly IDictionary<DataType, (string, string)> Data = new Dictionary<DataType, (string, string)>
         {
@@ -69,7 +69,7 @@ namespace Genbox.SimpleS3.Utility.S3Template
         private static void WriteOutFile(DataType dataType, ApiType apiType, string apiName, string template, string output)
         {
             (string path, string append) = Data[dataType];
-            string outPath = Path.Combine(output, path.Replace("%Type%", apiType.ToString()));
+            string outPath = Path.Combine(output, path.Replace("%Type%", apiType.ToString(), StringComparison.Ordinal));
 
             if (!Directory.Exists(outPath))
                 Directory.CreateDirectory(outPath);
@@ -100,9 +100,9 @@ namespace Genbox.SimpleS3.Utility.S3Template
             }
 
             return template
-                   .Replace("%ApiName%", apiName)
-                   .Replace("%ApiType%", apiType.ToString())
-                   .Replace("%ApiTypeLower%", apiType.ToString().ToLower());
+                   .Replace("%ApiName%", apiName, StringComparison.Ordinal)
+                   .Replace("%ApiType%", apiType.ToString(), StringComparison.Ordinal)
+                   .Replace("%ApiTypeLower%", apiType.ToString().ToLowerInvariant(), StringComparison.Ordinal);
         }
     }
 }

@@ -126,7 +126,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
                             if (csvOutput.QuoteEscapeCharacter != null)
                                 xml.WriteElement("QuoteEscapeCharacter", ConvertChar(csvOutput.QuoteEscapeCharacter));
 
-                            if (csvOutput.QuoteFields != QuoteFields.Unknown)
+                            if (csvOutput.QuoteFields != QuoteField.Unknown)
                                 xml.WriteElement("QuoteFields", ValueHelper.EnumToString(csvOutput.QuoteFields));
 
                             if (csvOutput.RecordDelimiter != null)

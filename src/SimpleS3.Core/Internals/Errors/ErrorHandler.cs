@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Network.Responses.Errors;
 
 namespace Genbox.SimpleS3.Core.Internals.Errors
@@ -14,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Internals.Errors
             XDocument errorDocument = XDocument.Load(response);
 
             if (errorDocument.Root == null)
-                throw new Exception("Unknown format in error response");
+                throw new S3Exception("Unknown format in error response");
 
             Dictionary<string, string> lookup = errorDocument.Root.Elements().ToDictionary(x => x.Name.LocalName, x => x.Value, StringComparer.OrdinalIgnoreCase);
 

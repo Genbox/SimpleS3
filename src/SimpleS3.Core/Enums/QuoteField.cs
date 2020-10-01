@@ -2,7 +2,7 @@
 
 namespace Genbox.SimpleS3.Core.Enums
 {
-    public enum QuoteFields
+    public enum QuoteField
     {
         Unknown = 0,
 

@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Utility.TestSetup
 {
-    internal class Program
+    internal static class Program
     {
         private static async Task Main(string[] args)
         {

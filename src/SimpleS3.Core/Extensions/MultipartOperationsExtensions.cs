@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Extensions
 {
     public static class MultipartOperationsExtensions
     {
-        public static async IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(this IMultipartOperations operations, CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, [EnumeratorCancellation]CancellationToken token = default)
+        public static async IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(this IMultipartOperations operations, CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(req, nameof(req));
             Validator.RequireNotNull(data, nameof(data));
@@ -85,7 +85,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             }
         }
 
-        public static async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectOperations operations, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
+        public static async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectOperations operations, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(output, nameof(output));
 
@@ -105,7 +105,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                 GetObjectResponse getResp = await operations.GetObjectAsync(getReq, token).ConfigureAwait(false);
 
                 if (!getResp.IsSuccess)
-                    throw new Exception();
+                    throw new S3RequestException(getResp.StatusCode);
 
                 await getResp.Content.CopyToAsync(output, 81920, token).ConfigureAwait(false);
 
@@ -150,14 +150,14 @@ namespace Genbox.SimpleS3.Core.Extensions
 
                 GetObjectResponse getResp = await operations.GetObjectAsync(getReq, token).ConfigureAwait(false);
 
-                using (Stream stream = getResp.Content)
+                using (getResp.Content)
                 {
                     long offset = (partNumber - 1) * partSize;
                     byte[] buffer = new byte[bufferSize];
 
                     while (true)
                     {
-                        int read = await stream.ReadUpToAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
+                        int read = await getResp.Content.ReadUpToAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
 
                         if (read > 0)
                         {
