@@ -8,19 +8,12 @@ using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Builders;
-using Genbox.SimpleS3.Core.Network.Requests;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using HttpMethod = Genbox.SimpleS3.Core.Abstracts.Enums.HttpMethod;
 
 namespace Genbox.SimpleS3.Core.Benchmarks
 {
     //This benchmark tests against https://github.com/FantasticFiasco/aws-signature-version-4
-
-    public class DummyRequest : BaseRequest
-    {
-        public DummyRequest() : base(HttpMethod.GET) { }
-    }
 
     [MemoryDiagnoser]
     [InProcess]
