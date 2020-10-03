@@ -2,9 +2,9 @@
 
 namespace Genbox.SimpleS3.Core.Network.Requests
 {
-    public abstract class PreSignedBaseRequest : BaseRequest
+    public abstract class SignedBaseRequest : BaseRequest
     {
-        protected PreSignedBaseRequest(HttpMethod method, string url) : base(method)
+        protected SignedBaseRequest(HttpMethod method, string url) : base(method)
         {
             Url = url;
         }

@@ -61,7 +61,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
             BucketClient = Services.GetRequiredService<IBucketClient>();
             MultipartClient = Services.GetRequiredService<IMultipartClient>();
             Transfer = Services.GetRequiredService<Transfer>();
-            PreSignedObjectOperations = Services.GetRequiredService<IPreSignedObjectOperations>();
+            SignedObjectOperations = Services.GetRequiredService<ISignedObjectOperations>();
         }
 
         public ServiceProvider Services { get; }
@@ -72,7 +72,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
         protected IBucketClient BucketClient { get; }
         protected IMultipartClient MultipartClient { get; }
         protected Transfer Transfer { get; }
-        public IPreSignedObjectOperations PreSignedObjectOperations { get; set; }
+        public ISignedObjectOperations SignedObjectOperations { get; set; }
 
         public void Dispose()
         {

@@ -68,20 +68,20 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.TryAddSingleton<ISignatureBuilder, SignatureBuilder>();
             collection.TryAddSingleton<IChunkedSignatureBuilder, ChunkedSignatureBuilder>();
             collection.TryAddSingleton<HeaderAuthorizationBuilder>();
-            collection.TryAddSingleton<IPreSignRequestHandler, DefaultPreSignedRequestHandler>();
+            collection.TryAddSingleton<ISignedRequestHandler, DefaultSignedRequestHandler>();
             collection.TryAddSingleton<QueryParameterAuthorizationBuilder>();
 
             //Operations
             collection.TryAddSingleton<IObjectOperations, ObjectOperations>();
             collection.TryAddSingleton<IBucketOperations, BucketOperations>();
             collection.TryAddSingleton<IMultipartOperations, MultipartOperations>();
-            collection.TryAddSingleton<IPreSignedObjectOperations, PreSignedObjectOperations>();
+            collection.TryAddSingleton<ISignedObjectOperations, SignedObjectOperations>();
 
             //Clients
             collection.TryAddSingleton<IObjectClient, S3ObjectClient>();
             collection.TryAddSingleton<IBucketClient, S3BucketClient>();
             collection.TryAddSingleton<IMultipartClient, S3MultipartClient>();
-            collection.TryAddSingleton<IPreSignedObjectClient, S3PreSignedObjectClient>();
+            collection.TryAddSingleton<ISignedObjectClient, S3SignedObjectClient>();
 
             //Misc
             collection.TryAddSingleton<IRequestHandler, DefaultRequestHandler>();

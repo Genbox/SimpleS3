@@ -68,16 +68,16 @@ namespace Genbox.SimpleS3.Core.Network
         {
             token.ThrowIfCancellationRequested();
 
-            if (request is PreSignedBaseRequest preSigned)
+            if (request is SignedBaseRequest preSigned)
                 return SendPreSigned<TResp>(preSigned, token);
 
             return SendRequest<TReq, TResp>(request, token);
         }
 
-        private Task<TResp> SendPreSigned<TResp>(PreSignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
+        private Task<TResp> SendPreSigned<TResp>(SignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
         {
             Stream? requestStream = _marshaller.MarshalRequest(preSigned, _options.Value);
-            return HandleResponse<PreSignedBaseRequest, TResp>(preSigned, preSigned.Url, requestStream, token);
+            return HandleResponse<SignedBaseRequest, TResp>(preSigned, preSigned.Url, requestStream, token);
         }
 
         private Task<TResp> SendRequest<TReq, TResp>(TReq request, CancellationToken token) where TResp : IResponse, new() where TReq : IRequest

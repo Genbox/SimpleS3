@@ -72,7 +72,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
             BucketClient = _services.GetRequiredService<IBucketClient>();
             MultipartClient = _services.GetRequiredService<IMultipartClient>();
             Transfer = _services.GetRequiredService<Fluent.Transfer>();
-            PreSignedObjectClient = _services.GetRequiredService<IPreSignedObjectClient>();
+            SignedObjectClient = _services.GetRequiredService<ISignedObjectClient>();
         }
 
         protected string BucketName { get; }
@@ -80,7 +80,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
         protected IBucketClient BucketClient { get; }
         protected IMultipartClient MultipartClient { get; }
         protected Fluent.Transfer Transfer { get; }
-        protected IPreSignedObjectClient PreSignedObjectClient { get; }
+        protected ISignedObjectClient SignedObjectClient { get; }
 
         public void Dispose()
         {

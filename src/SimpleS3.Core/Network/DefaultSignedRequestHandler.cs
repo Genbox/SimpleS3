@@ -18,16 +18,16 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Network
 {
-    public class DefaultPreSignedRequestHandler : IPreSignRequestHandler
+    public class DefaultSignedRequestHandler : ISignedRequestHandler
     {
         private readonly IAuthorizationBuilder _authBuilder;
-        private readonly ILogger<DefaultPreSignedRequestHandler> _logger;
+        private readonly ILogger<DefaultSignedRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
         private readonly IOptions<S3Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
         private readonly IValidatorFactory _validator;
 
-        public DefaultPreSignedRequestHandler(IOptions<S3Config> options, IScopeBuilder scopeBuilder, IValidatorFactory validator, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, ILogger<DefaultPreSignedRequestHandler> logger)
+        public DefaultSignedRequestHandler(IOptions<S3Config> options, IScopeBuilder scopeBuilder, IValidatorFactory validator, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, ILogger<DefaultSignedRequestHandler> logger)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));

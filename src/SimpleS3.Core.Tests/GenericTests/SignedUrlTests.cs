@@ -12,14 +12,14 @@ using Xunit;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests
 {
-    public class PreSignedUrlTests
+    public class SignedUrlTests
     {
         private readonly IOptions<S3Config> _options;
         private readonly ScopeBuilder _scopeBuilder;
         private readonly SignatureBuilder _sigBuilder;
         private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
 
-        public PreSignedUrlTests()
+        public SignedUrlTests()
         {
             //See https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-query-string-auth.html
             S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
