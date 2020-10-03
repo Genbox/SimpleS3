@@ -28,5 +28,6 @@ namespace Genbox.SimpleS3.Core
         public KeyValidationMode ObjectKeyValidationMode { get; set; } = KeyValidationMode.AsciiMode;
         public bool AutoUrlDecodeResponses { get; set; } = true;
         public bool AlwaysCalculateContentMd5 { get; set; }
+        public bool ThrowExceptionOnError { get; set; }
     }
 }

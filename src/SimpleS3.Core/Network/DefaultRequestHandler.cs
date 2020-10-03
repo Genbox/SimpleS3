@@ -14,6 +14,7 @@ using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Extensions;
@@ -184,6 +185,9 @@ namespace Genbox.SimpleS3.Core.Network
                             response.Error = ErrorHandler.Create(ms);
 
                         _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
+
+                        if (_options.Value.ThrowExceptionOnError)
+                            throw new S3RequestException(response.StatusCode, $"Received error: '{response.Error.Message}'. Details: '{response.Error.GetErrorDetails()}'");
                     }
                 }
             }

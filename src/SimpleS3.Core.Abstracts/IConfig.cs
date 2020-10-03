@@ -13,10 +13,9 @@ namespace Genbox.SimpleS3.Core.Abstracts
         AwsRegion Region { get; set; }
 
         /// <summary>
-        /// There are 3 different signing modes:
-        /// 1. Unsigned - means the request will be sent without a signature at all.
-        /// 2. FullSignature - Means the full payload will be hashed before sending. This option is better when you are only sending small objects (up to 32 MB).
-        /// 3. StreamingSignature - Means the payload will be hashed in chunks and streamed to the server. This option is better when you also send large objects (up to 5 TB).
+        /// There are 3 different signing modes: 1. Unsigned - means the request will be sent without a signature at all. 2. FullSignature - Means the
+        /// full payload will be hashed before sending. This option is better when you are only sending small objects (up to 32 MB). 3. StreamingSignature -
+        /// Means the payload will be hashed in chunks and streamed to the server. This option is better when you also send large objects (up to 5 TB).
         /// </summary>
         SignatureMode PayloadSignatureMode { get; set; }
 
@@ -53,5 +52,8 @@ namespace Genbox.SimpleS3.Core.Abstracts
 
         /// <summary>When enabled, SimpleS3 will always calculate the ContentMD5 property before sending the request</summary>
         bool AlwaysCalculateContentMd5 { get; set; }
+
+        /// <summary>Set this to true to make SimpleS3 throw exceptions when it receives an error response from the S3 API.</summary>
+        bool ThrowExceptionOnError { get; set; }
     }
 }
