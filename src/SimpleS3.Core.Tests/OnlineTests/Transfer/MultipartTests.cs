@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
                 data[i] = (byte)(i % 255);
             }
 
-            MultipartUploadStatus ulStatus = await Transfer.Upload(BucketName, nameof(UploadDownloadMultipart))
+            MultipartUploadStatus ulStatus = await Transfer.CreateUpload(BucketName, nameof(UploadDownloadMultipart))
                                                            .UploadMultipartAsync(new MemoryStream(data))
                                                            .ConfigureAwait(false);
 
@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
 
             using (MemoryStream ms = new MemoryStream())
             {
-                MultipartDownloadStatus dlStatus = await Transfer.Download(BucketName, nameof(UploadDownloadMultipart))
+                MultipartDownloadStatus dlStatus = await Transfer.CreateDownload(BucketName, nameof(UploadDownloadMultipart))
                                                                  .DownloadMultipartAsync(ms)
                                                                  .ConfigureAwait(false);
 

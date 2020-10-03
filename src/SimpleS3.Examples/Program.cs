@@ -75,7 +75,7 @@ namespace Genbox.SimpleS3.Examples
             Console.WriteLine("Using the fluent API");
 
             //Upload string
-            Upload upload = client.Transfer.Upload(bucketName, objectName)
+            Upload upload = client.Transfer.CreateUpload(bucketName, objectName)
                                            .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
                                            .WithCacheControl(CacheControlType.NoCache)
                                            .WithEncryption();
@@ -87,7 +87,7 @@ namespace Genbox.SimpleS3.Examples
                 Console.WriteLine("Successfully uploaded the object");
 
                 //Download string
-                Download download = client.Transfer.Download(bucketName, objectName)
+                Download download = client.Transfer.CreateDownload(bucketName, objectName)
                                                    .WithRange(0, 10); //Adjust this to return only part of the string
 
                 GetObjectResponse resp2 = await download.DownloadAsync().ConfigureAwait(false);

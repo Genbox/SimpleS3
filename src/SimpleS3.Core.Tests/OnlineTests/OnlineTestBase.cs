@@ -107,7 +107,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
 
         protected async Task<PutObjectResponse> UploadTransferAsync(string bucketName, string objectKey, Action<Upload>? action = null, bool assumeSuccess = true)
         {
-            Upload upload = Transfer.Upload(bucketName, objectKey);
+            Upload upload = Transfer.CreateUpload(bucketName, objectKey);
             action?.Invoke(upload);
 
             PutObjectResponse resp = await upload.UploadStringAsync("test", Encoding.UTF8).ConfigureAwait(false);
@@ -145,7 +145,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
 
         protected async Task<GetObjectResponse> AssertTransferAsync(string bucketName, string objectKey, Action<Download>? config = null, bool assumeSuccess = true)
         {
-            Download download = Transfer.Download(bucketName, objectKey);
+            Download download = Transfer.CreateDownload(bucketName, objectKey);
             config?.Invoke(download);
             GetObjectResponse resp = await download.DownloadAsync().ConfigureAwait(false);
 

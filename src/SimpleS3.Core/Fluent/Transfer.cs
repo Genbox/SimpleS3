@@ -15,12 +15,12 @@ namespace Genbox.SimpleS3.Core.Fluent
             _multipartOperations = multipartOperations;
         }
 
-        public Upload Upload(string bucket, string objectKey)
+        public Upload CreateUpload(string bucket, string objectKey)
         {
             return new Upload(_objectOperations, _multipartOperations, bucket, objectKey);
         }
 
-        public Download Download(string bucket, string objectKey)
+        public Download CreateDownload(string bucket, string objectKey)
         {
             return new Download(_objectOperations, bucket, objectKey);
         }

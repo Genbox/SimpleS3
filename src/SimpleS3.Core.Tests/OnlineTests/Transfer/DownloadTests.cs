@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
         {
             await ObjectClient.PutObjectStringAsync(BucketName, nameof(DownloadContentRange), "123456789012345678901234567890123456789012345678901234567890").ConfigureAwait(false);
 
-            GetObjectResponse resp = await Transfer.Download(BucketName, nameof(DownloadContentRange))
+            GetObjectResponse resp = await Transfer.CreateDownload(BucketName, nameof(DownloadContentRange))
                                                    .WithRange(0, 10)
                                                    .DownloadAsync()
                                                    .ConfigureAwait(false);
