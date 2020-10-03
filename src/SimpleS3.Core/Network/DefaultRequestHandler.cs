@@ -183,7 +183,7 @@ namespace Genbox.SimpleS3.Core.Network
                         using (responseStream)
                             response.Error = ErrorHandler.Create(ms);
 
-                        _logger.LogError("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
+                        _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
                     }
                 }
             }
