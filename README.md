@@ -9,7 +9,7 @@ A C# implementation of Amazon's S3 API with a focus on simplicity, security and 
 * Streaming chunked encoding support
 * Server-side encryption with customer keys
 * Support for path and virtual host style buckets
-* Support most S3 functions. See the [S3 API status page](https://github.com/Genbox/SimpleS3/wiki/S3-API-status). Something missing? You can help by [contributing](https://github.com/Genbox/SimpleS3/wiki/Extending-SimpleS3).
+* Support most S3 functions. See the [S3 API status page](https://github.com/Genbox/SimpleS3/wiki/S3-API-status).
 
 ### API features
 These are the features provided by this API implementation.
@@ -20,7 +20,9 @@ These are the features provided by this API implementation.
 * Extensive unit tests ensure correctness and stability
 * Support for uploading/downloading multiparts in parallel
 * Support for third-party servers like [Minio](https://min.io/) and [Wasabi](https://wasabi.com/)
-* ProfileManager to securely manage credentials
+* Has a ProfileManager to securely manage credentials with in-memory encryption
+* Everything is implemeneted with async and cancellation support
+* Validation of requests makes it easier to know what is wrong before sending a request
 
 ## Extensions
 SimpleS3 is very extensible and has multiple different network drivers and addons you can use. Click on the extension below for more information.
@@ -28,6 +30,7 @@ SimpleS3 is very extensible and has multiple different network drivers and addon
 * [SimpleS3.Extensions.HttpClient](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClient)
 * [SimpleS3.Extensions.HttpClientFactory](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClientFactory)
 * [SimpleS3.Extensions.ProfileManager](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.ProfileManager)
+* [SimpleS3.Extensions.HttpClientFactory.Polly](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClientFactory.Polly)
 
 ## Examples
 
@@ -55,12 +58,8 @@ await client.PutObjectStringAsync("MyBucket", "MyObject", "Hello World!");
 
 #### Download an object
 ```csharp
-string content = await client.GetObjectStringAsync("MyBucket", "MyObject");
-
-if (content != null)
-    Console.WriteLine(content); //Outputs: Hello World!
-else
-    Console.WriteLine("Something went wrong");
+GetObjectResponse resp = await client.GetObjectAsync("MyBucket", "MyObject");
+Console.WriteLine(await resp.Content.AsStringAsync());
 ```
 
 #### Delete an object
@@ -71,23 +70,22 @@ await client.DeleteObjectAsync("MyBucket", "MyObject");
 ### Fluent API
 The fluent API makes downloading/uploading objects easier by providing a convenient way of supplying information such as cache control, content-disposition, encryption keys, etc.
 ```csharp
-//Upload string
-Upload upload = client.Transfer
-                 .UploadString("MyBucket", "MyObject", "Hello World!", Encoding.UTF8)
-                 .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
-                 .WithCacheControl(CacheControlType.NoCache)
-                 .WithEncryption();
+//Upload
+Upload uploadJob = client.Transfer
+                         .CreateUpload("MyBucket", "MyObject")
+                         .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
+                         .WithCacheControl(CacheControlType.NoCache)
+                         .WithEncryption();
 
-PutObjectResponse resp = await upload.ExecuteAsync();
-Console.WriteLine("Success? " + resp.IsSuccess);
+PutObjectResponse ulResp = await uploadJob.UploadStringAsync("Hello World!", Encoding.UTF8);
 
 //Download string
 Download download = client.Transfer
-                     .Download("MyBucket", "MyObject")
-                     .WithRange(0, 5);                    
+                          .CreateDownload("MyBucket", "MyObject")
+                          .WithRange(0, 5);                    
 
-GetObjectResponse resp2 = await download.ExecuteAsync();
-Console.WriteLine(await resp2.Content.AsStringAsync()); //outputs 'Hello'
+GetObjectResponse dlResp = await download.DownloadAsync();
+Console.WriteLine(await dlResp.Content.AsStringAsync()); //Outputs "Hello"
 ```
 
-See the code in SimpleS3.Examples for more examples.
+See more code in SimpleS3.Examples
