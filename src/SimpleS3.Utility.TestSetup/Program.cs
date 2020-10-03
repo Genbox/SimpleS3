@@ -20,21 +20,23 @@ namespace Genbox.SimpleS3.Utility.TestSetup
     {
         private static async Task Main(string[] args)
         {
-            IConfigurationRoot root = new ConfigurationBuilder()
+            IConfigurationRoot configRoot = new ConfigurationBuilder()
                                       .AddJsonFile("Config.json", false)
                                       .Build();
 
             ServiceCollection services = new ServiceCollection();
 
-            services.Configure<S3Config>(root);
+            services.Configure<S3Config>(configRoot);
 
             IS3ClientBuilder clientBuilder = services.AddSimpleS3();
 
+            string profileName = configRoot["ProfileName"];
+
             clientBuilder.CoreBuilder.UseProfileManager()
-                         .BindConfigToDefaultProfile()
+                         .BindConfigToProfile(profileName)
                          .UseDataProtection();
 
-            IConfigurationSection proxySection = root.GetSection("Proxy");
+            IConfigurationSection proxySection = configRoot.GetSection("Proxy");
 
             if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
                 clientBuilder.HttpBuilder.WithProxy(proxySection["ProxyAddress"]);
@@ -42,18 +44,18 @@ namespace Genbox.SimpleS3.Utility.TestSetup
             using (ServiceProvider provider = services.BuildServiceProvider())
             {
                 IProfileManager manager = provider.GetRequiredService<IProfileManager>();
-                IProfile? profile = manager.GetDefaultProfile();
+                IProfile? profile = manager.GetProfile(profileName);
 
                 //If profile is null, then we do not yet have a profile stored on disk. We use ConsoleSetup as an easy and secure way of asking for credentials
                 if (profile == null)
                 {
                     Console.WriteLine("No profile found. Starting setup.");
-                    ConsoleSetup.SetupDefaultProfile(manager);
+                    ConsoleSetup.SetupProfile(manager, profileName);
                 }
 
                 IBucketClient bucketClient = provider.GetRequiredService<IBucketClient>();
 
-                string bucketName = root["BucketName"];
+                string bucketName = configRoot["BucketName"];
 
                 Console.WriteLine($"Setting up bucket '{bucketName}'");
 

@@ -42,8 +42,10 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
                 configRoot.Bind(config);
             });
 
+            string profileName = configRoot["ProfileName"];
+
             coreBuilder.UseProfileManager()
-                       .BindConfigToDefaultProfile()
+                       .BindConfigToProfile(profileName)
                        .UseDataProtection();
 
             IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();

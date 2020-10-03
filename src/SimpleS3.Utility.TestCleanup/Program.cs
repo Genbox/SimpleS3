@@ -19,21 +19,23 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
     {
         private static async Task Main(string[] args)
         {
-            IConfigurationRoot root = new ConfigurationBuilder()
+            IConfigurationRoot configRoot = new ConfigurationBuilder()
                                       .AddJsonFile("Config.json", false)
                                       .Build();
 
             ServiceCollection services = new ServiceCollection();
 
-            services.Configure<S3Config>(root);
+            services.Configure<S3Config>(configRoot);
 
-            IS3ClientBuilder clientBuilder = services.AddSimpleS3((s3Config, provider) => root.Bind(s3Config));
+            IS3ClientBuilder clientBuilder = services.AddSimpleS3((s3Config, provider) => configRoot.Bind(s3Config));
+
+            string profileName = configRoot["ProfileName"];
 
             clientBuilder.CoreBuilder.UseProfileManager()
-                         .BindConfigToDefaultProfile()
+                         .BindConfigToProfile(profileName)
                          .UseDataProtection();
 
-            IConfigurationSection proxySection = root.GetSection("Proxy");
+            IConfigurationSection proxySection = configRoot.GetSection("Proxy");
 
             if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
                 clientBuilder.HttpBuilder.WithProxy(proxySection["ProxyAddress"]);
@@ -41,11 +43,11 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
             using (ServiceProvider serviceProvider = services.BuildServiceProvider())
             {
                 IProfileManager manager = serviceProvider.GetRequiredService<IProfileManager>();
-                IProfile? profile = manager.GetDefaultProfile();
+                IProfile? profile = manager.GetProfile(profileName);
 
                 //If profile is null, then we do not yet have a profile stored on disk. We use ConsoleSetup as an easy and secure way of asking for credentials
                 if (profile == null)
-                    ConsoleSetup.SetupDefaultProfile(manager);
+                    ConsoleSetup.SetupProfile(manager, profileName);
 
                 S3Client client = serviceProvider.GetRequiredService<S3Client>();
 
@@ -61,7 +63,7 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
                 }
 
                 //Empty the main test bucket
-                await client.DeleteAllObjectsAsync(root["BucketName"]).ConfigureAwait(false);
+                await client.DeleteAllObjectsAsync(configRoot["BucketName"]).ConfigureAwait(false);
             }
         }
     }
