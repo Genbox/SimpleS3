@@ -1,7 +1,7 @@
 ﻿using System;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -12,15 +12,16 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
     public class ProfileManager : IProfileManager
     {
         public const string DefaultProfile = "DefaultProfile";
-        public const AwsRegion DefaultRegion = AwsRegion.UsEast1;
         private readonly IOptions<ProfileManagerOptions> _options;
         private readonly IAccessKeyProtector? _protector;
 
+        private readonly IInputValidator _validator;
         private readonly IProfileSerializer _serializer;
         private readonly IStorage _storage;
 
-        public ProfileManager(IProfileSerializer serializer, IStorage storage, IOptions<ProfileManagerOptions> options, IAccessKeyProtector? protector = null)
+        public ProfileManager(IInputValidator validator, IProfileSerializer serializer, IStorage storage, IOptions<ProfileManagerOptions> options, IAccessKeyProtector? protector = null)
         {
+            _validator = validator;
             _serializer = serializer;
             _storage = storage;
             _options = options;
@@ -57,10 +58,10 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
             return profile;
         }
 
-        public IProfile CreateProfile(string name, string keyId, byte[] accessKey, AwsRegion region = DefaultRegion, bool persist = true)
+        public IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, bool persist = true)
         {
-            InputValidator.ValidateKeyId(keyId);
-            InputValidator.ValidateAccessKey(accessKey);
+            _validator.ValidateKeyId(keyId);
+            _validator.ValidateAccessKey(accessKey);
 
             Profile profile = new Profile();
             profile.Name = name;
@@ -71,7 +72,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
                 profile.AddTag("Protector", _protector.GetType().Name);
 
             profile.CreatedOn = DateTimeOffset.UtcNow;
-            profile.Region = region;
+            profile.RegionCode = region;
 
             if (persist)
                 profile.Location = SaveProfile(profile);

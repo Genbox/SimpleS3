@@ -10,7 +10,6 @@ using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
-using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,7 +25,7 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
             ServiceCollection services = new ServiceCollection();
 
-            services.Configure<S3Config>(configRoot);
+            services.Configure<AwsConfig>(configRoot);
 
             IS3ClientBuilder clientBuilder = services.AddSimpleS3();
 
@@ -34,6 +33,7 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
             clientBuilder.CoreBuilder.UseProfileManager()
                          .BindConfigToProfile(profileName)
+                         .UseConsoleSetup()
                          .UseDataProtection();
 
             IConfigurationSection proxySection = configRoot.GetSection("Proxy");
@@ -43,15 +43,8 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
             using (ServiceProvider provider = services.BuildServiceProvider())
             {
-                IProfileManager manager = provider.GetRequiredService<IProfileManager>();
-                IProfile? profile = manager.GetProfile(profileName);
-
-                //If profile is null, then we do not yet have a profile stored on disk. We use ConsoleSetup as an easy and secure way of asking for credentials
-                if (profile == null)
-                {
-                    Console.WriteLine("No profile found. Starting setup.");
-                    ConsoleSetup.SetupProfile(manager, profileName);
-                }
+                IProfileSetup setup = provider.GetRequiredService<IProfileSetup>();
+                setup.SetupProfile(profileName);
 
                 IBucketClient bucketClient = provider.GetRequiredService<IBucketClient>();
 
@@ -61,9 +54,9 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
                 HeadBucketResponse headResp = await bucketClient.HeadBucketAsync(bucketName).ConfigureAwait(false);
 
-                if (headResp.IsSuccess)
+                if (headResp.StatusCode == 200)
                     Console.WriteLine($"'{bucketName}' already exist.");
-                else
+                else if (headResp.StatusCode == 404)
                 {
                     Console.WriteLine($"'{bucketName}' does not exist - creating.");
                     CreateBucketResponse createResp = await bucketClient.CreateBucketAsync(bucketName, x => x.EnableObjectLocking = true).ConfigureAwait(false);
@@ -75,6 +68,11 @@ namespace Genbox.SimpleS3.Utility.TestSetup
                         Console.Error.WriteLine($"Failed to create '{bucketName}'. Exiting.");
                         return;
                     }
+                }
+                else
+                {
+                    Console.WriteLine($"Unknown error code when checking if bucket exists: {headResp.StatusCode}");
+                    return;
                 }
 
                 Console.WriteLine("Adding lock configuration");

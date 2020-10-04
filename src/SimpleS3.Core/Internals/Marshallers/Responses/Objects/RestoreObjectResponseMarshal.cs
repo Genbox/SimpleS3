@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     [UsedImplicitly]
     internal class RestoreObjectResponseMarshal : IResponseMarshal<RestoreObjectResponse>
     {
-        public void MarshalResponse(IConfig config, RestoreObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(Config config, RestoreObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
             response.RestoreOutputPath = headers.GetHeader(AmzHeaders.XAmzRestoreOutputPath);

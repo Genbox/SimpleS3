@@ -21,13 +21,14 @@ namespace Genbox.SimpleS3.Core.Network
     public class DefaultSignedRequestHandler : ISignedRequestHandler
     {
         private readonly IAuthorizationBuilder _authBuilder;
+        private readonly IUrlBuilder _urlBuilder;
         private readonly ILogger<DefaultSignedRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
-        private readonly IOptions<S3Config> _options;
+        private readonly IOptions<AwsConfig> _options;
         private readonly IScopeBuilder _scopeBuilder;
         private readonly IValidatorFactory _validator;
 
-        public DefaultSignedRequestHandler(IOptions<S3Config> options, IScopeBuilder scopeBuilder, IValidatorFactory validator, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, ILogger<DefaultSignedRequestHandler> logger)
+        public DefaultSignedRequestHandler(IOptions<AwsConfig> options, IScopeBuilder scopeBuilder, IValidatorFactory validator, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultSignedRequestHandler> logger)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));
@@ -40,6 +41,7 @@ namespace Genbox.SimpleS3.Core.Network
             _validator = validator;
             _options = options;
             _authBuilder = authBuilder;
+            _urlBuilder = urlBuilder;
             _marshaller = marshaller;
             _logger = logger;
             _scopeBuilder = scopeBuilder;
@@ -52,15 +54,15 @@ namespace Genbox.SimpleS3.Core.Network
 
             _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
-            S3Config config = _options.Value;
-            _marshaller.MarshalRequest(request, config);
+            AwsConfig config = _options.Value;
+            _marshaller.MarshalRequest(config, request);
 
             _validator.ValidateAndThrow(request);
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(200);
             RequestHelper.AppendScheme(sb, config);
             int schemeLength = sb.Length;
-            RequestHelper.AppendHost(sb, config, request);
+            _urlBuilder.AppendHost(sb, request);
 
             request.SetHeader(HttpHeaders.Host, sb.ToString(schemeLength, sb.Length - schemeLength));
 
@@ -86,7 +88,7 @@ namespace Genbox.SimpleS3.Core.Network
             if (request is IContainSensitiveMaterial sensitive)
                 sensitive.ClearSensitiveMaterial();
 
-            RequestHelper.AppendUrl(sb, config, request);
+            _urlBuilder.AppendUrl(sb, request);
             RequestHelper.AppendQueryParameters(sb, request);
 
             string url = sb.ToString();

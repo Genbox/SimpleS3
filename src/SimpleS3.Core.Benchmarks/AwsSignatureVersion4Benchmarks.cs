@@ -8,6 +8,7 @@ using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Network;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -28,15 +29,16 @@ namespace Genbox.SimpleS3.Core.Benchmarks
         public void Setup()
         {
             {
-                S3Config config = new S3Config();
+                AwsConfig config = new AwsConfig();
                 config.Region = AwsRegion.EuWest1;
                 config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
 
-                IOptions<S3Config> options = Options.Create(config);
+                IOptions<AwsConfig> options = Options.Create(config);
 
                 SigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
                 ScopeBuilder scopeBuilder = new ScopeBuilder(options);
-                SignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, NullLogger<SignatureBuilder>.Instance, options);
+                AwsUrlBuilder urlBuilder = new AwsUrlBuilder(options);
+                SignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance, options);
 
                 _builder = new HeaderAuthorizationBuilder(options, scopeBuilder, signatureBuilder, NullLogger<HeaderAuthorizationBuilder>.Instance);
 

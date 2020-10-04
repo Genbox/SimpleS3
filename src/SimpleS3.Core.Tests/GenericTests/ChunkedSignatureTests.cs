@@ -9,6 +9,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Network;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Tests.Code.Extensions;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -21,14 +22,14 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
     {
         private readonly HeaderAuthorizationBuilder _authBuilder;
         private readonly ChunkedSignatureBuilder _chunkedSigBuilder;
-        private readonly IOptions<S3Config> _options;
+        private readonly IOptions<AwsConfig> _options;
         private readonly ScopeBuilder _scopeBuilder;
         private readonly SignatureBuilder _sigBuilder;
         private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
 
         public ChunkedSignatureTests()
         {
-            S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
+            AwsConfig config = new AwsConfig(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
 
             //The tests here have signatures built using path style
             config.NamingMode = NamingMode.PathStyle;
@@ -37,7 +38,8 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
 
             SigningKeyBuilder keyBuilder = new SigningKeyBuilder(_options, NullLogger<SigningKeyBuilder>.Instance);
             _scopeBuilder = new ScopeBuilder(_options);
-            _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<SignatureBuilder>.Instance, _options);
+            AwsUrlBuilder urlBuilder = new AwsUrlBuilder(_options);
+            _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance, _options);
             _chunkedSigBuilder = new ChunkedSignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);
             _authBuilder = new HeaderAuthorizationBuilder(_options, _scopeBuilder, _sigBuilder, NullLogger<HeaderAuthorizationBuilder>.Instance);
         }

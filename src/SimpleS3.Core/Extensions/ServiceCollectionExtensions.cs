@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -34,7 +33,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// </summary>
         /// <param name="collection">The service collection</param>
         /// <param name="config">The configuration delegate</param>
-        public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config, IServiceProvider> config)
+        public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection, Action<AwsConfig, IServiceProvider> config)
         {
             collection.Configure(config);
             return AddSimpleS3Core(collection);
@@ -46,7 +45,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// </summary>
         /// <param name="collection">The service collection</param>
         /// <param name="config">The configuration delegate</param>
-        public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection, Action<S3Config> config)
+        public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection, Action<AwsConfig> config)
         {
             collection.Configure(config);
             return AddSimpleS3Core(collection);
@@ -94,9 +93,9 @@ namespace Genbox.SimpleS3.Core.Extensions
 
             collection.AddSingleton<IRequestStreamWrapper, ChunkedContentRequestStreamWrapper>(); //This has to be added using AddSingleton
 
-            Assembly assembly = typeof(S3Config).Assembly; //Needs to be the assembly that contains the types
+            Assembly assembly = typeof(AwsConfig).Assembly; //Needs to be the assembly that contains the types
 
-            collection.TryAddEnumerable(CreateRegistrations(typeof(IValidator), assembly));
+            collection.TryAddEnumerable(CreateRegistrations(typeof(IInputValidator), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IRequestMarshal), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IResponseMarshal), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IPostMapper), assembly));

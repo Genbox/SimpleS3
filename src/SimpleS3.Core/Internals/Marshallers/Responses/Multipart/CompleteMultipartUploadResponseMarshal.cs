@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
     [UsedImplicitly]
     internal class CompleteMultipartUploadResponseMarshal : IResponseMarshal<CompleteMultipartUploadResponse>
     {
-        public void MarshalResponse(IConfig config, CompleteMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(Config config, CompleteMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);

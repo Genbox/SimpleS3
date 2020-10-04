@@ -64,7 +64,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests
 
             //A small hack to remove all validators, as we test them separately
             collection.RemoveAll(typeof(IValidator<>));
-            collection.RemoveAll<IValidator>();
+            collection.RemoveAll<IInputValidator>();
 
             _services = collection.BuildServiceProvider();
 

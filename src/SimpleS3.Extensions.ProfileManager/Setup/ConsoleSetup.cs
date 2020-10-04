@@ -1,39 +1,45 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
 using System.Text;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Common;
-using Genbox.SimpleS3.Core.Common.Extensions;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
 {
-    public static class ConsoleSetup
+    public class ConsoleSetup : IProfileSetup
     {
-        public static IProfile SetupDefaultProfile(IProfileManager profileManager, bool persist = true)
+        private readonly IProfileManager _profileManager;
+        private readonly IInputValidator _inputValidator;
+        private readonly IRegionManager _regionManager;
+
+        public ConsoleSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionManager regionManager)
         {
-            return SetupProfile(profileManager, ProfileManager.DefaultProfile, persist);
+            _profileManager = profileManager;
+            _inputValidator = inputValidator;
+            _regionManager = regionManager;
         }
 
-        public static IProfile SetupProfile(IProfileManager profileManager, string profileName, bool persist = true)
+        public IProfile SetupProfile(string profileName, bool persist = true)
         {
-        start:
+            IProfile? existingProfile = _profileManager.GetProfile(profileName);
+
+            if (existingProfile != null)
+                return existingProfile;
+
+            start:
             Console.WriteLine();
             Console.WriteLine("You don't have a profile set up yet. Please enter your API credentials.");
             Console.WriteLine("You can create a new API key at https://console.aws.amazon.com/iam/home?#/security_credentials");
 
             string enteredKeyId = GetKeyId();
             byte[] accessKey = GetAccessKey();
-            AwsRegion region = GetRegion();
+            IRegionInfo region = GetRegion();
 
             Console.WriteLine();
             Console.WriteLine("Please confirm the following information:");
             Console.WriteLine("Key id: " + enteredKeyId);
-            Console.WriteLine("Region: " + GetEnumMember(region) + " -- " + region.GetRegionName());
+            Console.WriteLine("Region: " + region.Code + " -- " + region.Name);
             Console.WriteLine();
 
             ConsoleKey key;
@@ -48,7 +54,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
             if (key == ConsoleKey.N)
                 goto start;
 
-            IProfile profile = profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region, persist);
+            IProfile profile = _profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region.Name, persist);
 
             if (persist)
             {
@@ -64,7 +70,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
             return profile;
         }
 
-        private static string GetKeyId()
+        private string GetKeyId()
         {
             string? enteredKeyId;
             bool validKeyId = true;
@@ -81,12 +87,12 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
 
                 if (!string.IsNullOrEmpty(enteredKeyId))
                     enteredKeyId = enteredKeyId.Trim();
-            } while (!(validKeyId = InputValidator.TryValidateKeyId(enteredKeyId, out _)));
+            } while (!(validKeyId = _inputValidator.TryValidateKeyId(enteredKeyId, out _)));
 
             return enteredKeyId!;
         }
 
-        private static byte[] GetAccessKey()
+        private byte[] GetAccessKey()
         {
             char[]? enteredAccessKey = null;
             byte[]? utf8AccessKey = null;
@@ -141,7 +147,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
                 }
 
                 utf8AccessKey = Encoding.UTF8.GetBytes(enteredAccessKey);
-            } while (!(validAccessKey = InputValidator.TryValidateAccessKey(utf8AccessKey, out _)));
+            } while (!(validAccessKey = _inputValidator.TryValidateAccessKey(utf8AccessKey, out _)));
 
             //Clear the access key from memory
             Array.Clear(enteredAccessKey, 0, enteredAccessKey.Length);
@@ -149,41 +155,37 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
             return utf8AccessKey;
         }
 
-        private static AwsRegion GetRegion()
+        private IRegionInfo GetRegion()
         {
             Console.WriteLine();
             Console.WriteLine("Choose the default region. You can choose it by index or region code");
 
-            string[] names = Enum.GetNames(typeof(AwsRegion)).Skip(1).ToArray();
+            HashSet<string> validRegionId = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            int counter = 0;
 
             Console.WriteLine("{0,-8}{1,-20}{2}", "Index", "Region Code", "Region Name");
-            foreach (string name in names)
+            foreach (IRegionInfo regionInfo in _regionManager.GetAllRegions())
             {
-                AwsRegion region = (AwsRegion)Enum.Parse(typeof(AwsRegion), name);
-                Console.WriteLine("{0,-8}{1,-20}{2}", (int)region, GetEnumMember(region), region.GetRegionName());
+                validRegionId.Add(regionInfo.Code);
+                Console.WriteLine("{0,-8}{1,-20}{2}", counter, regionInfo.Code, regionInfo.Name);
+
+                counter++;
             }
 
-            string? enteredRegion;
-            bool validRegion = true;
-            AwsRegion parsedRegion;
+        start2:
+            string? enteredRegion = Console.ReadLine();
 
-            do
+            if (enteredRegion != null)
             {
-                if (!validRegion)
-                    Console.Error.WriteLine("Invalid region. Try again.");
+                if (int.TryParse(enteredRegion, out int index) && index >= 0 && index <= counter)
+                    return _regionManager.GetRegionInfo(index);
 
-                enteredRegion = Console.ReadLine();
-            } while (!(validRegion = Enum.TryParse(enteredRegion, out parsedRegion) && Enum.IsDefined(typeof(AwsRegion), parsedRegion)));
+                if (validRegionId.Contains(enteredRegion))
+                    return _regionManager.GetRegionInfo(enteredRegion);
+            }
 
-            return parsedRegion;
-        }
-
-        private static string GetEnumMember(AwsRegion region)
-        {
-            Type type = region.GetType();
-            MemberInfo[] memInfo = type.GetMember(region.ToString());
-            IEnumerable<EnumMemberAttribute> attributes = memInfo[0].GetCustomAttributes<EnumMemberAttribute>();
-            return attributes.First().Value;
+            Console.Error.WriteLine("Invalid region. Try again.");
+            goto start2;
         }
     }
 }

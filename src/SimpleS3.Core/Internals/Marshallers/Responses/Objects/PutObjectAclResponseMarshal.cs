@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     [UsedImplicitly]
     internal class PutObjectAclResponseMarshal : IResponseMarshal<PutObjectAclResponse>
     {
-        public void MarshalResponse(IConfig config, PutObjectAclResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(Config config, PutObjectAclResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
         }

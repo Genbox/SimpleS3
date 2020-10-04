@@ -22,7 +22,7 @@ namespace Genbox.SimpleS3.Core.Network
             }, x => x);
         }
 
-        public void PostMap<TRequest, TResponse>(IConfig config, TRequest request, TResponse response) where TRequest : IRequest where TResponse : IResponse
+        public void PostMap<TRequest, TResponse>(Config config, TRequest request, TResponse response) where TRequest : IRequest where TResponse : IResponse
         {
             if (_postMappers.TryGetValue($"{typeof(TRequest).Name}-{typeof(TResponse).Name}", out IPostMapper marshaller))
                 ((IPostMapper<TRequest, TResponse>)marshaller).PostMap(config, request, response);

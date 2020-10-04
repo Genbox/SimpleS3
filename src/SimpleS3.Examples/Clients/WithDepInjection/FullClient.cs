@@ -35,7 +35,7 @@ namespace Genbox.SimpleS3.Examples.Clients.WithDepInjection
             });
 
             //Here we bind the configuration from above to S3Config, which is automatically used by SimpleS3
-            services.Configure<S3Config>(root);
+            services.Configure<AwsConfig>(root);
 
             //Here we create a core client without a network driver
             ICoreBuilder coreBuilder = services.AddSimpleS3Core(s3Config =>

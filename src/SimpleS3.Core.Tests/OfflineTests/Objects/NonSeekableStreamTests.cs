@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Objects
     {
         public NonSeekableStreamTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
-        protected override void ConfigureConfig(S3Config config)
+        protected override void ConfigureConfig(AwsConfig config)
         {
             //We force streaming signatures as it is the only one that supports non-seekable streams
             config.StreamingChunkSize = 8096;

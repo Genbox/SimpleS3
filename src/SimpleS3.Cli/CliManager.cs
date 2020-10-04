@@ -5,7 +5,6 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
-using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Cli
@@ -20,10 +19,11 @@ namespace Genbox.SimpleS3.Cli
             IS3ClientBuilder builder = services.AddSimpleS3();
 
             builder.CoreBuilder.UseProfileManager()
+                               .UseConsoleSetup()
                                .UseDataProtection();
 
             //Override the region if it is set via commandline
-            builder.Services.PostConfigure<S3Config>(config =>
+            builder.Services.PostConfigure<AwsConfig>(config =>
             {
                 if (region != AwsRegion.Unknown)
                     config.Region = region;
@@ -35,7 +35,8 @@ namespace Genbox.SimpleS3.Cli
             ServiceProvider provider = services.BuildServiceProvider();
             ProfileManager = provider.GetRequiredService<IProfileManager>();
 
-            IProfile profile = ProfileManager.GetProfile(profileName) ?? ConsoleSetup.SetupProfile(ProfileManager, profileName);
+            IProfileSetup? setup = provider.GetRequiredService<IProfileSetup>();
+            setup.SetupProfile(profileName);
 
             S3Client = provider.GetRequiredService<IClient>();
             BucketManager = provider.GetRequiredService<BucketManager>();

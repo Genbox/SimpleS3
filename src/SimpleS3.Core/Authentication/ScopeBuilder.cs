@@ -8,9 +8,9 @@ namespace Genbox.SimpleS3.Core.Authentication
 {
     public class ScopeBuilder : IScopeBuilder
     {
-        private readonly IOptions<S3Config> _options;
+        private readonly IOptions<AwsConfig> _options;
 
-        public ScopeBuilder(IOptions<S3Config> options)
+        public ScopeBuilder(IOptions<AwsConfig> options)
         {
             _options = options;
         }

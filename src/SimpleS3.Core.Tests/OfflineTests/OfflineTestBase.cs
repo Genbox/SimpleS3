@@ -56,7 +56,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
 
             BucketName = _configRoot["BucketName"] ?? "main-test-bucket-2019";
 
-            Config = Services.GetRequiredService<IOptions<S3Config>>().Value;
+            Config = Services.GetRequiredService<IOptions<AwsConfig>>().Value;
             ObjectClient = Services.GetRequiredService<IObjectClient>();
             BucketClient = Services.GetRequiredService<IBucketClient>();
             MultipartClient = Services.GetRequiredService<IMultipartClient>();
@@ -66,7 +66,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
 
         public ServiceProvider Services { get; }
 
-        protected S3Config Config { get; }
+        protected AwsConfig Config { get; }
         protected string BucketName { get; }
         protected IObjectClient ObjectClient { get; }
         protected IBucketClient BucketClient { get; }
@@ -80,7 +80,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void ConfigureConfig(S3Config config) { }
+        protected virtual void ConfigureConfig(AwsConfig config) { }
 
         protected virtual void ConfigureCoreBuilder(ICoreBuilder builder) { }
 

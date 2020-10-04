@@ -1,5 +1,4 @@
 ﻿using System;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Abstracts
 {
@@ -8,7 +7,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Abstracts
         string Name { get; }
         string KeyId { get; }
         byte[] AccessKey { get; }
-        AwsRegion Region { get; }
+        string RegionCode { get; }
         string Location { get; }
         DateTimeOffset CreatedOn { get; }
         void AddTag(string key, string value);

@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
     [UsedImplicitly]
     internal class PutBucketLockConfigurationRequestMarshal : IRequestMarshal<PutBucketLockConfigurationRequest>
     {
-        public Stream? MarshalRequest(PutBucketLockConfigurationRequest request, IConfig config)
+        public Stream? MarshalRequest(PutBucketLockConfigurationRequest request, Config config)
         {
             request.SetQueryParameter(AmzParameters.ObjectLock, string.Empty);
 

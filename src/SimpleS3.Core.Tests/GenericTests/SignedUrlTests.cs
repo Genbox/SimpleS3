@@ -5,6 +5,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Network;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -14,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
 {
     public class SignedUrlTests
     {
-        private readonly IOptions<S3Config> _options;
+        private readonly IOptions<AwsConfig> _options;
         private readonly ScopeBuilder _scopeBuilder;
         private readonly SignatureBuilder _sigBuilder;
         private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
@@ -22,13 +23,14 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
         public SignedUrlTests()
         {
             //See https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-query-string-auth.html
-            S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
+            AwsConfig config = new AwsConfig(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
 
             _options = Options.Create(config);
 
             SigningKeyBuilder keyBuilder = new SigningKeyBuilder(_options, NullLogger<SigningKeyBuilder>.Instance);
             _scopeBuilder = new ScopeBuilder(_options);
-            _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<SignatureBuilder>.Instance, _options);
+            AwsUrlBuilder urlBuilder = new AwsUrlBuilder(_options);
+            _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance, _options);
         }
 
         [Fact]

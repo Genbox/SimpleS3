@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Extensions
         /// <summary>Add SimpleS3 services to a service collection.</summary>
         /// <param name="collection">The service collection</param>
         /// <param name="config">The configuration delegate</param>
-        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config, IServiceProvider> config)
+        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<AwsConfig, IServiceProvider> config)
         {
             collection.Configure(config);
             return AddSimpleS3(collection);
@@ -24,7 +24,7 @@ namespace Genbox.SimpleS3.Extensions
         /// <summary>Add SimpleS3 services to a service collection.</summary>
         /// <param name="collection">The service collection</param>
         /// <param name="config">The configuration delegate</param>
-        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<S3Config> config)
+        public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection, Action<AwsConfig> config)
         {
             collection.Configure(config);
             return AddSimpleS3(collection);

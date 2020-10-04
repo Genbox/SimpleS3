@@ -8,6 +8,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Network;
 using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -27,14 +28,15 @@ namespace Genbox.SimpleS3.Core.Benchmarks
 
         public SignatureBenchmarks()
         {
-            S3Config config = new S3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
+            AwsConfig config = new AwsConfig(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
             config.PayloadSignatureMode = SignatureMode.FullSignature;
 
-            IOptions<S3Config> options = Options.Create(config);
+            IOptions<AwsConfig> options = Options.Create(config);
 
             _signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
             IScopeBuilder scopeBuilder = new ScopeBuilder(options);
-            _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<SignatureBuilder>.Instance, options);
+            AwsUrlBuilder urlBuilder = new AwsUrlBuilder(options);
+            _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance, options);
             _chunkSigBuilder = new ChunkedSignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);
 
             byte[] data = Encoding.UTF8.GetBytes("Hello world");
