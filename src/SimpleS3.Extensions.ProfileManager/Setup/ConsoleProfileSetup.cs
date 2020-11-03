@@ -7,13 +7,13 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
 {
-    public class ConsoleSetup : IProfileSetup
+    public class ConsoleProfileSetup : IProfileSetup
     {
         private readonly IProfileManager _profileManager;
         private readonly IInputValidator _inputValidator;
         private readonly IRegionManager _regionManager;
 
-        public ConsoleSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionManager regionManager)
+        public ConsoleProfileSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionManager regionManager)
         {
             _profileManager = profileManager;
             _inputValidator = inputValidator;

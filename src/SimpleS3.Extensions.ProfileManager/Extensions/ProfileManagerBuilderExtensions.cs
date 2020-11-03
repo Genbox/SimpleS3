@@ -32,7 +32,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
 
         public static IProfileManagerBuilder UseConsoleSetup(this IProfileManagerBuilder builder)
         {
-            builder.Services.AddSingleton<ConsoleSetup>();
+            builder.Services.AddSingleton<ConsoleProfileSetup>();
             return builder;
         }
     }

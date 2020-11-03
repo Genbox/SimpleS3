@@ -4,10 +4,10 @@
   "ChunkSize": 32768,
   "EnableBucketNameValidation": true,
   "BucketName": "main-test-bucket-2020",
-  "Endpoint": null, //Set to https://play.min.io:9000/ if you want to use Minio's play server
+  //"Endpoint": "https://s3.us-west-002.backblazeb2.com", //Set to https://play.min.io:9000/ if you want to use Minio's play server",
   "AutoUrlDecodeResponses": false,
-  "NamingMode": "VirtualHost",
-  "ProfileName": "DefaultProfile",
+  "NamingMode": "VirtualHost", //VirtualHost, PathStyle
+  "ProfileName": "DefaultProfile", //DefaultProfile, minio, b2
 
   "Proxy": {
     "UseProxy": false,

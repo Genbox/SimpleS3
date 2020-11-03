@@ -34,8 +34,10 @@ using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Operations;
 using Genbox.SimpleS3.Core.Validation;
+using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -281,9 +283,9 @@ namespace Genbox.SimpleS3
 
         private void Initialize(IOptions<AwsConfig> options, INetworkDriver networkDriver, ILoggerFactory loggerFactory)
         {
-            Assembly assembly = typeof(AwsConfig).Assembly;
+            Assembly assembly = typeof(Config).Assembly;
 
-            SimpleServiceProvider provider = new SimpleServiceProvider((typeof(IOptions<AwsConfig>), options));
+            SimpleServiceProvider provider = new SimpleServiceProvider((typeof(IOptions<Config>), options));
 
             IEnumerable<IValidator> validators = CreateInstances<IValidator>(assembly, provider);
             IEnumerable<IRequestMarshal> requestMarshals = CreateInstances<IRequestMarshal>(assembly, provider);
