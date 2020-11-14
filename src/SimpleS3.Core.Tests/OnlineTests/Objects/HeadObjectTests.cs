@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.TestBase;
 using Xunit;
 using Xunit.Abstractions;
 

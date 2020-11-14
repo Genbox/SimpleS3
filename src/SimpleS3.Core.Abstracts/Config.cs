@@ -2,7 +2,7 @@
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 
-namespace Genbox.SimpleS3.Core
+namespace Genbox.SimpleS3.Core.Abstracts
 {
     public class Config
     {
@@ -30,7 +30,7 @@ namespace Genbox.SimpleS3.Core
         public NamingMode NamingMode { get; set; } = NamingMode.VirtualHost; //Amazon recommends virtual host. Path style urls was deprecated on 2020-09-30
 
         /// <summary>Set to true if you want to use an encrypted connection.</summary>
-        public bool UseTLS { get; set; }
+        public bool UseTls { get; set; } = true;
 
         /// <summary>Use this to set a custom endpoint. For example, when using minio, you can set it to https://miniohost.com/</summary>
         public Uri? Endpoint { get; set; }
@@ -54,5 +54,7 @@ namespace Genbox.SimpleS3.Core
         public bool ThrowExceptionOnError { get; set; }
 
         public string RegionCode { get; set; }
+
+        public string ProviderType { get; set; }
     }
 }

@@ -19,11 +19,6 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions
         // https://github.com/App-vNext/Polly.Extensions.Http/blob/master/src/Polly.Extensions.Http/HttpPolicyExtensions.cs
         private static readonly Func<HttpResponseMessage, bool> TransientHttpStatusCodePredicate = resp => (int)resp.StatusCode >= 500 || resp.StatusCode == HttpStatusCode.RequestTimeout;
 
-        public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, IWebProxy proxy)
-        {
-            return builder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { Proxy = proxy });
-        }
-
         /// <summary>Adds a retry policy with 3 retries. Also adds a timeout policy that waits for 10 minutes before it terminates a request.</summary>
         public static IHttpClientBuilder UseDefaultHttpPolicy(this IHttpClientBuilder builder)
         {

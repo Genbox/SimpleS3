@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -28,9 +29,6 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
                 return existingProfile;
 
             start:
-            Console.WriteLine();
-            Console.WriteLine("You don't have a profile set up yet. Please enter your API credentials.");
-            Console.WriteLine("You can create a new API key at https://console.aws.amazon.com/iam/home?#/security_credentials");
 
             string enteredKeyId = GetKeyId();
             byte[] accessKey = GetAccessKey();
@@ -54,7 +52,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
             if (key == ConsoleKey.N)
                 goto start;
 
-            IProfile profile = _profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region.Name, persist);
+            IProfile profile = _profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region.Code, persist);
 
             if (persist)
             {
@@ -161,13 +159,13 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
             Console.WriteLine("Choose the default region. You can choose it by index or region code");
 
             HashSet<string> validRegionId = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            int counter = 0;
+            int counter = 0; //used for validation further down
 
             Console.WriteLine("{0,-8}{1,-20}{2}", "Index", "Region Code", "Region Name");
             foreach (IRegionInfo regionInfo in _regionManager.GetAllRegions())
             {
                 validRegionId.Add(regionInfo.Code);
-                Console.WriteLine("{0,-8}{1,-20}{2}", counter, regionInfo.Code, regionInfo.Name);
+                Console.WriteLine("{0,-8}{1,-20}{2}", Convert.ChangeType(regionInfo.EnumValue, typeof(int), NumberFormatInfo.InvariantInfo), regionInfo.Code, regionInfo.Name);
 
                 counter++;
             }

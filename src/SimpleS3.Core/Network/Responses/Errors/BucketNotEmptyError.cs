@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Genbox.SimpleS3.Core.Internals.Extensions;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Errors
@@ -8,10 +9,10 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
     {
         internal BucketNotEmptyError(IDictionary<string, string> lookup) : base(lookup)
         {
-            BucketName = lookup["BucketName"];
+            BucketName = lookup.GetOptionalValue("BucketName");
         }
 
-        public string BucketName { get; }
+        public string? BucketName { get; }
 
         public override string GetErrorDetails()
         {

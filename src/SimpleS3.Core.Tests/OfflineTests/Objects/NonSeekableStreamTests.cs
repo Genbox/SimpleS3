@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Tests.Code.Other;
+using Genbox.SimpleS3.TestBase;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -12,11 +14,13 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Objects
     {
         public NonSeekableStreamTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
-        protected override void ConfigureConfig(AwsConfig config)
+        protected override void ConfigureConfig(Config config)
         {
             //We force streaming signatures as it is the only one that supports non-seekable streams
             config.StreamingChunkSize = 8096;
             config.PayloadSignatureMode = SignatureMode.StreamingSignature;
+
+            base.ConfigureConfig(config);
         }
 
         [Fact]

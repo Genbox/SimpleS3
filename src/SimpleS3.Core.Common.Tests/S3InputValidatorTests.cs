@@ -5,11 +5,11 @@ namespace Genbox.SimpleS3.Core.Common.Tests
 {
     public class S3InputValidatorTests
     {
-        private readonly S3InputValidator _validator;
+        private readonly AwsInputValidator _validator;
 
         public S3InputValidatorTests()
         {
-            _validator = new S3InputValidator();
+            _validator = new AwsInputValidator();
         }
 
         [Theory]

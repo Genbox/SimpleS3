@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using JetBrains.Annotations;
@@ -6,7 +7,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Validation.Validators.Configs
 {
     [UsedImplicitly]
-    public class S3ConfigValidator : AbstractValidator<AwsConfig>
+    public class S3ConfigValidator : AbstractValidator<Config>
     {
         public S3ConfigValidator(IValidator<IAccessKey>? validator = null)
         {
@@ -17,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Validation.Validators.Configs
 
             RuleFor(x => x.ObjectKeyValidationMode).IsInEnum().Must(x => x != ObjectKeyValidationMode.Unknown).WithMessage("You must provide a valid object key validation mode.");
 
-            IRuleBuilderOptions<AwsConfig, IAccessKey> validatorRule = RuleFor(x => x.Credentials).NotNull().WithMessage("You must provide credentials.");
+            IRuleBuilderOptions<Config, IAccessKey> validatorRule = RuleFor(x => x.Credentials).NotNull().WithMessage("You must provide credentials.");
 
             if (validator != null)
                 validatorRule.SetValidator(validator);

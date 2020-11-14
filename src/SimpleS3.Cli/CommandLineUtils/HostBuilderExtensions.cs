@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using McMaster.Extensions.CommandLineUtils.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace Genbox.SimpleS3.Cli.CommandLineUtils
@@ -35,11 +34,10 @@ namespace Genbox.SimpleS3.Cli.CommandLineUtils
                 (context, services)
                     =>
                 {
-                    services
-                        .TryAddSingleton<IUnhandledExceptionHandler>(exceptionHandler);
+                    services.AddSingleton<IUnhandledExceptionHandler>(exceptionHandler);
                     services
                         .AddSingleton<IHostLifetime, CommandLineLifetime>()
-                        .TryAddSingleton(PhysicalConsole.Singleton);
+                        .AddSingleton(PhysicalConsole.Singleton);
                     services
                         .AddSingleton(provider =>
                         {

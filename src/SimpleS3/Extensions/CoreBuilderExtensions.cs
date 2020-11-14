@@ -2,7 +2,6 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Genbox.SimpleS3.Extensions
 {
@@ -10,7 +9,7 @@ namespace Genbox.SimpleS3.Extensions
     {
         public static ICoreBuilder UseS3Client(this ICoreBuilder builder)
         {
-            builder.Services.TryAddSingleton(x =>
+            builder.Services.AddSingleton(x =>
             {
                 //We have to call a specific constructor for dependency injection
                 IObjectClient objectClient = x.GetRequiredService<IObjectClient>();
@@ -20,7 +19,7 @@ namespace Genbox.SimpleS3.Extensions
             });
 
             //Add the client as the interface too
-            builder.Services.TryAddSingleton<IClient>(x => x.GetRequiredService<S3Client>());
+            builder.Services.AddSingleton<IClient>(x => x.GetRequiredService<S3Client>());
             return builder;
         }
     }

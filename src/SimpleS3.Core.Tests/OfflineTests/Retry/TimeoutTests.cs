@@ -8,6 +8,8 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Tests.Code.Other;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
+using Genbox.SimpleS3.TestBase;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
@@ -21,14 +23,16 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
 
         public TimeoutTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
-        protected override void ConfigureCoreBuilder(ICoreBuilder builder)
+        protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
         {
-            builder.UseHttpClientFactory()
-                   .ConfigurePrimaryHttpMessageHandler(() => _handler)
-                   .UseRetryPolicy(3, attempt => TimeSpan.Zero)
+            coreBuilder.UseHttpClientFactory()
+                       .ConfigurePrimaryHttpMessageHandler(() => _handler)
+                       .UseRetryPolicy(3, attempt => TimeSpan.Zero)
 
-                   // Set an extraordinary timeout
-                   .UseTimeoutPolicy(TimeSpan.FromSeconds(3));
+                       // Set an extraordinary timeout
+                       .UseTimeoutPolicy(TimeSpan.FromSeconds(3));
+
+            base.ConfigureCoreBuilder(coreBuilder, configuration);
         }
 
         [Fact]

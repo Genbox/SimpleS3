@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Xunit;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests

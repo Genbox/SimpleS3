@@ -17,12 +17,17 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
                 request.SetHeader(AmzHeaders.XAmzBucketObjectLockEnabled, request.EnableObjectLocking.Value ? "TRUE" : string.Empty);
 
             //Hard-code the LocationConstraint to the region from the config
-            FastXmlWriter writer = new FastXmlWriter(128);
-            writer.WriteStartElement("CreateBucketConfiguration");
-            writer.WriteElement("LocationConstraint", config.RegionCode);
-            writer.WriteEndElement("CreateBucketConfiguration");
+            if (config.ProviderType != "BackBlazeB2")
+            {
+                FastXmlWriter writer = new FastXmlWriter(128);
+                writer.WriteStartElement("CreateBucketConfiguration");
+                writer.WriteElement("LocationConstraint", config.RegionCode);
+                writer.WriteEndElement("CreateBucketConfiguration");
 
-            return new MemoryStream(writer.GetBytes());
+                return new MemoryStream(writer.GetBytes());
+            }
+
+            return null;
         }
     }
 }

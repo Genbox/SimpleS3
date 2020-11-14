@@ -8,8 +8,8 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Internals.Extensions;
-using Genbox.SimpleS3.Core.Internals.Pools;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -18,11 +18,11 @@ namespace Genbox.SimpleS3.Core.Builders
     public class HeaderAuthorizationBuilder : IAuthorizationBuilder
     {
         private readonly ILogger<HeaderAuthorizationBuilder> _logger;
-        private readonly IOptions<AwsConfig> _options;
+        private readonly IOptions<Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
         private readonly ISignatureBuilder _signatureBuilder;
 
-        public HeaderAuthorizationBuilder(IOptions<AwsConfig> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<HeaderAuthorizationBuilder> logger)
+        public HeaderAuthorizationBuilder(IOptions<Config> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<HeaderAuthorizationBuilder> logger)
         {
             _options = options;
             _scopeBuilder = scopeBuilder;

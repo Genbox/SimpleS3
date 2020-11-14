@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Internals.Constants;
@@ -14,10 +15,10 @@ namespace Genbox.SimpleS3.Core.Authentication
     public class SigningKeyBuilder : ISigningKeyBuilder
     {
         private readonly ILogger<SigningKeyBuilder> _logger;
-        private readonly IOptions<AwsConfig> _options;
+        private readonly IOptions<Config> _options;
         private readonly IAccessKeyProtector? _protector;
 
-        public SigningKeyBuilder(IOptions<AwsConfig> options, ILogger<SigningKeyBuilder> logger, IAccessKeyProtector? protector = null)
+        public SigningKeyBuilder(IOptions<Config> options, ILogger<SigningKeyBuilder> logger, IAccessKeyProtector? protector = null)
         {
             _options = options;
             _logger = logger;
@@ -36,7 +37,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             byte[] key = Encoding.UTF8.GetBytes(SigningConstants.Scheme).Concat(accessKey).ToArray();
 
             byte[] hashDate = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(date), key);
-            byte[] hashRegion = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(ValueHelper.EnumToString(_options.Value.Region)), hashDate);
+            byte[] hashRegion = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(_options.Value.RegionCode), hashDate);
             byte[] hashService = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(service), hashRegion);
             byte[] signingKey = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes("aws4_request"), hashService);
 

@@ -1,13 +1,5 @@
 {
-  "EnablePayloadSigning": true,
-  "EnableStreaming": true,
-  "ChunkSize": 32768,
-  "EnableBucketNameValidation": true,
-  "BucketName": "main-test-bucket-2020",
-  //"Endpoint": "https://s3.us-west-002.backblazeb2.com", //Set to https://play.min.io:9000/ if you want to use Minio's play server",
-  "AutoUrlDecodeResponses": false,
-  "NamingMode": "VirtualHost", //VirtualHost, PathStyle
-  "ProfileName": "DefaultProfile", //DefaultProfile, minio, b2
+  "ProfileName": "TestSetup-AmazonS3", //TestSetup-AmazonS3, TestSetup-BackBlazeB2
 
   "Proxy": {
     "UseProxy": false,

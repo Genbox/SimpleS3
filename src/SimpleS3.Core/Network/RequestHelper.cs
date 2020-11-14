@@ -1,6 +1,6 @@
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Common.Helpers;
 
 namespace Genbox.SimpleS3.Core.Network
 {
@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Network
         public static void AppendScheme(StringBuilder sb, Config config)
         {
             if (config.Endpoint == null)
-                sb.Append(config.UseTLS ? "https" : "http");
+                sb.Append(config.UseTls ? "https" : "http");
             else
                 sb.Append(config.Endpoint.Scheme);
 

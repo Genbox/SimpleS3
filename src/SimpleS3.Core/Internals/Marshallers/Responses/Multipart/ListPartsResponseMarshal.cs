@@ -24,7 +24,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
         public void MarshalResponse(Config config, ListPartsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Iso8601DateTimeExt);
-            response.AbortRuleId = headers.GetHeader(AmzHeaders.XAmzAbortRuleId);
+            response.AbortRuleId = headers.GetOptionalValue(AmzHeaders.XAmzAbortRuleId);
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
             XmlSerializer s = new XmlSerializer(typeof(ListPartsResult));

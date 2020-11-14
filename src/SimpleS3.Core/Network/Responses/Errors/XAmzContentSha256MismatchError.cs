@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Genbox.SimpleS3.Core.Internals.Extensions;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Errors
@@ -8,16 +9,16 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
     {
         internal XAmzContentSha256MismatchError(IDictionary<string, string> lookup) : base(lookup)
         {
-            ClientSha256 = lookup["ClientComputedContentSHA256"];
-            S3Sha256 = lookup["S3ComputedContentSHA256"];
-            RequestId = lookup["RequestId"];
-            HostId = lookup["HostId"];
+            ClientSha256 = lookup.GetOptionalValue("ClientComputedContentSHA256");
+            S3Sha256 = lookup.GetOptionalValue("S3ComputedContentSHA256");
+            RequestId = lookup.GetOptionalValue("RequestId");
+            HostId = lookup.GetOptionalValue("HostId");
         }
 
-        public string ClientSha256 { get; }
-        public string S3Sha256 { get; }
-        public string RequestId { get; }
-        public string HostId { get; }
+        public string? ClientSha256 { get; }
+        public string? S3Sha256 { get; }
+        public string? RequestId { get; }
+        public string? HostId { get; }
 
         public override string GetErrorDetails()
         {

@@ -4,6 +4,7 @@ using Amazon.Runtime;
 using Amazon.Util;
 using AwsSignatureVersion4.Private;
 using BenchmarkDotNet.Attributes;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
@@ -33,7 +34,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
                 config.Region = AwsRegion.EuWest1;
                 config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
 
-                IOptions<AwsConfig> options = Options.Create(config);
+                IOptions<Config> options = Options.Create(config);
 
                 SigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
                 ScopeBuilder scopeBuilder = new ScopeBuilder(options);

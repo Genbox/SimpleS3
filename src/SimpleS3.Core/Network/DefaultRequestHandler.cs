@@ -14,12 +14,12 @@ using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
@@ -148,11 +148,11 @@ namespace Genbox.SimpleS3.Core.Network
             TResp response = new TResp();
             response.StatusCode = statusCode;
             response.ContentLength = headers.GetHeaderLong(HttpHeaders.ContentLength);
-            response.ConnectionClosed = "closed".Equals(headers.GetHeader(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
+            response.ConnectionClosed = "closed".Equals(headers.GetOptionalValue(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
             response.Date = headers.GetHeaderDate(HttpHeaders.Date, DateTimeFormat.Rfc1123);
-            response.Server = headers.GetHeader(HttpHeaders.Server);
-            response.ResponseId = headers.GetHeader(AmzHeaders.XAmzId2);
-            response.RequestId = headers.GetHeader(AmzHeaders.XAmzRequestId);
+            response.Server = headers.GetOptionalValue(HttpHeaders.Server);
+            response.ResponseId = headers.GetOptionalValue(AmzHeaders.XAmzId2);
+            response.RequestId = headers.GetOptionalValue(AmzHeaders.XAmzRequestId);
 
             // https://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
             response.IsSuccess = !(statusCode == 403 //Forbidden
@@ -187,15 +187,16 @@ namespace Genbox.SimpleS3.Core.Network
                             response.Error = ErrorHandler.Create(ms);
 
                         _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
-
-                        if (_options.Value.ThrowExceptionOnError)
-                            throw new S3RequestException(response.StatusCode, $"Received error: '{response.Error.Message}'. Details: '{response.Error.GetErrorDetails()}'");
                     }
                 }
             }
 
             //We always map even if the request is not successful
             _postMapper.PostMap(_options.Value, request, response);
+
+            if (_options.Value.ThrowExceptionOnError && !response.IsSuccess)
+                throw new S3RequestException(response.StatusCode, $"Received error: '{response.Error?.Message}'. Details: '{response.Error?.GetErrorDetails()}'");
+
             return response;
         }
     }

@@ -4,6 +4,6 @@
     {
         IProfile? GetProfile(string name);
         string SaveProfile(IProfile profile);
-        IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, bool persist = true);
+        public IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, bool persist = true);
     }
 }

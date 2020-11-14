@@ -11,8 +11,8 @@ using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Internals.Constants;
-using Genbox.SimpleS3.Core.Internals.Pools;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -24,11 +24,11 @@ namespace Genbox.SimpleS3.Core.Network
         private readonly IUrlBuilder _urlBuilder;
         private readonly ILogger<DefaultSignedRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
-        private readonly IOptions<AwsConfig> _options;
+        private readonly IOptions<Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
         private readonly IValidatorFactory _validator;
 
-        public DefaultSignedRequestHandler(IOptions<AwsConfig> options, IScopeBuilder scopeBuilder, IValidatorFactory validator, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultSignedRequestHandler> logger)
+        public DefaultSignedRequestHandler(IOptions<Config> options, IScopeBuilder scopeBuilder, IValidatorFactory validator, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultSignedRequestHandler> logger)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));
@@ -54,7 +54,7 @@ namespace Genbox.SimpleS3.Core.Network
 
             _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
-            AwsConfig config = _options.Value;
+            Config config = _options.Value;
             _marshaller.MarshalRequest(config, request);
 
             _validator.ValidateAndThrow(request);

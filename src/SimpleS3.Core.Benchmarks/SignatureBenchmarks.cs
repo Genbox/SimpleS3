@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
@@ -31,7 +32,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
             AwsConfig config = new AwsConfig(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
             config.PayloadSignatureMode = SignatureMode.FullSignature;
 
-            IOptions<AwsConfig> options = Options.Create(config);
+            IOptions<Config> options = Options.Create(config);
 
             _signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
             IScopeBuilder scopeBuilder = new ScopeBuilder(options);

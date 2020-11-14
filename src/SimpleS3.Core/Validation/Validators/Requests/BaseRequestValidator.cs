@@ -41,13 +41,13 @@ namespace Genbox.SimpleS3.Core.Validation.Validators.Requests
                       .WithMessage("The object key length must be between 1 and 1024 characters")
                       .Must(x => validator.TryValidateObjectKey(x, ObjectKeyValidationMode.SafeMode, out _))
                       .When(x => config.ObjectKeyValidationMode == ObjectKeyValidationMode.SafeMode)
-                      .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\() are allowed when S3Config.{nameof(AwsConfig.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.SafeMode)}")
+                      .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\() are allowed when S3Config.{nameof(Config.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.SafeMode)}")
                       .Must(x => validator.TryValidateObjectKey(x, ObjectKeyValidationMode.AsciiMode, out _))
                       .When(x => config.ObjectKeyValidationMode == ObjectKeyValidationMode.AsciiMode)
-                      .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\()&$@=;:+ ,? and ASCII codes 0-31 and 127 are allowed when S3Config.{nameof(AwsConfig.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.AsciiMode)}")
+                      .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\()&$@=;:+ ,? and ASCII codes 0-31 and 127 are allowed when S3Config.{nameof(Config.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.AsciiMode)}")
                       .Must(x => validator.TryValidateObjectKey(x, ObjectKeyValidationMode.ExtendedAsciiMode, out _))
                       .When(x => config.ObjectKeyValidationMode == ObjectKeyValidationMode.ExtendedAsciiMode)
-                      .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\()&$@=;:+ ,?\\{{}}^%`[]\"<>~#| and ASCII codes 0-31 and 128-255 are allowed when S3Config.{nameof(AwsConfig.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.ExtendedAsciiMode)}"));
+                      .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\()&$@=;:+ ,?\\{{}}^%`[]\"<>~#| and ASCII codes 0-31 and 128-255 are allowed when S3Config.{nameof(Config.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.ExtendedAsciiMode)}"));
         }
     }
 }

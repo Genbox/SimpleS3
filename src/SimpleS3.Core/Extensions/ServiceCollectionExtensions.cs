@@ -9,6 +9,7 @@ using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Fluent;
@@ -62,36 +63,40 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.AddOptions();
 
             //Authentication
-            collection.TryAddSingleton<ISigningKeyBuilder, SigningKeyBuilder>();
-            collection.TryAddSingleton<IScopeBuilder, ScopeBuilder>();
-            collection.TryAddSingleton<ISignatureBuilder, SignatureBuilder>();
-            collection.TryAddSingleton<IChunkedSignatureBuilder, ChunkedSignatureBuilder>();
-            collection.TryAddSingleton<HeaderAuthorizationBuilder>();
-            collection.TryAddSingleton<ISignedRequestHandler, DefaultSignedRequestHandler>();
-            collection.TryAddSingleton<QueryParameterAuthorizationBuilder>();
+            collection.AddSingleton<ISigningKeyBuilder, SigningKeyBuilder>();
+            collection.AddSingleton<IScopeBuilder, ScopeBuilder>();
+            collection.AddSingleton<ISignatureBuilder, SignatureBuilder>();
+            collection.AddSingleton<IChunkedSignatureBuilder, ChunkedSignatureBuilder>();
+            collection.AddSingleton<HeaderAuthorizationBuilder>();
+            collection.AddSingleton<ISignedRequestHandler, DefaultSignedRequestHandler>();
+            collection.AddSingleton<QueryParameterAuthorizationBuilder>();
 
             //Operations
-            collection.TryAddSingleton<IObjectOperations, ObjectOperations>();
-            collection.TryAddSingleton<IBucketOperations, BucketOperations>();
-            collection.TryAddSingleton<IMultipartOperations, MultipartOperations>();
-            collection.TryAddSingleton<ISignedObjectOperations, SignedObjectOperations>();
+            collection.AddSingleton<IObjectOperations, ObjectOperations>();
+            collection.AddSingleton<IBucketOperations, BucketOperations>();
+            collection.AddSingleton<IMultipartOperations, MultipartOperations>();
+            collection.AddSingleton<ISignedObjectOperations, SignedObjectOperations>();
 
             //Clients
-            collection.TryAddSingleton<IObjectClient, S3ObjectClient>();
-            collection.TryAddSingleton<IBucketClient, S3BucketClient>();
-            collection.TryAddSingleton<IMultipartClient, S3MultipartClient>();
-            collection.TryAddSingleton<ISignedObjectClient, S3SignedObjectClient>();
+            collection.AddSingleton<IObjectClient, S3ObjectClient>();
+            collection.AddSingleton<IBucketClient, S3BucketClient>();
+            collection.AddSingleton<IMultipartClient, S3MultipartClient>();
+            collection.AddSingleton<ISignedObjectClient, S3SignedObjectClient>();
 
             //Misc
-            collection.TryAddSingleton<IRequestHandler, DefaultRequestHandler>();
-            collection.TryAddSingleton<IValidatorFactory, ValidatorFactory>();
-            collection.TryAddSingleton<IMarshalFactory, MarshalFactory>();
-            collection.TryAddSingleton<IPostMapperFactory, PostMapperFactory>();
+            collection.AddSingleton<IRequestHandler, DefaultRequestHandler>();
+            collection.AddSingleton<IValidatorFactory, ValidatorFactory>();
+            collection.AddSingleton<IMarshalFactory, MarshalFactory>();
+            collection.AddSingleton<IPostMapperFactory, PostMapperFactory>();
+            collection.AddSingleton<IRequestStreamWrapper, ChunkedContentRequestStreamWrapper>();
+
+            //Default services for AWS S3
+            collection.AddSingleton<IUrlBuilder, AwsUrlBuilder>();
+            collection.AddSingleton<IInputValidator, AwsInputValidator>();
+            collection.AddSingleton<IRegionData, AwsRegionData>();
 
             //Fluent
-            collection.TryAddSingleton<Transfer>();
-
-            collection.AddSingleton<IRequestStreamWrapper, ChunkedContentRequestStreamWrapper>(); //This has to be added using AddSingleton
+            collection.AddSingleton<Transfer>();
 
             Assembly assembly = typeof(AwsConfig).Assembly; //Needs to be the assembly that contains the types
 
