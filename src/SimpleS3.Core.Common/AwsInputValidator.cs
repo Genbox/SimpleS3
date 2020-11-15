@@ -7,8 +7,7 @@ namespace Genbox.SimpleS3.Core.Common
     {
         protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status)
         {
-            //AWS ids are 20, B2 are 25
-            if (keyId!.Length != 20 && keyId!.Length != 25)
+            if (keyId.Length != 20)
             {
                 status = ValidationStatus.WrongLength;
                 return false;
@@ -32,8 +31,7 @@ namespace Genbox.SimpleS3.Core.Common
 
         protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status)
         {
-            //AWS keys are 40, B2 keys are 31
-            if (accessKey.Length != 40 && accessKey.Length != 31)
+            if (accessKey.Length != 40)
             {
                 status = ValidationStatus.WrongLength;
                 return false;
