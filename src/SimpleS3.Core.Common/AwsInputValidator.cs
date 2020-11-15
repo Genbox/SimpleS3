@@ -1,19 +1,12 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Helpers;
 
 namespace Genbox.SimpleS3.Core.Common
 {
-    public class AwsInputValidator : IInputValidator
+    public class AwsInputValidator : InputValidatorBase
     {
-        public bool TryValidateKeyId(string? keyId, out ValidationStatus status)
+        protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status)
         {
-            if (string.IsNullOrEmpty(keyId))
-            {
-                status = ValidationStatus.NullInput;
-                return false;
-            }
-
             //AWS ids are 20, B2 are 25
             if (keyId!.Length != 20 && keyId!.Length != 25)
             {
@@ -37,14 +30,8 @@ namespace Genbox.SimpleS3.Core.Common
             return true;
         }
 
-        public bool TryValidateAccessKey(byte[]? accessKey, out ValidationStatus status)
+        protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status)
         {
-            if (accessKey == null)
-            {
-                status = ValidationStatus.NullInput;
-                return false;
-            }
-
             //AWS keys are 40, B2 keys are 31
             if (accessKey.Length != 40 && accessKey.Length != 31)
             {
@@ -56,35 +43,17 @@ namespace Genbox.SimpleS3.Core.Common
             return true;
         }
 
-        public bool TryValidateObjectKey(string? objectKey, ObjectKeyValidationMode mode, out ValidationStatus status)
+        protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status)
         {
-            if (string.IsNullOrEmpty(objectKey))
-            {
-                status = ValidationStatus.NullInput;
-                return false;
-            }
-
-            if (objectKey!.Length > 1024)
+            if (objectKey.Length < 1 || objectKey.Length > 1024)
             {
                 status = ValidationStatus.WrongLength;
                 return false;
             }
 
-            if (mode == ObjectKeyValidationMode.Unrestricted)
-            {
-                status = ValidationStatus.Ok;
-                return true;
-            }
-
             foreach (char c in objectKey)
             {
-                if (CharHelper.InRange(c, 'a', 'z'))
-                    continue;
-
-                if (CharHelper.InRange(c, 'A', 'Z'))
-                    continue;
-
-                if (CharHelper.InRange(c, '0', '9'))
+                if (CharHelper.InRange(c, 'a', 'z') || CharHelper.InRange(c, 'A', 'Z') || CharHelper.InRange(c, '0', '9'))
                     continue;
 
                 //See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
@@ -122,6 +91,9 @@ namespace Genbox.SimpleS3.Core.Common
                 if (CharHelper.InRange(c, (char)128, (char)255))
                     continue;
 
+                if (mode == ObjectKeyValidationMode.Unrestricted)
+                    continue;
+
                 if (mode == ObjectKeyValidationMode.ExtendedAsciiMode)
                 {
                     status = ValidationStatus.WrongFormat;
@@ -140,14 +112,8 @@ namespace Genbox.SimpleS3.Core.Common
         /// <param name="bucketName">The bucket name</param>
         /// <param name="status">Contains the error if validation failed</param>
         /// <returns>True if validation succeeded, false otherwise</returns>
-        public bool TryValidateBucketName(string? bucketName, out ValidationStatus status)
+        protected override bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status)
         {
-            if (bucketName == null)
-            {
-                status = ValidationStatus.NullInput;
-                return false;
-            }
-
             if (bucketName.Length < 3 || bucketName.Length > 63)
             {
                 status = ValidationStatus.WrongLength;

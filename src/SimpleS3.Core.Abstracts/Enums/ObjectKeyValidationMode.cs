@@ -3,10 +3,10 @@
     public enum ObjectKeyValidationMode
     {
         Unknown = 0,
-        Unrestricted,
-        ExtendedAsciiMode,
-        AsciiMode,
         SafeMode,
-        ForceSafeEncoding
+        AsciiMode,
+        ExtendedAsciiMode,
+        Unrestricted,
+        Disabled
     }
 }

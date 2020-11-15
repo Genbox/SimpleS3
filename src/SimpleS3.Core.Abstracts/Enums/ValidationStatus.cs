@@ -6,6 +6,7 @@
         Ok,
         NullInput,
         WrongLength,
-        WrongFormat
+        WrongFormat,
+        ReservedName
     }
 }
