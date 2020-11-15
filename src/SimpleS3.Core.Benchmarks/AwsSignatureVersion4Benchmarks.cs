@@ -47,7 +47,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
             }
 
             {
-                _request2 = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, "https://dummyurl");
+                _request2 = new HttpRequestMessage(HttpMethod.Get, "https://dummyurl");
                 _credentials = new ImmutableCredentials("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123", null);
 
                 // Add required headers
@@ -55,7 +55,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
 
                 // Add conditional headers
                 _request2.AddHeaderIf(_credentials.UseToken, HeaderKeys.XAmzSecurityTokenHeader, _credentials.Token);
-                _request2.AddHeaderIf(!_request2.Headers.Contains(HeaderKeys.HostHeader), HeaderKeys.HostHeader, _request2.RequestUri.Host);
+                _request2.AddHeaderIf(!_request2.Headers.Contains(HeaderKeys.HostHeader), HeaderKeys.HostHeader, _request2.RequestUri?.Host);
             }
         }
 

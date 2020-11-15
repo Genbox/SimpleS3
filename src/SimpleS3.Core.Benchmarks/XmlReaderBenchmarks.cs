@@ -26,14 +26,14 @@ namespace Genbox.SimpleS3.Core.Benchmarks
                                                               + "</XmlTestObject>");
 
         [Benchmark]
-        public XmlTestObject WithXmlDeserializer()
+        public XmlTestObject? WithXmlDeserializer()
         {
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(XmlTestObject));
             using (MemoryStream ms = new MemoryStream(data))
             using (XmlTextReader reader = new XmlTextReader(ms))
             {
                 reader.Namespaces = false;
-                return (XmlTestObject)xmlSerializer.Deserialize(reader);
+                return (XmlTestObject?)xmlSerializer.Deserialize(reader);
             }
         }
 
