@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <ProjectReference Include="..\SimpleS3.Extensions.BackBlazeB2\SimpleS3.Extensions.BackBlazeB2.csproj" />
     <ProjectReference Include="..\SimpleS3.Extensions.ProfileManager\SimpleS3.Extensions.ProfileManager.csproj" />
     <ProjectReference Include="..\SimpleS3\SimpleS3.csproj" />
