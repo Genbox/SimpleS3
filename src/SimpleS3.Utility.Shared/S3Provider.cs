@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Utility.TestSetup
+﻿namespace Genbox.SimpleS3.Utility.Shared
 {
     public enum S3Provider
     {

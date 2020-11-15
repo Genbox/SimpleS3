@@ -5,7 +5,6 @@ using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
-using Genbox.SimpleS3.Utility.TestSetup;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Utility.Shared

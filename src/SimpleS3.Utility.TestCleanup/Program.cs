@@ -4,7 +4,6 @@ using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Utility.Shared;
-using Genbox.SimpleS3.Utility.TestSetup;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Utility.TestCleanup
