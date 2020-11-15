@@ -6,10 +6,8 @@ using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClient.Extensions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Config = Genbox.SimpleS3.Core.Abstracts.Config;
 using IHttpClientBuilder = Genbox.SimpleS3.Extensions.HttpClient.IHttpClientBuilder;
 
 namespace Genbox.SimpleS3.Examples.Clients.WithDepInjection
@@ -22,20 +20,11 @@ namespace Genbox.SimpleS3.Examples.Clients.WithDepInjection
             //In this example we are using using Microsoft's Dependency Injection (DI) framework
             ServiceCollection services = new ServiceCollection();
 
-            //We use Microsoft.Extensions.Configuration framework here to load our config file
-            ConfigurationBuilder configBuilder = new ConfigurationBuilder();
-            configBuilder.AddJsonFile("Config.json", false);
-            IConfigurationRoot root = configBuilder.Build();
-
             //We use Microsoft.Extensions.Logging here to add support for logging
             services.AddLogging(x =>
             {
                 x.AddConsole();
-                x.AddConfiguration(root.GetSection("Logging"));
             });
-
-            //Here we bind the configuration from above to S3Config, which is automatically used by SimpleS3
-            services.Configure<Config>(root);
 
             //Here we create a core client without a network driver
             ICoreBuilder coreBuilder = services.AddSimpleS3Core(s3Config =>
