@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests
+namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests.Online
 {
     public class GenericTests : B2TestBase
     {

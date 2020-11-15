@@ -5,7 +5,7 @@ using Genbox.SimpleS3.TestBase;
 using Microsoft.Extensions.Configuration;
 using Xunit.Abstractions;
 
-namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests
+namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests.Online
 {
     public abstract class B2TestBase : OnlineTestBase
     {
