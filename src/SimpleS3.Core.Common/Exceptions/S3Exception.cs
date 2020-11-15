@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Genbox.SimpleS3.Core.ErrorHandling.Exceptions
+namespace Genbox.SimpleS3.Core.Common.Exceptions
 {
     public class S3Exception : Exception
     {

@@ -1,9 +1,7 @@
 ﻿using System;
-using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core.ErrorHandling.Exceptions
+namespace Genbox.SimpleS3.Core.Common.Exceptions
 {
-    [PublicAPI]
     public class S3RequestException : S3Exception
     {
         public S3RequestException(int statusCode, string? message = null, Exception? innException = null) : base(message, innException)

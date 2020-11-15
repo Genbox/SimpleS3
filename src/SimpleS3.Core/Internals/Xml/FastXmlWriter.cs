@@ -2,8 +2,8 @@
 using System.Globalization;
 using System.Text;
 using System.Xml;
+using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Helpers;
-using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 
 namespace Genbox.SimpleS3.Core.Internals.Xml
 {

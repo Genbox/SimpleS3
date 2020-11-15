@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
+using Genbox.SimpleS3.Core.Common.Exceptions;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace Genbox.SimpleS3.Cli.Commands

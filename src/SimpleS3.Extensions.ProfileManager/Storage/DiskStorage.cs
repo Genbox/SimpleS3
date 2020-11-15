@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
+using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Microsoft.Extensions.Options;
 

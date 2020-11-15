@@ -1,9 +1,9 @@
 ﻿using System;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
-using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Microsoft.Extensions.Options;
 
