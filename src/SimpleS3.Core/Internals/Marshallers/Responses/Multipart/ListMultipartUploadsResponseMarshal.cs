@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
     [UsedImplicitly]
     internal class ListMultipartUploadsResponseMarshal : IResponseMarshal<ListMultipartUploadsResponse>
     {
-        public void MarshalResponse(IConfig config, ListMultipartUploadsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(Config config, ListMultipartUploadsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             XmlSerializer s = new XmlSerializer(typeof(ListMultipartUploadsResult));
 

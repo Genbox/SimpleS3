@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
-using Genbox.SimpleS3.Extensions;
-using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
-using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
-using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
-using Microsoft.Extensions.Configuration;
+using Genbox.SimpleS3.Utility.Shared;
+using Genbox.SimpleS3.Utility.TestSetup;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Utility.TestCleanup
@@ -19,51 +13,41 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
     {
         private static async Task Main(string[] args)
         {
-            IConfigurationRoot configRoot = new ConfigurationBuilder()
-                                      .AddJsonFile("Config.json", false)
-                                      .Build();
+            S3Provider selectedProvider = UtilityHelper.SelectProvider();
 
-            ServiceCollection services = new ServiceCollection();
+            Console.WriteLine();
 
-            services.Configure<S3Config>(configRoot);
+            string profileName = UtilityHelper.GetProfileName(selectedProvider);
 
-            IS3ClientBuilder clientBuilder = services.AddSimpleS3((s3Config, provider) => configRoot.Bind(s3Config));
+            Console.WriteLine("This program will delete all buckets beginning with 'testbucket-'. Are you sure? Y/N");
 
-            string profileName = configRoot["ProfileName"];
+            ConsoleKeyInfo key = Console.ReadKey(true);
 
-            clientBuilder.CoreBuilder.UseProfileManager()
-                         .BindConfigToProfile(profileName)
-                         .UseDataProtection();
+            if (key.KeyChar != 'y')
+                return;
 
-            IConfigurationSection proxySection = configRoot.GetSection("Proxy");
-
-            if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
-                clientBuilder.HttpBuilder.WithProxy(proxySection["ProxyAddress"]);
-
-            using (ServiceProvider serviceProvider = services.BuildServiceProvider())
+            using (ServiceProvider provider = UtilityHelper.CreateSimpleS3(selectedProvider, profileName))
             {
-                IProfileManager manager = serviceProvider.GetRequiredService<IProfileManager>();
-                IProfile? profile = manager.GetProfile(profileName);
+                UtilityHelper.GetOrSetupProfile(provider, selectedProvider, profileName);
 
-                //If profile is null, then we do not yet have a profile stored on disk. We use ConsoleSetup as an easy and secure way of asking for credentials
-                if (profile == null)
-                    ConsoleSetup.SetupProfile(manager, profileName);
-
-                S3Client client = serviceProvider.GetRequiredService<S3Client>();
+                S3Client client = provider.GetRequiredService<S3Client>();
 
                 await foreach (S3Bucket bucket in client.ListAllBucketsAsync())
                 {
                     if (!bucket.Name.StartsWith("testbucket-", StringComparison.OrdinalIgnoreCase))
                         continue;
 
+                    Console.WriteLine("Deleting content of " + bucket.Name);
+
                     DeleteAllObjectsStatus objDelResp = await client.DeleteAllObjectsAsync(bucket.Name).ConfigureAwait(false);
 
                     if (objDelResp == DeleteAllObjectsStatus.Ok)
-                        await client.DeleteBucketAsync(bucket.Name).ConfigureAwait(false);
-                }
+                    {
+                        Console.WriteLine("Deleting bucket " + bucket.Name);
 
-                //Empty the main test bucket
-                await client.DeleteAllObjectsAsync(configRoot["BucketName"]).ConfigureAwait(false);
+                        await client.DeleteBucketAsync(bucket.Name).ConfigureAwait(false);
+                    }
+                }
             }
         }
     }

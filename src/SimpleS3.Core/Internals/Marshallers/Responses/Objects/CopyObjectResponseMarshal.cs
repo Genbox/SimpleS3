@@ -18,9 +18,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     [UsedImplicitly]
     internal class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectResponse>
     {
-        public void MarshalResponse(IConfig config, CopyObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(Config config, CopyObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.NewVersionId = headers.GetHeader(AmzHeaders.XAmzCopySourceVersionId);
+            response.NewVersionId = headers.GetOptionalValue(AmzHeaders.XAmzCopySourceVersionId);
 
             if (HeaderParserHelper.TryParseExpiration(headers, out (DateTimeOffset expiresOn, string ruleId) data))
             {
@@ -31,13 +31,13 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
-            response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSseAwsKmsKeyId);
-            response.SseContext = headers.GetHeader(AmzHeaders.XAmzSseContext);
+            response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
+            response.SseContext = headers.GetOptionalValue(AmzHeaders.XAmzSseContext);
 
             response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSseCustomerAlgorithm);
             response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
 
-            response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
+            response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
 
             XmlSerializer s = new XmlSerializer(typeof(CopyObjectResult));
 

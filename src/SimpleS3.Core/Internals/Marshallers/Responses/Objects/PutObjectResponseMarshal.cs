@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     [UsedImplicitly]
     internal class PutObjectResponseMarshal : IResponseMarshal<PutObjectResponse>
     {
-        public void MarshalResponse(IConfig config, PutObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(Config config, PutObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
 
@@ -23,13 +23,13 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             if (response.StorageClass == StorageClass.Unknown)
                 response.StorageClass = StorageClass.Standard;
 
-            response.ETag = headers.GetHeader(HttpHeaders.ETag);
+            response.ETag = headers.GetOptionalValue(HttpHeaders.ETag);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
-            response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSseAwsKmsKeyId);
+            response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
             response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSseCustomerAlgorithm);
             response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
-            response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
-            response.SseContext = headers.GetHeader(AmzHeaders.XAmzSseContext);
+            response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
+            response.SseContext = headers.GetOptionalValue(AmzHeaders.XAmzSseContext);
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
             if (HeaderParserHelper.TryParseExpiration(headers, out (DateTimeOffset expiresOn, string ruleId) data))

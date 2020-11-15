@@ -28,7 +28,12 @@ namespace Genbox.SimpleS3.Cli.Commands
 
         private static string GetVersion()
         {
-            return typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            AssemblyInformationalVersionAttribute? attr = typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+
+            if (attr != null)
+                return attr.InformationalVersion;
+
+            return "unknown";
         }
     }
 }

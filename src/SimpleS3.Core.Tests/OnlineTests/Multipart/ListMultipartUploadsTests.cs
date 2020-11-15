@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
+using Genbox.SimpleS3.TestBase;
 using Xunit;
 using Xunit.Abstractions;
 

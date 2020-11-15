@@ -5,6 +5,7 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.TestBase;
 using Xunit;
 using Xunit.Abstractions;
 

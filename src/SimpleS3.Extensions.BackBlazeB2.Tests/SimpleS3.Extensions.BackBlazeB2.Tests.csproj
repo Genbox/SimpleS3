@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="..\..\Imports\TestImport.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleS3.Core\SimpleS3.Core.csproj" />
+    <ProjectReference Include="..\SimpleS3.Extensions.BackBlazeB2\SimpleS3.Extensions.BackBlazeB2.csproj" />
+    <ProjectReference Include="..\SimpleS3.Extensions.HttpClientFactory\SimpleS3.Extensions.HttpClientFactory.csproj" />
+  </ItemGroup>
+
+</Project>

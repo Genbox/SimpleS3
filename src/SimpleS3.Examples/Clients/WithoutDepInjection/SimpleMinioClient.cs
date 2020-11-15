@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Examples.Clients.WithoutDepInjection
             StringAccessKey key = new StringAccessKey("Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG");
 
             //Minio expect the region to always be USEast1
-            S3Config config = new S3Config(key, AwsRegion.UsEast1);
+            AwsConfig config = new AwsConfig(key, AwsRegion.UsEast1);
 
             //We have to set the endpoint to point to the Minio Playground server
             config.Endpoint = new Uri("https://play.min.io:9000/");

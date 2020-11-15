@@ -8,12 +8,12 @@ namespace Genbox.SimpleS3.Core.Internals.Extensions
 {
     internal static class DictionaryExtensions
     {
-        public static string? GetHeader(this IDictionary<string, string> response, string key)
+        public static string? GetOptionalValue(this IDictionary<string, string> response, string key)
         {
             return TryGetHeader(response, key, out string? value) ? value : null;
         }
 
-        public static string GetRequiredHeader(this IDictionary<string, string> response, string key)
+        public static string GetRequiredValue(this IDictionary<string, string> response, string key)
         {
             if (response.TryGetValue(key, out string value))
                 return value;

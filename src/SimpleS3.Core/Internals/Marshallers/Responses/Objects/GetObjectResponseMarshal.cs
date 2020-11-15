@@ -15,26 +15,26 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     [UsedImplicitly]
     internal class GetObjectResponseMarshal : IResponseMarshal<GetObjectResponse>
     {
-        public void MarshalResponse(IConfig config, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(Config config, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.Metadata = HeaderParserHelper.ParseMetadata(headers);
-            response.ETag = headers.GetHeader(HttpHeaders.ETag);
-            response.CacheControl = headers.GetHeader(HttpHeaders.CacheControl);
+            response.ETag = headers.GetOptionalValue(HttpHeaders.ETag);
+            response.CacheControl = headers.GetOptionalValue(HttpHeaders.CacheControl);
             response.LastModified = headers.GetHeaderDate(HttpHeaders.LastModified, DateTimeFormat.Rfc1123);
-            response.ContentType = headers.GetHeader(HttpHeaders.ContentType);
-            response.ContentDisposition = headers.GetHeader(HttpHeaders.ContentDisposition);
-            response.ContentEncoding = headers.GetHeader(HttpHeaders.ContentEncoding);
-            response.ContentLanguage = headers.GetHeader(HttpHeaders.ContentLanguage);
-            response.ContentRange = headers.GetHeader(HttpHeaders.ContentRange);
-            response.AcceptRanges = headers.GetHeader(HttpHeaders.AcceptRanges);
+            response.ContentType = headers.GetOptionalValue(HttpHeaders.ContentType);
+            response.ContentDisposition = headers.GetOptionalValue(HttpHeaders.ContentDisposition);
+            response.ContentEncoding = headers.GetOptionalValue(HttpHeaders.ContentEncoding);
+            response.ContentLanguage = headers.GetOptionalValue(HttpHeaders.ContentLanguage);
+            response.ContentRange = headers.GetOptionalValue(HttpHeaders.ContentRange);
+            response.AcceptRanges = headers.GetOptionalValue(HttpHeaders.AcceptRanges);
             response.ExpiresOn = headers.GetHeaderDate(HttpHeaders.Expires, DateTimeFormat.Rfc1123);
             response.ReplicationStatus = headers.GetHeaderEnum<ReplicationStatus>(AmzHeaders.XAmzReplicationStatus);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
-            response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSseAwsKmsKeyId);
+            response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
             response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSseCustomerAlgorithm);
             response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
             response.IsDeleteMarker = headers.GetHeaderBool(AmzHeaders.XAmzDeleteMarker);
-            response.VersionId = headers.GetHeader(AmzHeaders.XAmzVersionId);
+            response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
             response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
@@ -43,12 +43,12 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             if (response.StorageClass == StorageClass.Unknown)
                 response.StorageClass = StorageClass.Standard;
 
-            response.Restore = headers.GetHeader(AmzHeaders.XAmzRestore);
+            response.Restore = headers.GetOptionalValue(AmzHeaders.XAmzRestore);
             response.TagCount = headers.GetHeaderInt(AmzHeaders.XAmzTaggingCount);
-            response.WebsiteRedirectLocation = headers.GetHeader(AmzHeaders.XAmzWebsiteRedirectLocation);
+            response.WebsiteRedirectLocation = headers.GetOptionalValue(AmzHeaders.XAmzWebsiteRedirectLocation);
             response.LockMode = headers.GetHeaderEnum<LockMode>(AmzHeaders.XAmzObjectLockMode);
             response.LockRetainUntil = headers.GetHeaderDate(AmzHeaders.XAmzObjectLockRetainUntilDate, DateTimeFormat.Iso8601DateTimeExt);
-            response.LockLegalHold = headers.GetHeader(AmzHeaders.XAmzObjectLockLegalHold) == "ON";
+            response.LockLegalHold = headers.GetOptionalValue(AmzHeaders.XAmzObjectLockLegalHold) == "ON";
             response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzPartsCount);
             response.Content = responseStream;
 

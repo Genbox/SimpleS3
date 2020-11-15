@@ -23,7 +23,8 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Other
             {
                 // Mimick regular HTTP handler, and use CopyToAsync() to let the HttpContent _write_ to our network stream
                 // Using ReadAsStreamAsync() is entirely different, and will always buffer/reuse the retrieved stream (meant for _reading_ from the network)
-                await request.Content.CopyToAsync(ms).ConfigureAwait(false);
+                if (request.Content != null)
+                    await request.Content.CopyToAsync(ms).ConfigureAwait(false);
 
                 // Ensure we could read data
                 Assert.True(ms.Length > 0);

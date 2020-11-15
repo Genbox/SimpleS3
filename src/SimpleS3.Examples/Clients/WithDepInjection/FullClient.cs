@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
@@ -10,6 +9,7 @@ using Genbox.SimpleS3.Extensions.HttpClient.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Config = Genbox.SimpleS3.Core.Abstracts.Config;
 using IHttpClientBuilder = Genbox.SimpleS3.Extensions.HttpClient.IHttpClientBuilder;
 
 namespace Genbox.SimpleS3.Examples.Clients.WithDepInjection
@@ -35,7 +35,7 @@ namespace Genbox.SimpleS3.Examples.Clients.WithDepInjection
             });
 
             //Here we bind the configuration from above to S3Config, which is automatically used by SimpleS3
-            services.Configure<S3Config>(root);
+            services.Configure<Config>(root);
 
             //Here we create a core client without a network driver
             ICoreBuilder coreBuilder = services.AddSimpleS3Core(s3Config =>

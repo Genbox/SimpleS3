@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Genbox.SimpleS3.Core.Internals.Extensions;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Errors
@@ -8,10 +9,10 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
     {
         internal HeadersNotSignedError(IDictionary<string, string> lookup) : base(lookup)
         {
-            HeadersNotSigned = lookup["HeadersNotSigned"];
+            HeadersNotSigned = lookup.GetOptionalValue("HeadersNotSigned");
         }
 
-        public string HeadersNotSigned { get; }
+        public string? HeadersNotSigned { get; }
 
         public override string GetErrorDetails()
         {

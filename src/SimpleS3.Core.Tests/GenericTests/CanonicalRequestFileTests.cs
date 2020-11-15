@@ -5,8 +5,10 @@ using System.IO;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Network;
 using Genbox.SimpleS3.Core.Tests.Code.Helpers;
 using Genbox.SimpleS3.Core.Tests.Code.Other;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -23,13 +25,14 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
 
         public CanonicalRequestFileTests()
         {
-            S3Config config = new S3Config(new StringAccessKey("KeyIdExampleExampleE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
+            AwsConfig config = new AwsConfig(new StringAccessKey("KeyIdExampleExampleE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
 
-            IOptions<S3Config> options = Options.Create(config);
+            IOptions<AwsConfig> options = Options.Create(config);
 
             ISigningKeyBuilder keyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
             _scopeBuilder = new ScopeBuilder(options);
-            _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, NullLogger<SignatureBuilder>.Instance, options);
+            AwsUrlBuilder urlBuilder = new AwsUrlBuilder(options);
+            _sigBuilder = new SignatureBuilder(keyBuilder, _scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance, options);
         }
 
         [Theory]

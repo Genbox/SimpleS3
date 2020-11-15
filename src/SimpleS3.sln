@@ -9,10 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core.Tests", "Simp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Examples", "SimpleS3.Examples\SimpleS3.Examples.csproj", "{6C2BD045-9FB3-485B-91CC-83B7A36DD0E0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{7C26C924-7B82-4A50-8BF0-584930DEF401}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Items", "_Items", "{7C26C924-7B82-4A50-8BF0-584930DEF401}"
 	ProjectSection(SolutionItems) = preProject
 		..\Config.json = ..\Config.json
-		..\Directory.Build.props = ..\Directory.Build.props
 		..\Global.ruleset = ..\Global.ruleset
 		..\README.md = ..\README.md
 	EndProjectSection
@@ -54,6 +53,21 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Utility.TestSetup", "SimpleS3.Utility.TestSetup\SimpleS3.Utility.TestSetup.csproj", "{029A981C-05EF-4556-8DEC-4A8FAA43E6AB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.HttpClientFactory.Polly", "SimpleS3.Extensions.HttpClientFactory.Polly\SimpleS3.Extensions.HttpClientFactory.Polly.csproj", "{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.BackBlazeB2", "SimpleS3.Extensions.BackBlazeB2\SimpleS3.Extensions.BackBlazeB2.csproj", "{0DA531D5-573A-42F4-A6A1-6FB3ADA097FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.BackBlazeB2.Tests", "SimpleS3.Extensions.BackBlazeB2.Tests\SimpleS3.Extensions.BackBlazeB2.Tests.csproj", "{6094F7D6-363D-4E66-A19F-515175A9BF55}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.TestBase", "SimpleS3.TestBase\SimpleS3.TestBase.csproj", "{1B43D940-DD93-450B-9FC7-7A3701E1DC61}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Imports", "_Imports", "{62F2C837-5670-4C27-9609-90F8B67BEC8E}"
+	ProjectSection(SolutionItems) = preProject
+		..\Directory.Build.props = ..\Directory.Build.props
+		..\Imports\TestImport.props = ..\Imports\TestImport.props
+		..\Imports\UtilityImport.props = ..\Imports\UtilityImport.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Utility.Shared", "SimpleS3.Utility.Shared\SimpleS3.Utility.Shared.csproj", "{258C9BD8-DF98-4662-BA67-FC79083FC1C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,6 +151,22 @@ Global
 		{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DA531D5-573A-42F4-A6A1-6FB3ADA097FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DA531D5-573A-42F4-A6A1-6FB3ADA097FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DA531D5-573A-42F4-A6A1-6FB3ADA097FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DA531D5-573A-42F4-A6A1-6FB3ADA097FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6094F7D6-363D-4E66-A19F-515175A9BF55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6094F7D6-363D-4E66-A19F-515175A9BF55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6094F7D6-363D-4E66-A19F-515175A9BF55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6094F7D6-363D-4E66-A19F-515175A9BF55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B43D940-DD93-450B-9FC7-7A3701E1DC61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B43D940-DD93-450B-9FC7-7A3701E1DC61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B43D940-DD93-450B-9FC7-7A3701E1DC61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B43D940-DD93-450B-9FC7-7A3701E1DC61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{258C9BD8-DF98-4662-BA67-FC79083FC1C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{258C9BD8-DF98-4662-BA67-FC79083FC1C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{258C9BD8-DF98-4662-BA67-FC79083FC1C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{258C9BD8-DF98-4662-BA67-FC79083FC1C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,6 +182,9 @@ Global
 		{20C8CD34-EACA-4284-9368-277CAFA3B9C3} = {8374F15C-AE00-4F9E-AC9C-23F98189334A}
 		{029A981C-05EF-4556-8DEC-4A8FAA43E6AB} = {8374F15C-AE00-4F9E-AC9C-23F98189334A}
 		{872A9FA7-3C55-4F07-8DA6-5BEE3A930C02} = {5F231AF0-BA65-4AE0-959F-A29E76CC6DFD}
+		{0DA531D5-573A-42F4-A6A1-6FB3ADA097FC} = {5F231AF0-BA65-4AE0-959F-A29E76CC6DFD}
+		{6094F7D6-363D-4E66-A19F-515175A9BF55} = {5F231AF0-BA65-4AE0-959F-A29E76CC6DFD}
+		{258C9BD8-DF98-4662-BA67-FC79083FC1C3} = {8374F15C-AE00-4F9E-AC9C-23F98189334A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EB716AC-1004-4514-8045-DAFF9636F0C5}

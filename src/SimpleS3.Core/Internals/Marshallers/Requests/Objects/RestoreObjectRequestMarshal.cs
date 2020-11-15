@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
     [UsedImplicitly]
     internal class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjectRequest>
     {
-        public Stream? MarshalRequest(RestoreObjectRequest request, IConfig config)
+        public Stream? MarshalRequest(RestoreObjectRequest request, Config config)
         {
             request.SetQueryParameter(AmzParameters.Restore, string.Empty);
 

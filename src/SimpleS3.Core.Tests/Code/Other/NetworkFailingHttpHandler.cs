@@ -10,22 +10,19 @@ namespace Genbox.SimpleS3.Core.Tests.Code.Other
     /// <summary>HTTP handler that fails with network errors after N requests</summary>
     internal class NetworkFailingHttpHandler : BaseFailingHttpHandler
     {
-        private readonly int _afterNRequests;
+        private readonly int _afterNumRequests;
 
-        public NetworkFailingHttpHandler(int afterNRequests)
+        public NetworkFailingHttpHandler(int afterNumRequests)
         {
-            Validator.RequireThat(afterNRequests >= 1, nameof(afterNRequests), "afterNRequests must be greater than or equal 1");
+            Validator.RequireThat(afterNumRequests >= 1, nameof(afterNumRequests), "afterNRequests must be greater than or equal 1");
 
-            _afterNRequests = afterNRequests;
+            _afterNumRequests = afterNumRequests;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (++RequestCounter > _afterNRequests)
-            {
-                // Throw IO exception
+            if (++RequestCounter > _afterNumRequests)
                 throw new IOException("NIC is missing");
-            }
 
             await ConsumeRequestAsync(request).ConfigureAwait(false);
 

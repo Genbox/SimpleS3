@@ -16,15 +16,15 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
     [UsedImplicitly]
     internal class CreateMultipartUploadResponseMarshal : IResponseMarshal<CreateMultipartUploadResponse>
     {
-        public void MarshalResponse(IConfig config, CreateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(Config config, CreateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Rfc1123);
-            response.AbortRuleId = headers.GetHeader(AmzHeaders.XAmzAbortRuleId);
+            response.AbortRuleId = headers.GetOptionalValue(AmzHeaders.XAmzAbortRuleId);
             response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
-            response.SseKmsKeyId = headers.GetHeader(AmzHeaders.XAmzSseAwsKmsKeyId);
+            response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
             response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSseCustomerAlgorithm);
             response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
-            response.SseContext = headers.GetHeader(AmzHeaders.XAmzSseContext);
+            response.SseContext = headers.GetOptionalValue(AmzHeaders.XAmzSseContext);
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(InitiateMultipartUploadResult));

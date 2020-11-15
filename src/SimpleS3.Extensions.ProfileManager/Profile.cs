@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager
@@ -17,7 +16,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
 
         public byte[] AccessKey { get; internal set; }
 
-        public AwsRegion Region { get; internal set; }
+        public string RegionCode { get; internal set; }
 
         public string Location { get; internal set; }
 

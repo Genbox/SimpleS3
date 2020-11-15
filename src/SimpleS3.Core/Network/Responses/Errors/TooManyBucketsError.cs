@@ -9,8 +9,11 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
     {
         internal TooManyBucketsError(IDictionary<string, string> lookup) : base(lookup)
         {
-            CurrentNumberOfBuckets = int.Parse(lookup["CurrentNumberOfBuckets"], NumberFormatInfo.InvariantInfo);
-            AllowedNumberOfBuckets = int.Parse(lookup["AllowedNumberOfBuckets"], NumberFormatInfo.InvariantInfo);
+            if (lookup.TryGetValue("CurrentNumberOfBuckets", out string current))
+                CurrentNumberOfBuckets = int.Parse(current, NumberFormatInfo.InvariantInfo);
+
+            if (lookup.TryGetValue("AllowedNumberOfBuckets", out string allowed))
+                AllowedNumberOfBuckets = int.Parse(allowed, NumberFormatInfo.InvariantInfo);
         }
 
         public int CurrentNumberOfBuckets { get; }

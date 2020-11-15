@@ -19,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     [UsedImplicitly]
     internal class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsResponse>
     {
-        public void MarshalResponse(IConfig config, ListObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(Config config, ListObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             XmlSerializer s = new XmlSerializer(typeof(ListBucketResult));
 

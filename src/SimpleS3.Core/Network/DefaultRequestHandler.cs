@@ -14,12 +14,12 @@ using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
@@ -32,15 +32,16 @@ namespace Genbox.SimpleS3.Core.Network
     public class DefaultRequestHandler : IRequestHandler
     {
         private readonly IAuthorizationBuilder _authBuilder;
+        private readonly IUrlBuilder _urlBuilder;
         private readonly ILogger<DefaultRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
         private readonly IPostMapperFactory _postMapper;
         private readonly INetworkDriver _networkDriver;
-        private readonly IOptions<S3Config> _options;
+        private readonly IOptions<Config> _options;
         private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
         private readonly IValidatorFactory _validator;
 
-        public DefaultRequestHandler(IOptions<S3Config> options, IValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
+        public DefaultRequestHandler(IOptions<Config> options, IValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));
@@ -55,6 +56,7 @@ namespace Genbox.SimpleS3.Core.Network
             _options = options;
             _networkDriver = networkDriver;
             _authBuilder = authBuilder;
+            _urlBuilder = urlBuilder;
             _marshaller = marshaller;
             _postMapper = postMapper;
             _logger = logger;
@@ -77,7 +79,7 @@ namespace Genbox.SimpleS3.Core.Network
 
         private Task<TResp> SendPreSigned<TResp>(SignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
         {
-            Stream? requestStream = _marshaller.MarshalRequest(preSigned, _options.Value);
+            Stream? requestStream = _marshaller.MarshalRequest(_options.Value, preSigned);
             return HandleResponse<SignedBaseRequest, TResp>(preSigned, preSigned.Url, requestStream, token);
         }
 
@@ -88,15 +90,15 @@ namespace Genbox.SimpleS3.Core.Network
 
             _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
-            S3Config config = _options.Value;
-            Stream? requestStream = _marshaller.MarshalRequest(request, config);
+            Config config = _options.Value;
+            Stream? requestStream = _marshaller.MarshalRequest(config, request);
 
             _validator.ValidateAndThrow(request);
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(200);
             RequestHelper.AppendScheme(sb, config);
             int schemeLength = sb.Length;
-            RequestHelper.AppendHost(sb, config, request);
+            _urlBuilder.AppendHost(sb, request);
 
             request.SetHeader(HttpHeaders.Host, sb.ToString(schemeLength, sb.Length - schemeLength));
             request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
@@ -125,7 +127,7 @@ namespace Genbox.SimpleS3.Core.Network
             //We add the authorization header here because we need ALL other headers to be present when we do
             _authBuilder.BuildAuthorization(request);
 
-            RequestHelper.AppendUrl(sb, config, request);
+            _urlBuilder.AppendUrl(sb, request);
             RequestHelper.AppendQueryParameters(sb, request);
             string url = sb.ToString();
             StringBuilderPool.Shared.Return(sb);
@@ -146,11 +148,11 @@ namespace Genbox.SimpleS3.Core.Network
             TResp response = new TResp();
             response.StatusCode = statusCode;
             response.ContentLength = headers.GetHeaderLong(HttpHeaders.ContentLength);
-            response.ConnectionClosed = "closed".Equals(headers.GetHeader(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
+            response.ConnectionClosed = "closed".Equals(headers.GetOptionalValue(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
             response.Date = headers.GetHeaderDate(HttpHeaders.Date, DateTimeFormat.Rfc1123);
-            response.Server = headers.GetHeader(HttpHeaders.Server);
-            response.ResponseId = headers.GetHeader(AmzHeaders.XAmzId2);
-            response.RequestId = headers.GetHeader(AmzHeaders.XAmzRequestId);
+            response.Server = headers.GetOptionalValue(HttpHeaders.Server);
+            response.ResponseId = headers.GetOptionalValue(AmzHeaders.XAmzId2);
+            response.RequestId = headers.GetOptionalValue(AmzHeaders.XAmzRequestId);
 
             // https://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
             response.IsSuccess = !(statusCode == 403 //Forbidden
@@ -185,15 +187,16 @@ namespace Genbox.SimpleS3.Core.Network
                             response.Error = ErrorHandler.Create(ms);
 
                         _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
-
-                        if (_options.Value.ThrowExceptionOnError)
-                            throw new S3RequestException(response.StatusCode, $"Received error: '{response.Error.Message}'. Details: '{response.Error.GetErrorDetails()}'");
                     }
                 }
             }
 
             //We always map even if the request is not successful
             _postMapper.PostMap(_options.Value, request, response);
+
+            if (_options.Value.ThrowExceptionOnError && !response.IsSuccess)
+                throw new S3RequestException(response.StatusCode, $"Received error: '{response.Error?.Message}'. Details: '{response.Error?.GetErrorDetails()}'");
+
             return response;
         }
     }

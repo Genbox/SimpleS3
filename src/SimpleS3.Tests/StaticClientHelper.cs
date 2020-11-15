@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Tests
     {
         public static (FakeNetworkDriver driver, S3Client client) CreateFakeClient()
         {
-            S3Config config = new S3Config(new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
+            AwsConfig config = new AwsConfig(new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
 
             FakeNetworkDriver fakeNetworkDriver = new FakeNetworkDriver();
 

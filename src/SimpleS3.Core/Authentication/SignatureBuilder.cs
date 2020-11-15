@@ -8,11 +8,11 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Internals.Pools;
-using Genbox.SimpleS3.Core.Network;
 using Microsoft.Collections.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -43,13 +43,15 @@ namespace Genbox.SimpleS3.Core.Authentication
 
         private readonly ISigningKeyBuilder _keyBuilder;
         private readonly ILogger<SignatureBuilder> _logger;
-        private readonly IOptions<S3Config> _options;
+        private readonly IOptions<Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
+        private readonly IUrlBuilder _urlBuilder;
 
-        public SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, ILogger<SignatureBuilder> logger, IOptions<S3Config> options)
+        public SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IUrlBuilder urlBuilder, ILogger<SignatureBuilder> logger, IOptions<Config> options)
         {
             _keyBuilder = keyBuilder;
             _scopeBuilder = scopeBuilder;
+            _urlBuilder = urlBuilder;
             _logger = logger;
             _options = options;
         }
@@ -61,7 +63,7 @@ namespace Genbox.SimpleS3.Core.Authentication
             _logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(100);
-            RequestHelper.AppendUrl(sb, _options.Value, request);
+            _urlBuilder.AppendUrl(sb, request);
             string url = sb.ToString();
 
             StringBuilderPool.Shared.Return(sb);

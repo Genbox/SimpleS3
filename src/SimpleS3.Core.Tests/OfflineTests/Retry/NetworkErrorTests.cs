@@ -6,6 +6,8 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Tests.Code.Other;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
+using Genbox.SimpleS3.TestBase;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
@@ -19,11 +21,13 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
 
         public NetworkErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
-        protected override void ConfigureCoreBuilder(ICoreBuilder builder)
+        protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
         {
-            builder.UseHttpClientFactory()
-                   .ConfigurePrimaryHttpMessageHandler(() => _handler)
-                   .UseRetryPolicy(3, attempt => TimeSpan.Zero);
+            coreBuilder.UseHttpClientFactory()
+                       .ConfigurePrimaryHttpMessageHandler(() => _handler)
+                       .UseRetryPolicy(3, attempt => TimeSpan.Zero);
+
+            base.ConfigureCoreBuilder(coreBuilder, configuration);
         }
 
         [Fact]
@@ -42,6 +46,13 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Retry
 
             // Because network errors are transient, they should be retried
             Assert.Equal(5, _handler.RequestCounter);
+        }
+
+        public override void Dispose()
+        {
+            _handler.Dispose();
+            GC.SuppressFinalize(this);
+            base.Dispose();
         }
     }
 }
