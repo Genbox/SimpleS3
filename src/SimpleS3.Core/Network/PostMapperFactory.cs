@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
+using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 
 namespace Genbox.SimpleS3.Core.Network
 {

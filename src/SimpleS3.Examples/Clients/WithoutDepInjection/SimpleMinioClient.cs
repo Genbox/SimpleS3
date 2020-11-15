@@ -1,7 +1,6 @@
 ﻿using System;
-using Genbox.SimpleS3.Core;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Aws;
 
 namespace Genbox.SimpleS3.Examples.Clients.WithoutDepInjection
 {

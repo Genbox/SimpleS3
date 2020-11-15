@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Genbox.HttpBuilders.Abstracts;
-using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Core.Builders
 {

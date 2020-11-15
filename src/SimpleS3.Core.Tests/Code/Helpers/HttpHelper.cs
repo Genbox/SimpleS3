@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Web;
-using Genbox.SimpleS3.Core.Common;
-using Genbox.SimpleS3.Core.Tests.Code.Other;
+using Genbox.SimpleS3.Core.Common.Validation;
+using Genbox.SimpleS3.Core.Tests.Code.Handlers;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Genbox.SimpleS3.Core.Tests.Code.Helpers
 {
-    public static class HttpHelper
+    internal static class HttpHelper
     {
         public static HttpHandler ParseHttpRequest(string request)
         {

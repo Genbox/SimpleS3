@@ -1,7 +1,6 @@
 ﻿using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Cli.Core.Managers;
-using Genbox.SimpleS3.Core;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;

@@ -10,8 +10,8 @@ using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Errors;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Core.Tests.Code.Extensions;
 using Genbox.SimpleS3.TestBase;
+using Genbox.SimpleS3.TestBase.Extensions;
 using Xunit;
 using Xunit.Abstractions;
 

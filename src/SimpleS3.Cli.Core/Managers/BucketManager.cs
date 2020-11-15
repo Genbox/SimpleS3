@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Cli.Core.Helpers;
-using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;

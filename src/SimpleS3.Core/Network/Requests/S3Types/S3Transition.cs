@@ -1,5 +1,5 @@
 ﻿using System;
-using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types

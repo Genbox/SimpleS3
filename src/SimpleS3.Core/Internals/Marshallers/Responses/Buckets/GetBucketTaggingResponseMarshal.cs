@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using JetBrains.Annotations;
 

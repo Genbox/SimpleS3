@@ -1,5 +1,5 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Request;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
 {

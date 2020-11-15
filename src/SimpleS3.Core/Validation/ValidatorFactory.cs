@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
-using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Validation;
 using JetBrains.Annotations;
 using IValidatorFactory = Genbox.SimpleS3.Core.Abstracts.Factories.IValidatorFactory;
 

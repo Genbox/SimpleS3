@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Reflection;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Network;
+using Genbox.SimpleS3.Core.Tests.Code.Handlers;
 using Genbox.SimpleS3.Core.Tests.Code.Helpers;
-using Genbox.SimpleS3.Core.Tests.Code.Other;
+using Genbox.SimpleS3.TestBase.Helpers;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
@@ -63,10 +64,12 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             //file-name.creq: The resulting canonical request.
             //file-name.sts: The resulting string to sign.
 
-            foreach ((string name, string content) in ResourceHelper.GetResources(@".*\.req$"))
+            Assembly assembly = typeof(CanonicalRequestFileTests).Assembly;
+
+            foreach ((string name, string content) in ResourceHelper.GetResources(assembly, @".*\.req$"))
             {
-                string expectedCr = ResourceHelper.GetResource(Path.ChangeExtension(name, "creq"));
-                string expectedSts = ResourceHelper.GetResource(Path.ChangeExtension(name, "sts"));
+                string expectedCr = ResourceHelper.GetResource(assembly, Path.ChangeExtension(name, "creq"));
+                string expectedSts = ResourceHelper.GetResource(assembly, Path.ChangeExtension(name, "sts"));
 
                 yield return new object[] { content, expectedCr, expectedSts };
             }

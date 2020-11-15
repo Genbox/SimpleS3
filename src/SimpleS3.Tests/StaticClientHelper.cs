@@ -1,6 +1,5 @@
-﻿using Genbox.SimpleS3.Core;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Authentication;
+﻿using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Aws;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 

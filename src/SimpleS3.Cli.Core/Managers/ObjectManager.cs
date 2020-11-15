@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Cli.Core.Enums;
 using Genbox.SimpleS3.Cli.Core.Exceptions;
 using Genbox.SimpleS3.Cli.Core.Helpers;
-using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.ErrorHandling.Exceptions;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;

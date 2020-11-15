@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Extensions.HttpClient.Internal;
 using Microsoft.Extensions.Logging;
 using HttpMethod = Genbox.SimpleS3.Core.Abstracts.Enums.HttpMethod;

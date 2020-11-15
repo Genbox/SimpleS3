@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Globalization;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
-using Genbox.SimpleS3.Core.Network;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;

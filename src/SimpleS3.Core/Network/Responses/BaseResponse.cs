@@ -1,5 +1,5 @@
 ﻿using System;
-using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 
 namespace Genbox.SimpleS3.Core.Network.Responses
 {

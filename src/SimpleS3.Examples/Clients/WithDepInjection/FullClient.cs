@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClient.Extensions;

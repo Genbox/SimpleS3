@@ -1,6 +1,6 @@
 ﻿using System;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 

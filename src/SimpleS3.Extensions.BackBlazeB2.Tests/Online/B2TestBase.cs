@@ -13,6 +13,9 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests.Online
 
         protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
         {
+            //Call the base method here. we need to overwrite the config with the BackBlazeB2 profile
+            base.ConfigureCoreBuilder(coreBuilder, configuration);
+
             coreBuilder.UseBackBlazeB2();
 
             string profileName = "TestSetup-BackBlazeB2";

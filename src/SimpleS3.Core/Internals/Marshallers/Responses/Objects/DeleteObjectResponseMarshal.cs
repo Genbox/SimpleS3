@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using JetBrains.Annotations;

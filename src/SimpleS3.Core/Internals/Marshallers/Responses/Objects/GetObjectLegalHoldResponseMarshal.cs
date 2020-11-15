@@ -4,6 +4,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects.Xml;
 using JetBrains.Annotations;

@@ -1,7 +1,7 @@
 ﻿using System;
 using Genbox.SimpleS3.Abstracts;
-using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;

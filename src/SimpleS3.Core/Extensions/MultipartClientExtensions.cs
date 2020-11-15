@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
-using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
