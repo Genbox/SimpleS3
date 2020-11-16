@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -33,6 +34,11 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Buckets
                     {
                         Expiration = new S3Expiration(5),
                         Filter = new S3Filter { Prefix = "temp/" }
+                    },
+                    new S3Rule("Expire temp2 folder tomorrow", true)
+                    {
+                        Expiration = new S3Expiration(DateTimeOffset.UtcNow.AddDays(1)),
+                        Filter = new S3Filter { Prefix = "temp2/" }
                     }
                 };
 

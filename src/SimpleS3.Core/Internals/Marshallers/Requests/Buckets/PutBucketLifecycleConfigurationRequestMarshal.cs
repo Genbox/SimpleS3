@@ -38,7 +38,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
                     writer.WriteStartElement("Expiration");
 
                     if (rule.Expiration.ExpireOnDate.HasValue)
-                        writer.WriteElement("Date", ValueHelper.DateToString(rule.Expiration.ExpireOnDate.Value, DateTimeFormat.Iso8601Date));
+                        writer.WriteElement("Date", ValueHelper.DateToString(rule.Expiration.ExpireOnDate.Value.UtcDateTime.Date, DateTimeFormat.Iso8601DateTimeExt));
 
                     if (rule.Expiration.ExpireAfterDays.HasValue)
                         writer.WriteElement("Days", rule.Expiration.ExpireAfterDays.Value);
