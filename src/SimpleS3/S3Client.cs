@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -10,7 +9,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
-using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Aws;
@@ -72,25 +70,7 @@ namespace Genbox.SimpleS3
             if (proxy != null)
                 builder.HttpBuilder.UseProxy(proxy);
 
-            services.AddSingleton<IOptions<Config>>(x=>
-            {
-                AwsConfig cfg = options.Value;
-
-                IRegionData? regionData = x.GetService<IRegionData>();
-
-                foreach (IRegionInfo region in regionData.GetRegions())
-                {
-                    if ((int)cfg.Region == (int)Convert.ChangeType(region.EnumValue, typeof(int), NumberFormatInfo.InvariantInfo))
-                    {
-                        cfg.RegionCode = region.Code;
-                        break;
-                    }
-                }
-
-                cfg.ProviderType = "AmazonS3";
-                
-                return options;
-            });
+            services.AddSingleton<IOptions<Config>>(x => options);
 
             ServiceProvider provider = services.BuildServiceProvider();
             Initialize(provider.GetService<IObjectClient>(), provider.GetService<IBucketClient>(), provider.GetService<IMultipartClient>());
@@ -102,26 +82,8 @@ namespace Genbox.SimpleS3
             services.AddSimpleS3();
             services.Replace(ServiceDescriptor.Singleton(networkDriver));
             services.Replace(ServiceDescriptor.Singleton(loggerFactory));
-            services.AddSingleton<IOptions<Config>>(x=>
-            {
-                AwsConfig cfg = options.Value;
+            services.AddSingleton<IOptions<Config>>(x => options);
 
-                IRegionData? regionData = x.GetService<IRegionData>();
-
-                foreach (IRegionInfo region in regionData.GetRegions())
-                {
-                    if ((int)cfg.Region == (int)Convert.ChangeType(region.EnumValue, typeof(int), NumberFormatInfo.InvariantInfo))
-                    {
-                        cfg.RegionCode = region.Code;
-                        break;
-                    }
-                }
-
-                cfg.ProviderType = "AmazonS3";
-                
-                return options;
-            });
-            
             ServiceProvider provider = services.BuildServiceProvider();
             Initialize(provider.GetService<IObjectClient>(), provider.GetService<IBucketClient>(), provider.GetService<IMultipartClient>());
         }
