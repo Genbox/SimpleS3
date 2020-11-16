@@ -36,6 +36,7 @@ namespace Genbox.SimpleS3
         private IBucketClient _bucketClient;
         private IMultipartClient _multipartClient;
         private IObjectClient _objectClient;
+        private readonly ServiceProvider _serviceProvider;
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="keyId">The key id</param>
@@ -72,8 +73,8 @@ namespace Genbox.SimpleS3
 
             services.AddSingleton<IOptions<Config>>(x => options);
 
-            ServiceProvider provider = services.BuildServiceProvider();
-            Initialize(provider.GetService<IObjectClient>(), provider.GetService<IBucketClient>(), provider.GetService<IMultipartClient>());
+            _serviceProvider = services.BuildServiceProvider();
+            Initialize(_serviceProvider.GetService<IObjectClient>(), _serviceProvider.GetService<IBucketClient>(), _serviceProvider.GetService<IMultipartClient>());
         }
 
         public S3Client(IOptions<AwsConfig> options, INetworkDriver networkDriver, ILoggerFactory loggerFactory)
@@ -84,8 +85,8 @@ namespace Genbox.SimpleS3
             services.Replace(ServiceDescriptor.Singleton(loggerFactory));
             services.AddSingleton<IOptions<Config>>(x => options);
 
-            ServiceProvider provider = services.BuildServiceProvider();
-            Initialize(provider.GetService<IObjectClient>(), provider.GetService<IBucketClient>(), provider.GetService<IMultipartClient>());
+            _serviceProvider = services.BuildServiceProvider();
+            Initialize(_serviceProvider.GetService<IObjectClient>(), _serviceProvider.GetService<IBucketClient>(), _serviceProvider.GetService<IMultipartClient>());
         }
 
         public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient)
@@ -270,6 +271,7 @@ namespace Genbox.SimpleS3
 
         public void Dispose()
         {
+            _serviceProvider.Dispose();
         }
     }
 }
