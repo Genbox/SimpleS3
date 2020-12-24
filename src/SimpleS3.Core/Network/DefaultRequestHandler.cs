@@ -177,18 +177,21 @@ namespace Genbox.SimpleS3.Core.Network
                 _marshaller.MarshalResponse(_options.Value, response, headers, responseStream ?? Stream.Null);
             else if (responseStream != null)
             {
-                using (MemoryStream ms = new MemoryStream())
+                if (headers.TryGetValue(HttpHeaders.ContentType, out string contentType) && (contentType.Equals("text/xml", StringComparison.OrdinalIgnoreCase) || contentType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)))
                 {
-                    await responseStream.CopyToAsync(ms, 81920, token).ConfigureAwait(false);
-
-                    if (ms.Length > 0)
+                    using (MemoryStream ms = new MemoryStream())
                     {
-                        ms.Seek(0, SeekOrigin.Begin);
+                        await responseStream.CopyToAsync(ms, 81920, token).ConfigureAwait(false);
 
-                        using (responseStream)
-                            response.Error = ErrorHandler.Create(ms);
+                        if (ms.Length > 0)
+                        {
+                            ms.Seek(0, SeekOrigin.Begin);
 
-                        _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
+                            using (responseStream)
+                                response.Error = ErrorHandler.Create(ms);
+
+                            _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
+                        }
                     }
                 }
             }
