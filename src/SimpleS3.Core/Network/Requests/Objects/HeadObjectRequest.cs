@@ -20,12 +20,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         internal HeadObjectRequest(HttpMethod method) : base(method)
         {
-        }
-
-        public HeadObjectRequest(string bucketName, string objectKey) : base(HttpMethod.HEAD)
-        {
-            Initialize(bucketName, objectKey);
-
             Range = new RangeBuilder();
             IfETagMatch = new ETagBuilder();
             IfETagNotMatch = new ETagBuilder();
@@ -39,6 +33,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             ResponseContentDisposition = new ContentDispositionBuilder(Options.Create(contentDisp));
             ResponseContentLanguage = new ContentLanguageBuilder();
             ResponseContentEncoding = new ContentEncodingBuilder();
+        }
+
+        public HeadObjectRequest(string bucketName, string objectKey) : this(HttpMethod.HEAD)
+        {
+            Initialize(bucketName, objectKey);
         }
 
         internal void Initialize(string bucketName, string objectKey)

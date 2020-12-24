@@ -19,12 +19,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 
         internal CreateMultipartUploadRequest(HttpMethod method) : base(method)
         {
-        }
-
-        public CreateMultipartUploadRequest(string bucketName, string objectKey) : base(HttpMethod.POST)
-        {
-            Initialize(bucketName, objectKey);
-
             Tags = new TagBuilder();
             Metadata = new MetadataBuilder();
             CacheControl = new CacheControlBuilder();
@@ -36,6 +30,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             AclGrantWriteAcp = new AclBuilder();
             AclGrantFullControl = new AclBuilder();
             SseContext = new KmsContextBuilder();
+        }
+
+        public CreateMultipartUploadRequest(string bucketName, string objectKey) : this(HttpMethod.POST)
+        {
+            Initialize(bucketName, objectKey);
         }
 
         internal void Initialize(string bucketName, string objectKey)

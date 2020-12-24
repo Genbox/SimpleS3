@@ -21,8 +21,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         internal void Initialize(string bucketName, string objectKey, Stream? content)
         {
-            Initialize(bucketName, objectKey);
             Content = content;
+            Initialize(bucketName, objectKey);
         }
 
         public Stream? Content { get; internal set; }
