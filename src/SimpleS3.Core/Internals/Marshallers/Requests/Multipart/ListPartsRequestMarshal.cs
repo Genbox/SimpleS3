@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
         {
             request.SetQueryParameter(AmzParameters.EncodingType, request.EncodingType);
             request.SetQueryParameter(AmzParameters.MaxParts, request.MaxParts);
-            request.SetQueryParameter(AmzParameters.PartNumberMarker, request.PartNumberMarker);
+            request.SetOptionalQueryParameter(AmzParameters.PartNumberMarker, request.PartNumberMarker);
             return null;
         }
     }

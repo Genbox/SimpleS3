@@ -14,11 +14,11 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
         public Stream? MarshalRequest(ListMultipartUploadsRequest request, Config config)
         {
             request.SetQueryParameter(AmzParameters.Uploads, string.Empty);
-            request.SetQueryParameter(AmzParameters.Delimiter, request.Delimiter);
+            request.SetOptionalQueryParameter(AmzParameters.Delimiter, request.Delimiter);
             request.SetQueryParameter(AmzParameters.EncodingType, request.EncodingType);
             request.SetQueryParameter(AmzParameters.MaxUploads, request.MaxUploads);
-            request.SetQueryParameter(AmzParameters.KeyMarker, request.KeyMarker);
-            request.SetQueryParameter(AmzParameters.Prefix, request.Prefix);
+            request.SetOptionalQueryParameter(AmzParameters.KeyMarker, request.KeyMarker);
+            request.SetOptionalQueryParameter(AmzParameters.Prefix, request.Prefix);
             request.SetOptionalQueryParameter(AmzParameters.UploadIdMarker, request.UploadIdMarker);
             return null;
         }
