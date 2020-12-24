@@ -17,8 +17,14 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     {
         private byte[]? _sseCustomerKey;
 
-        internal CreateMultipartUploadRequest() : base(HttpMethod.POST)
+        internal CreateMultipartUploadRequest(HttpMethod method) : base(method)
         {
+        }
+
+        public CreateMultipartUploadRequest(string bucketName, string objectKey) : base(HttpMethod.POST)
+        {
+            Initialize(bucketName, objectKey);
+
             Tags = new TagBuilder();
             Metadata = new MetadataBuilder();
             CacheControl = new CacheControlBuilder();
@@ -32,7 +38,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             SseContext = new KmsContextBuilder();
         }
 
-        public CreateMultipartUploadRequest(string bucketName, string objectKey) : this()
+        internal void Initialize(string bucketName, string objectKey)
         {
             BucketName = bucketName;
             ObjectKey = objectKey;

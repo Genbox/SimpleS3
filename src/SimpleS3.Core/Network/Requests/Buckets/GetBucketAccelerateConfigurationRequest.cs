@@ -12,6 +12,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     {
         public GetBucketAccelerateConfigurationRequest(string bucketName) : base(HttpMethod.GET)
         {
+            Initialize(bucketName);
+        }
+
+        internal void Initialize(string bucketName)
+        {
             BucketName = bucketName;
         }
 

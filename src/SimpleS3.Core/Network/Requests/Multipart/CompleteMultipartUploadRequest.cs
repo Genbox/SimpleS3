@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
-using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -22,18 +21,18 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// </summary>
     public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId
     {
-        private CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.POST)
+        public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, params UploadPartResponse[] parts) : this(bucketName, objectKey, uploadId, (IEnumerable<UploadPartResponse>)parts) { }
+
+        public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts) : base(HttpMethod.POST)
+        {
+            Initialize(bucketName, objectKey, uploadId, parts);
+        }
+
+        internal void Initialize(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts)
         {
             BucketName = bucketName;
             ObjectKey = objectKey;
             UploadId = uploadId;
-        }
-
-        public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, params UploadPartResponse[] parts) : this(bucketName, objectKey, uploadId, (IEnumerable<UploadPartResponse>)parts) { }
-
-        public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts) : this(bucketName, objectKey, uploadId)
-        {
-            Validator.RequireNotNull(parts, nameof(parts));
 
             UploadParts = new List<S3PartInfo>();
 
@@ -43,10 +42,17 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             }
         }
 
-        public IList<S3PartInfo> UploadParts { get; }
+        public IList<S3PartInfo> UploadParts { get; private set; }
         public string BucketName { get; set; }
         public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
         public string UploadId { get; set; }
+
+        public override void Reset()
+        {
+            RequestPayer = Payer.Unknown;
+
+            base.Reset();
+        }
     }
 }

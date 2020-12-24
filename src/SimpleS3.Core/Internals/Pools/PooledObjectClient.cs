@@ -6,19 +6,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
-using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core
+namespace Genbox.SimpleS3.Core.Internals.Pools
 {
-    /// <summary>This client pools all request objects to minimize the pressure on the garbage collector and free up memory.</summary>
-    [PublicAPI]
-    public class S3PooledObjectClient : IObjectClient
+    internal class PooledObjectClient : IObjectClient
     {
-        public S3PooledObjectClient(IObjectOperations operations)
+        public PooledObjectClient(IObjectOperations operations)
         {
             ObjectOperations = operations;
         }

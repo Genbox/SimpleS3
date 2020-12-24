@@ -10,6 +10,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     {
         public ListPartsRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.GET)
         {
+            Initialize(bucketName, objectKey, uploadId);
+        }
+
+        internal void Initialize(string bucketName, string objectKey, string uploadId)
+        {
             BucketName = bucketName;
             ObjectKey = objectKey;
             UploadId = uploadId;
@@ -22,11 +27,21 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public int? MaxParts { get; set; }
 
         /// <summary>Specifies the part after which listing should begin. Only parts with higher part numbers will be listed.</summary>
-        public string PartNumberMarker { get; set; }
+        public string? PartNumberMarker { get; set; }
 
         public string BucketName { get; set; }
         public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
         public string UploadId { get; set; }
+
+        public override void Reset()
+        {
+            RequestPayer = Payer.Unknown;
+            PartNumberMarker = null;
+            MaxParts = null;
+            EncodingType = EncodingType.Unknown;
+
+            base.Reset();
+        }
     }
 }

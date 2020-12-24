@@ -12,6 +12,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     {
         public PutBucketAccelerateConfigurationRequest(string bucketName, bool enabled) : base(HttpMethod.PUT)
         {
+            Initialize(bucketName, enabled);
+        }
+
+        internal void Initialize(string bucketName, bool enabled)
+        {
             BucketName = bucketName;
             AccelerationEnabled = enabled;
         }

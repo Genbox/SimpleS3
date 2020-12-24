@@ -15,12 +15,17 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     {
         public PutBucketLockConfigurationRequest(string bucketName, bool enabled) : base(HttpMethod.PUT)
         {
+            Initialize(bucketName, enabled);
+        }
+
+        internal void Initialize(string bucketName, bool enabled)
+        {
             BucketName = bucketName;
             Enabled = enabled;
         }
 
         public bool Enabled { get; set; }
-        public string LockToken { get; set; }
+        public string? LockToken { get; set; }
         public string BucketName { get; set; }
         public LockMode LockMode { get; set; }
         public DateTimeOffset? LockRetainUntil { get; set; }
@@ -28,5 +33,16 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
         public Payer RequestPayer { get; set; }
         Func<Type, bool> IAutoMapConfig.AutoMapDisabledFor => x => x == typeof(IHasLock);
         Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
+
+        public override void Reset()
+        {
+            LockToken = null;
+            LockMode = LockMode.Unknown;
+            LockRetainUntil = null;
+            ContentMd5 = null;
+            RequestPayer = Payer.Unknown;
+
+            base.Reset();
+        }
     }
 }

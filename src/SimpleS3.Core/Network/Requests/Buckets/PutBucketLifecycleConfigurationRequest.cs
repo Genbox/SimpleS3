@@ -13,13 +13,25 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     {
         public PutBucketLifecycleConfigurationRequest(string bucketName, IEnumerable<S3Rule> rules) : base(HttpMethod.PUT)
         {
+            Initialize(bucketName, rules);
+        }
+
+        internal void Initialize(string bucketName, IEnumerable<S3Rule> rules)
+        {
             BucketName = bucketName;
             Rules = rules.ToList();
         }
 
         public string BucketName { get; set; }
-        public IList<S3Rule> Rules { get; }
+        public IList<S3Rule> Rules { get; private set; }
         public Func<bool> ForceContentMd5 => () => true;
         public byte[]? ContentMd5 { get; set; }
+
+        public override void Reset()
+        {
+            ContentMd5 = null;
+
+            base.Reset();
+        }
     }
 }

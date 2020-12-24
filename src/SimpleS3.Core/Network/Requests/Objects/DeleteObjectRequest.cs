@@ -12,12 +12,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class DeleteObjectRequest : BaseRequest, IHasVersionId, IHasRequestPayer, IHasBypassGovernanceRetention, IHasObjectKey, IHasBucketName, IHasMfa
     {
-        internal DeleteObjectRequest() : base(HttpMethod.DELETE)
+        public DeleteObjectRequest(string bucketName, string objectKey) : base(HttpMethod.DELETE)
         {
             Mfa = new MfaAuthenticationBuilder();
+            Initialize(bucketName, objectKey);
         }
 
-        public DeleteObjectRequest(string bucketName, string objectKey) : this()
+        internal void Initialize(string bucketName, string objectKey)
         {
             BucketName = bucketName;
             ObjectKey = objectKey;

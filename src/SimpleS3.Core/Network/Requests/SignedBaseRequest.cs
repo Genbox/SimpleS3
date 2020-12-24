@@ -9,6 +9,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests
             Url = url;
         }
 
-        public string Url { get; }
+        public string Url { get; internal set; }
     }
 }

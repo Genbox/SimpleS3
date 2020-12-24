@@ -29,6 +29,14 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
             return obj;
         }
 
+        public TReturn RentAndUse<TReturn>(Action<T> setup, Func<T, TReturn> action)
+        {
+            T obj = Rent(setup);
+            TReturn returnVal = action(obj);
+            Return(obj);
+            return returnVal;
+        }
+
         public async Task<TReturn> RentAndUse<TReturn>(Action<T> setup, Func<T, Task<TReturn>> action)
         {
             T obj = Rent(setup);

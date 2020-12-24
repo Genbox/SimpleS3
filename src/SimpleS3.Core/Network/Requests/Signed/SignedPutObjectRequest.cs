@@ -11,6 +11,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Signed
             Content = content;
         }
 
-        public Stream? Content { get; }
+        public Stream? Content { get; internal set; }
     }
 }

@@ -18,8 +18,14 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     {
         private byte[]? _sseCustomerKey;
 
-        internal HeadObjectRequest() : base(HttpMethod.HEAD)
+        internal HeadObjectRequest(HttpMethod method) : base(method)
         {
+        }
+
+        public HeadObjectRequest(string bucketName, string objectKey) : base(HttpMethod.HEAD)
+        {
+            Initialize(bucketName, objectKey);
+
             Range = new RangeBuilder();
             IfETagMatch = new ETagBuilder();
             IfETagNotMatch = new ETagBuilder();
@@ -35,7 +41,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             ResponseContentEncoding = new ContentEncodingBuilder();
         }
 
-        public HeadObjectRequest(string bucketName, string objectKey) : this()
+        internal void Initialize(string bucketName, string objectKey)
         {
             BucketName = bucketName;
             ObjectKey = objectKey;

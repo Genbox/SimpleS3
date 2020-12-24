@@ -15,12 +15,17 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     {
         public CreateBucketRequest(string bucketName) : base(HttpMethod.PUT)
         {
-            BucketName = bucketName;
+            Initialize(bucketName);
             AclGrantRead = new AclBuilder();
             AclGrantWrite = new AclBuilder();
             AclGrantReadAcp = new AclBuilder();
             AclGrantWriteAcp = new AclBuilder();
             AclGrantFullControl = new AclBuilder();
+        }
+
+        internal void Initialize(string bucketName)
+        {
+            BucketName = bucketName;
         }
 
         /// <summary>Enable object locking on the bucket.</summary>
@@ -33,5 +38,17 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
         public AclBuilder AclGrantWriteAcp { get; }
         public AclBuilder AclGrantFullControl { get; }
         public string BucketName { get; set; }
+
+        public override void Reset()
+        {
+            Acl = BucketCannedAcl.Unknown;
+            AclGrantRead.Reset();
+            AclGrantWrite.Reset();
+            AclGrantReadAcp.Reset();
+            AclGrantWriteAcp.Reset();
+            AclGrantFullControl.Reset();
+
+            base.Reset();
+        }
     }
 }

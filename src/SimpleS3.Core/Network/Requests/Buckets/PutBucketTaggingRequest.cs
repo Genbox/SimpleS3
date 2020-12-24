@@ -19,8 +19,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     {
         public PutBucketTaggingRequest(string bucketName, IDictionary<string, string> tags) : base(HttpMethod.PUT)
         {
-            BucketName = bucketName;
+            Initialize(bucketName, tags);
             Tags = new TagBuilder();
+        }
+
+        internal void Initialize(string bucketName, IDictionary<string, string> tags)
+        {
+            BucketName = bucketName;
 
             foreach (KeyValuePair<string, string> pair in tags)
             {
@@ -32,5 +37,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
         public byte[]? ContentMd5 { get; set; }
         public Func<bool> ForceContentMd5 => () => true;
         public TagBuilder Tags { get; }
+
+        public override void Reset()
+        {
+            ContentMd5 = null;
+            Tags.Reset();
+
+            base.Reset();
+        }
     }
 }

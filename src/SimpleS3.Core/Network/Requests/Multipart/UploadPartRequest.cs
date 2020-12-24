@@ -15,6 +15,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 
         public UploadPartRequest(string bucketName, string objectKey, int partNumber, string uploadId, Stream content) : base(HttpMethod.PUT)
         {
+            Initialize(bucketName, objectKey, partNumber, uploadId, content);
+        }
+
+        internal void Initialize(string bucketName, string objectKey, int partNumber, string uploadId, Stream content)
+        {
             if (partNumber <= 0 || partNumber > 10_000)
                 throw new ArgumentException("Part number must be between 1 and 10.000 inclusive", nameof(partNumber));
 
@@ -26,7 +31,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         }
 
         public string BucketName { get; set; }
-        public Stream? Content { get; }
+        public Stream? Content { get; private set; }
         public byte[]? ContentMd5 { get; set; }
         public string ObjectKey { get; set; }
 
@@ -58,5 +63,16 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         }
 
         public string UploadId { get; set; }
+
+        public override void Reset()
+        {
+            ContentMd5 = null;
+            RequestPayer = Payer.Unknown;
+            SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
+            SseCustomerKey = null;
+            SseCustomerKeyMd5 = null;
+
+            base.Reset();
+        }
     }
 }

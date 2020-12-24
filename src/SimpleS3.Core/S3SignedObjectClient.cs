@@ -21,12 +21,12 @@ namespace Genbox.SimpleS3.Core
 
         public ISignedObjectOperations SignedObjectOperations { get; }
 
-        public string SignPutObject(string bucketName, string objectKey, Stream? data, TimeSpan expire, Action<PutObjectRequest>? config = null)
+        public string SignPutObject(string bucketName, string objectKey, Stream? content, TimeSpan expires, Action<PutObjectRequest>? config = null)
         {
-            PutObjectRequest request = new PutObjectRequest(bucketName, objectKey, data);
+            PutObjectRequest request = new PutObjectRequest(bucketName, objectKey, content);
             config?.Invoke(request);
 
-            return SignedObjectOperations.SignPutObject(request, expire);
+            return SignedObjectOperations.SignPutObject(request, expires);
         }
 
         public Task<PutObjectResponse> PutObjectAsync(string url, Stream? content, Action<SignedPutObjectRequest>? config = null, CancellationToken token = default)

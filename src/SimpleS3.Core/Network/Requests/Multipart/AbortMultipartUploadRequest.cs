@@ -16,6 +16,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     {
         public AbortMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.DELETE)
         {
+            Initialize(bucketName, objectKey, uploadId);
+        }
+
+        internal void Initialize(string bucketName, string objectKey, string uploadId)
+        {
             BucketName = bucketName;
             ObjectKey = objectKey;
             UploadId = uploadId;
@@ -25,5 +30,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
         public string UploadId { get; set; }
+
+        public override void Reset()
+        {
+            RequestPayer = Payer.Unknown;
+
+            base.Reset();
+        }
     }
 }
