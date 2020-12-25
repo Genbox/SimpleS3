@@ -21,9 +21,14 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// </summary>
     public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId
     {
+        internal CompleteMultipartUploadRequest() : base(HttpMethod.POST)
+        {
+            UploadParts = new List<S3PartInfo>();
+        }
+
         public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, params UploadPartResponse[] parts) : this(bucketName, objectKey, uploadId, (IEnumerable<UploadPartResponse>)parts) { }
 
-        public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts) : base(HttpMethod.POST)
+        public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts) : this()
         {
             Initialize(bucketName, objectKey, uploadId, parts);
         }
@@ -34,15 +39,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             ObjectKey = objectKey;
             UploadId = uploadId;
 
-            UploadParts = new List<S3PartInfo>();
-
             foreach (UploadPartResponse part in parts)
             {
                 UploadParts.Add(new S3PartInfo(part.ETag, part.PartNumber));
             }
         }
 
-        public IList<S3PartInfo> UploadParts { get; private set; }
+        public IList<S3PartInfo> UploadParts { get; }
         public string BucketName { get; set; }
         public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
@@ -51,6 +54,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public override void Reset()
         {
             RequestPayer = Payer.Unknown;
+            UploadParts.Clear();
 
             base.Reset();
         }

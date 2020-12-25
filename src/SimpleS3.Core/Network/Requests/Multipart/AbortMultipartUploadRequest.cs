@@ -14,7 +14,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// </summary>
     public class AbortMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId
     {
-        public AbortMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : base(HttpMethod.DELETE)
+        internal AbortMultipartUploadRequest() : base(HttpMethod.DELETE)
+        {
+        }
+
+        public AbortMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : this()
         {
             Initialize(bucketName, objectKey, uploadId);
         }

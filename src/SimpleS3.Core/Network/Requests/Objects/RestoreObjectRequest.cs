@@ -12,6 +12,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public RestoreObjectRequest(string bucketName, string objectKey) : this()
         {
+            Initialize(bucketName, objectKey);
+        }
+
+        internal void Initialize(string bucketName, string objectKey)
+        {
             BucketName = bucketName;
             ObjectKey = objectKey;
         }
@@ -43,8 +48,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public override void Reset()
         {
-            BucketName = null!;
-            ObjectKey = null!;
             SelectParameters?.Reset();
             OutputLocation?.Reset();
             Days = 0;

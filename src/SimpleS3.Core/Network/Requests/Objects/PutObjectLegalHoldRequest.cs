@@ -14,6 +14,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public PutObjectLegalHoldRequest(string bucketName, string objectKey, bool legalHold) : this()
         {
+            Initialize(bucketName, objectKey, legalHold);
+        }
+
+        internal void Initialize(string bucketName, string objectKey, bool legalHold)
+        {
             BucketName = bucketName;
             ObjectKey = objectKey;
             LockLegalHold = legalHold;
@@ -30,8 +35,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public override void Reset()
         {
-            BucketName = null!;
-            ObjectKey = null!;
             RequestPayer = Payer.Unknown;
             VersionId = null;
             ContentMd5 = null;

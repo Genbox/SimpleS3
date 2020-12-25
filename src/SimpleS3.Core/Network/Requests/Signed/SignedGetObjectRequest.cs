@@ -4,6 +4,16 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Signed
 {
     public class SignedGetObjectRequest : SignedBaseRequest
     {
-        public SignedGetObjectRequest(string url) : base(HttpMethod.GET, url) { }
+        internal SignedGetObjectRequest() : base(HttpMethod.GET) { }
+
+        public SignedGetObjectRequest(string url) : this()
+        {
+            Initialize(url);
+        }
+
+        internal void Initialize(string url)
+        {
+            Url = url;
+        }
     }
 }

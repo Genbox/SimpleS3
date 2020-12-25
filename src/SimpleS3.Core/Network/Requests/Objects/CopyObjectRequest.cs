@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects
@@ -15,6 +16,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey, IHasLegalHold
     {
+        private byte[]? _sseCustomerKey;
+
         internal CopyObjectRequest() : base(HttpMethod.PUT)
         {
             MetadataDirective = MetadataDirective.Copy;
@@ -33,16 +36,21 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public CopyObjectRequest(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey) : this()
         {
+            Initialize(sourceBucketName, sourceObjectKey, destinationBucketName, destinationObjectKey);
+        }
+
+        internal void Initialize(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey)
+        {
             SourceBucketName = sourceBucketName;
             SourceObjectKey = sourceObjectKey;
             DestinationBucketName = destinationBucketName;
             DestinationObjectKey = destinationObjectKey;
         }
 
-        public string SourceBucketName { get; internal set; }
-        public string SourceObjectKey { get; internal set; }
-        public string DestinationBucketName { get; internal set; }
-        public string DestinationObjectKey { get; internal set; }
+        public string SourceBucketName { get; private set; }
+        public string SourceObjectKey { get; private set; }
+        public string DestinationBucketName { get; private set; }
+        public string DestinationObjectKey { get; private set; }
         public MetadataDirective MetadataDirective { get; set; }
         public TaggingDirective TaggingDirective { get; set; }
         string IHasBucketName.BucketName { get => DestinationBucketName; set => throw new NotSupportedException(); }
@@ -64,16 +72,21 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public SseAlgorithm SseAlgorithm { get; set; }
         public string? SseKmsKeyId { get; set; }
         public KmsContextBuilder SseContext { get; set; }
+        public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
+        public byte[]? SseCustomerKey
+        {
+            get => _sseCustomerKey;
+            set => _sseCustomerKey = CopyHelper.CopyWithNull(value);
+        }
 
         public void ClearSensitiveMaterial()
         {
-            if (SseCustomerKey != null)
-                Array.Clear(SseCustomerKey, 0, SseCustomerKey.Length);
-        }
-
-        public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
-        public byte[]? SseCustomerKey { get; set; }
-        public byte[]? SseCustomerKeyMd5 { get; set; }
+            if (_sseCustomerKey != null)
+            {
+                Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
+                _sseCustomerKey = null;
+            }
+        }        public byte[]? SseCustomerKeyMd5 { get; set; }
         public StorageClass StorageClass { get; set; }
         public TagBuilder Tags { get; }
         public string? VersionId { get; set; }
@@ -81,10 +94,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public override void Reset()
         {
-            SourceBucketName = null!;
-            SourceObjectKey = null!;
-            DestinationBucketName = null!;
-            DestinationObjectKey = null!;
+            ClearSensitiveMaterial();
+
             MetadataDirective = MetadataDirective.Unknown;
             TaggingDirective = TaggingDirective.Unknown;
             IfModifiedSince = null;
@@ -105,7 +116,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             SseKmsKeyId = null;
             SseContext.Reset();
             SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
-            SseCustomerKey = null;
             SseCustomerKeyMd5 = null;
             StorageClass = StorageClass.Unknown;
             Tags.Reset();

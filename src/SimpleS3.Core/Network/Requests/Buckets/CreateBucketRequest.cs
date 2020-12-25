@@ -13,14 +13,18 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public class CreateBucketRequest : BaseRequest, IHasBucketAcl, IHasBucketName
     {
-        public CreateBucketRequest(string bucketName) : base(HttpMethod.PUT)
+        internal CreateBucketRequest() : base(HttpMethod.PUT)
         {
-            Initialize(bucketName);
             AclGrantRead = new AclBuilder();
             AclGrantWrite = new AclBuilder();
             AclGrantReadAcp = new AclBuilder();
             AclGrantWriteAcp = new AclBuilder();
             AclGrantFullControl = new AclBuilder();
+        }
+
+        public CreateBucketRequest(string bucketName) : this()
+        {
+            Initialize(bucketName);
         }
 
         internal void Initialize(string bucketName)

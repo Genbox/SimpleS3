@@ -4,6 +4,7 @@ using Genbox.HttpBuilders.BuilderOptions;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using Microsoft.Extensions.Options;
 
@@ -17,6 +18,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId, IHasBucketName, IHasObjectKey, IHasPartNumber
     {
         private byte[]? _sseCustomerKey;
+
+        internal HeadObjectRequest() : this(HttpMethod.HEAD)
+        {
+        }
 
         internal HeadObjectRequest(HttpMethod method) : base(method)
         {
@@ -35,7 +40,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             ResponseContentEncoding = new ContentEncodingBuilder();
         }
 
-        public HeadObjectRequest(string bucketName, string objectKey) : this(HttpMethod.HEAD)
+        public HeadObjectRequest(string bucketName, string objectKey) : this()
         {
             Initialize(bucketName, objectKey);
         }
@@ -62,33 +67,27 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public ContentEncodingBuilder ResponseContentEncoding { get; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public byte[]? SseCustomerKeyMd5 { get; set; }
-
         public byte[]? SseCustomerKey
         {
             get => _sseCustomerKey;
-            set
-            {
-                if (value == null)
-                {
-                    _sseCustomerKey = null;
-                    return;
-                }
-
-                _sseCustomerKey = new byte[value.Length];
-                Array.Copy(value, 0, _sseCustomerKey, 0, value.Length);
-            }
+            set => _sseCustomerKey = CopyHelper.CopyWithNull(value);
         }
 
         public void ClearSensitiveMaterial()
         {
             if (_sseCustomerKey != null)
+            {
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
+                _sseCustomerKey = null;
+            }
         }
 
         public string? VersionId { get; set; }
 
         public override void Reset()
         {
+            ClearSensitiveMaterial();
+
             Range.Reset();
             IfETagMatch.Reset();
             IfETagNotMatch.Reset();
@@ -102,11 +101,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             IfUnmodifiedSince = null;
             PartNumber = null;
             SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
-            SseCustomerKey = null;
             SseCustomerKeyMd5 = null;
             ResponseExpires = null;
-            BucketName = null!;
-            ObjectKey = null!;
 
             base.Reset();
         }

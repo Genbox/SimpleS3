@@ -24,6 +24,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public PutObjectAclRequest(string bucketName, string objectKey) : this()
         {
+            Initialize(bucketName, objectKey);
+        }
+
+        internal void Initialize(string bucketName, string objectKey)
+        {
             BucketName = bucketName;
             ObjectKey = objectKey;
         }
@@ -49,8 +54,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             AclGrantFullControl.Reset();
             RequestPayer = Payer.Unknown;
             VersionId = null;
-            BucketName = null!;
-            ObjectKey = null!;
 
             base.Reset();
         }

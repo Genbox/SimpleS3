@@ -23,7 +23,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         public T Rent(Action<T> setup)
         {
             if (!_pool.TryTake(out T obj))
-                obj = (T)Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture);
+                obj = (T)Activator.CreateInstance(typeof(T), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture);
 
             setup(obj);
             return obj;

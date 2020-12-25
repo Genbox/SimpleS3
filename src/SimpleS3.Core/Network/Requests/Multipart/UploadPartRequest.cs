@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
@@ -13,7 +14,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     {
         private byte[]? _sseCustomerKey;
 
-        public UploadPartRequest(string bucketName, string objectKey, int partNumber, string uploadId, Stream content) : base(HttpMethod.PUT)
+        internal UploadPartRequest() : base(HttpMethod.PUT)
+        {
+        }
+
+        public UploadPartRequest(string bucketName, string objectKey, int partNumber, string uploadId, Stream content) : this()
         {
             Initialize(bucketName, objectKey, partNumber, uploadId, content);
         }
@@ -39,37 +44,30 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public Payer RequestPayer { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public byte[]? SseCustomerKeyMd5 { get; set; }
-
         public byte[]? SseCustomerKey
         {
             get => _sseCustomerKey;
-            set
-            {
-                if (value == null)
-                {
-                    _sseCustomerKey = null;
-                    return;
-                }
-
-                _sseCustomerKey = new byte[value.Length];
-                Array.Copy(value, 0, _sseCustomerKey, 0, value.Length);
-            }
+            set => _sseCustomerKey = CopyHelper.CopyWithNull(value);
         }
 
         public void ClearSensitiveMaterial()
         {
             if (_sseCustomerKey != null)
+            {
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
+                _sseCustomerKey = null;
+            }
         }
 
         public string UploadId { get; set; }
 
         public override void Reset()
         {
+            ClearSensitiveMaterial();
+
             ContentMd5 = null;
             RequestPayer = Payer.Unknown;
             SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
-            SseCustomerKey = null;
             SseCustomerKeyMd5 = null;
 
             base.Reset();

@@ -9,7 +9,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public class DeleteBucketRequest : BaseRequest, IHasBucketName
     {
-        public DeleteBucketRequest(string bucketName) : base(HttpMethod.DELETE)
+        internal DeleteBucketRequest() : base(HttpMethod.DELETE)
+        {
+        }
+
+        public DeleteBucketRequest(string bucketName) : this()
         {
             Initialize(bucketName);
         }

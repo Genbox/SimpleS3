@@ -16,6 +16,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public ListObjectsRequest(string bucketName) : this()
         {
+            Initialize(bucketName);
+        }
+
+        internal void Initialize(string bucketName)
+        {
             BucketName = bucketName;
         }
 
@@ -74,7 +79,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public override void Reset()
         {
-            BucketName = null!;
             Delimiter = null;
             MaxKeys = null;
             EncodingType = EncodingType.Unknown;

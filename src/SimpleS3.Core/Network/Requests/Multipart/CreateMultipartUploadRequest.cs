@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
@@ -16,6 +17,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsiteRedirect, IHasMetadata, IHasTags, IHasLegalHold
     {
         private byte[]? _sseCustomerKey;
+
+        internal CreateMultipartUploadRequest() : this(HttpMethod.POST)
+        {
+        }
 
         internal CreateMultipartUploadRequest(HttpMethod method) : base(method)
         {
@@ -32,7 +37,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             SseContext = new KmsContextBuilder();
         }
 
-        public CreateMultipartUploadRequest(string bucketName, string objectKey) : this(HttpMethod.POST)
+        public CreateMultipartUploadRequest(string bucketName, string objectKey) : this()
         {
             Initialize(bucketName, objectKey);
         }
@@ -65,27 +70,19 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public KmsContextBuilder SseContext { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public byte[]? SseCustomerKeyMd5 { get; set; }
-
         public byte[]? SseCustomerKey
         {
             get => _sseCustomerKey;
-            set
-            {
-                if (value == null)
-                {
-                    _sseCustomerKey = null;
-                    return;
-                }
-
-                _sseCustomerKey = new byte[value.Length];
-                Array.Copy(value, 0, _sseCustomerKey, 0, value.Length);
-            }
+            set => _sseCustomerKey = CopyHelper.CopyWithNull(value);
         }
 
         public void ClearSensitiveMaterial()
         {
             if (_sseCustomerKey != null)
+            {
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
+                _sseCustomerKey = null;
+            }
         }
 
         public StorageClass StorageClass { get; set; }
@@ -94,6 +91,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
 
         public override void Reset()
         {
+            ClearSensitiveMaterial();
+
             Tags.Reset();
             Metadata.Reset();
             CacheControl.Reset();
@@ -114,10 +113,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             SseAlgorithm = SseAlgorithm.Unknown;
             SseKmsKeyId = null;
             SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
-            SseCustomerKey = null;
             SseCustomerKeyMd5 = null;
-            BucketName = null!;
-            ObjectKey = null!;
             WebsiteRedirectLocation = null;
             StorageClass = StorageClass.Unknown;
 

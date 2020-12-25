@@ -9,7 +9,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public class GetBucketTaggingRequest : BaseRequest, IHasBucketName
     {
-        public GetBucketTaggingRequest(string bucketName) : base(HttpMethod.GET)
+        internal GetBucketTaggingRequest() : base(HttpMethod.GET)
+        {
+        }
+
+        public GetBucketTaggingRequest(string bucketName) : this()
         {
             Initialize(bucketName);
         }

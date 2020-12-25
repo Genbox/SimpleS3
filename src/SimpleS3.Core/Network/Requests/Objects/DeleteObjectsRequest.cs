@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -22,12 +21,22 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         {
             Mfa = new MfaAuthenticationBuilder();
             Quiet = true;
+            Objects = new List<S3DeleteInfo>();
         }
 
         public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : this()
         {
+            Initialize(bucketName, resources);
+        }
+
+        internal void Initialize(string bucketName, IEnumerable<S3DeleteInfo> resources)
+        {
             BucketName = bucketName;
-            Objects = resources.ToList();
+
+            foreach (S3DeleteInfo info in resources)
+            {
+                Objects.Add(info);
+            }
         }
 
         /// <summary>In quiet mode the response includes only keys where the delete operation encountered an error.</summary>
@@ -45,8 +54,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
 
         public override void Reset()
         {
-            BucketName = null!;
-            Objects = null!;
+            Objects.Clear();
             Mfa.Reset();
             Quiet = true;
             BypassGovernanceRetention = null;

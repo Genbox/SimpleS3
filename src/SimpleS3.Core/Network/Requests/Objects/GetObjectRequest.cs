@@ -10,7 +10,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class GetObjectRequest : HeadObjectRequest, IHasRequestPayer
     {
-        public GetObjectRequest(string bucketName, string objectKey) : base(HttpMethod.GET)
+        internal GetObjectRequest() : base(HttpMethod.GET)
+        {
+        }
+
+        public GetObjectRequest(string bucketName, string objectKey) : this()
         {
             Initialize(bucketName, objectKey);
         }

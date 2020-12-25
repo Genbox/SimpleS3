@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -25,8 +24,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(DeleteObjectRequest req)
             {
-                req.BucketName = bucketName;
-                req.ObjectKey = objectKey;
+                req.Initialize(bucketName, objectKey);
                 config?.Invoke(req);
             }
 
@@ -39,8 +37,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(DeleteObjectsRequest req)
             {
-                req.BucketName = bucketName;
-                req.Objects = objectKeys.ToList();
+                req.Initialize(bucketName, objectKeys);
                 config?.Invoke(req);
             }
 
@@ -51,8 +48,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(HeadObjectRequest req)
             {
-                req.BucketName = bucketName;
-                req.ObjectKey = objectKey;
+                req.Initialize(bucketName, objectKey);
                 config?.Invoke(req);
             }
 
@@ -63,8 +59,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(GetObjectRequest req)
             {
-                req.BucketName = bucketName;
-                req.ObjectKey = objectKey;
+                req.Initialize(bucketName, objectKey);
                 config?.Invoke(req);
             }
 
@@ -75,9 +70,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(PutObjectRequest req)
             {
-                req.BucketName = bucketName;
-                req.ObjectKey = objectKey;
-                req.Content = data;
+                req.Initialize(bucketName, objectKey, data);
                 config?.Invoke(req);
             }
 
@@ -88,7 +81,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(ListObjectsRequest req)
             {
-                req.BucketName = bucketName;
+                req.Initialize(bucketName);
                 config?.Invoke(req);
             }
 
@@ -99,8 +92,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(RestoreObjectRequest req)
             {
-                req.BucketName = bucketName;
-                req.ObjectKey = objectKey;
+                req.Initialize(bucketName, objectKey);
                 config?.Invoke(req);
             }
 
@@ -111,10 +103,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(CopyObjectRequest req)
             {
-                req.SourceBucketName = sourceBucketName;
-                req.SourceObjectKey = sourceObjectKey;
-                req.DestinationBucketName = destinationBucket;
-                req.DestinationObjectKey = destinationObjectKey;
+                req.Initialize(sourceBucketName, sourceObjectKey, destinationBucket, destinationObjectKey);
                 config?.Invoke(req);
             }
 
@@ -125,8 +114,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(PutObjectAclRequest req)
             {
-                req.BucketName = bucketName;
-                req.ObjectKey = objectKey;
+                req.Initialize(bucketName, objectKey);
                 config?.Invoke(req);
             }
 
@@ -137,8 +125,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(GetObjectAclRequest req)
             {
-                req.BucketName = bucketName;
-                req.ObjectKey = objectKey;
+                req.Initialize(bucketName, objectKey);
                 config?.Invoke(req);
             }
 
@@ -149,8 +136,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(GetObjectLegalHoldRequest req)
             {
-                req.BucketName = bucketName;
-                req.ObjectKey = objectKey;
+                req.Initialize(bucketName, objectKey);
                 config?.Invoke(req);
             }
 
@@ -161,9 +147,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(PutObjectLegalHoldRequest req)
             {
-                req.BucketName = bucketName;
-                req.ObjectKey = objectKey;
-                req.LockLegalHold = lockStatus;
+                req.Initialize(bucketName, objectKey, lockStatus);
                 config?.Invoke(req);
             }
 

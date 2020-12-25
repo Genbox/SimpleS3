@@ -36,8 +36,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(SignedPutObjectRequest req)
             {
-                req.Url = url;
-                req.Content = content;
+                req.Initialize(url, content);
                 config?.Invoke(req);
             }
 
@@ -63,7 +62,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(SignedGetObjectRequest req)
             {
-                req.Url = url;
+                req.Initialize(url);
                 config?.Invoke(req);
             }
 
@@ -89,7 +88,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(SignedDeleteObjectRequest req)
             {
-                req.Url = url;
+                req.Initialize(url);
                 config?.Invoke(req);
             }
 
@@ -115,7 +114,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         {
             void Setup(SignedHeadObjectRequest req)
             {
-                req.Url = url;
+                req.Initialize(url);
                 config?.Invoke(req);
             }
 

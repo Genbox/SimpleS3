@@ -10,7 +10,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public class GetBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketName
     {
-        public GetBucketAccelerateConfigurationRequest(string bucketName) : base(HttpMethod.GET)
+        internal GetBucketAccelerateConfigurationRequest() : base(HttpMethod.GET)
+        {
+        }
+
+        public GetBucketAccelerateConfigurationRequest(string bucketName) : this()
         {
             Initialize(bucketName);
         }
