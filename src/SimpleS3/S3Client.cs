@@ -71,10 +71,15 @@ namespace Genbox.SimpleS3
             if (proxy != null)
                 builder.HttpBuilder.UseProxy(proxy);
 
-            services.AddSingleton<IOptions<Config>>(x => options);
+            services.AddSingleton<IOptions<Config>>(options);
 
             _serviceProvider = services.BuildServiceProvider();
-            Initialize(_serviceProvider.GetService<IObjectClient>(), _serviceProvider.GetService<IBucketClient>(), _serviceProvider.GetService<IMultipartClient>());
+            IObjectClient objectClient = _serviceProvider.GetRequiredService<IObjectClient>();
+            IBucketClient bucketClient = _serviceProvider.GetRequiredService<IBucketClient>();
+            IMultipartClient multipartClient = _serviceProvider.GetRequiredService<IMultipartClient>();
+            Transfer transfer = _serviceProvider.GetRequiredService<Transfer>();
+
+            Initialize(objectClient, bucketClient, multipartClient, transfer);
         }
 
         public S3Client(IOptions<AwsConfig> options, INetworkDriver networkDriver, ILoggerFactory loggerFactory)
@@ -83,24 +88,28 @@ namespace Genbox.SimpleS3
             services.AddSimpleS3();
             services.Replace(ServiceDescriptor.Singleton(networkDriver));
             services.Replace(ServiceDescriptor.Singleton(loggerFactory));
-            services.AddSingleton<IOptions<Config>>(x => options);
+            services.AddSingleton<IOptions<Config>>(options);
 
             _serviceProvider = services.BuildServiceProvider();
-            Initialize(_serviceProvider.GetService<IObjectClient>(), _serviceProvider.GetService<IBucketClient>(), _serviceProvider.GetService<IMultipartClient>());
+            IObjectClient objectClient = _serviceProvider.GetRequiredService<IObjectClient>();
+            IBucketClient bucketClient = _serviceProvider.GetRequiredService<IBucketClient>();
+            IMultipartClient multipartClient = _serviceProvider.GetRequiredService<IMultipartClient>();
+            Transfer transfer = _serviceProvider.GetRequiredService<Transfer>();
+
+            Initialize(objectClient, bucketClient, multipartClient, transfer);
         }
 
-        public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient)
+        public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, Transfer transfer)
         {
-            Initialize(objectClient, bucketClient, multipartClient);
+            Initialize(objectClient, bucketClient, multipartClient, transfer);
         }
 
-        private void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient)
+        private void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, Transfer transfer)
         {
             _objectClient = objectClient;
             _bucketClient = bucketClient;
             _multipartClient = multipartClient;
-
-            Transfer = new Transfer(_objectClient.ObjectOperations, _multipartClient.MultipartOperations);
+            Transfer = transfer;
         }
 
         public Transfer Transfer { get; private set; }

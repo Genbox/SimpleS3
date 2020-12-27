@@ -1,7 +1,8 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.SimpleS3.Abstracts
+namespace Genbox.SimpleS3.Internals
 {
     internal class S3ClientBuilder : ServiceBuilderBase, IS3ClientBuilder
     {
