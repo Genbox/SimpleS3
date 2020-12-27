@@ -224,8 +224,7 @@ namespace Genbox.SimpleS3.Core.Fluent
 
         public Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default)
         {
-            if (encoding == null)
-                encoding = Constants.Utf8NoBom;
+            encoding ??= Constants.Utf8NoBom;
 
             return UploadDataAsync(encoding.GetBytes(data), token);
         }

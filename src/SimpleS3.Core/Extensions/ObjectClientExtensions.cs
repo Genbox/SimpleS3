@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
@@ -96,8 +97,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             Validator.RequireNotNull(bucketName, nameof(bucketName));
             Validator.RequireNotNull(objectKey, nameof(objectKey));
 
-            if (encoding == null)
-                encoding = Encoding.UTF8;
+            encoding ??= Constants.Utf8NoBom;
 
             return client.PutObjectDataAsync(bucketName, objectKey, encoding.GetBytes(content), config, token);
         }
