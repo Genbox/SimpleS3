@@ -5,7 +5,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
 {
     public static class HttpClientBuilderExtensions
     {
-        public static IHttpClientBuilder WithProxy(this IHttpClientBuilder builder, IWebProxy proxy)
+        public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, IWebProxy proxy)
         {
             builder.Services.Configure<HttpClientConfig>(config =>
             {
@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
             return builder;
         }
 
-        public static IHttpClientBuilder WithProxy(this IHttpClientBuilder builder, string proxyUrl)
+        public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, string proxyUrl)
         {
             builder.Services.Configure<HttpClientConfig>(config =>
             {
