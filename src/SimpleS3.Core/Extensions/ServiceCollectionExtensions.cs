@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -17,10 +18,10 @@ using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Internals;
+using Genbox.SimpleS3.Core.Internals.Validation;
 using Genbox.SimpleS3.Core.Network;
 using Genbox.SimpleS3.Core.Network.RequestWrappers;
 using Genbox.SimpleS3.Core.Operations;
-using Genbox.SimpleS3.Core.Validation;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -107,6 +108,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.TryAddEnumerable(CreateRegistrations(typeof(IRequestMarshal), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IResponseMarshal), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IPostMapper), assembly));
+            collection.TryAddEnumerable(CreateRegistrations(typeof(IValidator), assembly));
 
             return new CoreBuilder(collection);
         }

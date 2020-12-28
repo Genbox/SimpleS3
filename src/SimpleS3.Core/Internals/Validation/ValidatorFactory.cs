@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 using JetBrains.Annotations;
 using IValidatorFactory = Genbox.SimpleS3.Core.Abstracts.Factories.IValidatorFactory;
 
-namespace Genbox.SimpleS3.Core.Validation
+namespace Genbox.SimpleS3.Core.Internals.Validation
 {
     [PublicAPI]
     public class ValidatorFactory : IValidatorFactory
