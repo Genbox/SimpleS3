@@ -290,11 +290,14 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
             int count = 0;
             using (MemoryStream ms = new MemoryStream(data))
             {
-                await foreach (UploadPartResponse resp in MultipartClient.MultipartOperations.MultipartUploadAsync(createRequest, ms, 10 * 1024 * 1024, 1))
+                CompleteMultipartUploadResponse? uploadResp = await MultipartClient.MultipartOperations.MultipartUploadAsync(createRequest, ms, 10 * 1024 * 1024, 2, response =>
                 {
+                    Assert.True(response.IsSuccess);
                     count++;
-                    Assert.True(resp.IsSuccess);
-                }
+                });
+
+                Assert.NotNull(uploadResp);
+                Assert.True(uploadResp!.IsSuccess);
             }
 
             Assert.Equal(10, count);

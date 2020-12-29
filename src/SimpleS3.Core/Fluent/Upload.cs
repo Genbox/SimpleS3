@@ -198,15 +198,18 @@ namespace Genbox.SimpleS3.Core.Fluent
             _request.Method = HttpMethod.POST;
             _request.Content = null;
 
-            IAsyncEnumerable<UploadPartResponse> uploadResp = _multipartOperations.MultipartUploadAsync(_request, data, token: token);
+            MultipartUploadStatus status = MultipartUploadStatus.Ok;
 
-            await foreach (UploadPartResponse resp in uploadResp.WithCancellation(token))
+            CompleteMultipartUploadResponse? uploadResp = await _multipartOperations.MultipartUploadAsync(_request, data, onPartResponse: response =>
             {
-                if (!resp.IsSuccess)
-                    return MultipartUploadStatus.Incomplete;
-            }
+                if (!response.IsSuccess)
+                    status = MultipartUploadStatus.Incomplete;
+            }, token: token);
 
-            return MultipartUploadStatus.Ok;
+            if (uploadResp == null || !uploadResp.IsSuccess)
+                status = MultipartUploadStatus.Incomplete;
+
+            return status;
         }
 
         public Task<PutObjectResponse> UploadAsync(Stream data, CancellationToken token = default)

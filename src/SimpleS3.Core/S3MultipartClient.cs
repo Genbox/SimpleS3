@@ -8,6 +8,7 @@ using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using JetBrains.Annotations;
@@ -80,20 +81,23 @@ namespace Genbox.SimpleS3.Core
             CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, objectKey);
             config?.Invoke(req);
 
-            IAsyncEnumerable<UploadPartResponse> asyncEnum = MultipartOperations.MultipartUploadAsync(req, data, partSize, numParallelParts, token);
+            MultipartUploadStatus status = MultipartUploadStatus.Ok;
 
-            await foreach (UploadPartResponse obj in asyncEnum.WithCancellation(token))
+            CompleteMultipartUploadResponse? uploadResp = await MultipartOperations.MultipartUploadAsync(req, data, onPartResponse: response =>
             {
-                if (!obj.IsSuccess)
-                    return MultipartUploadStatus.Incomplete;
-            }
+                if (!response.IsSuccess)
+                    status = MultipartUploadStatus.Incomplete;
+            }, token: token);
 
-            return MultipartUploadStatus.Ok;
+            if (uploadResp == null || !uploadResp.IsSuccess)
+                status = MultipartUploadStatus.Incomplete;
+
+            return status;
         }
 
-        public async Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, CancellationToken token = default)
+        public async Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
-            IAsyncEnumerable<GetObjectResponse> asyncEnum = _objectOperations.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, null, token);
+            IAsyncEnumerable<GetObjectResponse> asyncEnum = _objectOperations.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
 
             await foreach (GetObjectResponse obj in asyncEnum.WithCancellation(token))
             {

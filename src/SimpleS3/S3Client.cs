@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3
         private IBucketClient _bucketClient;
         private IMultipartClient _multipartClient;
         private IObjectClient _objectClient;
-        private readonly ServiceProvider _serviceProvider;
+        private readonly ServiceProvider? _serviceProvider;
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="keyId">The key id</param>
@@ -173,9 +173,9 @@ namespace Genbox.SimpleS3
             return _multipartClient.MultipartUploadAsync(bucketName, objectKey, data, partSize, numParallelParts, config, token);
         }
 
-        public Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, CancellationToken token = default)
+        public Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
-            return _multipartClient.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, token);
+            return _multipartClient.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
         }
 
         public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest>? config = null, CancellationToken token = default)
@@ -280,7 +280,7 @@ namespace Genbox.SimpleS3
 
         public void Dispose()
         {
-            _serviceProvider.Dispose();
+            _serviceProvider?.Dispose();
         }
     }
 }

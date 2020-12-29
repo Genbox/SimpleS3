@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -18,7 +20,8 @@ namespace Genbox.SimpleS3.Core.Extensions
 {
     public static class MultipartOperationsExtensions
     {
-        public static async IAsyncEnumerable<UploadPartResponse> MultipartUploadAsync(this IMultipartOperations operations, CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, [EnumeratorCancellation] CancellationToken token = default)
+        /// <summary>An extension that performs multipart upload.</summary>
+        public static async Task<CompleteMultipartUploadResponse?> MultipartUploadAsync(this IMultipartOperations operations, CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(req, nameof(req));
             Validator.RequireNotNull(data, nameof(data));
@@ -32,59 +35,77 @@ namespace Genbox.SimpleS3.Core.Extensions
             string bucket = req.BucketName;
             string objectKey = req.ObjectKey;
 
-            CreateMultipartUploadResponse initResp = await operations.CreateMultipartUploadAsync(req, token).ConfigureAwait(false);
+            byte[]? encryptionKey = null;
 
-            if (token.IsCancellationRequested)
-                yield break;
-
-            if (!initResp.IsSuccess)
-                throw new S3RequestException(initResp.StatusCode, "CreateMultipartUploadRequest was unsuccessful");
-
-            Queue<Task<UploadPartResponse>> uploads = new Queue<Task<UploadPartResponse>>();
-
-            using (SemaphoreSlim semaphore = new SemaphoreSlim(numParallelParts))
+            try
             {
-                long offset = 0;
-
-                for (int i = 1; offset < data.Length; i++)
+                if (req.SseCustomerKey != null)
                 {
-                    await semaphore.WaitAsync(token).ConfigureAwait(false);
-
-                    if (token.IsCancellationRequested)
-                        break;
-
-                    byte[] partData = new byte[partSize];
-                    int read = await data.ReadUpToAsync(partData, 0, partData.Length, token).ConfigureAwait(false);
-
-                    TaskCompletionSource<UploadPartResponse> completionSource = new TaskCompletionSource<UploadPartResponse>();
-                    uploads.Enqueue(completionSource.Task);
-
-                    UploadPartAsync(completionSource, operations, bucket, objectKey, partData, read, i, initResp.UploadId, semaphore, token);
-
-                    offset += partSize;
+                    encryptionKey = new byte[req.SseCustomerKey.Length];
+                    Array.Copy(req.SseCustomerKey, 0, encryptionKey, 0, encryptionKey.Length);
                 }
 
-                Queue<UploadPartResponse> responses = new Queue<UploadPartResponse>(uploads.Count);
+                CreateMultipartUploadResponse initResp = await operations.CreateMultipartUploadAsync(req, token).ConfigureAwait(false);
 
-                while (uploads.TryDequeue(out Task<UploadPartResponse>? task))
-                {
-                    if (token.IsCancellationRequested)
-                        yield break;
+                if (token.IsCancellationRequested)
+                    return null;
 
-                    UploadPartResponse response = await task!.ConfigureAwait(false);
-                    responses.Enqueue(response);
+                if (!initResp.IsSuccess)
+                    throw new S3RequestException(initResp.StatusCode, "CreateMultipartUploadRequest was unsuccessful");
 
-                    yield return response;
-                }
+                IAsyncEnumerable<byte[]> chunks = ReadChunksAsync(data, partSize, token);
 
-                CompleteMultipartUploadRequest completeReq = new CompleteMultipartUploadRequest(bucket, objectKey, initResp.UploadId, responses);
+                int partNumber = 0;
+
+                IEnumerable<UploadPartResponse> responses = await ParallelHelper.ExecuteAsync(chunks, async bytes =>
+                 {
+                     Interlocked.Increment(ref partNumber);
+
+                     using (MemoryStream ms = new MemoryStream(bytes, 0, bytes.Length))
+                     {
+                         UploadPartRequest uploadReq = new UploadPartRequest(bucket, objectKey, partNumber, initResp.UploadId, ms);
+                         uploadReq.SseCustomerAlgorithm = req.SseCustomerAlgorithm;
+                         uploadReq.SseCustomerKey = encryptionKey;
+                         uploadReq.SseCustomerKeyMd5 = req.SseCustomerKeyMd5;
+
+                         UploadPartResponse resp = await operations.UploadPartAsync(uploadReq, token).ConfigureAwait(false);
+                         onPartResponse?.Invoke(resp);
+                         return resp;
+                     }
+
+                 }, numParallelParts, token);
+
+                CompleteMultipartUploadRequest completeReq = new CompleteMultipartUploadRequest(bucket, objectKey, initResp.UploadId, responses.OrderBy(x => x.PartNumber));
                 CompleteMultipartUploadResponse completeResp = await operations.CompleteMultipartUploadAsync(completeReq, token).ConfigureAwait(false);
 
-                if (!completeResp.IsSuccess)
-                    throw new S3RequestException(completeResp.StatusCode, "CompleteMultipartUploadRequest was unsuccessful");
+                return completeResp;
+            }
+            finally
+            {
+                if (encryptionKey != null)
+                    Array.Clear(encryptionKey, 0, encryptionKey.Length);
             }
         }
 
+        private static async IAsyncEnumerable<byte[]> ReadChunksAsync(Stream data, int chunkSize, [EnumeratorCancellation] CancellationToken token)
+        {
+            while (true)
+            {
+                byte[] chunkData = new byte[chunkSize];
+                int read = await data.ReadUpToAsync(chunkData, 0, chunkData.Length, token).ConfigureAwait(false);
+
+                if (read == 0)
+                    break;
+
+                yield return chunkData;
+            }
+        }
+
+        /// <summary>
+        /// An extension that performs multipart download. It only works if the file that gets downloaded was originally uploaded using multipart,
+        /// otherwise it falls back to an ordinary get request. Note that the implementation is designed to avoid excessive memory usage, so it seeks in the
+        /// output stream whenever data is available.
+        /// </summary>
         public static async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectOperations operations, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(output, nameof(output));
@@ -175,28 +196,6 @@ namespace Genbox.SimpleS3.Core.Extensions
                 }
 
                 return getResp;
-            }
-            finally
-            {
-                semaphore.Release();
-            }
-        }
-
-        private static async Task UploadPartAsync(TaskCompletionSource<UploadPartResponse> completionSource, IMultipartOperations operations, string bucketName, string objectKey, byte[] data, int length, int partNumber, string uploadId, SemaphoreSlim semaphore, CancellationToken token)
-        {
-            try
-            {
-                using (MemoryStream ms = new MemoryStream(data, 0, length))
-                {
-                    UploadPartResponse result = await operations.UploadPartAsync(new UploadPartRequest(bucketName, objectKey, partNumber, uploadId, ms), token)
-                                                                .ConfigureAwait(false);
-
-                    completionSource.SetResult(result);
-                }
-            }
-            catch (Exception ex)
-            {
-                completionSource.SetException(ex);
             }
             finally
             {
