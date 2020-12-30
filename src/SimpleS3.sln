@@ -61,6 +61,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Imports", "_Imports", "{62
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Utility.Shared", "SimpleS3.Utility.Shared\SimpleS3.Utility.Shared.csproj", "{258C9BD8-DF98-4662-BA67-FC79083FC1C3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.ExamplesAdvanced", "SimpleS3.ExamplesAdvanced\SimpleS3.ExamplesAdvanced.csproj", "{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,10 @@ Global
 		{258C9BD8-DF98-4662-BA67-FC79083FC1C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{258C9BD8-DF98-4662-BA67-FC79083FC1C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{258C9BD8-DF98-4662-BA67-FC79083FC1C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

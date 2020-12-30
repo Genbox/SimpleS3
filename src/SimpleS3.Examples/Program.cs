@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Aws;
@@ -7,7 +6,6 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Examples.Clients.WithoutDepInjection;
 
 namespace Genbox.SimpleS3.Examples
 {
@@ -19,48 +17,46 @@ namespace Genbox.SimpleS3.Examples
             // Go here and login with your account to create an access key: https://console.aws.amazon.com/iam/home?#/security_credentials
             //
 
-            //Uncomment this line if you want to use it against your own bucket
-            using (S3Client client = SimpleClient.Create("MyKeyId", "MyAccessKey", AwsRegion.UsEast1))
+            using (S3Client client = new S3Client("MyKeyId", "MyAccessKey", AwsRegion.UsEast1))
             {
-                const string bucketName = "simple-s3-test";
+                //We add a unique identifier to the bucket name, as they have to be unique across ALL of AWS S3.
+                string bucketName = "simple-s3-test-" + Guid.NewGuid();
                 const string objectName = "some-object";
 
-                //First we create the a bucket named "simple-s3-test". It might already be there, so we ignore if the request was not a success
-                await client.CreateBucketAsync(bucketName).ConfigureAwait(false);
+                //First we create the a bucket.
+                await client.CreateBucketAsync(bucketName);
 
-                //Upload and download an object using the normal API
-                await UploadDownloadWithNormalApi(client, bucketName, objectName).ConfigureAwait(false);
+                //Upload then download an object using the normal API.
+                await UploadDownloadStandard(client, bucketName, objectName);
 
-                //Upload and download an object using the fluent API
-                await UploadDownloadWithFluent(client, bucketName, objectName).ConfigureAwait(false);
+                //Upload then download an object using the Transfer API.
+                await UploadDownloadTransfer(client, bucketName, objectName);
             }
         }
 
-        private static async Task UploadDownloadWithNormalApi(S3Client client, string bucketName, string objectName)
+        private static async Task UploadDownloadStandard(S3Client client, string bucketName, string objectName)
         {
             Console.WriteLine();
-            Console.WriteLine("Using the normal API");
+            Console.WriteLine("Using the standard API");
 
-            //Then we upload an object named "some-object" to the bucket. It contains "Hello World" inside it.
-            if (await UploadObject(client, bucketName, objectName).ConfigureAwait(false))
+            //We upload and object to the bucket with "Hello World" inside it.
+            PutObjectResponse putResp = await client.PutObjectStringAsync(bucketName, objectName, "Hello World");
+
+            if (putResp.IsSuccess)
             {
                 Console.WriteLine("Successfully uploaded the object");
 
-                GetObjectResponse resp = await DownloadObject(client, bucketName, objectName).ConfigureAwait(false);
+                GetObjectResponse getResp = await client.GetObjectAsync(bucketName, objectName);
 
                 //Here we try to download the object again. If successful, we should see it print the content to the screen.
-                if (resp.IsSuccess)
+                if (getResp.IsSuccess)
                 {
-                    Console.WriteLine("Successfully downloaded the object");
-
-                    string content = await resp.Content.AsStringAsync().ConfigureAwait(false);
-                    Console.WriteLine("The object contained: " + content);
+                    Console.WriteLine("Success! The object contained: " + await getResp.Content.AsStringAsync());
 
                     //Finally, we clean up after us and remove the object.
-                    if (await DeleteObject(client, bucketName, objectName).ConfigureAwait(false))
-                        Console.WriteLine("Successfully deleted the object");
-                    else
-                        Console.WriteLine("Failed deleting the object");
+                    DeleteObjectResponse delResp = await client.DeleteObjectAsync(bucketName, objectName);
+
+                    Console.WriteLine(delResp.IsSuccess ? "Successfully deleted the object" : "Failed deleting the object");
                 }
                 else
                     Console.WriteLine("Failed downloading object");
@@ -69,50 +65,36 @@ namespace Genbox.SimpleS3.Examples
                 Console.WriteLine("Failed uploading object");
         }
 
-        private static async Task UploadDownloadWithFluent(S3Client client, string bucketName, string objectName)
+        private static async Task UploadDownloadTransfer(S3Client client, string bucketName, string objectName)
         {
             Console.WriteLine();
-            Console.WriteLine("Using the fluent API");
+            Console.WriteLine("Using the Transfer API");
 
-            //Upload string
+            //The Transfer API is an easy-to-use API for building requests.
             Upload upload = client.Transfer.CreateUpload(bucketName, objectName)
                                            .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
                                            .WithCacheControl(CacheControlType.NoCache)
                                            .WithEncryption();
 
-            PutObjectResponse resp = await upload.UploadStringAsync("Hello World!", Encoding.UTF8).ConfigureAwait(false);
+            PutObjectResponse putResp = await upload.UploadStringAsync("Hello World!");
 
-            if (resp.IsSuccess)
+            if (putResp.IsSuccess)
             {
                 Console.WriteLine("Successfully uploaded the object");
 
                 //Download string
                 Download download = client.Transfer.CreateDownload(bucketName, objectName)
-                                                   .WithRange(0, 10); //Adjust this to return only part of the string
+                                                   .WithRange(0, 5); //Adjust this to return only part of the string
 
-                GetObjectResponse resp2 = await download.DownloadAsync().ConfigureAwait(false);
+                GetObjectResponse getResp = await download.DownloadAsync();
 
-                if (resp2.IsSuccess)
-                {
-                    Console.WriteLine("Successfully downloaded the object");
-                    Console.WriteLine("The object contained: " + await resp2.Content.AsStringAsync().ConfigureAwait(false));
-                }
+                if (getResp.IsSuccess)
+                    Console.WriteLine("Success! The object contained: " + await getResp.Content.AsStringAsync());
+                else
+                    Console.WriteLine("Failed to download the object");
             }
-        }
-
-        private static async Task<bool> UploadObject(S3Client client, string bucketName, string objectName)
-        {
-            return (await client.PutObjectStringAsync(bucketName, objectName, "Hello World").ConfigureAwait(false)).IsSuccess;
-        }
-
-        private static Task<GetObjectResponse> DownloadObject(S3Client client, string bucketName, string objectName)
-        {
-            return client.GetObjectAsync(bucketName, objectName);
-        }
-
-        private static async Task<bool> DeleteObject(S3Client client, string bucketName, string objectName)
-        {
-            return (await client.DeleteObjectAsync(bucketName, objectName).ConfigureAwait(false)).IsSuccess;
+            else
+                Console.WriteLine("Failed to upload the object");
         }
     }
 }
