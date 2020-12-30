@@ -8,13 +8,13 @@ If you are using [Microsoft's dependency injection](https://www.nuget.org/packag
 
 ```csharp
 ServiceCollection services = new ServiceCollection();
-ICoreBuilder coreBuilder = services
-                           .AddSimpleS3()
-                           .UseBackBlazeB2(config =>
-                            {
-                                config.Region = B2Region.UsWest001;
-                                config.Credentials = new StringAccessKey("your application id here", "secret key here");
-                            });;
+IS3ClientBuilder s3Builder = services.AddSimpleS3();
+
+s3Builder.CoreBuilder.UseBackBlazeB2(config =>
+{
+    config.Region = B2Region.UsWest001;
+    config.Credentials = new StringAccessKey("your application id here", "secret key here");
+});
 
 IServiceProvider serviceProvider = services.BuildServiceProvider();
 IObjectClient objectClient = serviceProvider.GetRequiredService<IObjectClient>();
