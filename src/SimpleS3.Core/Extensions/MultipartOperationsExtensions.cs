@@ -53,7 +53,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                 if (!initResp.IsSuccess)
                     throw new S3RequestException(initResp.StatusCode, "CreateMultipartUploadRequest was unsuccessful");
 
-                IAsyncEnumerable<byte[]> chunks = ReadChunksAsync(data, partSize, token);
+                IEnumerable<ArraySegment<byte>> chunks = ReadChunks(data, partSize);
 
                 int partNumber = 0;
 
@@ -61,7 +61,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                  {
                      Interlocked.Increment(ref partNumber);
 
-                     using (MemoryStream ms = new MemoryStream(bytes, 0, bytes.Length))
+                     using (MemoryStream ms = new MemoryStream(bytes.Array!, 0, bytes.Count))
                      {
                          UploadPartRequest uploadReq = new UploadPartRequest(bucket, objectKey, partNumber, initResp.UploadId, ms);
                          uploadReq.SseCustomerAlgorithm = req.SseCustomerAlgorithm;
@@ -87,17 +87,17 @@ namespace Genbox.SimpleS3.Core.Extensions
             }
         }
 
-        private static async IAsyncEnumerable<byte[]> ReadChunksAsync(Stream data, int chunkSize, [EnumeratorCancellation] CancellationToken token)
+        private static IEnumerable<ArraySegment<byte>> ReadChunks(Stream data, int chunkSize)
         {
             while (true)
             {
                 byte[] chunkData = new byte[chunkSize];
-                int read = await data.ReadUpToAsync(chunkData, 0, chunkData.Length, token).ConfigureAwait(false);
+                int read = data.ReadUpTo(chunkData, 0, chunkData.Length);
 
                 if (read == 0)
                     break;
 
-                yield return chunkData;
+                yield return new ArraySegment<byte>(chunkData, 0, read);
             }
         }
 

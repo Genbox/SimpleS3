@@ -241,7 +241,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
         [Fact]
         public async Task MultipartViaClient()
         {
-            byte[] data = new byte[10 * 1024 * 1024]; //10 Mb
+            byte[] data = new byte[20 * 1024 * 1024]; //20 Mb
 
             for (int i = 0; i < data.Length; i++)
             {

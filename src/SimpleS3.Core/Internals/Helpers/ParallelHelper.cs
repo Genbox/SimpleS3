@@ -29,14 +29,14 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
             }
         }
 
-        public static async Task<IEnumerable<TReturn>> ExecuteAsync<T, TReturn>(IAsyncEnumerable<T> source, Func<T, Task<TReturn>> action, int concurrentThreads, CancellationToken token)
+        public static async Task<IEnumerable<TReturn>> ExecuteAsync<T, TReturn>(IEnumerable<T> source, Func<T, Task<TReturn>> action, int concurrentThreads, CancellationToken token)
         {
             List<Task<TReturn>> tasks = new List<Task<TReturn>>();
             List<Task> tasks2 = new List<Task>();
 
             using (SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads))
             {
-                await foreach (T t in source.WithCancellation(token))
+                foreach (T t in source)
                 {
                     await throttler.WaitAsync(token);
 

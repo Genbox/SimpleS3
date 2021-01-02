@@ -24,5 +24,24 @@ namespace Genbox.SimpleS3.Core.Internals.Extensions
 
             return totalRead;
         }
+
+        public static int ReadUpTo(this Stream stream, byte[] buffer, int offset, int count)
+        {
+            int totalRead = 0;
+
+            while (count > 0)
+            {
+                int numRead = stream.Read(buffer, offset, count);
+
+                if (numRead == 0)
+                    break;
+
+                offset += numRead;
+                count -= numRead;
+                totalRead += numRead;
+            }
+
+            return totalRead;
+        }
     }
 }
