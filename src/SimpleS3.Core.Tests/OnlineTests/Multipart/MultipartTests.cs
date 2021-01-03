@@ -276,7 +276,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
             }
 
             HeadObjectResponse headResp = await ObjectClient.HeadObjectAsync(BucketName, nameof(MultipartViaClient), req => req.PartNumber = 1).ConfigureAwait(false);
-            Assert.Equal(2, headResp.NumberOfParts);
+            Assert.Equal(4, headResp.NumberOfParts);
         }
 
         [Fact]
