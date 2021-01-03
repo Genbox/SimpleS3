@@ -1,6 +1,7 @@
 # SimpleS3
 
 [![NuGet](https://img.shields.io/nuget/v/Genbox.SimpleS3.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/Genbox.SimpleS3/)
+[![Build](https://github.com/Genbox/SimpleS3/workflows/Generic%20build/badge.svg)](https://github.com/Genbox/SimpleS3/actions)
 
 ### Description
 A C# implementation of Amazon's S3 API with a focus on simplicity, security and performance. Download or upload an object with a single line of code.
