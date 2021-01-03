@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.TestBase;
@@ -16,18 +16,6 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
     public class ListObjectsTests : OnlineTestBase
     {
         public ListObjectsTests(ITestOutputHelper helper) : base(helper) { }
-
-        private async Task UploadString(string bucketName, string objName, SemaphoreSlim semaphore)
-        {
-            try
-            {
-                await ObjectClient.PutObjectStringAsync(bucketName, objName, string.Empty).ConfigureAwait(false);
-            }
-            finally
-            {
-                semaphore.Release();
-            }
-        }
 
         [Fact]
         public async Task ListObjects()
@@ -61,20 +49,8 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
             {
                 int concurrent = 10;
                 int count = 11;
-                Queue<Task> tasks = new Queue<Task>(count);
 
-                using (SemaphoreSlim semaphore = new SemaphoreSlim(concurrent))
-                {
-                    for (int i = 0; i < count; i++)
-                    {
-                        await semaphore.WaitAsync().ConfigureAwait(false);
-
-                        string tempObjName = "object-" + Guid.NewGuid();
-                        tasks.Enqueue(UploadString(bucket, tempObjName, semaphore));
-                    }
-
-                    await Task.WhenAll(tasks).ConfigureAwait(false);
-                }
+                await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), i => ObjectClient.PutObjectStringAsync(bucket, i.ToString(), string.Empty), concurrent, CancellationToken.None);
 
                 ListObjectsResponse gResp = await ObjectClient.ListObjectsAsync(bucket, req => req.MaxKeys = count - 1).ConfigureAwait(false);
                 Assert.True(gResp.IsSuccess);
