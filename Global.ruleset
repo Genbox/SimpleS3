@@ -4,6 +4,10 @@
     <Name Resource="MinimumRecommendedRules_Name" />
     <Description Resource="MinimumRecommendedRules_Description" />
   </Localization>
+  <Rules AnalyzerId="ConfigureAwaitChecker.Analyzer" RuleNamespace="ConfigureAwaitChecker.Analyzer">
+    <Rule Id="CAC001" Action="None" />
+    <Rule Id="CAC002" Action="None" />
+  </Rules>
   <Rules AnalyzerId="IDisposableAnalyzers" RuleNamespace="IDisposableAnalyzers">
     <Rule Id="IDISP013" Action="Error" />
     <Rule Id="IDISP014" Action="None" />
@@ -121,7 +125,7 @@
     <Rule Id="CA1720" Action="None" />
     <Rule Id="CA1724" Action="None" />
     <Rule Id="CA1819" Action="None" />
-    <Rule Id="CA2007" Action="Error" />
+    <Rule Id="CA2007" Action="None" />
   </Rules>
   <Rules AnalyzerId="Microsoft.CodeQuality.CSharp.Analyzers" RuleNamespace="Microsoft.CodeQuality.CSharp.Analyzers">
     <Rule Id="Async001" Action="Error" />
