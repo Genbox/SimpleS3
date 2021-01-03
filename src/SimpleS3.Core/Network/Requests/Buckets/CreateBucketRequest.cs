@@ -27,11 +27,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
             Initialize(bucketName);
         }
 
-        internal void Initialize(string bucketName)
-        {
-            BucketName = bucketName;
-        }
-
         /// <summary>Enable object locking on the bucket.</summary>
         public bool? EnableObjectLocking { get; set; }
 
@@ -42,6 +37,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
         public AclBuilder AclGrantWriteAcp { get; }
         public AclBuilder AclGrantFullControl { get; }
         public string BucketName { get; set; }
+
+        internal void Initialize(string bucketName)
+        {
+            BucketName = bucketName;
+        }
 
         public override void Reset()
         {

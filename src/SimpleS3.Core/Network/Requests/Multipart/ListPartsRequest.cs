@@ -8,20 +8,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// <summary>This operation lists the parts that have been uploaded for a specific multipart upload.</summary>
     public class ListPartsRequest : BaseRequest, IHasUploadId, IHasRequestPayer, IHasBucketName, IHasObjectKey
     {
-        internal ListPartsRequest() : base(HttpMethod.GET)
-        {
-        }
+        internal ListPartsRequest() : base(HttpMethod.GET) { }
 
         public ListPartsRequest(string bucketName, string objectKey, string uploadId) : this()
         {
             Initialize(bucketName, objectKey, uploadId);
-        }
-
-        internal void Initialize(string bucketName, string objectKey, string uploadId)
-        {
-            BucketName = bucketName;
-            ObjectKey = objectKey;
-            UploadId = uploadId;
         }
 
         /// <summary>Requests Amazon S3 to encode the response and specifies the encoding method to use.</summary>
@@ -37,6 +28,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
         public string UploadId { get; set; }
+
+        internal void Initialize(string bucketName, string objectKey, string uploadId)
+        {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
+            UploadId = uploadId;
+        }
 
         public override void Reset()
         {

@@ -8,8 +8,6 @@ namespace Genbox.SimpleS3.Core.Authentication
     /// </summary>
     public class StringAccessKey : AccessKeyBase
     {
-        public StringAccessKey(string keyId, string accessKey) : base(keyId, Encoding.UTF8.GetBytes(accessKey))
-        {
-        }
+        public StringAccessKey(string keyId, string accessKey) : base(keyId, Encoding.UTF8.GetBytes(accessKey)) { }
     }
 }

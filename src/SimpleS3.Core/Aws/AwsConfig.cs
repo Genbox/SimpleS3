@@ -9,8 +9,8 @@ namespace Genbox.SimpleS3.Core.Aws
     [PublicAPI]
     public class AwsConfig : Config
     {
-        private AwsRegion _region;
         private readonly IRegionConverter _converter = new RegionConverter(new AwsRegionData());
+        private AwsRegion _region;
 
         public AwsConfig()
         {

@@ -9,9 +9,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
 
     public class B2UrlBuilder : UrlBuilderBase
     {
-        public B2UrlBuilder(IOptions<Config> options) : base(options)
-        {
-        }
+        public B2UrlBuilder(IOptions<Config> options) : base(options) { }
 
         protected override void AppendVirtualHost(StringBuilder sb, Config config, string? bucketName)
         {

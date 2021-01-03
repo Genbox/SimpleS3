@@ -15,12 +15,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             Initialize(bucketName, objectKey);
         }
 
-        internal void Initialize(string bucketName, string objectKey)
-        {
-            BucketName = bucketName;
-            ObjectKey = objectKey;
-        }
-
         /// <summary>
         /// The number of days that you want the restored copy to exist. After the specified period, Amazon S3 deletes the temporary copy but the object
         /// remains archived in the <see cref="StorageClass.Glacier" /> or <see cref="StorageClass.DeepArchive" /> storage class that object was restored from.
@@ -45,6 +39,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
         public string? VersionId { get; set; }
+
+        internal void Initialize(string bucketName, string objectKey)
+        {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
+        }
 
         public override void Reset()
         {

@@ -18,9 +18,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     {
         private byte[]? _sseCustomerKey;
 
-        internal CreateMultipartUploadRequest() : this(HttpMethod.POST)
-        {
-        }
+        internal CreateMultipartUploadRequest() : this(HttpMethod.POST) { }
 
         internal CreateMultipartUploadRequest(HttpMethod method) : base(method)
         {
@@ -42,21 +40,15 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             Initialize(bucketName, objectKey);
         }
 
-        internal void Initialize(string bucketName, string objectKey)
-        {
-            BucketName = bucketName;
-            ObjectKey = objectKey;
-        }
-
         public string BucketName { get; set; }
         public CacheControlBuilder CacheControl { get; internal set; }
         public ContentDispositionBuilder ContentDisposition { get; internal set; }
         public ContentEncodingBuilder ContentEncoding { get; internal set; }
         public ContentTypeBuilder ContentType { get; internal set; }
         public DateTimeOffset? ExpiresOn { get; set; }
+        public bool? LockLegalHold { get; set; }
         public LockMode LockMode { get; set; }
         public DateTimeOffset? LockRetainUntil { get; set; }
-        public bool? LockLegalHold { get; set; }
         public MetadataBuilder Metadata { get; internal set; }
         public ObjectCannedAcl Acl { get; set; }
         public AclBuilder AclGrantRead { get; internal set; }
@@ -70,6 +62,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public KmsContextBuilder SseContext { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public byte[]? SseCustomerKeyMd5 { get; set; }
+
         public byte[]? SseCustomerKey
         {
             get => _sseCustomerKey;
@@ -88,6 +81,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public StorageClass StorageClass { get; set; }
         public TagBuilder Tags { get; internal set; }
         public string? WebsiteRedirectLocation { get; set; }
+
+        internal void Initialize(string bucketName, string objectKey)
+        {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
+        }
 
         public override void Reset()
         {

@@ -29,6 +29,19 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             Initialize(bucketName, resources);
         }
 
+        /// <summary>In quiet mode the response includes only keys where the delete operation encountered an error.</summary>
+        public bool Quiet { get; set; }
+
+        /// <summary>The list of objects</summary>
+        public IList<S3DeleteInfo> Objects { get; internal set; }
+        public byte[]? ContentMd5 { get; set; }
+        Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
+
+        public string BucketName { get; set; }
+        public bool? BypassGovernanceRetention { get; set; }
+        public MfaAuthenticationBuilder Mfa { get; }
+        public Payer RequestPayer { get; set; }
+
         internal void Initialize(string bucketName, IEnumerable<S3DeleteInfo> resources)
         {
             BucketName = bucketName;
@@ -38,19 +51,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
                 Objects.Add(info);
             }
         }
-
-        /// <summary>In quiet mode the response includes only keys where the delete operation encountered an error.</summary>
-        public bool Quiet { get; set; }
-
-        /// <summary>The list of objects</summary>
-        public IList<S3DeleteInfo> Objects { get; internal set; }
-
-        public string BucketName { get; set; }
-        public bool? BypassGovernanceRetention { get; set; }
-        public byte[]? ContentMd5 { get; set; }
-        public MfaAuthenticationBuilder Mfa { get; }
-        public Payer RequestPayer { get; set; }
-        Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
 
         public override void Reset()
         {

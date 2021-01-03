@@ -64,11 +64,11 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             {
                 //Upload using 8 concurrent connections and use server-side encryption with our own key.
                 await client.MultipartUploadAsync(bucketName, objectName, ms, 1024 * 1024 * 5, 4, request =>
-                  {
-                      request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
-                      request.SseCustomerKey = encryptionKey;
-                      request.SseCustomerKeyMd5 = MD5.Create().ComputeHash(encryptionKey);
-                  });
+                {
+                    request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
+                    request.SseCustomerKey = encryptionKey;
+                    request.SseCustomerKeyMd5 = MD5.Create().ComputeHash(encryptionKey);
+                });
             }
         }
 

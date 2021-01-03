@@ -14,14 +14,17 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// </summary>
     public class AbortMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId
     {
-        internal AbortMultipartUploadRequest() : base(HttpMethod.DELETE)
-        {
-        }
+        internal AbortMultipartUploadRequest() : base(HttpMethod.DELETE) { }
 
         public AbortMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : this()
         {
             Initialize(bucketName, objectKey, uploadId);
         }
+
+        public string BucketName { get; set; }
+        public string ObjectKey { get; set; }
+        public Payer RequestPayer { get; set; }
+        public string UploadId { get; set; }
 
         internal void Initialize(string bucketName, string objectKey, string uploadId)
         {
@@ -29,11 +32,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             ObjectKey = objectKey;
             UploadId = uploadId;
         }
-
-        public string BucketName { get; set; }
-        public string ObjectKey { get; set; }
-        public Payer RequestPayer { get; set; }
-        public string UploadId { get; set; }
 
         public override void Reset()
         {

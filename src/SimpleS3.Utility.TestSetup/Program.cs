@@ -73,15 +73,15 @@ namespace Genbox.SimpleS3.Utility.TestSetup
                 Console.Error.WriteLine("Failed to apply lock configuration.");
 
             List<S3Rule> rules = new List<S3Rule>
+            {
+                new S3Rule("ExpireAll", true)
                 {
-                    new S3Rule("ExpireAll", true)
-                    {
-                        AbortIncompleteMultipartUploadDays = 1,
-                        NonCurrentVersionExpirationDays = 1,
-                        Expiration = new S3Expiration(1),
-                        Filter = new S3Filter { Prefix = "" }
-                    }
-                };
+                    AbortIncompleteMultipartUploadDays = 1,
+                    NonCurrentVersionExpirationDays = 1,
+                    Expiration = new S3Expiration(1),
+                    Filter = new S3Filter { Prefix = "" }
+                }
+            };
 
             Console.WriteLine("Adding lifecycle configuration");
 
@@ -110,14 +110,10 @@ namespace Genbox.SimpleS3.Utility.TestSetup
                 if (createResp.IsSuccess)
                     Console.WriteLine($"Successfully created '{bucketName}'.");
                 else
-                {
                     Console.Error.WriteLine($"Failed to create '{bucketName}'. Exiting.");
-                }
             }
             else
-            {
                 Console.WriteLine($"Unknown error code when checking if bucket exists: {headResp.StatusCode}");
-            }
         }
     }
 }

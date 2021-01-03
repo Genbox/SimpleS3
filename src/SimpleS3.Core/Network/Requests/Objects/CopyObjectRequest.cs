@@ -39,14 +39,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             Initialize(sourceBucketName, sourceObjectKey, destinationBucketName, destinationObjectKey);
         }
 
-        internal void Initialize(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey)
-        {
-            SourceBucketName = sourceBucketName;
-            SourceObjectKey = sourceObjectKey;
-            DestinationBucketName = destinationBucketName;
-            DestinationObjectKey = destinationObjectKey;
-        }
-
         public string SourceBucketName { get; private set; }
         public string SourceObjectKey { get; private set; }
         public string DestinationBucketName { get; private set; }
@@ -58,9 +50,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public DateTimeOffset? IfUnmodifiedSince { get; set; }
         public ETagBuilder IfETagMatch { get; }
         public ETagBuilder IfETagNotMatch { get; }
+        public bool? LockLegalHold { get; set; }
         public LockMode LockMode { get; set; }
         public DateTimeOffset? LockRetainUntil { get; set; }
-        public bool? LockLegalHold { get; set; }
         public MetadataBuilder Metadata { get; }
         public ObjectCannedAcl Acl { get; set; }
         public AclBuilder AclGrantRead { get; }
@@ -73,6 +65,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public string? SseKmsKeyId { get; set; }
         public KmsContextBuilder SseContext { get; set; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
+
         public byte[]? SseCustomerKey
         {
             get => _sseCustomerKey;
@@ -86,11 +79,21 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
                 Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
                 _sseCustomerKey = null;
             }
-        }        public byte[]? SseCustomerKeyMd5 { get; set; }
+        }
+
+        public byte[]? SseCustomerKeyMd5 { get; set; }
         public StorageClass StorageClass { get; set; }
         public TagBuilder Tags { get; }
         public string? VersionId { get; set; }
         public string? WebsiteRedirectLocation { get; set; }
+
+        internal void Initialize(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey)
+        {
+            SourceBucketName = sourceBucketName;
+            SourceObjectKey = sourceObjectKey;
+            DestinationBucketName = destinationBucketName;
+            DestinationObjectKey = destinationObjectKey;
+        }
 
         public override void Reset()
         {

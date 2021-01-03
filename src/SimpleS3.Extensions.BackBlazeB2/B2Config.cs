@@ -7,8 +7,8 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
 {
     public class B2Config : Config
     {
-        private B2Region _region;
         private readonly IRegionConverter _converter = new RegionConverter(new B2RegionData());
+        private B2Region _region;
 
         public B2Config()
         {

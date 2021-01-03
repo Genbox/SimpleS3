@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -34,8 +34,7 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests
                 () => RuleFor(x => ((IHasBucketName)x).BucketName)
                       .Length(3, 64)
                       .Must(x => validator.TryValidateBucketName(x, out _))
-                      .When(x => cfg
-.EnableBucketNameValidation)
+                      .When(x => cfg.EnableBucketNameValidation)
                       .WithMessage("Amazon recommends naming buckets to be valid DNS names, as you can't change the name later on. To turn off DNS name validation, set S3Config.EnableBucketNameValidation to false"));
 
             When(x => x is IHasObjectKey,
@@ -45,16 +44,13 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests
                       .Length(1, 1024)
                       .WithMessage("The object key length must be between 1 and 1024 characters")
                       .Must(x => validator.TryValidateObjectKey(x, ObjectKeyValidationMode.SafeMode, out _))
-                      .When(x => cfg
-.ObjectKeyValidationMode == ObjectKeyValidationMode.SafeMode)
+                      .When(x => cfg.ObjectKeyValidationMode == ObjectKeyValidationMode.SafeMode)
                       .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\() are allowed when S3Config.{nameof(Config.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.SafeMode)}")
                       .Must(x => validator.TryValidateObjectKey(x, ObjectKeyValidationMode.AsciiMode, out _))
-                      .When(x => cfg
-.ObjectKeyValidationMode == ObjectKeyValidationMode.AsciiMode)
+                      .When(x => cfg.ObjectKeyValidationMode == ObjectKeyValidationMode.AsciiMode)
                       .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\()&$@=;:+ ,? and ASCII codes 0-31 and 127 are allowed when S3Config.{nameof(Config.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.AsciiMode)}")
                       .Must(x => validator.TryValidateObjectKey(x, ObjectKeyValidationMode.ExtendedAsciiMode, out _))
-                      .When(x => cfg
-.ObjectKeyValidationMode == ObjectKeyValidationMode.ExtendedAsciiMode)
+                      .When(x => cfg.ObjectKeyValidationMode == ObjectKeyValidationMode.ExtendedAsciiMode)
                       .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\()&$@=;:+ ,?\\{{}}^%`[]\"<>~#| and ASCII codes 0-31 and 128-255 are allowed when S3Config.{nameof(Config.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.ExtendedAsciiMode)}"));
         }
     }

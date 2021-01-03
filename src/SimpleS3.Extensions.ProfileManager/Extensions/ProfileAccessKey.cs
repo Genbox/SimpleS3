@@ -5,7 +5,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
 {
     public class ProfileAccessKey : IAccessKey
     {
-        public ProfileAccessKey(IProfile profile) 
+        public ProfileAccessKey(IProfile profile)
         {
             KeyId = profile.KeyId;
             AccessKey = profile.AccessKey;

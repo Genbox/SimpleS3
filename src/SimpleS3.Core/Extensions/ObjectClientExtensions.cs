@@ -11,7 +11,6 @@ using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Validation;
-using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -49,7 +48,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
 
         /// <summary>Delete all objects within the bucket</summary>
-        public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, bool deleteAllVersions = false, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, bool deleteAllVersions = false, [EnumeratorCancellation]CancellationToken token = default)
         {
             //We reuse this list to minimize memory usage.
             List<S3DeleteInfo> delete = new List<S3DeleteInfo>();
@@ -70,7 +69,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                     if (!response.IsSuccess)
                         yield break;
 
-                    if ((response.Versions.Count + response.DeleteMarkers.Count) == 0)
+                    if (response.Versions.Count + response.DeleteMarkers.Count == 0)
                         break;
 
                     delete.AddRange(response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));

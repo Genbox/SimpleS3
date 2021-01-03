@@ -9,20 +9,18 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public class GetBucketLockConfigurationRequest : BaseRequest, IHasBucketName
     {
-        internal GetBucketLockConfigurationRequest() : base(HttpMethod.GET)
-        {
-        }
+        internal GetBucketLockConfigurationRequest() : base(HttpMethod.GET) { }
 
         public GetBucketLockConfigurationRequest(string bucketName) : this()
         {
             Initialize(bucketName);
         }
 
+        public string BucketName { get; set; }
+
         internal void Initialize(string bucketName)
         {
             BucketName = bucketName;
         }
-
-        public string BucketName { get; set; }
     }
 }

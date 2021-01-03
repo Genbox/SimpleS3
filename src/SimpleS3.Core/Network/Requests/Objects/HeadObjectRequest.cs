@@ -19,9 +19,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     {
         private byte[]? _sseCustomerKey;
 
-        internal HeadObjectRequest() : this(HttpMethod.HEAD)
-        {
-        }
+        internal HeadObjectRequest() : this(HttpMethod.HEAD) { }
 
         internal HeadObjectRequest(HttpMethod method) : base(method)
         {
@@ -45,12 +43,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             Initialize(bucketName, objectKey);
         }
 
-        internal void Initialize(string bucketName, string objectKey)
-        {
-            BucketName = bucketName;
-            ObjectKey = objectKey;
-        }
-
         public string BucketName { get; set; }
         public DateTimeOffset? IfModifiedSince { get; set; }
         public DateTimeOffset? IfUnmodifiedSince { get; set; }
@@ -67,6 +59,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public ContentEncodingBuilder ResponseContentEncoding { get; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public byte[]? SseCustomerKeyMd5 { get; set; }
+
         public byte[]? SseCustomerKey
         {
             get => _sseCustomerKey;
@@ -83,6 +76,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         }
 
         public string? VersionId { get; set; }
+
+        internal void Initialize(string bucketName, string objectKey)
+        {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
+        }
 
         public override void Reset()
         {

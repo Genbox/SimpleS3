@@ -11,8 +11,8 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
 {
     public class ConsoleProfileSetup : IProfileSetup
     {
-        private readonly IProfileManager _profileManager;
         private readonly IInputValidator _inputValidator;
+        private readonly IProfileManager _profileManager;
         private readonly IRegionManager _regionManager;
 
         public ConsoleProfileSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionManager regionManager)
@@ -171,7 +171,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup
                 counter++;
             }
 
-        start2:
+            start2:
             string? enteredRegion = Console.ReadLine();
 
             if (enteredRegion != null)

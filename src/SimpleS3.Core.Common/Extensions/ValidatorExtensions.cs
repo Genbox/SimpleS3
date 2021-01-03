@@ -47,7 +47,6 @@ namespace Genbox.SimpleS3.Core.Common.Extensions
             };
         }
 
-
         public static void ValidateBucketName(this IInputValidator validator, string? bucketName)
         {
             if (validator.TryValidateBucketName(bucketName, out ValidationStatus status))

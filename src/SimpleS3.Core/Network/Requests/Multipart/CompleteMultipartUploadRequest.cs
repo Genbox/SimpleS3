@@ -33,6 +33,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
             Initialize(bucketName, objectKey, uploadId, parts);
         }
 
+        public IList<S3PartInfo> UploadParts { get; }
+        public string BucketName { get; set; }
+        public string ObjectKey { get; set; }
+        public Payer RequestPayer { get; set; }
+        public string UploadId { get; set; }
+
         internal void Initialize(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts)
         {
             BucketName = bucketName;
@@ -44,12 +50,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
                 UploadParts.Add(new S3PartInfo(part.ETag, part.PartNumber));
             }
         }
-
-        public IList<S3PartInfo> UploadParts { get; }
-        public string BucketName { get; set; }
-        public string ObjectKey { get; set; }
-        public Payer RequestPayer { get; set; }
-        public string UploadId { get; set; }
 
         public override void Reset()
         {

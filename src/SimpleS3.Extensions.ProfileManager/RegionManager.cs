@@ -7,8 +7,8 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
 {
     public class RegionManager : IRegionManager
     {
-        private readonly Dictionary<string, IRegionInfo> _lookup = new Dictionary<string, IRegionInfo>(StringComparer.Ordinal);
         private readonly Dictionary<int, IRegionInfo> _enumToRegion = new Dictionary<int, IRegionInfo>();
+        private readonly Dictionary<string, IRegionInfo> _lookup = new Dictionary<string, IRegionInfo>(StringComparer.Ordinal);
 
         public RegionManager(IRegionData regionData)
         {

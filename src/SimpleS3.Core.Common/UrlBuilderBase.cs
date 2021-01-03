@@ -43,9 +43,6 @@ namespace Genbox.SimpleS3.Core.Common
             }
         }
 
-        protected abstract void AppendVirtualHost(StringBuilder sb, Config config, string? bucketName);
-        protected abstract void AppendPathStyle(StringBuilder sb, Config config, string? bucketName);
-
         public void AppendUrl<TReq>(StringBuilder sb, TReq request) where TReq : IRequest
         {
             sb.Append('/');
@@ -58,5 +55,8 @@ namespace Genbox.SimpleS3.Core.Common
             if (request is IHasObjectKey ok)
                 sb.Append(UrlHelper.UrlPathEncode(ok.ObjectKey));
         }
+
+        protected abstract void AppendVirtualHost(StringBuilder sb, Config config, string? bucketName);
+        protected abstract void AppendPathStyle(StringBuilder sb, Config config, string? bucketName);
     }
 }

@@ -11,8 +11,8 @@ namespace Genbox.SimpleS3.Core.Operations
 {
     public class SignedObjectOperations : ISignedObjectOperations
     {
-        private readonly ISignedRequestHandler _signedHandler;
         private readonly IRequestHandler _handler;
+        private readonly ISignedRequestHandler _signedHandler;
 
         public SignedObjectOperations(ISignedRequestHandler signedHandler, IRequestHandler handler)
         {

@@ -22,11 +22,11 @@ namespace Genbox.SimpleS3.Core.Network
     public class DefaultSignedRequestHandler : ISignedRequestHandler
     {
         private readonly IAuthorizationBuilder _authBuilder;
-        private readonly IUrlBuilder _urlBuilder;
         private readonly ILogger<DefaultSignedRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
         private readonly IOptions<Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
+        private readonly IUrlBuilder _urlBuilder;
         private readonly IValidatorFactory _validator;
 
         public DefaultSignedRequestHandler(IOptions<Config> options, IScopeBuilder scopeBuilder, IValidatorFactory validator, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultSignedRequestHandler> logger)

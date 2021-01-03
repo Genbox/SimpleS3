@@ -65,13 +65,12 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
         Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(PutBucketLifecycleConfigurationRequest request, CancellationToken token = default);
 
         /// <summary>
-        /// Sets the versioning state of an existing bucket. To set the versioning state, you must be the bucket owner. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketVersioning.html for details.
+        /// Sets the versioning state of an existing bucket. To set the versioning state, you must be the bucket owner. See
+        /// https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketVersioning.html for details.
         /// </summary>
         Task<PutBucketVersioningResponse> PutBucketVersioningAsync(PutBucketVersioningRequest request, CancellationToken token = default);
 
-        /// <summary>
-        /// Returns the versioning state of a bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketVersioning.html for details.
-        /// </summary>
+        /// <summary>Returns the versioning state of a bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketVersioning.html for details.</summary>
         Task<GetBucketVersioningResponse> GetBucketVersioningAsync(GetBucketVersioningRequest request, CancellationToken token = default);
     }
 }

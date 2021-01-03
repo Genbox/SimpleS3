@@ -33,10 +33,10 @@ namespace Genbox.SimpleS3
     /// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
     public sealed class S3Client : IClient, IDisposable
     {
+        private readonly ServiceProvider? _serviceProvider;
         private IBucketClient _bucketClient;
         private IMultipartClient _multipartClient;
         private IObjectClient _objectClient;
-        private readonly ServiceProvider? _serviceProvider;
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="keyId">The key id</param>
@@ -102,14 +102,6 @@ namespace Genbox.SimpleS3
         public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, Transfer transfer)
         {
             Initialize(objectClient, bucketClient, multipartClient, transfer);
-        }
-
-        private void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, Transfer transfer)
-        {
-            _objectClient = objectClient;
-            _bucketClient = bucketClient;
-            _multipartClient = multipartClient;
-            Transfer = transfer;
         }
 
         public Transfer Transfer { get; private set; }
@@ -296,6 +288,14 @@ namespace Genbox.SimpleS3
         public void Dispose()
         {
             _serviceProvider?.Dispose();
+        }
+
+        private void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, Transfer transfer)
+        {
+            _objectClient = objectClient;
+            _bucketClient = bucketClient;
+            _multipartClient = multipartClient;
+            Transfer = transfer;
         }
     }
 }

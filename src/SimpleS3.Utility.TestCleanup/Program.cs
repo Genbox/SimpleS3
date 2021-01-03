@@ -71,9 +71,7 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
                             Console.Write("[ ] deleted");
                     }
                     else
-                    {
                         Console.Write(" [ ] emptied [ ] deleted");
-                    }
 
                     Console.WriteLine();
                 }

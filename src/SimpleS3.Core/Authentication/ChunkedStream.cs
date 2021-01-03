@@ -24,18 +24,18 @@ namespace Genbox.SimpleS3.Core.Authentication
         private readonly byte[] _buffer;
         private readonly IChunkedSignatureBuilder _chunkedSigBuilder;
         private readonly int _chunkSize;
-        private readonly Stream _originalStream;
-        private readonly IRequest _request;
-        private int _bufferLength = -1;
-        private int _bufferPosition = -1;
 
         private readonly int _headerSize;
+        private readonly Stream _originalStream;
+        private readonly IRequest _request;
+        private readonly byte[] _seedSignature;
+        private int _bufferLength = -1;
+        private int _bufferPosition = -1;
         private bool _inputStreamConsumed;
 
         private bool _outputBufferIsTerminatingChunk;
         private long _position;
         private byte[] _previousSignature;
-        private readonly byte[] _seedSignature;
 
         public ChunkedStream(IOptions<Config> options, IChunkedSignatureBuilder chunkedSigBuilder, IRequest request, byte[] seedSignature, Stream originalStream)
         {

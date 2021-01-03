@@ -27,11 +27,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             Initialize(bucketName, objectKey);
         }
 
-        internal void Initialize(string bucketName, string objectKey)
-        {
-            BucketName = bucketName;
-            ObjectKey = objectKey;
-        }
+        public string BucketName { get; set; }
 
         public byte[]? ContentMd5 { get; set; }
         public ObjectCannedAcl Acl { get; set; }
@@ -39,10 +35,15 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public AclBuilder AclGrantReadAcp { get; }
         public AclBuilder AclGrantWriteAcp { get; }
         public AclBuilder AclGrantFullControl { get; }
+        public string ObjectKey { get; set; }
         public Payer RequestPayer { get; set; }
         public string? VersionId { get; set; }
-        public string BucketName { get; set; }
-        public string ObjectKey { get; set; }
+
+        internal void Initialize(string bucketName, string objectKey)
+        {
+            BucketName = bucketName;
+            ObjectKey = objectKey;
+        }
 
         public override void Reset()
         {

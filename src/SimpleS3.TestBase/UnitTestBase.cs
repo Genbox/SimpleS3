@@ -58,14 +58,14 @@ namespace Genbox.SimpleS3.TestBase
         protected ISignedObjectClient SignedObjectClient { get; }
         protected Transfer Transfer { get; }
 
-        protected virtual void ConfigureServices(IServiceCollection services) { }
-        protected virtual void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration) { }
-        protected virtual void ConfigureConfig(Config config) { }
-
         public virtual void Dispose()
         {
             Services?.Dispose();
             GC.SuppressFinalize(this);
         }
+
+        protected virtual void ConfigureServices(IServiceCollection services) { }
+        protected virtual void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration) { }
+        protected virtual void ConfigureConfig(Config config) { }
     }
 }

@@ -13,12 +13,6 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         /// <summary>Returns the count of the tags associated with the object. This header is returned only if the count is greater than zero.</summary>
         public int TagCount { get; internal set; }
 
-        /// <summary>
-        /// When a bucket is configured as a website, you can set this metadata on the object so the website endpoint will evaluate the request for the
-        /// object as a 301 redirect to another object in the same bucket or an external URL.
-        /// </summary>
-        public string? WebsiteRedirectLocation { get; internal set; }
-
         public int? NumberOfParts { get; internal set; }
         public string? CacheControl { get; internal set; }
         public string? ETag { get; internal set; }
@@ -27,9 +21,9 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public DateTimeOffset? LifeCycleExpiresOn { get; internal set; }
         public string? LifeCycleRuleId { get; internal set; }
         public DateTimeOffset? ExpiresOn { get; internal set; }
+        public bool LockLegalHold { get; internal set; }
         public LockMode LockMode { get; internal set; }
         public DateTimeOffset? LockRetainUntil { get; internal set; }
-        public bool LockLegalHold { get; internal set; }
         public IDictionary<string, string>? Metadata { get; internal set; }
         public ReplicationStatus ReplicationStatus { get; internal set; }
         public string? ContentType { get; internal set; }
@@ -47,5 +41,11 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects
         public byte[]? SseCustomerKeyMd5 { get; internal set; }
         public StorageClass StorageClass { get; internal set; }
         public string? VersionId { get; internal set; }
+
+        /// <summary>
+        /// When a bucket is configured as a website, you can set this metadata on the object so the website endpoint will evaluate the request for the
+        /// object as a 301 redirect to another object in the same bucket or an external URL.
+        /// </summary>
+        public string? WebsiteRedirectLocation { get; internal set; }
     }
 }

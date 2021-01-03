@@ -58,22 +58,22 @@ namespace Genbox.SimpleS3.Core.Extensions
                 int partNumber = 0;
 
                 IEnumerable<UploadPartResponse> responses = await ParallelHelper.ExecuteAsync(chunks, async bytes =>
-                 {
-                     Interlocked.Increment(ref partNumber);
+                {
+                    Interlocked.Increment(ref partNumber);
 
-                     using (MemoryStream ms = new MemoryStream(bytes.Array!, 0, bytes.Count))
-                     {
-                         UploadPartRequest uploadReq = new UploadPartRequest(bucket, objectKey, partNumber, initResp.UploadId, ms);
-                         uploadReq.SseCustomerAlgorithm = req.SseCustomerAlgorithm;
-                         uploadReq.SseCustomerKey = encryptionKey;
-                         uploadReq.SseCustomerKeyMd5 = req.SseCustomerKeyMd5;
+                    using (MemoryStream ms = new MemoryStream(bytes.Array!, 0, bytes.Count))
+                    {
+                        UploadPartRequest uploadReq = new UploadPartRequest(bucket, objectKey, partNumber, initResp.UploadId, ms);
+                        uploadReq.SseCustomerAlgorithm = req.SseCustomerAlgorithm;
+                        uploadReq.SseCustomerKey = encryptionKey;
+                        uploadReq.SseCustomerKeyMd5 = req.SseCustomerKeyMd5;
 
-                         UploadPartResponse resp = await operations.UploadPartAsync(uploadReq, token).ConfigureAwait(false);
-                         onPartResponse?.Invoke(resp);
-                         return resp;
-                     }
+                        UploadPartResponse resp = await operations.UploadPartAsync(uploadReq, token).ConfigureAwait(false);
+                        onPartResponse?.Invoke(resp);
+                        return resp;
+                    }
 
-                 }, numParallelParts, token);
+                }, numParallelParts, token);
 
                 CompleteMultipartUploadRequest completeReq = new CompleteMultipartUploadRequest(bucket, objectKey, initResp.UploadId, responses.OrderBy(x => x.PartNumber));
                 CompleteMultipartUploadResponse completeResp = await operations.CompleteMultipartUploadAsync(completeReq, token).ConfigureAwait(false);
@@ -106,7 +106,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// otherwise it falls back to an ordinary get request. Note that the implementation is designed to avoid excessive memory usage, so it seeks in the
         /// output stream whenever data is available.
         /// </summary>
-        public static async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectOperations operations, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
+        public static async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectOperations operations, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
         {
             Validator.RequireNotNull(output, nameof(output));
 

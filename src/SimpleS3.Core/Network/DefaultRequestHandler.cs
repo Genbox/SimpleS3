@@ -34,13 +34,13 @@ namespace Genbox.SimpleS3.Core.Network
     public class DefaultRequestHandler : IRequestHandler
     {
         private readonly IAuthorizationBuilder _authBuilder;
-        private readonly IUrlBuilder _urlBuilder;
         private readonly ILogger<DefaultRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
-        private readonly IPostMapperFactory _postMapper;
         private readonly INetworkDriver _networkDriver;
         private readonly IOptions<Config> _options;
+        private readonly IPostMapperFactory _postMapper;
         private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
+        private readonly IUrlBuilder _urlBuilder;
         private readonly IValidatorFactory _validator;
 
         public DefaultRequestHandler(IOptions<Config> options, IValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)

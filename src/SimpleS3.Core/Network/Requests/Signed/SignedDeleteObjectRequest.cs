@@ -4,9 +4,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Signed
 {
     public class SignedDeleteObjectRequest : SignedBaseRequest
     {
-        internal SignedDeleteObjectRequest() : base(HttpMethod.DELETE)
-        {
-        }
+        internal SignedDeleteObjectRequest() : base(HttpMethod.DELETE) { }
 
         public SignedDeleteObjectRequest(string url) : this()
         {

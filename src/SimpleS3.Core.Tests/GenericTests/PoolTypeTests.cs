@@ -11,9 +11,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
 {
     public class PoolTypeTests
     {
-        /// <summary>
-        /// Tests is each of the BaseRequest types has an internal constructor with zero parameters.
-        /// </summary>
+        /// <summary>Tests is each of the BaseRequest types has an internal constructor with zero parameters.</summary>
         [Fact]
         public void EnsureInternalCtor()
         {
@@ -41,9 +39,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             Assert.Empty(failed);
         }
 
-        /// <summary>
-        /// Tests if each type has an initialize method, which is needed to correctly initialize a new state when using pools
-        /// </summary>
+        /// <summary>Tests if each type has an initialize method, which is needed to correctly initialize a new state when using pools</summary>
         [Fact]
         public void EnsureInitializeMethod()
         {

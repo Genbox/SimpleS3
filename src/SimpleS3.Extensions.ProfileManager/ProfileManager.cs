@@ -14,10 +14,10 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
         public const string DefaultProfile = "DefaultProfile";
         private readonly IOptions<ProfileManagerOptions> _options;
         private readonly IAccessKeyProtector? _protector;
-
-        private readonly IInputValidator _validator;
         private readonly IProfileSerializer _serializer;
         private readonly IStorage _storage;
+
+        private readonly IInputValidator _validator;
 
         public ProfileManager(IInputValidator validator, IProfileSerializer serializer, IStorage storage, IOptions<ProfileManagerOptions> options, IAccessKeyProtector? protector = null)
         {

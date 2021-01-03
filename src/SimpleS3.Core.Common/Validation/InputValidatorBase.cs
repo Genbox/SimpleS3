@@ -5,8 +5,6 @@ namespace Genbox.SimpleS3.Core.Common.Validation
 {
     public abstract class InputValidatorBase : IInputValidator
     {
-        protected abstract bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status);
-
         public bool TryValidateKeyId(string? keyId, out ValidationStatus status)
         {
             if (keyId == null)
@@ -17,8 +15,6 @@ namespace Genbox.SimpleS3.Core.Common.Validation
 
             return TryValidateKeyIdInternal(keyId, out status);
         }
-
-        protected abstract bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status);
 
         public bool TryValidateAccessKey(byte[]? accessKey, out ValidationStatus status)
         {
@@ -31,8 +27,6 @@ namespace Genbox.SimpleS3.Core.Common.Validation
             return TryValidateAccessKeyInternal(accessKey, out status);
         }
 
-        protected abstract bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status);
-
         public bool TryValidateBucketName(string? bucketName, out ValidationStatus status)
         {
             if (bucketName == null)
@@ -43,8 +37,6 @@ namespace Genbox.SimpleS3.Core.Common.Validation
 
             return TryValidateBucketNameInternal(bucketName, out status);
         }
-
-        protected abstract bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status);
 
         public bool TryValidateObjectKey(string? objectKey, ObjectKeyValidationMode mode, out ValidationStatus status)
         {
@@ -62,5 +54,13 @@ namespace Genbox.SimpleS3.Core.Common.Validation
 
             return TryValidateObjectKeyInternal(objectKey, mode, out status);
         }
+
+        protected abstract bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status);
+
+        protected abstract bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status);
+
+        protected abstract bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status);
+
+        protected abstract bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status);
     }
 }

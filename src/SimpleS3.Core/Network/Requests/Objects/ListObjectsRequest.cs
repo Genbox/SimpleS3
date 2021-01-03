@@ -19,11 +19,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
             Initialize(bucketName);
         }
 
-        internal void Initialize(string bucketName)
-        {
-            BucketName = bucketName;
-        }
-
         /// <summary>
         /// A delimiter is a character you use to group keys. If you specify a <see cref="Prefix" />, all of the keys that contain the same string
         /// between the prefix and the first occurrence of the delimiter after the prefix are grouped under a single result element called CommonPrefixes. If you
@@ -76,6 +71,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public string BucketName { get; set; }
 
         public Payer RequestPayer { get; set; }
+
+        internal void Initialize(string bucketName)
+        {
+            BucketName = bucketName;
+        }
 
         public override void Reset()
         {

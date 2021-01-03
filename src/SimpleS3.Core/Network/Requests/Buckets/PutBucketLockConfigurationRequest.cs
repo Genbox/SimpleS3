@@ -13,30 +13,28 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public sealed class PutBucketLockConfigurationRequest : BaseRequest, IHasBucketName, IHasRequestPayer, IHasLock, IContentMd5Config, IAutoMapConfig
     {
-        internal PutBucketLockConfigurationRequest() : base(HttpMethod.PUT)
-        {
-        }
+        internal PutBucketLockConfigurationRequest() : base(HttpMethod.PUT) { }
 
         public PutBucketLockConfigurationRequest(string bucketName, bool enabled) : this()
         {
             Initialize(bucketName, enabled);
         }
 
+        public bool Enabled { get; set; }
+        public string? LockToken { get; set; }
+        Func<Type, bool> IAutoMapConfig.AutoMapDisabledFor => x => x == typeof(IHasLock);
+        public byte[]? ContentMd5 { get; set; }
+        Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
+        public string BucketName { get; set; }
+        public LockMode LockMode { get; set; }
+        public DateTimeOffset? LockRetainUntil { get; set; }
+        public Payer RequestPayer { get; set; }
+
         internal void Initialize(string bucketName, bool enabled)
         {
             BucketName = bucketName;
             Enabled = enabled;
         }
-
-        public bool Enabled { get; set; }
-        public string? LockToken { get; set; }
-        public string BucketName { get; set; }
-        public LockMode LockMode { get; set; }
-        public DateTimeOffset? LockRetainUntil { get; set; }
-        public byte[]? ContentMd5 { get; set; }
-        public Payer RequestPayer { get; set; }
-        Func<Type, bool> IAutoMapConfig.AutoMapDisabledFor => x => x == typeof(IHasLock);
-        Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
 
         public override void Reset()
         {
