@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -151,6 +151,11 @@ namespace Genbox.SimpleS3
         public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.PutObjectLegalHoldAsync(bucketName, objectKey, lockStatus, config, token);
+        }
+
+        public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default)
+        {
+            return _objectClient.ListObjectVersionsAsync(bucketName, config, token);
         }
 
         public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default)

@@ -153,5 +153,16 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
 
             return ObjectPool<PutObjectLegalHoldRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.PutObjectLegalHoldAsync(request, token));
         }
+
+        public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default)
+        {
+            void Setup(ListObjectVersionsRequest req)
+            {
+                req.Initialize(bucketName);
+                config?.Invoke(req);
+            }
+
+            return ObjectPool<ListObjectVersionsRequest>.Shared.RentAndUse(Setup, request => ObjectOperations.ListObjectVersionsAsync(request, token));
+        }
     }
 }

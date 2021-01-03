@@ -70,6 +70,14 @@ namespace Genbox.SimpleS3.Core
             return ObjectOperations.ListObjectsAsync(req, token);
         }
 
+        public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default)
+        {
+            ListObjectVersionsRequest req = new ListObjectVersionsRequest(bucketName);
+            config?.Invoke(req);
+
+            return ObjectOperations.ListObjectVersionsAsync(req, token);
+        }
+
         public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default)
         {
             RestoreObjectRequest req = new RestoreObjectRequest(bucketName, objectKey);

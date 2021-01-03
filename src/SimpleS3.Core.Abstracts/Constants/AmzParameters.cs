@@ -13,6 +13,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Constants
         public const string VersionId = "versionId";
         public const string EncodingType = "encoding-type";
         public const string Delete = "delete";
+        public const string Versions = "versions";
         public const string Versioning = "versioning";
         public const string Delimiter = "delimiter";
         public const string MaxKeys = "max-keys";
@@ -36,6 +37,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Constants
         public const string Tagging = "tagging";
         public const string Accelerate = "accelerate";
         public const string Lifecycle = "lifecycle";
+        public const string VersionIdMarker = "version-id-marker";
 
         #region Presigning
 
