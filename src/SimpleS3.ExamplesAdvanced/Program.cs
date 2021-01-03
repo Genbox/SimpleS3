@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
@@ -62,7 +64,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
         {
             await using (MemoryStream ms = new MemoryStream(data))
             {
-                //Upload using 8 concurrent connections and use server-side encryption with our own key.
+                //Upload using multiple concurrent connections and use server-side encryption with our own key.
                 await client.MultipartUploadAsync(bucketName, objectName, ms, 1024 * 1024 * 5, 4, request =>
                 {
                     request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
@@ -76,13 +78,19 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
         {
             await using (MemoryStream ms = new MemoryStream())
             {
-                //Upload using 8 concurrent connections and use server-side encryption with our own key.
-                await client.MultipartDownloadAsync(bucketName, objectName, ms, numParallelParts: 4, config: request =>
+                //Download using multiple concurrent connections and use server-side encryption with our own key.
+                IAsyncEnumerable<GetObjectResponse>? asynEnum = client.MultipartDownloadAsync(bucketName, objectName, ms, numParallelParts: 4, config: request =>
                 {
                     request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
                     request.SseCustomerKey = encryptionKey;
                     request.SseCustomerKeyMd5 = MD5.Create().ComputeHash(encryptionKey);
                 });
+
+                await foreach (GetObjectResponse resp in asynEnum)
+                {
+                    if (!resp.IsSuccess)
+                        Console.WriteLine("A chunk failed");
+                }
 
                 return ms.ToArray();
             }

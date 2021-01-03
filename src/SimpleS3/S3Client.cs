@@ -12,7 +12,6 @@ using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Aws;
-using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
@@ -163,16 +162,6 @@ namespace Genbox.SimpleS3
         public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default)
         {
             return _multipartClient.ListMultipartUploadsAsync(bucketName, config, token);
-        }
-
-        public Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default)
-        {
-            return _multipartClient.MultipartUploadAsync(bucketName, objectKey, data, partSize, numParallelParts, config, token);
-        }
-
-        public Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
-        {
-            return _multipartClient.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
         }
 
         public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest>? config = null, CancellationToken token = default)

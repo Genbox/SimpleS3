@@ -11,7 +11,6 @@ using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
@@ -192,23 +191,12 @@ namespace Genbox.SimpleS3.Core.Fluent
             return this;
         }
 
-        public async Task<MultipartUploadStatus> UploadMultipartAsync(Stream data, CancellationToken token = default)
+        public Task<CompleteMultipartUploadResponse> UploadMultipartAsync(Stream data, CancellationToken token = default)
         {
             _request.Method = HttpMethod.POST;
             _request.Content = null;
 
-            MultipartUploadStatus status = MultipartUploadStatus.Ok;
-
-            CompleteMultipartUploadResponse? uploadResp = await _multipartOperations.MultipartUploadAsync(_request, data, onPartResponse: response =>
-            {
-                if (!response.IsSuccess)
-                    status = MultipartUploadStatus.Incomplete;
-            }, token: token);
-
-            if (uploadResp == null || !uploadResp.IsSuccess)
-                status = MultipartUploadStatus.Incomplete;
-
-            return status;
+            return _multipartOperations.MultipartUploadAsync(_request, data, token: token);
         }
 
         public Task<PutObjectResponse> UploadAsync(Stream data, CancellationToken token = default)

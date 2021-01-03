@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Genbox.HttpBuilders;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
@@ -25,17 +24,9 @@ namespace Genbox.SimpleS3.Core.Fluent
             _objectOperations = objectOperations;
         }
 
-        public async Task<MultipartDownloadStatus> DownloadMultipartAsync(Stream output, CancellationToken token = default)
+        public IAsyncEnumerable<GetObjectResponse> DownloadMultipartAsync(Stream output, CancellationToken token = default)
         {
-            IAsyncEnumerable<GetObjectResponse> getResp = _objectOperations.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
-
-            await foreach (GetObjectResponse resp in getResp.WithCancellation(token))
-            {
-                if (!resp.IsSuccess)
-                    return MultipartDownloadStatus.Incomplete;
-            }
-
-            return MultipartDownloadStatus.Ok;
+            return _objectOperations.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
         }
 
         /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>

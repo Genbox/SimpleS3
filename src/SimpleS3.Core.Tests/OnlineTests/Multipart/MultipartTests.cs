@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
@@ -250,9 +250,9 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
 
             using (MemoryStream ms = new MemoryStream(data))
             {
-                MultipartUploadStatus resp = await MultipartClient.MultipartUploadAsync(BucketName, nameof(MultipartViaClient), ms, 5 * 1024 * 1024).ConfigureAwait(false);
+                CompleteMultipartUploadResponse resp = await MultipartClient.MultipartUploadAsync(BucketName, nameof(MultipartViaClient), ms, 5 * 1024 * 1024).ConfigureAwait(false);
 
-                Assert.Equal(MultipartUploadStatus.Ok, resp);
+                Assert.True(resp.IsSuccess);
             }
 
             GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, nameof(MultipartViaClient)).ConfigureAwait(false);
@@ -267,7 +267,11 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
             //Try multipart downloading it
             using (MemoryStream ms = new MemoryStream())
             {
-                await MultipartClient.MultipartDownloadAsync(BucketName, nameof(MultipartViaClient), ms).ConfigureAwait(false);
+                IAsyncEnumerable<GetObjectResponse> responses = ObjectClient.MultipartDownloadAsync(BucketName, nameof(MultipartViaClient), ms);
+
+                await foreach (GetObjectResponse resp in responses)
+                    Assert.True(resp.IsSuccess);
+
                 Assert.Equal(data, ms.ToArray());
             }
 

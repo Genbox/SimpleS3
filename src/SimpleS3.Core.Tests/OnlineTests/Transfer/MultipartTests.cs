@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.ErrorHandling.Status;
+using Genbox.SimpleS3.Core.Network.Responses.Multipart;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.TestBase;
 using Xunit;
 using Xunit.Abstractions;
@@ -21,19 +23,22 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Transfer
                 data[i] = (byte)(i % 255);
             }
 
-            MultipartUploadStatus ulStatus = await Transfer.CreateUpload(BucketName, nameof(UploadDownloadMultipart))
-                                                           .UploadMultipartAsync(new MemoryStream(data))
-                                                           .ConfigureAwait(false);
+            CompleteMultipartUploadResponse uploadResp = await Transfer.CreateUpload(BucketName, nameof(UploadDownloadMultipart))
+                                                                       .UploadMultipartAsync(new MemoryStream(data))
+                                                                       .ConfigureAwait(false);
 
-            Assert.Equal(MultipartUploadStatus.Ok, ulStatus);
+            Assert.True(uploadResp.IsSuccess);
 
             using (MemoryStream ms = new MemoryStream())
             {
-                MultipartDownloadStatus dlStatus = await Transfer.CreateDownload(BucketName, nameof(UploadDownloadMultipart))
-                                                                 .DownloadMultipartAsync(ms)
-                                                                 .ConfigureAwait(false);
+                IAsyncEnumerable<GetObjectResponse>? responses = Transfer.CreateDownload(BucketName, nameof(UploadDownloadMultipart))
+                                                                         .DownloadMultipartAsync(ms);
 
-                Assert.Equal(MultipartDownloadStatus.Ok, dlStatus);
+                await foreach (var resp in responses)
+                {
+                    Assert.True(resp.IsSuccess);
+                }
+
                 Assert.Equal(data, ms.ToArray());
             }
         }

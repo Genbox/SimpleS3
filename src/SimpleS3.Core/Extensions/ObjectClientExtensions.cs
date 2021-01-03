@@ -21,6 +21,11 @@ namespace Genbox.SimpleS3.Core.Extensions
 {
     public static class ObjectClientExtensions
     {
+        public static IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectClient client, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
+        {
+            return client.ObjectOperations.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
+        }
+
         public static async Task<DeleteObjectResponse> DeleteObjectAsync(this IObjectClient client, string bucketName, string objectKey, string? versionId = null, MfaAuthenticationBuilder? mfa = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));

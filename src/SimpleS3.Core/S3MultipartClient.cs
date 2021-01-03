@@ -5,12 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
-using Genbox.SimpleS3.Core.ErrorHandling.Status;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
-using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
-using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core
@@ -18,11 +14,8 @@ namespace Genbox.SimpleS3.Core
     [PublicAPI]
     public class S3MultipartClient : IMultipartClient
     {
-        private readonly IObjectOperations _objectOperations;
-
-        public S3MultipartClient(IMultipartOperations multipartOperations, IObjectOperations objectOperations)
+        public S3MultipartClient(IMultipartOperations multipartOperations)
         {
-            _objectOperations = objectOperations;
             MultipartOperations = multipartOperations;
         }
 
@@ -74,38 +67,6 @@ namespace Genbox.SimpleS3.Core
             config?.Invoke(request);
 
             return MultipartOperations.ListMultipartUploadsAsync(request, token);
-        }
-
-        public async Task<MultipartUploadStatus> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default)
-        {
-            CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, objectKey);
-            config?.Invoke(req);
-
-            MultipartUploadStatus status = MultipartUploadStatus.Ok;
-
-            CompleteMultipartUploadResponse? uploadResp = await MultipartOperations.MultipartUploadAsync(req, data, onPartResponse: response =>
-            {
-                if (!response.IsSuccess)
-                    status = MultipartUploadStatus.Incomplete;
-            }, token: token);
-
-            if (uploadResp == null || !uploadResp.IsSuccess)
-                status = MultipartUploadStatus.Incomplete;
-
-            return status;
-        }
-
-        public async Task<MultipartDownloadStatus> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
-        {
-            IAsyncEnumerable<GetObjectResponse> asyncEnum = _objectOperations.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
-
-            await foreach (GetObjectResponse obj in asyncEnum.WithCancellation(token))
-            {
-                if (!obj.IsSuccess)
-                    return MultipartDownloadStatus.Incomplete;
-            }
-
-            return MultipartDownloadStatus.Ok;
         }
     }
 }
