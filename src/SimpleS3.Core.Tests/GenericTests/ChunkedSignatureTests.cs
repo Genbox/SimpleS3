@@ -11,7 +11,6 @@ using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
-using Genbox.SimpleS3.TestBase.Extensions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;

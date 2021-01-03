@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Genbox.SimpleS3.TestBase.Extensions
+namespace Genbox.SimpleS3.Core.Internals.Extensions
 {
-    public static class EnumerableExtensions
+    internal static class EnumerableExtensions
     {
         public static IEnumerable<List<T>> Chunk<T>(this IEnumerable<T> enumerable, int chunkSize)
         {
