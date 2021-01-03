@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +12,7 @@ using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.ErrorHandling.Status;
+using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -48,37 +49,101 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
 
         /// <summary>Delete all objects within the bucket</summary>
-        public static async Task<DeleteAllObjectsStatus> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, CancellationToken token = default)
+        public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, bool deleteAllVersions = false, [EnumeratorCancellation] CancellationToken token = default)
         {
-            string? continuationToken = null;
-            ListObjectsResponse response;
+            //We reuse this list to minimize memory usage.
+            List<S3DeleteInfo> delete = new List<S3DeleteInfo>();
 
-            do
+            if (deleteAllVersions)
             {
-                if (token.IsCancellationRequested)
-                    break;
+                ListObjectVersionsResponse response;
+                string? keyMarker = null;
 
-                string? cToken = continuationToken;
-                response = await client.ListObjectsAsync(bucketName, req => req.ContinuationToken = cToken, token).ConfigureAwait(false);
+                do
+                {
+                    if (token.IsCancellationRequested)
+                        break;
 
-                if (!response.IsSuccess)
-                    return DeleteAllObjectsStatus.RequestFailed;
+                    string? marker = keyMarker;
+                    response = await client.ListObjectVersionsAsync(bucketName, req => req.KeyMarker = marker, token).ConfigureAwait(false);
 
-                if (response.KeyCount == 0)
-                    break;
+                    if (!response.IsSuccess)
+                        yield break;
 
-                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, response.Objects.Select(x => x.ObjectKey), req => req.Quiet = false, token).ConfigureAwait(false);
+                    if ((response.Versions.Count + response.DeleteMarkers.Count) == 0)
+                        break;
 
-                if (!multiDelResponse.IsSuccess)
-                    return DeleteAllObjectsStatus.RequestFailed;
+                    delete.AddRange(response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
+                    delete.AddRange(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
 
-                if (multiDelResponse.Errors.Count > 0)
-                    return DeleteAllObjectsStatus.ObjectDeleteFailed;
+                    //Since we add both versions and delete markers together, we might get more than 1000, which is the max for DeleteObjects.
+                    if (delete.Count > 1000)
+                    {
+                        foreach (IList<S3DeleteInfo> chunk in delete.Chunk(1000))
+                        {
+                            DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, chunk, req => req.Quiet = false, token).ConfigureAwait(false);
 
-                continuationToken = response.NextContinuationToken;
-            } while (response.IsTruncated);
+                            if (!multiDelResponse.IsSuccess)
+                                yield break;
 
-            return DeleteAllObjectsStatus.Ok;
+                            foreach (S3DeleteError error in multiDelResponse.Errors)
+                            {
+                                yield return error;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
+
+                        if (!multiDelResponse.IsSuccess)
+                            yield break;
+
+                        foreach (S3DeleteError error in multiDelResponse.Errors)
+                        {
+                            yield return error;
+                        }
+                    }
+
+                    delete.Clear();
+                    keyMarker = response.NextKeyMarker;
+                } while (response.IsTruncated);
+            }
+            else
+            {
+                string? continuationToken = null;
+                ListObjectsResponse response;
+
+                do
+                {
+                    if (token.IsCancellationRequested)
+                        break;
+
+                    string? cToken = continuationToken;
+                    response = await client.ListObjectsAsync(bucketName, req => req.ContinuationToken = cToken, token).ConfigureAwait(false);
+
+                    if (!response.IsSuccess)
+                        yield break;
+
+                    if (response.KeyCount == 0)
+                        break;
+
+                    delete.AddRange(response.Objects.Select(x => new S3DeleteInfo(x.ObjectKey)));
+
+                    DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
+
+                    if (!multiDelResponse.IsSuccess)
+                        yield break;
+
+                    foreach (S3DeleteError error in multiDelResponse.Errors)
+                    {
+                        yield return error;
+                    }
+
+                    delete.Clear();
+                    continuationToken = response.NextContinuationToken;
+                } while (response.IsTruncated);
+            }
         }
 
         public static async Task<PutObjectResponse> PutObjectDataAsync(this IObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest>? config = null, CancellationToken token = default)

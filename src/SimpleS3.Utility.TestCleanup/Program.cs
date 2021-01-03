@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,16 +38,44 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
                     if (!bucket.Name.StartsWith("testbucket-", StringComparison.OrdinalIgnoreCase))
                         continue;
 
-                    Console.WriteLine("Deleting content of " + bucket.Name);
+                    Console.Write(bucket.Name);
 
-                    DeleteAllObjectsStatus objDelResp = await client.DeleteAllObjectsAsync(bucket.Name).ConfigureAwait(false);
+                    int errors = 0;
 
-                    if (objDelResp == DeleteAllObjectsStatus.Ok)
+                    IAsyncEnumerable<S3DeleteError> delAllResp = client.DeleteAllObjectsAsync(bucket.Name, true);
+
+                    await foreach (S3DeleteError error in delAllResp)
                     {
-                        Console.WriteLine("Deleting bucket " + bucket.Name);
+                        errors++;
 
-                        await client.DeleteBucketAsync(bucket.Name).ConfigureAwait(false);
+                        PutObjectLegalHoldResponse legalResp = await client.PutObjectLegalHoldAsync(bucket.Name, error.ObjectKey, false, request => request.VersionId = error.VersionId);
+
+                        if (legalResp.IsSuccess)
+                        {
+                            DeleteObjectResponse delResp = await client.DeleteObjectAsync(bucket.Name, error.ObjectKey, error.VersionId);
+
+                            if (delResp.IsSuccess)
+                                errors--;
+                        }
                     }
+
+                    if (errors == 0)
+                    {
+                        Console.Write(" [x] emptied ");
+
+                        DeleteBucketResponse delBucketResp = await client.DeleteBucketAsync(bucket.Name).ConfigureAwait(false);
+
+                        if (delBucketResp.IsSuccess)
+                            Console.Write("[x] deleted");
+                        else
+                            Console.Write("[ ] deleted");
+                    }
+                    else
+                    {
+                        Console.Write(" [ ] emptied [ ] deleted");
+                    }
+
+                    Console.WriteLine();
                 }
             }
         }

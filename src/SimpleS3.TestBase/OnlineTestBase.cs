@@ -2,12 +2,12 @@
 using System.Text;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.ErrorHandling.Status;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -30,7 +30,7 @@ namespace Genbox.SimpleS3.TestBase
 
             if (profile == null)
                 throw new InvalidOperationException("Profile '" + configRoot["ProfileName"] + "' not found. Remember to run the TestSetup utility");
-            
+
             string uniqId = profile.KeyId.Substring(0, 8);
             BucketName = "testbucket-" + uniqId.ToLowerInvariant();
         }
@@ -140,8 +140,13 @@ namespace Genbox.SimpleS3.TestBase
             }
             finally
             {
-                DeleteAllObjectsStatus delResp = await ObjectClient.DeleteAllObjectsAsync(tempBucketName).ConfigureAwait(false);
-                Assert.Equal(DeleteAllObjectsStatus.Ok, delResp);
+                int errors = 0;
+                await foreach (S3DeleteError _ in ObjectClient.DeleteAllObjectsAsync(tempBucketName, true))
+                {
+                    errors++;
+                }
+
+                Assert.Equal(0, errors);
 
                 DeleteBucketResponse del2Resp = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
                 Assert.True(del2Resp.IsSuccess);
