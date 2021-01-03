@@ -77,5 +77,15 @@ namespace Genbox.SimpleS3.Core.Operations
         {
             return _requestHandler.SendRequestAsync<PutBucketLifecycleConfigurationRequest, PutBucketLifecycleConfigurationResponse>(request, token);
         }
+
+        public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(PutBucketVersioningRequest request, CancellationToken token = default)
+        {
+            return _requestHandler.SendRequestAsync<PutBucketVersioningRequest, PutBucketVersioningResponse>(request, token);
+        }
+
+        public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(GetBucketVersioningRequest request, CancellationToken token = default)
+        {
+            return _requestHandler.SendRequestAsync<GetBucketVersioningRequest, GetBucketVersioningResponse>(request, token);
+        }
     }
 }

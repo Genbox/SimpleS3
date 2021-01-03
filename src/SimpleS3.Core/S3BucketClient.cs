@@ -116,5 +116,21 @@ namespace Genbox.SimpleS3.Core
 
             return BucketOperations.PutBucketLifecycleConfigurationAsync(request, token);
         }
+
+        public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
+        {
+            PutBucketVersioningRequest request = new PutBucketVersioningRequest(bucketName, enabled);
+            config?.Invoke(request);
+
+            return BucketOperations.PutBucketVersioningAsync(request, token);
+        }
+
+        public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default)
+        {
+            GetBucketVersioningRequest request = new GetBucketVersioningRequest(bucketName);
+            config?.Invoke(request);
+
+            return BucketOperations.GetBucketVersioningAsync(request, token);
+        }
     }
 }

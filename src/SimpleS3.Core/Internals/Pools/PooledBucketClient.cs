@@ -170,5 +170,31 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
 
             return ObjectPool<PutBucketLifecycleConfigurationRequest>.Shared.RentAndUse(Setup, Action);
         }
+
+        public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
+        {
+            void Setup(PutBucketVersioningRequest req)
+            {
+                req.Initialize(bucketName, enabled);
+                config?.Invoke(req);
+            }
+
+            Task<PutBucketVersioningResponse> Action(PutBucketVersioningRequest request) => BucketOperations.PutBucketVersioningAsync(request, token);
+
+            return ObjectPool<PutBucketVersioningRequest>.Shared.RentAndUse(Setup, Action);
+        }
+
+        public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default)
+        {
+            void Setup(GetBucketVersioningRequest req)
+            {
+                req.Initialize(bucketName);
+                config?.Invoke(req);
+            }
+
+            Task<GetBucketVersioningResponse> Action(GetBucketVersioningRequest request) => BucketOperations.GetBucketVersioningAsync(request, token);
+
+            return ObjectPool<GetBucketVersioningRequest>.Shared.RentAndUse(Setup, Action);
+        }
     }
 }

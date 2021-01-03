@@ -13,6 +13,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Constants
         public const string VersionId = "versionId";
         public const string EncodingType = "encoding-type";
         public const string Delete = "delete";
+        public const string Versioning = "versioning";
         public const string Delimiter = "delimiter";
         public const string MaxKeys = "max-keys";
         public const string Prefix = "prefix";

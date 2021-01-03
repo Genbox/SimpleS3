@@ -102,5 +102,18 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token </param>
         Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default);
+
+        /// <summary>Enable or disable versioning on an existing bucket.</summary>
+        /// <param name="bucketName">The bucket name</param>
+        /// <param name="enabled">Set to true if you want to enable versioning. Set it to false to disable versioning.</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token </param>
+        Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default);
+
+        /// <summary>Get the versioning configuration on an existing bucket.</summary>
+        /// <param name="bucketName">The bucket name</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token </param>
+        Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default);
     }
 }

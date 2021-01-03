@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -226,6 +226,16 @@ namespace Genbox.SimpleS3
         public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
         {
             return _bucketClient.PutBucketLifecycleConfigurationAsync(bucketName, rules, config, token);
+        }
+
+        public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
+        {
+            return _bucketClient.PutBucketVersioningAsync(bucketName, enabled, config, token);
+        }
+
+        public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default)
+        {
+            return _bucketClient.GetBucketVersioningAsync(bucketName, config, token);
         }
 
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default)
