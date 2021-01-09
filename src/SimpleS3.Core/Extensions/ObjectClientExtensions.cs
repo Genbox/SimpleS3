@@ -11,7 +11,6 @@ using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Validation;
-using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -21,7 +20,7 @@ namespace Genbox.SimpleS3.Core.Extensions
 {
     public static class ObjectClientExtensions
     {
-        public static IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectClient client, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
+        public static IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectClient client, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
             return client.ObjectOperations.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
         }
@@ -55,21 +54,17 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <summary>Delete all objects within the bucket</summary>
         public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, bool deleteAllVersions = false, [EnumeratorCancellation]CancellationToken token = default)
         {
-            //We reuse this list to minimize memory usage.
-            List<S3DeleteInfo> delete = new List<S3DeleteInfo>();
-
             if (deleteAllVersions)
             {
                 ListObjectVersionsResponse response;
-                string? keyMarker = null;
+                Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucketName, req => req.KeyMarker = null, token);
 
                 do
                 {
                     if (token.IsCancellationRequested)
                         break;
 
-                    string? marker = keyMarker;
-                    response = await client.ListObjectVersionsAsync(bucketName, req => req.KeyMarker = marker, token).ConfigureAwait(false);
+                    response = await responseTask;
 
                     if (!response.IsSuccess)
                         yield break;
@@ -77,62 +72,11 @@ namespace Genbox.SimpleS3.Core.Extensions
                     if (response.Versions.Count + response.DeleteMarkers.Count == 0)
                         break;
 
-                    delete.AddRange(response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
-                    delete.AddRange(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
+                    string keyMarker = response.NextKeyMarker;
+                    responseTask = client.ListObjectVersionsAsync(bucketName, req => req.KeyMarker = keyMarker, token);
 
-                    //Since we add both versions and delete markers together, we might get more than 1000, which is the max for DeleteObjects.
-                    if (delete.Count > 1000)
-                    {
-                        foreach (IList<S3DeleteInfo> chunk in delete.Chunk(1000))
-                        {
-                            DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, chunk, req => req.Quiet = false, token).ConfigureAwait(false);
-
-                            if (!multiDelResponse.IsSuccess)
-                                yield break;
-
-                            foreach (S3DeleteError error in multiDelResponse.Errors)
-                            {
-                                yield return error;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
-
-                        if (!multiDelResponse.IsSuccess)
-                            yield break;
-
-                        foreach (S3DeleteError error in multiDelResponse.Errors)
-                        {
-                            yield return error;
-                        }
-                    }
-
-                    delete.Clear();
-                    keyMarker = response.NextKeyMarker;
-                } while (response.IsTruncated);
-            }
-            else
-            {
-                string? continuationToken = null;
-                ListObjectsResponse response;
-
-                do
-                {
-                    if (token.IsCancellationRequested)
-                        break;
-
-                    string? cToken = continuationToken;
-                    response = await client.ListObjectsAsync(bucketName, req => req.ContinuationToken = cToken, token).ConfigureAwait(false);
-
-                    if (!response.IsSuccess)
-                        yield break;
-
-                    if (response.KeyCount == 0)
-                        break;
-
-                    delete.AddRange(response.Objects.Select(x => new S3DeleteInfo(x.ObjectKey)));
+                    IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
+                                               .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
 
                     DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
 
@@ -143,9 +87,37 @@ namespace Genbox.SimpleS3.Core.Extensions
                     {
                         yield return error;
                     }
+                } while (response.IsTruncated);
+            }
+            else
+            {
+                ListObjectsResponse response;
+                Task<ListObjectsResponse> responseTask = client.ListObjectsAsync(bucketName, req => req.ContinuationToken = null, token);
 
-                    delete.Clear();
-                    continuationToken = response.NextContinuationToken;
+                do
+                {
+                    if (token.IsCancellationRequested)
+                        break;
+
+                    response = await responseTask;
+
+                    if (!response.IsSuccess)
+                        yield break;
+
+                    string localToken = response.NextContinuationToken;
+                    responseTask = client.ListObjectsAsync(bucketName, req => req.ContinuationToken = localToken, token);
+
+                    IEnumerable<S3DeleteInfo>? delete = response.Objects.Select(x => new S3DeleteInfo(x.ObjectKey));
+
+                    DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
+
+                    if (!multiDelResponse.IsSuccess)
+                        yield break;
+
+                    foreach (S3DeleteError error in multiDelResponse.Errors)
+                    {
+                        yield return error;
+                    }
                 } while (response.IsTruncated);
             }
         }
@@ -188,6 +160,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="client">The BucketClient</param>
         /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
         /// <param name="getOwnerInfo">Set to true if you want to get object owner information as well.</param>
+        /// <param name="config">Delegate to configure the ListObjectsRequest before sending it</param>
         /// <param name="token">A cancellation token</param>
         public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
         {
