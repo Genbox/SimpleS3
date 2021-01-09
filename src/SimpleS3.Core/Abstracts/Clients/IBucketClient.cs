@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
@@ -11,8 +10,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
 {
     public interface IBucketClient
     {
-        IBucketOperations BucketOperations { get; }
-
         /// <summary>Creates a bucket</summary>
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="config">A delegate to configure the request</param>

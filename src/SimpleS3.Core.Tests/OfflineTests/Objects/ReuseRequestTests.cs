@@ -23,7 +23,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Objects
 
             for (int i = 0; i < 2; i++)
             {
-                GetObjectResponse resp = await ObjectClient.ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);
+                GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);
                 Assert.True(resp.IsSuccess);
 
                 //None of the essential properties must change
@@ -60,7 +60,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests.Objects
                 string key = i.ToString();
                 req.ObjectKey = key;
 
-                GetObjectResponse resp = await ObjectClient.ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);
+                GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);
                 Assert.True(resp.IsSuccess);
 
                 //The key must not change after the request is sent

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -14,8 +13,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
     [PublicAPI]
     public interface IObjectClient
     {
-        IObjectOperations ObjectOperations { get; }
-
         /// <summary>Delete an object</summary>
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="objectKey">The key of the object</param>

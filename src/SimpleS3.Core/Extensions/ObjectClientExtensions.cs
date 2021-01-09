@@ -20,11 +20,6 @@ namespace Genbox.SimpleS3.Core.Extensions
 {
     public static class ObjectClientExtensions
     {
-        public static IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(this IObjectClient client, string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
-        {
-            return client.ObjectOperations.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
-        }
-
         public static async Task<DeleteObjectResponse> DeleteObjectAsync(this IObjectClient client, string bucketName, string objectKey, string? versionId = null, MfaAuthenticationBuilder? mfa = null, CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
@@ -76,7 +71,7 @@ namespace Genbox.SimpleS3.Core.Extensions
                     responseTask = client.ListObjectVersionsAsync(bucketName, req => req.KeyMarker = keyMarker, token);
 
                     IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
-                                               .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
+                                                               .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
 
                     DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
 

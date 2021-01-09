@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using JetBrains.Annotations;
@@ -13,8 +12,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
     [PublicAPI]
     public interface IMultipartClient
     {
-        IMultipartOperations MultipartOperations { get; }
-
         /// <summary>
         /// Create a multipart upload. Once created, you can start uploading parts to it. Remember to call either
         /// <see cref="CompleteMultipartUploadAsync" /> or <see cref="AbortMultipartUploadAsync" /> when you are finished.

@@ -4,9 +4,10 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders;
+using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -15,18 +16,22 @@ namespace Genbox.SimpleS3.Core.Fluent
 {
     public class Download
     {
-        private readonly IObjectOperations _objectOperations;
+        private readonly IObjectOperations _operations;
+        private readonly IObjectClient _client;
+        private readonly IMultipartTransfer _multipartTransfer;
         private readonly GetObjectRequest _request;
 
-        internal Download(IObjectOperations objectOperations, string bucket, string objectKey)
+        internal Download(IObjectOperations operations, IObjectClient client, IMultipartTransfer multipartTransfer, string bucket, string objectKey)
         {
             _request = new GetObjectRequest(bucket, objectKey);
-            _objectOperations = objectOperations;
+            _operations = operations;
+            _client = client;
+            _multipartTransfer = multipartTransfer;
         }
 
         public IAsyncEnumerable<GetObjectResponse> DownloadMultipartAsync(Stream output, CancellationToken token = default)
         {
-            return _objectOperations.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
+            return _multipartTransfer.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
         }
 
         /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
@@ -100,7 +105,7 @@ namespace Genbox.SimpleS3.Core.Fluent
 
         public Task<GetObjectResponse> DownloadAsync(CancellationToken token = default)
         {
-            return _objectOperations.GetObjectAsync(_request, token);
+            return _operations.GetObjectAsync(_request, token);
         }
     }
 }

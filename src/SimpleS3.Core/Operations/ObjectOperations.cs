@@ -16,16 +16,15 @@ namespace Genbox.SimpleS3.Core.Operations
     public class ObjectOperations : IObjectOperations
     {
         private readonly IRequestHandler _requestHandler;
+        private readonly List<IRequestWrapper> _requestWrappers;
+        private readonly List<IResponseWrapper> _responseWrappers;
 
         public ObjectOperations(IRequestHandler requestHandler, IEnumerable<IRequestWrapper> requestWrappers, IEnumerable<IResponseWrapper> responseWrappers)
         {
             _requestHandler = requestHandler;
-            RequestWrappers = requestWrappers.ToList();
-            ResponseWrappers = responseWrappers.ToList();
+            _requestWrappers = requestWrappers.ToList();
+            _responseWrappers = responseWrappers.ToList();
         }
-
-        public IList<IRequestWrapper> RequestWrappers { get; }
-        public IList<IResponseWrapper> ResponseWrappers { get; }
 
         public Task<DeleteObjectResponse> DeleteObjectAsync(DeleteObjectRequest request, CancellationToken token = default)
         {
@@ -48,7 +47,7 @@ namespace Genbox.SimpleS3.Core.Operations
 
             if (request.Content != null)
             {
-                foreach (IRequestWrapper wrapper in RequestWrappers)
+                foreach (IRequestWrapper wrapper in _requestWrappers)
                 {
                     if (wrapper.IsSupported(request))
                         request.Content = wrapper.Wrap(request.Content, request);
@@ -62,7 +61,7 @@ namespace Genbox.SimpleS3.Core.Operations
         {
             GetObjectResponse response = await _requestHandler.SendRequestAsync<GetObjectRequest, GetObjectResponse>(request, token).ConfigureAwait(false);
 
-            foreach (IResponseWrapper wrapper in ResponseWrappers)
+            foreach (IResponseWrapper wrapper in _responseWrappers)
             {
                 response.Content = wrapper.Wrap(response.Content, response);
             }

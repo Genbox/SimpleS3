@@ -19,8 +19,9 @@ namespace Genbox.SimpleS3.Extensions
                 IObjectClient objectClient = x.GetRequiredService<IObjectClient>();
                 IBucketClient bucketClient = x.GetRequiredService<IBucketClient>();
                 IMultipartClient multipartClient = x.GetRequiredService<IMultipartClient>();
+                IMultipartTransfer multipartTransfer = x.GetRequiredService<IMultipartTransfer>();
                 Transfer transfer = x.GetRequiredService<Transfer>();
-                return new S3Client(objectClient, bucketClient, multipartClient, transfer);
+                return new S3Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
             });
 
             //Add the client as the interface too

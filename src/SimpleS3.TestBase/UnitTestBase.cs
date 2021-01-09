@@ -2,6 +2,7 @@
 using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Fluent;
 using Microsoft.Extensions.Configuration;
@@ -44,17 +45,21 @@ namespace Genbox.SimpleS3.TestBase
             Services = collection.BuildServiceProvider();
 
             ObjectClient = Services.GetRequiredService<IObjectClient>();
+            ObjectOperations = Services.GetRequiredService<IObjectOperations>();
             BucketClient = Services.GetRequiredService<IBucketClient>();
             MultipartClient = Services.GetRequiredService<IMultipartClient>();
             SignedObjectClient = Services.GetRequiredService<ISignedObjectClient>();
+            MultipartTransfer = Services.GetRequiredService<IMultipartTransfer>();
             Transfer = Services.GetRequiredService<Transfer>();
         }
 
         protected ServiceProvider Services { get; }
         protected string BucketName { get; set; }
+        protected IObjectOperations ObjectOperations { get; }
         protected IObjectClient ObjectClient { get; }
         protected IBucketClient BucketClient { get; }
         protected IMultipartClient MultipartClient { get; }
+        protected IMultipartTransfer MultipartTransfer { get; }
         protected ISignedObjectClient SignedObjectClient { get; }
         protected Transfer Transfer { get; }
 

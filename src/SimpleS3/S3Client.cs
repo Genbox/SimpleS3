@@ -8,7 +8,6 @@ using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
-using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Aws;
@@ -36,6 +35,7 @@ namespace Genbox.SimpleS3
         private IBucketClient _bucketClient;
         private IMultipartClient _multipartClient;
         private IObjectClient _objectClient;
+        private IMultipartTransfer _multipartTransfer;
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="keyId">The key id</param>
@@ -76,9 +76,10 @@ namespace Genbox.SimpleS3
             IObjectClient objectClient = _serviceProvider.GetRequiredService<IObjectClient>();
             IBucketClient bucketClient = _serviceProvider.GetRequiredService<IBucketClient>();
             IMultipartClient multipartClient = _serviceProvider.GetRequiredService<IMultipartClient>();
+            IMultipartTransfer multipartTransfer = _serviceProvider.GetRequiredService<IMultipartTransfer>();
             Transfer transfer = _serviceProvider.GetRequiredService<Transfer>();
 
-            Initialize(objectClient, bucketClient, multipartClient, transfer);
+            Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
 
         public S3Client(IOptions<AwsConfig> options, INetworkDriver networkDriver, ILoggerFactory loggerFactory)
@@ -93,21 +94,18 @@ namespace Genbox.SimpleS3
             IObjectClient objectClient = _serviceProvider.GetRequiredService<IObjectClient>();
             IBucketClient bucketClient = _serviceProvider.GetRequiredService<IBucketClient>();
             IMultipartClient multipartClient = _serviceProvider.GetRequiredService<IMultipartClient>();
+            IMultipartTransfer multipartTransfer = _serviceProvider.GetRequiredService<IMultipartTransfer>();
             Transfer transfer = _serviceProvider.GetRequiredService<Transfer>();
 
-            Initialize(objectClient, bucketClient, multipartClient, transfer);
+            Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
 
-        public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, Transfer transfer)
+        public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, Transfer transfer)
         {
-            Initialize(objectClient, bucketClient, multipartClient, transfer);
+            Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
 
         public Transfer Transfer { get; private set; }
-
-        public IObjectOperations ObjectOperations => _objectClient.ObjectOperations;
-        public IBucketOperations BucketOperations => _bucketClient.BucketOperations;
-        public IMultipartOperations MultipartOperations => _multipartClient.MultipartOperations;
 
         public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
         {
@@ -279,12 +277,27 @@ namespace Genbox.SimpleS3
             _serviceProvider?.Dispose();
         }
 
-        private void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, Transfer transfer)
+        private void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, Transfer transfer)
         {
             _objectClient = objectClient;
             _bucketClient = bucketClient;
             _multipartClient = multipartClient;
             Transfer = transfer;
+        }
+
+        public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return _multipartTransfer.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
+        }
+
+        public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
+        {
+            return _multipartTransfer.MultipartUploadAsync(bucketName, objectKey, data, partSize, numParallelParts, config, onPartResponse, token);
+        }
+
+        public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
+        {
+            return _multipartTransfer.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
         }
     }
 }

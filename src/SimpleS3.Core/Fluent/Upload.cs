@@ -5,13 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders;
 using Genbox.HttpBuilders.Enums;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -21,14 +21,14 @@ namespace Genbox.SimpleS3.Core.Fluent
 {
     public class Upload
     {
-        private readonly IMultipartOperations _multipartOperations;
+        private readonly IMultipartTransfer _multipartTransfer;
         private readonly IObjectOperations _objectOperations;
         private readonly PutObjectRequest _request;
 
-        internal Upload(IObjectOperations objectOperations, IMultipartOperations multipartOperations, string bucket, string objectKey)
+        internal Upload(IObjectOperations objectOperations, IMultipartTransfer multipartTransfer, string bucket, string objectKey)
         {
             _objectOperations = objectOperations;
-            _multipartOperations = multipartOperations;
+            _multipartTransfer = multipartTransfer;
 
             _request = new PutObjectRequest(bucket, objectKey, null);
         }
@@ -196,7 +196,7 @@ namespace Genbox.SimpleS3.Core.Fluent
             _request.Method = HttpMethod.POST;
             _request.Content = null;
 
-            return _multipartOperations.MultipartUploadAsync(_request, data, token: token);
+            return _multipartTransfer.MultipartUploadAsync(_request, data, token: token);
         }
 
         public Task<PutObjectResponse> UploadAsync(Stream data, CancellationToken token = default)

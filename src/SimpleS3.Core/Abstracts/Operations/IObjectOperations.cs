@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using JetBrains.Annotations;
@@ -11,9 +9,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations
     [PublicAPI]
     public interface IObjectOperations
     {
-        IList<IRequestWrapper> RequestWrappers { get; }
-        IList<IResponseWrapper> ResponseWrappers { get; }
-
         /// <summary>Deletes an object. See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_DeleteObject.html for details</summary>
         Task<DeleteObjectResponse> DeleteObjectAsync(DeleteObjectRequest request, CancellationToken token = default);
 

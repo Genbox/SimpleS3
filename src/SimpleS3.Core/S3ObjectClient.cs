@@ -15,19 +15,19 @@ namespace Genbox.SimpleS3.Core
     [PublicAPI]
     public class S3ObjectClient : IObjectClient
     {
+        private readonly IObjectOperations _objectOperations;
+
         public S3ObjectClient(IObjectOperations operations)
         {
-            ObjectOperations = operations;
+            _objectOperations = operations;
         }
-
-        public IObjectOperations ObjectOperations { get; }
 
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default)
         {
             DeleteObjectRequest req = new DeleteObjectRequest(bucketName, objectKey);
             config?.Invoke(req);
 
-            return ObjectOperations.DeleteObjectAsync(req, token);
+            return _objectOperations.DeleteObjectAsync(req, token);
         }
 
         public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default)
@@ -35,7 +35,7 @@ namespace Genbox.SimpleS3.Core
             DeleteObjectsRequest req = new DeleteObjectsRequest(bucketName, objectKeys);
             config?.Invoke(req);
 
-            return ObjectOperations.DeleteObjectsAsync(req, token);
+            return _objectOperations.DeleteObjectsAsync(req, token);
         }
 
         public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest>? config = null, CancellationToken token = default)
@@ -43,7 +43,7 @@ namespace Genbox.SimpleS3.Core
             HeadObjectRequest req = new HeadObjectRequest(bucketName, objectKey);
             config?.Invoke(req);
 
-            return ObjectOperations.HeadObjectAsync(req, token);
+            return _objectOperations.HeadObjectAsync(req, token);
         }
 
         public Task<GetObjectResponse> GetObjectAsync(string bucketName, string objectKey, Action<GetObjectRequest>? config = null, CancellationToken token = default)
@@ -51,7 +51,7 @@ namespace Genbox.SimpleS3.Core
             GetObjectRequest req = new GetObjectRequest(bucketName, objectKey);
             config?.Invoke(req);
 
-            return ObjectOperations.GetObjectAsync(req, token);
+            return _objectOperations.GetObjectAsync(req, token);
         }
 
         public Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream? data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
@@ -59,7 +59,7 @@ namespace Genbox.SimpleS3.Core
             PutObjectRequest req = new PutObjectRequest(bucketName, objectKey, data);
             config?.Invoke(req);
 
-            return ObjectOperations.PutObjectAsync(req, token);
+            return _objectOperations.PutObjectAsync(req, token);
         }
 
         public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
@@ -67,7 +67,7 @@ namespace Genbox.SimpleS3.Core
             ListObjectsRequest req = new ListObjectsRequest(bucketName);
             config?.Invoke(req);
 
-            return ObjectOperations.ListObjectsAsync(req, token);
+            return _objectOperations.ListObjectsAsync(req, token);
         }
 
         public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default)
@@ -75,7 +75,7 @@ namespace Genbox.SimpleS3.Core
             ListObjectVersionsRequest req = new ListObjectVersionsRequest(bucketName);
             config?.Invoke(req);
 
-            return ObjectOperations.ListObjectVersionsAsync(req, token);
+            return _objectOperations.ListObjectVersionsAsync(req, token);
         }
 
         public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default)
@@ -83,7 +83,7 @@ namespace Genbox.SimpleS3.Core
             RestoreObjectRequest req = new RestoreObjectRequest(bucketName, objectKey);
             config?.Invoke(req);
 
-            return ObjectOperations.RestoreObjectsAsync(req, token);
+            return _objectOperations.RestoreObjectsAsync(req, token);
         }
 
         public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest>? config = null, CancellationToken token = default)
@@ -91,7 +91,7 @@ namespace Genbox.SimpleS3.Core
             CopyObjectRequest req = new CopyObjectRequest(sourceBucketName, sourceObjectKey, destinationBucket, destinationObjectKey);
             config?.Invoke(req);
 
-            return ObjectOperations.CopyObjectsAsync(req, token);
+            return _objectOperations.CopyObjectsAsync(req, token);
         }
 
         public Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest>? config = null, CancellationToken token = default)
@@ -99,7 +99,7 @@ namespace Genbox.SimpleS3.Core
             PutObjectAclRequest req = new PutObjectAclRequest(bucketName, objectKey);
             config?.Invoke(req);
 
-            return ObjectOperations.PutObjectAclAsync(req, token);
+            return _objectOperations.PutObjectAclAsync(req, token);
         }
 
         public Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest>? config = null, CancellationToken token = default)
@@ -107,7 +107,7 @@ namespace Genbox.SimpleS3.Core
             GetObjectAclRequest req = new GetObjectAclRequest(bucketName, objectKey);
             config?.Invoke(req);
 
-            return ObjectOperations.GetObjectAclAsync(req, token);
+            return _objectOperations.GetObjectAclAsync(req, token);
         }
 
         public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default)
@@ -115,7 +115,7 @@ namespace Genbox.SimpleS3.Core
             GetObjectLegalHoldRequest req = new GetObjectLegalHoldRequest(bucketName, objectKey);
             config?.Invoke(req);
 
-            return ObjectOperations.GetObjectLegalHoldAsync(req, token);
+            return _objectOperations.GetObjectLegalHoldAsync(req, token);
         }
 
         public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default)
@@ -123,7 +123,7 @@ namespace Genbox.SimpleS3.Core
             PutObjectLegalHoldRequest req = new PutObjectLegalHoldRequest(bucketName, objectKey, lockStatus);
             config?.Invoke(req);
 
-            return ObjectOperations.PutObjectLegalHoldAsync(req, token);
+            return _objectOperations.PutObjectLegalHoldAsync(req, token);
         }
     }
 }

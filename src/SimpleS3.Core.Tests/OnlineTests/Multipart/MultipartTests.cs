@@ -7,7 +7,6 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Errors;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -250,7 +249,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
 
             using (MemoryStream ms = new MemoryStream(data))
             {
-                CompleteMultipartUploadResponse resp = await MultipartClient.MultipartUploadAsync(BucketName, nameof(MultipartViaClient), ms, 5 * 1024 * 1024).ConfigureAwait(false);
+                CompleteMultipartUploadResponse resp = await MultipartTransfer.MultipartUploadAsync(BucketName, nameof(MultipartViaClient), ms, 5 * 1024 * 1024).ConfigureAwait(false);
 
                 Assert.True(resp.IsSuccess);
             }
@@ -267,10 +266,12 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
             //Try multipart downloading it
             using (MemoryStream ms = new MemoryStream())
             {
-                IAsyncEnumerable<GetObjectResponse> responses = ObjectClient.MultipartDownloadAsync(BucketName, nameof(MultipartViaClient), ms);
+                IAsyncEnumerable<GetObjectResponse> responses = MultipartTransfer.MultipartDownloadAsync(BucketName, nameof(MultipartViaClient), ms);
 
                 await foreach (GetObjectResponse resp in responses)
+                {
                     Assert.True(resp.IsSuccess);
+                }
 
                 Assert.Equal(data, ms.ToArray());
             }
@@ -289,12 +290,10 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Multipart
                 data[i] = (byte)'A';
             }
 
-            CreateMultipartUploadRequest createRequest = new CreateMultipartUploadRequest(BucketName, nameof(MultipartViaExtensions));
-
             int count = 0;
             using (MemoryStream ms = new MemoryStream(data))
             {
-                CompleteMultipartUploadResponse? uploadResp = await MultipartClient.MultipartOperations.MultipartUploadAsync(createRequest, ms, 10 * 1024 * 1024, 2, response =>
+                CompleteMultipartUploadResponse uploadResp = await MultipartTransfer.MultipartUploadAsync(BucketName, nameof(MultipartViaExtensions), ms, 10 * 1024 * 1024, 2, null, response =>
                 {
                     Assert.True(response.IsSuccess);
                     count++;
