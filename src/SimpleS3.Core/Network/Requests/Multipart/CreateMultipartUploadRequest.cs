@@ -59,7 +59,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
         public Payer RequestPayer { get; set; }
         public SseAlgorithm SseAlgorithm { get; set; }
         public string? SseKmsKeyId { get; set; }
-        public KmsContextBuilder SseContext { get; set; }
+        public KmsContextBuilder SseContext { get; internal set; } //setter is needed for fluent Upload
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
         public byte[]? SseCustomerKeyMd5 { get; set; }
 

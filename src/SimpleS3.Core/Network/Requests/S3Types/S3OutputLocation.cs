@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
@@ -47,7 +47,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
         public AclBuilder AclGrantFullControl { get; internal set; }
         public SseAlgorithm SseAlgorithm { get; set; }
         public string? SseKmsKeyId { get; set; }
-        public KmsContextBuilder SseContext { get; set; }
+        public KmsContextBuilder SseContext { get; }
         public StorageClass StorageClass { get; set; }
 
         internal void Reset()

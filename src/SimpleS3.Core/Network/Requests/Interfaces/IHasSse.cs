@@ -22,6 +22,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces
         /// pairs you add will be bound to the encrypted content and protected, but the pairs themselves will not be encrypted. See
         /// https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context for more info on the subject.
         /// </summary>
-        KmsContextBuilder SseContext { get; set; }
+        KmsContextBuilder SseContext { get; }
     }
 }

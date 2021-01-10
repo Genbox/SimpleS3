@@ -63,7 +63,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public Payer RequestPayer { get; set; }
         public SseAlgorithm SseAlgorithm { get; set; }
         public string? SseKmsKeyId { get; set; }
-        public KmsContextBuilder SseContext { get; set; }
+        public KmsContextBuilder SseContext { get; }
         public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
 
         public byte[]? SseCustomerKey
