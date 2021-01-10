@@ -62,20 +62,19 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 
                     foreach (Content content in bucketResult.Contents)
                     {
-                        S3Object obj = new S3Object();
-                        obj.ObjectKey = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(content.Key) : content.Key;
-                        obj.ETag = content.ETag;
+                        string objectKey = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(content.Key) : content.Key;
+
+                        StorageClass storageClass = StorageClass.Unknown;
 
                         if (content.StorageClass != null)
-                            obj.StorageClass = ValueHelper.ParseEnum<StorageClass>(content.StorageClass);
+                            storageClass = ValueHelper.ParseEnum<StorageClass>(content.StorageClass);
 
-                        obj.LastModifiedOn = content.LastModified;
-                        obj.Size = content.Size;
+                        S3Identity? owner = null;
 
                         if (content.Owner != null)
-                            obj.Owner = new S3Identity { Name = content.Owner.DisplayName, Id = content.Owner.Id };
+                            owner = new S3Identity(content.Owner.Id, content.Owner.DisplayName);
 
-                        response.Objects.Add(obj);
+                        response.Objects.Add(new S3Object(objectKey, content.LastModified, content.Size, owner, content.ETag, storageClass));
                     }
                 }
                 else

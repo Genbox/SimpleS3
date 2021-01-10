@@ -189,7 +189,11 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 
         private static S3DeleteMarker ParseDeleteMarker(XmlTextReader r)
         {
-            S3DeleteMarker marker = new S3DeleteMarker();
+            bool isLatest = false;
+            string? versionId = null;
+            string? objectKey = null;
+            DateTimeOffset lastModified;
+            Owner? owner = null;
 
             while (r.Read())
             {
@@ -202,24 +206,27 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                 switch (r.Name)
                 {
                     case "Key":
-                        marker.ObjectKey = r.ReadString();
+                        objectKey = r.ReadString();
                         break;
                     case "VersionId":
-                        marker.VersionId = r.ReadString();
+                        versionId = r.ReadString();
                         break;
                     case "IsLatest":
-                        marker.IsLatest = ValueHelper.ParseBool(r.ReadString());
+                        isLatest = ValueHelper.ParseBool(r.ReadString());
                         break;
                     case "LastModified":
-                        marker.LastModified = ValueHelper.ParseDate(r.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                        lastModified = ValueHelper.ParseDate(r.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
                         break;
                     case "Owner":
-                        marker.Owner = ParseOwner(r);
+                        owner = ParseOwner(r);
                         break;
                 }
             }
 
-            return marker;
+            if (owner == null || objectKey == null || versionId == null)
+                throw new ArgumentNullException();
+
+            return new S3DeleteMarker(isLatest, objectKey, lastModified, owner, versionId);
         }
     }
 }

@@ -52,18 +52,10 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
                 response.IsTruncated = listResult.IsTruncated;
 
                 if (listResult.Owner != null)
-                {
-                    response.Owner = new S3Identity();
-                    response.Owner.Name = listResult.Owner.DisplayName;
-                    response.Owner.Id = listResult.Owner.Id;
-                }
+                    response.Owner = new S3Identity(listResult.Owner.Id, listResult.Owner.DisplayName);
 
                 if (listResult.Initiator != null)
-                {
-                    response.Initiator = new S3Identity();
-                    response.Initiator.Name = listResult.Initiator.DisplayName;
-                    response.Initiator.Id = listResult.Initiator.Id;
-                }
+                    response.Initiator = new S3Identity(listResult.Initiator.Id, listResult.Initiator.DisplayName);
 
                 if (listResult.Parts != null)
                 {
@@ -71,13 +63,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
 
                     foreach (Part part in listResult.Parts)
                     {
-                        S3Part s3Part = new S3Part();
-                        s3Part.ETag = part.ETag;
-                        s3Part.LastModified = part.LastModified;
-                        s3Part.PartNumber = part.PartNumber;
-                        s3Part.Size = part.Size;
-
-                        response.Parts.Add(s3Part);
+                        response.Parts.Add(new S3Part(part.PartNumber, part.LastModified, part.Size, part.ETag));
                     }
                 }
                 else

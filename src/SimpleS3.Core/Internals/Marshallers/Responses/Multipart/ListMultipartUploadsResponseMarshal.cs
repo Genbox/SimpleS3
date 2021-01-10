@@ -71,16 +71,12 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
 
                         if (listUpload.Owner != null)
                         {
-                            s3Upload.Owner = new S3Identity();
-                            s3Upload.Owner.Name = listUpload.Owner.DisplayName;
-                            s3Upload.Owner.Id = listUpload.Owner.Id;
+                            s3Upload.Owner = new S3Identity(listUpload.Owner.Id, listUpload.Owner.DisplayName);
                         }
 
                         if (listUpload.Initiator != null)
                         {
-                            s3Upload.Initiator = new S3Identity();
-                            s3Upload.Initiator.Name = listUpload.Initiator.DisplayName;
-                            s3Upload.Initiator.Id = listUpload.Initiator.Id;
+                            s3Upload.Initiator = new S3Identity(listUpload.Initiator.Id, listUpload.Initiator.DisplayName);
                         }
 
                         response.Uploads.Add(s3Upload);

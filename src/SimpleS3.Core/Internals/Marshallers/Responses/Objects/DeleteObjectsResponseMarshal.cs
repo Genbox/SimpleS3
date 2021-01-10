@@ -37,13 +37,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 
                     foreach (Deleted deleted in deleteResult.Deleted)
                     {
-                        S3DeletedObject s3Deleted = new S3DeletedObject();
-                        s3Deleted.ObjectKey = deleted.Key;
-                        s3Deleted.DeleteMarkerVersionId = deleted.DeleteMarkerVersionId;
-                        s3Deleted.VersionId = deleted.VersionId;
-                        s3Deleted.IsDeleteMarker = deleted.DeleteMarker;
-
-                        response.Deleted.Add(s3Deleted);
+                        response.Deleted.Add(new S3DeletedObject(deleted.Key, deleted.DeleteMarkerVersionId, deleted.DeleteMarker, deleted.VersionId));
                     }
                 }
                 else
@@ -55,13 +49,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 
                     foreach (Error error in deleteResult.Error)
                     {
-                        S3DeleteError s3DeleteError = new S3DeleteError();
-                        s3DeleteError.ObjectKey = error.Key;
-                        s3DeleteError.VersionId = error.VersionId;
-                        s3DeleteError.Code = ValueHelper.ParseEnum<ErrorCode>(error.Code);
-                        s3DeleteError.Message = error.Message;
-
-                        response.Errors.Add(s3DeleteError);
+                        response.Errors.Add(new S3DeleteError(error.Key, ValueHelper.ParseEnum<ErrorCode>(error.Code), error.Message, error.VersionId));
                     }
                 }
                 else

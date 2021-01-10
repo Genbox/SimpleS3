@@ -33,11 +33,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                 AccessControlPolicy aclOutput = (AccessControlPolicy)s.Deserialize(r);
 
                 if (aclOutput.Owner != null)
-                {
-                    response.Owner = new S3Identity();
-                    response.Owner.Id = aclOutput.Owner.Id;
-                    response.Owner.Name = aclOutput.Owner.DisplayName;
-                }
+                    response.Owner = new S3Identity(aclOutput.Owner.Id, aclOutput.Owner.DisplayName);
 
                 if (aclOutput.AccessControlList?.Grants != null)
                 {
@@ -47,22 +43,27 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                     {
                         foreach (GranteeBase grantee in grant.Grantee)
                         {
-                            S3Grant s3Grant = new S3Grant();
-                            s3Grant.Permission = ValueHelper.ParseEnum<Permission>(grant.Permission);
+                            Permission permission = ValueHelper.ParseEnum<Permission>(grant.Permission);
+                            GrantType type;
+                            string? id = null;
+                            string? name = null;
+                            string? uri = null;
 
                             if (grantee is Group grantGroup)
                             {
-                                s3Grant.Uri = grantGroup.Uri;
-                                s3Grant.Type = GrantType.Group;
+                                uri = grantGroup.Uri;
+                                type = GrantType.Group;
                             }
                             else if (grantee is CanonicalUser grantUser)
                             {
-                                s3Grant.Id = grantUser.Id;
-                                s3Grant.Name = grantUser.DisplayName;
-                                s3Grant.Type = GrantType.User;
+                                id = grantUser.Id;
+                                name = grantUser.DisplayName;
+                                type = GrantType.User;
                             }
+                            else
+                                throw new InvalidOperationException("Unsupported user type");
 
-                            response.Grants.Add(s3Grant);
+                            response.Grants.Add(new S3Grant(type, permission, name, id, uri));
                         }
                     }
                 }

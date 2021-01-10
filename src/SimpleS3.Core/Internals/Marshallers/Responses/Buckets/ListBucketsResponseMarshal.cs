@@ -27,11 +27,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
                 ListAllMyBucketsResult listResult = (ListAllMyBucketsResult)s.Deserialize(r);
 
                 if (listResult.Owner != null)
-                {
-                    response.Owner = new S3Identity();
-                    response.Owner.Id = listResult.Owner.Id;
-                    response.Owner.Name = listResult.Owner.DisplayName;
-                }
+                    response.Owner = new S3Identity(listResult.Owner.Id, listResult.Owner.DisplayName);
 
                 if (listResult.Buckets != null)
                 {
@@ -39,11 +35,8 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
 
                     foreach (Bucket lb in listResult.Buckets)
                     {
-                        S3Bucket b = new S3Bucket();
-                        b.Name = lb.Name;
-                        b.CreatedOn = lb.CreationDate;
 
-                        response.Buckets.Add(b);
+                        response.Buckets.Add(new S3Bucket(lb.Name, lb.CreationDate));
                     }
                 }
                 else
