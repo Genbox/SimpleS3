@@ -4,12 +4,10 @@ using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core.Operations
+namespace Genbox.SimpleS3.Core.Internals.Operations
 {
-    [PublicAPI]
-    public class BucketOperations : IBucketOperations
+    internal class BucketOperations : IBucketOperations
     {
         private readonly IRequestHandler _requestHandler;
 

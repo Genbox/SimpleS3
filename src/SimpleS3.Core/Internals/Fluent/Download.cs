@@ -11,9 +11,9 @@ using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
-namespace Genbox.SimpleS3.Core.Fluent
+namespace Genbox.SimpleS3.Core.Internals.Fluent
 {
-    public class Download
+    internal class Download : IDownload
     {
         private readonly IObjectOperations _operations;
         private readonly IMultipartTransfer _multipartTransfer;
@@ -32,7 +32,7 @@ namespace Genbox.SimpleS3.Core.Fluent
         }
 
         /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
-        public Download WithEncryptionCustomerKey(byte[] encryptionKey)
+        public IDownload WithEncryptionCustomerKey(byte[] encryptionKey)
         {
             _request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
             _request.SseCustomerKey = encryptionKey;
@@ -40,38 +40,38 @@ namespace Genbox.SimpleS3.Core.Fluent
             return this;
         }
 
-        public Download WithRange(RangeBuilder builder)
+        public IDownload WithRange(RangeBuilder builder)
         {
             _request.Range = builder;
             return this;
         }
 
-        public Download WithRange(long start, long end)
+        public IDownload WithRange(long start, long end)
         {
             _request.Range.Add(start, end);
             return this;
         }
 
-        public Download WithMultipart(int partNumber)
+        public IDownload WithMultipart(int partNumber)
         {
             _request.PartNumber = partNumber;
             return this;
         }
 
-        public Download WithVersionId(string versionId)
+        public IDownload WithVersionId(string versionId)
         {
             _request.VersionId = versionId;
             return this;
         }
 
-        public Download WithDateTimeConditional(DateTimeOffset? ifModifiedSince = null, DateTimeOffset? ifUnmodifiedSince = null)
+        public IDownload WithDateTimeConditional(DateTimeOffset? ifModifiedSince = null, DateTimeOffset? ifUnmodifiedSince = null)
         {
             _request.IfModifiedSince = ifModifiedSince;
             _request.IfUnmodifiedSince = ifUnmodifiedSince;
             return this;
         }
 
-        public Download WithEtagConditional(ETagBuilder? ifETagMatch = null, ETagBuilder? ifETagNotMatch = null)
+        public IDownload WithEtagConditional(ETagBuilder? ifETagMatch = null, ETagBuilder? ifETagNotMatch = null)
         {
             if (ifETagMatch != null)
                 _request.IfETagMatch = ifETagMatch;
@@ -82,7 +82,7 @@ namespace Genbox.SimpleS3.Core.Fluent
             return this;
         }
 
-        public Download WithEtagConditional(string? ifETagMatch = null, string? ifETagNotMatch = null)
+        public IDownload WithEtagConditional(string? ifETagMatch = null, string? ifETagNotMatch = null)
         {
             if (ifETagMatch != null)
                 _request.IfETagMatch.Set(ifETagMatch);

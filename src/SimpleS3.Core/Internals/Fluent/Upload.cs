@@ -9,7 +9,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Builders;
-using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
@@ -17,9 +16,9 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
-namespace Genbox.SimpleS3.Core.Fluent
+namespace Genbox.SimpleS3.Core.Internals.Fluent
 {
-    public class Upload
+    internal class Upload : IUpload
     {
         private readonly IMultipartTransfer _multipartTransfer;
         private readonly IObjectOperations _objectOperations;
@@ -33,62 +32,62 @@ namespace Genbox.SimpleS3.Core.Fluent
             _request = new PutObjectRequest(bucket, objectKey, null);
         }
 
-        public Upload WithCacheControl(CacheControlBuilder cacheControl)
+        public IUpload WithCacheControl(CacheControlBuilder cacheControl)
         {
             _request.CacheControl = cacheControl;
             return this;
         }
 
-        public Upload WithCacheControl(CacheControlType type, int seconds = -1)
+        public IUpload WithCacheControl(CacheControlType type, int seconds = -1)
         {
             _request.CacheControl.Set(type, seconds);
             return this;
         }
 
-        public Upload WithContentDisposition(ContentDispositionBuilder builder)
+        public IUpload WithContentDisposition(ContentDispositionBuilder builder)
         {
             _request.ContentDisposition = builder;
             return this;
         }
 
-        public Upload WithContentDisposition(ContentDispositionType type, string? filename = null)
+        public IUpload WithContentDisposition(ContentDispositionType type, string? filename = null)
         {
             _request.ContentDisposition.Set(type, filename);
             return this;
         }
 
-        public Upload WithContentType(ContentTypeBuilder builder)
+        public IUpload WithContentType(ContentTypeBuilder builder)
         {
             _request.ContentType = builder;
             return this;
         }
 
-        public Upload WithContentType(string mediaType, string? charset = null, string? boundary = null)
+        public IUpload WithContentType(string mediaType, string? charset = null, string? boundary = null)
         {
             _request.ContentType.Set(mediaType, charset, boundary);
             return this;
         }
 
-        public Upload WithContentType(MediaType mediaType, Charset charset = Charset.Utf_8, string? boundary = null)
+        public IUpload WithContentType(MediaType mediaType, Charset charset = Charset.Utf_8, string? boundary = null)
         {
             _request.ContentType.Set(mediaType, charset, boundary);
             return this;
         }
 
-        public Upload WithContentEncoding(ContentEncodingBuilder builder)
+        public IUpload WithContentEncoding(ContentEncodingBuilder builder)
         {
             _request.ContentEncoding = builder;
             return this;
         }
 
-        public Upload WithContentEncoding(ContentEncodingType type)
+        public IUpload WithContentEncoding(ContentEncodingType type)
         {
             _request.ContentEncoding.Add(type);
             return this;
         }
 
         /// <summary>Enables Server Side Encryption (SSE) using AES. The key is automatically created and maintained on the server.</summary>
-        public Upload WithEncryption()
+        public IUpload WithEncryption()
         {
             _request.SseAlgorithm = SseAlgorithm.Aes256;
             return this;
@@ -97,7 +96,7 @@ namespace Genbox.SimpleS3.Core.Fluent
         /// <summary>Enables Server Side Encryption (SSE) with Amazon's Key Management Service (KMS)</summary>
         /// <param name="kmsKeyId">You can use this this specify which KMS master key you want to use.</param>
         /// <param name="kmsContext">Here you can specify the encryption context.</param>
-        public Upload WithEncryptionKms(string? kmsKeyId = null, KmsContextBuilder? kmsContext = null)
+        public IUpload WithEncryptionKms(string? kmsKeyId = null, KmsContextBuilder? kmsContext = null)
         {
             _request.SseAlgorithm = SseAlgorithm.AwsKms;
 
@@ -111,7 +110,7 @@ namespace Genbox.SimpleS3.Core.Fluent
         }
 
         /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
-        public Upload WithEncryptionCustomerKey(byte[] encryptionKey)
+        public IUpload WithEncryptionCustomerKey(byte[] encryptionKey)
         {
             _request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
             _request.SseCustomerKey = encryptionKey;
@@ -119,43 +118,43 @@ namespace Genbox.SimpleS3.Core.Fluent
             return this;
         }
 
-        public Upload WithMetadata(MetadataBuilder metadata)
+        public IUpload WithMetadata(MetadataBuilder metadata)
         {
             _request.Metadata = metadata;
             return this;
         }
 
-        public Upload WithMetadata(string key, string value)
+        public IUpload WithMetadata(string key, string value)
         {
             _request.Metadata.Add(key, value);
             return this;
         }
 
-        public Upload WithStorageClass(StorageClass storageClass)
+        public IUpload WithStorageClass(StorageClass storageClass)
         {
             _request.StorageClass = storageClass;
             return this;
         }
 
-        public Upload WithTag(TagBuilder tags)
+        public IUpload WithTag(TagBuilder tags)
         {
             _request.Tags = tags;
             return this;
         }
 
-        public Upload WithTag(string key, string value)
+        public IUpload WithTag(string key, string value)
         {
             _request.Tags.Add(key, value);
             return this;
         }
 
-        public Upload WithAccessControl(ObjectCannedAcl acl)
+        public IUpload WithAccessControl(ObjectCannedAcl acl)
         {
             _request.Acl = acl;
             return this;
         }
 
-        public Upload WithAccessControl(ObjectAclBuilder acl)
+        public IUpload WithAccessControl(ObjectAclBuilder acl)
         {
             Validator.RequireNotNull(acl, nameof(acl));
 
@@ -166,26 +165,26 @@ namespace Genbox.SimpleS3.Core.Fluent
             return this;
         }
 
-        public Upload CalculateContentMd5()
+        public IUpload CalculateContentMd5()
         {
-            _request.ContentMd5 = _request.Content == null ? Constants.EmptyMd5Bytes : CryptoHelper.Md5Hash(_request.Content, true);
+            _request.ContentMd5 = _request.Content == null ? Common.Constants.EmptyMd5Bytes : CryptoHelper.Md5Hash(_request.Content, true);
             return this;
         }
 
-        public Upload WithLock(LockMode lockMode, DateTimeOffset retainUntil)
+        public IUpload WithLock(LockMode lockMode, DateTimeOffset retainUntil)
         {
             _request.LockMode = lockMode;
             _request.LockRetainUntil = retainUntil;
             return this;
         }
 
-        public Upload WithLegalHold()
+        public IUpload WithLegalHold()
         {
             _request.LockLegalHold = true;
             return this;
         }
 
-        public Upload RemoveLegalHold()
+        public IUpload RemoveLegalHold()
         {
             _request.LockLegalHold = false;
             return this;
@@ -214,12 +213,12 @@ namespace Genbox.SimpleS3.Core.Fluent
 
         public Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default)
         {
-            encoding ??= Constants.Utf8NoBom;
+            encoding ??= Common.Constants.Utf8NoBom;
 
             return UploadDataAsync(encoding.GetBytes(data), token);
         }
 
-        public Upload WithWebsiteRedirectLocation(string url)
+        public IUpload WithWebsiteRedirectLocation(string url)
         {
             _request.WebsiteRedirectLocation = url;
             return this;

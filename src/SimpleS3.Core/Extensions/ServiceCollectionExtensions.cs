@@ -14,13 +14,14 @@ using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
-using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Internals;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Builders;
+using Genbox.SimpleS3.Core.Internals.Clients;
+using Genbox.SimpleS3.Core.Internals.Fluent;
 using Genbox.SimpleS3.Core.Internals.Network;
+using Genbox.SimpleS3.Core.Internals.Operations;
 using Genbox.SimpleS3.Core.Internals.Validation;
-using Genbox.SimpleS3.Core.Operations;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -81,10 +82,10 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.AddSingleton<ISignedObjectOperations, SignedObjectOperations>();
 
             //Clients
-            collection.AddSingleton<IObjectClient, S3ObjectClient>();
-            collection.AddSingleton<IBucketClient, S3BucketClient>();
-            collection.AddSingleton<IMultipartClient, S3MultipartClient>();
-            collection.AddSingleton<ISignedObjectClient, S3SignedObjectClient>();
+            collection.AddSingleton<IObjectClient, ObjectClient>();
+            collection.AddSingleton<IBucketClient, BucketClient>();
+            collection.AddSingleton<IMultipartClient, MultipartClient>();
+            collection.AddSingleton<ISignedObjectClient, SignedObjectClient>();
 
             //Misc
             collection.AddSingleton<IRequestHandler, DefaultRequestHandler>();

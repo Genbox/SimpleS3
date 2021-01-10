@@ -7,16 +7,14 @@ using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core
+namespace Genbox.SimpleS3.Core.Internals.Clients
 {
-    [PublicAPI]
-    public class S3BucketClient : IBucketClient
+    internal class BucketClient : IBucketClient
     {
         private readonly IBucketOperations _bucketOperations;
 
-        public S3BucketClient(IBucketOperations bucketOperations)
+        public BucketClient(IBucketOperations bucketOperations)
         {
             _bucketOperations = bucketOperations;
         }

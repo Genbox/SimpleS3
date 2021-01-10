@@ -11,7 +11,6 @@ using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Aws;
-using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
@@ -300,12 +299,12 @@ namespace Genbox.SimpleS3
             return _multipartTransfer.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
         }
 
-        public Upload CreateUpload(string bucket, string objectKey)
+        public IUpload CreateUpload(string bucket, string objectKey)
         {
             return _transfer.CreateUpload(bucket, objectKey);
         }
 
-        public Download CreateDownload(string bucket, string objectKey)
+        public IDownload CreateDownload(string bucket, string objectKey)
         {
             return _transfer.CreateDownload(bucket, objectKey);
         }

@@ -3,7 +3,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -69,9 +68,9 @@ namespace Genbox.SimpleS3.TestBase
             return UploadAsync(BucketName, objectKey, config, assumeSuccess);
         }
 
-        protected async Task<PutObjectResponse> UploadTransferAsync(string bucketName, string objectKey, Action<Upload>? action = null, bool assumeSuccess = true)
+        protected async Task<PutObjectResponse> UploadTransferAsync(string bucketName, string objectKey, Action<IUpload>? action = null, bool assumeSuccess = true)
         {
-            Upload upload = Transfer.CreateUpload(bucketName, objectKey);
+            IUpload upload = Transfer.CreateUpload(bucketName, objectKey);
             action?.Invoke(upload);
 
             PutObjectResponse resp = await upload.UploadStringAsync("test", Encoding.UTF8).ConfigureAwait(false);
@@ -84,7 +83,7 @@ namespace Genbox.SimpleS3.TestBase
             return resp;
         }
 
-        protected Task<PutObjectResponse> UploadTransferAsync(string objectKey, Action<Upload>? action = null, bool assumeSuccess = true)
+        protected Task<PutObjectResponse> UploadTransferAsync(string objectKey, Action<IUpload>? action = null, bool assumeSuccess = true)
         {
             return UploadTransferAsync(BucketName, objectKey, action, assumeSuccess);
         }
@@ -107,9 +106,9 @@ namespace Genbox.SimpleS3.TestBase
             return AssertAsync(BucketName, objectKey, config, assumeSuccess);
         }
 
-        protected async Task<GetObjectResponse> AssertTransferAsync(string bucketName, string objectKey, Action<Download>? config = null, bool assumeSuccess = true)
+        protected async Task<GetObjectResponse> AssertTransferAsync(string bucketName, string objectKey, Action<IDownload>? config = null, bool assumeSuccess = true)
         {
-            Download download = Transfer.CreateDownload(bucketName, objectKey);
+            IDownload download = Transfer.CreateDownload(bucketName, objectKey);
             config?.Invoke(download);
             GetObjectResponse resp = await download.DownloadAsync().ConfigureAwait(false);
 
@@ -122,7 +121,7 @@ namespace Genbox.SimpleS3.TestBase
             return resp;
         }
 
-        protected Task<GetObjectResponse> AssertTransferAsync(string objectKey, Action<Download>? config = null, bool assumeSuccess = true)
+        protected Task<GetObjectResponse> AssertTransferAsync(string objectKey, Action<IDownload>? config = null, bool assumeSuccess = true)
         {
             return AssertTransferAsync(BucketName, objectKey, config, assumeSuccess);
         }

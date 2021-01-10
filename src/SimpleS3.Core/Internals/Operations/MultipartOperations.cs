@@ -8,12 +8,10 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
-using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core.Operations
+namespace Genbox.SimpleS3.Core.Internals.Operations
 {
-    [PublicAPI]
-    public class MultipartOperations : IMultipartOperations
+    internal class MultipartOperations : IMultipartOperations
     {
         private readonly IRequestHandler _requestHandler;
 

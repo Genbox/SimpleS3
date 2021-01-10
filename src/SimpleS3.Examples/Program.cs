@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 namespace Genbox.SimpleS3.Examples
@@ -71,7 +71,7 @@ namespace Genbox.SimpleS3.Examples
             Console.WriteLine("Using the Transfer API");
 
             //The Transfer API is an easy-to-use API for building requests.
-            Upload upload = client.CreateUpload(bucketName, objectName)
+            IUpload upload = client.CreateUpload(bucketName, objectName)
                                   .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
                                   .WithCacheControl(CacheControlType.NoCache)
                                   .WithEncryption();
@@ -83,7 +83,7 @@ namespace Genbox.SimpleS3.Examples
                 Console.WriteLine("Successfully uploaded the object");
 
                 //Download string
-                Download download = client.CreateDownload(bucketName, objectName)
+                IDownload download = client.CreateDownload(bucketName, objectName)
                                           .WithRange(0, 5); //Adjust this to return only part of the string
 
                 GetObjectResponse getResp = await download.DownloadAsync();

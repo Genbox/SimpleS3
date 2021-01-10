@@ -7,16 +7,14 @@ using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.Signed;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core
+namespace Genbox.SimpleS3.Core.Internals.Clients
 {
-    [PublicAPI]
-    public class S3SignedObjectClient : ISignedObjectClient
+    internal class SignedObjectClient : ISignedObjectClient
     {
         private readonly ISignedObjectOperations _operations;
 
-        public S3SignedObjectClient(ISignedObjectOperations operations)
+        public SignedObjectClient(ISignedObjectOperations operations)
         {
             _operations = operations;
         }

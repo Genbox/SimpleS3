@@ -7,16 +7,14 @@ using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
-using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core
+namespace Genbox.SimpleS3.Core.Internals.Clients
 {
-    [PublicAPI]
-    public class S3MultipartClient : IMultipartClient
+    internal class MultipartClient : IMultipartClient
     {
         private readonly IMultipartOperations _multipartOperations;
 
-        public S3MultipartClient(IMultipartOperations multipartOperations)
+        public MultipartClient(IMultipartOperations multipartOperations)
         {
             _multipartOperations = multipartOperations;
         }

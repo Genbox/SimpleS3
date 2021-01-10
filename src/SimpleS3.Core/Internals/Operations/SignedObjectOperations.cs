@@ -7,9 +7,9 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.Signed;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
-namespace Genbox.SimpleS3.Core.Operations
+namespace Genbox.SimpleS3.Core.Internals.Operations
 {
-    public class SignedObjectOperations : ISignedObjectOperations
+    internal class SignedObjectOperations : ISignedObjectOperations
     {
         private readonly IRequestHandler _handler;
         private readonly ISignedRequestHandler _signedHandler;

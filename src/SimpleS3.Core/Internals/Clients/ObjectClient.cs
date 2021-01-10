@@ -8,16 +8,14 @@ using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core
+namespace Genbox.SimpleS3.Core.Internals.Clients
 {
-    [PublicAPI]
-    public class S3ObjectClient : IObjectClient
+    internal class ObjectClient : IObjectClient
     {
         private readonly IObjectOperations _objectOperations;
 
-        public S3ObjectClient(IObjectOperations operations)
+        public ObjectClient(IObjectOperations operations)
         {
             _objectOperations = operations;
         }

@@ -1,11 +1,9 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
-using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core.Fluent
+namespace Genbox.SimpleS3.Core.Internals.Fluent
 {
-    [PublicAPI]
-    public class Transfer : ITransfer
+    internal class Transfer : ITransfer
     {
         private readonly IMultipartTransfer _multipartTransfer;
         private readonly IObjectOperations _objectOperations;
@@ -16,12 +14,12 @@ namespace Genbox.SimpleS3.Core.Fluent
             _multipartTransfer = multipartTransfer;
         }
 
-        public Upload CreateUpload(string bucket, string objectKey)
+        public IUpload CreateUpload(string bucket, string objectKey)
         {
             return new Upload(_objectOperations, _multipartTransfer, bucket, objectKey);
         }
 
-        public Download CreateDownload(string bucket, string objectKey)
+        public IDownload CreateDownload(string bucket, string objectKey)
         {
             return new Download(_objectOperations, _multipartTransfer, bucket, objectKey);
         }
