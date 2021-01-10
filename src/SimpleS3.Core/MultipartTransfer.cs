@@ -18,7 +18,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
-namespace Genbox.SimpleS3.Core.Fluent
+namespace Genbox.SimpleS3.Core
 {
     public class MultipartTransfer : IMultipartTransfer
     {

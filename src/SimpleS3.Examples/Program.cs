@@ -71,10 +71,10 @@ namespace Genbox.SimpleS3.Examples
             Console.WriteLine("Using the Transfer API");
 
             //The Transfer API is an easy-to-use API for building requests.
-            Upload upload = client.Transfer.CreateUpload(bucketName, objectName)
-                                           .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
-                                           .WithCacheControl(CacheControlType.NoCache)
-                                           .WithEncryption();
+            Upload upload = client.CreateUpload(bucketName, objectName)
+                                  .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
+                                  .WithCacheControl(CacheControlType.NoCache)
+                                  .WithEncryption();
 
             PutObjectResponse putResp = await upload.UploadStringAsync("Hello World!");
 
@@ -83,8 +83,8 @@ namespace Genbox.SimpleS3.Examples
                 Console.WriteLine("Successfully uploaded the object");
 
                 //Download string
-                Download download = client.Transfer.CreateDownload(bucketName, objectName)
-                                                   .WithRange(0, 5); //Adjust this to return only part of the string
+                Download download = client.CreateDownload(bucketName, objectName)
+                                          .WithRange(0, 5); //Adjust this to return only part of the string
 
                 GetObjectResponse getResp = await download.DownloadAsync();
 

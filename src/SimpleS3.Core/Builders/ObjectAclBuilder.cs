@@ -1,8 +1,8 @@
 ﻿using EnumsNET;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Enums;
 
-namespace Genbox.SimpleS3.Core.Fluent
+namespace Genbox.SimpleS3.Core.Builders
 {
     public class ObjectAclBuilder
     {

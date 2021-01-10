@@ -36,6 +36,7 @@ namespace Genbox.SimpleS3
         private IMultipartClient _multipartClient;
         private IObjectClient _objectClient;
         private IMultipartTransfer _multipartTransfer;
+        private ITransfer _transfer;
 
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="keyId">The key id</param>
@@ -77,7 +78,7 @@ namespace Genbox.SimpleS3
             IBucketClient bucketClient = _serviceProvider.GetRequiredService<IBucketClient>();
             IMultipartClient multipartClient = _serviceProvider.GetRequiredService<IMultipartClient>();
             IMultipartTransfer multipartTransfer = _serviceProvider.GetRequiredService<IMultipartTransfer>();
-            Transfer transfer = _serviceProvider.GetRequiredService<Transfer>();
+            ITransfer transfer = _serviceProvider.GetRequiredService<ITransfer>();
 
             Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
@@ -95,17 +96,15 @@ namespace Genbox.SimpleS3
             IBucketClient bucketClient = _serviceProvider.GetRequiredService<IBucketClient>();
             IMultipartClient multipartClient = _serviceProvider.GetRequiredService<IMultipartClient>();
             IMultipartTransfer multipartTransfer = _serviceProvider.GetRequiredService<IMultipartTransfer>();
-            Transfer transfer = _serviceProvider.GetRequiredService<Transfer>();
+            ITransfer transfer = _serviceProvider.GetRequiredService<ITransfer>();
 
             Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
 
-        public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, Transfer transfer)
+        public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
         {
             Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
-
-        public Transfer Transfer { get; private set; }
 
         public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
         {
@@ -277,12 +276,13 @@ namespace Genbox.SimpleS3
             _serviceProvider?.Dispose();
         }
 
-        private void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, Transfer transfer)
+        private void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
         {
             _objectClient = objectClient;
             _bucketClient = bucketClient;
             _multipartClient = multipartClient;
-            Transfer = transfer;
+            _transfer = transfer;
+            _multipartTransfer = multipartTransfer;
         }
 
         public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
@@ -298,6 +298,16 @@ namespace Genbox.SimpleS3
         public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
         {
             return _multipartTransfer.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
+        }
+
+        public Upload CreateUpload(string bucket, string objectKey)
+        {
+            return _transfer.CreateUpload(bucket, objectKey);
+        }
+
+        public Download CreateDownload(string bucket, string objectKey)
+        {
+            return _transfer.CreateDownload(bucket, objectKey);
         }
     }
 }

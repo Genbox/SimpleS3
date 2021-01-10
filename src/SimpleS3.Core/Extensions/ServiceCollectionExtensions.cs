@@ -100,7 +100,8 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.AddSingleton<IRegionData, AwsRegionData>();
 
             //Fluent
-            collection.AddSingleton<Transfer>();
+            collection.AddSingleton<ITransfer, Transfer>();
+            collection.AddSingleton<IMultipartTransfer, MultipartTransfer>();
 
             Assembly assembly = typeof(AwsConfig).Assembly; //Needs to be the assembly that contains the types
 

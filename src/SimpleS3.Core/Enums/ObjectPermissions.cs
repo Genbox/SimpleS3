@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Genbox.SimpleS3.Core.Fluent
+namespace Genbox.SimpleS3.Core.Enums
 {
     [Flags]
     public enum ObjectPermissions

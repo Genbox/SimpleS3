@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
@@ -17,15 +16,13 @@ namespace Genbox.SimpleS3.Core.Fluent
     public class Download
     {
         private readonly IObjectOperations _operations;
-        private readonly IObjectClient _client;
         private readonly IMultipartTransfer _multipartTransfer;
         private readonly GetObjectRequest _request;
 
-        internal Download(IObjectOperations operations, IObjectClient client, IMultipartTransfer multipartTransfer, string bucket, string objectKey)
+        internal Download(IObjectOperations operations, IMultipartTransfer multipartTransfer, string bucket, string objectKey)
         {
             _request = new GetObjectRequest(bucket, objectKey);
             _operations = operations;
-            _client = client;
             _multipartTransfer = multipartTransfer;
         }
 

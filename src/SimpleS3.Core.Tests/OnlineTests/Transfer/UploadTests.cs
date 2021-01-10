@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
+using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Fluent;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.TestBase;
 using Xunit;

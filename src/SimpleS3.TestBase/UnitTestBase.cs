@@ -4,7 +4,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.Fluent;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -50,7 +49,7 @@ namespace Genbox.SimpleS3.TestBase
             MultipartClient = Services.GetRequiredService<IMultipartClient>();
             SignedObjectClient = Services.GetRequiredService<ISignedObjectClient>();
             MultipartTransfer = Services.GetRequiredService<IMultipartTransfer>();
-            Transfer = Services.GetRequiredService<Transfer>();
+            Transfer = Services.GetRequiredService<ITransfer>();
         }
 
         protected ServiceProvider Services { get; }
@@ -61,7 +60,7 @@ namespace Genbox.SimpleS3.TestBase
         protected IMultipartClient MultipartClient { get; }
         protected IMultipartTransfer MultipartTransfer { get; }
         protected ISignedObjectClient SignedObjectClient { get; }
-        protected Transfer Transfer { get; }
+        protected ITransfer Transfer { get; }
 
         public virtual void Dispose()
         {
