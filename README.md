@@ -1,6 +1,7 @@
 # SimpleS3
 
 [![NuGet](https://img.shields.io/nuget/v/Genbox.SimpleS3.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/Genbox.SimpleS3/)
+[![Build](https://github.com/Genbox/SimpleS3/workflows/Generic%20build/badge.svg)](https://github.com/Genbox/SimpleS3/actions)
 
 ### Description
 A C# implementation of Amazon's S3 API with a focus on simplicity, security and performance. Download or upload an object with a single line of code.
@@ -97,8 +98,10 @@ await client.DeleteAllObjectsAsync("MyBucket");
 ### Extensions
 SimpleS3 is very extensible and has multiple different network drivers and addons you can use. Click on the extension below for more information.
 
-* [SimpleS3.Extensions.HttpClient](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClient)
-* [SimpleS3.Extensions.HttpClientFactory](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClientFactory)
-* [SimpleS3.Extensions.HttpClientFactory.Polly](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClientFactory.Polly)
-* [SimpleS3.Extensions.ProfileManager](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.ProfileManager)
-* [SimpleS3.Extensions.BackBlazeB2](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.BackBlazeB2)
+| Nuget         | Extension
+| ------------- | -------------
+| [![NuGet](https://img.shields.io/nuget/v/Genbox.SimpleS3.Extensions.HttpClient.svg?style=flat-square&label=HttpClient)](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.HttpClient/)| [SimpleS3.Extensions.HttpClient](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClient)
+| [![NuGet](https://img.shields.io/nuget/v/Genbox.SimpleS3.Extensions.HttpClientFactory.svg?style=flat-square&label=HttpClientFactory)](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.HttpClientFactory/)| [SimpleS3.Extensions.HttpClientFactory](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClientFactory)
+| [![NuGet](https://img.shields.io/nuget/v/Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.svg?style=flat-square&label=HttpClientFactory.Polly)](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.HttpClientFactory.Polly/)| [SimpleS3.Extensions.HttpClientFactory.Polly](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.HttpClientFactory.Polly)
+| [![NuGet](https://img.shields.io/nuget/v/Genbox.SimpleS3.Extensions.ProfileManager.svg?style=flat-square&label=ProfileManager)](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.ProfileManager/)| [SimpleS3.Extensions.ProfileManager](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.ProfileManager)
+| [![NuGet](https://img.shields.io/nuget/v/Genbox.SimpleS3.Extensions.BackBlazeB2.svg?style=flat-square&label=BackBlazeB2)](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.BackBlazeB2/)| [SimpleS3.Extensions.BackBlazeB2](https://github.com/Genbox/SimpleS3/tree/master/src/SimpleS3.Extensions.BackBlazeB2)
