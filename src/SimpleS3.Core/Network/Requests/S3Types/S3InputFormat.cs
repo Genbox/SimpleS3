@@ -2,7 +2,7 @@
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
 {
-    public abstract class InputFormat
+    public abstract class S3InputFormat
     {
         public CompressionType CompressionType { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
 {
-    public class S3CsvOutputFormat : OutputFormat
+    public class S3CsvOutputFormat : S3OutputFormat
     {
         /// <summary>Value used to delimit fields</summary>
         public char? FieldDelimiter { get; set; }

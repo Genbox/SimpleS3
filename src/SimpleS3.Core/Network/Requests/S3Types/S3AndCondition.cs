@@ -2,7 +2,7 @@
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
 {
-    public class S3AndCondition
+    public abstract class S3AndCondition
     {
         /// <summary>Prefix identifying one or more objects to which the rule applies. Set to empty string to apply to the whole bucket.</summary>
         public string? Prefix { get; set; }

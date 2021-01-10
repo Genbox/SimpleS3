@@ -6,8 +6,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
     {
         public S3Rule(string id, bool enabled)
         {
-            Enabled = enabled;
             Id = id;
+            Enabled = enabled;
             NonCurrentVersionTransitions = new List<S3NonCurrentVersionTransition>(0);
             Transitions = new List<S3Transition>(0);
         }
@@ -35,7 +35,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
         /// bucket is versioning-enabled (or versioning is suspended), you can set this action to request that Amazon S3 transition noncurrent object versions to
         /// a specific storage class at a set period in the object's lifetime.
         /// </summary>
-        public IList<S3NonCurrentVersionTransition> NonCurrentVersionTransitions { get; }
+        public IList<S3NonCurrentVersionTransition> NonCurrentVersionTransitions { get; set; }
 
         /// <summary>If true, the rule is enabled. If false, the rule is disabled.</summary>
         public bool Enabled { get; }
