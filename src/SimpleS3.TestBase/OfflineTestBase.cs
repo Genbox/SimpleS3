@@ -1,7 +1,7 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
-using Genbox.SimpleS3.Core.Misc;
+using Genbox.SimpleS3.TestBase.Code;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Xunit.Abstractions;

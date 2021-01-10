@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 
-namespace Genbox.SimpleS3.Core.Misc
+namespace Genbox.SimpleS3.TestBase.Code
 {
     public class NullNetworkDriver : INetworkDriver
     {
