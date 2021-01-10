@@ -7,6 +7,7 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Tests.Code.Handlers;

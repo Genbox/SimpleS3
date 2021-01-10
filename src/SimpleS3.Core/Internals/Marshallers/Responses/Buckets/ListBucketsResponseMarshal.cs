@@ -5,10 +5,10 @@ using System.Xml;
 using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
+using Genbox.SimpleS3.Core.Internals.Network.Xml;
+using Genbox.SimpleS3.Core.Internals.Network.XmlTypes;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using Genbox.SimpleS3.Core.Network.Responses.Buckets.Xml;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
-using Genbox.SimpleS3.Core.Network.Responses.XmlTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets

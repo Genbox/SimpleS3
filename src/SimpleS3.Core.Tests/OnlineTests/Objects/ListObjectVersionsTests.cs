@@ -58,7 +58,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
                 Assert.Equal(1, version1.Size);
                 Assert.Equal(StorageClass.Standard, version1.StorageClass);
                 Assert.Equal(TestConstants.TestUserId, version1.Owner.Id);
-                Assert.Equal(TestConstants.TestUsername, version1.Owner.DisplayName);
+                Assert.Equal(TestConstants.TestUsername, version1.Owner.Name);
 
                 S3Version version2 = listResp.Versions[1];
                 Assert.Equal("2", version2.ObjectKey);
@@ -69,7 +69,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
                 Assert.Equal(2, version2.Size);
                 Assert.Equal(StorageClass.Standard, version2.StorageClass);
                 Assert.Equal(TestConstants.TestUserId, version2.Owner.Id);
-                Assert.Equal(TestConstants.TestUsername, version2.Owner.DisplayName);
+                Assert.Equal(TestConstants.TestUsername, version2.Owner.Name);
 
                 //This is the latest version of object 3 and should be 4 in size
                 S3Version version3 = listResp.Versions[2];
@@ -81,7 +81,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
                 Assert.Equal(4, version3.Size);
                 Assert.Equal(StorageClass.Standard, version3.StorageClass);
                 Assert.Equal(TestConstants.TestUserId, version3.Owner.Id);
-                Assert.Equal(TestConstants.TestUsername, version3.Owner.DisplayName);
+                Assert.Equal(TestConstants.TestUsername, version3.Owner.Name);
 
                 //This was the previous version of object 3, so it should not be the latest and have 3 in size
                 S3Version version3a = listResp.Versions[3];
@@ -93,7 +93,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
                 Assert.Equal(3, version3a.Size);
                 Assert.Equal(StorageClass.Standard, version3a.StorageClass);
                 Assert.Equal(TestConstants.TestUserId, version3a.Owner.Id);
-                Assert.Equal(TestConstants.TestUsername, version3a.Owner.DisplayName);
+                Assert.Equal(TestConstants.TestUsername, version3a.Owner.Name);
 
                 //This is the latest version of object 2, since it was deleted
                 S3DeleteMarker delMarker = listResp.DeleteMarkers[0];
@@ -102,7 +102,7 @@ namespace Genbox.SimpleS3.Core.Tests.OnlineTests.Objects
                 Assert.Equal(putResp4.VersionId, delMarker.VersionId);
                 Assert.Equal(DateTimeOffset.UtcNow.DateTime, delMarker.LastModified.DateTime, TimeSpan.FromMinutes(1));
                 Assert.Equal(TestConstants.TestUserId, delMarker.Owner.Id);
-                Assert.Equal(TestConstants.TestUsername, delMarker.Owner.DisplayName);
+                Assert.Equal(TestConstants.TestUsername, delMarker.Owner.Name);
 
             }).ConfigureAwait(false);
         }

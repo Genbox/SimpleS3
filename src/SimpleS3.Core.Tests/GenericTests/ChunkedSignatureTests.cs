@@ -8,7 +8,8 @@ using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Aws;
-using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Internals.Authentication;
+using Genbox.SimpleS3.Core.Internals.Builders;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -81,7 +82,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             IDictionary<string, string> query = new Dictionary<string, string>();
 
             //Override the header signing filter and just sign everything
-            SigningConstants.ShouldSignHeader += s => true;
+            HeaderWhitelist.ShouldSignHeader += s => true;
 
             string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethod.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(query), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
             Assert.Equal(expectedSeedCr, actualSeedCr);

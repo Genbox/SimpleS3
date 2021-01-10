@@ -8,7 +8,8 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Aws;
-using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Internals.Authentication;
+using Genbox.SimpleS3.Core.Internals.Builders;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 

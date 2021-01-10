@@ -9,8 +9,8 @@ using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Internals.Network.Xml;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
-using Genbox.SimpleS3.Core.Network.Responses.Multipart.Xml;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart

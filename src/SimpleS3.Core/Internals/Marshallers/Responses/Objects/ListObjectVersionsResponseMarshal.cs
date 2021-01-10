@@ -10,7 +10,6 @@ using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
-using Genbox.SimpleS3.Core.Network.Responses.XmlTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
@@ -161,9 +160,10 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             return version;
         }
 
-        private static Owner ParseOwner(XmlTextReader r)
+        private static S3Identity ParseOwner(XmlTextReader r)
         {
-            Owner owner = new Owner();
+            string? displayName = null;
+            string? id = null;
 
             while (r.Read())
             {
@@ -176,15 +176,18 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                 switch (r.Name)
                 {
                     case "DisplayName":
-                        owner.DisplayName = r.ReadString();
+                        displayName = r.ReadString();
                         break;
                     case "ID":
-                        owner.Id = r.ReadString();
+                        id = r.ReadString();
                         break;
                 }
             }
 
-            return owner;
+            if (id == null || displayName == null)
+                throw new InvalidOperationException("Id or displayname must not be null");
+
+            return new S3Identity(id, displayName);
         }
 
         private static S3DeleteMarker ParseDeleteMarker(XmlTextReader r)
@@ -193,7 +196,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             string? versionId = null;
             string? objectKey = null;
             DateTimeOffset lastModified;
-            Owner? owner = null;
+            S3Identity? owner = null;
 
             while (r.Read())
             {
