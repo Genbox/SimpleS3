@@ -14,13 +14,13 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory
 {
     public class HttpClientFactoryNetworkDriver : INetworkDriver
     {
-        private readonly HttpClient _client;
         private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
+        private readonly IHttpClientFactory _clientFactory;
 
-        public HttpClientFactoryNetworkDriver(ILogger<HttpClientFactoryNetworkDriver> logger, HttpClient client)
+        public HttpClientFactoryNetworkDriver(ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory)
         {
             _logger = logger;
-            _client = client;
+            _clientFactory = clientFactory;
         }
 
         public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethod method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
@@ -42,7 +42,8 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory
 
                 _logger.LogTrace("Sending HTTP request");
 
-                httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                HttpClient client = _clientFactory.CreateClient();
+                httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
             }
 
             _logger.LogDebug("Got an {status} response with {Code}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
