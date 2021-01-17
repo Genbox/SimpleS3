@@ -50,7 +50,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.BackBla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.BackBlazeB2.Tests", "SimpleS3.Extensions.BackBlazeB2.Tests\SimpleS3.Extensions.BackBlazeB2.Tests.csproj", "{6094F7D6-363D-4E66-A19F-515175A9BF55}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.TestBase", "SimpleS3.TestBase\SimpleS3.TestBase.csproj", "{1B43D940-DD93-450B-9FC7-7A3701E1DC61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core.TestBase", "SimpleS3.Core.TestBase\SimpleS3.Core.TestBase.csproj", "{1B43D940-DD93-450B-9FC7-7A3701E1DC61}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Imports", "_Imports", "{62F2C837-5670-4C27-9609-90F8B67BEC8E}"
 	ProjectSection(SolutionItems) = preProject
@@ -62,6 +62,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Utility.Shared", "SimpleS3.Utility.Shared\SimpleS3.Utility.Shared.csproj", "{258C9BD8-DF98-4662-BA67-FC79083FC1C3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.ExamplesAdvanced", "SimpleS3.ExamplesAdvanced\SimpleS3.ExamplesAdvanced.csproj", "{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.AwsS3", "SimpleS3.Extensions.AwsS3\SimpleS3.Extensions.AwsS3.csproj", "{289A434D-1570-4F73-80D8-015CB7D92DEE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.AwsS3.Tests", "SimpleS3.Extensions.AwsS3.Tests\SimpleS3.Extensions.AwsS3.Tests.csproj", "{9D122B3D-1B9D-4219-B08F-1D9C6552EB0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +157,14 @@ Global
 		{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{289A434D-1570-4F73-80D8-015CB7D92DEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{289A434D-1570-4F73-80D8-015CB7D92DEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{289A434D-1570-4F73-80D8-015CB7D92DEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{289A434D-1570-4F73-80D8-015CB7D92DEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D122B3D-1B9D-4219-B08F-1D9C6552EB0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D122B3D-1B9D-4219-B08F-1D9C6552EB0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D122B3D-1B9D-4219-B08F-1D9C6552EB0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D122B3D-1B9D-4219-B08F-1D9C6552EB0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -168,6 +180,8 @@ Global
 		{0DA531D5-573A-42F4-A6A1-6FB3ADA097FC} = {5F231AF0-BA65-4AE0-959F-A29E76CC6DFD}
 		{6094F7D6-363D-4E66-A19F-515175A9BF55} = {5F231AF0-BA65-4AE0-959F-A29E76CC6DFD}
 		{258C9BD8-DF98-4662-BA67-FC79083FC1C3} = {8374F15C-AE00-4F9E-AC9C-23F98189334A}
+		{289A434D-1570-4F73-80D8-015CB7D92DEE} = {5F231AF0-BA65-4AE0-959F-A29E76CC6DFD}
+		{9D122B3D-1B9D-4219-B08F-1D9C6552EB0F} = {5F231AF0-BA65-4AE0-959F-A29E76CC6DFD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EB716AC-1004-4514-8045-DAFF9636F0C5}

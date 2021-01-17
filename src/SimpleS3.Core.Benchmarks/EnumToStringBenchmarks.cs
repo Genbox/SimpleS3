@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using EnumsNET;
-using Genbox.SimpleS3.Core.Aws;
+using Genbox.SimpleS3.Extensions.AwsS3;
 
 namespace Genbox.SimpleS3.Core.Benchmarks
 {

@@ -2,3 +2,4 @@
 
 [assembly: InternalsVisibleTo("Genbox.SimpleS3.Core.Tests")]
 [assembly: InternalsVisibleTo("Genbox.SimpleS3.Core.Benchmarks")]
+[assembly: InternalsVisibleTo("Genbox.SimpleS3.Extensions.AwsS3.Tests")]

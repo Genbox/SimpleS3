@@ -11,8 +11,7 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
-using Genbox.SimpleS3.Core.Aws;
-using Genbox.SimpleS3.Core.Common.Extensions;
+using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Internals;
 using Genbox.SimpleS3.Core.Internals.Authentication;
@@ -32,30 +31,6 @@ namespace Genbox.SimpleS3.Core.Extensions
     [PublicAPI]
     public static class ServiceCollectionExtensions
     {
-        /// <summary>
-        /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this
-        /// method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
-        /// </summary>
-        /// <param name="collection">The service collection</param>
-        /// <param name="config">The configuration delegate</param>
-        public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection, Action<AwsConfig, IServiceProvider> config)
-        {
-            collection.Configure(config);
-            return AddSimpleS3Core(collection);
-        }
-
-        /// <summary>
-        /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this
-        /// method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
-        /// </summary>
-        /// <param name="collection">The service collection</param>
-        /// <param name="config">The configuration delegate</param>
-        public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection, Action<AwsConfig> config)
-        {
-            collection.Configure(config);
-            return AddSimpleS3Core(collection);
-        }
-
         /// <summary>
         /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this
         /// method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
@@ -93,19 +68,14 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.AddSingleton<IMarshalFactory, MarshalFactory>();
             collection.AddSingleton<IPostMapperFactory, PostMapperFactory>();
             collection.AddSingleton<IRequestStreamWrapper, ChunkedContentRequestStreamWrapper>();
-
-            //Default services for AWS S3
-            collection.AddSingleton<IUrlBuilder, AwsUrlBuilder>();
-            collection.AddSingleton<IInputValidator, AwsInputValidator>();
-            collection.AddSingleton<IRegionData, AwsRegionData>();
+            collection.AddSingleton<IRegionConverter, RegionConverter>();
 
             //Fluent
             collection.AddSingleton<ITransfer, Transfer>();
             collection.AddSingleton<IMultipartTransfer, MultipartTransfer>();
 
-            Assembly assembly = typeof(AwsConfig).Assembly; //Needs to be the assembly that contains the types
+            Assembly assembly = typeof(ServiceCollectionExtensions).Assembly; //Needs to be the assembly that contains the types
 
-            collection.TryAddEnumerable(CreateRegistrations(typeof(IInputValidator), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IRequestMarshal), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IResponseMarshal), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IPostMapper), assembly));

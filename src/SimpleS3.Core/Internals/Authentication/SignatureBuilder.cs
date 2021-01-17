@@ -14,7 +14,6 @@ using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
-using Genbox.SimpleS3.Core.Internals.Helpers;
 using Microsoft.Collections.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

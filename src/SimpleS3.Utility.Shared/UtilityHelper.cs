@@ -2,6 +2,7 @@
 using System.Linq;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Extensions;
+using Genbox.SimpleS3.Extensions.AwsS3.Extensions;
 using Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
@@ -55,9 +56,7 @@ namespace Genbox.SimpleS3.Utility.Shared
                          .UseDataProtection();
 
             if (selectedProvider == S3Provider.AmazonS3)
-            {
-                //Do nothing
-            }
+                clientBuilder.CoreBuilder.UseAwsS3();
             else if (selectedProvider == S3Provider.BackBlazeB2)
                 clientBuilder.CoreBuilder.UseBackBlazeB2();
             else

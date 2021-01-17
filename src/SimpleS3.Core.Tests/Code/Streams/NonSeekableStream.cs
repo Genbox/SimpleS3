@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Genbox.SimpleS3.Core.Tests.Code.Streams
 {
-    public class NonSeekableStream : Stream
+    internal class NonSeekableStream : Stream
     {
         private readonly MemoryStream _backingStream;
 

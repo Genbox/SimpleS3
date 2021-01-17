@@ -11,6 +11,7 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Extensions;
+using Genbox.SimpleS3.Extensions.AwsS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -32,7 +33,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             //In this example we are using Microsoft's Dependency Injection framework
 
             //If you have a proxy, you can set it here
-            IWebProxy? proxy = new WebProxy("http://127.0.0.1:8888");
+            IWebProxy? proxy = null;
 
             using (S3Client client = BuildClient(proxy))
             {
@@ -105,7 +106,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             services.AddLogging(x => x.AddConsole());
 
             //Here we create a core client. It has no network driver at this point.
-            ICoreBuilder coreBuilder = services.AddSimpleS3Core();
+            ICoreBuilder coreBuilder = services.AddSimpleS3Core().UseAwsS3();
 
             //We want to use HttpClientFactory as the HTTP driver
             IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();

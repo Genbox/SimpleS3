@@ -1,9 +1,10 @@
 ﻿using System;
 using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Extensions.AwsS3;
+using Genbox.SimpleS3.Extensions.AwsS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Internals;
@@ -36,6 +37,7 @@ namespace Genbox.SimpleS3.Extensions
         public static IS3ClientBuilder AddSimpleS3(this IServiceCollection collection)
         {
             ICoreBuilder coreBuilder = collection.AddSimpleS3Core();
+            coreBuilder.UseAwsS3();
             coreBuilder.UseS3Client();
 
             IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();

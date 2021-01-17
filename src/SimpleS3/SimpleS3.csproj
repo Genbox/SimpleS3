@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SimpleS3.Core\SimpleS3.Core.csproj" />
+    <ProjectReference Include="..\SimpleS3.Extensions.AwsS3\SimpleS3.Extensions.AwsS3.csproj" />
     <ProjectReference Include="..\SimpleS3.Extensions.HttpClientFactory.Polly\SimpleS3.Extensions.HttpClientFactory.Polly.csproj" />
     <ProjectReference Include="..\SimpleS3.Extensions.HttpClientFactory\SimpleS3.Extensions.HttpClientFactory.csproj" />
   </ItemGroup>

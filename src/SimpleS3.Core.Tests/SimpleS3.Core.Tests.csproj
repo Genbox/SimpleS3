@@ -7,7 +7,8 @@
   <Import Project="..\..\Imports\TestImport.props" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Core" Version="2.2.0" />
+    <ProjectReference Include="..\SimpleS3.Extensions.HttpClientFactory.Polly\SimpleS3.Extensions.HttpClientFactory.Polly.csproj" />
+    <ProjectReference Include="..\SimpleS3.Extensions.HttpClientFactory\SimpleS3.Extensions.HttpClientFactory.csproj" />
   </ItemGroup>
 
 </Project>

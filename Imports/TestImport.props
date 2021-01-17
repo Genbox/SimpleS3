@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Condition="$(MSBuildProjectName) != 'SimpleS3.TestBase'" Include="..\SimpleS3.TestBase\SimpleS3.TestBase.csproj" />
+    <ProjectReference Condition="$(MSBuildProjectName) != 'SimpleS3.Core.TestBase'" Include="..\SimpleS3.Core.TestBase\SimpleS3.Core.TestBase.csproj" />
   </ItemGroup>
 
 </Project>

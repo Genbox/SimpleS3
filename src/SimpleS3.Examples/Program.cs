@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Aws;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Extensions.AwsS3;
 
 namespace Genbox.SimpleS3.Examples
 {
