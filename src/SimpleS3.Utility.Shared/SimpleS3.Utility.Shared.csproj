@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SimpleS3.Extensions.BackBlazeB2\SimpleS3.Extensions.BackBlazeB2.csproj" />
+    <ProjectReference Include="..\SimpleS3.BackBlazeB2\SimpleS3.BackBlazeB2.csproj" />
+    <ProjectReference Include="..\SimpleS3.AwsS3\SimpleS3.AwsS3.csproj" />
     <ProjectReference Include="..\SimpleS3.Extensions.ProfileManager\SimpleS3.Extensions.ProfileManager.csproj" />
-    <ProjectReference Include="..\SimpleS3\SimpleS3.csproj" />
   </ItemGroup>
 
 </Project>

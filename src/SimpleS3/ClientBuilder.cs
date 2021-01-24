@@ -2,11 +2,11 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.SimpleS3.Internals
+namespace Genbox.SimpleS3
 {
-    internal class S3ClientBuilder : ServiceBuilderBase, IS3ClientBuilder
+    public class ClientBuilder : ServiceBuilderBase, IClientBuilder
     {
-        public S3ClientBuilder(IServiceCollection services, IHttpClientBuilder httpBuilder, ICoreBuilder coreBuilder) : base(services)
+        public ClientBuilder(IServiceCollection services, IHttpClientBuilder httpBuilder, ICoreBuilder coreBuilder) : base(services)
         {
             HttpBuilder = httpBuilder;
             CoreBuilder = coreBuilder;

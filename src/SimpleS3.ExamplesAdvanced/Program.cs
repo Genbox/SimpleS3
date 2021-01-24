@@ -10,7 +10,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Extensions;
 using Genbox.SimpleS3.Extensions.AwsS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
@@ -35,33 +34,33 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             //If you have a proxy, you can set it here
             IWebProxy? proxy = null;
 
-            using (S3Client client = BuildClient(proxy))
-            {
-                string bucketName = "simple-s3-test-" + Guid.NewGuid();
-                const string objectName = "some-object";
+            ISimpleS3Client client = BuildClient(proxy);
 
-                //First we create the a bucket named "simple-s3-test". It might already be there, so we ignore if the request was not a success
-                await client.CreateBucketAsync(bucketName).ConfigureAwait(false);
+            string bucketName = "simple-s3-test-" + Guid.NewGuid();
+            const string objectName = "some-object";
 
-                Random random = new Random();
+            //First we create the a bucket named "simple-s3-test". It might already be there, so we ignore if the request was not a success
+            await client.CreateBucketAsync(bucketName).ConfigureAwait(false);
 
-                byte[] data = new byte[1024 * 1024 * 64];
-                random.NextBytes(data); //Fill the buffer with random data
+            Random random = new Random();
 
-                byte[] encryptionKey = Encoding.UTF8.GetBytes("This is our secret encryption ke");
+            byte[] data = new byte[1024 * 1024 * 64];
+            random.NextBytes(data); //Fill the buffer with random data
 
-                await UploadData(client, bucketName, objectName, data, encryptionKey);
+            byte[] encryptionKey = Encoding.UTF8.GetBytes("This is our secret encryption ke");
 
-                byte[] downloaded = await DownloadData(client, bucketName, objectName, encryptionKey);
+            await UploadData(client, bucketName, objectName, data, encryptionKey);
 
-                if (data.SequenceEqual(downloaded))
-                    Console.WriteLine("The uploaded and downloaded data are the same");
-                else
-                    Console.WriteLine("The uploaded and downloaded data are NOT the same");
-            }
+            byte[] downloaded = await DownloadData(client, bucketName, objectName, encryptionKey);
+
+            if (data.SequenceEqual(downloaded))
+                Console.WriteLine("The uploaded and downloaded data are the same");
+            else
+                Console.WriteLine("The uploaded and downloaded data are NOT the same");
+
         }
 
-        private static async Task UploadData(S3Client client, string bucketName, string objectName, byte[] data, byte[] encryptionKey)
+        private static async Task UploadData(ISimpleS3Client client, string bucketName, string objectName, byte[] data, byte[] encryptionKey)
         {
             await using (MemoryStream ms = new MemoryStream(data))
             {
@@ -75,7 +74,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             }
         }
 
-        private static async Task<byte[]> DownloadData(S3Client client, string bucketName, string objectName, byte[] encryptionKey)
+        private static async Task<byte[]> DownloadData(ISimpleS3Client client, string bucketName, string objectName, byte[] encryptionKey)
         {
             await using (MemoryStream ms = new MemoryStream())
             {
@@ -97,7 +96,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             }
         }
 
-        private static S3Client BuildClient(IWebProxy? proxy = null)
+        private static ISimpleS3Client BuildClient(IWebProxy? proxy = null)
         {
             //Create the dependency injection container
             ServiceCollection services = new ServiceCollection();
@@ -106,7 +105,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             services.AddLogging(x => x.AddConsole());
 
             //Here we create a core client. It has no network driver at this point.
-            ICoreBuilder coreBuilder = services.AddSimpleS3Core().UseAwsS3();
+            ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services);
 
             //We want to use HttpClientFactory as the HTTP driver
             IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
@@ -119,7 +118,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
                 httpBuilder.UseProxy(proxy);
 
             //This adds the S3Client service. This service combines ObjectClient, MultipartClient and BucketClient into a single client. Makes it easier for new people to use the library.
-            coreBuilder.UseS3Client();
+            coreBuilder.UseAwsS3();
 
             //Here we add the profile manager. It is a profile system that persist your credentials to disk in a very secure way.
             coreBuilder.UseProfileManager()
@@ -139,7 +138,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
                 setup.SetupDefaultProfile();
             }
 
-            return serviceProvider.GetRequiredService<S3Client>();
+            return serviceProvider.GetRequiredService<ISimpleS3Client>();
         }
     }
 }

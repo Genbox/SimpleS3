@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Extensions;
 using Xunit;
 
-namespace Genbox.SimpleS3.Tests
+namespace Genbox.SimpleS3.AwsS3.Tests
 {
     public class StaticCreatorTests
     {

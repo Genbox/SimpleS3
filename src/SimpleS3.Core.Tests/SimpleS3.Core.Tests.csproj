@@ -6,9 +6,4 @@
 
   <Import Project="..\..\Imports\TestImport.props" />
 
-  <ItemGroup>
-    <ProjectReference Include="..\SimpleS3.Extensions.HttpClientFactory.Polly\SimpleS3.Extensions.HttpClientFactory.Polly.csproj" />
-    <ProjectReference Include="..\SimpleS3.Extensions.HttpClientFactory\SimpleS3.Extensions.HttpClientFactory.csproj" />
-  </ItemGroup>
-
 </Project>

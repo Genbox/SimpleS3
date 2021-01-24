@@ -26,7 +26,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests
         public CanonicalRequestFileTests()
         {
             ServiceCollection services = new ServiceCollection();
-            services.AddSimpleS3Core().UseAwsS3(x =>
+            SimpleS3CoreServices.AddSimpleS3Core(services).UseAwsS3(x =>
             {
                 x.Credentials = new StringAccessKey("KeyIdExampleExampleE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
                 x.Region = AwsRegion.UsEast1;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -31,7 +32,7 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
             {
                 UtilityHelper.GetOrSetupProfile(provider, selectedProvider, profileName);
 
-                S3Client client = provider.GetRequiredService<S3Client>();
+                ISimpleS3Client client = provider.GetRequiredService<ISimpleS3Client>();
 
                 await foreach (S3Bucket bucket in client.ListAllBucketsAsync())
                 {

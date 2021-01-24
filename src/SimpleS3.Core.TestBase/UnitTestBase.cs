@@ -29,8 +29,7 @@ namespace Genbox.SimpleS3.Core.TestBase
             collection.AddSingleton<IUrlBuilder, NullUrlBuilder>();
             collection.AddSingleton<IInputValidator, NullInputValidator>();
 
-            ICoreBuilder coreBuilder = collection.AddSimpleS3Core();
-
+            ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(collection);
             ConfigureCoreBuilder(coreBuilder, configRoot);
 
             collection.AddLogging(x =>

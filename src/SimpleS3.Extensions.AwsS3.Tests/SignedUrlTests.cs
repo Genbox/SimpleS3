@@ -29,7 +29,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests
             //See https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-query-string-auth.html
 
             ServiceCollection services = new ServiceCollection();
-            services.AddSimpleS3Core().UseAwsS3(x =>
+            SimpleS3CoreServices.AddSimpleS3Core(services).UseAwsS3(x =>
             {
                 x.Credentials = new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
                 x.Region = AwsRegion.UsEast1;

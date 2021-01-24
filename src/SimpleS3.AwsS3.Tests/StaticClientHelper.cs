@@ -1,8 +1,8 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.AwsS3.Extensions;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.AwsS3;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Genbox.SimpleS3.Tests
+namespace Genbox.SimpleS3.AwsS3.Tests
 {
     public static class StaticClientHelper
     {
@@ -19,7 +19,7 @@ namespace Genbox.SimpleS3.Tests
             FakeNetworkDriver fakeNetworkDriver = new FakeNetworkDriver();
 
             ServiceCollection services = new ServiceCollection();
-            services.AddSimpleS3Core();
+            services.AddAwsS3();
 
             services.AddSingleton<IUrlBuilder, AwsUrlBuilder>();
             services.AddSingleton<IInputValidator, NullInputValidator>();

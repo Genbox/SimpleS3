@@ -6,6 +6,14 @@ namespace Genbox.SimpleS3.Core.Abstracts
 {
     public class Config
     {
+        public Config() { }
+
+        public Config(IAccessKey credentials, string region)
+        {
+            Credentials = credentials;
+            RegionCode = region;
+        }
+
         /// <summary>The credentials to use when communicating with S3.</summary>
         public IAccessKey Credentials { get; set; }
 

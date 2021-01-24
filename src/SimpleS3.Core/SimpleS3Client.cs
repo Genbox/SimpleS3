@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
-using Genbox.SimpleS3.Core.Abstracts.Request;
-using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
@@ -17,92 +12,32 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Extensions;
-using Genbox.SimpleS3.Extensions.AwsS3;
-using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3
+namespace Genbox.SimpleS3.Core
 {
     /// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
-    public sealed class S3Client : IClient, IDisposable
+    public class SimpleS3Client : ISimpleS3Client
     {
-        private readonly ServiceProvider? _serviceProvider;
         private IBucketClient _bucketClient;
         private IMultipartClient _multipartClient;
         private IObjectClient _objectClient;
         private IMultipartTransfer _multipartTransfer;
         private ITransfer _transfer;
 
-        /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
-        /// <param name="keyId">The key id</param>
-        /// <param name="accessKey">The secret access key</param>
-        /// <param name="region">The region you wish to use</param>
-        /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(string keyId, byte[] accessKey, AwsRegion region, IWebProxy? proxy = null) : this(new AwsConfig(new AccessKey(keyId, accessKey), region), proxy) { }
-
-        /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
-        /// <param name="keyId">The key id</param>
-        /// <param name="accessKey">The secret access key</param>
-        /// <param name="region">The region you wish to use</param>
-        /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(string keyId, string accessKey, AwsRegion region, IWebProxy? proxy = null) : this(new AwsConfig(new StringAccessKey(keyId, accessKey), region), proxy) { }
-
-        /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
-        /// <param name="credentials">The credentials to use</param>
-        /// <param name="region">The region you wish to use</param>
-        /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(IAccessKey credentials, AwsRegion region, IWebProxy? proxy = null) : this(new AwsConfig(credentials, region), proxy) { }
-
-        /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
-        /// <param name="config">The configuration you want to use</param>
-        /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(AwsConfig config, IWebProxy? proxy = null) : this(Options.Create(config), proxy) { }
-
-        public S3Client(IOptions<AwsConfig> options, IWebProxy? proxy = null)
+        public SimpleS3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
         {
-            ServiceCollection services = new ServiceCollection();
-            IS3ClientBuilder builder = services.AddSimpleS3();
-
-            if (proxy != null)
-                builder.HttpBuilder.UseProxy(proxy);
-
-            services.AddSingleton<IOptions<Config>>(options);
-
-            _serviceProvider = services.BuildServiceProvider();
-            IObjectClient objectClient = _serviceProvider.GetRequiredService<IObjectClient>();
-            IBucketClient bucketClient = _serviceProvider.GetRequiredService<IBucketClient>();
-            IMultipartClient multipartClient = _serviceProvider.GetRequiredService<IMultipartClient>();
-            IMultipartTransfer multipartTransfer = _serviceProvider.GetRequiredService<IMultipartTransfer>();
-            ITransfer transfer = _serviceProvider.GetRequiredService<ITransfer>();
-
             Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
 
-        public S3Client(IOptions<AwsConfig> options, INetworkDriver networkDriver, ILoggerFactory loggerFactory)
+        protected SimpleS3Client() { }
+
+        protected void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
         {
-            ServiceCollection services = new ServiceCollection();
-            services.AddSimpleS3();
-            services.Replace(ServiceDescriptor.Singleton(networkDriver));
-            services.Replace(ServiceDescriptor.Singleton(loggerFactory));
-            services.AddSingleton<IOptions<Config>>(options);
-
-            _serviceProvider = services.BuildServiceProvider();
-            IObjectClient objectClient = _serviceProvider.GetRequiredService<IObjectClient>();
-            IBucketClient bucketClient = _serviceProvider.GetRequiredService<IBucketClient>();
-            IMultipartClient multipartClient = _serviceProvider.GetRequiredService<IMultipartClient>();
-            IMultipartTransfer multipartTransfer = _serviceProvider.GetRequiredService<IMultipartTransfer>();
-            ITransfer transfer = _serviceProvider.GetRequiredService<ITransfer>();
-
-            Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
-        }
-
-        public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
-        {
-            Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+            _objectClient = objectClient;
+            _bucketClient = bucketClient;
+            _multipartClient = multipartClient;
+            _multipartTransfer = multipartTransfer;
+            _transfer = transfer;
         }
 
         public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
@@ -268,20 +203,6 @@ namespace Genbox.SimpleS3
         public Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream? data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.PutObjectAsync(bucketName, objectKey, data, config, token);
-        }
-
-        public void Dispose()
-        {
-            _serviceProvider?.Dispose();
-        }
-
-        private void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
-        {
-            _objectClient = objectClient;
-            _bucketClient = bucketClient;
-            _multipartClient = multipartClient;
-            _transfer = transfer;
-            _multipartTransfer = multipartTransfer;
         }
 
         public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)

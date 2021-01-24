@@ -4,7 +4,6 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions
@@ -24,9 +23,9 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions
 
         public static ICoreBuilder UseBackBlazeB2(this ICoreBuilder clientBuilder)
         {
-            clientBuilder.Services.Replace(ServiceDescriptor.Singleton<IRegionData, B2RegionData>());
-            clientBuilder.Services.Replace(ServiceDescriptor.Singleton<IInputValidator, B2InputValidator>());
-            clientBuilder.Services.Replace(ServiceDescriptor.Singleton<IUrlBuilder, B2UrlBuilder>());
+            clientBuilder.Services.AddSingleton<IRegionData, B2RegionData>();
+            clientBuilder.Services.AddSingleton<IInputValidator, B2InputValidator>();
+            clientBuilder.Services.AddSingleton<IUrlBuilder, B2UrlBuilder>();
 
             clientBuilder.Services.PostConfigure<Config>((x, y) =>
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
+using Genbox.SimpleS3.AwsS3;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;

@@ -29,14 +29,14 @@ using IValidatorFactory = Genbox.SimpleS3.Core.Abstracts.Factories.IValidatorFac
 namespace Genbox.SimpleS3.Core.Extensions
 {
     [PublicAPI]
-    public static class ServiceCollectionExtensions
+    public static class SimpleS3CoreServices
     {
         /// <summary>
         /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this
         /// method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
         /// </summary>
         /// <param name="collection">The service collection</param>
-        public static ICoreBuilder AddSimpleS3Core(this IServiceCollection collection)
+        public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection)
         {
             collection.AddLogging();
             collection.AddOptions();
@@ -61,6 +61,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.AddSingleton<IBucketClient, BucketClient>();
             collection.AddSingleton<IMultipartClient, MultipartClient>();
             collection.AddSingleton<ISignedObjectClient, SignedObjectClient>();
+            collection.AddSingleton<ISimpleS3Client, SimpleS3Client>();
 
             //Misc
             collection.AddSingleton<IRequestHandler, DefaultRequestHandler>();
@@ -74,7 +75,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.AddSingleton<ITransfer, Transfer>();
             collection.AddSingleton<IMultipartTransfer, MultipartTransfer>();
 
-            Assembly assembly = typeof(ServiceCollectionExtensions).Assembly; //Needs to be the assembly that contains the types
+            Assembly assembly = typeof(SimpleS3CoreServices).Assembly; //Needs to be the assembly that contains the types
 
             collection.TryAddEnumerable(CreateRegistrations(typeof(IRequestMarshal), assembly));
             collection.TryAddEnumerable(CreateRegistrations(typeof(IResponseMarshal), assembly));

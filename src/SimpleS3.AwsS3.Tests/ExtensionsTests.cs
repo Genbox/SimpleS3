@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Genbox.SimpleS3.Tests
+namespace Genbox.SimpleS3.AwsS3.Tests
 {
     public class ExtensionsTests
     {

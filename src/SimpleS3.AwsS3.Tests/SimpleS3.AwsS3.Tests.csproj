@@ -7,7 +7,7 @@
   <Import Project="..\..\Imports\TestImport.props" />
 
   <ItemGroup>
-    <ProjectReference Include="..\SimpleS3\SimpleS3.csproj" />
+    <ProjectReference Include="..\SimpleS3.AwsS3\SimpleS3.AwsS3.csproj" />
   </ItemGroup>
 
 </Project>
