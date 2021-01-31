@@ -63,7 +63,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.AwsS3",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.AwsS3.Tests", "SimpleS3.Extensions.AwsS3.Tests\SimpleS3.Extensions.AwsS3.Tests.csproj", "{9D122B3D-1B9D-4219-B08F-1D9C6552EB0F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3", "SimpleS3\SimpleS3.csproj", "{D784AEF4-9B6B-45FF-A029-53482A2EA45D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.ProviderBase", "SimpleS3.ProviderBase\SimpleS3.ProviderBase.csproj", "{D784AEF4-9B6B-45FF-A029-53482A2EA45D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.BackBlazeB2", "SimpleS3.BackBlazeB2\SimpleS3.BackBlazeB2.csproj", "{D83D7112-120C-41C0-ABD0-313E07E0889C}"
 EndProject
