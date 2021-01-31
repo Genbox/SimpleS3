@@ -25,10 +25,10 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.OnlineTests.Objects
             Assert.True(getResp.IsSuccess);
 
             S3Grant? grant = Assert.Single(getResp.Grants);
-            Assert.Equal(TestConstants.TestUserId, grant.Id);
-            Assert.Equal(TestConstants.TestUsername, grant.Name);
-            Assert.Equal(Permission.FullControl, grant.Permission);
-            Assert.Equal(GrantType.User, grant.Type);
+            Assert.Equal(TestConstants.TestUserId, grant.Grantee.Id);
+            Assert.Equal(TestConstants.TestUsername, grant.Grantee.DisplayName);
+            Assert.Equal(S3Permission.FullControl, grant.Permission);
+            Assert.Equal(GrantType.CanonicalUser, grant.Grantee.Type);
 
             //Update the object to have another ACL using Canned ACLs
             PutObjectAclResponse putResp = await ObjectClient.PutObjectAclAsync(BucketName, objectKey, req => req.Acl = ObjectCannedAcl.PublicReadWrite).ConfigureAwait(false);
@@ -44,21 +44,21 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.OnlineTests.Objects
 
             //This is the default owner ACL
             S3Grant first = getResp2.Grants[0];
-            Assert.Equal(TestConstants.TestUserId, first.Id);
-            Assert.Equal(TestConstants.TestUsername, first.Name);
-            Assert.Equal(Permission.FullControl, first.Permission);
-            Assert.Equal(GrantType.User, first.Type);
+            Assert.Equal(TestConstants.TestUserId, first.Grantee.Id);
+            Assert.Equal(TestConstants.TestUsername, first.Grantee.DisplayName);
+            Assert.Equal(S3Permission.FullControl, first.Permission);
+            Assert.Equal(GrantType.CanonicalUser, first.Grantee.Type);
 
             //Next 2 ACLs should be READ + WRITE for AllUsers
             S3Grant second = getResp2.Grants[1];
-            Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", second.Uri);
-            Assert.Equal(Permission.Read, second.Permission);
-            Assert.Equal(GrantType.Group, second.Type);
+            Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", second.Grantee.Uri);
+            Assert.Equal(S3Permission.Read, second.Permission);
+            Assert.Equal(GrantType.Group, second.Grantee.Type);
 
             S3Grant third = getResp2.Grants[2];
-            Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", third.Uri);
-            Assert.Equal(Permission.Write, third.Permission);
-            Assert.Equal(GrantType.Group, third.Type);
+            Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", third.Grantee.Uri);
+            Assert.Equal(S3Permission.Write, third.Permission);
+            Assert.Equal(GrantType.Group, third.Grantee.Type);
         }
     }
 }

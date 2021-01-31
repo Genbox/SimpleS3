@@ -5,6 +5,7 @@ using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Extensions.BackBlazeB2;
+using Genbox.SimpleS3.ProviderBase;
 
 namespace Genbox.SimpleS3.BackBlazeB2
 {

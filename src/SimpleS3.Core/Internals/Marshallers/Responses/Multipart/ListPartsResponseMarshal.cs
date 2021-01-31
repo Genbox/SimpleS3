@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Xml;
-using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Response;
@@ -13,8 +11,6 @@ using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
-using Genbox.SimpleS3.Core.Network.Xml;
-using Genbox.SimpleS3.Core.Network.XmlTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
@@ -28,47 +24,94 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
             response.AbortRuleId = headers.GetOptionalValue(AmzHeaders.XAmzAbortRuleId);
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-            XmlSerializer s = new XmlSerializer(typeof(ListPartsResult));
-
-            using (XmlTextReader r = new XmlTextReader(responseStream))
+            using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {
-                r.Namespaces = false;
+                xmlReader.ReadToDescendant("ListPartsResult");
 
-                ListPartsResult listResult = (ListPartsResult)s.Deserialize(r);
-
-                if (listResult.EncodingType != null)
-                    response.EncodingType = ValueHelper.ParseEnum<EncodingType>(listResult.EncodingType);
-
-                response.ObjectKey = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listResult.Key) : listResult.Key;
-                response.BucketName = listResult.Bucket;
-                response.UploadId = listResult.UploadId;
-
-                if (listResult.StorageClass != null)
-                    response.StorageClass = ValueHelper.ParseEnum<StorageClass>(listResult.StorageClass);
-
-                response.PartNumberMarker = listResult.PartNumberMarker;
-                response.NextPartNumberMarker = listResult.NextPartNumberMarker;
-                response.MaxParts = listResult.MaxParts;
-                response.IsTruncated = listResult.IsTruncated;
-
-                if (listResult.Owner != null)
-                    response.Owner = new S3Identity(listResult.Owner.Id, listResult.Owner.DisplayName);
-
-                if (listResult.Initiator != null)
-                    response.Initiator = new S3Identity(listResult.Initiator.Id, listResult.Initiator.DisplayName);
-
-                if (listResult.Parts != null)
+                while (xmlReader.Read())
                 {
-                    response.Parts = new List<S3Part>(listResult.Parts.Count);
+                    if (xmlReader.NodeType != XmlNodeType.Element)
+                        continue;
 
-                    foreach (Part part in listResult.Parts)
+                    switch (xmlReader.Name)
                     {
-                        response.Parts.Add(new S3Part(part.PartNumber, part.LastModified, part.Size, part.ETag));
+                        case "Key":
+                            response.ObjectKey = xmlReader.ReadString();
+                            break;
+                        case "Bucket":
+                            response.BucketName = xmlReader.ReadString();
+                            break;
+                        case "UploadId":
+                            response.UploadId = xmlReader.ReadString();
+                            break;
+                        case "EncodingType":
+                            response.EncodingType = ValueHelper.ParseEnum<EncodingType>(xmlReader.ReadString());
+                            break;
+                        case "StorageClass":
+                            response.StorageClass = ValueHelper.ParseEnum<StorageClass>(xmlReader.ReadString());
+                            break;
+                        case "PartNumberMarker":
+                            response.PartNumberMarker = ValueHelper.ParseInt(xmlReader.ReadString());
+                            break;
+                        case "NextPartNumberMarker":
+                            response.NextPartNumberMarker = ValueHelper.ParseInt(xmlReader.ReadString());
+                            break;
+                        case "MaxParts":
+                            response.MaxParts = ValueHelper.ParseInt(xmlReader.ReadString());
+                            break;
+                        case "IsTruncated":
+                            response.IsTruncated = ValueHelper.ParseBool(xmlReader.ReadString());
+                            break;
+                        case "Owner":
+                            response.Owner = XmlHelper.ParseOwner(xmlReader);
+                            break;
+                        case "Initiator":
+                            response.Initiator = XmlHelper.ParseOwner(xmlReader, "Initiator");
+                            break;
+                        case "Part":
+                            ParsePart(response, xmlReader);
+                            break;
                     }
                 }
-                else
-                    response.Parts = Array.Empty<S3Part>();
             }
+        }
+
+        private void ParsePart(ListPartsResponse response, XmlTextReader xmlReader)
+        {
+            int? partNumber = null;
+            DateTimeOffset? lastModified = null;
+            long? size = null;
+            string? eTag = null;
+
+            while (xmlReader.Read())
+            {
+                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Part")
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                switch (xmlReader.Name)
+                {
+                    case "PartNumber":
+                        partNumber = ValueHelper.ParseInt(xmlReader.ReadString());
+                        break;
+                    case "LastModified":
+                        lastModified = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                        break;
+                    case "ETag":
+                        eTag = xmlReader.ReadString();
+                        break;
+                    case "Size":
+                        size = ValueHelper.ParseLong(xmlReader.ReadString());
+                        break;
+                }
+            }
+
+            if (partNumber == null || lastModified == null || size == null)
+                throw new InvalidOperationException("Missing required values");
+
+            response.Parts.Add(new S3Part(partNumber.Value, lastModified.Value, size.Value, eTag));
         }
     }
 }

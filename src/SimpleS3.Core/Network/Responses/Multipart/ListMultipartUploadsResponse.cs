@@ -7,6 +7,12 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
 {
     public class ListMultipartUploadsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt
     {
+        public ListMultipartUploadsResponse()
+        {
+            Uploads = new List<S3Upload>();
+            CommonPrefixes = new List<string>();
+        }
+
         /// <summary>Name of the bucket to which the multipart upload was initiated.</summary>
         public string Bucket { get; internal set; }
 

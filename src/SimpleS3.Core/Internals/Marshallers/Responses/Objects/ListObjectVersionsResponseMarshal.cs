@@ -152,42 +152,12 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                         version.StorageClass = ValueHelper.ParseEnum<StorageClass>(r.ReadString());
                         break;
                     case "Owner":
-                        version.Owner = ParseOwner(r);
+                        version.Owner = XmlHelper.ParseOwner(r);
                         break;
                 }
             }
 
             return version;
-        }
-
-        private static S3Identity ParseOwner(XmlTextReader r)
-        {
-            string? displayName = null;
-            string? id = null;
-
-            while (r.Read())
-            {
-                if (r.NodeType == XmlNodeType.EndElement && r.Name == "Owner")
-                    break;
-
-                if (r.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (r.Name)
-                {
-                    case "DisplayName":
-                        displayName = r.ReadString();
-                        break;
-                    case "ID":
-                        id = r.ReadString();
-                        break;
-                }
-            }
-
-            if (id == null || displayName == null)
-                throw new InvalidOperationException("Id or displayname must not be null");
-
-            return new S3Identity(id, displayName);
         }
 
         private static S3DeleteMarker ParseDeleteMarker(XmlTextReader r)
@@ -221,7 +191,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                         lastModified = ValueHelper.ParseDate(r.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
                         break;
                     case "Owner":
-                        owner = ParseOwner(r);
+                        owner = XmlHelper.ParseOwner(r);
                         break;
                 }
             }

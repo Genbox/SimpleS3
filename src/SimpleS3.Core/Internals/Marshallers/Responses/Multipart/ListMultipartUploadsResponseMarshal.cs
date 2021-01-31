@@ -1,17 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Xml;
-using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
-using Genbox.SimpleS3.Core.Network.Xml;
-using Genbox.SimpleS3.Core.Network.XmlTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
@@ -21,70 +18,93 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
     {
         public void MarshalResponse(Config config, ListMultipartUploadsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            XmlSerializer s = new XmlSerializer(typeof(ListMultipartUploadsResult));
-
-            using (XmlTextReader r = new XmlTextReader(responseStream))
+            using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {
-                r.Namespaces = false;
+                xmlReader.ReadToDescendant("ListMultipartUploadsResult");
 
-                ListMultipartUploadsResult listResult = (ListMultipartUploadsResult)s.Deserialize(r);
-
-                if (listResult.EncodingType != null)
-                    response.EncodingType = ValueHelper.ParseEnum<EncodingType>(listResult.EncodingType);
-
-                response.KeyMarker = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listResult.KeyMarker) : listResult.KeyMarker;
-                response.NextKeyMarker = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listResult.NextKeyMarker) : listResult.NextKeyMarker;
-                response.Prefix = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listResult.Prefix) : listResult.Prefix;
-                response.Delimiter = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listResult.Delimiter) : listResult.Delimiter;
-                response.Bucket = listResult.Bucket;
-                response.UploadIdMarker = listResult.UploadIdMarker;
-                response.NextUploadIdMarker = listResult.NextUploadIdMarker;
-                response.MaxUploads = listResult.MaxUploads;
-                response.IsTruncated = listResult.IsTruncated;
-
-                if (listResult.CommonPrefixes != null)
+                while (xmlReader.Read())
                 {
-                    response.CommonPrefixes = new List<string>(listResult.CommonPrefixes.Count);
+                    if (xmlReader.NodeType != XmlNodeType.Element)
+                        continue;
 
-                    foreach (CommonPrefix prefix in listResult.CommonPrefixes)
+                    switch (xmlReader.Name)
                     {
-                        response.CommonPrefixes.Add(prefix.Prefix);
+                        case "Bucket":
+                            response.Bucket = xmlReader.ReadString();
+                            break;
+                        case "KeyMarker":
+                            response.KeyMarker = xmlReader.ReadString();
+                            break;
+                        case "UploadIdMarker":
+                            response.UploadIdMarker = xmlReader.ReadString();
+                            break;
+                        case "NextKeyMarker":
+                            response.NextKeyMarker = xmlReader.ReadString();
+                            break;
+                        case "NextUploadIdMarker":
+                            response.NextUploadIdMarker = xmlReader.ReadString();
+                            break;
+                        case "MaxUploads":
+                            response.MaxUploads = ValueHelper.ParseInt(xmlReader.ReadString());
+                            break;
+                        case "EncodingType":
+                            response.EncodingType = ValueHelper.ParseEnum<EncodingType>(xmlReader.ReadString());
+                            break;
+                        case "IsTruncated":
+                            response.IsTruncated = ValueHelper.ParseBool(xmlReader.ReadString());
+                            break;
+                        case "Upload":
+                            ParseUpload(response, xmlReader);
+                            break;
                     }
                 }
-                else
-                    response.CommonPrefixes = Array.Empty<string>();
-
-                if (listResult.Uploads != null)
-                {
-                    response.Uploads = new List<S3Upload>(listResult.Uploads.Count);
-
-                    foreach (Upload listUpload in listResult.Uploads)
-                    {
-                        S3Upload s3Upload = new S3Upload();
-                        s3Upload.ObjectKey = config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url ? WebUtility.UrlDecode(listUpload.Key) : listUpload.Key;
-                        s3Upload.UploadId = listUpload.UploadId;
-
-                        if (listUpload.StorageClass != null)
-                            s3Upload.StorageClass = ValueHelper.ParseEnum<StorageClass>(listUpload.StorageClass);
-
-                        s3Upload.Initiated = listUpload.Initiated;
-
-                        if (listUpload.Owner != null)
-                        {
-                            s3Upload.Owner = new S3Identity(listUpload.Owner.Id, listUpload.Owner.DisplayName);
-                        }
-
-                        if (listUpload.Initiator != null)
-                        {
-                            s3Upload.Initiator = new S3Identity(listUpload.Initiator.Id, listUpload.Initiator.DisplayName);
-                        }
-
-                        response.Uploads.Add(s3Upload);
-                    }
-                }
-                else
-                    response.Uploads = Array.Empty<S3Upload>();
             }
+        }
+
+        private void ParseUpload(ListMultipartUploadsResponse response, XmlTextReader xmlReader)
+        {
+            string? key = null;
+            string? uploadId = null;
+            S3Identity? initiator = null;
+            S3Identity? owner = null;
+            StorageClass storageClass = StorageClass.Unknown;
+            DateTimeOffset? initiated = null;
+
+            while (xmlReader.Read())
+            {
+                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Upload")
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                switch (xmlReader.Name)
+                {
+                    case "Key":
+                        key = xmlReader.ReadString();
+                        break;
+                    case "UploadId":
+                        uploadId = xmlReader.ReadString();
+                        break;
+                    case "Initiator":
+                        initiator = XmlHelper.ParseOwner(xmlReader, "Initiator");
+                        break;
+                    case "Owner":
+                        owner = XmlHelper.ParseOwner(xmlReader);
+                        break;
+                    case "StorageClass":
+                        storageClass = ValueHelper.ParseEnum<StorageClass>(xmlReader.ReadString());
+                        break;
+                    case "Initiated":
+                        initiated = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                        break;
+                }
+            }
+
+            if (key == null || uploadId == null || initiator == null || owner == null || storageClass == StorageClass.Unknown || initiated == null)
+                throw new InvalidOperationException("Missing required values");
+
+            response.Uploads.Add(new S3Upload(key, uploadId, initiator, owner, storageClass, initiated.Value));
         }
     }
 }

@@ -11,7 +11,7 @@ using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3
+namespace Genbox.SimpleS3.ProviderBase
 {
     /// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
     public abstract class ClientBase : SimpleS3Client, IDisposable

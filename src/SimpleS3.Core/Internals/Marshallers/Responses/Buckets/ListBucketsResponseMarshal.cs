@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
+using Genbox.SimpleS3.Core.Internals.Enums;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
-using Genbox.SimpleS3.Core.Network.Xml;
-using Genbox.SimpleS3.Core.Network.XmlTypes;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
@@ -18,30 +17,102 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
     {
         public void MarshalResponse(Config config, ListBucketsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            XmlSerializer s = new XmlSerializer(typeof(ListAllMyBucketsResult));
-
-            using (XmlTextReader r = new XmlTextReader(responseStream))
+            using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {
-                r.Namespaces = false;
+                xmlReader.ReadToDescendant("ListAllMyBucketsResult");
 
-                ListAllMyBucketsResult listResult = (ListAllMyBucketsResult)s.Deserialize(r);
-
-                if (listResult.Owner != null)
-                    response.Owner = new S3Identity(listResult.Owner.Id, listResult.Owner.DisplayName);
-
-                if (listResult.Buckets != null)
+                while (xmlReader.Read())
                 {
-                    response.Buckets = new List<S3Bucket>(listResult.Buckets.Count);
+                    if (xmlReader.NodeType != XmlNodeType.Element)
+                        continue;
 
-                    foreach (Bucket lb in listResult.Buckets)
+                    switch (xmlReader.Name)
                     {
-
-                        response.Buckets.Add(new S3Bucket(lb.Name, lb.CreationDate));
+                        case "Owner":
+                            ReadOwner(response, xmlReader);
+                            break;
+                        case "Buckets":
+                            ReadBuckets(response, xmlReader);
+                            break;
                     }
                 }
-                else
-                    response.Buckets = Array.Empty<S3Bucket>();
             }
+        }
+
+        private void ReadOwner(ListBucketsResponse response, XmlTextReader xmlReader)
+        {
+            string? id = null;
+            string? displayName = null;
+
+            while (xmlReader.Read())
+            {
+                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Owner")
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                switch (xmlReader.Name)
+                {
+                    case "ID":
+                        id = xmlReader.ReadString();
+                        break;
+                    case "DisplayName":
+                        displayName = xmlReader.ReadString();
+                        break;
+                }
+            }
+
+            if (id == null || displayName == null)
+                throw new InvalidOperationException("Missing required values");
+
+            response.Owner = new S3Identity(id, displayName);
+        }
+
+
+        private void ReadBuckets(ListBucketsResponse response, XmlTextReader xmlReader)
+        {
+            while (xmlReader.Read())
+            {
+                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Buckets")
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                if (xmlReader.Name == "Bucket")
+                    ReadBucket(response, xmlReader);
+            }
+        }
+
+        private void ReadBucket(ListBucketsResponse response, XmlTextReader xmlReader)
+        {
+            string? name = null;
+            DateTimeOffset? creationData = null;
+
+            while (xmlReader.Read())
+            {
+                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Bucket")
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                switch (xmlReader.Name)
+                {
+                    case "Name":
+                        name = xmlReader.ReadString();
+                        break;
+                    case "CreationDate":
+                        creationData = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                        break;
+                }
+            }
+
+            if (name == null || creationData == null)
+                throw new InvalidOperationException("Missing required values");
+
+            response.Buckets.Add(new S3Bucket(name, creationData.Value));
         }
     }
 }

@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Core.Network.Xml;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
@@ -18,14 +16,11 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
         {
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-            XmlSerializer s = new XmlSerializer(typeof(LegalHold));
-
-            using (XmlTextReader r = new XmlTextReader(responseStream))
+            using (XmlTextReader reader = new XmlTextReader(responseStream))
             {
-                r.Namespaces = false;
-
-                LegalHold legalHoldOutput = (LegalHold)s.Deserialize(r);
-                response.LegalHold = legalHoldOutput.Status == "ON";
+                reader.ReadToDescendant("Status");
+                reader.Read();
+                response.LegalHold = reader.Value == "ON";
             }
         }
     }

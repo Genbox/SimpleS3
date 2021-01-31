@@ -2,7 +2,7 @@
 
 namespace Genbox.SimpleS3.Core.Enums
 {
-    public enum Permission
+    public enum S3Permission
     {
         Unknown = 0,
 

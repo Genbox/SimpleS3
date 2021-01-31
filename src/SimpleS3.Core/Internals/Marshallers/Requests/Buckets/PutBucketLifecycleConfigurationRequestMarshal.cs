@@ -81,8 +81,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
                     }
                 }
 
-                if (rule.Id != null)
-                    writer.WriteElement("ID", rule.Id);
+                writer.WriteElement("ID", rule.Id);
 
                 if (rule.NonCurrentVersionExpirationDays != null)
                 {

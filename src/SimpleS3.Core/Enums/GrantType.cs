@@ -4,6 +4,6 @@
     {
         Unknown = 0,
         Group,
-        User,
+        CanonicalUser
     }
 }

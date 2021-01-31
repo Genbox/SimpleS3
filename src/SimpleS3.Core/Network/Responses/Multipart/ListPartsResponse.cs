@@ -8,6 +8,11 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
 {
     public class ListPartsResponse : BaseResponse, IHasRequestCharged, IHasAbort, IHasTruncated, IHasStorageClass, IHasUploadId
     {
+        public ListPartsResponse()
+        {
+            Parts = new List<S3Part>();
+        }
+
         /// <summary>Name of the bucket to which the multipart upload was initiated.</summary>
         public string BucketName { get; internal set; }
 

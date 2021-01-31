@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using System.Xml.Serialization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Response;
@@ -9,7 +8,6 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
-using Genbox.SimpleS3.Core.Network.Xml;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
@@ -28,16 +26,28 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
             response.SseContext = headers.GetOptionalValue(AmzHeaders.XAmzSseContext);
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(InitiateMultipartUploadResult));
-
             using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {
-                xmlReader.Namespaces = false;
+                xmlReader.ReadToDescendant("InitiateMultipartUploadResult");
 
-                InitiateMultipartUploadResult resp = (InitiateMultipartUploadResult)xmlSerializer.Deserialize(xmlReader);
-                response.Bucket = resp.Bucket;
-                response.ObjectKey = resp.Key;
-                response.UploadId = resp.UploadId;
+                while (xmlReader.Read())
+                {
+                    if (xmlReader.NodeType != XmlNodeType.Element)
+                        continue;
+
+                    switch (xmlReader.Name)
+                    {
+                        case "Bucket":
+                            response.Bucket = xmlReader.ReadString();
+                            break;
+                        case "Key":
+                            response.ObjectKey = xmlReader.ReadString();
+                            break;
+                        case "UploadId":
+                            response.UploadId = xmlReader.ReadString();
+                            break;
+                    }
+                }
             }
         }
     }

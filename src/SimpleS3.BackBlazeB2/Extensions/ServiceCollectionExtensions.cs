@@ -1,5 +1,4 @@
 ﻿using System;
-using Genbox.SimpleS3.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Common.Extensions;
@@ -8,6 +7,8 @@ using Genbox.SimpleS3.Extensions.BackBlazeB2;
 using Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
+using Genbox.SimpleS3.ProviderBase;
+using Genbox.SimpleS3.ProviderBase.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.BackBlazeB2.Extensions
