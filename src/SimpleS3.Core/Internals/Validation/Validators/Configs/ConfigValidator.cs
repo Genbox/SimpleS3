@@ -7,9 +7,9 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs
 {
     [UsedImplicitly]
-    internal class S3ConfigValidator : AbstractValidator<Config>
+    internal class ConfigValidator : AbstractValidator<Config>
     {
-        public S3ConfigValidator(IValidator<IAccessKey>? validator = null)
+        public ConfigValidator(IValidator<IAccessKey>? validator = null)
         {
             RuleFor(x => x.RegionCode).NotNull().WithMessage("You must provide a region.");
             RuleFor(x => x.PayloadSignatureMode).IsInEnum().Must(x => x != SignatureMode.Unknown).WithMessage("You must provide a valid payload signature mode.");
