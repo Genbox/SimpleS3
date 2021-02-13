@@ -1,7 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.TestBase;
 using Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
-using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Microsoft.Extensions.Configuration;
 using Xunit.Abstractions;
 
@@ -9,7 +8,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests.Online
 {
     public abstract class B2TestBase : OnlineTestBase
     {
-        protected B2TestBase(ITestOutputHelper outputHelper) : base(outputHelper) { }
+        protected B2TestBase(ITestOutputHelper outputHelper) : base(outputHelper, "TestSetup-BackBlazeB2") { }
 
         protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
         {
@@ -17,12 +16,6 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests.Online
             base.ConfigureCoreBuilder(coreBuilder, configuration);
 
             coreBuilder.UseBackBlazeB2();
-
-            string profileName = "TestSetup-BackBlazeB2";
-
-            coreBuilder.UseProfileManager()
-                       .BindConfigToProfile(profileName)
-                       .UseDataProtection();
         }
     }
 }
