@@ -1,5 +1,4 @@
-﻿using EnumsNET;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Builders
@@ -13,16 +12,16 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public ObjectAclBuilder AddEmail(string email, ObjectPermissions permissions)
         {
-            if (permissions.HasAnyFlags(ObjectPermissions.Read))
+            if (permissions.HasFlag(ObjectPermissions.Read))
                 ReadObject.AddEmail(email);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.ReadAcl))
+            if (permissions.HasFlag(ObjectPermissions.ReadAcl))
                 ReadAcl.AddEmail(email);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.WriteAcl))
+            if (permissions.HasFlag(ObjectPermissions.WriteAcl))
                 WriteAcl.AddEmail(email);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.FullControl))
+            if (permissions.HasFlag(ObjectPermissions.FullControl))
                 FullControl.AddEmail(email);
 
             return this;
@@ -30,16 +29,16 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public ObjectAclBuilder AddUserId(string userId, ObjectPermissions permissions)
         {
-            if (permissions.HasAnyFlags(ObjectPermissions.Read))
+            if (permissions.HasFlag(ObjectPermissions.Read))
                 ReadObject.AddUserId(userId);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.ReadAcl))
+            if (permissions.HasFlag(ObjectPermissions.ReadAcl))
                 ReadAcl.AddUserId(userId);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.WriteAcl))
+            if (permissions.HasFlag(ObjectPermissions.WriteAcl))
                 WriteAcl.AddUserId(userId);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.FullControl))
+            if (permissions.HasFlag(ObjectPermissions.FullControl))
                 FullControl.AddUserId(userId);
 
             return this;
@@ -47,16 +46,16 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public ObjectAclBuilder AddGroup(string uri, ObjectPermissions permissions)
         {
-            if (permissions.HasAnyFlags(ObjectPermissions.Read))
+            if (permissions.HasFlag(ObjectPermissions.Read))
                 ReadObject.AddGroup(uri);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.ReadAcl))
+            if (permissions.HasFlag(ObjectPermissions.ReadAcl))
                 ReadAcl.AddGroup(uri);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.WriteAcl))
+            if (permissions.HasFlag(ObjectPermissions.WriteAcl))
                 WriteAcl.AddGroup(uri);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.FullControl))
+            if (permissions.HasFlag(ObjectPermissions.FullControl))
                 FullControl.AddGroup(uri);
 
             return this;
@@ -64,16 +63,16 @@ namespace Genbox.SimpleS3.Core.Builders
 
         public ObjectAclBuilder AddGroup(PredefinedGroup group, ObjectPermissions permissions)
         {
-            if (permissions.HasAnyFlags(ObjectPermissions.Read))
+            if (permissions.HasFlag(ObjectPermissions.Read))
                 ReadObject.AddGroup(group);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.ReadAcl))
+            if (permissions.HasFlag(ObjectPermissions.ReadAcl))
                 ReadAcl.AddGroup(group);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.WriteAcl))
+            if (permissions.HasFlag(ObjectPermissions.WriteAcl))
                 WriteAcl.AddGroup(group);
 
-            if (permissions.HasAnyFlags(ObjectPermissions.FullControl))
+            if (permissions.HasFlag(ObjectPermissions.FullControl))
                 FullControl.AddGroup(group);
 
             return this;

@@ -10,7 +10,6 @@ using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
-using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Authentication;

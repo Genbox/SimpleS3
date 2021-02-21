@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Enums
 {
@@ -7,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Enums
     {
         Unknown,
 
-        [EnumMember(Value = "url")]
+        [EnumValue("url")]
         Url
     }
 }

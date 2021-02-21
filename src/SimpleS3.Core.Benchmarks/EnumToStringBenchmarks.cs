@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using EnumsNET;
-using Genbox.SimpleS3.Extensions.AwsS3;
+using Genbox.SimpleS3.Core.Common.Helpers;
 
 namespace Genbox.SimpleS3.Core.Benchmarks
 {
@@ -10,19 +10,19 @@ namespace Genbox.SimpleS3.Core.Benchmarks
         [Benchmark]
         public string? EnumsDotNet()
         {
-            return AwsRegion.ApEast1.AsString(EnumFormat.EnumMemberValue);
+            return TestEnum.Value3.AsString(EnumFormat.EnumMemberValue);
         }
 
         [Benchmark]
         public string DotNet()
         {
-            return AwsRegion.ApEast1.ToString();
+            return TestEnum.Value3.ToString();
         }
 
         [Benchmark]
-        public string DotNetUpper()
+        public string Custom()
         {
-            return AwsRegion.ApEast1.ToString().ToUpperInvariant();
+            return EnumHelper.AsString(TestEnum.Value3);
         }
     }
 }

@@ -9,7 +9,6 @@ using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
-using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;

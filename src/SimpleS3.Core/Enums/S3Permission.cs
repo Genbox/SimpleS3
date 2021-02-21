@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Enums
 {
@@ -6,13 +7,13 @@ namespace Genbox.SimpleS3.Core.Enums
     {
         Unknown = 0,
 
-        [EnumMember(Value = "FULL_CONTROL")]
+        [EnumValue("FULL_CONTROL")]
         FullControl,
 
-        [EnumMember(Value = "READ")]
+        [EnumValue("READ")]
         Read,
 
-        [EnumMember(Value = "WRITE")]
+        [EnumValue("WRITE")]
         Write
     }
 }

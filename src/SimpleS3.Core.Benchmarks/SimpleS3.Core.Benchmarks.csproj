@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AwsSignatureVersion4" Version="1.4.0" />
     <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+    <PackageReference Include="Enums.NET" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>

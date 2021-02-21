@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Enums
 {
@@ -13,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Enums
         /// retention period. To override or remove governance-mode retention settings, a user must have the s3:BypassGovernanceRetention permission and must
         /// explicitly include x-amz-bypass-governance-retention:true as a request header with any request that requires overriding governance mode.
         /// </summary>
-        [EnumMember(Value = "GOVERNANCE")]
+        [EnumValue("GOVERNANCE")]
         Governance,
 
         /// <summary>
@@ -21,7 +22,7 @@ namespace Genbox.SimpleS3.Core.Enums
         /// When an object is locked in compliance mode, its retention mode can't be changed, and its retention period can't be shortened. Compliance mode
         /// ensures that an object version can't be overwritten or deleted for the duration of the retention period.
         /// </summary>
-        [EnumMember(Value = "COMPLIANCE")]
+        [EnumValue("COMPLIANCE")]
         Compliance
     }
 }

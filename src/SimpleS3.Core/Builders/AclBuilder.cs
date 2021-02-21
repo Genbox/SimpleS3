@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using EnumsNET;
 using Genbox.HttpBuilders.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Core.Builders
@@ -153,7 +153,7 @@ namespace Genbox.SimpleS3.Core.Builders
         /// <param name="group">One of Amazon's predefined groups</param>
         public AclBuilder AddGroup(PredefinedGroup group)
         {
-            string? groupStr = group.AsString(EnumFormat.EnumMemberValue);
+            string? groupStr = EnumHelper.AsString(group);
 
             Validator.RequireNotNull(groupStr, nameof(group), "Bug: PredefinedGroup is missing EnumValue");
 

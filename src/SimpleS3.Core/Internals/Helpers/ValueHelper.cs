@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
-using EnumsNET;
 using Genbox.SimpleS3.Core.Common.Exceptions;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Enums;
@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
     {
         public static T ParseEnum<T>(string? value) where T : struct, Enum
         {
-            return EnumsNET.Enums.TryParse(value, true, out T parsedValue, EnumFormat.EnumMemberValue, EnumFormat.Name, EnumFormat.UnderlyingValue) ? parsedValue : default;
+            return EnumHelper.TryParse(value, out T parsedValue) ? parsedValue : default;
         }
 
         public static int ParseInt(string? value)
@@ -68,7 +68,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
 
         public static string EnumToString<T>(T value) where T : struct, Enum
         {
-            string? str = value.AsString(EnumFormat.EnumMemberValue, EnumFormat.Name);
+            string? str = EnumHelper.AsString(value);
 
             if (str == null)
                 throw new S3Exception("Unable to parse enum");

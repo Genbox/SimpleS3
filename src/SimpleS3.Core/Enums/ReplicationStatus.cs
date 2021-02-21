@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Enums
 {
@@ -6,16 +7,16 @@ namespace Genbox.SimpleS3.Core.Enums
     {
         Unknown = 0,
 
-        [EnumMember(Value = "PENDING")]
+        [EnumValue("PENDING")]
         Pending,
 
-        [EnumMember(Value = "COMPLETED")]
+        [EnumValue("COMPLETED")]
         Completed,
 
-        [EnumMember(Value = "FAILED")]
+        [EnumValue("FAILED")]
         Failed,
 
-        [EnumMember(Value = "REPLICA")]
+        [EnumValue("REPLICA")]
         Replica
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Core.Enums
 {
@@ -13,14 +14,14 @@ namespace Genbox.SimpleS3.Core.Enums
         /// you have the option to create and manage encryption keys yourself, or use a default key that is unique to you, the service you're using, and the
         /// Region you're working in.
         /// </summary>
-        [EnumMember(Value = "aws:kms")]
+        [EnumValue("aws:kms")]
         AwsKms,
 
         /// <summary>
         /// Each object is encrypted with a unique key. As an additional safeguard, it encrypts the key itself with a master key that it regularly
         /// rotates.
         /// </summary>
-        [EnumMember(Value = "AES256")]
+        [EnumValue("AES256")]
         Aes256
     }
 }
