@@ -20,17 +20,15 @@ namespace Genbox.SimpleS3.Core.TestBase
 {
     public abstract class OnlineTestBase : UnitTestBase
     {
-        private readonly string _profileName;
 
-        protected OnlineTestBase(ITestOutputHelper outputHelper, string profileName) : base(outputHelper)
+        protected OnlineTestBase(ITestOutputHelper outputHelper, string profileName) : base(outputHelper, profileName)
         {
-            _profileName = profileName;
             IProfileManager profileManager = Services.GetRequiredService<IProfileManager>();
 
-            IProfile? profile = profileManager.GetProfile(_profileName);
+            IProfile? profile = profileManager.GetProfile(profileName);
 
             if (profile == null)
-                throw new InvalidOperationException($"Profile '{_profileName}' not found. Remember to run the TestSetup utility");
+                throw new InvalidOperationException($"Profile '{profileName}' not found. Remember to run the TestSetup utility");
 
             string uniqId = profile.KeyId.Substring(0, 8);
             BucketName = "testbucket-" + uniqId.ToLowerInvariant();
@@ -46,9 +44,12 @@ namespace Genbox.SimpleS3.Core.TestBase
             if (proxySection != null && proxySection["UseProxy"].Equals("true", StringComparison.OrdinalIgnoreCase))
                 httpBuilder.UseProxy(proxySection["ProxyAddress"]);
 
-            coreBuilder.UseProfileManager()
-                       .BindConfigToProfile(_profileName)
-                       .UseDataProtection();
+            if (ProfileName != null)
+            {
+                coreBuilder.UseProfileManager()
+                           .BindConfigToProfile(ProfileName)
+                           .UseDataProtection();
+            }
 
             base.ConfigureCoreBuilder(coreBuilder, configuration);
         }

@@ -15,8 +15,10 @@ namespace Genbox.SimpleS3.Core.TestBase
 {
     public abstract class UnitTestBase : IDisposable
     {
-        protected UnitTestBase(ITestOutputHelper outputHelper)
+
+        protected UnitTestBase(ITestOutputHelper outputHelper, string? profileName = null)
         {
+            ProfileName = profileName;
             IConfigurationRoot configRoot = new ConfigurationBuilder()
                                             .AddJsonFile("Config.json", false)
                                             .Build();
@@ -45,25 +47,18 @@ namespace Genbox.SimpleS3.Core.TestBase
             ConfigureServices(collection);
 
             Services = collection.BuildServiceProvider();
-
-            ObjectClient = Services.GetRequiredService<IObjectClient>();
-            ObjectOperations = Services.GetRequiredService<IObjectOperations>();
-            BucketClient = Services.GetRequiredService<IBucketClient>();
-            MultipartClient = Services.GetRequiredService<IMultipartClient>();
-            SignedObjectClient = Services.GetRequiredService<ISignedObjectClient>();
-            MultipartTransfer = Services.GetRequiredService<IMultipartTransfer>();
-            Transfer = Services.GetRequiredService<ITransfer>();
         }
 
         protected ServiceProvider Services { get; }
         protected string BucketName { get; set; }
-        protected IObjectOperations ObjectOperations { get; }
-        protected IObjectClient ObjectClient { get; }
-        protected IBucketClient BucketClient { get; }
-        protected IMultipartClient MultipartClient { get; }
-        protected IMultipartTransfer MultipartTransfer { get; }
-        protected ISignedObjectClient SignedObjectClient { get; }
-        protected ITransfer Transfer { get; }
+        protected string? ProfileName { get; }
+        protected IObjectOperations ObjectOperations => Services.GetRequiredService<IObjectOperations>();
+        protected IObjectClient ObjectClient => Services.GetRequiredService<IObjectClient>();
+        protected IBucketClient BucketClient => Services.GetRequiredService<IBucketClient>();
+        protected IMultipartClient MultipartClient => Services.GetRequiredService<IMultipartClient>();
+        protected IMultipartTransfer MultipartTransfer => Services.GetRequiredService<IMultipartTransfer>();
+        protected ISignedObjectClient SignedObjectClient => Services.GetRequiredService<ISignedObjectClient>();
+        protected ITransfer Transfer => Services.GetRequiredService<ITransfer>();
 
         public virtual void Dispose()
         {

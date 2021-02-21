@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
             IProfile? profile = profileManager.GetProfile(profileName);
 
             if (profile == null)
-                throw new S3Exception("The profile " + profileName + " does not exist.");
+                throw new S3Exception($"The profile '{profileName}' does not exist.");
 
             config.Credentials = new ProfileAccessKey(profile);
             config.RegionCode = profile.RegionCode;

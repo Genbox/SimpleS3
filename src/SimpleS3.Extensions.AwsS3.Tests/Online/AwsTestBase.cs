@@ -12,10 +12,8 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online
 
         protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
         {
-            //Call the base method here. we need to overwrite the config with the BackBlazeB2 profile
-            base.ConfigureCoreBuilder(coreBuilder, configuration);
-
             coreBuilder.UseAwsS3();
+            base.ConfigureCoreBuilder(coreBuilder, configuration);
         }
     }
 }

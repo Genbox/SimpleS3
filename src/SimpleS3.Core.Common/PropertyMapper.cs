@@ -22,6 +22,11 @@ namespace Genbox.SimpleS3.Core.Common
                 {
                     if (destProp.Name == sourceProp.Name)
                     {
+                        object? sourceVal = sourceProp.GetValue(source, null);
+
+                        if (sourceVal == null)
+                            continue;
+
                         destProp.SetValue(destination, sourceProp.GetValue(source, null), null);
                     }
                 }
