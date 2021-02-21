@@ -2,7 +2,7 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Request;
-using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.AwsS3;
 using Microsoft.Extensions.DependencyInjection;
