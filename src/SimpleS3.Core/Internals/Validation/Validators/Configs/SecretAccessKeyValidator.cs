@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs
                 .NotEmpty().WithMessage("You must provide a key id.")
                 .Length(20).WithMessage("The key id must be 20 characters long.");
 
-            RuleFor(x => x.AccessKey)
+            RuleFor(x => x.SecretKey)
                 .NotNull().WithMessage("You must provide a secret access key.");
         }
     }

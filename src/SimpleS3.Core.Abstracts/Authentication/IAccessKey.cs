@@ -3,6 +3,6 @@
     public interface IAccessKey
     {
         string KeyId { get; }
-        byte[] AccessKey { get; }
+        byte[] SecretKey { get; }
     }
 }

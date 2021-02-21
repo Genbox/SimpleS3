@@ -32,7 +32,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             //Documentation says the key is valid for 7 days, but tests shows that is not true.
             string date = dateTime.ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo);
 
-            byte[] accessKey = KeyHelper.UnprotectKey(_options.Value.Credentials.AccessKey, _protector);
+            byte[] accessKey = KeyHelper.UnprotectKey(_options.Value.Credentials.SecretKey, _protector);
             byte[] key = Encoding.UTF8.GetBytes(SigningConstants.Scheme).Concat(accessKey).ToArray();
 
             byte[] hashDate = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(date), key);

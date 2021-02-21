@@ -2,6 +2,7 @@
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Authentication;
 
 namespace Genbox.SimpleS3.Extensions.BackBlazeB2
 {
@@ -14,6 +15,8 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
         {
             ProviderType = "BackBlazeB2";
         }
+
+        public B2Config(string keyId, string secretKey, B2Region region) : this(new StringAccessKey(keyId, secretKey), region) { }
 
         public B2Config(IAccessKey credentials, B2Region region) : this()
         {

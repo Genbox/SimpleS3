@@ -8,10 +8,10 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
         public ProfileAccessKey(IProfile profile)
         {
             KeyId = profile.KeyId;
-            AccessKey = profile.AccessKey;
+            SecretKey = profile.AccessKey;
         }
 
         public string KeyId { get; }
-        public byte[] AccessKey { get; }
+        public byte[] SecretKey { get; }
     }
 }
