@@ -24,9 +24,6 @@ namespace Genbox.SimpleS3.AwsS3.Tests
 
             await client.GetObjectAsync("testbucket", "GetObjectAsync").ConfigureAwait(false);
             Assert.Equal("https://testbucket.s3.us-east-1.amazonaws.com/GetObjectAsync", driver.SendResource);
-
-            Assert.True((await client.GetObjectAsync("testbucket", "GetDataAsync").ConfigureAwait(false)).IsSuccess);
-            Assert.Equal("https://testbucket.s3.us-east-1.amazonaws.com/GetDataAsync", driver.SendResource);
         }
     }
 }
