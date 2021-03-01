@@ -6,6 +6,7 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Extensions.BackBlazeB2;
 using Genbox.SimpleS3.ProviderBase;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.BackBlazeB2
 {
@@ -35,10 +36,10 @@ namespace Genbox.SimpleS3.BackBlazeB2
         /// <summary>Creates a new instance of <see cref="B2Client" /></summary>
         /// <param name="config">The configuration you want to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public B2Client(B2Config config, IWebProxy? proxy = null) : base(config, proxy) { }
+        public B2Client(B2Config config, IWebProxy? proxy = null) : base(new B2InputValidator(), new B2UrlBuilder(Options.Create(config)), config, proxy) { }
 
-        public B2Client(B2Config options, INetworkDriver networkDriver) : base(options, networkDriver) { }
+        public B2Client(B2Config config, INetworkDriver networkDriver) : base(new B2InputValidator(), new B2UrlBuilder(Options.Create(config)), config, networkDriver) { }
 
-        public B2Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer) { }
+        internal B2Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer) { }
     }
 }

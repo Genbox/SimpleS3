@@ -6,6 +6,7 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Extensions.AwsS3;
 using Genbox.SimpleS3.ProviderBase;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.AwsS3
 {
@@ -35,10 +36,10 @@ namespace Genbox.SimpleS3.AwsS3
         /// <summary>Creates a new instance of <see cref="S3Client" /></summary>
         /// <param name="config">The configuration you want to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public S3Client(AwsConfig config, IWebProxy? proxy = null) : base(config, proxy) { }
+        public S3Client(AwsConfig config, IWebProxy? proxy = null) : base(new AwsInputValidator(), new AwsUrlBuilder(Options.Create(config)), config, proxy) { }
 
-        public S3Client(AwsConfig options, INetworkDriver networkDriver) : base(options, networkDriver) { }
+        public S3Client(AwsConfig config, INetworkDriver networkDriver) : base(new AwsInputValidator(), new AwsUrlBuilder(Options.Create(config)), config, networkDriver) { }
 
-        public S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer) { }
+        internal S3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer) { }
     }
 }
