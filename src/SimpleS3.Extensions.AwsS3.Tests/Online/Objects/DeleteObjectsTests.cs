@@ -46,7 +46,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
             PutObjectResponse putResp2 = await ObjectClient.PutObjectAsync(BucketName, nameof(DeleteObjectsRequestPayer), null, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
             Assert.True(putResp2.RequestCharged);
 
-            DeleteObjectsResponse delResp2 = await ObjectClient.DeleteObjectsAsync(BucketName, new[] { nameof(DeleteObjectsRequestPayer) }, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
+            DeleteObjectsResponse delResp2 = await ObjectClient.DeleteObjectsAsync(BucketName, new[] { new S3DeleteInfo(nameof(DeleteObjectsRequestPayer)) }, req => req.RequestPayer = Payer.Requester).ConfigureAwait(false);
             Assert.True(delResp2.RequestCharged);
         }
     }

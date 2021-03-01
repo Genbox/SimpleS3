@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -54,9 +59,10 @@ namespace Genbox.SimpleS3.Core.TestBase
             base.ConfigureCoreBuilder(coreBuilder, configuration);
         }
 
-        protected async Task<PutObjectResponse> UploadAsync(string bucketName, string objectKey, Action<PutObjectRequest>? config = null, bool assumeSuccess = true)
+        protected async Task<PutObjectResponse> UploadAsync(string bucketName, string objectKey, string content, Action<PutObjectRequest>? config = null, bool assumeSuccess = true)
         {
-            PutObjectResponse resp = await ObjectClient.PutObjectStringAsync(bucketName, objectKey, "test", Encoding.UTF8, config).ConfigureAwait(false);
+            await using MemoryStream ms = new MemoryStream(Constants.Utf8NoBom.GetBytes(content));
+            PutObjectResponse resp = await ObjectClient.PutObjectAsync(bucketName, objectKey, ms, config).ConfigureAwait(false);
 
             if (assumeSuccess)
                 Assert.True(resp.IsSuccess);
@@ -64,6 +70,11 @@ namespace Genbox.SimpleS3.Core.TestBase
                 Assert.False(resp.IsSuccess);
 
             return resp;
+        }
+
+        protected Task<PutObjectResponse> UploadAsync(string bucketName, string objectKey, Action<PutObjectRequest>? config = null, bool assumeSuccess = true)
+        {
+            return UploadAsync(bucketName, objectKey, "test", config, assumeSuccess);
         }
 
         protected Task<PutObjectResponse> UploadAsync(string objectKey, Action<PutObjectRequest>? config = null, bool assumeSuccess = true)
@@ -142,17 +153,48 @@ namespace Genbox.SimpleS3.Core.TestBase
             }
             finally
             {
-                int errors = 0;
-                await foreach (S3DeleteError _ in ObjectClient.DeleteAllObjectsAsync(tempBucketName, true))
-                {
-                    errors++;
-                }
+                int errors = await DeleteAllObjects(ObjectClient, tempBucketName);
 
                 Assert.Equal(0, errors);
 
                 DeleteBucketResponse del2Resp = await BucketClient.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
                 Assert.True(del2Resp.IsSuccess);
             }
+        }
+
+        private static async Task<int> DeleteAllObjects(IObjectClient client, string bucket)
+        {
+            ListObjectVersionsResponse response;
+            Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = null);
+
+            int failed = 0;
+
+            do
+            {
+                response = await responseTask;
+
+                if (!response.IsSuccess)
+                    return -1;
+
+                if (response.Versions.Count + response.DeleteMarkers.Count == 0)
+                    break;
+
+                string keyMarker = response.NextKeyMarker;
+                responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = keyMarker);
+
+                IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
+                                                           .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
+
+                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucket, delete, req => req.Quiet = false).ConfigureAwait(false);
+
+                if (!multiDelResponse.IsSuccess)
+                    return -1;
+
+                failed += multiDelResponse.Errors.Count;
+
+            } while (response.IsTruncated);
+
+            return failed;
         }
     }
 }

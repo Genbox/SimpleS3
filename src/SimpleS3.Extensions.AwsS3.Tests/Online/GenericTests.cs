@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
@@ -19,7 +18,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online
 
                 PutObjectResponse? putResp = await ObjectClient.PutObjectAsync(name, objectKey, null).ConfigureAwait(false);
                 await ObjectClient.GetObjectAsync(name, objectKey).ConfigureAwait(false);
-                await ObjectClient.DeleteObjectAsync(name, objectKey, putResp.VersionId).ConfigureAwait(false);
+                await ObjectClient.DeleteObjectAsync(name, objectKey, x => x.VersionId = putResp.VersionId).ConfigureAwait(false);
             }).ConfigureAwait(false);
         }
     }

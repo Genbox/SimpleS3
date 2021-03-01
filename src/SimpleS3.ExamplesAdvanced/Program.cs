@@ -44,7 +44,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
 
             Random random = new Random();
 
-            byte[] data = new byte[1024 * 1024 * 64];
+            byte[] data = new byte[1024 * 8];
             random.NextBytes(data); //Fill the buffer with random data
 
             byte[] encryptionKey = Encoding.UTF8.GetBytes("This is our secret encryption ke");
@@ -65,7 +65,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             await using (MemoryStream ms = new MemoryStream(data))
             {
                 //Upload using multiple concurrent connections and use server-side encryption with our own key.
-                await client.MultipartUploadAsync(bucketName, objectName, ms, 1024 * 1024 * 5, 4, request =>
+                await client.PutObjectAsync(bucketName, objectName, ms, request =>
                 {
                     request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
                     request.SseCustomerKey = encryptionKey;
@@ -76,24 +76,18 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
 
         private static async Task<byte[]> DownloadData(ISimpleS3Client client, string bucketName, string objectName, byte[] encryptionKey)
         {
-            await using (MemoryStream ms = new MemoryStream())
+            //Download using multiple concurrent connections and use server-side encryption with our own key.
+            GetObjectResponse resp = await client.GetObjectAsync(bucketName, objectName, request =>
             {
-                //Download using multiple concurrent connections and use server-side encryption with our own key.
-                IAsyncEnumerable<GetObjectResponse>? asynEnum = client.MultipartDownloadAsync(bucketName, objectName, ms, numParallelParts: 4, config: request =>
-                {
-                    request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
-                    request.SseCustomerKey = encryptionKey;
-                    request.SseCustomerKeyMd5 = MD5.Create().ComputeHash(encryptionKey);
-                });
+                request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
+                request.SseCustomerKey = encryptionKey;
+                request.SseCustomerKeyMd5 = MD5.Create().ComputeHash(encryptionKey);
+            });
 
-                await foreach (GetObjectResponse resp in asynEnum)
-                {
-                    if (!resp.IsSuccess)
-                        Console.WriteLine("A chunk failed");
-                }
+            if (!resp.IsSuccess)
+                Console.WriteLine("A chunk failed");
 
-                return ms.ToArray();
-            }
+            return await resp.Content.AsDataAsync();
         }
 
         private static ISimpleS3Client BuildClient(IWebProxy? proxy = null)

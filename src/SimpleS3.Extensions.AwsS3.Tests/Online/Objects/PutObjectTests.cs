@@ -59,7 +59,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
         [InlineData(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~/")]
         public async Task PutObjectValidCharacters(string name)
         {
-            PutObjectResponse putResp = await ObjectClient.PutObjectStringAsync(BucketName, name, string.Empty).ConfigureAwait(false);
+            PutObjectResponse putResp = await UploadAsync(BucketName, name).ConfigureAwait(false);
             Assert.True(putResp.IsSuccess);
 
             GetObjectResponse getResp = await ObjectClient.GetObjectAsync(BucketName, name).ConfigureAwait(false);
@@ -72,9 +72,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
         public async Task PutObjectInvalidCharacters(string name)
         {
             //These 2 test cases came after an exhaustive search in the whole UTF-16 character space.
-
-            PutObjectResponse resp = await ObjectClient.PutObjectStringAsync(BucketName, name, string.Empty).ConfigureAwait(false);
-            Assert.False(resp.IsSuccess);
+            await UploadAsync(BucketName, name, assumeSuccess:false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -309,7 +307,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
         [Fact]
         public async Task PutObjectTooManyTags()
         {
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await ObjectClient.PutObjectStringAsync(BucketName, nameof(PutObjectTooManyTags), "data", null, request =>
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await UploadAsync(BucketName, nameof(PutObjectTooManyTags), request =>
             {
                 for (int i = 0; i < 51; i++)
                 {

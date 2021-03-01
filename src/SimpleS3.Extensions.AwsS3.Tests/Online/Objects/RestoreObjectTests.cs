@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
                 sw.WriteLine("\"donald trump\",7,present");
                 sw.WriteLine("fantastic fox,31,missing");
 
-                await ObjectClient.PutObjectStringAsync(BucketName, nameof(RestoreWithSelect), sw.ToString(), Encoding.UTF8, req => req.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
+                await UploadAsync(BucketName, nameof(RestoreWithSelect), sw.ToString(), req => req.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
             }
 
             RestoreObjectResponse restoreResp = await ObjectClient.RestoreObjectAsync(BucketName, nameof(RestoreWithSelect), req =>

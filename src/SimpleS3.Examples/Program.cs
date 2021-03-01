@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.AwsS3;
@@ -41,7 +43,7 @@ namespace Genbox.SimpleS3.Examples
             Console.WriteLine("Using the standard API");
 
             //We upload and object to the bucket with "Hello World" inside it.
-            PutObjectResponse putResp = await client.PutObjectStringAsync(bucketName, objectName, "Hello World");
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, objectName, new MemoryStream(Encoding.UTF8.GetBytes("Hello World")));
 
             if (putResp.IsSuccess)
             {

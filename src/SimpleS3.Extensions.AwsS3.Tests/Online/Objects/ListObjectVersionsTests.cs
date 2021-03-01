@@ -30,12 +30,12 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
                 GetBucketVersioningResponse getVerResp = await BucketClient.GetBucketVersioningAsync(bucket);
                 Assert.True(getVerResp.Status);
 
-                PutObjectResponse putResp1 = await ObjectClient.PutObjectStringAsync(bucket, "1", "a").ConfigureAwait(false);
-                PutObjectResponse putResp2 = await ObjectClient.PutObjectStringAsync(bucket, "2", "aa").ConfigureAwait(false);
-                PutObjectResponse putResp3 = await ObjectClient.PutObjectStringAsync(bucket, "3", "aaa").ConfigureAwait(false);
+                PutObjectResponse putResp1 = await UploadAsync(bucket, "1", "a").ConfigureAwait(false);
+                PutObjectResponse putResp2 = await UploadAsync(bucket, "2", "aa").ConfigureAwait(false);
+                PutObjectResponse putResp3 = await UploadAsync(bucket, "3", "aaa").ConfigureAwait(false);
 
                 DeleteObjectResponse putResp4 = await ObjectClient.DeleteObjectAsync(bucket, "2"); //Delete object 2
-                PutObjectResponse putResp5 = await ObjectClient.PutObjectStringAsync(bucket, "3", "aaaa").ConfigureAwait(false); //Overwrite object 3
+                PutObjectResponse putResp5 = await UploadAsync(bucket, "3", "aaaa").ConfigureAwait(false); //Overwrite object 3
 
                 ListObjectVersionsResponse listResp = await ObjectClient.ListObjectVersionsAsync(bucket);
                 Assert.True(listResp.IsSuccess);
@@ -115,7 +115,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
                 int concurrent = 10;
                 int count = 11;
 
-                await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), i => ObjectClient.PutObjectStringAsync(bucket, i.ToString(), string.Empty), concurrent, CancellationToken.None);
+                await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), i => UploadAsync(bucket, i.ToString()), concurrent, CancellationToken.None);
 
                 ListObjectVersionsResponse listResp = await ObjectClient.ListObjectVersionsAsync(bucket, req => req.MaxKeys = count - 1).ConfigureAwait(false);
                 Assert.True(listResp.IsSuccess);
@@ -139,8 +139,8 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
                 string tempObjName = "object-" + Guid.NewGuid();
                 string tempObjName2 = "something-" + Guid.NewGuid();
 
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
+                await UploadAsync(bucket, tempObjName).ConfigureAwait(false);
+                await UploadAsync(bucket, tempObjName2).ConfigureAwait(false);
 
                 ListObjectVersionsResponse? resp = await ObjectClient.ListObjectVersionsAsync(bucket, req => req.Delimiter = "-").ConfigureAwait(false);
                 Assert.True(resp.IsSuccess);
@@ -159,7 +159,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
             {
                 string tempObjName = "!#/()";
 
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, string.Empty).ConfigureAwait(false);
+                await UploadAsync(bucket, tempObjName).ConfigureAwait(false);
 
                 ListObjectVersionsResponse resp = await ObjectClient.ListObjectVersionsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
                 Assert.True(resp.IsSuccess);
@@ -180,8 +180,8 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
                 string tempObjName = "object-" + Guid.NewGuid();
                 string tempObjName2 = "something-" + Guid.NewGuid();
 
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName, "hello").ConfigureAwait(false);
-                await ObjectClient.PutObjectStringAsync(bucket, tempObjName2, "world!").ConfigureAwait(false);
+                await UploadAsync(bucket, tempObjName).ConfigureAwait(false);
+                await UploadAsync(bucket, tempObjName2).ConfigureAwait(false);
 
                 ListObjectVersionsResponse resp = await ObjectClient.ListObjectVersionsAsync(bucket, req => req.Prefix = "object").ConfigureAwait(false);
                 Assert.True(resp.IsSuccess);
