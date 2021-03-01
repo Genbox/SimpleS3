@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3.ProviderBase
 {
     /// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
-    public abstract class ClientBase : SimpleS3Client, IDisposable
+    public abstract class ClientBase : IDisposable
     {
         private ServiceProvider? _serviceProvider;
 
@@ -48,8 +48,10 @@ namespace Genbox.SimpleS3.ProviderBase
 
         protected internal ClientBase(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
         {
-            Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+            S3Client = new SimpleS3Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
+
+        protected SimpleS3Client S3Client { get; private set; }
 
         public void Dispose()
         {
@@ -67,7 +69,7 @@ namespace Genbox.SimpleS3.ProviderBase
             IMultipartTransfer multipartTransfer = _serviceProvider.GetRequiredService<IMultipartTransfer>();
             ITransfer transfer = _serviceProvider.GetRequiredService<ITransfer>();
 
-            Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+            S3Client = new SimpleS3Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
 
         protected virtual void Dispose(bool disposing)
