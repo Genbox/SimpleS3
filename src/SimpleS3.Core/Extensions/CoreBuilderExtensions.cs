@@ -1,4 +1,5 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
+﻿#if COMMERCIAL
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Internals.Pools;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,3 +19,4 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
     }
 }
+#endif

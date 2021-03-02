@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if COMMERCIAL
+using System;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Common.Extensions;
@@ -53,3 +54,4 @@ namespace Genbox.SimpleS3.BackBlazeB2.Extensions
         }
     }
 }
+#endif

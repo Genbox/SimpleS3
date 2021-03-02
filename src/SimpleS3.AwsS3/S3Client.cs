@@ -229,6 +229,7 @@ namespace Genbox.SimpleS3.AwsS3
             return S3Client.CreateDownload(bucket, objectKey);
         }
 
+#if COMMERCIAL
         public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
             return S3Client.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
@@ -243,5 +244,6 @@ namespace Genbox.SimpleS3.AwsS3
         {
             return S3Client.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
         }
+#endif
     }
 }

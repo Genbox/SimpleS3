@@ -236,6 +236,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Multipart
             Assert.Equal(file, await getResp.Content!.AsDataAsync().ConfigureAwait(false));
         }
 
+#if COMMERCIAL
         [Fact]
         public async Task MultipartViaClient()
         {
@@ -304,5 +305,6 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Multipart
 
             Assert.Equal(10, count);
         }
+#endif
     }
 }

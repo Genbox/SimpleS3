@@ -1,16 +1,20 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
+#if COMMERCIAL
+using System.Collections.Generic;
+using System.IO;
+#endif
 
 namespace Genbox.SimpleS3.Core.Abstracts
 {
     public interface IDownload
     {
+#if COMMERCIAL
         IAsyncEnumerable<GetObjectResponse> DownloadMultipartAsync(Stream output, CancellationToken token = default);
+#endif
 
         /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
         IDownload WithEncryptionCustomerKey(byte[] encryptionKey);

@@ -13,8 +13,10 @@ using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
-using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
+#if COMMERCIAL
+using Genbox.SimpleS3.Core.Network.Responses.Multipart;
+#endif
 
 namespace Genbox.SimpleS3.Core.Internals.Fluent
 {
@@ -190,6 +192,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
             return this;
         }
 
+#if COMMERCIAL
         public Task<CompleteMultipartUploadResponse> UploadMultipartAsync(Stream data, CancellationToken token = default)
         {
             _request.Method = HttpMethod.POST;
@@ -197,6 +200,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
 
             return _multipartTransfer.MultipartUploadAsync(_request, data, token: token);
         }
+#endif
 
         public Task<PutObjectResponse> UploadAsync(Stream data, CancellationToken token = default)
         {

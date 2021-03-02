@@ -27,6 +27,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Configurations>Debug;Release;Commercial</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +38,10 @@
     <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" PrivateAssets="all" />
     <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="4.0.0" PrivateAssets="all" />
   </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Commercial'">
+    <DefineConstants>$(DefineConstants);COMMERCIAL</DefineConstants>
+  </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <GenerateDocumentationFile>false</GenerateDocumentationFile>

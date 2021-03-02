@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -52,8 +52,7 @@ namespace Genbox.SimpleS3.Core.TestBase
             if (ProfileName != null)
             {
                 coreBuilder.UseProfileManager()
-                           .BindConfigToProfile(ProfileName)
-                           .UseDataProtection();
+                           .BindConfigToProfile(ProfileName);
             }
 
             base.ConfigureCoreBuilder(coreBuilder, configuration);

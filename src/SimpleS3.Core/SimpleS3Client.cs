@@ -205,6 +205,7 @@ namespace Genbox.SimpleS3.Core
             return _objectClient.PutObjectAsync(bucketName, objectKey, data, config, token);
         }
 
+#if COMMERCIAL
         public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
             return _multipartTransfer.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
@@ -219,6 +220,7 @@ namespace Genbox.SimpleS3.Core
         {
             return _multipartTransfer.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
         }
+#endif
 
         public IUpload CreateUpload(string bucket, string objectKey)
         {

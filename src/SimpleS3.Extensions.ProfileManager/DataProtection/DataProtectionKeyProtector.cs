@@ -1,4 +1,5 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Authentication;
+﻿#if COMMERCIAL
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.DataProtection
@@ -23,3 +24,4 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.DataProtection
         }
     }
 }
+#endif

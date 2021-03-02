@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if COMMERCIAL
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -43,3 +44,4 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Transfer
         }
     }
 }
+#endif

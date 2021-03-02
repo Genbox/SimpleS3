@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if COMMERCIAL
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -229,19 +230,20 @@ namespace Genbox.SimpleS3.BackBlazeB2
             return S3Client.CreateDownload(bucket, objectKey);
         }
 
-        IAsyncEnumerable<GetObjectResponse> IMultipartTransfer.MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
+        public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return S3Client.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
         }
 
-        Task<CompleteMultipartUploadResponse> IMultipartTransfer.MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
+        public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return S3Client.MultipartUploadAsync(bucketName, objectKey, data, partSize, numParallelParts, config, onPartResponse, token);
         }
 
-        Task<CompleteMultipartUploadResponse> IMultipartTransfer.MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
+        public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return S3Client.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
         }
     }
 }
+#endif

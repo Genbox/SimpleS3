@@ -1,3 +1,4 @@
+#if COMMERCIAL
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.TestBase;
@@ -24,3 +25,4 @@ namespace Genbox.SimpleS3.BackBlazeB2.Tests
         }
     }
 }
+#endif

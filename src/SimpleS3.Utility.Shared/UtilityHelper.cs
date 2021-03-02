@@ -54,8 +54,7 @@ namespace Genbox.SimpleS3.Utility.Shared
 
             coreBuilder.UseProfileManager()
                        .BindConfigToProfile(profileName)
-                       .UseConsoleSetup()
-                       .UseDataProtection();
+                       .UseConsoleSetup();
 
             if (selectedProvider == S3Provider.AmazonS3)
                 coreBuilder.UseAwsS3();

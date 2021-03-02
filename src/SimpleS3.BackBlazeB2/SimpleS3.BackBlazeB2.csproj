@@ -5,6 +5,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' != 'Commercial'">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\SimpleS3.Extensions.BackBlazeB2\SimpleS3.Extensions.BackBlazeB2.csproj" />
     <ProjectReference Include="..\SimpleS3.ProviderBase\SimpleS3.ProviderBase.csproj" />

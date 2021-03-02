@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if COMMERCIAL
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -9,10 +10,14 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
+#endif
+
 namespace Genbox.SimpleS3.Core.Abstracts
 {
     public interface IMultipartTransfer
     {
+#if COMMERCIAL
+
         /// <summary>
         /// An extension that performs multipart download. It only works if the file that gets downloaded was originally uploaded using multipart,
         /// otherwise it falls back to an ordinary get request. Note that the implementation is designed to avoid excessive memory usage, so it seeks in the
@@ -24,5 +29,6 @@ namespace Genbox.SimpleS3.Core.Abstracts
 
         /// <summary>An extension that performs multipart upload.</summary>
         Task<CompleteMultipartUploadResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default);
+#endif
     }
 }

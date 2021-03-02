@@ -7,8 +7,10 @@ using Genbox.HttpBuilders;
 using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
+#if COMMERCIAL
+using Genbox.SimpleS3.Core.Network.Responses.Multipart;
+#endif
 
 namespace Genbox.SimpleS3.Core.Abstracts
 {
@@ -46,7 +48,11 @@ namespace Genbox.SimpleS3.Core.Abstracts
         IUpload WithLock(LockMode lockMode, DateTimeOffset retainUntil);
         IUpload WithLegalHold();
         IUpload RemoveLegalHold();
+
+#if COMMERCIAL
         Task<CompleteMultipartUploadResponse> UploadMultipartAsync(Stream data, CancellationToken token = default);
+#endif
+
         Task<PutObjectResponse> UploadAsync(Stream data, CancellationToken token = default);
         Task<PutObjectResponse> UploadDataAsync(byte[] data, CancellationToken token = default);
         Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if COMMERCIAL
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -124,3 +125,4 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
         }
     }
 }
+#endif
