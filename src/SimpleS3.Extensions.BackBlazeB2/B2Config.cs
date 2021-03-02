@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
 
         public B2Config()
         {
-            ProviderType = "BackBlazeB2";
+            ProviderName = "BackBlazeB2";
         }
 
         public B2Config(string keyId, string secretKey, B2Region region) : this(new StringAccessKey(keyId, secretKey), region) { }

@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
                 request.SetHeader(AmzHeaders.XAmzBucketObjectLockEnabled, request.EnableObjectLocking.Value ? "TRUE" : string.Empty);
 
             //Hard-code the LocationConstraint to the region from the config
-            if (config.ProviderType != "BackBlazeB2")
+            if (config.ProviderName != "BackBlazeB2")
             {
                 FastXmlWriter writer = new FastXmlWriter(128);
                 writer.WriteStartElement("CreateBucketConfiguration");

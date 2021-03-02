@@ -63,6 +63,6 @@ namespace Genbox.SimpleS3.Core.Abstracts
 
         public string RegionCode { get; set; }
 
-        public string ProviderType { get; set; }
+        public string ProviderName { get; set; }
     }
 }

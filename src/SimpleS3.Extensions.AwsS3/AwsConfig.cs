@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3
 
         public AwsConfig()
         {
-            ProviderType = "AmazonS3";
+            ProviderName = "AmazonS3";
         }
 
         public AwsConfig(string keyId, string secretKey, AwsRegion region) : this(new StringAccessKey(keyId, secretKey), region) { }
