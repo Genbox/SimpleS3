@@ -17,7 +17,6 @@ namespace Genbox.SimpleS3.Core.Abstracts
     public interface IMultipartTransfer
     {
 #if COMMERCIAL
-
         /// <summary>
         /// An extension that performs multipart download. It only works if the file that gets downloaded was originally uploaded using multipart,
         /// otherwise it falls back to an ordinary get request. Note that the implementation is designed to avoid excessive memory usage, so it seeks in the

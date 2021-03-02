@@ -20,8 +20,8 @@ namespace Genbox.SimpleS3.Core
     {
         private IBucketClient _bucketClient;
         private IMultipartClient _multipartClient;
-        private IObjectClient _objectClient;
         private IMultipartTransfer _multipartTransfer;
+        private IObjectClient _objectClient;
         private ITransfer _transfer;
 
         public SimpleS3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
@@ -30,15 +30,6 @@ namespace Genbox.SimpleS3.Core
         }
 
         protected SimpleS3Client() { }
-
-        protected void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
-        {
-            _objectClient = objectClient;
-            _bucketClient = bucketClient;
-            _multipartClient = multipartClient;
-            _multipartTransfer = multipartTransfer;
-            _transfer = transfer;
-        }
 
         public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
         {
@@ -205,6 +196,25 @@ namespace Genbox.SimpleS3.Core
             return _objectClient.PutObjectAsync(bucketName, objectKey, data, config, token);
         }
 
+        public IUpload CreateUpload(string bucket, string objectKey)
+        {
+            return _transfer.CreateUpload(bucket, objectKey);
+        }
+
+        public IDownload CreateDownload(string bucket, string objectKey)
+        {
+            return _transfer.CreateDownload(bucket, objectKey);
+        }
+
+        protected void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
+        {
+            _objectClient = objectClient;
+            _bucketClient = bucketClient;
+            _multipartClient = multipartClient;
+            _multipartTransfer = multipartTransfer;
+            _transfer = transfer;
+        }
+
 #if COMMERCIAL
         public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
@@ -221,15 +231,5 @@ namespace Genbox.SimpleS3.Core
             return _multipartTransfer.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
         }
 #endif
-
-        public IUpload CreateUpload(string bucket, string objectKey)
-        {
-            return _transfer.CreateUpload(bucket, objectKey);
-        }
-
-        public IDownload CreateDownload(string bucket, string objectKey)
-        {
-            return _transfer.CreateDownload(bucket, objectKey);
-        }
     }
 }

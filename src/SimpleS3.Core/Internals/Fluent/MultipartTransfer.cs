@@ -84,48 +84,6 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
             }
         }
 
-        private async Task<GetObjectResponse> DownloadPartAsync(string bucketName, string objectKey, Stream output, long partSize, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, Action<GetObjectRequest>? config, CancellationToken token)
-        {
-            try
-            {
-                GetObjectResponse getResp = await _objectClient.GetObjectAsync(bucketName, objectKey, req =>
-                {
-                    req.PartNumber = partNumber;
-                    config?.Invoke(req);
-                }, token).ConfigureAwait(false);
-
-                using (getResp.Content)
-                {
-                    long offset = (partNumber - 1) * partSize;
-                    byte[] buffer = new byte[bufferSize];
-
-                    while (true)
-                    {
-                        int read = await getResp.Content.ReadUpToAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
-
-                        if (read > 0)
-                        {
-                            mutex.WaitOne();
-
-                            output.Seek(offset, SeekOrigin.Begin);
-                            await output.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
-                            offset += read;
-
-                            mutex.ReleaseMutex();
-                        }
-                        else
-                            break;
-                    }
-                }
-
-                return getResp;
-            }
-            finally
-            {
-                semaphore.Release();
-            }
-        }
-
         public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
         {
             CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, objectKey);
@@ -196,6 +154,48 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
             {
                 if (encryptionKey != null)
                     Array.Clear(encryptionKey, 0, encryptionKey.Length);
+            }
+        }
+
+        private async Task<GetObjectResponse> DownloadPartAsync(string bucketName, string objectKey, Stream output, long partSize, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, Action<GetObjectRequest>? config, CancellationToken token)
+        {
+            try
+            {
+                GetObjectResponse getResp = await _objectClient.GetObjectAsync(bucketName, objectKey, req =>
+                {
+                    req.PartNumber = partNumber;
+                    config?.Invoke(req);
+                }, token).ConfigureAwait(false);
+
+                using (getResp.Content)
+                {
+                    long offset = (partNumber - 1) * partSize;
+                    byte[] buffer = new byte[bufferSize];
+
+                    while (true)
+                    {
+                        int read = await getResp.Content.ReadUpToAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
+
+                        if (read > 0)
+                        {
+                            mutex.WaitOne();
+
+                            output.Seek(offset, SeekOrigin.Begin);
+                            await output.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
+                            offset += read;
+
+                            mutex.ReleaseMutex();
+                        }
+                        else
+                            break;
+                    }
+                }
+
+                return getResp;
+            }
+            finally
+            {
+                semaphore.Release();
             }
         }
 

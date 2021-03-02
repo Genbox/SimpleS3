@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase;
 using Xunit;
@@ -72,7 +71,7 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Objects
         public async Task PutObjectInvalidCharacters(string name)
         {
             //These 2 test cases came after an exhaustive search in the whole UTF-16 character space.
-            await UploadAsync(BucketName, name, assumeSuccess:false).ConfigureAwait(false);
+            await UploadAsync(BucketName, name, assumeSuccess: false).ConfigureAwait(false);
         }
 
         [Theory]

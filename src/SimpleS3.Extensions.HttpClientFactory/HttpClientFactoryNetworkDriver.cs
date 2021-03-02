@@ -14,8 +14,8 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory
 {
     public class HttpClientFactoryNetworkDriver : INetworkDriver
     {
-        private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
 
         public HttpClientFactoryNetworkDriver(ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory)
         {

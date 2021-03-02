@@ -7,8 +7,6 @@ namespace Genbox.SimpleS3.Core.Common.Internals
 {
     internal class EnumCache<T> where T : Enum
     {
-        public static EnumCache<T> Instance { get; } = new EnumCache<T>();
-
         private readonly Dictionary<T, string> _map;
         private readonly Dictionary<string, T> _map2;
         private readonly Type _type;
@@ -30,6 +28,8 @@ namespace Genbox.SimpleS3.Core.Common.Internals
                 _map2.Add(enumStr, enumVal);
             }
         }
+
+        public static EnumCache<T> Instance { get; } = new EnumCache<T>();
 
         public string AsString(ref T value)
         {

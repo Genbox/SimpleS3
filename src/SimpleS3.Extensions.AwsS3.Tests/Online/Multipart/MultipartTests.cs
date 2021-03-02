@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +11,10 @@ using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
+
+#if COMMERCIAL
+using System.Collections.Generic;
+#endif
 
 namespace Genbox.SimpleS3.Extensions.AwsS3.Tests.Online.Multipart
 {

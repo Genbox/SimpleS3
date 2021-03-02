@@ -15,7 +15,6 @@ namespace Genbox.SimpleS3.Core.TestBase
 {
     public abstract class UnitTestBase : IDisposable
     {
-
         protected UnitTestBase(ITestOutputHelper outputHelper, string? profileName = null)
         {
             ProfileName = profileName;

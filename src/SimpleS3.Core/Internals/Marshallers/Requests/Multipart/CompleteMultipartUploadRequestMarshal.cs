@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
             foreach (S3PartInfo partInfo in request.UploadParts)
             {
                 xml.WriteStartElement("Part");
-                
+
                 if (partInfo.ETag != null)
                     xml.WriteElement("ETag", partInfo.ETag.Trim('"'));
 

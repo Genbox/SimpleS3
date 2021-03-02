@@ -27,9 +27,9 @@ namespace Genbox.SimpleS3.Extensions.AwsS3.Tests
     {
         private readonly HeaderAuthorizationBuilder _authBuilder;
         private readonly ChunkedSignatureBuilder _chunkedSigBuilder;
+        private readonly IOptions<Config> _options;
         private readonly ScopeBuilder _scopeBuilder;
         private readonly SignatureBuilder _sigBuilder;
-        private readonly IOptions<Config> _options;
         private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
 
         public ChunkedSignatureTests()

@@ -69,7 +69,6 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
             response.Owner = new S3Identity(id, displayName);
         }
 
-
         private void ReadBuckets(ListBucketsResponse response, XmlTextReader xmlReader)
         {
             while (xmlReader.Read())

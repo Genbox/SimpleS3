@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,7 +25,6 @@ namespace Genbox.SimpleS3.Core.TestBase
 {
     public abstract class OnlineTestBase : UnitTestBase
     {
-
         protected OnlineTestBase(ITestOutputHelper outputHelper, string profileName) : base(outputHelper, profileName)
         {
             IProfileManager profileManager = Services.GetRequiredService<IProfileManager>();

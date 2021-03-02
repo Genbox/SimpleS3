@@ -5,7 +5,10 @@ namespace Genbox.SimpleS3.Core.Common.Helpers
 {
     public static class EnumHelper
     {
-        public static string AsString<T>(T value) where T : Enum => EnumCache<T>.Instance.AsString(ref value);
+        public static string AsString<T>(T value) where T : Enum
+        {
+            return EnumCache<T>.Instance.AsString(ref value);
+        }
 
         public static bool TryParse<T>(string? value, out T enumVal) where T : struct, Enum
         {

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders;
@@ -11,12 +9,17 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
+#if COMMERCIAL
+using System.Collections.Generic;
+using System.IO;
+#endif
+
 namespace Genbox.SimpleS3.Core.Internals.Fluent
 {
     internal class Download : IDownload
     {
-        private readonly IObjectOperations _operations;
         private readonly IMultipartTransfer _multipartTransfer;
+        private readonly IObjectOperations _operations;
         private readonly GetObjectRequest _request;
 
         internal Download(IObjectOperations operations, IMultipartTransfer multipartTransfer, string bucket, string objectKey)
@@ -95,16 +98,16 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
             return this;
         }
 
+        public Task<GetObjectResponse> DownloadAsync(CancellationToken token = default)
+        {
+            return _operations.GetObjectAsync(_request, token);
+        }
+
         private void CopyProperties(GetObjectRequest req)
         {
             int? partNum = req.PartNumber;
             req = _request;
             req.PartNumber = partNum;
-        }
-
-        public Task<GetObjectResponse> DownloadAsync(CancellationToken token = default)
-        {
-            return _operations.GetObjectAsync(_request, token);
         }
     }
 }
