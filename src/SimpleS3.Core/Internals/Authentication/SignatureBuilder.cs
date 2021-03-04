@@ -81,7 +81,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             //Consists of:
             // Hmac-Sha256(SigningKey, StringToSign)
 
-            return CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date, "s3"));
+            return CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date));
         }
 
         internal string CreateCanonicalRequest(Guid requestId, string url, HttpMethod method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)

@@ -52,7 +52,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
         [Benchmark]
         public byte[] SignatureKeyBuilder()
         {
-            return _signingKeyBuilder.CreateSigningKey(_date, "s3");
+            return _signingKeyBuilder.CreateSigningKey(_date);
         }
 
         [Benchmark]
