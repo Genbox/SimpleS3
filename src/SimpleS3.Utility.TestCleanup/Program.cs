@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
 
                 ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
 
-                await foreach (S3Bucket bucket in client.ListAllBucketsAsync())
+                await foreach (S3Bucket bucket in ListAllBucketsAsync(client))
                 {
                     if (!bucket.Name.StartsWith("testbucket-", StringComparison.OrdinalIgnoreCase))
                         continue;
@@ -78,6 +78,16 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
 
                     Console.WriteLine();
                 }
+            }
+        }
+
+        public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(IBucketClient client)
+        {
+            ListBucketsResponse response = await client.ListBucketsAsync().ConfigureAwait(false);
+
+            foreach (S3Bucket bucket in response.Buckets)
+            {
+                yield return bucket;
             }
         }
 
