@@ -48,12 +48,12 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
 
         /// <summary>Delete all objects within the bucket</summary>
-        public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, bool deleteAllVersions = false, [EnumeratorCancellation]CancellationToken token = default)
+        public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, bool deleteAllVersions = false, [EnumeratorCancellation] CancellationToken token = default)
         {
             if (deleteAllVersions)
             {
                 ListObjectVersionsResponse response;
-                Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucketName, req => req.KeyMarker = null, token);
+                Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucketName, null, token);
 
                 do
                 {
@@ -66,10 +66,13 @@ namespace Genbox.SimpleS3.Core.Extensions
                         yield break;
 
                     if (response.Versions.Count + response.DeleteMarkers.Count == 0)
-                        break;
+                        yield break;
 
-                    string keyMarker = response.NextKeyMarker;
-                    responseTask = client.ListObjectVersionsAsync(bucketName, req => req.KeyMarker = keyMarker, token);
+                    if (response.IsTruncated)
+                    {
+                        string keyMarker = response.NextKeyMarker;
+                        responseTask = client.ListObjectVersionsAsync(bucketName, req => req.KeyMarker = keyMarker, token);
+                    }
 
                     IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
                                                                .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
@@ -88,20 +91,23 @@ namespace Genbox.SimpleS3.Core.Extensions
             else
             {
                 ListObjectsResponse response;
-                Task<ListObjectsResponse> responseTask = client.ListObjectsAsync(bucketName, req => req.ContinuationToken = null, token);
+                Task<ListObjectsResponse> responseTask = client.ListObjectsAsync(bucketName, null, token);
 
                 do
                 {
                     if (token.IsCancellationRequested)
-                        break;
+                        yield break;
 
                     response = await responseTask;
 
                     if (!response.IsSuccess)
                         yield break;
 
-                    string localToken = response.NextContinuationToken;
-                    responseTask = client.ListObjectsAsync(bucketName, req => req.ContinuationToken = localToken, token);
+                    if (response.IsTruncated)
+                    {
+                        string localToken = response.NextContinuationToken;
+                        responseTask = client.ListObjectsAsync(bucketName, req => req.ContinuationToken = localToken, token);
+                    }
 
                     IEnumerable<S3DeleteInfo>? delete = response.Objects.Select(x => new S3DeleteInfo(x.ObjectKey));
 
@@ -158,7 +164,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="getOwnerInfo">Set to true if you want to get object owner information as well.</param>
         /// <param name="config">Delegate to configure the ListObjectsRequest before sending it</param>
         /// <param name="token">A cancellation token</param>
-        public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
+        public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
         {
             Validator.RequireNotNull(client, nameof(client));
             Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));

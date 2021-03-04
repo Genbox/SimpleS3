@@ -84,7 +84,7 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
         private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjects(ISimpleClient client, string bucket)
         {
             ListObjectVersionsResponse response;
-            Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = null);
+            Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucket);
 
             do
             {
@@ -96,8 +96,11 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
                 if (response.Versions.Count + response.DeleteMarkers.Count == 0)
                     break;
 
-                string keyMarker = response.NextKeyMarker;
-                responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = keyMarker);
+                if (response.IsTruncated)
+                {
+                    string keyMarker = response.NextKeyMarker;
+                    responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = keyMarker);
+                }
 
                 IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
                                                            .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));

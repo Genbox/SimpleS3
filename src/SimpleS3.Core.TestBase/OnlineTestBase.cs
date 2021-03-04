@@ -164,7 +164,7 @@ namespace Genbox.SimpleS3.Core.TestBase
         private static async Task<int> DeleteAllObjects(IObjectClient client, string bucket)
         {
             ListObjectVersionsResponse response;
-            Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = null);
+            Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucket);
 
             int failed = 0;
 
@@ -178,13 +178,16 @@ namespace Genbox.SimpleS3.Core.TestBase
                 if (response.Versions.Count + response.DeleteMarkers.Count == 0)
                     break;
 
-                string keyMarker = response.NextKeyMarker;
-                responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = keyMarker);
+                if (response.IsTruncated)
+                {
+                    string keyMarker = response.NextKeyMarker;
+                    responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = keyMarker);
+                }
 
                 IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
                                                            .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
 
-                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucket, delete, req => req.Quiet = false).ConfigureAwait(false);
+                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucket, delete, req => req.Quiet = true).ConfigureAwait(false);
 
                 if (!multiDelResponse.IsSuccess)
                     return -1;
@@ -196,7 +199,7 @@ namespace Genbox.SimpleS3.Core.TestBase
             return failed;
         }
 
-        protected string GetTempBucketName()
+        protected static string GetTempBucketName()
         {
             return "testbucket-" + Guid.NewGuid();
         }
