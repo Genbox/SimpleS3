@@ -12,7 +12,6 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
     internal static class ParserHelper
     {
         private static readonly Regex _expirationRegex = new Regex("expiry-date=\"(.+?)\", rule-id=\"(.+?)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        private const string _metadataHeader = "x-amz-meta-";
 
         public static IDictionary<string, string> ParseMetadata(IDictionary<string, string> headers)
         {
@@ -20,11 +19,11 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
 
             foreach (KeyValuePair<string, string> item in headers)
             {
-                if (!item.Key.StartsWith(_metadataHeader, StringComparison.OrdinalIgnoreCase))
+                if (!item.Key.StartsWith(Constants.AmzMetadata, StringComparison.OrdinalIgnoreCase))
                     continue;
 
                 //If we crash here, it is because AWS sent us an invalid header.
-                metadata[item.Key.Substring(_metadataHeader.Length)] = item.Value;
+                metadata[item.Key.Substring(Constants.AmzMetadata.Length)] = item.Value;
             }
 
             return metadata;

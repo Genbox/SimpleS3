@@ -17,10 +17,9 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
     internal class ChunkedStream : Stream
     {
         private const string _newlineStr = "\r\n";
+        private static readonly byte[] _newline = { 13, 10 };
+
         private const string _chunkSignature = ";chunk-signature=";
-
-        private static readonly byte[] Newline = Encoding.UTF8.GetBytes(_newlineStr);
-
         private readonly byte[] _buffer;
         private readonly IChunkedSignatureBuilder _chunkedSigBuilder;
         private readonly int _chunkSize;
@@ -54,7 +53,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             _chunkSize = options.Value.StreamingChunkSize;
 
             _headerSize = CalculateChunkHeaderLength(_chunkSize, seedSignature.Length * 2);
-            _buffer = new byte[_chunkSize + _headerSize + Newline.Length];
+            _buffer = new byte[_chunkSize + _headerSize + _newline.Length];
         }
 
         public override bool CanRead => true;
@@ -100,13 +99,13 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
                 int headerSize = CreateChunkHeader(_previousSignature, totalRead, _buffer);
 
                 // Append final newline
-                Buffer.BlockCopy(Newline, 0, _buffer, _headerSize + totalRead, Newline.Length);
+                Buffer.BlockCopy(_newline, 0, _buffer, _headerSize + totalRead, _newline.Length);
 
                 // Move data payload in buffer, if header is smaller than expected
                 if (_headerSize != headerSize)
-                    Buffer.BlockCopy(_buffer, _headerSize, _buffer, headerSize, totalRead + Newline.Length);
+                    Buffer.BlockCopy(_buffer, _headerSize, _buffer, headerSize, totalRead + _newline.Length);
 
-                _bufferLength = headerSize + totalRead + Newline.Length;
+                _bufferLength = headerSize + totalRead + _newline.Length;
                 _bufferPosition = 0;
 
                 // Fill buffer from N (header size) position to its full length
@@ -172,7 +171,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             return chunkSize.ToString("X", NumberFormatInfo.InvariantInfo).Length
                    + _chunkSignature.Length
                    + signatureLength
-                   + Newline.Length;
+                   + _newline.Length;
         }
 
         /// <summary>
@@ -185,13 +184,13 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
                 throw new ArgumentOutOfRangeException(nameof(originalLength), "Expected 0 or greater value for originalLength.");
 
             if (originalLength == 0)
-                return CalculateChunkHeaderLength(0, 64) + Newline.Length;
+                return CalculateChunkHeaderLength(0, 64) + _newline.Length;
 
             long maxSizeChunks = originalLength / _chunkSize;
             long remainingBytes = originalLength % _chunkSize;
-            return maxSizeChunks * (CalculateChunkHeaderLength(_chunkSize, 64) + _chunkSize + Newline.Length)
-                   + (remainingBytes > 0 ? CalculateChunkHeaderLength((int)remainingBytes, 64) + remainingBytes + Newline.Length : 0)
-                   + CalculateChunkHeaderLength(0, 64) + Newline.Length;
+            return maxSizeChunks * (CalculateChunkHeaderLength(_chunkSize, 64) + _chunkSize + _newline.Length)
+                   + (remainingBytes > 0 ? CalculateChunkHeaderLength((int)remainingBytes, 64) + remainingBytes + _newline.Length : 0)
+                   + CalculateChunkHeaderLength(0, 64) + _newline.Length;
         }
 
         private static int CreateChunkHeader(byte[] chunkSignature, int contentLength, byte[] buffer)

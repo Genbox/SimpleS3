@@ -3,28 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Internals.Pools;
 
 namespace Genbox.SimpleS3.Core.Builders
 {
     public class MetadataBuilder : IEnumerable<KeyValuePair<string, string>>, IPooledObject
     {
-        private const string _metadataHeader = "x-amz-meta-";
         private readonly ISet<byte> _allowed;
         private IDictionary<string, string>? _metadata;
         private int _totalSize;
 
         public MetadataBuilder()
         {
-            _allowed = new HashSet<byte>( /*95*/);
-
             //Determined by brute-force against amazon's S3 service
-            byte[] bytes = Encoding.UTF8.GetBytes("! \"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
-
-            foreach (byte b in bytes)
-            {
-                _allowed.Add(b);
-            }
+            //! "#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+            _allowed = new HashSet<byte> { 33, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126 };
         }
 
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
@@ -75,7 +69,7 @@ namespace Genbox.SimpleS3.Core.Builders
         {
             foreach (KeyValuePair<string, string> item in this)
             {
-                yield return new KeyValuePair<string, string>(_metadataHeader + item.Key, item.Value);
+                yield return new KeyValuePair<string, string>(Constants.AmzMetadata + item.Key, item.Value);
             }
         }
     }

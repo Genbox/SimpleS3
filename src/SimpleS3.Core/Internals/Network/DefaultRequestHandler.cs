@@ -118,7 +118,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
                 if (config.PayloadSignatureMode == SignatureMode.Unsigned)
                     contentHash = "UNSIGNED-PAYLOAD";
                 else
-                    contentHash = requestStream == null ? "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" : CryptoHelper.Sha256Hash(requestStream, true).HexEncode();
+                    contentHash = requestStream == null ? Constants.EmptySha256 : CryptoHelper.Sha256Hash(requestStream, true).HexEncode();
 
                 request.SetHeader(AmzHeaders.XAmzContentSha256, contentHash);
             }
