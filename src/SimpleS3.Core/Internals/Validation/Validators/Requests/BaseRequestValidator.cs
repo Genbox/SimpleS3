@@ -32,7 +32,6 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests
             //- Must be between 3 and 63 long
             When(x => x is IHasBucketName,
                 () => RuleFor(x => ((IHasBucketName)x).BucketName)
-                      .Length(3, 64)
                       .Must(x => validator.TryValidateBucketName(x, out _))
                       .When(x => cfg.EnableBucketNameValidation)
                       .WithMessage("Amazon recommends naming buckets to be valid DNS names, as you can't change the name later on. To turn off DNS name validation, set S3Config.EnableBucketNameValidation to false"));
@@ -41,8 +40,6 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests
                 () => RuleFor(x => ((IHasObjectKey)x).ObjectKey)
                       .NotEmpty()
                       .WithMessage("You must provide an object key.")
-                      .Length(1, 1024)
-                      .WithMessage("The object key length must be between 1 and 1024 characters")
                       .Must(x => validator.TryValidateObjectKey(x, ObjectKeyValidationMode.SafeMode, out _))
                       .When(x => cfg.ObjectKeyValidationMode == ObjectKeyValidationMode.SafeMode)
                       .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\() are allowed when S3Config.{nameof(Config.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.SafeMode)}")
