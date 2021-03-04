@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     {
         public void MarshalResponse(Config config, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.Metadata = HeaderParserHelper.ParseMetadata(headers);
+            response.Metadata = ParserHelper.ParseMetadata(headers);
             response.ETag = headers.GetOptionalValue(HttpHeaders.ETag);
             response.CacheControl = headers.GetOptionalValue(HttpHeaders.CacheControl);
             response.LastModified = headers.GetHeaderDate(HttpHeaders.LastModified, DateTimeFormat.Rfc1123);
@@ -53,7 +53,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzPartsCount);
             response.Content = responseStream;
 
-            if (HeaderParserHelper.TryParseExpiration(headers, out (DateTimeOffset expiresOn, string ruleId) data))
+            if (ParserHelper.TryParseExpiration(headers, out (DateTimeOffset expiresOn, string ruleId) data))
             {
                 response.LifeCycleExpiresOn = data.expiresOn;
                 response.LifeCycleRuleId = data.ruleId;

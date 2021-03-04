@@ -24,15 +24,12 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             {
                 xmlReader.ReadToDescendant("AccessControlPolicy");
 
-                while (xmlReader.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader, "AccessControlPolicy"))
                 {
-                    if (xmlReader.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    switch (xmlReader.Name)
+                    switch (name)
                     {
                         case "Owner":
-                            response.Owner = XmlHelper.ParseOwner(xmlReader);
+                            response.Owner = ParserHelper.ParseOwner(xmlReader);
                             break;
                         case "AccessControlList":
                             ParseAcl(response, xmlReader);
@@ -42,35 +39,23 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             }
         }
 
-        private void ParseAcl(GetObjectAclResponse response, XmlTextReader xmlReader)
+        private static void ParseAcl(GetObjectAclResponse response, XmlReader xmlReader)
         {
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "AccessControlList"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "AccessControlList")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                if (xmlReader.Name == "Grant")
+                if (name == "Grant")
                     ParseGrant(response, xmlReader);
             }
         }
 
-        private void ParseGrant(GetObjectAclResponse response, XmlTextReader xmlReader)
+        private static void ParseGrant(GetObjectAclResponse response, XmlReader xmlReader)
         {
             S3Permission permission = S3Permission.Unknown;
             S3Grantee? grantee = null;
 
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "Grant"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Grant")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (xmlReader.Name)
+                switch (name)
                 {
                     case "Grantee":
                         grantee = ParseGrantee(xmlReader);
@@ -87,7 +72,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             response.Grants.Add(new S3Grant(grantee, permission));
         }
 
-        private S3Grantee ParseGrantee(XmlTextReader xmlReader)
+        private static S3Grantee ParseGrantee(XmlReader xmlReader)
         {
             xmlReader.MoveToAttribute("xsi:type");
             xmlReader.ReadAttributeValue();
@@ -98,15 +83,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             string? displayName = null;
             string? uri = null;
 
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "Grantee"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Grantee")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (xmlReader.Name)
+                switch (name)
                 {
                     case "ID":
                         id = xmlReader.ReadString();

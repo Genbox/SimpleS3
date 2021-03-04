@@ -24,12 +24,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             {
                 xmlReader.ReadToDescendant("DeleteResult");
 
-                while (xmlReader.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
-                    if (xmlReader.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    switch (xmlReader.Name)
+                    switch (name)
                     {
                         case "Deleted":
                             ParseDeleted(response, xmlReader);
@@ -42,22 +39,16 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             }
         }
 
-        private void ParseDeleted(DeleteObjectsResponse response, XmlTextReader xmlReader)
+        private static void ParseDeleted(DeleteObjectsResponse response, XmlReader xmlReader)
         {
             string? key = null;
             string? versionId = null;
             bool deleteMarker = false;
             string? deleteVersionId = null;
 
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "Deleted"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Deleted")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (xmlReader.Name)
+                switch (name)
                 {
                     case "Key":
                         key = xmlReader.ReadString();
@@ -80,22 +71,16 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             response.Deleted.Add(new S3DeletedObject(key, versionId, deleteMarker, deleteVersionId));
         }
 
-        private void ParseError(DeleteObjectsResponse response, XmlTextReader xmlReader)
+        private static void ParseError(DeleteObjectsResponse response, XmlReader xmlReader)
         {
             string? key = null;
             string? versionId = null;
             ErrorCode code = ErrorCode.Unknown;
             string? message = null;
 
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "Error"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Error")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (xmlReader.Name)
+                switch (name)
                 {
                     case "Key":
                         key = xmlReader.ReadString();

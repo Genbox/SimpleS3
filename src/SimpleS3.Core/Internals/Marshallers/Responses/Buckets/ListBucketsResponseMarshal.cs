@@ -21,15 +21,12 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
             {
                 xmlReader.ReadToDescendant("ListAllMyBucketsResult");
 
-                while (xmlReader.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
-                    if (xmlReader.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    switch (xmlReader.Name)
+                    switch (name)
                     {
                         case "Owner":
-                            response.Owner = XmlHelper.ParseOwner(xmlReader);
+                            response.Owner = ParserHelper.ParseOwner(xmlReader);
                             break;
                         case "Buckets":
                             ReadBuckets(response, xmlReader);
@@ -39,38 +36,26 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
             }
         }
 
-        private void ReadBuckets(ListBucketsResponse response, XmlTextReader xmlReader)
+        private static void ReadBuckets(ListBucketsResponse response, XmlReader xmlReader)
         {
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "Buckets"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Buckets")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                if (xmlReader.Name == "Bucket")
+                if (name == "Bucket")
                     ReadBucket(response, xmlReader);
             }
         }
 
-        private void ReadBucket(ListBucketsResponse response, XmlTextReader xmlReader)
+        private static void ReadBucket(ListBucketsResponse response, XmlReader xmlReader)
         {
-            string? name = null;
+            string? bucketName = null;
             DateTimeOffset? creationData = null;
 
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "Bucket"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Bucket")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (xmlReader.Name)
+                switch (name)
                 {
                     case "Name":
-                        name = xmlReader.ReadString();
+                        bucketName = xmlReader.ReadString();
                         break;
                     case "CreationDate":
                         creationData = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
@@ -78,10 +63,10 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
                 }
             }
 
-            if (name == null || creationData == null)
+            if (bucketName == null || creationData == null)
                 throw new InvalidOperationException("Missing required values");
 
-            response.Buckets.Add(new S3Bucket(name, creationData.Value));
+            response.Buckets.Add(new S3Bucket(bucketName, creationData.Value));
         }
     }
 }

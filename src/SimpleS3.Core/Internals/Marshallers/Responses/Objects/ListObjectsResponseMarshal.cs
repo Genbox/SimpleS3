@@ -25,12 +25,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             {
                 xmlReader.ReadToDescendant("ListBucketResult");
 
-                while (xmlReader.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
-                    if (xmlReader.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    switch (xmlReader.Name)
+                    switch (name)
                     {
                         case "Name":
                             response.BucketName = xmlReader.ReadString();
@@ -73,7 +70,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             }
         }
 
-        private void ReadContents(ListObjectsResponse response, XmlTextReader xmlReader)
+        private static void ReadContents(ListObjectsResponse response, XmlReader xmlReader)
         {
             string? key = null;
             DateTimeOffset? lastModified = null;
@@ -82,15 +79,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             StorageClass storageClass = StorageClass.Unknown;
             S3Identity? owner = null;
 
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "Contents"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Contents")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (xmlReader.Name)
+                switch (name)
                 {
                     case "Key":
                         key = xmlReader.ReadString();
@@ -108,7 +99,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                         storageClass = ValueHelper.ParseEnum<StorageClass>(xmlReader.ReadString());
                         break;
                     case "Owner":
-                        owner = XmlHelper.ParseOwner(xmlReader);
+                        owner = ParserHelper.ParseOwner(xmlReader);
                         break;
                 }
             }
@@ -119,24 +110,14 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             response.Objects.Add(new S3Object(key, lastModified.Value, size.Value, owner, eTag, storageClass));
         }
 
-        private void ReadCommonPrefixes(ListObjectsResponse response, XmlTextReader xmlReader)
+        private static void ReadCommonPrefixes(ListObjectsResponse response, XmlReader xmlReader)
         {
             string? key = null;
 
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "CommonPrefixes"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "CommonPrefixes")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (xmlReader.Name)
-                {
-                    case "Prefix":
-                        key = xmlReader.ReadString();
-                        break;
-                }
+                if (name == "Prefix")
+                    key = xmlReader.ReadString();
             }
 
             if (key == null)

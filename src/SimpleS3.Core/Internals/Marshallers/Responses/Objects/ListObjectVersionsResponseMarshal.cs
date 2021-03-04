@@ -23,55 +23,52 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             response.DeleteMarkers = new List<S3DeleteMarker>();
             response.CommonPrefixes = new List<string>();
 
-            using (XmlTextReader r = new XmlTextReader(responseStream))
+            using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {
-                r.Namespaces = false;
+                xmlReader.ReadToDescendant("ListVersionsResult");
 
-                while (r.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
-                    if (r.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    switch (r.Name)
+                    switch (name)
                     {
                         case "IsTruncated":
-                            response.IsTruncated = ValueHelper.ParseBool(r.ReadString());
+                            response.IsTruncated = ValueHelper.ParseBool(xmlReader.ReadString());
                             break;
                         case "EncodingType":
-                            response.EncodingType = ValueHelper.ParseEnum<EncodingType>(r.ReadString());
+                            response.EncodingType = ValueHelper.ParseEnum<EncodingType>(xmlReader.ReadString());
                             break;
                         case "KeyMarker":
-                            response.KeyMarker = r.ReadString();
+                            response.KeyMarker = xmlReader.ReadString();
                             break;
                         case "VersionIdMarker":
-                            response.VersionIdMarker = r.ReadString();
+                            response.VersionIdMarker = xmlReader.ReadString();
                             break;
                         case "NextKeyMarker":
-                            response.NextKeyMarker = r.ReadString();
+                            response.NextKeyMarker = xmlReader.ReadString();
                             break;
                         case "NextVersionIdMarker":
-                            response.NextVersionIdMarker = r.ReadString();
+                            response.NextVersionIdMarker = xmlReader.ReadString();
                             break;
                         case "Name":
-                            response.Name = r.ReadString();
+                            response.Name = xmlReader.ReadString();
                             break;
                         case "Prefix":
-                            response.Prefix = r.ReadString();
+                            response.Prefix = xmlReader.ReadString();
                             break;
                         case "Delimiter":
-                            response.Delimiter = r.ReadString();
+                            response.Delimiter = xmlReader.ReadString();
                             break;
                         case "MaxKeys":
-                            response.MaxKeys = ValueHelper.ParseInt(r.ReadString());
+                            response.MaxKeys = ValueHelper.ParseInt(xmlReader.ReadString());
                             break;
                         case "Version":
-                            response.Versions.Add(ParseVersion(r));
+                            response.Versions.Add(ParseVersion(xmlReader));
                             break;
                         case "DeleteMarker":
-                            response.DeleteMarkers.Add(ParseDeleteMarker(r));
+                            response.DeleteMarkers.Add(ParseDeleteMarker(xmlReader));
                             break;
                         case "CommonPrefixes":
-                            response.CommonPrefixes.Add(ParseCommonPrefixes(r));
+                            response.CommonPrefixes.Add(ParseCommonPrefixes(xmlReader));
                             break;
                     }
                 }
@@ -96,71 +93,66 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             }
         }
 
-        private static string ParseCommonPrefixes(XmlTextReader r)
+        private static string ParseCommonPrefixes(XmlReader xmlReader)
         {
-            while (r.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "CommonPrefixes"))
             {
-                if (r.NodeType == XmlNodeType.EndElement && r.Name == "CommonPrefixes")
-                    break;
-
-                if (r.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (r.Name)
-                {
-                    case "Prefix":
-                        return r.ReadString();
-                }
+                if (name == "Prefix")
+                    return xmlReader.ReadString();
             }
 
             throw new InvalidOperationException("Could not parse common prefix");
         }
 
-        private static S3Version ParseVersion(XmlTextReader r)
+        private static S3Version ParseVersion(XmlReader xmlReader)
         {
-            S3Version version = new S3Version();
+            string? objectKey = null;
+            string? versionId = null;
+            bool? isLatest = null;
+            DateTimeOffset? lastModified = null;
+            string? etag = null;
+            int size = -1;
+            StorageClass storageClass = StorageClass.Unknown;
+            S3Identity? owner = null;
 
-            while (r.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "Version"))
             {
-                if (r.NodeType == XmlNodeType.EndElement && r.Name == "Version")
-                    break;
-
-                if (r.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (r.Name)
+                switch (name)
                 {
                     case "Key":
-                        version.ObjectKey = r.ReadString();
+                        objectKey = xmlReader.ReadString();
                         break;
                     case "VersionId":
-                        version.VersionId = r.ReadString();
+                        versionId = xmlReader.ReadString();
                         break;
                     case "IsLatest":
-                        version.IsLatest = ValueHelper.ParseBool(r.ReadString());
+                        isLatest = ValueHelper.ParseBool(xmlReader.ReadString());
                         break;
                     case "LastModified":
-                        version.LastModified = ValueHelper.ParseDate(r.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                        lastModified = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
                         break;
                     case "ETag":
-                        version.Etag = r.ReadString();
+                        etag = xmlReader.ReadString();
                         break;
                     case "Size":
-                        version.Size = ValueHelper.ParseInt(r.ReadString());
+                        size = ValueHelper.ParseInt(xmlReader.ReadString());
                         break;
                     case "StorageClass":
-                        version.StorageClass = ValueHelper.ParseEnum<StorageClass>(r.ReadString());
+                        storageClass = ValueHelper.ParseEnum<StorageClass>(xmlReader.ReadString());
                         break;
                     case "Owner":
-                        version.Owner = XmlHelper.ParseOwner(r);
+                        owner = ParserHelper.ParseOwner(xmlReader);
                         break;
                 }
             }
 
-            return version;
+            if (objectKey == null || versionId == null || isLatest == null || lastModified == null || etag == null || size == -1 || storageClass == StorageClass.Unknown || owner == null)
+                throw new InvalidOperationException("Missing required values");
+
+            return new S3Version(objectKey, versionId, isLatest.Value, lastModified.Value, etag, size, owner, storageClass);
         }
 
-        private static S3DeleteMarker ParseDeleteMarker(XmlTextReader r)
+        private static S3DeleteMarker ParseDeleteMarker(XmlReader xmlReader)
         {
             bool isLatest = false;
             string? versionId = null;
@@ -168,36 +160,30 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             DateTimeOffset lastModified;
             S3Identity? owner = null;
 
-            while (r.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "DeleteMarker"))
             {
-                if (r.NodeType == XmlNodeType.EndElement && r.Name == "DeleteMarker")
-                    break;
-
-                if (r.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (r.Name)
+                switch (name)
                 {
                     case "Key":
-                        objectKey = r.ReadString();
+                        objectKey = xmlReader.ReadString();
                         break;
                     case "VersionId":
-                        versionId = r.ReadString();
+                        versionId = xmlReader.ReadString();
                         break;
                     case "IsLatest":
-                        isLatest = ValueHelper.ParseBool(r.ReadString());
+                        isLatest = ValueHelper.ParseBool(xmlReader.ReadString());
                         break;
                     case "LastModified":
-                        lastModified = ValueHelper.ParseDate(r.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                        lastModified = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
                         break;
                     case "Owner":
-                        owner = XmlHelper.ParseOwner(r);
+                        owner = ParserHelper.ParseOwner(xmlReader);
                         break;
                 }
             }
 
             if (owner == null || objectKey == null || versionId == null)
-                throw new ArgumentNullException();
+                throw new InvalidOperationException("Missing required values");
 
             return new S3DeleteMarker(isLatest, objectKey, lastModified, owner, versionId);
         }

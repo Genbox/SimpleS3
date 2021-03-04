@@ -7,6 +7,7 @@ using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using JetBrains.Annotations;
 
@@ -30,12 +31,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
             {
                 xmlReader.ReadToDescendant("InitiateMultipartUploadResult");
 
-                while (xmlReader.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
-                    if (xmlReader.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    switch (xmlReader.Name)
+                    switch (name)
                     {
                         case "Bucket":
                             response.Bucket = xmlReader.ReadString();

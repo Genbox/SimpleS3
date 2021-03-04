@@ -22,12 +22,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
             {
                 xmlReader.ReadToDescendant("ListMultipartUploadsResult");
 
-                while (xmlReader.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
-                    if (xmlReader.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    switch (xmlReader.Name)
+                    switch (name)
                     {
                         case "Bucket":
                             response.Bucket = xmlReader.ReadString();
@@ -61,7 +58,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
             }
         }
 
-        private void ParseUpload(ListMultipartUploadsResponse response, XmlTextReader xmlReader)
+        private static void ParseUpload(ListMultipartUploadsResponse response, XmlReader xmlReader)
         {
             string? key = null;
             string? uploadId = null;
@@ -70,15 +67,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
             StorageClass storageClass = StorageClass.Unknown;
             DateTimeOffset? initiated = null;
 
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "Upload"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Upload")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (xmlReader.Name)
+                switch (name)
                 {
                     case "Key":
                         key = xmlReader.ReadString();
@@ -87,10 +78,10 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
                         uploadId = xmlReader.ReadString();
                         break;
                     case "Initiator":
-                        initiator = XmlHelper.ParseOwner(xmlReader, "Initiator");
+                        initiator = ParserHelper.ParseOwner(xmlReader, "Initiator");
                         break;
                     case "Owner":
-                        owner = XmlHelper.ParseOwner(xmlReader);
+                        owner = ParserHelper.ParseOwner(xmlReader);
                         break;
                     case "StorageClass":
                         storageClass = ValueHelper.ParseEnum<StorageClass>(xmlReader.ReadString());

@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
         {
             response.NewVersionId = headers.GetOptionalValue(AmzHeaders.XAmzCopySourceVersionId);
 
-            if (HeaderParserHelper.TryParseExpiration(headers, out (DateTimeOffset expiresOn, string ruleId) data))
+            if (ParserHelper.TryParseExpiration(headers, out (DateTimeOffset expiresOn, string ruleId) data))
             {
                 response.LifeCycleExpiresOn = data.expiresOn;
                 response.LifeCycleRuleId = data.ruleId;
@@ -42,12 +42,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
             {
                 xmlReader.ReadToDescendant("CopyObjectResult");
 
-                while (xmlReader.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
-                    if (xmlReader.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    switch (xmlReader.Name)
+                    switch (name)
                     {
                         case "ETag":
                             response.ETag = xmlReader.ReadString();

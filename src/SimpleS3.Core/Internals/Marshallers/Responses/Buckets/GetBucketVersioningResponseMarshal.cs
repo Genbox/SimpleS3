@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using JetBrains.Annotations;
 
@@ -15,12 +16,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
         {
             using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {
-                while (xmlReader.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
-                    if (xmlReader.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    switch (xmlReader.Name)
+                    switch (name)
                     {
                         case "Status":
                             response.Status = xmlReader.ReadString() == "Enabled";

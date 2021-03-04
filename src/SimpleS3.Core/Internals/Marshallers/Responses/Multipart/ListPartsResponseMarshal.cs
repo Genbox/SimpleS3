@@ -28,12 +28,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
             {
                 xmlReader.ReadToDescendant("ListPartsResult");
 
-                while (xmlReader.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
-                    if (xmlReader.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    switch (xmlReader.Name)
+                    switch (name)
                     {
                         case "Key":
                             response.ObjectKey = xmlReader.ReadString();
@@ -63,10 +60,10 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
                             response.IsTruncated = ValueHelper.ParseBool(xmlReader.ReadString());
                             break;
                         case "Owner":
-                            response.Owner = XmlHelper.ParseOwner(xmlReader);
+                            response.Owner = ParserHelper.ParseOwner(xmlReader);
                             break;
                         case "Initiator":
-                            response.Initiator = XmlHelper.ParseOwner(xmlReader, "Initiator");
+                            response.Initiator = ParserHelper.ParseOwner(xmlReader, "Initiator");
                             break;
                         case "Part":
                             ParsePart(response, xmlReader);
@@ -76,22 +73,16 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
             }
         }
 
-        private void ParsePart(ListPartsResponse response, XmlTextReader xmlReader)
+        private static void ParsePart(ListPartsResponse response, XmlReader xmlReader)
         {
             int? partNumber = null;
             DateTimeOffset? lastModified = null;
             long? size = null;
             string? eTag = null;
 
-            while (xmlReader.Read())
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "Part"))
             {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Part")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (xmlReader.Name)
+                switch (name)
                 {
                     case "PartNumber":
                         partNumber = ValueHelper.ParseInt(xmlReader.ReadString());

@@ -20,12 +20,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
             {
                 xmlReader.ReadToDescendant("DefaultRetention");
 
-                while (xmlReader.Read())
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
-                    if (!xmlReader.IsStartElement())
-                        continue;
-
-                    switch (xmlReader.Name)
+                    switch (name)
                     {
                         case "Mode":
                             response.LockMode = ValueHelper.ParseEnum<LockMode>(xmlReader.ReadString());
