@@ -166,7 +166,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             throw new NotSupportedException();
         }
 
-        private static int CalculateChunkHeaderLength(int chunkSize, int signatureLength)
+        private static int CalculateChunkHeaderLength(long chunkSize, int signatureLength)
         {
             return chunkSize.ToString("X", NumberFormatInfo.InvariantInfo).Length
                    + _chunkSignature.Length
@@ -186,11 +186,12 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             if (originalLength == 0)
                 return CalculateChunkHeaderLength(0, 64) + _newline.Length;
 
-            long maxSizeChunks = originalLength / _chunkSize;
-            long remainingBytes = originalLength % _chunkSize;
-            return maxSizeChunks * (CalculateChunkHeaderLength(_chunkSize, 64) + _chunkSize + _newline.Length)
-                   + (remainingBytes > 0 ? CalculateChunkHeaderLength((int)remainingBytes, 64) + remainingBytes + _newline.Length : 0)
-                   + CalculateChunkHeaderLength(0, 64) + _newline.Length;
+            long maxSizeChunks = Math.DivRem(originalLength, _chunkSize, out long remainingBytes);
+            int chunkSize = CalculateChunkHeaderLength(_chunkSize, 64) + _chunkSize + _newline.Length;
+            long lastChunkSize = CalculateChunkHeaderLength(remainingBytes, 64) + remainingBytes + _newline.Length;
+            int headerSize = CalculateChunkHeaderLength(0, 64) + _newline.Length;
+
+            return maxSizeChunks * chunkSize + (remainingBytes > 0 ? lastChunkSize : 0) + headerSize;
         }
 
         private static int CreateChunkHeader(byte[] chunkSignature, int contentLength, byte[] buffer)
