@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Genbox.SimpleS3.Core.Internals.Xml;
@@ -16,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             FastXmlWriter writer = new FastXmlWriter(50, standard);
             writer.WriteElement("Test", "<&>");
 
-            Assert.Equal("<Test>&lt;&amp;&gt;</Test>", writer.ToString());
+            Assert.Equal("<Test>&lt;&amp;&gt;</Test>", Encoding.UTF8.GetString(writer.GetBytes()));
         }
 
         [Theory]
@@ -27,7 +28,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             FastXmlWriter writer = new FastXmlWriter(50, standard);
             writer.WriteElement("Test", "💩");
 
-            string actual = writer.ToString();
+            string actual = Encoding.UTF8.GetString(writer.GetBytes());
 
             Assert.Equal("<Test>💩</Test>", actual);
         }
@@ -49,7 +50,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             FastXmlWriter writer = new FastXmlWriter(50, standard);
             writer.WriteElement("Test", "Value");
 
-            Assert.Equal("<Test>Value</Test>", writer.ToString());
+            Assert.Equal("<Test>Value</Test>", Encoding.UTF8.GetString(writer.GetBytes()));
         }
 
         [Theory]
@@ -85,7 +86,8 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
 
             writer.WriteElement("test", sb.ToString());
 
-            XDocument _ = XDocument.Parse(writer.ToString());
+            using MemoryStream ms = new MemoryStream(writer.GetBytes());
+            XDocument _ = XDocument.Load(ms);
         }
 
         [Theory]
@@ -104,7 +106,8 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests
             writer.WriteElement("test", sb.ToString());
 
             XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(writer.ToString());
+            using MemoryStream ms = new MemoryStream(writer.GetBytes());
+            xmlDoc.Load(ms);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.Common.Pools;
 
 namespace Genbox.SimpleS3.Core.Internals.Xml
 {
@@ -14,6 +15,7 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
         private readonly XmlCharMode _invalidCharMode;
         private readonly StringBuilder _xml;
         private readonly XmlStandard _xmlStandard;
+        private bool _used;
 
         /// <summary>Create a new <see cref="FastXmlWriter" /> with the specified capacity.</summary>
         /// <param name="capacity">The capacity of the XML writer. Note that it does not expand any further.</param>
@@ -29,7 +31,7 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
             _invalidCharMode = invalidChars;
             _discouragedCharMode = discouragedChars;
 
-            _xml = new StringBuilder(capacity);
+            _xml = StringBuilderPool.Shared.Rent(capacity);
         }
 
         /// <summary>Write a new element with the specified value</summary>
@@ -195,18 +197,11 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
         /// <summary>Return a set of UTF8 encoded bytes</summary>
         public byte[] GetBytes()
         {
-            return Encoding.UTF8.GetBytes(_xml.ToString());
-        }
+            if (_used)
+                throw new InvalidOperationException("Do not reuse FastXmlWriter instances");
 
-        /// <summary>Gives a string representation of the XML structure</summary>
-        public override string ToString()
-        {
-            return _xml.ToString();
-        }
-
-        public void Clear()
-        {
-            _xml.Clear();
+            _used = true;
+            return Encoding.UTF8.GetBytes(StringBuilderPool.Shared.ReturnString(_xml));
         }
     }
 }
