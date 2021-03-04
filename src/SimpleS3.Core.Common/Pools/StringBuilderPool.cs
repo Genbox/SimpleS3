@@ -134,6 +134,13 @@ namespace Genbox.SimpleS3.Core.Common.Pools
                 ReturnViaScan(builder);
         }
 
+        public string ReturnString(StringBuilder builder)
+        {
+            string value = builder.ToString();
+            Return(builder);
+            return value;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ReturnViaScan(StringBuilder builder)
         {

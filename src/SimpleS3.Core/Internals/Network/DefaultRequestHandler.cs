@@ -130,8 +130,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
 
             _urlBuilder.AppendUrl(sb, request);
             RequestHelper.AppendQueryParameters(sb, request);
-            string url = sb.ToString();
-            StringBuilderPool.Shared.Return(sb);
+            string url = StringBuilderPool.Shared.ReturnString(sb);;
 
             return HandleResponse<TReq, TResp>(request, url, requestStream, token);
         }

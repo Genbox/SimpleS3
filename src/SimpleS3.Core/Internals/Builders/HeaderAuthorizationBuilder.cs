@@ -53,8 +53,7 @@ namespace Genbox.SimpleS3.Core.Internals.Builders
             header.AppendFormat(CultureInfo.InvariantCulture, "SignedHeaders={0},", string.Join(";", HeaderWhitelist.FilterHeaders(headers).Select(x => x.Key)));
             header.AppendFormat(CultureInfo.InvariantCulture, "Signature={0}", signature.HexEncode());
 
-            string authHeader = header.ToString();
-            StringBuilderPool.Shared.Return(header);
+            string authHeader = StringBuilderPool.Shared.ReturnString(header);;
             _logger.LogDebug("AuthHeader: {AuthHeader}", authHeader);
             return authHeader;
         }

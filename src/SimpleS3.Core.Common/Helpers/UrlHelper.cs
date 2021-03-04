@@ -42,9 +42,7 @@ namespace Genbox.SimpleS3.Core.Common.Helpers
                     sb.Append('%').AppendFormat(CultureInfo.InvariantCulture, "{0:X2}", symbol);
             }
 
-            string result = sb.ToString();
-            StringBuilderPool.Shared.Return(sb);
-            return result;
+            return StringBuilderPool.Shared.ReturnString(sb);
         }
 
         public static string CreateQueryString(IEnumerable<KeyValuePair<string, string>> parameters, bool encode = true, bool outputEqualOnEmpty = false)
@@ -69,9 +67,7 @@ namespace Genbox.SimpleS3.Core.Common.Helpers
                     sb.Append(encodedKey).Append('=').Append(encode ? UrlEncode(item.Value) : item.Value);
             }
 
-            string result = sb.ToString();
-            StringBuilderPool.Shared.Return(sb);
-            return result;
+            return StringBuilderPool.Shared.ReturnString(sb);
         }
     }
 }

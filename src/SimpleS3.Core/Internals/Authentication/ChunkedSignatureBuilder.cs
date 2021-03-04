@@ -51,10 +51,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             sb.Append("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855").Append(SigningConstants.Newline);
             sb.Append(CryptoHelper.Sha256Hash(content, offset, length).HexEncode());
 
-            string sts = sb.ToString();
-
-            StringBuilderPool.Shared.Return(sb);
-
+            string sts = StringBuilderPool.Shared.ReturnString(sb);
             _logger.LogDebug("Chunked StringToSign: {StringToSign}", sts);
             return sts;
         }

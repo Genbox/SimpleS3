@@ -47,10 +47,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks
             //We use a field here to avoid a smart compiler from creating a constant
             sb.Append("MyKey").Append(EqualSign).Append("MyValue");
 
-            string val = sb.ToString();
-
-            StringBuilderPool.Shared.Return(sb);
-            return val;
+            return StringBuilderPool.Shared.ReturnString(sb);
         }
     }
 }

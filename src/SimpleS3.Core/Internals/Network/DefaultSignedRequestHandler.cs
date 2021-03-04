@@ -94,9 +94,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
             _urlBuilder.AppendUrl(sb, request);
             RequestHelper.AppendQueryParameters(sb, request);
 
-            string url = sb.ToString();
-            StringBuilderPool.Shared.Return(sb);
-            return url;
+            return StringBuilderPool.Shared.ReturnString(sb);
         }
     }
 }

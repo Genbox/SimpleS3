@@ -61,9 +61,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(100);
             _urlBuilder.AppendUrl(sb, request);
-            string url = sb.ToString();
-
-            StringBuilderPool.Shared.Return(sb);
+            string url = StringBuilderPool.Shared.ReturnString(sb);
 
             string payloadSignature = enablePayloadSignature ? request.Headers[AmzHeaders.XAmzContentSha256] : "UNSIGNED-PAYLOAD";
 
@@ -108,10 +106,8 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             sb.Append(CanonicalizeHeaderNames(orderedHeaders)).Append(SigningConstants.Newline);
             sb.Append(contentHash);
 
-            string canonicalRequest = sb.ToString();
-
-            StringBuilderPool.Shared.Return(sb);
-
+            string canonicalRequest = StringBuilderPool.Shared.ReturnString(sb);
+            
             _logger.LogDebug("CanonicalRequest: {CanonicalRequest}", canonicalRequest);
             return canonicalRequest;
         }
@@ -132,9 +128,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             sb.Append(scope).Append(SigningConstants.Newline);
             sb.Append(CryptoHelper.Sha256Hash(Encoding.UTF8.GetBytes(canonicalRequest)).HexEncode());
 
-            string sts = sb.ToString();
-
-            StringBuilderPool.Shared.Return(sb);
+            string sts = StringBuilderPool.Shared.ReturnString(sb);
 
             _logger.LogDebug("StringToSign: {StringToSign}", sts);
             return sts;
@@ -175,9 +169,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
                   .Append(SigningConstants.Newline);
             }
 
-            string value = sb.ToString();
-            StringBuilderPool.Shared.Return(sb);
-            return value;
+            return StringBuilderPool.Shared.ReturnString(sb);
         }
 
         private static string CanonicalizeHeaderNames(IReadOnlyDictionary<string, string> headers)
@@ -198,9 +190,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
                 sb.Append(item.Key);
             }
 
-            string value = sb.ToString();
-            StringBuilderPool.Shared.Return(sb);
-            return value;
+            return StringBuilderPool.Shared.ReturnString(sb);;
         }
     }
 }

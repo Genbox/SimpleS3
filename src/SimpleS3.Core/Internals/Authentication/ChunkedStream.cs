@@ -204,9 +204,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
                 .Append(chunkSignature.HexEncode())
                 .Append(_newlineStr);
 
-            string value = chunkHeader.ToString();
-
-            StringBuilderPool.Shared.Return(chunkHeader);
+            string value = StringBuilderPool.Shared.ReturnString(chunkHeader);
 
             return Encoding.UTF8.GetBytes(value, 0, value.Length, buffer, 0);
         }
