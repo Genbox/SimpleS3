@@ -5,6 +5,7 @@ using Amazon.Util;
 using AwsSignatureVersion4.Private;
 using BenchmarkDotNet.Attributes;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Benchmarks.Misc;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Internals.Authentication;
@@ -13,7 +14,7 @@ using Genbox.SimpleS3.Extensions.AmazonS3;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3.Core.Benchmarks
+namespace Genbox.SimpleS3.Core.Benchmarks.Tests
 {
     //This benchmark tests against https://github.com/FantasticFiasco/aws-signature-version-4
 

@@ -1,8 +1,9 @@
 ﻿using System;
 using BenchmarkDotNet.Attributes;
+using Genbox.SimpleS3.Core.Benchmarks.Misc;
 using Genbox.SimpleS3.Core.Common.Helpers;
 
-namespace Genbox.SimpleS3.Core.Benchmarks
+namespace Genbox.SimpleS3.Core.Benchmarks.Tests
 {
     [InProcess]
     public class EnumParseBenchmarks

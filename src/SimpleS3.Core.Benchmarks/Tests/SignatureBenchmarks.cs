@@ -16,7 +16,7 @@ using Genbox.SimpleS3.Extensions.AmazonS3;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3.Core.Benchmarks
+namespace Genbox.SimpleS3.Core.Benchmarks.Tests
 {
     [MemoryDiagnoser]
     [InProcess]

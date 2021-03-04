@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using BenchmarkDotNet.Attributes;
 
-namespace Genbox.SimpleS3.Core.Benchmarks
+namespace Genbox.SimpleS3.Core.Benchmarks.Tests
 {
     [InProcess]
     [MemoryDiagnoser]

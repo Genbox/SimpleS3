@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Genbox.SimpleS3.Core.Benchmarks
+namespace Genbox.SimpleS3.Core.Benchmarks.Misc
 {
     internal enum TestEnum
     {
