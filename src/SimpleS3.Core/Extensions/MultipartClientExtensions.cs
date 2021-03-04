@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if COMMERCIAL
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -37,3 +38,4 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
     }
 }
+#endif

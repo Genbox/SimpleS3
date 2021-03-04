@@ -1,4 +1,5 @@
-﻿using System;
+#if COMMERCIAL
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -33,3 +34,4 @@ namespace Genbox.SimpleS3.Core.Extensions
         }
     }
 }
+#endif
