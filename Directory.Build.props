@@ -4,7 +4,6 @@
     <Authors>Ian Qvist</Authors>
     <Copyright>Copyright 2020, by Ian Qvist. All rights reserved.</Copyright>
     <Description>A simple, secure and high-performance client for Amazon S3</Description>
-    <Version>0.1.0-beta.3</Version>
 
     <!-- Set copying files etc. to timeout faster -->
     <CopyRetryCount>2</CopyRetryCount>
@@ -32,6 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
+    <PackageReference Include="MinVer" Version="2.4.0" PrivateAssets="all"/>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3" PrivateAssets="all" />
     <PackageReference Include="IDisposableAnalyzers" Version="3.4.10" PrivateAssets="all" />
     <PackageReference Include="Roslynator.Analyzers" Version="3.1.0" PrivateAssets="all" />
