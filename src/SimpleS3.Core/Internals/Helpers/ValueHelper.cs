@@ -3,9 +3,9 @@ using System.Globalization;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
-using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Misc;
 
 namespace Genbox.SimpleS3.Core.Internals.Helpers
 {

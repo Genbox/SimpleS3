@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SimpleS3.Extensions.ProfileManager\SimpleS3.Extensions.ProfileManager.csproj" />
-    <ProjectReference Include="..\SimpleS3.AwsS3\SimpleS3.AwsS3.csproj" />
+    <ProjectReference Include="..\SimpleS3.AmazonS3\SimpleS3.AmazonS3.csproj" />
   </ItemGroup>
 
 </Project>

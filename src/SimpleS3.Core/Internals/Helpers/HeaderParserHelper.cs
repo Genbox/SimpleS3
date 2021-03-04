@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Genbox.SimpleS3.Core.Abstracts.Constants;
-using Genbox.SimpleS3.Core.Internals.Constants;
+using Genbox.SimpleS3.Core.Common.Constants;
+using Genbox.SimpleS3.Core.Internals.Misc;
 
 namespace Genbox.SimpleS3.Core.Internals.Helpers
 {
     internal static class HeaderParserHelper
     {
-        private static readonly Regex expirationRegex = new Regex("expiry-date=\"(.+?)\", rule-id=\"(.+?)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _expirationRegex = new Regex("expiry-date=\"(.+?)\", rule-id=\"(.+?)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private const string _metadataHeader = "x-amz-meta-";
 
         public static IDictionary<string, string> ParseMetadata(IDictionary<string, string> headers)
         {
-            string _metadataHeader = "x-amz-meta-";
-
             IDictionary<string, string> metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (KeyValuePair<string, string> item in headers)
@@ -36,7 +35,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
             if (!headers.TryGetValue(AmzHeaders.XAmzExpiration, out string expiration))
                 return false;
 
-            Match match = expirationRegex.Match(expiration);
+            Match match = _expirationRegex.Match(expiration);
 
             if (!match.Success)
                 return false;

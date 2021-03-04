@@ -10,6 +10,7 @@ using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
+using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -61,7 +62,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.AddSingleton<IBucketClient, BucketClient>();
             collection.AddSingleton<IMultipartClient, MultipartClient>();
             collection.AddSingleton<ISignedObjectClient, SignedObjectClient>();
-            collection.AddSingleton<ISimpleS3Client, SimpleS3Client>();
+            collection.AddSingleton<ISimpleClient, SimpleClient>();
 
             //Misc
             collection.AddSingleton<IRequestHandler, DefaultRequestHandler>();

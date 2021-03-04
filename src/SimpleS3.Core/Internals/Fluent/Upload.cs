@@ -8,7 +8,9 @@ using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
@@ -170,7 +172,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
 
         public IUpload CalculateContentMd5()
         {
-            _request.ContentMd5 = _request.Content == null ? Common.Constants.EmptyMd5Bytes : CryptoHelper.Md5Hash(_request.Content, true);
+            _request.ContentMd5 = _request.Content == null ? Constants.EmptyMd5Bytes : CryptoHelper.Md5Hash(_request.Content, true);
             return this;
         }
 
@@ -218,7 +220,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
 
         public Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default)
         {
-            encoding ??= Common.Constants.Utf8NoBom;
+            encoding ??= Constants.Utf8NoBom;
 
             return UploadDataAsync(encoding.GetBytes(data), token);
         }

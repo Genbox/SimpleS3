@@ -34,7 +34,7 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
             {
                 UtilityHelper.GetOrSetupProfile(provider, selectedProvider, profileName);
 
-                ISimpleS3Client client = provider.GetRequiredService<ISimpleS3Client>();
+                ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
 
                 await foreach (S3Bucket bucket in client.ListAllBucketsAsync())
                 {
@@ -81,7 +81,7 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
             }
         }
 
-        private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjects(ISimpleS3Client client, string bucket)
+        private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjects(ISimpleClient client, string bucket)
         {
             ListObjectVersionsResponse response;
             Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = null);

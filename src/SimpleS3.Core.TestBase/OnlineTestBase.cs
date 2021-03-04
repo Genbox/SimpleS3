@@ -6,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
-using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
@@ -138,11 +139,11 @@ namespace Genbox.SimpleS3.Core.TestBase
             return AssertTransferAsync(BucketName, objectKey, config, assumeSuccess);
         }
 
-        protected async Task CreateTempBucketAsync(Func<string, Task> action)
+        protected async Task CreateTempBucketAsync(Func<string, Task> action, Action<CreateBucketRequest>? config = null)
         {
-            string tempBucketName = "testbucket-" + Guid.NewGuid();
+            string tempBucketName = GetTempBucketName();
 
-            CreateBucketResponse createResponse = await BucketClient.CreateBucketAsync(tempBucketName).ConfigureAwait(false);
+            CreateBucketResponse createResponse = await BucketClient.CreateBucketAsync(tempBucketName, config).ConfigureAwait(false);
             Assert.True(createResponse.IsSuccess);
 
             try
@@ -193,6 +194,11 @@ namespace Genbox.SimpleS3.Core.TestBase
             } while (response.IsTruncated);
 
             return failed;
+        }
+
+        protected string GetTempBucketName()
+        {
+            return "testbucket-" + Guid.NewGuid();
         }
     }
 }

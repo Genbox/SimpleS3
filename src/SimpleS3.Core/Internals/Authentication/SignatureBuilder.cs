@@ -5,18 +5,16 @@ using System.Linq;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;
-using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Misc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication
 {
@@ -44,17 +42,15 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
 
         private readonly ISigningKeyBuilder _keyBuilder;
         private readonly ILogger<SignatureBuilder> _logger;
-        private readonly IOptions<Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
         private readonly IUrlBuilder _urlBuilder;
 
-        public SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IUrlBuilder urlBuilder, ILogger<SignatureBuilder> logger, IOptions<Config> options)
+        public SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IUrlBuilder urlBuilder, ILogger<SignatureBuilder> logger)
         {
             _keyBuilder = keyBuilder;
             _scopeBuilder = scopeBuilder;
             _urlBuilder = urlBuilder;
             _logger = logger;
-            _options = options;
         }
 
         public byte[] CreateSignature(IRequest request, bool enablePayloadSignature = true)

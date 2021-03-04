@@ -5,7 +5,7 @@ using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Common.Helpers;
-using Genbox.SimpleS3.Core.Internals.Constants;
+using Genbox.SimpleS3.Core.Internals.Misc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

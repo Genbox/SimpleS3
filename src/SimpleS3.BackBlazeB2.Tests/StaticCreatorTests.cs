@@ -14,11 +14,11 @@ namespace Genbox.SimpleS3.BackBlazeB2.Tests
         {
             FakeNetworkDriver driver = new FakeNetworkDriver();
 
-            B2Config config = new B2Config();
+            BackBlazeB2Config config = new BackBlazeB2Config();
             config.Credentials = new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
-            config.Region = B2Region.UsWest001;
+            config.Region = BackBlazeB2Region.UsWest001;
 
-            B2Client client = new B2Client(config, driver);
+            BackBlazeB2Client client = new BackBlazeB2Client(config, driver);
 
             await client.GetObjectAsync("testbucket", "GetObjectAsync").ConfigureAwait(false);
             Assert.Equal("https://testbucket.s3.us-west-001.backblazeb2.com/GetObjectAsync", driver.SendResource);

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;

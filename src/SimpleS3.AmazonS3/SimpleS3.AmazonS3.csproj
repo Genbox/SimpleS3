@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleS3.Extensions.AmazonS3\SimpleS3.Extensions.AmazonS3.csproj" />
+    <ProjectReference Include="..\SimpleS3.ProviderBase\SimpleS3.ProviderBase.csproj" />
+  </ItemGroup>
+
+</Project>

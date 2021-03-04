@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Abstracts
 {
@@ -10,7 +11,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Abstracts
         string RegionCode { get; }
         string Location { get; }
         DateTimeOffset CreatedOn { get; }
-        void AddTag(string key, string value);
+        IDictionary<string, string>? Tags { get; }
         string? GetTag(string key);
     }
 }

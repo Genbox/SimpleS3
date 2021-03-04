@@ -1,6 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
-
-namespace Genbox.SimpleS3.Core.Common.Tests
+﻿namespace Genbox.SimpleS3.Core.Common.Tests
 {
     internal enum TestEnum
     {

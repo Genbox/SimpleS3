@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
 {
     public static class ParallelHelper
     {
-        public static async Task ExecuteAsync<T>(IEnumerable<T> source, Func<T, Task> action, int concurrentThreads, CancellationToken token)
+        public static async Task ExecuteAsync<T>(IEnumerable<T> source, Func<T, Task> action, int concurrentThreads, CancellationToken token = default)
         {
             using (SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads))
             {
@@ -29,7 +29,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
             }
         }
 
-        public static async Task<IEnumerable<TReturn>> ExecuteAsync<T, TReturn>(IEnumerable<T> source, Func<T, Task<TReturn>> action, int concurrentThreads, CancellationToken token)
+        public static async Task<IEnumerable<TReturn>> ExecuteAsync<T, TReturn>(IEnumerable<T> source, Func<T, Task<TReturn>> action, int concurrentThreads, CancellationToken token = default)
         {
             List<Task<TReturn>> tasks = new List<Task<TReturn>>();
             List<Task> tasks2 = new List<Task>();

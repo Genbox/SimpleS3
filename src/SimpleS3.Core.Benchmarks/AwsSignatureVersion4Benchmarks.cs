@@ -5,11 +5,11 @@ using Amazon.Util;
 using AwsSignatureVersion4.Private;
 using BenchmarkDotNet.Attributes;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Common.Authentication;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Builders;
-using Genbox.SimpleS3.Extensions.AwsS3;
+using Genbox.SimpleS3.Extensions.AmazonS3;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -30,16 +30,16 @@ namespace Genbox.SimpleS3.Core.Benchmarks
         public void Setup()
         {
             {
-                AwsConfig config = new AwsConfig();
-                config.Region = AwsRegion.EuWest1;
+                AmazonS3Config config = new AmazonS3Config();
+                config.Region = AmazonS3Region.EuWest1;
                 config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
 
                 IOptions<Config> options = Options.Create(config);
 
                 SigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
                 ScopeBuilder scopeBuilder = new ScopeBuilder(options);
-                AwsUrlBuilder urlBuilder = new AwsUrlBuilder(options);
-                SignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance, options);
+                AmazonS3UrlBuilder urlBuilder = new AmazonS3UrlBuilder(options);
+                SignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance);
 
                 _builder = new HeaderAuthorizationBuilder(options, scopeBuilder, signatureBuilder, NullLogger<HeaderAuthorizationBuilder>.Instance);
 

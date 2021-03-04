@@ -9,12 +9,11 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Extensions.AwsS3.Extensions;
+using Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
-using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -33,7 +32,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             //If you have a proxy, you can set it here
             IWebProxy? proxy = null;
 
-            ISimpleS3Client client = BuildClient(proxy);
+            ISimpleClient client = BuildClient(proxy);
 
             string bucketName = "simple-s3-test-" + Guid.NewGuid();
             const string objectName = "some-object";
@@ -59,7 +58,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
 
         }
 
-        private static async Task UploadData(ISimpleS3Client client, string bucketName, string objectName, byte[] data, byte[] encryptionKey)
+        private static async Task UploadData(ISimpleClient client, string bucketName, string objectName, byte[] data, byte[] encryptionKey)
         {
             await using (MemoryStream ms = new MemoryStream(data))
             {
@@ -73,7 +72,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             }
         }
 
-        private static async Task<byte[]> DownloadData(ISimpleS3Client client, string bucketName, string objectName, byte[] encryptionKey)
+        private static async Task<byte[]> DownloadData(ISimpleClient client, string bucketName, string objectName, byte[] encryptionKey)
         {
             //Download using multiple concurrent connections and use server-side encryption with our own key.
             GetObjectResponse resp = await client.GetObjectAsync(bucketName, objectName, request =>
@@ -89,7 +88,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             return await resp.Content.AsDataAsync();
         }
 
-        private static ISimpleS3Client BuildClient(IWebProxy? proxy = null)
+        private static ISimpleClient BuildClient(IWebProxy? proxy = null)
         {
             //Create the dependency injection container
             ServiceCollection services = new ServiceCollection();
@@ -111,7 +110,7 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
                 httpBuilder.UseProxy(proxy);
 
             //This adds the S3Client service. This service combines ObjectClient, MultipartClient and BucketClient into a single client. Makes it easier for new people to use the library.
-            coreBuilder.UseAwsS3();
+            coreBuilder.UseAmazonS3();
 
             //Here we add the profile manager. It is a profile system that persist your credentials to disk in a very secure way.
             coreBuilder.UseProfileManager()
@@ -126,11 +125,11 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
 
             if (profile == null)
             {
-                ConsoleProfileSetup? setup = serviceProvider.GetRequiredService<ConsoleProfileSetup>();
+                IProfileSetup? setup = serviceProvider.GetRequiredService<IProfileSetup>();
                 setup.SetupDefaultProfile();
             }
 
-            return serviceProvider.GetRequiredService<ISimpleS3Client>();
+            return serviceProvider.GetRequiredService<ISimpleClient>();
         }
     }
 }

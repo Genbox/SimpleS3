@@ -2,6 +2,7 @@
 using System;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.BackBlazeB2;
@@ -16,13 +17,13 @@ namespace Genbox.SimpleS3.BackBlazeB2.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IClientBuilder AddBackBlazeB2(this IServiceCollection collection, Action<B2Config, IServiceProvider> config)
+        public static IClientBuilder AddBackBlazeB2(this IServiceCollection collection, Action<BackBlazeB2Config, IServiceProvider> config)
         {
             collection.Configure(config);
             return AddBackBlazeB2(collection);
         }
 
-        public static IClientBuilder AddBackBlazeB2(this IServiceCollection collection, Action<B2Config> config)
+        public static IClientBuilder AddBackBlazeB2(this IServiceCollection collection, Action<BackBlazeB2Config> config)
         {
             collection.Configure(config);
             return AddBackBlazeB2(collection);
@@ -44,11 +45,11 @@ namespace Genbox.SimpleS3.BackBlazeB2.Extensions
                 IMultipartClient multipartClient = x.GetRequiredService<IMultipartClient>();
                 IMultipartTransfer multipartTransfer = x.GetRequiredService<IMultipartTransfer>();
                 ITransfer transfer = x.GetRequiredService<ITransfer>();
-                return new B2Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+                return new BackBlazeB2Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
             });
 
             //Add the client as the interface too
-            coreBuilder.Services.AddSingleton<ISimpleS3Client>(x => x.GetRequiredService<B2Client>());
+            coreBuilder.Services.AddSingleton<ISimpleClient>(x => x.GetRequiredService<BackBlazeB2Client>());
 
             return new ClientBuilder(collection, httpBuilder, coreBuilder);
         }

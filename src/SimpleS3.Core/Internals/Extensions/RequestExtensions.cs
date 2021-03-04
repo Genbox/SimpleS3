@@ -2,9 +2,9 @@
 using System.Globalization;
 using Genbox.HttpBuilders.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
-using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Internals.Misc;
 
 namespace Genbox.SimpleS3.Core.Internals.Extensions
 {

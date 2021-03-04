@@ -6,8 +6,8 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;
-using Genbox.SimpleS3.Core.Internals.Constants;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Misc;
 using Microsoft.Extensions.Logging;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication

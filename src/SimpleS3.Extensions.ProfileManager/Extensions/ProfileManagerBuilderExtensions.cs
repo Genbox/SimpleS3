@@ -1,12 +1,13 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
-using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
+using Genbox.SimpleS3.Extensions.ProfileManager.Internal.DataProtection;
+using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Managers;
+using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
 #if COMMERCIAL
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
-using Genbox.SimpleS3.Extensions.ProfileManager.DataProtection;
 using Microsoft.AspNetCore.DataProtection;
 #endif
 
@@ -38,6 +39,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
         public static IProfileManagerBuilder UseConsoleSetup(this IProfileManagerBuilder builder)
         {
             builder.Services.AddSingleton<ConsoleProfileSetup>();
+            builder.Services.AddSingleton<IRegionManager, RegionManager>();
             return builder;
         }
     }

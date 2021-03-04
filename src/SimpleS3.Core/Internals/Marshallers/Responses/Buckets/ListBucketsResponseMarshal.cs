@@ -29,7 +29,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
                     switch (xmlReader.Name)
                     {
                         case "Owner":
-                            ReadOwner(response, xmlReader);
+                            response.Owner = XmlHelper.ParseOwner(xmlReader);
                             break;
                         case "Buckets":
                             ReadBuckets(response, xmlReader);
@@ -37,36 +37,6 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
                     }
                 }
             }
-        }
-
-        private void ReadOwner(ListBucketsResponse response, XmlTextReader xmlReader)
-        {
-            string? id = null;
-            string? displayName = null;
-
-            while (xmlReader.Read())
-            {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "Owner")
-                    break;
-
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
-
-                switch (xmlReader.Name)
-                {
-                    case "ID":
-                        id = xmlReader.ReadString();
-                        break;
-                    case "DisplayName":
-                        displayName = xmlReader.ReadString();
-                        break;
-                }
-            }
-
-            if (id == null || displayName == null)
-                throw new InvalidOperationException("Missing required values");
-
-            response.Owner = new S3Identity(id, displayName);
         }
 
         private void ReadBuckets(ListBucketsResponse response, XmlTextReader xmlReader)

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Authentication;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Authentication;
@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Core.Internals.Builders
         {
             Validator.RequireNotNull(request, nameof(request));
 
-            string? auth = BuildInternal(request.Timestamp, request.Headers, _signatureBuilder.CreateSignature(request));
+            string auth = BuildInternal(request.Timestamp, request.Headers, _signatureBuilder.CreateSignature(request));
 
             request.SetHeader(HttpHeaders.Authorization, auth);
         }

@@ -2,7 +2,7 @@
 using System.Linq;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Extensions.AwsS3.Extensions;
+using Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
 using Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -57,7 +57,7 @@ namespace Genbox.SimpleS3.Utility.Shared
                        .UseConsoleSetup();
 
             if (selectedProvider == S3Provider.AmazonS3)
-                coreBuilder.UseAwsS3();
+                coreBuilder.UseAmazonS3();
             else if (selectedProvider == S3Provider.BackBlazeB2)
                 coreBuilder.UseBackBlazeB2();
             else

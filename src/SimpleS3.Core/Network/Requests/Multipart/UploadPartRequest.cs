@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
-using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;

@@ -1,6 +1,6 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 

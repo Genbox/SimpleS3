@@ -7,13 +7,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Pools;
@@ -73,18 +73,18 @@ namespace Genbox.SimpleS3.Core.Internals.Network
             token.ThrowIfCancellationRequested();
 
             if (request is SignedBaseRequest preSigned)
-                return SendPreSigned<TResp>(preSigned, token);
+                return SendPreSignedAsync<TResp>(preSigned, token);
 
-            return SendRequest<TReq, TResp>(request, token);
+            return SendRequestInternalAsync<TReq, TResp>(request, token);
         }
 
-        private Task<TResp> SendPreSigned<TResp>(SignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
+        private Task<TResp> SendPreSignedAsync<TResp>(SignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
         {
             Stream? requestStream = _marshaller.MarshalRequest(_options.Value, preSigned);
             return HandleResponse<SignedBaseRequest, TResp>(preSigned, preSigned.Url, requestStream, token);
         }
 
-        private Task<TResp> SendRequest<TReq, TResp>(TReq request, CancellationToken token) where TResp : IResponse, new() where TReq : IRequest
+        private Task<TResp> SendRequestInternalAsync<TReq, TResp>(TReq request, CancellationToken token) where TResp : IResponse, new() where TReq : IRequest
         {
             request.Timestamp = DateTimeOffset.UtcNow;
             request.RequestId = Guid.NewGuid();

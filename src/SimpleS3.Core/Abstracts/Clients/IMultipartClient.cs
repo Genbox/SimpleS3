@@ -44,6 +44,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="bucketName">Name of the bucket</param>
         /// <param name="objectKey">The key of the object</param>
         /// <param name="uploadId">The upload id of the multipart upload</param>
+        /// <param name="parts">All the parts that should be included in the multipart transfer</param>
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token</param>
         Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default);

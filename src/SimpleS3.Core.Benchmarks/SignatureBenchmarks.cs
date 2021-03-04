@@ -4,15 +4,15 @@ using System.Text;
 using BenchmarkDotNet.Attributes;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
-using Genbox.SimpleS3.Core.Abstracts.Constants;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Authentication;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
-using Genbox.SimpleS3.Extensions.AwsS3;
+using Genbox.SimpleS3.Extensions.AmazonS3;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -30,15 +30,15 @@ namespace Genbox.SimpleS3.Core.Benchmarks
 
         public SignatureBenchmarks()
         {
-            AwsConfig config = new AwsConfig(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AwsRegion.UsEast1);
+            AmazonS3Config config = new AmazonS3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AmazonS3Region.UsEast1);
             config.PayloadSignatureMode = SignatureMode.FullSignature;
 
             IOptions<Config> options = Options.Create(config);
 
             _signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
             IScopeBuilder scopeBuilder = new ScopeBuilder(options);
-            AwsUrlBuilder urlBuilder = new AwsUrlBuilder(options);
-            _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance, options);
+            AmazonS3UrlBuilder urlBuilder = new AmazonS3UrlBuilder(options);
+            _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance);
             _chunkSigBuilder = new ChunkedSignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);
 
             byte[] data = Encoding.UTF8.GetBytes("Hello world");

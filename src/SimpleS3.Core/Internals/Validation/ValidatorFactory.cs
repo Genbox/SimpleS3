@@ -10,7 +10,7 @@ using IValidatorFactory = Genbox.SimpleS3.Core.Abstracts.Factories.IValidatorFac
 namespace Genbox.SimpleS3.Core.Internals.Validation
 {
     [PublicAPI]
-    public class ValidatorFactory : IValidatorFactory
+    internal class ValidatorFactory : IValidatorFactory
     {
         private readonly IDictionary<Type, IValidator> _validators;
 

@@ -37,7 +37,7 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
             return returnVal;
         }
 
-        public async Task<TReturn> RentAndUse<TReturn>(Action<T> setup, Func<T, Task<TReturn>> action)
+        public async Task<TReturn> RentAndUseAsync<TReturn>(Action<T> setup, Func<T, Task<TReturn>> action)
         {
             T obj = Rent(setup);
             TReturn returnVal = await action(obj).ConfigureAwait(false);

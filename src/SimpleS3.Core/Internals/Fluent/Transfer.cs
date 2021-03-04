@@ -1,5 +1,6 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Abstracts.Transfer;
 
 namespace Genbox.SimpleS3.Core.Internals.Fluent
 {

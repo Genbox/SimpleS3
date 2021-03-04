@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,10 +49,10 @@ namespace Genbox.SimpleS3.ProviderBase
 
         protected internal ClientBase(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
         {
-            S3Client = new SimpleS3Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+            Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
 
-        protected SimpleS3Client S3Client { get; private set; }
+        protected SimpleClient Client { get; private set; }
 
         public void Dispose()
         {
@@ -69,7 +70,7 @@ namespace Genbox.SimpleS3.ProviderBase
             IMultipartTransfer multipartTransfer = _serviceProvider.GetRequiredService<IMultipartTransfer>();
             ITransfer transfer = _serviceProvider.GetRequiredService<ITransfer>();
 
-            S3Client = new SimpleS3Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+            Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
         }
 
         protected virtual void Dispose(bool disposing)

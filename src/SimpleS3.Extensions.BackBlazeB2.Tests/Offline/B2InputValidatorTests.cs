@@ -5,11 +5,11 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests.Offline
 {
     public class B2InputValidatorTests
     {
-        private readonly B2InputValidator _validator;
+        private readonly BackblazeB2InputValidator _validator;
 
         public B2InputValidatorTests()
         {
-            _validator = new B2InputValidator();
+            _validator = new BackblazeB2InputValidator();
         }
 
         [Theory]

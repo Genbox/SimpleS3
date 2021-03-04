@@ -3,6 +3,7 @@ using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Microsoft.Extensions.Configuration;

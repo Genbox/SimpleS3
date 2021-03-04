@@ -3,12 +3,12 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Genbox.HttpBuilders.Enums;
-using Genbox.SimpleS3.AwsS3;
+using Genbox.SimpleS3.AmazonS3;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Extensions.AwsS3;
+using Genbox.SimpleS3.Extensions.AmazonS3;
 
 namespace Genbox.SimpleS3.Examples
 {
@@ -20,7 +20,7 @@ namespace Genbox.SimpleS3.Examples
             // Go here and login with your account to create an access key: https://console.aws.amazon.com/iam/home?#/security_credentials
             //
 
-            using (S3Client client = new S3Client("MyKeyId", "MyAccessKey", AwsRegion.UsEast1))
+            using (AmazonS3Client client = new AmazonS3Client("MyKeyId", "MyAccessKey", AmazonS3Region.UsEast1))
             {
                 //We add a unique identifier to the bucket name, as they have to be unique across ALL of AWS S3.
                 string bucketName = "simple-s3-test-" + Guid.NewGuid();
@@ -37,7 +37,7 @@ namespace Genbox.SimpleS3.Examples
             }
         }
 
-        private static async Task UploadDownloadStandard(S3Client client, string bucketName, string objectName)
+        private static async Task UploadDownloadStandard(AmazonS3Client client, string bucketName, string objectName)
         {
             Console.WriteLine();
             Console.WriteLine("Using the standard API");
@@ -68,7 +68,7 @@ namespace Genbox.SimpleS3.Examples
                 Console.WriteLine("Failed uploading object");
         }
 
-        private static async Task UploadDownloadTransfer(S3Client client, string bucketName, string objectName)
+        private static async Task UploadDownloadTransfer(AmazonS3Client client, string bucketName, string objectName)
         {
             Console.WriteLine();
             Console.WriteLine("Using the Transfer API");

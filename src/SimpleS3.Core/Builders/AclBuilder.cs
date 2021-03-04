@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Genbox.HttpBuilders.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
+using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Builders
 {

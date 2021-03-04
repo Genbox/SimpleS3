@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Genbox.SimpleS3.Core.Abstracts;
 
 namespace Genbox.SimpleS3.Core.Common.Internals
 {

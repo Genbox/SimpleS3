@@ -5,6 +5,7 @@ using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
+using Genbox.SimpleS3.Extensions.ProfileManager.Internal;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager
