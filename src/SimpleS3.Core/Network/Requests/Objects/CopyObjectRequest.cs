@@ -99,8 +99,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         {
             ClearSensitiveMaterial();
 
-            MetadataDirective = MetadataDirective.Unknown;
-            TaggingDirective = TaggingDirective.Unknown;
+            MetadataDirective = MetadataDirective.Copy;
+            TaggingDirective = TaggingDirective.Copy;
             IfModifiedSince = null;
             IfUnmodifiedSince = null;
             IfETagMatch.Reset();
