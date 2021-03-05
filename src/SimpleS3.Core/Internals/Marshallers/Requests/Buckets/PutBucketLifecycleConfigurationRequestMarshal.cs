@@ -51,6 +51,8 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
 
                 if (rule.Filter != null)
                 {
+                    writer.WriteStartElement("Filter");
+
                     if (rule.Filter.Prefix != null)
                         writer.WriteElement("Prefix", rule.Filter.Prefix);
 
@@ -79,6 +81,8 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
 
                         writer.WriteEndElement("And");
                     }
+
+                    writer.WriteEndElement("Filter");
                 }
 
                 writer.WriteElement("ID", rule.Id);
