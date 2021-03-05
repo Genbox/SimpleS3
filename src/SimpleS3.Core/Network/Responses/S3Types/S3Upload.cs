@@ -1,10 +1,11 @@
 ﻿using System;
+using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
 {
-    public class S3Upload : IHasStorageClass, IHasUploadId
+    public class S3Upload : IHasStorageClass, IHasUploadId, IHasObjectKey
     {
         public S3Upload(string objectKey, string uploadId, S3Identity initiator, S3Identity owner, StorageClass storageClass, DateTimeOffset initiated)
         {

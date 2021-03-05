@@ -2,6 +2,6 @@
 {
     public interface IHasBucketName
     {
-        string BucketName { get; set; }
+        string BucketName { get; }
     }
 }

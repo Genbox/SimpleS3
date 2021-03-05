@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Multipart
 
             CreateMultipartUploadResponse createResp = await MultipartClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
 
-            Assert.Equal(BucketName, createResp.Bucket);
+            Assert.Equal(BucketName, createResp.BucketName);
             Assert.Equal(objectKey, createResp.ObjectKey);
             Assert.NotNull(createResp.UploadId);
 

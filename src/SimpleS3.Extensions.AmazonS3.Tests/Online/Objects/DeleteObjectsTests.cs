@@ -20,19 +20,19 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Objects
             resources[0] = new S3DeleteInfo(nameof(DeleteObjects) + "1");
             resources[1] = new S3DeleteInfo(nameof(DeleteObjects) + "2", "versionnotfound");
 
-            await UploadAsync(resources[0].Name).ConfigureAwait(false);
-            await UploadAsync(resources[1].Name).ConfigureAwait(false);
+            await UploadAsync(resources[0].ObjectKey).ConfigureAwait(false);
+            await UploadAsync(resources[1].ObjectKey).ConfigureAwait(false);
 
             DeleteObjectsResponse resp = await ObjectClient.DeleteObjectsAsync(BucketName, resources, req => req.Quiet = false).ConfigureAwait(false);
 
             S3DeletedObject? delObj = Assert.Single(resp.Deleted);
-            Assert.Equal(resources[0].Name, delObj.ObjectKey);
+            Assert.Equal(resources[0].ObjectKey, delObj.ObjectKey);
             Assert.True(delObj.IsDeleteMarker);
             Assert.NotEmpty(delObj.DeleteMarkerVersionId);
 
             S3DeleteError? errorObj = Assert.Single(resp.Errors);
 
-            Assert.Equal(resources[1].Name, errorObj.ObjectKey);
+            Assert.Equal(resources[1].ObjectKey, errorObj.ObjectKey);
             Assert.Equal(resources[1].VersionId, errorObj.VersionId);
             Assert.Equal(ErrorCode.NoSuchVersion, errorObj.Code);
             Assert.Equal("The specified version does not exist.", errorObj.Message);

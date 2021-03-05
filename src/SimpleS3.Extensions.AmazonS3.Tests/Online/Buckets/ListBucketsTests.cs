@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Buckets
         {
             ListBucketsResponse listResp = await BucketClient.ListBucketsAsync().ConfigureAwait(false);
             Assert.True(listResp.Buckets.Count > 0);
-            Assert.Single(listResp.Buckets, bucket => bucket.Name == BucketName);
+            Assert.Single(listResp.Buckets, bucket => bucket.BucketName == BucketName);
         }
     }
 }

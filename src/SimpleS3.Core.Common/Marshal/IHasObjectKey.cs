@@ -2,6 +2,6 @@
 {
     public interface IHasObjectKey
     {
-        string ObjectKey { get; set; }
+        string ObjectKey { get; }
     }
 }

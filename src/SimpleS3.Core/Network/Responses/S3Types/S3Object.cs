@@ -1,10 +1,11 @@
 ﻿using System;
+using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
 {
-    public class S3Object : IHasStorageClass, IHasETag
+    public class S3Object : IHasStorageClass, IHasETag, IHasObjectKey
     {
         public S3Object(string objectKey, DateTimeOffset lastModifiedOn, long size, S3Identity? owner, string? eTag, StorageClass storageClass)
         {

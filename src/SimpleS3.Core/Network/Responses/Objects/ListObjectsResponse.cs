@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Objects
 {
-    public class ListObjectsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt, IHasRequestCharged
+    public class ListObjectsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt, IHasRequestCharged, IHasBucketName
     {
         public ListObjectsResponse()
         {

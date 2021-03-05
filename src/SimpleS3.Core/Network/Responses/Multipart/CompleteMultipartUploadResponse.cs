@@ -1,10 +1,11 @@
 ﻿using System;
+using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
 {
-    public class CompleteMultipartUploadResponse : BaseResponse, IHasRequestCharged, IHasVersionId, IHasExpiration, IHasETag, IHasSse
+    public class CompleteMultipartUploadResponse : BaseResponse, IHasRequestCharged, IHasVersionId, IHasExpiration, IHasETag, IHasSse, IHasBucketName, IHasObjectKey
     {
         /// <summary>The URI that identifies the newly created object.</summary>
         public string Location { get; internal set; }

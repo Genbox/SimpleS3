@@ -1,9 +1,11 @@
 ﻿using System;
+using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
 {
-    public class S3Version
+    public class S3Version : IHasObjectKey, IHasVersionId
     {
         public S3Version(string objectKey, string versionId, bool isLatest, DateTimeOffset lastModified, string etag, int size, S3Identity owner, StorageClass storageClass)
         {

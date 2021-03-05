@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
 {
-    public class ListPartsResponse : BaseResponse, IHasRequestCharged, IHasAbort, IHasTruncated, IHasStorageClass, IHasUploadId
+    public class ListPartsResponse : BaseResponse, IHasRequestCharged, IHasAbort, IHasTruncated, IHasStorageClass, IHasUploadId, IHasBucketName, IHasObjectKey
     {
         public ListPartsResponse()
         {

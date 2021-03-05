@@ -40,7 +40,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Objects
                 Assert.Equal(4, listResp.Versions.Count);
                 Assert.Equal(1, listResp.DeleteMarkers.Count);
 
-                Assert.Equal(bucket, listResp.Name);
+                Assert.Equal(bucket, listResp.BucketName);
                 Assert.Equal(string.Empty, listResp.Prefix);
                 Assert.Equal(string.Empty, listResp.KeyMarker);
                 Assert.Equal(string.Empty, listResp.VersionIdMarker);

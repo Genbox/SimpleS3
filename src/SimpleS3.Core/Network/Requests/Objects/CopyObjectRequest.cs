@@ -45,7 +45,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public string DestinationObjectKey { get; private set; }
         public MetadataDirective MetadataDirective { get; set; }
         public TaggingDirective TaggingDirective { get; set; }
-        string IHasBucketName.BucketName { get => DestinationBucketName; set => throw new NotSupportedException(); }
+        string IHasBucketName.BucketName => DestinationBucketName;
         public DateTimeOffset? IfModifiedSince { get; set; }
         public DateTimeOffset? IfUnmodifiedSince { get; set; }
         public ETagBuilder IfETagMatch { get; }
@@ -59,7 +59,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         public AclBuilder AclGrantReadAcp { get; }
         public AclBuilder AclGrantWriteAcp { get; }
         public AclBuilder AclGrantFullControl { get; }
-        string IHasObjectKey.ObjectKey { get => DestinationObjectKey; set => throw new NotSupportedException(); }
+        string IHasObjectKey.ObjectKey => DestinationObjectKey;
         public Payer RequestPayer { get; set; }
         public SseAlgorithm SseAlgorithm { get; set; }
         public string? SseKmsKeyId { get; set; }

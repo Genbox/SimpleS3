@@ -25,7 +25,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
             foreach (S3DeleteInfo info in request.Objects)
             {
                 xml.WriteStartElement("Object");
-                xml.WriteElement("Key", info.Name);
+                xml.WriteElement("Key", info.ObjectKey);
 
                 if (info.VersionId != null)
                     xml.WriteElement("VersionId", info.VersionId);

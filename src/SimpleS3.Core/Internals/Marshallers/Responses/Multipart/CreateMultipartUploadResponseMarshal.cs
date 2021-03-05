@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
                     switch (name)
                     {
                         case "Bucket":
-                            response.Bucket = xmlReader.ReadString();
+                            response.BucketName = xmlReader.ReadString();
                             break;
                         case "Key":
                             response.ObjectKey = xmlReader.ReadString();

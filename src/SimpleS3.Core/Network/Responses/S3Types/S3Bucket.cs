@@ -1,24 +1,25 @@
 ﻿using System;
+using Genbox.SimpleS3.Core.Common.Marshal;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
 {
-    public class S3Bucket
+    public class S3Bucket : IHasBucketName
     {
-        public S3Bucket(string name, DateTimeOffset createdOn)
+        public S3Bucket(string bucketName, DateTimeOffset createdOn)
         {
-            Name = name;
+            BucketName = bucketName;
             CreatedOn = createdOn;
         }
 
         /// <summary>Name of the bucket</summary>
-        public string Name { get; }
+        public string BucketName { get; }
 
         /// <summary>The date the bucket was created</summary>
         public DateTimeOffset CreatedOn { get; }
 
         public override string ToString()
         {
-            return Name;
+            return BucketName;
         }
     }
 }

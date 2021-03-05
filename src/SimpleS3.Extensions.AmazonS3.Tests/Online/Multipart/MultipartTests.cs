@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -134,7 +133,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Multipart
 
             CreateMultipartUploadResponse createResp = await MultipartClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
             Assert.True(createResp.IsSuccess);
-            Assert.Equal(BucketName, createResp.Bucket);
+            Assert.Equal(BucketName, createResp.BucketName);
             Assert.Equal(objectKey, createResp.ObjectKey);
             Assert.NotNull(createResp.UploadId);
 
@@ -168,7 +167,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Multipart
 
             CreateMultipartUploadResponse initResp = await MultipartClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
 
-            Assert.Equal(BucketName, initResp.Bucket);
+            Assert.Equal(BucketName, initResp.BucketName);
             Assert.Equal(objectKey, initResp.ObjectKey);
             Assert.NotNull(initResp.UploadId);
 
@@ -203,7 +202,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Multipart
             CreateMultipartUploadResponse initResp = await MultipartClient.CreateMultipartUploadAsync(BucketName, objectKey).ConfigureAwait(false);
 
             Assert.True(initResp.IsSuccess);
-            Assert.Equal(BucketName, initResp.Bucket);
+            Assert.Equal(BucketName, initResp.BucketName);
             Assert.Equal(objectKey, initResp.ObjectKey);
             Assert.NotNull(initResp.UploadId);
 

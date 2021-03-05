@@ -1,8 +1,10 @@
 ﻿using System;
+using Genbox.SimpleS3.Core.Common.Marshal;
+using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
 {
-    public class S3DeleteMarker
+    public class S3DeleteMarker : IHasObjectKey, IHasVersionId
     {
         public S3DeleteMarker(bool isLatest, string objectKey, DateTimeOffset lastModified, S3Identity owner, string versionId)
         {

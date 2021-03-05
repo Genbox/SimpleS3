@@ -1,17 +1,19 @@
-﻿using JetBrains.Annotations;
+﻿using Genbox.SimpleS3.Core.Common.Marshal;
+using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
 {
     [PublicAPI]
-    public class S3DeleteInfo
+    public class S3DeleteInfo : IHasObjectKey, IHasVersionId
     {
-        public S3DeleteInfo(string name, string? versionId = null)
+        public S3DeleteInfo(string objectKey, string? versionId = null)
         {
-            Name = name;
+            ObjectKey = objectKey;
             VersionId = versionId;
         }
 
-        public string Name { get; set; }
+        public string ObjectKey { get; set; }
         public string? VersionId { get; set; }
     }
 }

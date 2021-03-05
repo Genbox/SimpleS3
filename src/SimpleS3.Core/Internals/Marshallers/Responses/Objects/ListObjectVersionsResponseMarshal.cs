@@ -50,7 +50,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                             response.NextVersionIdMarker = xmlReader.ReadString();
                             break;
                         case "Name":
-                            response.Name = xmlReader.ReadString();
+                            response.BucketName = xmlReader.ReadString();
                             break;
                         case "Prefix":
                             response.Prefix = xmlReader.ReadString();

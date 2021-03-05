@@ -1,8 +1,9 @@
-﻿using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
+﻿using Genbox.SimpleS3.Core.Common.Marshal;
+using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
 {
-    public class S3DeletedObject : IHasDeleteMarker, IHasVersionId
+    public class S3DeletedObject : IHasDeleteMarker, IHasVersionId, IHasObjectKey
     {
         public S3DeletedObject(string objectKey, string? versionId, bool isDeleteMarker, string? deleteMarkerVersionId)
         {
