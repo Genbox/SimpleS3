@@ -70,7 +70,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests
             writer.WriteEndElement("person");
             writer.WriteEndElement("rootnode");
 
-            return writer.ToString();
+            return writer.GetXmlString();
         }
     }
 }

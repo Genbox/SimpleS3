@@ -194,6 +194,15 @@ namespace Genbox.SimpleS3.Core.Internals.Xml
             throw new S3Exception("Invalid XML standard");
         }
 
+        public string GetXmlString()
+        {
+            if (_used)
+                throw new InvalidOperationException("Do not reuse FastXmlWriter instances");
+
+            _used = true;
+            return StringBuilderPool.Shared.ReturnString(_xml);
+        }
+
         /// <summary>Return a set of UTF8 encoded bytes</summary>
         public byte[] GetBytes()
         {
