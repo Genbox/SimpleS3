@@ -13,8 +13,6 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
     {
         public void MarshalResponse(Config config, GetBucketTaggingResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.Tags = new Dictionary<string, string>();
-
             using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {
                 xmlReader.ReadToDescendant("TagSet");

@@ -39,12 +39,12 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
         /// using the same object key, then uploads in the response are first sorted by key. Additionally, uploads are sorted in ascending order within each key
         /// by the upload initiation time.
         /// </summary>
-        public IList<S3Upload> Uploads { get; internal set; }
+        public IList<S3Upload> Uploads { get; }
 
         public EncodingType EncodingType { get; internal set; }
         public bool IsTruncated { get; internal set; }
         public string? Prefix { get; internal set; }
         public string? Delimiter { get; internal set; }
-        public IList<string>? CommonPrefixes { get; internal set; }
+        public IList<string>? CommonPrefixes { get; }
     }
 }

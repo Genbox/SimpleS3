@@ -19,10 +19,6 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
     {
         public void MarshalResponse(Config config, ListObjectVersionsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
-            response.Versions = new List<S3Version>();
-            response.DeleteMarkers = new List<S3DeleteMarker>();
-            response.CommonPrefixes = new List<string>();
-
             using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {
                 xmlReader.ReadToDescendant("ListVersionsResult");

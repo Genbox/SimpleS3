@@ -48,7 +48,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Multipart
         public S3Identity Initiator { get; internal set; }
 
         /// <summary>The list of parts</summary>
-        public IList<S3Part> Parts { get; internal set; }
+        public IList<S3Part> Parts { get; }
 
         public DateTimeOffset? AbortsOn { get; internal set; }
         public string? AbortRuleId { get; internal set; }

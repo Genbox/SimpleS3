@@ -28,7 +28,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
         }
 
         public string BucketName { get; set; }
-
         public byte[]? ContentMd5 { get; set; }
         public ObjectCannedAcl Acl { get; set; }
         public AclBuilder AclGrantRead { get; }

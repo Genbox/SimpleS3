@@ -14,6 +14,6 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
         /// This is used in a Lifecycle Rule Filter to apply a logical AND to two or more predicates. The Lifecycle Rule will apply to any object
         /// matching all of the predicates configured inside the And operator.
         /// </summary>
-        public IList<S3AndCondition> Conditions { get; set; }
+        public IList<S3AndCondition> Conditions { get; }
     }
 }
