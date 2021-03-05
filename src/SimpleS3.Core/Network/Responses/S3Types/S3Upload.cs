@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
         }
 
         /// <summary>The object key</summary>
-        public string ObjectKey { get; }
+        public string ObjectKey { get; internal set; }
 
         /// <summary>
         /// Identifies who initiated the multipart upload. If the initiator is an AWS account, this element provides the same information as the Owner

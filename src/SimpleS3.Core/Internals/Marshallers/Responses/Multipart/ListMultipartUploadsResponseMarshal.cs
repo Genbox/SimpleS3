@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
@@ -54,6 +55,19 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
                             ParseUpload(response, xmlReader);
                             break;
                     }
+                }
+            }
+
+            if (config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url)
+            {
+                response.Delimiter = WebUtility.UrlDecode(response.Delimiter);
+                response.KeyMarker = WebUtility.UrlDecode(response.KeyMarker);
+                response.Prefix = WebUtility.UrlDecode(response.Prefix);
+                response.NextKeyMarker = WebUtility.UrlDecode(response.NextKeyMarker);
+
+                foreach (S3Upload upload in response.Uploads)
+                {
+                    upload.ObjectKey = WebUtility.UrlDecode(upload.ObjectKey);
                 }
             }
         }

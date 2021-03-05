@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
@@ -70,6 +71,12 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
                             break;
                     }
                 }
+            }
+
+            //Bug: Docs at https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html does not list encoding type, but the response is XML, so I have implemented it anyway.
+            if (config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url)
+            {
+                response.ObjectKey = WebUtility.UrlDecode(response.ObjectKey);
             }
         }
 

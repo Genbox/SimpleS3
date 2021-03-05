@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.S3Types
             StorageClass = storageClass;
         }
 
-        public string ObjectKey { get; }
+        public string ObjectKey { get; internal set; }
         public DateTimeOffset LastModifiedOn { get; }
         public long Size { get; }
 
