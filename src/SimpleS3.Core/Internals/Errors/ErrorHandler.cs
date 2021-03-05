@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Xml.Linq;
-using Genbox.SimpleS3.Core.Common.Exceptions;
+using System.Xml;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Errors;
 
 namespace Genbox.SimpleS3.Core.Internals.Errors
@@ -12,14 +11,19 @@ namespace Genbox.SimpleS3.Core.Internals.Errors
     {
         internal static GenericError Create(Stream response)
         {
-            XDocument errorDocument = XDocument.Load(response);
+            Dictionary<string, string> lookup = new Dictionary<string, string>(StringComparer.Ordinal);
 
-            if (errorDocument.Root == null)
-                throw new S3Exception("Unknown format in error response");
+            using (XmlReader xmlReader = new XmlTextReader(response))
+            {
+                xmlReader.ReadToDescendant("Error");
 
-            Dictionary<string, string> lookup = errorDocument.Root.Elements().ToDictionary(x => x.Name.LocalName, x => x.Value, StringComparer.OrdinalIgnoreCase);
+                foreach (string name in XmlHelper.ReadElements(xmlReader))
+                {
+                    lookup.Add(name, xmlReader.ReadString());
+                }
+            }
 
-            string code = lookup["code"];
+            string code = lookup["Code"];
 
             switch (code)
             {
