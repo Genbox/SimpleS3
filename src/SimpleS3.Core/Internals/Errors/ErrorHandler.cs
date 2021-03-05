@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -45,6 +45,8 @@ namespace Genbox.SimpleS3.Core.Internals.Errors
                     return new NoSuchBucketError(lookup);
                 case "BucketNotEmpty":
                     return new BucketNotEmptyError(lookup);
+                case "PreconditionFailed":
+                    return new PreconditionFailedError(lookup);
                 default:
                     return new GenericError(lookup);
             }
