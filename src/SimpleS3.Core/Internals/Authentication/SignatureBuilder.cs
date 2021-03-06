@@ -190,7 +190,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
                 sb.Append(item.Key);
             }
 
-            return StringBuilderPool.Shared.ReturnString(sb);;
+            return StringBuilderPool.Shared.ReturnString(sb);
         }
     }
 }
