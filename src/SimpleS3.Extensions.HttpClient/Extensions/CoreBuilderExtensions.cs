@@ -37,13 +37,9 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
                 handler.MaxAutomaticRedirections = 3;
                 handler.SslProtocols = SslProtocols.None; //Let the OS handle the protocol to use
 
-                IOptions<HttpClientConfig> options = x.GetService<IOptions<HttpClientConfig>>();
-
-                if (options != null)
-                {
-                    handler.UseProxy = options.Value.UseProxy;
-                    handler.Proxy = options.Value.Proxy;
-                }
+                IOptions<HttpClientConfig> options = x.GetRequiredService<IOptions<HttpClientConfig>>();
+                handler.UseProxy = options.Value.UseProxy;
+                handler.Proxy = options.Value.Proxy;
 
                 ILogger<HttpClientNetworkDriver> logger = x.GetRequiredService<ILogger<HttpClientNetworkDriver>>();
 

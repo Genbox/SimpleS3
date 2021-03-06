@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
 
             builder.Services.Configure<HttpClientFactoryOptions>((options, x) =>
             {
-                IOptions<HttpClientFactoryConfig> factoryConfig = x.GetService<IOptions<HttpClientFactoryConfig>>();
+                IOptions<HttpClientFactoryConfig> factoryConfig = x.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
                 options.HandlerLifetime = factoryConfig.Value.HandlerLifetime;
 
                 options.HttpClientActions.Add(client =>

@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions
 
         // Polly default transient codes: >500 & 408
         // https://github.com/App-vNext/Polly.Extensions.Http/blob/master/src/Polly.Extensions.Http/HttpPolicyExtensions.cs
-        private static readonly Func<HttpResponseMessage, bool> TransientHttpStatusCodePredicate = resp => (int)resp.StatusCode >= 500 || resp.StatusCode == HttpStatusCode.RequestTimeout;
+        private static readonly Func<HttpResponseMessage, bool> _transientHttpStatusCodePredicate = resp => (int)resp.StatusCode >= 500 || resp.StatusCode == HttpStatusCode.RequestTimeout;
 
         /// <summary>Adds a retry policy with 3 retries. Also adds a timeout policy that waits for 10 minutes before it terminates a request.</summary>
         public static IHttpClientBuilder UseDefaultHttpPolicy(this IHttpClientBuilder builder)
@@ -40,17 +40,17 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions
         public static IHttpClientBuilder UseRetryPolicy(this IHttpClientBuilder builder, int retries, BackoffTime backoffTime)
         {
             // Add a policy that will handle transient HTTP & Networking errors
-            RetryPolicy<HttpResponseMessage> exceptionPolicy = Policy<HttpResponseMessage>
-                // Handle network errors
-                .Handle<IOException>()
-                // Handle other HttpClient errors
-                .Or<HttpRequestException>()
-                // Handle Polly timeouts
-                .Or<TimeoutRejectedException>()
-                // Handle transient-error status codes
-                .OrResult(TransientHttpStatusCodePredicate)
-                // Action
-                .WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt));
+            AsyncRetryPolicy<HttpResponseMessage>? exceptionPolicy = Policy<HttpResponseMessage>
+                                                                     // Handle network errors
+                                                                     .Handle<IOException>()
+                                                                     // Handle other HttpClient errors
+                                                                     .Or<HttpRequestException>()
+                                                                     // Handle Polly timeouts
+                                                                     .Or<TimeoutRejectedException>()
+                                                                     // Handle transient-error status codes
+                                                                     .OrResult(_transientHttpStatusCodePredicate)
+                                                                     // Action
+                                                                     .WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt));
 
             builder.AddPolicyHandler(exceptionPolicy);
             builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
@@ -59,7 +59,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions
 
         public static IHttpClientBuilder UseTimeoutPolicy(this IHttpClientBuilder builder, TimeSpan timeout)
         {
-            TimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(timeout);
+            AsyncTimeoutPolicy<HttpResponseMessage>? timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(timeout);
             builder.AddPolicyHandler(timeoutPolicy);
             return builder;
         }
