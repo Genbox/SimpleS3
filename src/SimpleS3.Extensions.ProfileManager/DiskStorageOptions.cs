@@ -10,6 +10,6 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
 
         public string ProfileLocation { get; set; } = DefaultLocation;
 
-        public bool OverwriteExisting { get; set; } = false;
+        public bool OverwriteExisting { get; set; }
     }
 }

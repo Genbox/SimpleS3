@@ -30,11 +30,11 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
 
         public void OnStartLine(Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod method, HttpVersion version, Span<byte> target, Span<byte> path, Span<byte> query, Span<byte> customMethod, bool pathEncoded)
         {
-            Method = Enum.Parse<HttpMethod>(method.ToString().ToUpper());
+            Method = Enum.Parse<HttpMethod>(method.ToString().ToUpperInvariant());
             Target = Encoding.UTF8.GetString(target);
 
             //We need to remove parameters from the target
-            int paramIndex = Target.IndexOf('?');
+            int paramIndex = Target.IndexOf('?', StringComparison.Ordinal);
 
             if (paramIndex > 0)
                 Target = Target.Substring(0, paramIndex);

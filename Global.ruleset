@@ -173,7 +173,8 @@
     <Rule Id="RCS1079" Action="Error" />
     <Rule Id="RCS1090" Action="None" />
     <Rule Id="RCS1093" Action="Warning" />
-    <Rule Id="RCS1096" Action="Warning" />
+    <Rule Id="RCS1096" Action="None" />
+    <Rule Id="RCS1096i" Action="Warning" />
     <Rule Id="RCS1097" Action="Error" />
     <Rule Id="RCS1102" Action="None" />
     <Rule Id="RCS1105" Action="Error" />

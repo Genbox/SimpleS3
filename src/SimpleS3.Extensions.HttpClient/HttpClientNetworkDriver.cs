@@ -12,7 +12,7 @@ using HttpMethod = Genbox.SimpleS3.Core.Abstracts.Enums.HttpMethod;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient
 {
-    public class HttpClientNetworkDriver : INetworkDriver, IDisposable
+    public sealed class HttpClientNetworkDriver : INetworkDriver, IDisposable
     {
         private readonly System.Net.Http.HttpClient _client;
         private readonly ILogger<HttpClientNetworkDriver> _logger;
@@ -26,7 +26,6 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
         public void Dispose()
         {
             _client?.Dispose();
-            GC.SuppressFinalize(this);
         }
 
         public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethod method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)

@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.AmazonS3.Tests
             config.Credentials = new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
             config.Region = AmazonS3Region.UsEast1;
 
-            AmazonS3Client client = new AmazonS3Client(config, driver);
+            using AmazonS3Client client = new AmazonS3Client(config, driver);
 
             await client.GetObjectAsync("testbucket", "GetObjectAsync").ConfigureAwait(false);
             Assert.Equal("https://testbucket.s3.us-east-1.amazonaws.com/GetObjectAsync", driver.SendResource);

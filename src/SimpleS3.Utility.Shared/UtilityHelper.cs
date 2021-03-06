@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Utility.Shared
         {
             ConsoleKeyInfo key;
             int intVal = 0;
-            S3Provider[] choices = Enum.GetValues<S3Provider>();
+            S3Provider[] choices = Enum.GetValues<S3Provider>().Skip(1).ToArray();
 
             do
             {

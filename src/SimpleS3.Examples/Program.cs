@@ -43,7 +43,8 @@ namespace Genbox.SimpleS3.Examples
             Console.WriteLine("Using the standard API");
 
             //We upload and object to the bucket with "Hello World" inside it.
-            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, objectName, new MemoryStream(Encoding.UTF8.GetBytes("Hello World")));
+            await using MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("Hello World"));
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, objectName, memoryStream);
 
             if (putResp.IsSuccess)
             {
