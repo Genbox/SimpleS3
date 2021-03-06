@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers
             {
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
-                if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
+                if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter && key.Key != ConsoleKey.Escape)
                 {
                     pass.Add(key.KeyChar);
                     Console.Write("*");
