@@ -5,8 +5,6 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Internal
 {
     internal class BackblazeB2RegionData : IRegionData
     {
-        private BackblazeB2RegionData() { }
-
         public static BackblazeB2RegionData Instance { get; } = new BackblazeB2RegionData();
 
         public IEnumerable<IRegionInfo> GetRegions()

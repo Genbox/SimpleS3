@@ -5,8 +5,6 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Internal
 {
     internal class AmazonS3RegionData : IRegionData
     {
-        private AmazonS3RegionData() { }
-
         public static AmazonS3RegionData Instance { get; } = new AmazonS3RegionData();
 
         public IEnumerable<IRegionInfo> GetRegions()
