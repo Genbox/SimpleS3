@@ -12,7 +12,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
 #if COMMERCIAL
-
+using System.Collections.Generic;
 #endif
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Multipart
