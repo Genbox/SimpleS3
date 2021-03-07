@@ -1,7 +1,5 @@
 # SimpleS3
 
-[![NuGet - Free](https://img.shields.io/nuget/v/Genbox.SimpleS3.svg?style=flat-square&label=Free)](https://www.nuget.org/packages/Genbox.SimpleS3/)
-[![NuGet - Commercial](https://img.shields.io/nuget/v/Genbox.SimpleS3.svg?style=flat-square&label=Commercial%20)](https://www.nuget.org/packages/Genbox.SimpleS3/)
 [![Build](https://github.com/Genbox/SimpleS3/workflows/Generic%20build/badge.svg)](https://github.com/Genbox/SimpleS3/actions)
 [![Publish](https://github.com/Genbox/SimpleS3/workflows/Nuget%20release/badge.svg)](https://github.com/Genbox/SimpleS3/actions)
 [![License](https://img.shields.io/github/license/Genbox/SimpleS3)](https://github.com/Genbox/SimpleS3/blob/master/LICENSE.txt)
@@ -31,6 +29,14 @@ These are the features provided by SimpleS3.
 * Supports configuration binding via [Microsoft.Extensions.Configuration](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-2.2).
 
 ### Usage
+
+### Packages
+
+| Nuget | Type |
+|-------|------|
+|[![AmazonS3 - Free](https://img.shields.io/nuget/v/Genbox.SimpleS3.AmazonS3.svg?style=flat-square&label=Amazon%20S3)](https://www.nuget.org/packages/Genbox.SimpleS3.AmazonS3/)| Free
+|[![BackblazeB2 - Commercial](https://img.shields.io/nuget/v/Genbox.SimpleS3.BackBlazeB2.Commercial.svg?style=flat-square&label=Backblaze%20B2)](https://www.nuget.org/packages/Genbox.SimpleS3.BackBlazeB2.Commercial/)| Commercial
+
 
 #### Setup the config and client
 ```csharp
