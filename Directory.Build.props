@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <Authors>Ian Qvist</Authors>
-    <Copyright>Copyright 2020, by Ian Qvist. All rights reserved.</Copyright>
-    <Description>A simple, secure and high-performance client for Amazon S3</Description>
+    <Copyright>Copyright 2021, by Ian Qvist. All rights reserved.</Copyright>
+    <Description>A simple, secure and high-performance library to communicate with Amazon S3 compatible APIs.</Description>
 
     <!-- Set copying files etc. to timeout faster -->
     <CopyRetryCount>2</CopyRetryCount>
@@ -20,7 +20,7 @@
     <RepositoryType>Git</RepositoryType>
     <RootNamespace>Genbox.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>Genbox.$(MSBuildProjectName)</AssemblyName>
-    <PackageProjectUrl>https://github.com/Genbox/$(MSBuildProjectName)</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Genbox/SimpleS3</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Configurations>Debug;Release;CommercialDebug;CommercialRelease</Configurations>
 
@@ -52,6 +52,8 @@
 
   <PropertyGroup Condition="$(DefineConstants.Contains(COMMERCIAL))">
     <AssemblyName>Genbox.$(MSBuildProjectName).Commercial</AssemblyName>
+    <Description>$(Description)
+      This is a commercial version of the package. You must be a Github commercial tier sponsor to use it. See https://github.com/sponsors/Genbox/ for more info.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
