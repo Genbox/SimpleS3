@@ -7,7 +7,8 @@ assignees: ''
 
 ---
 
-* [ ] I understand that my bug report may be closed for any reason
+* [ ] I hereby verify that I am a sponsor.
+Sponsorship is required before you can submit bug reports. See https://github.com/sponsors/Genbox
 
 **Describe the bug**
 What is the bug about?
