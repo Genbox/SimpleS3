@@ -30,13 +30,15 @@ These are the features provided by SimpleS3.
 
 ### Usage
 
-### Packages
+#### Download package
+The packages here already depends on all the things you need. Commercial packages require a commercial sponsorship.
 
 | Nuget | Type |
 |-------|------|
 |[![AmazonS3 - Free](https://img.shields.io/nuget/v/Genbox.SimpleS3.AmazonS3.svg?style=flat-square&label=Amazon%20S3)](https://www.nuget.org/packages/Genbox.SimpleS3.AmazonS3/)| Free
 |[![BackblazeB2 - Commercial](https://img.shields.io/nuget/v/Genbox.SimpleS3.BackBlazeB2.Commercial.svg?style=flat-square&label=Backblaze%20B2)](https://www.nuget.org/packages/Genbox.SimpleS3.BackBlazeB2.Commercial/)| Commercial
 
+For the purpose of the examples below, we are going to use the Amazon S3 provider.
 
 #### Setup the config and client
 ```csharp
