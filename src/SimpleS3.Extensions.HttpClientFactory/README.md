@@ -9,16 +9,6 @@ If you are using [Microsoft's dependency injection](https://www.nuget.org/packag
 
 ```csharp
 ServiceCollection services = new ServiceCollection();
-ICoreBuilder coreBuilder = services.AddSimpleS3Core(s3Config =>
-{
-    s3Config.Credentials = new StringAccessKey(keyId, accessKey);
-    s3Config.Region = region;
-});
-
+ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services);
 coreBuilder.UseHttpClientFactory();
-
-IServiceProvider serviceProvider = services.BuildServiceProvider();
-IObjectClient objectClient = serviceProvider.GetRequiredService<IObjectClient>();
 ```
-
-You can now use the `objectClient` to work with objects on S3.

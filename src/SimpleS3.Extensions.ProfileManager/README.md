@@ -8,18 +8,17 @@ If you are using [Microsoft's dependency injection](https://www.nuget.org/packag
 
 ```csharp
 ServiceCollection services = new ServiceCollection();
-IS3ClientBuilder s3Builder = services.AddSimpleS3();
-s3Builder.CoreBuilder
-         .UseProfileManager() //Adds the profile system
-         .BindConfigToDefaultProfile() //Ask SimpleS3 to use credentials using a profile called "Default"
-         .UseConsoleSetup() //Add the ConsoleSetup service to the service collection
-         .UseDataProtection(); //Use secure encryption to protect the profiles
+ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services);
+
+coreBuilder.UseProfileManager() //Adds the profile system
+           .BindConfigToDefaultProfile() //Ask SimpleS3 to use credentials using a profile called "Default"
+           .UseConsoleSetup(); //Add the ConsoleSetup service to the service collection
 
 IServiceProvider serviceProvider = services.BuildServiceProvider();
 
 //Use the profile manager to get the "Default" profile. Returns null if it does not exist.
 
-IProfileManager? profileManager = serviceProvider.GetRequiredService<IProfileManager>();
+IProfileManager profileManager = serviceProvider.GetRequiredService<IProfileManager>();
 IProfile? profile = profileManager.GetDefaultProfile();
 
 if (profile == null)
@@ -28,8 +27,4 @@ if (profile == null)
     ConsoleProfileSetup? setup = serviceProvider.GetRequiredService<ConsoleProfileSetup>();
     setup.SetupDefaultProfile();
 }
-
-IObjectClient objectClient = serviceProvider.GetRequiredService<IObjectClient>();
 ```
-
-You can now use the `objectClient` to work with objects on S3.

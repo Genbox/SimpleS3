@@ -1,23 +1,24 @@
-﻿# SimpleS3.Extensions.AwsS3
-This extension adds support for [BackBlaze's B2 serivce](https://www.backblaze.com/b2/cloud-storage.html).
+﻿# SimpleS3.Extensions.AmazonS3
+This extension adds support for [Amazon's S3 serivce](https://aws.amazon.com/s3/).
 
-To use it, add a reference to [Genbox.SimpleS3.Extensions.BackBlazeB2](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.BackBlazeB2)
+To use it, add a reference to [Genbox.SimpleS3.Extensions.AmazonS3](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.AmazonS3)
 
 ### Using Microsoft.Extensions.DependencyInjection
-If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you can use B2 like so:
+If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you can use it like so:
 
 ```csharp
 ServiceCollection services = new ServiceCollection();
-IS3ClientBuilder s3Builder = services.AddSimpleS3();
+ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services);
+IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
 
-s3Builder.CoreBuilder.UseBackBlazeB2(config =>
+coreBuilder.UseAmazonS3(config =>
 {
-    config.Region = B2Region.UsWest001;
-    config.Credentials = new StringAccessKey("your application id here", "secret key here");
+    config.Region = AmazonS3Region.EuWest1;
+    config.Credentials = new StringAccessKey("key id here", "access key here");
 });
 
 IServiceProvider serviceProvider = services.BuildServiceProvider();
 IObjectClient objectClient = serviceProvider.GetRequiredService<IObjectClient>();
 ```
 
-You can now use the `objectClient` to work with objects on B2.
+You can now use the `objectClient` to work with objects on S3.
