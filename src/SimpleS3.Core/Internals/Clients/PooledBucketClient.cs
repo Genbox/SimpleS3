@@ -198,6 +198,19 @@ namespace Genbox.SimpleS3.Core.Internals.Clients
 
             return ObjectPool<GetBucketVersioningRequest>.Shared.RentAndUseAsync(Setup, Action);
         }
+
+        public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
+        {
+            void Setup(GetBucketLifecycleConfigurationRequest req)
+            {
+                req.Initialize(bucketName);
+                config?.Invoke(req);
+            }
+
+            Task<GetBucketLifecycleConfigurationResponse> Action(GetBucketLifecycleConfigurationRequest request) => BucketOperations.GetBucketLifecycleConfigurationAsync(request, token);
+
+            return ObjectPool<GetBucketLifecycleConfigurationRequest>.Shared.RentAndUseAsync(Setup, Action);
+        }
     }
 }
 #endif

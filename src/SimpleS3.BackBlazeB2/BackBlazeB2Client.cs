@@ -126,6 +126,11 @@ namespace Genbox.SimpleS3.BackBlazeB2
             return Client.GetBucketVersioningAsync(bucketName, config, token);
         }
 
+        public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
+        {
+            throw new NotSupportedException();
+        }
+
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default)
         {
             return Client.DeleteObjectAsync(bucketName, objectKey, config, token);
