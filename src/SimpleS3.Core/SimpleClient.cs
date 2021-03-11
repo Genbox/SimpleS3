@@ -147,6 +147,11 @@ namespace Genbox.SimpleS3.Core
             return _bucketClient.GetBucketVersioningAsync(bucketName, config, token);
         }
 
+        public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
+        {
+            return _bucketClient.GetBucketLifecycleConfigurationAsync(bucketName, config, token);
+        }
+
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default)
         {
             return _objectClient.DeleteObjectAsync(bucketName, objectKey, config, token);

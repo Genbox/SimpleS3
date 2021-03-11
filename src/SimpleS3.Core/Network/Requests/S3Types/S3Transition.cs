@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Transactions;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
 
@@ -26,6 +27,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
             Validator.RequireThat(transitionAfterDays > 0, nameof(transitionAfterDays));
             Validator.RequireThat(storageClass != StorageClass.Unknown, nameof(storageClass));
 
+            TransitionAfterDays = transitionAfterDays;
+            StorageClass = storageClass;
+        }
+
+        internal S3Transition(DateTimeOffset? transitionOnDate, int? transitionAfterDays, StorageClass storageClass)
+        {
+            TransitionOnDate = transitionOnDate;
             TransitionAfterDays = transitionAfterDays;
             StorageClass = storageClass;
         }

@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Buckets
         public BucketLifecycleConfigurationTests(ITestOutputHelper helper) : base(helper) { }
 
         [Fact]
-        public async Task PutLifecycleConfigurationTest()
+        public async Task PutGetLifecycleConfigurationTest()
         {
             await CreateTempBucketAsync(async x =>
             {
@@ -34,6 +34,29 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Buckets
                 PutBucketLifecycleConfigurationResponse putResp = await BucketClient.PutBucketLifecycleConfigurationAsync(x, new[] { rule1, rule2, rule3 }).ConfigureAwait(false);
                 Assert.True(putResp.IsSuccess);
 
+                GetBucketLifecycleConfigurationResponse getResp = await BucketClient.GetBucketLifecycleConfigurationAsync(x).ConfigureAwait(false);
+                Assert.True(getResp.IsSuccess);
+
+                S3Rule rule1a = getResp.Rules[0];
+                Assert.Equal(rule1.Id, rule1a.Id);
+                Assert.Equal(rule1.Enabled, rule1a.Enabled);
+                Assert.Equal(rule1.Filter.Prefix, rule1a.Filter?.Prefix);
+                Assert.Equal(rule1.Transitions[0].StorageClass, rule1a.Transitions[0].StorageClass);
+                Assert.Equal(rule1.Transitions[0].TransitionAfterDays, rule1a.Transitions[0].TransitionAfterDays);
+                Assert.Equal(rule1.Transitions[1].StorageClass, rule1a.Transitions[1].StorageClass);
+                Assert.Equal(rule1.Transitions[1].TransitionAfterDays, rule1a.Transitions[1].TransitionAfterDays);
+
+                S3Rule rule2a = getResp.Rules[1];
+                Assert.Equal(rule2.Id, rule2a.Id);
+                Assert.Equal(rule2.Enabled, rule2a.Enabled);
+                Assert.Equal(rule2.Filter.Prefix, rule2a.Filter?.Prefix);
+                Assert.Equal(rule2.Expiration.ExpireAfterDays, rule2a.Expiration?.ExpireAfterDays);
+
+                S3Rule rule3a = getResp.Rules[2];
+                Assert.Equal(rule3.Id, rule3a.Id);
+                Assert.Equal(rule3.Enabled, rule3a.Enabled);
+                Assert.Equal(rule3.Filter.Tag, rule3a.Filter?.Tag);
+                Assert.Equal(rule3.Expiration.ExpireOnDate?.Date, rule3a.Expiration?.ExpireOnDate?.Date); //Amazon round the date to the day instead
             }).ConfigureAwait(false);
         }
 
@@ -48,6 +71,15 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Buckets
 
                 PutBucketLifecycleConfigurationResponse putResp = await BucketClient.PutBucketLifecycleConfigurationAsync(x, new[] { rule }).ConfigureAwait(false);
                 Assert.True(putResp.IsSuccess);
+
+                GetBucketLifecycleConfigurationResponse getResp = await BucketClient.GetBucketLifecycleConfigurationAsync(x);
+                Assert.True(getResp.IsSuccess);
+
+                S3Rule rule1a = getResp.Rules[0];
+                Assert.Equal(rule.Id, rule1a.Id);
+                Assert.Equal(rule.Enabled, rule1a.Enabled);
+                Assert.Equal(rule.Filter.Prefix, rule1a.Filter?.Prefix);
+                Assert.Equal(rule.Expiration.ExpireAfterDays, rule1a.Expiration?.ExpireAfterDays);
 
             }).ConfigureAwait(false);
         }

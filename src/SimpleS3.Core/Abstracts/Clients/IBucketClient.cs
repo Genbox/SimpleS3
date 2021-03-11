@@ -112,5 +112,11 @@ namespace Genbox.SimpleS3.Core.Abstracts.Clients
         /// <param name="config">A delegate to configure the request</param>
         /// <param name="token">A cancellation token </param>
         Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default);
+
+        /// <summary>Returns the lifecycle configuration information set on the bucket.</summary>
+        /// <param name="bucketName">The bucket name</param>
+        /// <param name="config">A delegate to configure the request</param>
+        /// <param name="token">A cancellation token </param>
+        Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default);
     }
 }

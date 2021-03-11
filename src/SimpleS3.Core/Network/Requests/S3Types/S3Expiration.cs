@@ -28,6 +28,13 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
             ExpireObjectDeleteMarker = expireDeleteMarker;
         }
 
+        internal S3Expiration(DateTimeOffset? expireOnDate, int? expireAfterDays, bool? expireObjectDeleteMarker)
+        {
+            ExpireOnDate = expireOnDate;
+            ExpireAfterDays = expireAfterDays;
+            ExpireObjectDeleteMarker = expireObjectDeleteMarker;
+        }
+
         public DateTimeOffset? ExpireOnDate { get; }
         public int? ExpireAfterDays { get; }
         public bool? ExpireObjectDeleteMarker { get; }

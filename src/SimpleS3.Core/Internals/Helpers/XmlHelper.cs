@@ -7,6 +7,10 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
     {
         public static IEnumerable<string> ReadElements(XmlReader xmlReader, string? tagName = null)
         {
+            //Support closed tags: <MyTag />
+            if (xmlReader.IsEmptyElement && xmlReader.Name == tagName)
+                yield break;
+
             while (xmlReader.Read())
             {
                 if (tagName != null)

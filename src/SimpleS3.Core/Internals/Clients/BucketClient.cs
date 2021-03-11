@@ -130,5 +130,13 @@ namespace Genbox.SimpleS3.Core.Internals.Clients
 
             return _bucketOperations.GetBucketVersioningAsync(request, token);
         }
+
+        public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
+        {
+            GetBucketLifecycleConfigurationRequest request = new GetBucketLifecycleConfigurationRequest(bucketName);
+            config?.Invoke(request);
+
+            return _bucketOperations.GetBucketLifecycleConfigurationAsync(request, token);
+        }
     }
 }
