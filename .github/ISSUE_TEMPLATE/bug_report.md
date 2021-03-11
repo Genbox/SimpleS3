@@ -13,7 +13,7 @@ Sponsorship is required before you can submit bug reports. See https://github.co
 **Describe the bug**
 What is the bug about?
 
-**To Reproduce**
+**How to reproduce?**
 Describe steps to reproduce the bug. Please include code to reproduce if possible.
 
 **Expected behavior**
