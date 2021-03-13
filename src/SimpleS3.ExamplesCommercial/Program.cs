@@ -102,4 +102,11 @@ namespace Genbox.SimpleS3.ExamplesCommercial
         }
     }
 }
+#else
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+    }
+}
 #endif
