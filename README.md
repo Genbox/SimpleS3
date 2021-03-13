@@ -38,7 +38,7 @@ The packages here already depends on all the things you need. Commercial package
 |[![AmazonS3 - Free](https://img.shields.io/nuget/v/Genbox.SimpleS3.AmazonS3.svg?style=flat-square&label=Amazon%20S3)](https://www.nuget.org/packages/Genbox.SimpleS3.AmazonS3/)| Free
 |[![BackblazeB2 - Commercial](https://img.shields.io/nuget/v/Genbox.SimpleS3.BackBlazeB2.Commercial.svg?style=flat-square&label=Backblaze%20B2)](https://www.nuget.org/packages/Genbox.SimpleS3.BackBlazeB2.Commercial/)| Commercial
 
-For the purpose of the examples below, we are going to use the Amazon S3 provider.
+See the [provider status page](https://github.com/Genbox/SimpleS3/wiki/Provider-status) for the list of operations that are currently supported. For the purpose of the examples below, we are going to use the Amazon S3 provider.
 
 #### Setup the config and client
 ```csharp
@@ -87,14 +87,6 @@ Currently SimpleS3 has the following commercial features:
 * High-level API to help listing/deleting more than 1000 objects at the time. Uses [HTTP pipelining](https://en.wikipedia.org/wiki/HTTP_pipelining) to reduce latency.
 * Extends ProfileManager with strong in-memory and on-disk encryption. Keys are always cleared from memory after use.
 * Enable automatic pooling of requests to reduce allocations and speed up requests.
-
-#### Providers
-SimpleS3 is built to support multiple S3 providers. You can seamless switch betwene them. See [advanced usage](https://github.com/Genbox/SimpleS3/wiki/Advanced-usage) for more info.
-
-| Provider      | Status
-| ------------- | -------------
-| Amazon S3     | Partial. See [Amazon S3 status](https://github.com/Genbox/SimpleS3/wiki/Amazon-S3-provider-status)
-| Backblaze B2  | Partial. See [Backblaze B2 status](https://github.com/Genbox/SimpleS3/wiki/Backblaze-B2-provider-status)
 
 ### Extensions
 SimpleS3 is extensible and has multiple different network drivers and extensions you can use. Click on the extension below for more information.
