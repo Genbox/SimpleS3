@@ -85,8 +85,6 @@ namespace Genbox.SimpleS3.ExamplesCommercial
                    .UseConsoleSetup()
                    .UseDataProtection(); //This is a commercial feature
 
-            builder.HttpBuilder.UseProxy(new WebProxy("http://127.0.0.1:8888"));
-
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             IProfileManager profileManager = serviceProvider.GetRequiredService<IProfileManager>();
