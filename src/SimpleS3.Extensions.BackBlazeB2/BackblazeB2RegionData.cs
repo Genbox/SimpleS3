@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 
-namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Internal
+namespace Genbox.SimpleS3.Extensions.BackBlazeB2
 {
-    internal class BackblazeB2RegionData : IRegionData
+    public class BackblazeB2RegionData : IRegionData
     {
         public static BackblazeB2RegionData Instance { get; } = new BackblazeB2RegionData();
 

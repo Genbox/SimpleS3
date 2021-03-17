@@ -4,7 +4,6 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Extensions;
-using Genbox.SimpleS3.Extensions.BackBlazeB2.Internal;
 
 namespace Genbox.SimpleS3.Extensions.BackBlazeB2
 {

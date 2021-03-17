@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 
-namespace Genbox.SimpleS3.Extensions.AmazonS3.Internal
+namespace Genbox.SimpleS3.Extensions.AmazonS3
 {
-    internal class AmazonS3RegionData : IRegionData
+    public class AmazonS3RegionData : IRegionData
     {
         public static AmazonS3RegionData Instance { get; } = new AmazonS3RegionData();
 
