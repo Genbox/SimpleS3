@@ -23,6 +23,7 @@ namespace Genbox.SimpleS3.ProviderBase
             services.AddSingleton(inputValidator);
             services.AddSingleton(urlBuilder);
             services.AddSingleton(Options.Create(config));
+            services.AddLogging();
 
             ICoreBuilder builder = SimpleS3CoreServices.AddSimpleS3Core(services);
 
@@ -39,6 +40,8 @@ namespace Genbox.SimpleS3.ProviderBase
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton(inputValidator);
             services.AddSingleton(urlBuilder);
+            services.AddLogging();
+          
             SimpleS3CoreServices.AddSimpleS3Core(services);
 
             services.AddSingleton(networkDriver);

@@ -39,7 +39,6 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="collection">The service collection</param>
         public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection)
         {
-            collection.AddLogging();
             collection.AddOptions();
 
             //Authentication

@@ -26,6 +26,8 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
         public CanonicalRequestFileTests()
         {
             ServiceCollection services = new ServiceCollection();
+            services.AddLogging();
+
             SimpleS3CoreServices.AddSimpleS3Core(services).UseAmazonS3(x =>
             {
                 x.Credentials = new StringAccessKey("KeyIdExampleExampleE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");

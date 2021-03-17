@@ -9,7 +9,7 @@
     <PackageReference Include="FluentValidation" Version="9.5.3" />
     <PackageReference Include="Genbox.HttpBuilders" Version="1.0.3" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
   </ItemGroup>
 
