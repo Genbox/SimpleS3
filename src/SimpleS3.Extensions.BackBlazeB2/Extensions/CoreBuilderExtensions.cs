@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Extensions;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -30,7 +31,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions
             clientBuilder.Services.PostConfigure<Config>((x, y) =>
             {
                 IOptions<BackBlazeB2Config> awsCfg = y.GetRequiredService<IOptions<BackBlazeB2Config>>();
-                PropertyMapper.MapObjects(awsCfg.Value, x);
+                PropertyHelper.MapObjects(awsCfg.Value, x);
             });
 
             return clientBuilder;

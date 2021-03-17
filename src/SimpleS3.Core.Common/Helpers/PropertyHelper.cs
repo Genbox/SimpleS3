@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Genbox.SimpleS3.Core.Common
+namespace Genbox.SimpleS3.Core.Common.Helpers
 {
-    public static class PropertyMapper
+    public static class PropertyHelper
     {
         public static void MapObjects<T, T2>(T source, T2 destination)
         {
