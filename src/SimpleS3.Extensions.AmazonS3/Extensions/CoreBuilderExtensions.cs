@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Extensions
     {
         public static ICoreBuilder UseAmazonS3(this ICoreBuilder clientBuilder, Action<AmazonS3Config> config)
         {
-            return UseAmazonS3(clientBuilder, (b2Config, _) => config.Invoke(b2Config));
+            return UseAmazonS3(clientBuilder, (s3Config, _) => config.Invoke(s3Config));
         }
 
         public static ICoreBuilder UseAmazonS3(this ICoreBuilder clientBuilder, Action<AmazonS3Config, IServiceProvider> config)
