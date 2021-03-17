@@ -5,30 +5,33 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 
 namespace Genbox.SimpleS3.Core.Common
 {
+    /// <summary>
+    /// Converts between region codes and enums.
+    /// </summary>
     public class RegionConverter : IRegionConverter
     {
-        private readonly Dictionary<int, string> _enumMap = new Dictionary<int, string>(15);
+        private readonly Dictionary<int, IRegionInfo> _enumMap = new Dictionary<int, IRegionInfo>();
+        private readonly Dictionary<string, IRegionInfo> _stringMap = new Dictionary<string, IRegionInfo>(StringComparer.OrdinalIgnoreCase);
 
         public RegionConverter(IRegionData data)
         {
             foreach (IRegionInfo regionInfo in data.GetRegions())
             {
-                AddRegion(regionInfo);
+                int intVal = (int)Convert.ChangeType(regionInfo.EnumValue, typeof(int), NumberFormatInfo.InvariantInfo);
+
+                _enumMap.Add(intVal, regionInfo);
+                _stringMap.Add(regionInfo.Code, regionInfo);
             }
         }
 
-        public string GetRegion(Enum enumVal)
+        public IRegionInfo GetRegion(int enumValue)
         {
-            int intVal = (int)Convert.ChangeType(enumVal, typeof(int), NumberFormatInfo.InvariantInfo);
-            return _enumMap[intVal];
+            return _enumMap[enumValue];
         }
 
-        public void AddRegion(IRegionInfo regionInfo)
+        public IRegionInfo GetRegion(string regionCode)
         {
-            int intVal = (int)Convert.ChangeType(regionInfo.EnumValue, typeof(int), NumberFormatInfo.InvariantInfo);
-
-            if (!_enumMap.ContainsKey(intVal))
-                _enumMap.Add(intVal, regionInfo.Code);
+            return _stringMap[regionCode];
         }
     }
 }

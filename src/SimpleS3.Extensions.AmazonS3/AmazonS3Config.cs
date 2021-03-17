@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Authentication;
+using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.AmazonS3.Internal;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3
@@ -31,7 +32,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
             set
             {
                 _region = value;
-                RegionCode = _converter.GetRegion(value);
+                RegionCode = _converter.GetRegion(value).Code;
             }
         }
     }

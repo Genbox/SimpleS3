@@ -13,13 +13,15 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup
     {
         private readonly IInputValidator _inputValidator;
         private readonly IProfileManager _profileManager;
-        private readonly IRegionManager _regionManager;
+        private readonly IRegionConverter _regionConverter;
+        private readonly IRegionData _regionData;
 
-        public ConsoleProfileSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionManager regionManager)
+        public ConsoleProfileSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionConverter regionConverter, IRegionData regionData)
         {
             _profileManager = profileManager;
             _inputValidator = inputValidator;
-            _regionManager = regionManager;
+            _regionConverter = regionConverter;
+            _regionData = regionData;
         }
 
         public IProfile SetupProfile(string profileName, bool persist = true)
@@ -163,7 +165,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup
             int counter = 0; //used for validation further down
 
             Console.WriteLine("{0,-8}{1,-20}{2}", "Index", "Region Code", "Region Name");
-            foreach (IRegionInfo regionInfo in _regionManager.GetAllRegions())
+            foreach (IRegionInfo regionInfo in _regionData.GetRegions())
             {
                 validRegionId.Add(regionInfo.Code);
                 Console.WriteLine("{0,-8}{1,-20}{2}", Convert.ChangeType(regionInfo.EnumValue, typeof(int), NumberFormatInfo.InvariantInfo), regionInfo.Code, regionInfo.Name);
@@ -177,10 +179,10 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup
             if (enteredRegion != null)
             {
                 if (int.TryParse(enteredRegion, out int index) && index >= 0 && index <= counter)
-                    return _regionManager.GetRegionInfo(index);
+                    return _regionConverter.GetRegion(index);
 
                 if (validRegionId.Contains(enteredRegion))
-                    return _regionManager.GetRegionInfo(enteredRegion);
+                    return _regionConverter.GetRegion(enteredRegion);
             }
 
             Console.Error.WriteLine("Invalid region. Try again.");

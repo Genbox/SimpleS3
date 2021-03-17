@@ -1,7 +1,8 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Region;
+using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
-using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Managers;
 using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -39,7 +40,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
         public static IProfileManagerBuilder UseConsoleSetup(this IProfileManagerBuilder builder)
         {
             builder.Services.AddSingleton<ConsoleProfileSetup>();
-            builder.Services.AddSingleton<IRegionManager, RegionManager>();
+            builder.Services.AddSingleton<IRegionConverter, RegionConverter>();
             return builder;
         }
     }

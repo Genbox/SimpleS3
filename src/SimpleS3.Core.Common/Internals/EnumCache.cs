@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Common.Internals
             foreach (string name in names)
             {
                 T enumVal = (T)Enum.Parse(_type, name);
-                string? enumStr = GetAttributeValue(name) ?? name;
+                string enumStr = GetAttributeValue(name) ?? name;
 
                 _map.Add(enumVal, enumStr);
                 _map2.Add(enumStr, enumVal);

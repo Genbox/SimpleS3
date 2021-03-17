@@ -1,4 +1,5 @@
 ﻿using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.Common.Tests.Code;
 using Xunit;
 
 namespace Genbox.SimpleS3.Core.Common.Tests
