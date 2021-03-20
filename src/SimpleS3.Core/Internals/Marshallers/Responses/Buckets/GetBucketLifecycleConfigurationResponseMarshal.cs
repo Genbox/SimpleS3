@@ -140,6 +140,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
         {
             string? prefix = null;
             KeyValuePair<string, string>? tag = null;
+            S3AndCondition? andCondition = null;
 
             foreach (string name in XmlHelper.ReadElements(xmlReader, "Filter"))
             {
@@ -151,6 +152,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
                     case "Tag":
                         tag = ReadTag(xmlReader);
                         break;
+                    case "And":
+                        andCondition = ReadAndCondition(xmlReader);
+                        break;
                 }
             }
 
@@ -159,11 +163,39 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
             S3Filter filter = new S3Filter();
             filter.Prefix = prefix;
             filter.Tag = tag;
+            filter.AndConditions = andCondition;
 
             return filter;
         }
 
-        private static KeyValuePair<string, string>? ReadTag(XmlReader xmlReader)
+        private static S3AndCondition ReadAndCondition(XmlReader xmlReader)
+        {
+            string? prefix = null;
+            IList<KeyValuePair<string, string>> tags = new List<KeyValuePair<string, string>>();
+
+            foreach (string name in XmlHelper.ReadElements(xmlReader, "And"))
+            {
+                switch (name)
+                {
+                    case "Prefix":
+                        prefix = xmlReader.ReadString();
+                        break;
+                    case "Tag":
+                        tags.Add(ReadTag(xmlReader));
+                        break;
+                }
+            }
+
+            if (prefix == null && tags.Count == 0)
+                throw new InvalidOperationException("Missing required values");
+
+            S3AndCondition condition = new S3AndCondition();
+            condition.Prefix = prefix;
+            condition.Tags = tags;
+            return condition;
+        }
+
+        private static KeyValuePair<string, string> ReadTag(XmlReader xmlReader)
         {
             string? key = null;
             string? value = null;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Enums;
@@ -84,23 +84,35 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Buckets
             }).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "This does not currently work. Seems to match docs, but AWS gives an error")]
+        [Fact]
         public async Task PutLifecycleConfigurationWithLogicalAndTest()
         {
             await CreateTempBucketAsync(async x =>
             {
-                S3Filter filter1 = new S3Filter();
-                filter1.Tag = new KeyValuePair<string, string>("type", "temp");
+                S3AndCondition conditions = new S3AndCondition();
+                conditions.Prefix = "temp/";
+                conditions.Tags.Add(new KeyValuePair<string, string>("Type1", "Temp1"));
+                conditions.Tags.Add(new KeyValuePair<string, string>("Type2", "Temp2"));
 
-                S3Filter filter2 = new S3Filter();
-                filter2.Prefix = "Temp/";
+                S3Filter filter = new S3Filter();
+                filter.AndConditions = conditions;
 
                 S3Rule rule = new S3Rule("Test logical and", true);
-                rule.Filter = new S3Filter { Conditions = { filter1, filter2 } };
+                rule.Filter = filter;
                 rule.Expiration = new S3Expiration(DateTimeOffset.UtcNow.AddDays(1));
 
                 PutBucketLifecycleConfigurationResponse putResp = await BucketClient.PutBucketLifecycleConfigurationAsync(x, new[] { rule }).ConfigureAwait(false);
                 Assert.True(putResp.IsSuccess);
+
+                GetBucketLifecycleConfigurationResponse getResp = await BucketClient.GetBucketLifecycleConfigurationAsync(x).ConfigureAwait(false);
+                Assert.True(getResp.IsSuccess);
+
+                S3Rule? rule1 = Assert.Single(getResp.Rules);
+                S3AndCondition? conditions1 = rule1.Filter?.AndConditions;
+
+                Assert.NotNull(conditions1);
+                Assert.Equal(conditions.Prefix, conditions1!.Prefix);
+                Assert.Equal(conditions.Tags, conditions1.Tags);
 
             }).ConfigureAwait(false);
         }

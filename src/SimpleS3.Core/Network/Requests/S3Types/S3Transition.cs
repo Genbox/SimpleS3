@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Transactions;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
 

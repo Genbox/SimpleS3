@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -64,19 +65,24 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
                         writer.WriteEndElement("Tag");
                     }
 
-                    foreach (S3AndCondition condition in rule.Filter.Conditions)
+                    S3AndCondition? andCondition = rule.Filter.AndConditions;
+
+                    if (andCondition != null)
                     {
                         writer.WriteStartElement("And");
 
-                        if (condition.Prefix != null)
-                            writer.WriteElement("Prefix", condition.Prefix);
+                        if (andCondition.Prefix != null)
+                            writer.WriteElement("Prefix", andCondition.Prefix);
 
-                        if (condition.Tag != null)
+                        if (andCondition.Tags != null)
                         {
-                            writer.WriteStartElement("Tag");
-                            writer.WriteElement("Key", condition.Tag.Value.Key);
-                            writer.WriteElement("Value", condition.Tag.Value.Value);
-                            writer.WriteEndElement("Tag");
+                            foreach (KeyValuePair<string, string> tag in andCondition.Tags)
+                            {
+                                writer.WriteStartElement("Tag");
+                                writer.WriteElement("Key", tag.Key);
+                                writer.WriteElement("Value", tag.Value);
+                                writer.WriteEndElement("Tag");
+                            }
                         }
 
                         writer.WriteEndElement("And");
