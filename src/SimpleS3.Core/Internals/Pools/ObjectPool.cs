@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -53,6 +54,19 @@ namespace Genbox.SimpleS3.Core.Internals.Pools
             //We reset here instead of in Rent() because it frees memory for strings and objects by releasing references.
             obj.Reset();
             _pool.Add(obj);
+        }
+
+        public void Return(IEnumerable<T> objs)
+        {
+            if (_pool.Count > _maxCapacity)
+                return;
+
+            //We reset here instead of in Rent() because it frees memory for strings and objects by releasing references.
+            foreach (T obj in objs)
+            {
+                obj.Reset();
+                _pool.Add(obj);
+            }
         }
     }
 }

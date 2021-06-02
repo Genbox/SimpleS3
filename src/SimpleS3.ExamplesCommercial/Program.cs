@@ -1,6 +1,5 @@
 ﻿#if COMMERCIAL
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.BackBlazeB2.Extensions;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -8,7 +7,6 @@ using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
-using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Genbox.SimpleS3.ProviderBase.Abstracts;
@@ -57,7 +55,7 @@ namespace Genbox.SimpleS3.ExamplesCommercial
 
                 Console.WriteLine("# Deleting all objects in temporary bucket");
 
-                await foreach (S3DeleteError obj in client.DeleteAllObjectsAsync(bucketName, true)) //This is a commercial feature
+                await foreach (S3DeleteError obj in client.DeleteAllObjectVersionsAsync(bucketName)) //This is a commercial feature
                 {
                     Console.WriteLine("Deleted " + obj.ObjectKey);
                 }
