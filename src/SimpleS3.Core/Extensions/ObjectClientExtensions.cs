@@ -66,6 +66,9 @@ namespace Genbox.SimpleS3.Core.Extensions
                 if (!response.IsSuccess)
                     yield break;
 
+                if (response.Objects.Count == 0)
+                    yield break;
+
                 if (response.IsTruncated)
                 {
                     string localToken = response.NextContinuationToken;
