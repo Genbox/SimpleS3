@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests.Online
             {
                 string objectKey = "object-key";
 
-                PutObjectResponse? putResp = await ObjectClient.PutObjectAsync(name, objectKey, null).ConfigureAwait(false);
+                PutObjectResponse putResp = await ObjectClient.PutObjectAsync(name, objectKey, null).ConfigureAwait(false);
                 await ObjectClient.GetObjectAsync(name, objectKey).ConfigureAwait(false);
                 await ObjectClient.DeleteObjectAsync(name, objectKey, x => x.VersionId = putResp.VersionId).ConfigureAwait(false);
             }).ConfigureAwait(false);

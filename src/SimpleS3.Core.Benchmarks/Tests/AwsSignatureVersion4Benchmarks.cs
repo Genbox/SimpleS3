@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using Amazon.Runtime;
 using Amazon.Util;
@@ -57,7 +58,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests
 
                 // Add conditional headers
                 _request2.AddHeaderIf(_credentials.UseToken, HeaderKeys.XAmzSecurityTokenHeader, _credentials.Token);
-                _request2.AddHeaderIf(!_request2.Headers.Contains(HeaderKeys.HostHeader), HeaderKeys.HostHeader, _request2.RequestUri?.Host);
+                _request2.AddHeaderIf(!_request2.Headers.Contains(HeaderKeys.HostHeader), HeaderKeys.HostHeader, _request2.RequestUri?.Host!);
             }
         }
 
@@ -71,7 +72,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests
         public string ASV4()
         {
             // Build the canonical request
-            (string canonicalRequest, string signedHeaders) = CanonicalRequest.Build("s3", _request2, null, null);
+            (string canonicalRequest, string signedHeaders) = CanonicalRequest.Build("s3", _request2, new Dictionary<string, IEnumerable<string>>(), string.Empty);
 
             // Build the string to sign
             (string stringToSign, string credentialScope) = StringToSign.Build(

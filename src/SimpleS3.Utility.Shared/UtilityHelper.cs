@@ -48,7 +48,7 @@ namespace Genbox.SimpleS3.Utility.Shared
         public static ServiceProvider CreateSimpleS3(S3Provider selectedProvider, string profileName)
         {
             ServiceCollection services = new ServiceCollection();
-            ICoreBuilder? coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services);
+            ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services);
 
             coreBuilder.UseHttpClientFactory();
 

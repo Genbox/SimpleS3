@@ -31,7 +31,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Transfer
 
             using (MemoryStream ms = new MemoryStream())
             {
-                IAsyncEnumerable<GetObjectResponse>? responses = Transfer.CreateDownload(BucketName, nameof(UploadDownloadMultipart))
+                IAsyncEnumerable<GetObjectResponse> responses = Transfer.CreateDownload(BucketName, nameof(UploadDownloadMultipart))
                                                                          .DownloadMultipartAsync(ms);
 
                 await foreach (var resp in responses)
