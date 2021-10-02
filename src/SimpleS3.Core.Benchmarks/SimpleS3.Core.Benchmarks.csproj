@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AwsSignatureVersion4" Version="1.4.0" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+    <PackageReference Include="AwsSignatureVersion4" Version="2.1.1" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
     <PackageReference Include="Enums.NET" Version="4.0.0" />
   </ItemGroup>
 
