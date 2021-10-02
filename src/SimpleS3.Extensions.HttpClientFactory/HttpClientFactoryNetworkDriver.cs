@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Internal;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using HttpMethod = Genbox.SimpleS3.Core.Abstracts.Enums.HttpMethod;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory
@@ -15,10 +16,12 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory
     public class HttpClientFactoryNetworkDriver : INetworkDriver
     {
         private readonly IHttpClientFactory _clientFactory;
+        private readonly IOptions<HttpClientFactoryNetworkDriverConfig> _options;
         private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
 
-        public HttpClientFactoryNetworkDriver(ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory)
+        public HttpClientFactoryNetworkDriver(IOptions<HttpClientFactoryNetworkDriverConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory)
         {
+            _options = options;
             _logger = logger;
             _clientFactory = clientFactory;
         }
@@ -42,7 +45,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory
 
                 _logger.LogTrace("Sending HTTP request");
 
-                HttpClient client = _clientFactory.CreateClient();
+                HttpClient client = _clientFactory.CreateClient(_options.Value.HttpClientName);
                 httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
             }
 

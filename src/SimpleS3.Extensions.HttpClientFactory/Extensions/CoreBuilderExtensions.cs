@@ -34,9 +34,9 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
             builder.Services.AddHttpClient();
             builder.Services.AddSingleton<INetworkDriver, HttpClientFactoryNetworkDriver>();
 
-            builder.Services.Configure<HttpClientFactoryOptions>((options, x) =>
+            builder.Services.Configure<HttpClientFactoryOptions>((options, services) =>
             {
-                IOptions<HttpClientFactoryConfig> factoryConfig = x.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
+                IOptions<HttpClientFactoryConfig> factoryConfig = services.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
                 options.HandlerLifetime = factoryConfig.Value.HandlerLifetime;
 
                 options.HttpClientActions.Add(client =>
@@ -56,6 +56,13 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
 
                     b.PrimaryHandler = handler;
                 });
+            });
+
+            builder.Services.Configure<HttpClientFactoryNetworkDriverConfig>((options, services) =>
+            {
+                //Here we transfer over the HttpClientName from the upper API config to lower API config
+                IOptions<HttpClientFactoryConfig> factoryConfig = services.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
+                options.HttpClientName = factoryConfig.Value.HttpClientName;
             });
 
             return builder;
