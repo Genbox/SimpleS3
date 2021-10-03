@@ -10,6 +10,7 @@
     <ProjectReference Include="..\SimpleS3.BackBlazeB2\SimpleS3.BackBlazeB2.csproj" />
     <ProjectReference Include="..\SimpleS3.AmazonS3\SimpleS3.AmazonS3.csproj" />
     <ProjectReference Include="..\SimpleS3.Extensions.ProfileManager\SimpleS3.Extensions.ProfileManager.csproj" />
+    <ProjectReference Include="..\SimpleS3.GoogleCloudStorage\SimpleS3.GoogleCloudStorage.csproj" />
   </ItemGroup>
 
 </Project>

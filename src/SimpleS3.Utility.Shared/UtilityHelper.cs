@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
 using Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
+using Genbox.SimpleS3.Extensions.GoogleCloudStorage.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
@@ -60,6 +61,8 @@ namespace Genbox.SimpleS3.Utility.Shared
                 coreBuilder.UseAmazonS3();
             else if (selectedProvider == S3Provider.BackBlazeB2)
                 coreBuilder.UseBackBlazeB2();
+            else if (selectedProvider == S3Provider.GoogleCloudStorage)
+                coreBuilder.UseGoogleCloudStorage();
             else
                 throw new ArgumentOutOfRangeException(nameof(selectedProvider), selectedProvider, null);
 
