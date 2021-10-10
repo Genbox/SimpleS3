@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -14,7 +15,7 @@ namespace Genbox.SimpleS3.Utility.TestSetup
     {
         private static async Task Main(string[] args)
         {
-            Console.WriteLine("You are about to set up the test environment for online tests");
+            Console.WriteLine("You are about to set up the test environment for the provider tests");
 
             S3Provider selectedProvider = UtilityHelper.SelectProvider();
 
@@ -22,47 +23,29 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
             string profileName = UtilityHelper.GetProfileName(selectedProvider);
 
-            using (ServiceProvider provider = UtilityHelper.CreateSimpleS3(selectedProvider, profileName))
+            using ServiceProvider provider = UtilityHelper.CreateSimpleS3(selectedProvider, profileName);
+
+            IProfile profile = UtilityHelper.GetOrSetupProfile(provider, selectedProvider, profileName);
+            string bucketName = UtilityHelper.GetTestBucket(profile);
+
+            IBucketClient bucketClient = provider.GetRequiredService<IBucketClient>();
+
+            Console.WriteLine($"Setting up bucket '{bucketName}'");
+
+            bool success = false;
+
+            if (!await BucketExistAsync(bucketClient, bucketName))
+                success = await TryCreateBucketAsync(bucketClient, bucketName);
+
+            if (success)
             {
-                IProfile profile = UtilityHelper.GetOrSetupProfile(provider, selectedProvider, profileName);
-                string bucketName = UtilityHelper.GetTestBucket(profile);
-
-                IBucketClient bucketClient = provider.GetRequiredService<IBucketClient>();
-
                 if (selectedProvider == S3Provider.AmazonS3)
-                    await SetupBucketAwsS3(bucketClient, bucketName).ConfigureAwait(false);
-                else if (selectedProvider == S3Provider.BackBlazeB2)
-                    await SetupBucketBackBlazeB2(bucketClient, bucketName).ConfigureAwait(false);
+                    await PostConfigureAmazonS3(bucketClient, bucketName).ConfigureAwait(false);
             }
         }
 
-        private static async Task SetupBucketAwsS3(IBucketClient bucketClient, string bucketName)
+        private static async Task PostConfigureAmazonS3(IBucketClient bucketClient, string bucketName)
         {
-            Console.WriteLine($"Setting up bucket '{bucketName}'");
-
-            HeadBucketResponse headResp = await bucketClient.HeadBucketAsync(bucketName).ConfigureAwait(false);
-
-            if (headResp.StatusCode == 200)
-                Console.WriteLine($"'{bucketName}' already exist.");
-            else if (headResp.StatusCode == 404)
-            {
-                Console.WriteLine($"'{bucketName}' does not exist - creating.");
-                CreateBucketResponse createResp = await bucketClient.CreateBucketAsync(bucketName, x => x.EnableObjectLocking = true).ConfigureAwait(false);
-
-                if (createResp.IsSuccess)
-                    Console.WriteLine($"Successfully created '{bucketName}'.");
-                else
-                {
-                    Console.Error.WriteLine($"Failed to create '{bucketName}'. Exiting.");
-                    return;
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Unknown error code when checking if bucket exists: {headResp.StatusCode}");
-                return;
-            }
-
             Console.WriteLine("Adding lock configuration");
 
             PutBucketLockConfigurationResponse putLockResp = await bucketClient.PutBucketLockConfigurationAsync(bucketName, true).ConfigureAwait(false);
@@ -94,26 +77,38 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
         }
 
-        private static async Task SetupBucketBackBlazeB2(IBucketClient bucketClient, string bucketName)
+        private static async Task<bool> BucketExistAsync(IBucketClient bucketClient, string bucketName)
         {
-            Console.WriteLine($"Setting up bucket '{bucketName}'");
-
             HeadBucketResponse headResp = await bucketClient.HeadBucketAsync(bucketName).ConfigureAwait(false);
 
             if (headResp.StatusCode == 200)
-                Console.WriteLine($"'{bucketName}' already exist.");
-            else if (headResp.StatusCode == 404)
             {
-                Console.WriteLine($"'{bucketName}' does not exist - creating.");
-                CreateBucketResponse createResp = await bucketClient.CreateBucketAsync(bucketName).ConfigureAwait(false);
-
-                if (createResp.IsSuccess)
-                    Console.WriteLine($"Successfully created '{bucketName}'.");
-                else
-                    Console.Error.WriteLine($"Failed to create '{bucketName}'. Exiting.");
+                Console.WriteLine($"'{bucketName}' already exist.");
+                return true;
             }
-            else
-                Console.WriteLine($"Unknown error code when checking if bucket exists: {headResp.StatusCode}");
+
+            if (headResp.StatusCode == 404)
+            {
+                Console.WriteLine($"'{bucketName}' does not exist..");
+                return false;
+            }
+
+            Console.WriteLine($"Unknown error code when checking if bucket exists: {(HttpStatusCode)headResp.StatusCode} (Code: {headResp.StatusCode})");
+            return false;
+        }
+
+        private static async Task<bool> TryCreateBucketAsync(IBucketClient bucketClient, string bucketName)
+        {
+            CreateBucketResponse createResp = await bucketClient.CreateBucketAsync(bucketName).ConfigureAwait(false);
+
+            if (createResp.IsSuccess)
+            {
+                Console.WriteLine($"Successfully created '{bucketName}'.");
+                return true;
+            }
+
+            Console.Error.WriteLine($"Failed to create '{bucketName}'. Error: " + createResp.Error?.Message);
+            return false;
         }
     }
 }

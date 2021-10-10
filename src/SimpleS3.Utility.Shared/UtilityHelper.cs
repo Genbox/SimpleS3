@@ -18,21 +18,25 @@ namespace Genbox.SimpleS3.Utility.Shared
         {
             ConsoleKeyInfo key;
             int intVal = 0;
-            S3Provider[] choices = Enum.GetValues<S3Provider>().Skip(1).ToArray();
+
+            S3Provider[] enumValues = Enum.GetValues<S3Provider>();
+
+            //Skip 'unknown' and 'all'
+            S3Provider[] choices = enumValues.Skip(1).Take(enumValues.Length - 2).ToArray();
 
             do
             {
                 Console.WriteLine("Please select which provider you want to use:");
 
-                foreach (S3Provider choice in choices)
+                for (int i = 0; i < choices.Length; i++)
                 {
-                    Console.WriteLine($"{(int)choice}. {choice}");
+                    Console.WriteLine($"{i + 1}. {choices[i]}");
                 }
 
                 key = Console.ReadKey(true);
-            } while (!choices.Any(x => int.TryParse(key.KeyChar.ToString(), out intVal) && (int)x == intVal));
+            } while (!choices.Any(x => int.TryParse(key.KeyChar.ToString(), out intVal) && intVal >= 0 && intVal <= choices.Length));
 
-            return (S3Provider)intVal;
+            return choices[intVal - 1];
         }
 
         public static string GetProfileName(S3Provider provider)
@@ -42,8 +46,22 @@ namespace Genbox.SimpleS3.Utility.Shared
 
         public static string GetTestBucket(IProfile profile)
         {
-            string uniqId = profile.KeyId.Substring(0, 8);
-            return "testbucket-" + uniqId;
+            return "testbucket-" + profile.KeyId[..8];
+        }
+
+        public static string GetTemporaryBucket()
+        {
+            return "tempbucket-" + Guid.NewGuid();
+        }
+
+        public static bool IsTestBucket(string bucketName, IProfile profile)
+        {
+            return string.Equals(bucketName, GetTestBucket(profile), StringComparison.Ordinal);
+        }
+
+        public static bool IsTemporaryBucket(string bucketName)
+        {
+            return bucketName.StartsWith("tempbucket-", StringComparison.OrdinalIgnoreCase);
         }
 
         public static ServiceProvider CreateSimpleS3(S3Provider selectedProvider, string profileName)
@@ -51,7 +69,7 @@ namespace Genbox.SimpleS3.Utility.Shared
             ServiceCollection services = new ServiceCollection();
             ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services);
 
-            coreBuilder.UseHttpClientFactory();
+            coreBuilder.UseHttpClientFactory().UseProxy("127.0.0.1:8888");
 
             coreBuilder.UseProfileManager()
                        .BindConfigToProfile(profileName)

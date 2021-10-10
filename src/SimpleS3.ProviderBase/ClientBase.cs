@@ -41,7 +41,7 @@ namespace Genbox.SimpleS3.ProviderBase
             services.AddSingleton(inputValidator);
             services.AddSingleton(urlBuilder);
             services.AddLogging();
-          
+
             SimpleS3CoreServices.AddSimpleS3Core(services);
 
             services.AddSingleton(networkDriver);
@@ -50,9 +50,9 @@ namespace Genbox.SimpleS3.ProviderBase
             Build(services);
         }
 
-        protected internal ClientBase(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
+        protected internal ClientBase(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient)
         {
-            Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+            Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
         }
 
         protected SimpleClient Client { get; private set; }
@@ -72,8 +72,9 @@ namespace Genbox.SimpleS3.ProviderBase
             IMultipartClient multipartClient = _serviceProvider.GetRequiredService<IMultipartClient>();
             IMultipartTransfer multipartTransfer = _serviceProvider.GetRequiredService<IMultipartTransfer>();
             ITransfer transfer = _serviceProvider.GetRequiredService<ITransfer>();
+            ISignedObjectClient signedObjectClient = _serviceProvider.GetRequiredService<ISignedObjectClient>();
 
-            Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+            Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
         }
 
         protected virtual void Dispose(bool disposing)

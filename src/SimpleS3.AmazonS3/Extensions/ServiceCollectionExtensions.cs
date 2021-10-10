@@ -52,7 +52,8 @@ namespace Genbox.SimpleS3.AmazonS3.Extensions
                 IMultipartClient multipartClient = x.GetRequiredService<IMultipartClient>();
                 IMultipartTransfer multipartTransfer = x.GetRequiredService<IMultipartTransfer>();
                 ITransfer transfer = x.GetRequiredService<ITransfer>();
-                return new AmazonS3Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+                ISignedObjectClient? signedObjectClient = x.GetRequiredService<ISignedObjectClient>();
+                return new AmazonS3Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
             });
 
             //Add the client as the interface too

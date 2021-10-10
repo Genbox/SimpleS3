@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
+using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,58 +32,72 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
             if (key.KeyChar != 'y')
                 return;
 
-            using (ServiceProvider provider = UtilityHelper.CreateSimpleS3(selectedProvider, profileName))
+            using ServiceProvider provider = UtilityHelper.CreateSimpleS3(selectedProvider, profileName);
+
+            IProfile profile = UtilityHelper.GetOrSetupProfile(provider, selectedProvider, profileName);
+
+            ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
+
+            await foreach (S3Bucket bucket in ListAllBucketsAsync(client))
             {
-                UtilityHelper.GetOrSetupProfile(provider, selectedProvider, profileName);
+                if (!UtilityHelper.IsTestBucket(bucket.BucketName, profile) && !UtilityHelper.IsTemporaryBucket(bucket.BucketName))
+                    continue;
 
-                ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
+                Console.Write(bucket.BucketName);
 
-                await foreach (S3Bucket bucket in ListAllBucketsAsync(client))
+                int errors = await EmptyBucketAsync(client, bucket.BucketName);
+
+                if (errors == 0)
                 {
-                    if (!bucket.BucketName.StartsWith("testbucket-", StringComparison.OrdinalIgnoreCase))
-                        continue;
+                    Console.Write(" [x] emptied ");
 
-                    Console.Write(bucket.BucketName);
+                    DeleteBucketResponse delBucketResp = await client.DeleteBucketAsync(bucket.BucketName).ConfigureAwait(false);
 
-                    int errors = 0;
-
-                    IAsyncEnumerable<S3DeleteError> delAllResp = DeleteAllObjects(client, bucket.BucketName);
-
-                    await foreach (S3DeleteError error in delAllResp)
-                    {
-                        errors++;
-
-                        PutObjectLegalHoldResponse legalResp = await client.PutObjectLegalHoldAsync(bucket.BucketName, error.ObjectKey, false, request => request.VersionId = error.VersionId);
-
-                        if (legalResp.IsSuccess)
-                        {
-                            DeleteObjectResponse delResp = await client.DeleteObjectAsync(bucket.BucketName, error.ObjectKey, x => x.VersionId = error.VersionId);
-
-                            if (delResp.IsSuccess)
-                                errors--;
-                        }
-                    }
-
-                    if (errors == 0)
-                    {
-                        Console.Write(" [x] emptied ");
-
-                        DeleteBucketResponse delBucketResp = await client.DeleteBucketAsync(bucket.BucketName).ConfigureAwait(false);
-
-                        if (delBucketResp.IsSuccess)
-                            Console.Write("[x] deleted");
-                        else
-                            Console.Write("[ ] deleted");
-                    }
+                    if (delBucketResp.IsSuccess)
+                        Console.Write("[x] deleted");
                     else
-                        Console.Write(" [ ] emptied [ ] deleted");
-
-                    Console.WriteLine();
+                        Console.Write("[ ] deleted");
                 }
+                else
+                    Console.Write(" [ ] emptied [ ] deleted");
+
+                Console.WriteLine();
             }
         }
 
-        public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(IBucketClient client)
+        private static async Task<int> EmptyBucketAsync(ISimpleClient client, string bucketName)
+        {
+            int errors = 0;
+
+            IAsyncEnumerable<S3DeleteError> delAllResp = DeleteAllObjects(client, bucketName);
+
+            await foreach (S3DeleteError error in delAllResp)
+            {
+                errors++;
+
+                PutObjectLegalHoldResponse legalResp = await client.PutObjectLegalHoldAsync(bucketName, error.ObjectKey, false, request => request.VersionId = error.VersionId);
+
+                if (legalResp.IsSuccess)
+                {
+                    DeleteObjectResponse delResp = await client.DeleteObjectAsync(bucketName, error.ObjectKey, x => x.VersionId = error.VersionId);
+
+                    if (delResp.IsSuccess)
+                        errors--;
+                }
+            }
+
+            //Abort all incomplete multipart uploads
+            IAsyncEnumerable<S3Upload> partUploads = client.ListAllMultipartUploadsAsync(bucketName);
+
+            await foreach (S3Upload partUpload in partUploads)
+            {
+                await client.AbortMultipartUploadAsync(bucketName, partUpload.ObjectKey, partUpload.UploadId);
+            }
+
+            return errors;
+        }
+
+        private static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(IBucketClient client)
         {
             ListBucketsResponse response = await client.ListBucketsAsync().ConfigureAwait(false);
 

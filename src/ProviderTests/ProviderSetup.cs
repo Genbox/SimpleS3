@@ -24,7 +24,7 @@ namespace Genbox.ProviderTests
         }
 
         public static ProviderSetup Instance { get; } = new ProviderSetup();
-        public IList<(IProfile, ISimpleClient)> Clients { get; } = new List<(IProfile, ISimpleClient)>();
+        public IList<(S3Provider, IProfile, ISimpleClient)> Clients { get; } = new List<(S3Provider, IProfile, ISimpleClient)>();
 
         private void BuildProvider(S3Provider provider)
         {
@@ -62,7 +62,7 @@ namespace Genbox.ProviderTests
             if (profile == null)
                 throw new InvalidOperationException("Unable to find profile");
 
-            Clients.Add((profile, p.GetRequiredService<ISimpleClient>()));
+            Clients.Add((provider, profile, p.GetRequiredService<ISimpleClient>()));
         }
     }
 }

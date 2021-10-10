@@ -205,7 +205,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
         }
 #endif
 
-        public Task<PutObjectResponse> UploadAsync(Stream data, CancellationToken token = default)
+        public Task<PutObjectResponse> UploadAsync(Stream? data, CancellationToken token = default)
         {
             _request.Method = HttpMethod.PUT;
             _request.Content = data;
