@@ -63,7 +63,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers
                 }
             }
 
-            if (id == null || displayName == null)
+            if (id == null)
                 throw new InvalidOperationException("Missing required values in Owner section");
 
             return new S3Identity(id, displayName);
