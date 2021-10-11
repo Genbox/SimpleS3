@@ -45,7 +45,7 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
 
                 Console.Write(bucket.BucketName);
 
-                int errors = await EmptyBucketAsync(client, bucket.BucketName);
+                int errors = await EmptyBucketAsync(selectedProvider, client, bucket.BucketName);
 
                 if (errors == 0)
                 {
@@ -65,11 +65,11 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
             }
         }
 
-        private static async Task<int> EmptyBucketAsync(ISimpleClient client, string bucketName)
+        private static async Task<int> EmptyBucketAsync(S3Provider provider, ISimpleClient client, string bucketName)
         {
             int errors = 0;
 
-            IAsyncEnumerable<S3DeleteError> delAllResp = DeleteAllObjects(client, bucketName);
+            IAsyncEnumerable<S3DeleteError> delAllResp = DeleteAllObjects(provider, client, bucketName);
 
             await foreach (S3DeleteError error in delAllResp)
             {
@@ -107,7 +107,7 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
             }
         }
 
-        private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjects(ISimpleClient client, string bucket)
+        private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjects(S3Provider provider, ISimpleClient client, string bucket)
         {
             ListObjectVersionsResponse response;
             Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucket);
@@ -131,16 +131,26 @@ namespace Genbox.SimpleS3.Utility.TestCleanup
                 IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
                                                            .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
 
-                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucket, delete, req => req.Quiet = false).ConfigureAwait(false);
-
-                if (!multiDelResponse.IsSuccess)
-                    yield break;
-
-                foreach (S3DeleteError error in multiDelResponse.Errors)
+                //Google does not support DeleteObjects
+                if (provider == S3Provider.GoogleCloudStorage)
                 {
-                    yield return error;
+                    foreach (S3DeleteInfo info in delete)
+                    {
+                        await client.DeleteObjectAsync(bucket, info.ObjectKey, info.VersionId);
+                    }
                 }
+                else
+                {
+                    DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucket, delete, req => req.Quiet = false).ConfigureAwait(false);
 
+                    if (!multiDelResponse.IsSuccess)
+                        yield break;
+
+                    foreach (S3DeleteError error in multiDelResponse.Errors)
+                    {
+                        yield return error;
+                    }
+                }
             } while (response.IsTruncated);
         }
     }
