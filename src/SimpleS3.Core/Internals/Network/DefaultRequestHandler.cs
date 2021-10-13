@@ -130,7 +130,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
 
             _urlBuilder.AppendUrl(sb, request);
             RequestHelper.AppendQueryParameters(sb, request);
-            string url = StringBuilderPool.Shared.ReturnString(sb);;
+            string url = StringBuilderPool.Shared.ReturnString(sb);
 
             return HandleResponse<TReq, TResp>(request, url, requestStream, token);
         }
@@ -175,7 +175,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
                 _marshaller.MarshalResponse(_options.Value, response, headers, responseStream ?? Stream.Null);
             else if (responseStream != null)
             {
-                if (headers.TryGetValue(HttpHeaders.ContentType, out string contentType) && (contentType.Equals("text/xml", StringComparison.OrdinalIgnoreCase) || contentType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)))
+                try
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
@@ -191,6 +191,10 @@ namespace Genbox.SimpleS3.Core.Internals.Network
                             _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
                         }
                     }
+                }
+                catch
+                {
+                    //Do nothing
                 }
             }
 

@@ -106,7 +106,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
                 }
             }
 
-            if (key == null || uploadId == null || initiator == null || owner == null || storageClass == StorageClass.Unknown || initiated == null)
+            if (key == null || uploadId == null || storageClass == StorageClass.Unknown || initiated == null)
                 throw new InvalidOperationException("Missing required values");
 
             response.Uploads.Add(new S3Upload(key, uploadId, initiator, owner, storageClass, initiated.Value));
