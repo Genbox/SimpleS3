@@ -189,7 +189,7 @@ namespace Genbox.ProviderTests.Multipart
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task MultipartUpload(S3Provider _, IProfile profile, ISimpleClient client)
+        public async Task MultipartUpload(S3Provider provider, IProfile profile, ISimpleClient client)
         {
             string objectKey = nameof(MultipartUpload);
             string bucketName = GetTestBucket(profile);
@@ -222,7 +222,7 @@ namespace Genbox.ProviderTests.Multipart
 
             //Provoke an 'InvalidArgument' error. Parts start from index 1
             GetObjectResponse getResp1 = await client.GetObjectAsync(bucketName, nameof(MultipartUpload), r => r.PartNumber = 0).ConfigureAwait(false);
-            Assert.Equal(400, getResp1.StatusCode);
+            Assert.Equal(provider == S3Provider.GoogleCloudStorage ? 200 : 400, getResp1.StatusCode);
             Assert.IsType<InvalidArgumentError>(getResp1.Error);
 
             GetObjectResponse getResp2 = await client.GetObjectAsync(bucketName, nameof(MultipartUpload), r => r.PartNumber = 1).ConfigureAwait(false);
@@ -235,8 +235,8 @@ namespace Genbox.ProviderTests.Multipart
 
 #if COMMERCIAL
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task MultipartViaClient(S3Provider _, IProfile profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3)]
+        public async Task MultipartViaClient(S3Provider provider, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
 
@@ -262,23 +262,26 @@ namespace Genbox.ProviderTests.Multipart
                 Assert.Equal(data, ms.ToArray());
             }
 
-            //Try multipart downloading it
-            await using (MemoryStream ms = new MemoryStream())
+            if (provider == S3Provider.AmazonS3)
             {
-                IAsyncEnumerable<GetObjectResponse> responses = client.MultipartDownloadAsync(bucketName, nameof(MultipartViaClient), ms);
-
-                await foreach (GetObjectResponse resp in responses)
+                //Try multipart downloading it
+                await using (MemoryStream ms = new MemoryStream())
                 {
-                    //We use IsSuccess here since providers return different return code
-                    Assert.True(resp.IsSuccess);
+                    IAsyncEnumerable<GetObjectResponse> responses = client.MultipartDownloadAsync(bucketName, nameof(MultipartViaClient), ms);
+
+                    await foreach (GetObjectResponse resp in responses)
+                    {
+                        //We use IsSuccess here since providers return different return code
+                        Assert.True(resp.IsSuccess);
+                    }
+
+                    Assert.Equal(data, ms.ToArray());
                 }
 
-                Assert.Equal(data, ms.ToArray());
+                HeadObjectResponse headResp = await client.HeadObjectAsync(bucketName, nameof(MultipartViaClient), req => req.PartNumber = 1).ConfigureAwait(false);
+                Assert.Equal(206, headResp.StatusCode);
+                Assert.Equal(4, headResp.NumberOfParts);
             }
-
-            HeadObjectResponse headResp = await client.HeadObjectAsync(bucketName, nameof(MultipartViaClient), req => req.PartNumber = 1).ConfigureAwait(false);
-            Assert.Equal(200, headResp.StatusCode);
-            Assert.Equal(4, headResp.NumberOfParts);
         }
 
         [Theory]

@@ -36,7 +36,9 @@ namespace Genbox.ProviderTests.Multipart
                 Assert.Equal(0, listResp1.NextPartNumberMarker);
                 Assert.Equal(1000, listResp1.MaxParts);
                 Assert.False(listResp1.IsTruncated);
-                Assert.Equal(TestConstants.TestUsername, listResp1.Owner.Name);
+
+                if (provider == S3Provider.AmazonS3)
+                    Assert.Equal(TestConstants.TestUsername, listResp1.Owner.Name);
 
                 Assert.Empty(listResp1.Parts);
 
@@ -47,17 +49,29 @@ namespace Genbox.ProviderTests.Multipart
                 await using (MemoryStream ms = new MemoryStream(file))
                     uploadResp = await client.UploadPartAsync(tempBucket, objName, 1, createResp.UploadId, ms).ConfigureAwait(false);
 
-                ListPartsResponse listResp2 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
+                ListPartsResponse listResp2 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId, r => r.EncodingType = EncodingType.Url).ConfigureAwait(false);
 
                 Assert.Equal(tempBucket, listResp2.BucketName);
-                Assert.Equal(WebUtility.UrlEncode(objName), listResp2.ObjectKey); //It should be encoded at this point
+
+                if (provider == S3Provider.AmazonS3)
+                    Assert.Equal(WebUtility.UrlEncode(objName), listResp2.ObjectKey); //It should be encoded at this point
+                else
+                    Assert.Equal(objName, listResp2.ObjectKey); //Only amazon supports encoding apparently
+
                 Assert.Equal(createResp.UploadId, listResp2.UploadId);
                 Assert.Equal(StorageClass.Standard, listResp2.StorageClass);
                 Assert.Equal(0, listResp2.PartNumberMarker);
-                Assert.Equal(1, listResp2.NextPartNumberMarker);
+
+                if (provider == S3Provider.GoogleCloudStorage)
+                    Assert.Equal(0, listResp2.NextPartNumberMarker);
+                else
+                    Assert.Equal(1, listResp2.NextPartNumberMarker);
+
                 Assert.Equal(1000, listResp2.MaxParts);
                 Assert.False(listResp2.IsTruncated);
-                Assert.Equal(TestConstants.TestUsername, listResp2.Owner.Name);
+
+                if (provider != S3Provider.GoogleCloudStorage)
+                    Assert.Equal(TestConstants.TestUsername, listResp2.Owner.Name);
 
                 S3Part? part = Assert.Single(listResp2.Parts);
 
@@ -66,10 +80,10 @@ namespace Genbox.ProviderTests.Multipart
                 Assert.Equal("\"32ca18808933aa12e979375d07048a11\"", part.ETag);
                 Assert.Equal(file.Length, part.Size);
 
-                await client.CompleteMultipartUploadAsync(tempBucket, objName, createResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
+                CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(tempBucket, objName, createResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
+                Assert.Equal(200, completeResp.StatusCode);
 
                 ListPartsResponse listResp3 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId).ConfigureAwait(false);
-                Assert.False(listResp3.IsSuccess);
                 Assert.Equal(404, listResp3.StatusCode);
             }).ConfigureAwait(false);
         }
