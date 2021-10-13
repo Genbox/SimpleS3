@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
@@ -8,6 +9,7 @@ using Genbox.SimpleS3.Extensions.GoogleCloudStorage.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Utility.Shared
@@ -64,25 +66,35 @@ namespace Genbox.SimpleS3.Utility.Shared
             return bucketName.StartsWith("tempbucket-", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static ServiceProvider CreateSimpleS3(S3Provider selectedProvider, string profileName)
+        public static ServiceProvider CreateSimpleS3(S3Provider provider, string profileName)
         {
             ServiceCollection services = new ServiceCollection();
             ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services);
 
-            coreBuilder.UseHttpClientFactory().UseProxy("127.0.0.1:8888");
+            IConfigurationRoot configRoot = new ConfigurationBuilder()
+                                            .SetBasePath(Environment.CurrentDirectory)
+                                            .AddJsonFile("Config.json", false)
+                                            .Build();
+
+            IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
+
+            IConfigurationSection? proxySection = configRoot.GetSection("Proxy");
+
+            if (proxySection != null && proxySection.GetValue<bool>("UseProxy"))
+                httpBuilder.UseProxy(new WebProxy(proxySection.GetValue<string>("ProxyAddress")));
 
             coreBuilder.UseProfileManager()
                        .BindConfigToProfile(profileName)
                        .UseConsoleSetup();
 
-            if (selectedProvider == S3Provider.AmazonS3)
+            if (provider == S3Provider.AmazonS3)
                 coreBuilder.UseAmazonS3();
-            else if (selectedProvider == S3Provider.BackBlazeB2)
+            else if (provider == S3Provider.BackBlazeB2)
                 coreBuilder.UseBackBlazeB2();
-            else if (selectedProvider == S3Provider.GoogleCloudStorage)
+            else if (provider == S3Provider.GoogleCloudStorage)
                 coreBuilder.UseGoogleCloudStorage();
             else
-                throw new ArgumentOutOfRangeException(nameof(selectedProvider), selectedProvider, null);
+                throw new ArgumentOutOfRangeException(nameof(provider), provider, null);
 
             return services.BuildServiceProvider();
         }
