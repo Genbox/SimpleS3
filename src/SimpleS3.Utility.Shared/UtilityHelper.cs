@@ -46,7 +46,7 @@ namespace Genbox.SimpleS3.Utility.Shared
 
         public static string GetTestBucket(IProfile profile)
         {
-            return "testbucket-" + profile.KeyId[..8];
+            return "testbucket-" + profile.KeyId[..8].ToLowerInvariant();
         }
 
         public static string GetTemporaryBucket()

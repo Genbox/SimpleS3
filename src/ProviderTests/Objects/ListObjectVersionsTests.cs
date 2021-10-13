@@ -57,8 +57,8 @@ namespace Genbox.ProviderTests.Objects
                 Assert.Equal("\"0cc175b9c0f1b6a831c399e269772661\"", version1.Etag);
                 Assert.Equal(1, version1.Size);
                 Assert.Equal(StorageClass.Standard, version1.StorageClass);
-                Assert.Equal(TestConstants.TestUserId, version1.Owner.Id);
-                Assert.Equal(TestConstants.TestUsername, version1.Owner.Name);
+                Assert.Equal(TestConstants.TestUserId, version1.Owner?.Id);
+                Assert.Equal(TestConstants.TestUsername, version1.Owner?.Name);
 
                 S3Version version2 = listResp.Versions[1];
                 Assert.Equal("2", version2.ObjectKey);
@@ -68,8 +68,8 @@ namespace Genbox.ProviderTests.Objects
                 Assert.Equal("\"4124bc0a9335c27f086f24ba207a4912\"", version2.Etag);
                 Assert.Equal(2, version2.Size);
                 Assert.Equal(StorageClass.Standard, version2.StorageClass);
-                Assert.Equal(TestConstants.TestUserId, version2.Owner.Id);
-                Assert.Equal(TestConstants.TestUsername, version2.Owner.Name);
+                Assert.Equal(TestConstants.TestUserId, version2.Owner?.Id);
+                Assert.Equal(TestConstants.TestUsername, version2.Owner?.Name);
 
                 //This is the latest version of object 3 and should be 4 in size
                 S3Version version3 = listResp.Versions[2];
@@ -80,8 +80,8 @@ namespace Genbox.ProviderTests.Objects
                 Assert.Equal("\"74b87337454200d4d33f80c4663dc5e5\"", version3.Etag);
                 Assert.Equal(4, version3.Size);
                 Assert.Equal(StorageClass.Standard, version3.StorageClass);
-                Assert.Equal(TestConstants.TestUserId, version3.Owner.Id);
-                Assert.Equal(TestConstants.TestUsername, version3.Owner.Name);
+                Assert.Equal(TestConstants.TestUserId, version3.Owner?.Id);
+                Assert.Equal(TestConstants.TestUsername, version3.Owner?.Name);
 
                 //This was the previous version of object 3, so it should not be the latest and have 3 in size
                 S3Version version3a = listResp.Versions[3];
@@ -92,8 +92,8 @@ namespace Genbox.ProviderTests.Objects
                 Assert.Equal("\"47bce5c74f589f4867dbd57e9ca9f808\"", version3a.Etag);
                 Assert.Equal(3, version3a.Size);
                 Assert.Equal(StorageClass.Standard, version3a.StorageClass);
-                Assert.Equal(TestConstants.TestUserId, version3a.Owner.Id);
-                Assert.Equal(TestConstants.TestUsername, version3a.Owner.Name);
+                Assert.Equal(TestConstants.TestUserId, version3a.Owner?.Id);
+                Assert.Equal(TestConstants.TestUsername, version3a.Owner?.Name);
 
                 //This is the latest version of object 2, since it was deleted
                 S3DeleteMarker delMarker = listResp.DeleteMarkers[0];

@@ -25,12 +25,12 @@ namespace Genbox.ProviderTests.Objects
             byte[] binaryData = new byte[10];
             RandomNumberGenerator.Fill(binaryData);
 
-            PutObjectResponse putResp1 = await client.PutObjectDataAsync(bucketName, nameof(GetObjectData), binaryData).ConfigureAwait(false);
-            Assert.Equal(200, putResp1.StatusCode);
+            PutObjectResponse putResp = await client.PutObjectDataAsync(bucketName, nameof(GetObjectData), binaryData).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
 
-            GetObjectResponse getResp1 = await client.GetObjectAsync(bucketName, nameof(GetObjectData)).ConfigureAwait(false);
-            Assert.Equal(200, getResp1.StatusCode);
-            Assert.Equal(binaryData, await getResp1.Content.AsDataAsync());
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(GetObjectData)).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal(binaryData, await getResp.Content.AsDataAsync());
         }
 
         [Theory]
@@ -45,12 +45,12 @@ namespace Genbox.ProviderTests.Objects
 
             string stringData = "Hello 你好 ਸਤ ਸ੍ਰੀ ਅਕਾਲ Привет";
 
-            PutObjectResponse putResp2 = await client.PutObjectStringAsync(bucketName, nameof(GetObjectString), stringData).ConfigureAwait(false);
-            Assert.Equal(200, putResp2.StatusCode);
+            PutObjectResponse putResp = await client.PutObjectStringAsync(bucketName, nameof(GetObjectString), stringData).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
 
-            GetObjectResponse getResp2 = await client.GetObjectAsync(bucketName, nameof(GetObjectString)).ConfigureAwait(false);
-            Assert.Equal(200, getResp2.StatusCode);
-            Assert.Equal(stringData, await getResp2.Content.AsStringAsync());
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(GetObjectString)).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal(stringData, await getResp.Content.AsStringAsync());
         }
 
         [Theory]
@@ -59,8 +59,8 @@ namespace Genbox.ProviderTests.Objects
         {
             string bucketName = GetTestBucket(profile);
 
-            await client.PutObjectAsync(bucketName, nameof(GetObjectContentRange), null).ConfigureAwait(false);
-            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(GetObjectContentRange), req => req.Range.Add(0, 2)).ConfigureAwait(false);
+            await client.PutObjectStringAsync(bucketName, nameof(GetObjectContentRange), "test").ConfigureAwait(false);
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(GetObjectContentRange), r => r.Range.Add(0, 2)).ConfigureAwait(false);
 
             Assert.Equal(206, getResp.StatusCode);
             Assert.Equal(3, getResp.ContentLength);
@@ -70,7 +70,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3)]
         public async Task GetObjectLifecycle(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
@@ -82,7 +82,7 @@ namespace Genbox.ProviderTests.Objects
             Assert.Equal("ExpireAll", putResp.LifeCycleRuleId);
 
             GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(GetObjectLifecycle)).ConfigureAwait(false);
-            Assert.Equal(206, getResp.StatusCode);
+            Assert.Equal(200, getResp.StatusCode);
 
             //Test lifecycle expiration
             Assert.Equal(DateTime.UtcNow.AddDays(2).Date, getResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);

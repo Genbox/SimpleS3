@@ -36,7 +36,7 @@ namespace Genbox.ProviderTests.Transfer
                 IAsyncEnumerable<GetObjectResponse> responses = client.CreateDownload(bucketName, nameof(UploadDownloadMultipart))
                                                                       .DownloadMultipartAsync(ms);
 
-                await foreach (var resp in responses)
+                await foreach (GetObjectResponse resp in responses)
                 {
                     Assert.True(resp.IsSuccess);
                 }

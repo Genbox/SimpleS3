@@ -16,52 +16,40 @@ namespace Genbox.ProviderTests.Objects
     public class PutObjectTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        [InlineData(ObjectCannedAcl.AuthenticatedRead)]
-        [InlineData(ObjectCannedAcl.AwsExecRead)]
-        [InlineData(ObjectCannedAcl.BucketOwnerFullControl)]
-        [InlineData(ObjectCannedAcl.BucketOwnerRead)]
-        [InlineData(ObjectCannedAcl.Private)]
-        [InlineData(ObjectCannedAcl.PublicRead)]
-        [InlineData(ObjectCannedAcl.PublicReadWrite)]
-        public Task PutObjectCannedAcl(ObjectCannedAcl acl, IProfile profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.All, ObjectCannedAcl.AuthenticatedRead, ObjectCannedAcl.AwsExecRead, ObjectCannedAcl.BucketOwnerFullControl, ObjectCannedAcl.BucketOwnerRead, ObjectCannedAcl.Private, ObjectCannedAcl.PublicRead, ObjectCannedAcl.PublicReadWrite)]
+        public async Task PutObjectCannedAcl(S3Provider _, IProfile profile, ISimpleClient client, ObjectCannedAcl acl)
         {
             string bucketName = GetTestBucket(profile);
-            return client.PutObjectAsync(bucketName, $"{nameof(PutObjectCannedAcl)}-{acl}", null, req => req.Acl = acl);
+            PutObjectResponse resp = await client.PutObjectAsync(bucketName, $"{nameof(PutObjectCannedAcl)}-{acl}", null, r => r.Acl = acl);
+            Assert.Equal(200, resp.StatusCode);
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        [InlineData(LockMode.Compliance)]
-        [InlineData(LockMode.Governance)]
-        public async Task PutObjectLockMode(LockMode lockMode, IProfile profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.All, LockMode.Compliance, LockMode.Governance)]
+        public async Task PutObjectLockMode(S3Provider _, IProfile profile, ISimpleClient client, LockMode lockMode)
         {
+            string bucketName = GetTestBucket(profile);
             DateTimeOffset lockRetainUntil = DateTimeOffset.UtcNow.AddMinutes(1);
 
             //We add a unique guid to prevent contamination across runs
             string objectKey = $"{nameof(PutObjectLockMode)}-{lockMode}-{Guid.NewGuid()}";
-            string bucketName = GetTestBucket(profile);
 
-            await client.PutObjectAsync(bucketName, objectKey, null, req =>
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, objectKey, null, r =>
             {
-                req.LockMode = lockMode;
-                req.LockRetainUntil = lockRetainUntil;
+                r.LockMode = lockMode;
+                r.LockRetainUntil = lockRetainUntil;
             }).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
 
-            GetObjectResponse resp = await client.GetObjectAsync(bucketName, objectKey).ConfigureAwait(false);
-            Assert.Equal(lockMode, resp.LockMode);
-            Assert.Equal(lockRetainUntil.DateTime, resp.LockRetainUntil!.Value.DateTime, TimeSpan.FromSeconds(1));
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, objectKey).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal(lockMode, getResp.LockMode);
+            Assert.Equal(lockRetainUntil.DateTime, getResp.LockRetainUntil!.Value.DateTime, TimeSpan.FromSeconds(1));
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        [InlineData("NormalFile")]
-        [InlineData("This/Should/Look/Like/Directories/File.txt")]
-        [InlineData("_\\_")]
-        [InlineData("~")]
-        [InlineData("/")]
-        [InlineData(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~/")]
-        public async Task PutObjectValidCharacters(string name, IProfile profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.All, "NormalFile", "This/Should/Look/Like/Directories/File.txt", "_\\_", "~", "/", " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~/")]
+        public async Task PutObjectValidCharacters(S3Provider _, IProfile profile, ISimpleClient client, string name)
         {
             string bucketName = GetTestBucket(profile);
             PutObjectResponse putResp = await client.PutObjectAsync(bucketName, name, null).ConfigureAwait(false);
@@ -72,10 +60,8 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        [InlineData(".")]
-        [InlineData("\0")]
-        public async Task PutObjectInvalidCharacters(string name, IProfile profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.All, ".", "\0")]
+        public async Task PutObjectInvalidCharacters(S3Provider _, IProfile profile, ISimpleClient client, string name)
         {
             string bucketName = GetTestBucket(profile);
 
@@ -84,139 +70,144 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        [InlineData(SseAlgorithm.Aes256)]
-        [InlineData(SseAlgorithm.AwsKms)]
-        public async Task PutObjectServerSideEncryption(SseAlgorithm algorithm, IProfile profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.All, SseAlgorithm.Aes256, SseAlgorithm.AwsKms)]
+        public async Task PutObjectServerSideEncryption(S3Provider _, IProfile profile, ISimpleClient client, SseAlgorithm algorithm)
         {
             string bucketName = GetTestBucket(profile);
-            PutObjectResponse resp = await client.PutObjectAsync(bucketName, nameof(PutObjectServerSideEncryption), null, request => request.SseAlgorithm = algorithm).ConfigureAwait(false);
-            Assert.Equal(algorithm, resp.SseAlgorithm);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectServerSideEncryption), null, r => r.SseAlgorithm = algorithm).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
+            Assert.Equal(algorithm, putResp.SseAlgorithm);
 
-            await client.GetObjectAsync(bucketName, nameof(PutObjectServerSideEncryption)).ConfigureAwait(false);
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectServerSideEncryption)).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        [InlineData(StorageClass.Standard, true)]
-        [InlineData(StorageClass.DeepArchive, false)]
-        [InlineData(StorageClass.Glacier, false)]
-        [InlineData(StorageClass.IntelligentTiering, true)]
-        [InlineData(StorageClass.OneZoneIa, true)]
-        [InlineData(StorageClass.ReducedRedundancy, true)]
-        [InlineData(StorageClass.StandardIa, true)]
-        public async Task PutObjectStorageClass(StorageClass storageClass, bool canDownload, IProfile profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.All, StorageClass.Standard, StorageClass.DeepArchive, StorageClass.Glacier, StorageClass.IntelligentTiering, StorageClass.OneZoneIa, StorageClass.ReducedRedundancy, StorageClass.StandardIa)]
+        public async Task PutObjectStorageClass(S3Provider _, IProfile profile, ISimpleClient client, StorageClass storageClass)
         {
             string bucketName = GetTestBucket(profile);
-            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectStorageClass) + "-" + storageClass, null, req => req.StorageClass = storageClass).ConfigureAwait(false);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectStorageClass) + "-" + storageClass, null, r => r.StorageClass = storageClass).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
             Assert.Equal(storageClass, putResp.StorageClass);
 
-            if (canDownload)
-            {
-                GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectStorageClass) + "-" + storageClass).ConfigureAwait(false);
-                Assert.Equal(storageClass, getResp.StorageClass);
-            }
+            if (storageClass is StorageClass.DeepArchive or StorageClass.Glacier)
+                return;
+
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectStorageClass) + "-" + storageClass).ConfigureAwait(false);
+            Assert.Equal(storageClass, getResp.StorageClass);
+            Assert.Equal(200, getResp.StatusCode);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task MultiplePermissions(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task MultiplePermissions(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
-            await client.PutObjectAsync(bucketName, nameof(MultiplePermissions), null, request =>
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(MultiplePermissions), null, r =>
             {
-                request.AclGrantRead.AddEmail(TestConstants.TestEmail);
-                request.AclGrantRead.AddUserId(TestConstants.TestUserId);
-                request.AclGrantReadAcp.AddEmail(TestConstants.TestEmail);
-                request.AclGrantReadAcp.AddUserId(TestConstants.TestUserId);
-                request.AclGrantWriteAcp.AddEmail(TestConstants.TestEmail);
-                request.AclGrantWriteAcp.AddUserId(TestConstants.TestUserId);
-                request.AclGrantFullControl.AddEmail(TestConstants.TestEmail);
-                request.AclGrantFullControl.AddUserId(TestConstants.TestUserId);
-            }).ConfigureAwait(false);
-        }
-
-        [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectCacheControl(S3Provider _, IProfile  profile, ISimpleClient client)
-        {
-            string bucketName = GetTestBucket(profile);
-            await client.PutObjectAsync(bucketName, nameof(PutObjectCacheControl), null, req => req.CacheControl.Set(CacheControlType.MaxAge, 100)).ConfigureAwait(false);
-
-            GetObjectResponse resp = await client.GetObjectAsync(bucketName, nameof(PutObjectCacheControl)).ConfigureAwait(false);
-            Assert.Equal("max-age=100", resp.CacheControl);
-        }
-
-        [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectContentProperties(S3Provider _, IProfile  profile, ISimpleClient client)
-        {
-            string bucketName = GetTestBucket(profile);
-            await client.PutObjectAsync(bucketName, nameof(PutObjectContentProperties), null, req =>
-            {
-                req.ContentDisposition.Set(ContentDispositionType.Attachment, "filename.jpg");
-                req.ContentEncoding.Add(ContentEncodingType.Identity);
-                req.ContentType.Set(MediaType.Text_plain, Charset.Utf_8);
+                r.AclGrantRead.AddEmail(TestConstants.TestEmail);
+                r.AclGrantRead.AddUserId(TestConstants.TestUserId);
+                r.AclGrantReadAcp.AddEmail(TestConstants.TestEmail);
+                r.AclGrantReadAcp.AddUserId(TestConstants.TestUserId);
+                r.AclGrantWriteAcp.AddEmail(TestConstants.TestEmail);
+                r.AclGrantWriteAcp.AddUserId(TestConstants.TestUserId);
+                r.AclGrantFullControl.AddEmail(TestConstants.TestEmail);
+                r.AclGrantFullControl.AddUserId(TestConstants.TestUserId);
             }).ConfigureAwait(false);
 
-            GetObjectResponse resp = await client.GetObjectAsync(bucketName, nameof(PutObjectContentProperties)).ConfigureAwait(false);
-            Assert.Equal(4, resp.ContentLength);
-            Assert.Equal("attachment; filename*=\"filename.jpg\"", resp.ContentDisposition);
-            Assert.Equal("text/plain; charset=utf-8", resp.ContentType);
+            Assert.Equal(200, putResp.StatusCode);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectEtag(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectCacheControl(S3Provider _, IProfile profile, ISimpleClient client)
+        {
+            string bucketName = GetTestBucket(profile);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectCacheControl), null, r => r.CacheControl.Set(CacheControlType.MaxAge, 100)).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
+
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectCacheControl)).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal("max-age=100", getResp.CacheControl);
+        }
+
+        [Theory]
+        [MultipleProviders(S3Provider.All)]
+        public async Task PutObjectContentProperties(S3Provider _, IProfile profile, ISimpleClient client)
+        {
+            string bucketName = GetTestBucket(profile);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectContentProperties), null, r =>
+            {
+                r.ContentDisposition.Set(ContentDispositionType.Attachment, "filename.jpg");
+                r.ContentEncoding.Add(ContentEncodingType.Identity);
+                r.ContentType.Set(MediaType.Text_plain, Charset.Utf_8);
+            }).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
+
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectContentProperties)).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal(4, getResp.ContentLength);
+            Assert.Equal("attachment; filename*=\"filename.jpg\"", getResp.ContentDisposition);
+            Assert.Equal("text/plain; charset=utf-8", getResp.ContentType);
+        }
+
+        [Theory]
+        [MultipleProviders(S3Provider.All)]
+        public async Task PutObjectEtag(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
             PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectEtag), null).ConfigureAwait(false);
 
-            await client.GetObjectAsync(bucketName, nameof(PutObjectEtag), req => req.IfETagMatch.Set(putResp.ETag)).ConfigureAwait(false);
+            await client.GetObjectAsync(bucketName, nameof(PutObjectEtag), r => r.IfETagMatch.Set(putResp.ETag)).ConfigureAwait(false);
 
-            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectEtag), req => req.IfETagMatch.Set("not the tag you are looking for")).ConfigureAwait(false);
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectEtag), r => r.IfETagMatch.Set("not the tag you are looking for")).ConfigureAwait(false);
             Assert.Equal(412, getResp.StatusCode);
 
-            await client.GetObjectAsync(bucketName, nameof(PutObjectEtag), req => req.IfETagNotMatch.Set("not the tag you are looking for")).ConfigureAwait(false);
+            await client.GetObjectAsync(bucketName, nameof(PutObjectEtag), r => r.IfETagNotMatch.Set("not the tag you are looking for")).ConfigureAwait(false);
 
-            GetObjectResponse getResp2 = await client.GetObjectAsync(bucketName, nameof(PutObjectEtag), req => req.IfETagNotMatch.Set(putResp.ETag)).ConfigureAwait(false);
+            GetObjectResponse getResp2 = await client.GetObjectAsync(bucketName, nameof(PutObjectEtag), r => r.IfETagNotMatch.Set(putResp.ETag)).ConfigureAwait(false);
             Assert.Equal(304, getResp2.StatusCode);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectLargeMetadata(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectLargeMetadata(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
             string value = new string('b', 2047);
 
-            await client.PutObjectAsync(bucketName, nameof(PutObjectMultipleMetadata), null, req =>
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectMultipleMetadata), null, r =>
             {
                 //Amazon ignores the metadata prefix and header separator, so we just need to count key length + value length
-                req.Metadata.Add("a", value);
+                r.Metadata.Add("a", value);
             }).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
 
-            GetObjectResponse gResp = await client.GetObjectAsync(bucketName, nameof(PutObjectMultipleMetadata)).ConfigureAwait(false);
-            Assert.Equal(value, gResp.Metadata!["a"]);
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectMultipleMetadata)).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal(value, getResp.Metadata!["a"]);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectLegalHold(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectLegalHold(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
-            await client.PutObjectAsync(bucketName, nameof(PutObjectLegalHold), null, req => req.LockLegalHold = true).ConfigureAwait(false);
+            await client.PutObjectAsync(bucketName, nameof(PutObjectLegalHold), null, r => r.LockLegalHold = true).ConfigureAwait(false);
 
             GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectLegalHold)).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
             Assert.True(getResp.LockLegalHold);
 
             HeadObjectResponse headResp = await client.HeadObjectAsync(bucketName, nameof(PutObjectLegalHold)).ConfigureAwait(false);
+            Assert.Equal(200, headResp.StatusCode);
             Assert.True(headResp.LockLegalHold);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectLifecycle(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectLifecycle(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
             PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectLifecycle), null).ConfigureAwait(false);
@@ -229,54 +220,60 @@ namespace Genbox.ProviderTests.Objects
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public Task PutObjectMetadataSpecialCharacters(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectMetadataSpecialCharacters(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
-            return client.PutObjectAsync(bucketName, nameof(PutObjectMultipleMetadata), null, req => req.Metadata.Add("a", "!\" #$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"));
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectMultipleMetadata), null, r => r.Metadata.Add("a", "!\" #$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"));
+            Assert.Equal(200, putResp.StatusCode);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectMultipleMetadata(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectMultipleMetadata(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
-            await client.PutObjectAsync(bucketName, nameof(PutObjectMultipleMetadata), null, req =>
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectMultipleMetadata), null, r =>
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    req.Metadata.Add("mykey" + i, "myvalue" + i);
+                    r.Metadata.Add("mykey" + i, "myvalue" + i);
                 }
             }).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
 
-            GetObjectResponse resp = await client.GetObjectAsync(bucketName, nameof(PutObjectMultipleMetadata)).ConfigureAwait(false);
-            Assert.Equal(10, resp.Metadata!.Count);
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectMultipleMetadata)).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal(10, getResp.Metadata!.Count);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectMultipleTags(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectMultipleTags(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
-            await client.PutObjectAsync(bucketName, nameof(PutObjectMultipleTags), null, req =>
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectMultipleTags), null, r =>
             {
-                req.Tags.Add("mykey1", "myvalue1");
-                req.Tags.Add("mykey2", "myvalue2");
+                r.Tags.Add("mykey1", "myvalue1");
+                r.Tags.Add("mykey2", "myvalue2");
             }).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
 
-            GetObjectResponse gResp = await client.GetObjectAsync(bucketName, nameof(PutObjectMultipleTags)).ConfigureAwait(false);
-            Assert.Equal(2, gResp.TagCount);
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectMultipleTags)).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal(2, getResp.TagCount);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectResponseHeaders(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectResponseHeaders(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
 
             //Upload a file for tests
-            await client.PutObjectAclAsync(bucketName, nameof(PutObjectResponseHeaders)).ConfigureAwait(false);
+            PutObjectAclResponse putResp = await client.PutObjectAclAsync(bucketName, nameof(PutObjectResponseHeaders)).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
 
-            GetObjectResponse resp = await client.GetObjectAsync(bucketName, nameof(PutObjectResponseHeaders), req =>
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectResponseHeaders), req =>
             {
                 req.ResponseCacheControl.Set(CacheControlType.MaxAge, 42);
                 req.ResponseContentDisposition.Set(ContentDispositionType.Attachment, "filename.txt");
@@ -285,78 +282,84 @@ namespace Genbox.ProviderTests.Objects
                 req.ResponseContentType.Set("text/html", "utf-8");
                 req.ResponseExpires = DateTimeOffset.UtcNow;
             }).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
 
-            Assert.Equal("max-age=42", resp.CacheControl);
-            Assert.Equal("attachment; filename=\"filename.txt\"", resp.ContentDisposition);
-            Assert.Equal("gzip", resp.ContentEncoding);
-            Assert.Equal("da-DK", resp.ContentLanguage);
-            Assert.Equal("text/html; charset=utf-8", resp.ContentType);
-            Assert.Equal(DateTime.UtcNow, resp.ExpiresOn!.Value.DateTime, TimeSpan.FromSeconds(5));
+            Assert.Equal("max-age=42", getResp.CacheControl);
+            Assert.Equal("attachment; filename=\"filename.txt\"", getResp.ContentDisposition);
+            Assert.Equal("gzip", getResp.ContentEncoding);
+            Assert.Equal("da-DK", getResp.ContentLanguage);
+            Assert.Equal("text/html; charset=utf-8", getResp.ContentType);
+            Assert.Equal(DateTime.UtcNow, getResp.ExpiresOn!.Value.DateTime, TimeSpan.FromSeconds(5));
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectServerSideEncryptionCustomerKey(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectServerSideEncryptionCustomerKey(S3Provider _, IProfile profile, ISimpleClient client)
         {
+            string bucketName = GetTestBucket(profile);
+
             byte[] key = new byte[32];
             new Random(42).NextBytes(key);
 
             byte[] keyHash = CryptoHelper.Md5Hash(key);
-            string bucketName = GetTestBucket(profile);
 
-            PutObjectResponse resp = await client.PutObjectAsync(bucketName, nameof(PutObjectServerSideEncryptionCustomerKey), null, req =>
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectServerSideEncryptionCustomerKey), null, r =>
             {
-                req.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
-                req.SseCustomerKey = key;
-                req.SseCustomerKeyMd5 = keyHash;
+                r.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
+                r.SseCustomerKey = key;
+                r.SseCustomerKeyMd5 = keyHash;
             }).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
+            Assert.Equal(SseCustomerAlgorithm.Aes256, putResp.SseCustomerAlgorithm);
+            Assert.Equal(keyHash, putResp.SseCustomerKeyMd5);
 
-            Assert.Equal(SseCustomerAlgorithm.Aes256, resp.SseCustomerAlgorithm);
-            Assert.Equal(keyHash, resp.SseCustomerKeyMd5);
-
-            await client.GetObjectAsync(bucketName, nameof(PutObjectServerSideEncryptionCustomerKey), req =>
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectServerSideEncryptionCustomerKey), r =>
             {
-                req.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
-                req.SseCustomerKey = key;
-                req.SseCustomerKeyMd5 = keyHash;
+                r.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
+                r.SseCustomerKey = key;
+                r.SseCustomerKeyMd5 = keyHash;
             }).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectSingleMetadata(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectSingleMetadata(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
-            await client.PutObjectAsync(bucketName, nameof(PutObjectSingleMetadata), null, req => req.Metadata.Add("mykey", "myvalue")).ConfigureAwait(false);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectSingleMetadata), null, r => r.Metadata.Add("mykey", "myvalue")).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
 
-            GetObjectResponse resp = await client.GetObjectAsync(bucketName, nameof(PutObjectSingleMetadata)).ConfigureAwait(false);
-            Assert.Equal("myvalue", resp.Metadata!["mykey"]);
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectSingleMetadata)).ConfigureAwait(false);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal("myvalue", getResp.Metadata!["mykey"]);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectTooManyTags(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectTooManyTags(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await client.PutObjectAsync(bucketName, nameof(PutObjectTooManyTags), null, request =>
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await client.PutObjectAsync(bucketName, nameof(PutObjectTooManyTags), null, r =>
             {
                 for (int i = 0; i < 51; i++)
                 {
-                    request.Tags.Add(i.ToString(NumberFormatInfo.InvariantInfo), i.ToString(NumberFormatInfo.InvariantInfo));
+                    r.Tags.Add(i.ToString(NumberFormatInfo.InvariantInfo), i.ToString(NumberFormatInfo.InvariantInfo));
                 }
             }).ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectWebsiteRedirect(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutObjectWebsiteRedirect(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
-            await client.PutObjectAsync(bucketName, nameof(PutObjectWebsiteRedirect), null, req => req.WebsiteRedirectLocation = "https://google.com").ConfigureAwait(false);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectWebsiteRedirect), null, r => r.WebsiteRedirectLocation = "https://google.com").ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
 
             GetObjectResponse resp = await client.GetObjectAsync(bucketName, nameof(PutObjectWebsiteRedirect)).ConfigureAwait(false);
-            Assert.Equal("https://google.com", resp.WebsiteRedirectLocation);
             Assert.Equal(200, resp.StatusCode);
+            Assert.Equal("https://google.com", resp.WebsiteRedirectLocation);
         }
     }
 }
