@@ -54,7 +54,7 @@ namespace Genbox.SimpleS3.Core.Abstracts
         Task<CompleteMultipartUploadResponse> UploadMultipartAsync(Stream data, CancellationToken token = default);
 #endif
 
-        Task<PutObjectResponse> UploadAsync(Stream data, CancellationToken token = default);
+        Task<PutObjectResponse> UploadAsync(Stream? data, CancellationToken token = default);
         Task<PutObjectResponse> UploadDataAsync(byte[] data, CancellationToken token = default);
         Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default);
         IUpload WithWebsiteRedirectLocation(string url);

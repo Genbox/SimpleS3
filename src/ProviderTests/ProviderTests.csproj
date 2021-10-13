@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="..\..\Imports\TestImport.props" />
+
+  <ItemGroup>
+    <Content Include="..\..\Config.json" Link="Config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleS3.AmazonS3\SimpleS3.AmazonS3.csproj" />
+    <ProjectReference Include="..\SimpleS3.BackBlazeB2\SimpleS3.BackBlazeB2.csproj" />
+    <ProjectReference Include="..\SimpleS3.Extensions.ProfileManager\SimpleS3.Extensions.ProfileManager.csproj" />
+    <ProjectReference Include="..\SimpleS3.GoogleCloudStorage\SimpleS3.GoogleCloudStorage.csproj" />
+    <ProjectReference Include="..\SimpleS3.Utility.Shared\SimpleS3.Utility.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

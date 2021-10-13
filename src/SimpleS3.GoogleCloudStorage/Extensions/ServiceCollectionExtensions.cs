@@ -45,7 +45,8 @@ namespace Genbox.SimpleS3.GoogleCloudStorage.Extensions
                 IMultipartClient multipartClient = x.GetRequiredService<IMultipartClient>();
                 IMultipartTransfer multipartTransfer = x.GetRequiredService<IMultipartTransfer>();
                 ITransfer transfer = x.GetRequiredService<ITransfer>();
-                return new GoogleCloudStorageClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+                ISignedObjectClient? signedObjectClient = x.GetRequiredService<ISignedObjectClient>();
+                return new GoogleCloudStorageClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
             });
 
             //Add the client as the interface too

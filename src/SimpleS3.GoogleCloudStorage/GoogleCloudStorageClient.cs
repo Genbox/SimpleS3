@@ -15,6 +15,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
+using Genbox.SimpleS3.Core.Network.Requests.Signed;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -54,7 +55,7 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
 
         public GoogleCloudStorageClient(GoogleCloudStorageConfig config, INetworkDriver networkDriver) : base(new GoogleCloudStorageValidator(), new GoogleCloudStorageUrlBuilder(Options.Create(config)), config, networkDriver) { }
 
-        internal GoogleCloudStorageClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer) { }
+        internal GoogleCloudStorageClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) { }
 
         public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default)
         {
@@ -86,39 +87,39 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
             return Client.GetBucketLockConfigurationAsync(bucketName, config, token);
         }
 
-        Task<GetBucketTaggingResponse> IBucketClient.GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default)
+        public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return Client.GetBucketTaggingAsync(bucketName, config, token);
         }
 
-        Task<PutBucketTaggingResponse> IBucketClient.PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
+        public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return Client.PutBucketTaggingAsync(bucketName, tags, config, token);
         }
 
-        Task<DeleteBucketTaggingResponse> IBucketClient.DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default)
+        public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return Client.DeleteBucketTaggingAsync(bucketName, config, token);
         }
 
-        Task<PutBucketAccelerateConfigurationResponse> IBucketClient.PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
+        public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return Client.PutBucketAccelerateConfigurationAsync(bucketName, enabled, config, token);
         }
 
-        Task<GetBucketAccelerateConfigurationResponse> IBucketClient.GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
+        public Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return Client.GetBucketAccelerateConfigurationAsync(bucketName, config, token);
         }
 
-        Task<PutBucketLifecycleConfigurationResponse> IBucketClient.PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
+        public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return Client.PutBucketLifecycleConfigurationAsync(bucketName, rules, config, token);
         }
 
-        Task<PutBucketVersioningResponse> IBucketClient.PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
+        public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return Client.PutBucketVersioningAsync(bucketName, enabled, config, token);
         }
 
         public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default)
@@ -128,7 +129,7 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
 
         public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return Client.GetBucketLifecycleConfigurationAsync(bucketName, config, token);
         }
 
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default)
@@ -161,9 +162,9 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
             return Client.ListObjectsAsync(bucketName, config, token);
         }
 
-        Task<RestoreObjectResponse> IObjectClient.RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default)
+        public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default)
         {
-            throw new NotSupportedException();
+            return Client.RestoreObjectAsync(bucketName, objectKey, config, token);
         }
 
         public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest>? config = null, CancellationToken token = default)
@@ -236,6 +237,7 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
             return Client.CreateDownload(bucket, objectKey);
         }
 
+#if COMMERCIAL
         public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
             return Client.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
@@ -249,6 +251,47 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
         public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
         {
             return Client.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
+        }
+#endif
+
+        public string SignPutObject(string bucketName, string objectKey, Stream? content, TimeSpan expires, Action<PutObjectRequest>? config = null)
+        {
+            return Client.SignPutObject(bucketName, objectKey, content, expires, config);
+        }
+
+        public Task<PutObjectResponse> PutObjectAsync(string url, Stream? content, Action<SignedPutObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return Client.PutObjectAsync(url, content, config, token);
+        }
+
+        public string SignGetObject(string bucketName, string objectKey, TimeSpan expires, Action<GetObjectRequest>? config = null)
+        {
+            return Client.SignGetObject(bucketName, objectKey, expires, config);
+        }
+
+        public Task<GetObjectResponse> GetObjectAsync(string url, Action<SignedGetObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return Client.GetObjectAsync(url, config, token);
+        }
+
+        public string SignDeleteObject(string bucketName, string objectKey, TimeSpan expires, Action<DeleteObjectRequest>? config = null)
+        {
+            return Client.SignDeleteObject(bucketName, objectKey, expires, config);
+        }
+
+        public Task<DeleteObjectResponse> DeleteObjectAsync(string url, Action<SignedDeleteObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return Client.DeleteObjectAsync(url, config, token);
+        }
+
+        public string SignHeadObject(string bucketName, string objectKey, TimeSpan expires, Action<HeadObjectRequest>? config = null)
+        {
+            return Client.SignHeadObject(bucketName, objectKey, expires, config);
+        }
+
+        public Task<HeadObjectResponse> HeadObjectAsync(string url, Action<SignedHeadObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return Client.HeadObjectAsync(url, config, token);
         }
     }
 }

@@ -7,6 +7,12 @@
   <Import Project="..\..\Imports\UtilityImport.props" />
 
   <ItemGroup>
+    <Content Include="..\..\Config.json" Link="Config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SimpleS3.Utility.Shared\SimpleS3.Utility.Shared.csproj" />
   </ItemGroup>
 

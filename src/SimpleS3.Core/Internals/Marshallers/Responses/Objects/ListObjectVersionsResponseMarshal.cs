@@ -21,7 +21,8 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
         {
             using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {
-                xmlReader.ReadToDescendant("ListVersionsResult");
+                //To support Google's lack of versions which is identical to S3 ListObjectVersions, but not quite
+                //xmlReader.ReadToDescendant("ListVersionsResult");
 
                 foreach (string name in XmlHelper.ReadElements(xmlReader))
                 {
@@ -142,7 +143,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                 }
             }
 
-            if (objectKey == null || versionId == null || isLatest == null || lastModified == null || etag == null || size == -1 || storageClass == StorageClass.Unknown || owner == null)
+            if (objectKey == null || isLatest == null || lastModified == null || etag == null || size == -1)
                 throw new InvalidOperationException("Missing required values");
 
             return new S3Version(objectKey, versionId, isLatest.Value, lastModified.Value, etag, size, owner, storageClass);

@@ -14,6 +14,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
+using Genbox.SimpleS3.Core.Network.Requests.Signed;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -53,7 +54,7 @@ namespace Genbox.SimpleS3.AmazonS3
 
         public AmazonS3Client(AmazonS3Config config, INetworkDriver networkDriver) : base(new AmazonS3InputValidator(), new AmazonS3UrlBuilder(Options.Create(config)), config, networkDriver) { }
 
-        internal AmazonS3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer) { }
+        internal AmazonS3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) { }
 
         public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default)
         {
@@ -251,5 +252,45 @@ namespace Genbox.SimpleS3.AmazonS3
             return Client.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
         }
 #endif
+
+        public string SignPutObject(string bucketName, string objectKey, Stream? content, TimeSpan expires, Action<PutObjectRequest>? config = null)
+        {
+            return Client.SignPutObject(bucketName, objectKey, content, expires, config);
+        }
+
+        public Task<PutObjectResponse> PutObjectAsync(string url, Stream? content, Action<SignedPutObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return Client.PutObjectAsync(url, content, config, token);
+        }
+
+        public string SignGetObject(string bucketName, string objectKey, TimeSpan expires, Action<GetObjectRequest>? config = null)
+        {
+            return Client.SignGetObject(bucketName, objectKey, expires, config);
+        }
+
+        public Task<GetObjectResponse> GetObjectAsync(string url, Action<SignedGetObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return Client.GetObjectAsync(url, config, token);
+        }
+
+        public string SignDeleteObject(string bucketName, string objectKey, TimeSpan expires, Action<DeleteObjectRequest>? config = null)
+        {
+            return Client.SignDeleteObject(bucketName, objectKey, expires, config);
+        }
+
+        public Task<DeleteObjectResponse> DeleteObjectAsync(string url, Action<SignedDeleteObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return Client.DeleteObjectAsync(url, config, token);
+        }
+
+        public string SignHeadObject(string bucketName, string objectKey, TimeSpan expires, Action<HeadObjectRequest>? config = null)
+        {
+            return Client.SignHeadObject(bucketName, objectKey, expires, config);
+        }
+
+        public Task<HeadObjectResponse> HeadObjectAsync(string url, Action<SignedHeadObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return Client.HeadObjectAsync(url, config, token);
+        }
     }
 }

@@ -10,6 +10,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
+using Genbox.SimpleS3.Core.Network.Requests.Signed;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -24,10 +25,11 @@ namespace Genbox.SimpleS3.Core
         private IMultipartTransfer _multipartTransfer;
         private IObjectClient _objectClient;
         private ITransfer _transfer;
+        private ISignedObjectClient _signedObjectClient;
 
-        public SimpleClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
+        public SimpleClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObject)
         {
-            Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer);
+            Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObject);
         }
 
         protected SimpleClient() { }
@@ -212,13 +214,14 @@ namespace Genbox.SimpleS3.Core
             return _transfer.CreateDownload(bucket, objectKey);
         }
 
-        protected void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer)
+        protected void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient)
         {
             _objectClient = objectClient;
             _bucketClient = bucketClient;
             _multipartClient = multipartClient;
             _multipartTransfer = multipartTransfer;
             _transfer = transfer;
+            _signedObjectClient = signedObjectClient;
         }
 
 #if COMMERCIAL
@@ -237,5 +240,44 @@ namespace Genbox.SimpleS3.Core
             return _multipartTransfer.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
         }
 #endif
+        public string SignPutObject(string bucketName, string objectKey, Stream? content, TimeSpan expires, Action<PutObjectRequest>? config = null)
+        {
+            return _signedObjectClient.SignPutObject(bucketName, objectKey, content, expires, config);
+        }
+
+        public Task<PutObjectResponse> PutObjectAsync(string url, Stream? content, Action<SignedPutObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return _signedObjectClient.PutObjectAsync(url, content, config, token);
+        }
+
+        public string SignGetObject(string bucketName, string objectKey, TimeSpan expires, Action<GetObjectRequest>? config = null)
+        {
+            return _signedObjectClient.SignGetObject(bucketName, objectKey, expires, config);
+        }
+
+        public Task<GetObjectResponse> GetObjectAsync(string url, Action<SignedGetObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return _signedObjectClient.GetObjectAsync(url, config, token);
+        }
+
+        public string SignDeleteObject(string bucketName, string objectKey, TimeSpan expires, Action<DeleteObjectRequest>? config = null)
+        {
+            return _signedObjectClient.SignDeleteObject(bucketName, objectKey, expires, config);
+        }
+
+        public Task<DeleteObjectResponse> DeleteObjectAsync(string url, Action<SignedDeleteObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return _signedObjectClient.DeleteObjectAsync(url, config, token);
+        }
+
+        public string SignHeadObject(string bucketName, string objectKey, TimeSpan expires, Action<HeadObjectRequest>? config = null)
+        {
+            return _signedObjectClient.SignHeadObject(bucketName, objectKey, expires, config);
+        }
+
+        public Task<HeadObjectResponse> HeadObjectAsync(string url, Action<SignedHeadObjectRequest>? config = null, CancellationToken token = default)
+        {
+            return _signedObjectClient.HeadObjectAsync(url, config, token);
+        }
     }
 }
