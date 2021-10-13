@@ -11,20 +11,18 @@ namespace Genbox.ProviderTests.Multipart
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task AbortIncompleteUpload(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task AbortIncompleteUpload(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string objectKey = nameof(AbortIncompleteUpload);
             string bucketName = GetTestBucket(profile);
 
             CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucketName, objectKey).ConfigureAwait(false);
-
+            Assert.Equal(200, createResp.StatusCode);
             Assert.Equal(bucketName, createResp.BucketName);
             Assert.Equal(objectKey, createResp.ObjectKey);
             Assert.NotNull(createResp.UploadId);
 
             AbortMultipartUploadResponse abortResp = await client.AbortMultipartUploadAsync(bucketName, objectKey, createResp.UploadId).ConfigureAwait(false);
-
-            Assert.True(abortResp.IsSuccess);
             Assert.Equal(204, abortResp.StatusCode);
         }
     }

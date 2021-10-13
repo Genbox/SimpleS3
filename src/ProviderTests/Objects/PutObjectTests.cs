@@ -5,6 +5,7 @@ using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -16,7 +17,9 @@ namespace Genbox.ProviderTests.Objects
     public class PutObjectTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All, ObjectCannedAcl.AuthenticatedRead, ObjectCannedAcl.AwsExecRead, ObjectCannedAcl.BucketOwnerFullControl, ObjectCannedAcl.BucketOwnerRead, ObjectCannedAcl.Private, ObjectCannedAcl.PublicRead, ObjectCannedAcl.PublicReadWrite)]
+        [MultipleProviders(S3Provider.AmazonS3, ObjectCannedAcl.AuthenticatedRead, ObjectCannedAcl.AwsExecRead, ObjectCannedAcl.BucketOwnerFullControl, ObjectCannedAcl.BucketOwnerRead, ObjectCannedAcl.Private, ObjectCannedAcl.PublicRead, ObjectCannedAcl.PublicReadWrite)]
+        [MultipleProviders(S3Provider.BackBlazeB2, ObjectCannedAcl.Private)]
+        [MultipleProviders(S3Provider.GoogleCloudStorage, ObjectCannedAcl.AuthenticatedRead, ObjectCannedAcl.BucketOwnerFullControl, ObjectCannedAcl.BucketOwnerRead, ObjectCannedAcl.Private, ObjectCannedAcl.PublicRead)]
         public async Task PutObjectCannedAcl(S3Provider _, IProfile profile, ISimpleClient client, ObjectCannedAcl acl)
         {
             string bucketName = GetTestBucket(profile);
@@ -25,7 +28,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All, LockMode.Compliance, LockMode.Governance)]
+        [MultipleProviders(S3Provider.AmazonS3, LockMode.Compliance, LockMode.Governance)]
         public async Task PutObjectLockMode(S3Provider _, IProfile profile, ISimpleClient client, LockMode lockMode)
         {
             string bucketName = GetTestBucket(profile);
@@ -34,7 +37,7 @@ namespace Genbox.ProviderTests.Objects
             //We add a unique guid to prevent contamination across runs
             string objectKey = $"{nameof(PutObjectLockMode)}-{lockMode}-{Guid.NewGuid()}";
 
-            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, objectKey, null, r =>
+            PutObjectResponse putResp = await client.PutObjectStringAsync(bucketName, objectKey, "bla", null, r =>
             {
                 r.LockMode = lockMode;
                 r.LockRetainUntil = lockRetainUntil;
@@ -53,10 +56,10 @@ namespace Genbox.ProviderTests.Objects
         {
             string bucketName = GetTestBucket(profile);
             PutObjectResponse putResp = await client.PutObjectAsync(bucketName, name, null).ConfigureAwait(false);
-            Assert.True(putResp.IsSuccess);
+            Assert.Equal(200, putResp.StatusCode);
 
             GetObjectResponse getResp = await client.GetObjectAsync(bucketName, name).ConfigureAwait(false);
-            Assert.True(getResp.IsSuccess);
+            Assert.Equal(200, getResp.StatusCode);
         }
 
         [Theory]
@@ -66,11 +69,15 @@ namespace Genbox.ProviderTests.Objects
             string bucketName = GetTestBucket(profile);
 
             //These 2 test cases came after an exhaustive search in the whole UTF-16 character space.
-            await client.PutObjectAsync(bucketName, name, null).ConfigureAwait(false);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, name, null).ConfigureAwait(false);
+
+            //We use IsSuccess here since different providers return different error codes
+            Assert.False(putResp.IsSuccess);
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All, SseAlgorithm.Aes256, SseAlgorithm.AwsKms)]
+        [MultipleProviders(S3Provider.AmazonS3, SseAlgorithm.Aes256, SseAlgorithm.AwsKms)]
+        [MultipleProviders(S3Provider.BackBlazeB2, SseAlgorithm.Aes256)]
         public async Task PutObjectServerSideEncryption(S3Provider _, IProfile profile, ISimpleClient client, SseAlgorithm algorithm)
         {
             string bucketName = GetTestBucket(profile);
@@ -83,7 +90,8 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All, StorageClass.Standard, StorageClass.DeepArchive, StorageClass.Glacier, StorageClass.IntelligentTiering, StorageClass.OneZoneIa, StorageClass.ReducedRedundancy, StorageClass.StandardIa)]
+        [MultipleProviders(S3Provider.AmazonS3, StorageClass.Standard, StorageClass.DeepArchive, StorageClass.Glacier, StorageClass.IntelligentTiering, StorageClass.OneZoneIa, StorageClass.ReducedRedundancy, StorageClass.StandardIa)]
+        [MultipleProviders(S3Provider.BackBlazeB2 | S3Provider.GoogleCloudStorage, StorageClass.Standard)]
         public async Task PutObjectStorageClass(S3Provider _, IProfile profile, ISimpleClient client, StorageClass storageClass)
         {
             string bucketName = GetTestBucket(profile);
@@ -100,7 +108,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
         public async Task MultiplePermissions(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
@@ -133,11 +141,11 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
         public async Task PutObjectContentProperties(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
-            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectContentProperties), null, r =>
+            PutObjectResponse putResp = await client.PutObjectStringAsync(bucketName, nameof(PutObjectContentProperties), "test", null, r =>
             {
                 r.ContentDisposition.Set(ContentDispositionType.Attachment, "filename.jpg");
                 r.ContentEncoding.Add(ContentEncodingType.Identity);
@@ -190,11 +198,11 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
         public async Task PutObjectLegalHold(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
-            await client.PutObjectAsync(bucketName, nameof(PutObjectLegalHold), null, r => r.LockLegalHold = true).ConfigureAwait(false);
+            await client.PutObjectStringAsync(bucketName, nameof(PutObjectLegalHold), "test", null, r => r.LockLegalHold = true).ConfigureAwait(false);
 
             GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectLegalHold)).ConfigureAwait(false);
             Assert.Equal(200, getResp.StatusCode);
@@ -206,7 +214,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3)]
         public async Task PutObjectLifecycle(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
@@ -247,7 +255,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3)]
         public async Task PutObjectMultipleTags(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
@@ -264,13 +272,13 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)] //Google does not seem to support CacheControl
         public async Task PutObjectResponseHeaders(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
 
             //Upload a file for tests
-            PutObjectAclResponse putResp = await client.PutObjectAclAsync(bucketName, nameof(PutObjectResponseHeaders)).ConfigureAwait(false);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(PutObjectResponseHeaders), null).ConfigureAwait(false);
             Assert.Equal(200, putResp.StatusCode);
 
             GetObjectResponse getResp = await client.GetObjectAsync(bucketName, nameof(PutObjectResponseHeaders), req =>
@@ -293,7 +301,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3)]
         public async Task PutObjectServerSideEncryptionCustomerKey(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
@@ -350,7 +358,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3)]
         public async Task PutObjectWebsiteRedirect(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);

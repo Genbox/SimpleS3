@@ -11,8 +11,8 @@ namespace Genbox.ProviderTests.Objects
     public class CopyObjectTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task CopyObject(S3Provider _, IProfile  profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
+        public async Task CopyObject(S3Provider _, IProfile profile, ISimpleClient client)
         {
             //Upload an object to copy
             string sourceKey = nameof(CopyObject);

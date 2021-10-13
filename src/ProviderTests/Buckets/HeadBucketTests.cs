@@ -11,7 +11,7 @@ namespace Genbox.ProviderTests.Buckets
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task HeadBucket(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task HeadBucket(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
 

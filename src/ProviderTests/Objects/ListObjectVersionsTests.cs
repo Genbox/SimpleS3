@@ -19,9 +19,9 @@ namespace Genbox.ProviderTests.Objects
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListObjectVersions(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task ListObjectVersions(S3Provider provider, IProfile profile, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async bucket =>
             {
                 //Enable versioning on the bucket
                 await client.PutBucketVersioningAsync(bucket, true);
@@ -84,16 +84,16 @@ namespace Genbox.ProviderTests.Objects
                 Assert.Equal(TestConstants.TestUsername, version3.Owner?.Name);
 
                 //This was the previous version of object 3, so it should not be the latest and have 3 in size
-                S3Version version3a = listResp.Versions[3];
-                Assert.Equal("3", version3a.ObjectKey);
-                Assert.Equal(putResp3.VersionId, version3a.VersionId);
-                Assert.False(version3a.IsLatest);
-                Assert.Equal(DateTimeOffset.UtcNow.DateTime, version3a.LastModified.DateTime, TimeSpan.FromMinutes(1));
-                Assert.Equal("\"47bce5c74f589f4867dbd57e9ca9f808\"", version3a.Etag);
-                Assert.Equal(3, version3a.Size);
-                Assert.Equal(StorageClass.Standard, version3a.StorageClass);
-                Assert.Equal(TestConstants.TestUserId, version3a.Owner?.Id);
-                Assert.Equal(TestConstants.TestUsername, version3a.Owner?.Name);
+                S3Version version3A = listResp.Versions[3];
+                Assert.Equal("3", version3A.ObjectKey);
+                Assert.Equal(putResp3.VersionId, version3A.VersionId);
+                Assert.False(version3A.IsLatest);
+                Assert.Equal(DateTimeOffset.UtcNow.DateTime, version3A.LastModified.DateTime, TimeSpan.FromMinutes(1));
+                Assert.Equal("\"47bce5c74f589f4867dbd57e9ca9f808\"", version3A.Etag);
+                Assert.Equal(3, version3A.Size);
+                Assert.Equal(StorageClass.Standard, version3A.StorageClass);
+                Assert.Equal(TestConstants.TestUserId, version3A.Owner?.Id);
+                Assert.Equal(TestConstants.TestUsername, version3A.Owner?.Name);
 
                 //This is the latest version of object 2, since it was deleted
                 S3DeleteMarker delMarker = listResp.DeleteMarkers[0];
@@ -109,9 +109,9 @@ namespace Genbox.ProviderTests.Objects
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListObjectsMoreThanMaxKeys(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task ListObjectsMoreThanMaxKeys(S3Provider provider, IProfile profile, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async bucket =>
             {
                 int concurrent = 10;
                 int count = 11;
@@ -134,9 +134,9 @@ namespace Genbox.ProviderTests.Objects
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListObjectVersionsWithDelimiter(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task ListObjectVersionsWithDelimiter(S3Provider provider, IProfile profile, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async bucket =>
             {
                 string tempObjName = "object-" + Guid.NewGuid();
                 string tempObjName2 = "something-" + Guid.NewGuid();
@@ -156,9 +156,9 @@ namespace Genbox.ProviderTests.Objects
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListObjectVersionsWithEncoding(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task ListObjectVersionsWithEncoding(S3Provider provider, IProfile profile, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async bucket =>
             {
                 string tempObjName = "!#/()";
 
@@ -177,9 +177,9 @@ namespace Genbox.ProviderTests.Objects
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListObjectsWithPrefix(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task ListObjectsWithPrefix(S3Provider provider, IProfile profile, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async bucket =>
             {
                 string tempObjName = "object-" + Guid.NewGuid();
                 string tempObjName2 = "something-" + Guid.NewGuid();

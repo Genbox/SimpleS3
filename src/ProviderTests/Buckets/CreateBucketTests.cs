@@ -13,7 +13,7 @@ namespace Genbox.ProviderTests.Buckets
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task CreateBucket(S3Provider provider, IProfile  _, ISimpleClient client)
+        public async Task CreateBucket(S3Provider provider, IProfile _, ISimpleClient client)
         {
             string tempBucketName = GetTemporaryBucket();
 
@@ -26,39 +26,39 @@ namespace Genbox.ProviderTests.Buckets
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task CreateBucketCannedAcl(S3Provider provider, IProfile  _, ISimpleClient client)
+        public async Task CreateBucketCannedAcl(S3Provider provider, IProfile _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async s =>
+            await CreateTempBucketAsync(provider, client, async s =>
             {
                 //TODO: Check ACL once we have that functionality
-            }, req => req.Acl = BucketCannedAcl.PublicReadWrite);
+            }, r => r.Acl = BucketCannedAcl.PublicReadWrite);
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task CreateBucketCustomAcl(S3Provider provider, IProfile  _, ISimpleClient client)
+        public async Task CreateBucketCustomAcl(S3Provider provider, IProfile _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async s =>
+            await CreateTempBucketAsync(provider, client, async s =>
             {
                 //TODO: Check ACL once we have that functionality
-            }, req =>
+            }, r =>
             {
-                req.AclGrantReadAcp.AddEmail(TestConstants.TestEmail);
-                req.AclGrantWriteAcp.AddEmail(TestConstants.TestEmail);
-                req.AclGrantRead.AddEmail(TestConstants.TestEmail);
-                req.AclGrantWrite.AddEmail(TestConstants.TestEmail);
-                req.AclGrantFullControl.AddEmail(TestConstants.TestEmail);
+                r.AclGrantReadAcp.AddEmail(TestConstants.TestEmail);
+                r.AclGrantWriteAcp.AddEmail(TestConstants.TestEmail);
+                r.AclGrantRead.AddEmail(TestConstants.TestEmail);
+                r.AclGrantWrite.AddEmail(TestConstants.TestEmail);
+                r.AclGrantFullControl.AddEmail(TestConstants.TestEmail);
             });
         }
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task CreateBucketObjectLocking(S3Provider provider, IProfile  _, ISimpleClient client)
+        public async Task CreateBucketObjectLocking(S3Provider provider, IProfile _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async s =>
+            await CreateTempBucketAsync(provider, client, async s =>
             {
                 //TODO: Check locking is enabled once we have that functionality
-            }, req => req.EnableObjectLocking = true);
+            }, r => r.EnableObjectLocking = true);
         }
     }
 }

@@ -13,31 +13,35 @@ namespace Genbox.ProviderTests.Objects
     public class DeleteObjectsTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task DeleteObjects(S3Provider _, IProfile  profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
+        public async Task DeleteObjects(S3Provider _, IProfile profile, ISimpleClient client)
         {
-            string BucketName = GetTestBucket(profile);
+            string bucketName = GetTestBucket(profile);
 
             S3DeleteInfo[] resources = new S3DeleteInfo[2];
             resources[0] = new S3DeleteInfo(nameof(DeleteObjects) + "1");
             resources[1] = new S3DeleteInfo(nameof(DeleteObjects) + "2", "versionnotfound");
 
-            await client.PutObjectAsync(BucketName, resources[0].ObjectKey, null).ConfigureAwait(false);
-            await client.PutObjectAsync(BucketName, resources[1].ObjectKey, null).ConfigureAwait(false);
+            PutObjectResponse putResp1 = await client.PutObjectAsync(bucketName, resources[0].ObjectKey, null).ConfigureAwait(false);
+            Assert.Equal(200, putResp1.StatusCode);
 
-            DeleteObjectsResponse resp = await client.DeleteObjectsAsync(BucketName, resources, req => req.Quiet = false).ConfigureAwait(false);
+            PutObjectResponse putResp2 = await client.PutObjectAsync(bucketName, resources[1].ObjectKey, null).ConfigureAwait(false);
+            Assert.Equal(200, putResp2.StatusCode);
 
-            S3DeletedObject? delObj = Assert.Single(resp.Deleted);
+            DeleteObjectsResponse delResp = await client.DeleteObjectsAsync(bucketName, resources, r => r.Quiet = false).ConfigureAwait(false);
+            Assert.Equal(200, delResp.StatusCode);
+
+            S3DeletedObject? delObj = Assert.Single(delResp.Deleted);
             Assert.Equal(resources[0].ObjectKey, delObj.ObjectKey);
             Assert.True(delObj.IsDeleteMarker);
             Assert.NotEmpty(delObj.DeleteMarkerVersionId);
 
-            S3DeleteError? errorObj = Assert.Single(resp.Errors);
+            S3DeleteError? errorObj = Assert.Single(delResp.Errors);
 
             Assert.Equal(resources[1].ObjectKey, errorObj.ObjectKey);
             Assert.Equal(resources[1].VersionId, errorObj.VersionId);
             Assert.Equal(ErrorCode.NoSuchVersion, errorObj.Code);
-            Assert.Equal("The specified version does not exist.", errorObj.Message);
+            Assert.NotEmpty(errorObj.Message);
         }
     }
 }

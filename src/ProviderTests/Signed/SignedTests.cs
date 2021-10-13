@@ -14,7 +14,7 @@ namespace Genbox.ProviderTests.Signed
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task FullPreSignTest(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task FullPreSignTest(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
             int expireIn = 100;

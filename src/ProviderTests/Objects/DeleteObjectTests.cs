@@ -11,13 +11,18 @@ namespace Genbox.ProviderTests.Objects
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task DeleteObject(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task DeleteObject(S3Provider provider, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
 
-            await client.PutObjectAsync(bucketName, nameof(DeleteObject), null).ConfigureAwait(false);
-            DeleteObjectResponse resp = await client.DeleteObjectAsync(bucketName, nameof(DeleteObject)).ConfigureAwait(false);
-            Assert.True(resp.IsDeleteMarker);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(DeleteObject), null).ConfigureAwait(false);
+            Assert.Equal(200, putResp.StatusCode);
+
+            DeleteObjectResponse delREsp = await client.DeleteObjectAsync(bucketName, nameof(DeleteObject)).ConfigureAwait(false);
+            Assert.Equal(204, delREsp.StatusCode);
+
+            if (provider == S3Provider.AmazonS3)
+                Assert.True(delREsp.IsDeleteMarker);
         }
     }
 }

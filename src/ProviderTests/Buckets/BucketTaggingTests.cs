@@ -11,10 +11,10 @@ namespace Genbox.ProviderTests.Buckets
     public class BucketTaggingTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task GetPutDeleteBucketTagging(S3Provider provider, IProfile  _, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3)]
+        public async Task GetPutDeleteBucketTagging(S3Provider provider, IProfile _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async tempBucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 IDictionary<string, string> tags = new Dictionary<string, string>();
                 tags.Add("MyKey", "MyValue");
@@ -34,10 +34,10 @@ namespace Genbox.ProviderTests.Buckets
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task GetEmptyBucketTagging(S3Provider provider, IProfile  _, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3)]
+        public async Task GetEmptyBucketTagging(S3Provider provider, IProfile _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async tempBucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 GetBucketTaggingResponse getResp = await client.GetBucketTaggingAsync(tempBucket).ConfigureAwait(false);
                 Assert.Equal(404, getResp.StatusCode);

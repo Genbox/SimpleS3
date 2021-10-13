@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ namespace Genbox.ProviderTests
 {
     public abstract class TestBase
     {
-        protected string GetTestBucket(IProfile  profile)
+        protected string GetTestBucket(IProfile profile)
         {
             return UtilityHelper.GetTestBucket(profile);
         }

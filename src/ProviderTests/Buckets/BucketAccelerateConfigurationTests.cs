@@ -10,10 +10,10 @@ namespace Genbox.ProviderTests.Buckets
     public class BucketAccelerateConfigurationTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task PutGetBucketAccelerateConfiguration(S3Provider provider, IProfile  _, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3)]
+        public async Task PutGetBucketAccelerateConfiguration(S3Provider provider, IProfile _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async x =>
+            await CreateTempBucketAsync(provider, client, async x =>
             {
                 GetBucketAccelerateConfigurationResponse getResp = await client.GetBucketAccelerateConfigurationAsync(x).ConfigureAwait(false);
                 Assert.True(getResp.IsSuccess);

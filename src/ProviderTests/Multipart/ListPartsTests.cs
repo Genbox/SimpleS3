@@ -17,9 +17,9 @@ namespace Genbox.ProviderTests.Multipart
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListParts(S3Provider provider, IProfile  _, ISimpleClient client)
+        public async Task ListParts(S3Provider provider, IProfile _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async tempBucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 //We add the special characters at the end to test EncodingType support.
                 string objName = nameof(ListParts) + "%";

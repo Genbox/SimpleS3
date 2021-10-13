@@ -11,13 +11,13 @@ namespace Genbox.ProviderTests.Buckets
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListBuckets(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task ListBuckets(S3Provider _, IProfile profile, ISimpleClient client)
         {
-            string BucketName = GetTestBucket(profile);
+            string bucketName = GetTestBucket(profile);
 
             ListBucketsResponse listResp = await client.ListBucketsAsync().ConfigureAwait(false);
             Assert.True(listResp.Buckets.Count > 0);
-            Assert.Single(listResp.Buckets, bucket => bucket.BucketName == BucketName);
+            Assert.Single(listResp.Buckets, bucket => bucket.BucketName == bucketName);
         }
     }
 }

@@ -10,8 +10,8 @@ namespace Genbox.ProviderTests.Objects
     public class ObjectLegalHoldTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task PutGetObjectLegalHold(S3Provider _, IProfile  profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
+        public async Task PutGetObjectLegalHold(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string objectKey = nameof(PutGetObjectLegalHold);
             string bucketName = GetTestBucket(profile);

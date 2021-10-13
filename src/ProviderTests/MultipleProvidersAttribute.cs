@@ -9,8 +9,8 @@ namespace Genbox.ProviderTests
 {
     public sealed class MultipleProvidersAttribute : DataAttribute
     {
-        private readonly S3Provider _providers;
         private readonly object[] _otherData;
+        private readonly S3Provider _providers;
         private bool _shouldSkip;
 
         public MultipleProvidersAttribute(S3Provider providers, params object[] otherData)

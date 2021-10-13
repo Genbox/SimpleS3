@@ -14,17 +14,18 @@ namespace Genbox.ProviderTests.Objects
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutGetObjectAcl(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task PutGetObjectAcl(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string objectKey = nameof(PutGetObjectAcl);
             string bucketName = GetTestBucket(profile);
 
             //Create an object
-            await client.PutObjectAsync(bucketName, objectKey, null).ConfigureAwait(false);
+            PutObjectResponse putResp1 = await client.PutObjectAsync(bucketName, objectKey, null).ConfigureAwait(false);
+            Assert.Equal(200, putResp1.StatusCode);
 
             //Get the ACL, which should be the default one (owner has ACL)
             GetObjectAclResponse getResp = await client.GetObjectAclAsync(bucketName, objectKey).ConfigureAwait(false);
-            Assert.True(getResp.IsSuccess);
+            Assert.Equal(200, getResp.StatusCode);
 
             S3Grant? grant = Assert.Single(getResp.Grants);
             Assert.Equal(TestConstants.TestUserId, grant.Grantee.Id);
@@ -33,11 +34,11 @@ namespace Genbox.ProviderTests.Objects
             Assert.Equal(GrantType.CanonicalUser, grant.Grantee.Type);
 
             //Update the object to have another ACL using Canned ACLs
-            PutObjectAclResponse putResp = await client.PutObjectAclAsync(bucketName, objectKey, req => req.Acl = ObjectCannedAcl.PublicReadWrite).ConfigureAwait(false);
-            Assert.True(putResp.IsSuccess);
+            PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucketName, objectKey, r => r.Acl = ObjectCannedAcl.PublicReadWrite).ConfigureAwait(false);
+            Assert.Equal(200, putResp2.StatusCode);
 
             GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucketName, objectKey).ConfigureAwait(false);
-            Assert.True(getResp2.IsSuccess);
+            Assert.Equal(200, getResp2.StatusCode);
 
             Assert.Equal(TestConstants.TestUserId, getResp2.Owner.Id);
             Assert.Equal(TestConstants.TestUsername, getResp2.Owner.Name);

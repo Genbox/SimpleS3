@@ -14,10 +14,10 @@ namespace Genbox.ProviderTests.Buckets
     public class BucketLifecycleConfigurationTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task PutGetLifecycleConfigurationTest(S3Provider provider, IProfile  _, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3)]
+        public async Task PutGetLifecycleConfigurationTest(S3Provider provider, IProfile _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async tempBucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 S3Rule rule1 = new S3Rule("Transition logs after 30 days to StandardIa and after 60 days to OneZoneIa", true);
                 rule1.Transitions.Add(new S3Transition(30, StorageClass.StandardIa));
@@ -38,34 +38,34 @@ namespace Genbox.ProviderTests.Buckets
                 GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket).ConfigureAwait(false);
                 Assert.True(getResp.IsSuccess);
 
-                S3Rule rule1a = getResp.Rules[0];
-                Assert.Equal(rule1.Id, rule1a.Id);
-                Assert.Equal(rule1.Enabled, rule1a.Enabled);
-                Assert.Equal(rule1.Filter.Prefix, rule1a.Filter?.Prefix);
-                Assert.Equal(rule1.Transitions[0].StorageClass, rule1a.Transitions[0].StorageClass);
-                Assert.Equal(rule1.Transitions[0].TransitionAfterDays, rule1a.Transitions[0].TransitionAfterDays);
-                Assert.Equal(rule1.Transitions[1].StorageClass, rule1a.Transitions[1].StorageClass);
-                Assert.Equal(rule1.Transitions[1].TransitionAfterDays, rule1a.Transitions[1].TransitionAfterDays);
+                S3Rule rule1A = getResp.Rules[0];
+                Assert.Equal(rule1.Id, rule1A.Id);
+                Assert.Equal(rule1.Enabled, rule1A.Enabled);
+                Assert.Equal(rule1.Filter.Prefix, rule1A.Filter?.Prefix);
+                Assert.Equal(rule1.Transitions[0].StorageClass, rule1A.Transitions[0].StorageClass);
+                Assert.Equal(rule1.Transitions[0].TransitionAfterDays, rule1A.Transitions[0].TransitionAfterDays);
+                Assert.Equal(rule1.Transitions[1].StorageClass, rule1A.Transitions[1].StorageClass);
+                Assert.Equal(rule1.Transitions[1].TransitionAfterDays, rule1A.Transitions[1].TransitionAfterDays);
 
-                S3Rule rule2a = getResp.Rules[1];
-                Assert.Equal(rule2.Id, rule2a.Id);
-                Assert.Equal(rule2.Enabled, rule2a.Enabled);
-                Assert.Equal(rule2.Filter.Prefix, rule2a.Filter?.Prefix);
-                Assert.Equal(rule2.Expiration.ExpireAfterDays, rule2a.Expiration?.ExpireAfterDays);
+                S3Rule rule2A = getResp.Rules[1];
+                Assert.Equal(rule2.Id, rule2A.Id);
+                Assert.Equal(rule2.Enabled, rule2A.Enabled);
+                Assert.Equal(rule2.Filter.Prefix, rule2A.Filter?.Prefix);
+                Assert.Equal(rule2.Expiration.ExpireAfterDays, rule2A.Expiration?.ExpireAfterDays);
 
-                S3Rule rule3a = getResp.Rules[2];
-                Assert.Equal(rule3.Id, rule3a.Id);
-                Assert.Equal(rule3.Enabled, rule3a.Enabled);
-                Assert.Equal(rule3.Filter.Tag, rule3a.Filter?.Tag);
-                Assert.Equal(rule3.Expiration.ExpireOnDate?.Date, rule3a.Expiration?.ExpireOnDate?.Date); //Amazon round the date to the day instead
+                S3Rule rule3A = getResp.Rules[2];
+                Assert.Equal(rule3.Id, rule3A.Id);
+                Assert.Equal(rule3.Enabled, rule3A.Enabled);
+                Assert.Equal(rule3.Filter.Tag, rule3A.Filter?.Tag);
+                Assert.Equal(rule3.Expiration.ExpireOnDate?.Date, rule3A.Expiration?.ExpireOnDate?.Date); //Amazon round the date to the day instead
             }).ConfigureAwait(false);
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task PutLifecycleConfigurationBucketWideTest(S3Provider provider, IProfile  _, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3)]
+        public async Task PutLifecycleConfigurationBucketWideTest(S3Provider provider, IProfile _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async tempBucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 S3Rule rule = new S3Rule("Expire the whole bucket after 10 days", true);
                 rule.Expiration = new S3Expiration(DateTimeOffset.UtcNow.AddDays(10));
@@ -77,20 +77,20 @@ namespace Genbox.ProviderTests.Buckets
                 GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket);
                 Assert.True(getResp.IsSuccess);
 
-                S3Rule rule1a = getResp.Rules[0];
-                Assert.Equal(rule.Id, rule1a.Id);
-                Assert.Equal(rule.Enabled, rule1a.Enabled);
-                Assert.Equal(rule.Filter.Prefix, rule1a.Filter?.Prefix);
-                Assert.Equal(rule.Expiration.ExpireAfterDays, rule1a.Expiration?.ExpireAfterDays);
+                S3Rule rule1A = getResp.Rules[0];
+                Assert.Equal(rule.Id, rule1A.Id);
+                Assert.Equal(rule.Enabled, rule1A.Enabled);
+                Assert.Equal(rule.Filter.Prefix, rule1A.Filter?.Prefix);
+                Assert.Equal(rule.Expiration.ExpireAfterDays, rule1A.Expiration?.ExpireAfterDays);
 
             }).ConfigureAwait(false);
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task PutLifecycleConfigurationWithLogicalAndTest(S3Provider provider, IProfile  _, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3)]
+        public async Task PutLifecycleConfigurationWithLogicalAndTest(S3Provider provider, IProfile _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(client, async tempBucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 S3AndCondition conditions = new S3AndCondition();
                 conditions.Prefix = "temp/";

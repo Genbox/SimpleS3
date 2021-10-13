@@ -14,23 +14,23 @@ namespace Genbox.ProviderTests.Objects
     public class RestoreObjectTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task Restore(S3Provider _, IProfile  profile, ISimpleClient client)
+        [MultipleProviders(S3Provider.AmazonS3)]
+        public async Task Restore(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
 
             //Upload an object to glacier
-            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(Restore), null, req => req.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(Restore), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
             Assert.Equal(StorageClass.Glacier, putResp.StorageClass);
 
-            RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucketName, nameof(Restore), req => req.Days = 2).ConfigureAwait(false);
+            RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucketName, nameof(Restore), r => r.Days = 2).ConfigureAwait(false);
 
             Assert.Equal(202, restoreResp.StatusCode);
         }
 
         [Theory(Skip = "Amazon Glacier retrievals are too often offline for this test to pass.")]
         [MultipleProviders(S3Provider.AmazonS3)]
-        public async Task RestoreWithSelect(S3Provider _, IProfile  profile, ISimpleClient client)
+        public async Task RestoreWithSelect(S3Provider _, IProfile profile, ISimpleClient client)
         {
             string bucketName = GetTestBucket(profile);
 
@@ -41,23 +41,23 @@ namespace Genbox.ProviderTests.Objects
                 sw.WriteLine("\"donald trump\",7,present");
                 sw.WriteLine("fantastic fox,31,missing");
 
-                await client.PutObjectStringAsync(bucketName, nameof(RestoreWithSelect), sw.ToString(), null, req => req.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
+                await client.PutObjectStringAsync(bucketName, nameof(RestoreWithSelect), sw.ToString(), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
             }
 
-            RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucketName, nameof(RestoreWithSelect), req =>
+            RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucketName, nameof(RestoreWithSelect), r =>
             {
-                req.RequestType = RestoreRequestType.Select;
-                req.Description = "This is a description";
-                req.RequestTier = RetrievalTier.Standard;
+                r.RequestType = RestoreRequestType.Select;
+                r.Description = "This is a description";
+                r.RequestTier = RetrievalTier.Standard;
 
                 S3CsvInputFormat inputFormat = new S3CsvInputFormat();
                 inputFormat.HeaderUsage = HeaderUsage.Use;
 
                 S3CsvOutputFormat outputFormat = new S3CsvOutputFormat();
-                req.SelectParameters = new S3SelectParameters("SELECT * FROM object WHERE age > 7", inputFormat, outputFormat);
+                r.SelectParameters = new S3SelectParameters("SELECT * FROM object WHERE age > 7", inputFormat, outputFormat);
 
-                req.OutputLocation = new S3OutputLocation(bucketName, "outputJob");
-                req.OutputLocation.StorageClass = StorageClass.Standard;
+                r.OutputLocation = new S3OutputLocation(bucketName, "outputJob");
+                r.OutputLocation.StorageClass = StorageClass.Standard;
             }).ConfigureAwait(false);
 
             Assert.Equal(202, restoreResp.StatusCode);

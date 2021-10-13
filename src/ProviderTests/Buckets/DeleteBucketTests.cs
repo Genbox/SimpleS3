@@ -13,7 +13,7 @@ namespace Genbox.ProviderTests.Buckets
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task DeleteBucket(S3Provider provider, IProfile  _, ISimpleClient client)
+        public async Task DeleteBucket(S3Provider provider, IProfile _, ISimpleClient client)
         {
             string tempBucketName = GetTemporaryBucket();
 
