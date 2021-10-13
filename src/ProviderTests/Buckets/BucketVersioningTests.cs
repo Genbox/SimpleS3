@@ -9,7 +9,7 @@ namespace Genbox.ProviderTests.Buckets
     public class BucketVersioningTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)] //BackBlaze does not support suspending versioning
         public async Task PutBucketVersioningRequest(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>

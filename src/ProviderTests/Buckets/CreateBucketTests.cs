@@ -12,7 +12,7 @@ namespace Genbox.ProviderTests.Buckets
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task CreateBucket(S3Provider provider, string _, ISimpleClient client)
+        public async Task CreateBucket(S3Provider _, string __, ISimpleClient client)
         {
             string tempBucketName = GetTemporaryBucket();
 
@@ -27,17 +27,17 @@ namespace Genbox.ProviderTests.Buckets
         [MultipleProviders(S3Provider.All)]
         public async Task CreateBucketCannedAcl(S3Provider provider, string _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(provider, client, async s =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 //TODO: Check ACL once we have that functionality
-            }, r => r.Acl = BucketCannedAcl.PublicReadWrite);
+            }, r => r.Acl = BucketCannedAcl.Private);
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
         public async Task CreateBucketCustomAcl(S3Provider provider, string _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(provider, client, async s =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 //TODO: Check ACL once we have that functionality
             }, r =>
@@ -54,7 +54,7 @@ namespace Genbox.ProviderTests.Buckets
         [MultipleProviders(S3Provider.All)]
         public async Task CreateBucketObjectLocking(S3Provider provider, string _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(provider, client, async s =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 //TODO: Check locking is enabled once we have that functionality
             }, r => r.EnableObjectLocking = true);

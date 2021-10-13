@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,7 +56,12 @@ namespace Genbox.ProviderTests.Objects
                 int concurrent = 10;
                 int count = 11;
 
-                await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), i => client.PutObjectAsync(tempBucket, i.ToString(), null), concurrent, CancellationToken.None);
+                IEnumerable<PutObjectResponse> responses = await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), i => client.PutObjectAsync(tempBucket, i.ToString(), null), concurrent, CancellationToken.None);
+
+                foreach (PutObjectResponse putResp in responses)
+                {
+                    Assert.Equal(200, putResp.StatusCode);
+                }
 
                 ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, r => r.MaxKeys = count - 1).ConfigureAwait(false);
                 Assert.Equal(200, listResp.StatusCode);
@@ -79,7 +85,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)] //Google supports delimiter, but it is sorely broken
         public async Task ListObjectsWithDelimiter(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
@@ -95,7 +101,7 @@ namespace Genbox.ProviderTests.Objects
 
                 Assert.Equal("-", listResp.Delimiter);
                 Assert.Equal(2, listResp.KeyCount);
-                Assert.Equal(2, listResp.CommonPrefixes!.Count);
+                Assert.Equal(2, listResp.CommonPrefixes.Count);
                 Assert.Equal("object-", listResp.CommonPrefixes[0]);
                 Assert.Equal("something-", listResp.CommonPrefixes[1]);
             }).ConfigureAwait(false);
@@ -124,7 +130,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
         public async Task ListObjectsWithOwner(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>

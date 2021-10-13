@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -11,11 +10,6 @@ namespace Genbox.ProviderTests
 {
     public abstract class TestBase
     {
-        protected string GetTestBucket(IProfile profile)
-        {
-            return UtilityHelper.GetTestBucket(profile);
-        }
-
         protected string GetTemporaryBucket()
         {
             return UtilityHelper.GetTemporaryBucket();

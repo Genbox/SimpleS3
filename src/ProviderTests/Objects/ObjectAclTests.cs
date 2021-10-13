@@ -12,7 +12,7 @@ namespace Genbox.ProviderTests.Objects
     public class ObjectAclTests : TestBase
     {
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
         public async Task PutGetObjectAcl(S3Provider provider, string bucket, ISimpleClient client)
         {
             string objectKey = nameof(PutGetObjectAcl);
@@ -46,9 +46,12 @@ namespace Genbox.ProviderTests.Objects
             {
                 Assert.Equal(TestConstants.TestUserId, getResp2.Owner.Id);
                 Assert.Equal(TestConstants.TestUsername, getResp2.Owner.Name);
+                Assert.Equal(3, getResp2.Grants.Count);
             }
-
-            Assert.Equal(3, getResp2.Grants.Count);
+            else
+            {
+                Assert.Equal(2, getResp2.Grants.Count);
+            }
 
             //This is the default owner ACL
             S3Grant first = getResp2.Grants[0];
@@ -57,10 +60,10 @@ namespace Genbox.ProviderTests.Objects
             {
                 Assert.Equal(TestConstants.TestUserId, first.Grantee.Id);
                 Assert.Equal(TestConstants.TestUsername, first.Grantee.DisplayName);
+                Assert.Equal(GrantType.CanonicalUser, first.Grantee.Type);
             }
 
             Assert.Equal(S3Permission.FullControl, first.Permission);
-            Assert.Equal(GrantType.CanonicalUser, first.Grantee.Type);
 
             //Next 2 ACLs should be READ + WRITE for AllUsers
             S3Grant second = getResp2.Grants[1];
@@ -68,10 +71,13 @@ namespace Genbox.ProviderTests.Objects
             Assert.Equal(S3Permission.Read, second.Permission);
             Assert.Equal(GrantType.Group, second.Grantee.Type);
 
-            S3Grant third = getResp2.Grants[2];
-            Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", third.Grantee.Uri);
-            Assert.Equal(S3Permission.Write, third.Permission);
-            Assert.Equal(GrantType.Group, third.Grantee.Type);
+            if (provider == S3Provider.AmazonS3)
+            {
+                S3Grant third = getResp2.Grants[2];
+                Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", third.Grantee.Uri);
+                Assert.Equal(S3Permission.Write, third.Permission);
+                Assert.Equal(GrantType.Group, third.Grantee.Type);
+            }
         }
     }
 }

@@ -182,7 +182,7 @@ namespace Genbox.ProviderTests.Multipart
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
         public async Task MultipartUpload(S3Provider provider, string bucket, ISimpleClient client)
         {
             string objectKey = nameof(MultipartUpload);
