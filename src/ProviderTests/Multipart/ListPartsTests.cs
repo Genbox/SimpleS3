@@ -69,7 +69,7 @@ namespace Genbox.ProviderTests.Multipart
                 Assert.Equal(1000, listResp2.MaxParts);
                 Assert.False(listResp2.IsTruncated);
 
-                if (provider != S3Provider.GoogleCloudStorage)
+                if (provider == S3Provider.AmazonS3)
                     Assert.Equal(TestConstants.TestUsername, listResp2.Owner.Name);
 
                 S3Part? part = Assert.Single(listResp2.Parts);

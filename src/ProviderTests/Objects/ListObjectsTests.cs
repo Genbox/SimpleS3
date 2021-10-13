@@ -62,8 +62,10 @@ namespace Genbox.ProviderTests.Objects
 
                 Assert.Equal(count - 1, listResp.KeyCount);
                 Assert.Equal(count - 1, listResp.Objects.Count);
-                Assert.NotEmpty(listResp.NextContinuationToken);
                 Assert.True(listResp.IsTruncated);
+
+                if (provider == S3Provider.AmazonS3)
+                    Assert.NotEmpty(listResp.NextContinuationToken);
 
                 ListObjectsResponse listResp2 = await client.ListObjectsAsync(tempBucket, r => r.ContinuationToken = listResp.NextContinuationToken).ConfigureAwait(false);
                 Assert.Equal(200, listResp2.StatusCode);
@@ -100,7 +102,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
+        [MultipleProviders(S3Provider.AmazonS3)]
         public async Task ListObjectsWithEncoding(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
@@ -135,8 +137,15 @@ namespace Genbox.ProviderTests.Objects
                 Assert.Equal(200, listResp.StatusCode);
 
                 S3Object obj = listResp.Objects.First();
-                Assert.Equal(TestConstants.TestUsername, obj.Owner!.Name);
-                Assert.Equal(TestConstants.TestUserId, obj.Owner.Id);
+
+                if (provider == S3Provider.AmazonS3)
+                {
+                    Assert.Equal(TestConstants.TestUsername, obj.Owner!.Name);
+                    Assert.Equal(TestConstants.TestUserId, obj.Owner.Id);
+                }
+                else
+                    Assert.NotNull(obj.Owner);
+
             }).ConfigureAwait(false);
         }
 

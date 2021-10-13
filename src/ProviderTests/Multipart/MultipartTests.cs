@@ -213,17 +213,20 @@ namespace Genbox.ProviderTests.Multipart
             Assert.Equal(200, completeResp.StatusCode);
             Assert.NotNull(uploadResp2.ETag);
 
-            //Provoke an 'InvalidArgument' error. Parts start from index 1
-            GetObjectResponse getResp1 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 0).ConfigureAwait(false);
-            Assert.Equal(provider == S3Provider.GoogleCloudStorage ? 200 : 400, getResp1.StatusCode);
-            Assert.IsType<InvalidArgumentError>(getResp1.Error);
+            if (provider == S3Provider.AmazonS3)
+            {
+                //Provoke an 'InvalidArgument' error. Parts start from index 1
+                GetObjectResponse getResp1 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 0).ConfigureAwait(false);
+                Assert.Equal(400, getResp1.StatusCode);
+                Assert.IsType<InvalidArgumentError>(getResp1.Error);
 
-            GetObjectResponse getResp2 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 1).ConfigureAwait(false);
-            Assert.Equal(206, getResp2.StatusCode);
+                GetObjectResponse getResp2 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 1).ConfigureAwait(false);
+                Assert.Equal(206, getResp2.StatusCode);
 
-            byte[] contentData = await getResp2.Content!.AsDataAsync().ConfigureAwait(false);
-            Assert.Equal(parts[0].Length, contentData.Length);
-            Assert.Equal(parts[0], contentData);
+                byte[] contentData = await getResp2.Content!.AsDataAsync().ConfigureAwait(false);
+                Assert.Equal(parts[0].Length, contentData.Length);
+                Assert.Equal(parts[0], contentData);
+            }
         }
 
 #if COMMERCIAL

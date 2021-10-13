@@ -13,7 +13,7 @@ namespace Genbox.ProviderTests.Objects
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutGetObjectAcl(S3Provider _, string bucket, ISimpleClient client)
+        public async Task PutGetObjectAcl(S3Provider provider, string bucket, ISimpleClient client)
         {
             string objectKey = nameof(PutGetObjectAcl);
 
@@ -26,27 +26,39 @@ namespace Genbox.ProviderTests.Objects
             Assert.Equal(200, getResp.StatusCode);
 
             S3Grant? grant = Assert.Single(getResp.Grants);
-            Assert.Equal(TestConstants.TestUserId, grant.Grantee.Id);
-            Assert.Equal(TestConstants.TestUsername, grant.Grantee.DisplayName);
             Assert.Equal(S3Permission.FullControl, grant.Permission);
-            Assert.Equal(GrantType.CanonicalUser, grant.Grantee.Type);
+
+            if (provider == S3Provider.AmazonS3)
+            {
+                Assert.Equal(GrantType.CanonicalUser, grant.Grantee.Type);
+                Assert.Equal(TestConstants.TestUserId, grant.Grantee.Id);
+                Assert.Equal(TestConstants.TestUsername, grant.Grantee.DisplayName);
+            }
 
             //Update the object to have another ACL using Canned ACLs
-            PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucket, objectKey, r => r.Acl = ObjectCannedAcl.PublicReadWrite).ConfigureAwait(false);
+            PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucket, objectKey, r => r.Acl = ObjectCannedAcl.PublicRead).ConfigureAwait(false);
             Assert.Equal(200, putResp2.StatusCode);
 
             GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucket, objectKey).ConfigureAwait(false);
             Assert.Equal(200, getResp2.StatusCode);
 
-            Assert.Equal(TestConstants.TestUserId, getResp2.Owner.Id);
-            Assert.Equal(TestConstants.TestUsername, getResp2.Owner.Name);
+            if (provider == S3Provider.AmazonS3)
+            {
+                Assert.Equal(TestConstants.TestUserId, getResp2.Owner.Id);
+                Assert.Equal(TestConstants.TestUsername, getResp2.Owner.Name);
+            }
 
             Assert.Equal(3, getResp2.Grants.Count);
 
             //This is the default owner ACL
             S3Grant first = getResp2.Grants[0];
-            Assert.Equal(TestConstants.TestUserId, first.Grantee.Id);
-            Assert.Equal(TestConstants.TestUsername, first.Grantee.DisplayName);
+
+            if (provider == S3Provider.AmazonS3)
+            {
+                Assert.Equal(TestConstants.TestUserId, first.Grantee.Id);
+                Assert.Equal(TestConstants.TestUsername, first.Grantee.DisplayName);
+            }
+
             Assert.Equal(S3Permission.FullControl, first.Permission);
             Assert.Equal(GrantType.CanonicalUser, first.Grantee.Type);
 
