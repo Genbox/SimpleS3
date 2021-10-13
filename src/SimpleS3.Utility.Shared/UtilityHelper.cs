@@ -1,12 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.Multipart;
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
 using Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
 using Genbox.SimpleS3.Extensions.GoogleCloudStorage.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
+using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Microsoft.Extensions.Configuration;
@@ -66,7 +73,7 @@ namespace Genbox.SimpleS3.Utility.Shared
             return bucketName.StartsWith("tempbucket-", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static ServiceProvider CreateSimpleS3(S3Provider provider, string profileName)
+        public static ServiceProvider CreateSimpleS3(S3Provider provider, string profileName, bool enableRetry)
         {
             ServiceCollection services = new ServiceCollection();
             ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services);
@@ -77,6 +84,9 @@ namespace Genbox.SimpleS3.Utility.Shared
                                             .Build();
 
             IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
+
+            if (enableRetry)
+                httpBuilder.UseDefaultHttpPolicy();
 
             IConfigurationSection? proxySection = configRoot.GetSection("Proxy");
 
@@ -119,6 +129,93 @@ namespace Genbox.SimpleS3.Utility.Shared
             }
 
             return profile;
+        }
+
+        public static async Task<int> ForceDeleteBucketAsync(S3Provider provider, ISimpleClient client, string bucket)
+        {
+            int errors = 0;
+
+            await foreach (S3DeleteError error in DeleteAllObjects(provider, client, bucket))
+            {
+                errors++;
+
+                PutObjectLegalHoldResponse legalResp = await client.PutObjectLegalHoldAsync(bucket, error.ObjectKey, false, r => r.VersionId = error.VersionId);
+
+                if (legalResp.IsSuccess)
+                {
+                    DeleteObjectResponse delResp = await client.DeleteObjectAsync(bucket, error.ObjectKey, x => x.VersionId = error.VersionId);
+
+                    if (delResp.IsSuccess)
+                        errors--;
+                }
+            }
+
+            if (errors > 0)
+            {
+                //Google counts multipart uploads as part of bucket
+                if (provider == S3Provider.GoogleCloudStorage)
+                {
+                    //Abort all incomplete multipart uploads
+                    IAsyncEnumerable<S3Upload> partUploads = client.ListAllMultipartUploadsAsync(bucket);
+
+                    await foreach (S3Upload partUpload in partUploads)
+                    {
+                        AbortMultipartUploadResponse abortResp = await client.AbortMultipartUploadAsync(bucket, partUpload.ObjectKey, partUpload.UploadId);
+
+                        if (abortResp.IsSuccess)
+                            errors--;
+                    }
+                }
+            }
+
+            return errors;
+        }
+
+        private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjects(S3Provider provider, ISimpleClient client, string bucket)
+        {
+            ListObjectVersionsResponse response;
+            Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucket);
+
+            do
+            {
+                response = await responseTask;
+
+                if (!response.IsSuccess)
+                    yield break;
+
+                if (response.Versions.Count + response.DeleteMarkers.Count == 0)
+                    break;
+
+                if (response.IsTruncated)
+                {
+                    string keyMarker = response.NextKeyMarker;
+                    responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = keyMarker);
+                }
+
+                IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
+                                                           .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
+
+                //Google does not support DeleteObjects
+                if (provider == S3Provider.GoogleCloudStorage)
+                {
+                    foreach (S3DeleteInfo info in delete)
+                    {
+                        await client.DeleteObjectAsync(bucket, info.ObjectKey, info.VersionId);
+                    }
+                }
+                else
+                {
+                    DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucket, delete, req => req.Quiet = false).ConfigureAwait(false);
+
+                    if (!multiDelResponse.IsSuccess)
+                        yield break;
+
+                    foreach (S3DeleteError error in multiDelResponse.Errors)
+                    {
+                        yield return error;
+                    }
+                }
+            } while (response.IsTruncated);
         }
     }
 }

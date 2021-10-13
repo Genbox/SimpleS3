@@ -22,7 +22,7 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
             string profileName = UtilityHelper.GetProfileName(selectedProvider);
 
-            using ServiceProvider provider = UtilityHelper.CreateSimpleS3(selectedProvider, profileName);
+            using ServiceProvider provider = UtilityHelper.CreateSimpleS3(selectedProvider, profileName, true);
 
             IProfile profile = UtilityHelper.GetOrSetupProfile(provider, selectedProvider, profileName);
             string bucketName = UtilityHelper.GetTestBucket(profile);

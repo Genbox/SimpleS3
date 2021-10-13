@@ -21,7 +21,7 @@ namespace Genbox.ProviderTests
 
         private void BuildProvider(S3Provider provider)
         {
-            ServiceProvider services = UtilityHelper.CreateSimpleS3(provider, "TestSetup-" + provider);
+            ServiceProvider services = UtilityHelper.CreateSimpleS3(provider, "TestSetup-" + provider, false);
 
             IProfileManager profileManager = services.GetRequiredService<IProfileManager>();
 
