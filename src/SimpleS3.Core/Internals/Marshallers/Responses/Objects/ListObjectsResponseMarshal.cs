@@ -117,7 +117,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
                 }
             }
 
-            if (key == null || lastModified == null || size == null || storageClass == StorageClass.Unknown)
+            if (key == null || lastModified == null || size == null)
                 throw new InvalidOperationException("Missing required values");
 
             response.Objects.Add(new S3Object(key, lastModified.Value, size.Value, owner, eTag, storageClass));

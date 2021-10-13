@@ -5,13 +5,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(DefineConstants.Contains(COMMERCIAL))">
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="2.1.1" />
-  </ItemGroup>
+  <PropertyGroup Condition="!$(DefineConstants.Contains(COMMERCIAL))">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SimpleS3.Core.Common\SimpleS3.Core.Common.csproj" />

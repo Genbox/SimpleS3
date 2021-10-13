@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="!$(DefineConstants.Contains(COMMERCIAL))">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleS3.Extensions.GoogleCloudStorage\SimpleS3.Extensions.GoogleCloudStorage.csproj" />
+    <ProjectReference Include="..\SimpleS3.ProviderBase\SimpleS3.ProviderBase.csproj" />
+  </ItemGroup>
+</Project>

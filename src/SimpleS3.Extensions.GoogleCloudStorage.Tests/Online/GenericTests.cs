@@ -3,9 +3,9 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests.Online
+namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage.Tests.Online
 {
-    public class GenericTests : B2TestBase
+    public class GenericTests : GoogleCloudStorageTestBase
     {
         public GenericTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 

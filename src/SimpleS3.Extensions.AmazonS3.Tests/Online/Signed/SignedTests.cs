@@ -21,13 +21,13 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Signed
 
             await using (MemoryStream ms = new MemoryStream(Encoding.ASCII.GetBytes("hello world")))
             {
-                PutObjectResponse? putResp = await SignedObjectClient.PutObjectAsync(url, ms).ConfigureAwait(false);
+                PutObjectResponse putResp = await SignedObjectClient.PutObjectAsync(url, ms).ConfigureAwait(false);
                 Assert.Equal(200, putResp.StatusCode);
             }
 
             url = SignedObjectClient.SignGetObject(BucketName, "test.zip", TimeSpan.FromSeconds(expireIn));
 
-            GetObjectResponse? getResp = await SignedObjectClient.GetObjectAsync(url).ConfigureAwait(false);
+            GetObjectResponse getResp = await SignedObjectClient.GetObjectAsync(url).ConfigureAwait(false);
             Assert.Equal(200, getResp.StatusCode);
 
             url = SignedObjectClient.SignDeleteObject(BucketName, "test.zip", TimeSpan.FromSeconds(expireIn));

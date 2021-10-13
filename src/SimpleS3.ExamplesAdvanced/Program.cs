@@ -120,12 +120,12 @@ namespace Genbox.SimpleS3.ExamplesAdvanced
             //Finally we build the service provider and return the S3Client
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
-            IProfileManager? profileManager = serviceProvider.GetRequiredService<IProfileManager>();
+            IProfileManager profileManager = serviceProvider.GetRequiredService<IProfileManager>();
             IProfile? profile = profileManager.GetDefaultProfile();
 
             if (profile == null)
             {
-                IProfileSetup? setup = serviceProvider.GetRequiredService<IProfileSetup>();
+                IProfileSetup setup = serviceProvider.GetRequiredService<IProfileSetup>();
                 setup.SetupDefaultProfile();
             }
 

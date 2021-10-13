@@ -140,7 +140,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests.Online.Objects
                 await UploadAsync(bucket, tempObjName).ConfigureAwait(false);
                 await UploadAsync(bucket, tempObjName2).ConfigureAwait(false);
 
-                ListObjectVersionsResponse? resp = await ObjectClient.ListObjectVersionsAsync(bucket, req => req.Delimiter = "-").ConfigureAwait(false);
+                ListObjectVersionsResponse resp = await ObjectClient.ListObjectVersionsAsync(bucket, req => req.Delimiter = "-").ConfigureAwait(false);
                 Assert.True(resp.IsSuccess);
 
                 Assert.Equal("-", resp.Delimiter);
