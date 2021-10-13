@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -32,16 +31,27 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
             Console.WriteLine($"Setting up bucket '{bucketName}'");
 
-            bool success = false;
-
-            if (!await BucketExistAsync(bucketClient, bucketName))
-                success = await TryCreateBucketAsync(bucketClient, bucketName);
+            bool success = await TryCreateBucketAsync(bucketClient, bucketName);
 
             if (success)
             {
                 if (selectedProvider == S3Provider.AmazonS3)
                     await PostConfigureAmazonS3(bucketClient, bucketName).ConfigureAwait(false);
+                else if (selectedProvider == S3Provider.BackBlazeB2)
+                    await PostConfigureBackBlazeB2(bucketClient, bucketName).ConfigureAwait(false);
             }
+        }
+
+        private static async Task PostConfigureBackBlazeB2(IBucketClient bucketClient, string bucketName)
+        {
+            Console.WriteLine("Adding lock configuration");
+
+            PutBucketLockConfigurationResponse putLockResp = await bucketClient.PutBucketLockConfigurationAsync(bucketName, true).ConfigureAwait(false);
+
+            if (putLockResp.IsSuccess)
+                Console.WriteLine("Successfully applied lock configuration.");
+            else
+                Console.Error.WriteLine("Failed to apply lock configuration.");
         }
 
         private static async Task PostConfigureAmazonS3(IBucketClient bucketClient, string bucketName)
@@ -77,29 +87,15 @@ namespace Genbox.SimpleS3.Utility.TestSetup
 
         }
 
-        private static async Task<bool> BucketExistAsync(IBucketClient bucketClient, string bucketName)
-        {
-            HeadBucketResponse headResp = await bucketClient.HeadBucketAsync(bucketName).ConfigureAwait(false);
-
-            if (headResp.StatusCode == 200)
-            {
-                Console.WriteLine($"'{bucketName}' already exist.");
-                return true;
-            }
-
-            if (headResp.StatusCode == 404)
-            {
-                Console.WriteLine($"'{bucketName}' does not exist..");
-                return false;
-            }
-
-            Console.WriteLine($"Unknown error code when checking if bucket exists: {(HttpStatusCode)headResp.StatusCode} (Code: {headResp.StatusCode})");
-            return false;
-        }
-
         private static async Task<bool> TryCreateBucketAsync(IBucketClient bucketClient, string bucketName)
         {
-            CreateBucketResponse createResp = await bucketClient.CreateBucketAsync(bucketName).ConfigureAwait(false);
+            HeadBucketResponse headResp = await bucketClient.HeadBucketAsync(bucketName);
+
+            //Bucket already exist - we return true to apply post-configuration
+            if (headResp.StatusCode == 200)
+                return true;
+
+            CreateBucketResponse createResp = await bucketClient.CreateBucketAsync(bucketName, r => r.EnableObjectLocking = true).ConfigureAwait(false);
 
             if (createResp.IsSuccess)
             {
