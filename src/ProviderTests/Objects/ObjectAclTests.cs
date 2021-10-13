@@ -4,7 +4,6 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Core.TestBase;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -14,17 +13,16 @@ namespace Genbox.ProviderTests.Objects
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task PutGetObjectAcl(S3Provider _, IProfile profile, ISimpleClient client)
+        public async Task PutGetObjectAcl(S3Provider _, string bucket, ISimpleClient client)
         {
             string objectKey = nameof(PutGetObjectAcl);
-            string bucketName = GetTestBucket(profile);
 
             //Create an object
-            PutObjectResponse putResp1 = await client.PutObjectAsync(bucketName, objectKey, null).ConfigureAwait(false);
+            PutObjectResponse putResp1 = await client.PutObjectAsync(bucket, objectKey, null).ConfigureAwait(false);
             Assert.Equal(200, putResp1.StatusCode);
 
             //Get the ACL, which should be the default one (owner has ACL)
-            GetObjectAclResponse getResp = await client.GetObjectAclAsync(bucketName, objectKey).ConfigureAwait(false);
+            GetObjectAclResponse getResp = await client.GetObjectAclAsync(bucket, objectKey).ConfigureAwait(false);
             Assert.Equal(200, getResp.StatusCode);
 
             S3Grant? grant = Assert.Single(getResp.Grants);
@@ -34,10 +32,10 @@ namespace Genbox.ProviderTests.Objects
             Assert.Equal(GrantType.CanonicalUser, grant.Grantee.Type);
 
             //Update the object to have another ACL using Canned ACLs
-            PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucketName, objectKey, r => r.Acl = ObjectCannedAcl.PublicReadWrite).ConfigureAwait(false);
+            PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucket, objectKey, r => r.Acl = ObjectCannedAcl.PublicReadWrite).ConfigureAwait(false);
             Assert.Equal(200, putResp2.StatusCode);
 
-            GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucketName, objectKey).ConfigureAwait(false);
+            GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucket, objectKey).ConfigureAwait(false);
             Assert.Equal(200, getResp2.StatusCode);
 
             Assert.Equal(TestConstants.TestUserId, getResp2.Owner.Id);

@@ -7,7 +7,6 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Core.TestBase;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -17,7 +16,7 @@ namespace Genbox.ProviderTests.Multipart
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListParts(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task ListParts(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
             {

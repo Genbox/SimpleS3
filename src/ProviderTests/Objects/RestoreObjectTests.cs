@@ -5,7 +5,6 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -15,25 +14,21 @@ namespace Genbox.ProviderTests.Objects
     {
         [Theory]
         [MultipleProviders(S3Provider.AmazonS3)]
-        public async Task Restore(S3Provider _, IProfile profile, ISimpleClient client)
+        public async Task Restore(S3Provider _, string bucket, ISimpleClient client)
         {
-            string bucketName = GetTestBucket(profile);
-
             //Upload an object to glacier
-            PutObjectResponse putResp = await client.PutObjectAsync(bucketName, nameof(Restore), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
+            PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(Restore), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
             Assert.Equal(StorageClass.Glacier, putResp.StorageClass);
 
-            RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucketName, nameof(Restore), r => r.Days = 2).ConfigureAwait(false);
+            RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(Restore), r => r.Days = 2).ConfigureAwait(false);
 
             Assert.Equal(202, restoreResp.StatusCode);
         }
 
         [Theory(Skip = "Amazon Glacier retrievals are too often offline for this test to pass.")]
         [MultipleProviders(S3Provider.AmazonS3)]
-        public async Task RestoreWithSelect(S3Provider _, IProfile profile, ISimpleClient client)
+        public async Task RestoreWithSelect(S3Provider _, string bucket, ISimpleClient client)
         {
-            string bucketName = GetTestBucket(profile);
-
             await using (StringWriter sw = new StringWriter())
             {
                 sw.WriteLine("name,age,status");
@@ -41,10 +36,10 @@ namespace Genbox.ProviderTests.Objects
                 sw.WriteLine("\"donald trump\",7,present");
                 sw.WriteLine("fantastic fox,31,missing");
 
-                await client.PutObjectStringAsync(bucketName, nameof(RestoreWithSelect), sw.ToString(), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
+                await client.PutObjectStringAsync(bucket, nameof(RestoreWithSelect), sw.ToString(), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
             }
 
-            RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucketName, nameof(RestoreWithSelect), r =>
+            RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(RestoreWithSelect), r =>
             {
                 r.RequestType = RestoreRequestType.Select;
                 r.Description = "This is a description";
@@ -56,7 +51,7 @@ namespace Genbox.ProviderTests.Objects
                 S3CsvOutputFormat outputFormat = new S3CsvOutputFormat();
                 r.SelectParameters = new S3SelectParameters("SELECT * FROM object WHERE age > 7", inputFormat, outputFormat);
 
-                r.OutputLocation = new S3OutputLocation(bucketName, "outputJob");
+                r.OutputLocation = new S3OutputLocation(bucket, "outputJob");
                 r.OutputLocation.StorageClass = StorageClass.Standard;
             }).ConfigureAwait(false);
 

@@ -3,7 +3,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -13,7 +12,7 @@ namespace Genbox.ProviderTests.Buckets
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task DeleteBucket(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task DeleteBucket(S3Provider provider, string _, ISimpleClient client)
         {
             string tempBucketName = GetTemporaryBucket();
 

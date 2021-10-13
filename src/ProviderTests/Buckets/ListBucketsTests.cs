@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -11,13 +10,11 @@ namespace Genbox.ProviderTests.Buckets
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListBuckets(S3Provider _, IProfile profile, ISimpleClient client)
+        public async Task ListBuckets(S3Provider _, string bucket, ISimpleClient client)
         {
-            string bucketName = GetTestBucket(profile);
-
             ListBucketsResponse listResp = await client.ListBucketsAsync().ConfigureAwait(false);
             Assert.True(listResp.Buckets.Count > 0);
-            Assert.Single(listResp.Buckets, bucket => bucket.BucketName == bucketName);
+            Assert.Single(listResp.Buckets, x => x.BucketName == bucket);
         }
     }
 }

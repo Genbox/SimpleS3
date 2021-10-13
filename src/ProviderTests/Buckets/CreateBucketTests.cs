@@ -3,7 +3,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.TestBase;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -13,7 +12,7 @@ namespace Genbox.ProviderTests.Buckets
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task CreateBucket(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task CreateBucket(S3Provider provider, string _, ISimpleClient client)
         {
             string tempBucketName = GetTemporaryBucket();
 
@@ -26,7 +25,7 @@ namespace Genbox.ProviderTests.Buckets
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task CreateBucketCannedAcl(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task CreateBucketCannedAcl(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async s =>
             {
@@ -36,7 +35,7 @@ namespace Genbox.ProviderTests.Buckets
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task CreateBucketCustomAcl(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task CreateBucketCustomAcl(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async s =>
             {
@@ -53,7 +52,7 @@ namespace Genbox.ProviderTests.Buckets
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task CreateBucketObjectLocking(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task CreateBucketObjectLocking(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async s =>
             {

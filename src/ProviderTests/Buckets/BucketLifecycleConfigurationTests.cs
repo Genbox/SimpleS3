@@ -5,7 +5,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -15,7 +14,7 @@ namespace Genbox.ProviderTests.Buckets
     {
         [Theory]
         [MultipleProviders(S3Provider.AmazonS3)]
-        public async Task PutGetLifecycleConfigurationTest(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task PutGetLifecycleConfigurationTest(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
@@ -63,7 +62,7 @@ namespace Genbox.ProviderTests.Buckets
 
         [Theory]
         [MultipleProviders(S3Provider.AmazonS3)]
-        public async Task PutLifecycleConfigurationBucketWideTest(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task PutLifecycleConfigurationBucketWideTest(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
@@ -88,7 +87,7 @@ namespace Genbox.ProviderTests.Buckets
 
         [Theory]
         [MultipleProviders(S3Provider.AmazonS3)]
-        public async Task PutLifecycleConfigurationWithLogicalAndTest(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task PutLifecycleConfigurationWithLogicalAndTest(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
             {

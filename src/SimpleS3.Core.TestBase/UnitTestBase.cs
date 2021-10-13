@@ -3,7 +3,6 @@ using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
-using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Microsoft.Extensions.Configuration;
@@ -54,11 +53,6 @@ namespace Genbox.SimpleS3.Core.TestBase
         protected string? ProfileName { get; }
         protected IObjectOperations ObjectOperations => Services.GetRequiredService<IObjectOperations>();
         protected IObjectClient ObjectClient => Services.GetRequiredService<IObjectClient>();
-        protected IBucketClient BucketClient => Services.GetRequiredService<IBucketClient>();
-        protected IMultipartClient MultipartClient => Services.GetRequiredService<IMultipartClient>();
-        protected IMultipartTransfer MultipartTransfer => Services.GetRequiredService<IMultipartTransfer>();
-        protected ISignedObjectClient SignedObjectClient => Services.GetRequiredService<ISignedObjectClient>();
-        protected ITransfer Transfer => Services.GetRequiredService<ITransfer>();
 
         public virtual void Dispose()
         {

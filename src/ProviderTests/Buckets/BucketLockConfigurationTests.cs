@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -13,7 +12,7 @@ namespace Genbox.ProviderTests.Buckets
     {
         [Theory]
         [MultipleProviders(S3Provider.AmazonS3, LockMode.Compliance, LockMode.Governance)]
-        public async Task GetPutBucketLockConfiguration(S3Provider provider, IProfile _, ISimpleClient client, LockMode mode)
+        public async Task GetPutBucketLockConfiguration(S3Provider provider, string _, ISimpleClient client, LockMode mode)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
@@ -33,7 +32,7 @@ namespace Genbox.ProviderTests.Buckets
 
         [Theory]
         [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
-        public async Task GetEmptyBucketLock(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task GetEmptyBucketLock(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
@@ -46,7 +45,7 @@ namespace Genbox.ProviderTests.Buckets
 
         [Theory]
         [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
-        public async Task GetWhenBucketLockIsDisabled(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task GetWhenBucketLockIsDisabled(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
@@ -57,7 +56,7 @@ namespace Genbox.ProviderTests.Buckets
 
         [Theory(Skip = "seem to fail on all platforms right now")]
         [MultipleProviders(S3Provider.All)]
-        public async Task OverwriteExistingLock(S3Provider provider, IProfile _, ISimpleClient client)
+        public async Task OverwriteExistingLock(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
             {

@@ -9,7 +9,6 @@ using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Core.TestBase;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -19,25 +18,25 @@ namespace Genbox.ProviderTests.Objects
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListObjectVersions(S3Provider provider, IProfile profile, ISimpleClient client)
+        public async Task ListObjectVersions(S3Provider provider, string _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(provider, client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 //Enable versioning on the bucket
-                await client.PutBucketVersioningAsync(bucket, true);
+                await client.PutBucketVersioningAsync(tempBucket, true);
 
                 //Verify that we enabled bucket versioning
-                GetBucketVersioningResponse getVerResp = await client.GetBucketVersioningAsync(bucket);
+                GetBucketVersioningResponse getVerResp = await client.GetBucketVersioningAsync(tempBucket);
                 Assert.True(getVerResp.Status);
 
-                PutObjectResponse putResp1 = await client.PutObjectStringAsync(bucket, "1", "a").ConfigureAwait(false);
-                PutObjectResponse putResp2 = await client.PutObjectStringAsync(bucket, "2", "aa").ConfigureAwait(false);
-                PutObjectResponse putResp3 = await client.PutObjectStringAsync(bucket, "3", "aaa").ConfigureAwait(false);
+                PutObjectResponse putResp1 = await client.PutObjectStringAsync(tempBucket, "1", "a").ConfigureAwait(false);
+                PutObjectResponse putResp2 = await client.PutObjectStringAsync(tempBucket, "2", "aa").ConfigureAwait(false);
+                PutObjectResponse putResp3 = await client.PutObjectStringAsync(tempBucket, "3", "aaa").ConfigureAwait(false);
 
-                DeleteObjectResponse putResp4 = await client.DeleteObjectAsync(bucket, "2"); //Delete object 2
-                PutObjectResponse putResp5 = await client.PutObjectStringAsync(bucket, "3", "aaaa").ConfigureAwait(false); //Overwrite object 3
+                DeleteObjectResponse putResp4 = await client.DeleteObjectAsync(tempBucket, "2"); //Delete object 2
+                PutObjectResponse putResp5 = await client.PutObjectStringAsync(tempBucket, "3", "aaaa").ConfigureAwait(false); //Overwrite object 3
 
-                ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(bucket);
+                ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(tempBucket);
                 Assert.True(listResp.IsSuccess);
                 Assert.Equal(4, listResp.Versions.Count);
 
@@ -47,7 +46,7 @@ namespace Genbox.ProviderTests.Objects
                     Assert.Equal(1000, listResp.MaxKeys);
                 }
 
-                Assert.Equal(bucket, listResp.BucketName);
+                Assert.Equal(tempBucket, listResp.BucketName);
                 Assert.False(listResp.IsTruncated);
 
                 S3Version version1 = listResp.Versions[0];
@@ -138,22 +137,22 @@ namespace Genbox.ProviderTests.Objects
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListObjectsMoreThanMaxKeys(S3Provider provider, IProfile profile, ISimpleClient client)
+        public async Task ListObjectsMoreThanMaxKeys(S3Provider provider, string _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(provider, client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 int concurrent = 10;
                 int count = 11;
 
-                await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), i => client.PutObjectAsync(bucket, i.ToString(), null), concurrent);
+                await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), i => client.PutObjectAsync(tempBucket, i.ToString(), null), concurrent);
 
-                ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(bucket, req => req.MaxKeys = count - 1).ConfigureAwait(false);
+                ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(tempBucket, r => r.MaxKeys = count - 1).ConfigureAwait(false);
                 Assert.True(listResp.IsSuccess);
                 Assert.True(listResp.IsTruncated);
                 Assert.Equal(10, listResp.MaxKeys);
                 Assert.Equal(10, listResp.Versions.Count);
 
-                ListObjectVersionsResponse listResp2 = await client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = listResp.NextKeyMarker).ConfigureAwait(false);
+                ListObjectVersionsResponse listResp2 = await client.ListObjectVersionsAsync(tempBucket, r => r.KeyMarker = listResp.NextKeyMarker).ConfigureAwait(false);
                 Assert.True(listResp2.IsSuccess);
                 Assert.False(listResp2.IsTruncated);
                 Assert.Equal(1, listResp2.Versions.Count);
@@ -163,17 +162,17 @@ namespace Genbox.ProviderTests.Objects
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListObjectVersionsWithDelimiter(S3Provider provider, IProfile profile, ISimpleClient client)
+        public async Task ListObjectVersionsWithDelimiter(S3Provider provider, string _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(provider, client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 string tempObjName = "object-" + Guid.NewGuid();
                 string tempObjName2 = "something-" + Guid.NewGuid();
 
-                await client.PutObjectAsync(bucket, tempObjName, null).ConfigureAwait(false);
-                await client.PutObjectAsync(bucket, tempObjName2, null).ConfigureAwait(false);
+                await client.PutObjectAsync(tempBucket, tempObjName, null).ConfigureAwait(false);
+                await client.PutObjectAsync(tempBucket, tempObjName2, null).ConfigureAwait(false);
 
-                ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(bucket, req => req.Delimiter = "-").ConfigureAwait(false);
+                ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.Delimiter = "-").ConfigureAwait(false);
                 Assert.True(resp.IsSuccess);
 
                 Assert.Equal("-", resp.Delimiter);
@@ -185,15 +184,15 @@ namespace Genbox.ProviderTests.Objects
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListObjectVersionsWithEncoding(S3Provider provider, IProfile profile, ISimpleClient client)
+        public async Task ListObjectVersionsWithEncoding(S3Provider provider, string _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(provider, client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 string tempObjName = "!#/()";
 
-                await client.PutObjectAsync(bucket, tempObjName, null).ConfigureAwait(false);
+                await client.PutObjectAsync(tempBucket, tempObjName, null).ConfigureAwait(false);
 
-                ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(bucket, req => req.EncodingType = EncodingType.Url).ConfigureAwait(false);
+                ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.EncodingType = EncodingType.Url).ConfigureAwait(false);
                 Assert.True(resp.IsSuccess);
 
                 Assert.Equal(EncodingType.Url, resp.EncodingType);
@@ -206,17 +205,17 @@ namespace Genbox.ProviderTests.Objects
 
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListObjectsWithPrefix(S3Provider provider, IProfile profile, ISimpleClient client)
+        public async Task ListObjectsWithPrefix(S3Provider provider, string _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(provider, client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 string tempObjName = "object-" + Guid.NewGuid();
                 string tempObjName2 = "something-" + Guid.NewGuid();
 
-                await client.PutObjectAsync(bucket, tempObjName, null).ConfigureAwait(false);
-                await client.PutObjectAsync(bucket, tempObjName2, null).ConfigureAwait(false);
+                await client.PutObjectAsync(tempBucket, tempObjName, null).ConfigureAwait(false);
+                await client.PutObjectAsync(tempBucket, tempObjName2, null).ConfigureAwait(false);
 
-                ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(bucket, req => req.Prefix = "object").ConfigureAwait(false);
+                ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.Prefix = "object").ConfigureAwait(false);
                 Assert.True(resp.IsSuccess);
 
                 Assert.Equal("object", resp.Prefix);

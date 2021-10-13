@@ -26,16 +26,17 @@ namespace Genbox.ProviderTests
             foreach ((S3Provider provider, IProfile profile, ISimpleClient client) in ProviderSetup.Instance.Clients)
             {
                 _shouldSkip = !_providers.HasFlag(provider);
+                string bucket = UtilityHelper.GetTestBucket(profile);
 
                 if (_otherData.Length > 0)
                 {
                     foreach (object o in _otherData)
                     {
-                        yield return new[] { provider, profile, client, o };
+                        yield return new[] { provider, bucket, client, o };
                     }
                 }
                 else
-                    yield return new object?[] { provider, profile, client };
+                    yield return new object?[] { provider, bucket, client };
             }
         }
     }

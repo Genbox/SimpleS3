@@ -6,7 +6,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
-using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
@@ -16,24 +15,24 @@ namespace Genbox.ProviderTests.Multipart
     {
         [Theory]
         [MultipleProviders(S3Provider.All)]
-        public async Task ListMultipartUploads(S3Provider provider, IProfile profile, ISimpleClient client)
+        public async Task ListMultipartUploads(S3Provider provider, string _, ISimpleClient client)
         {
-            await CreateTempBucketAsync(provider, client, async bucket =>
+            await CreateTempBucketAsync(provider, client, async tempBucket =>
             {
                 //The percentage sign at the end is to test if encoding works correctly
                 string objName = nameof(ListMultipartUploads) + "%";
 
-                CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objName).ConfigureAwait(false);
+                CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(tempBucket, objName).ConfigureAwait(false);
                 Assert.Equal(200, createResp.StatusCode);
 
                 byte[] file = new byte[5 * 1024];
 
                 await using (MemoryStream ms = new MemoryStream(file))
-                    await client.UploadPartAsync(bucket, objName, 1, createResp.UploadId, ms).ConfigureAwait(false);
+                    await client.UploadPartAsync(tempBucket, objName, 1, createResp.UploadId, ms).ConfigureAwait(false);
 
-                ListMultipartUploadsResponse listResp = await client.ListMultipartUploadsAsync(bucket, r => r.EncodingType = EncodingType.Url).ConfigureAwait(false);
+                ListMultipartUploadsResponse listResp = await client.ListMultipartUploadsAsync(tempBucket, r => r.EncodingType = EncodingType.Url).ConfigureAwait(false);
                 Assert.Equal(200, listResp.StatusCode);
-                Assert.Equal(bucket, listResp.Bucket);
+                Assert.Equal(tempBucket, listResp.Bucket);
 
                 if (provider == S3Provider.AmazonS3)
                 {
