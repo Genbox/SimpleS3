@@ -9,10 +9,11 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors
     {
         internal PreconditionFailedError(IDictionary<string, string> lookup) : base(lookup)
         {
-            Condition = lookup.GetRequiredValue("Condition");
+            //The condition field is optional since only Amazon S3 returns it
+            Condition = lookup.GetOptionalValue("Condition");
         }
 
-        public string Condition { get; }
+        public string? Condition { get; }
 
         public override string GetErrorDetails()
         {
