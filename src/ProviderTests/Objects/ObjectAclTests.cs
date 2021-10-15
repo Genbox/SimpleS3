@@ -41,16 +41,12 @@ namespace Genbox.ProviderTests.Objects
 
             GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucket, objectKey).ConfigureAwait(false);
             Assert.Equal(200, getResp2.StatusCode);
+            Assert.Equal(2, getResp2.Grants.Count);
 
             if (provider == S3Provider.AmazonS3)
             {
                 Assert.Equal(TestConstants.TestUserId, getResp2.Owner.Id);
                 Assert.Equal(TestConstants.TestUsername, getResp2.Owner.Name);
-                Assert.Equal(3, getResp2.Grants.Count);
-            }
-            else
-            {
-                Assert.Equal(2, getResp2.Grants.Count);
             }
 
             //This is the default owner ACL
@@ -71,13 +67,13 @@ namespace Genbox.ProviderTests.Objects
             Assert.Equal(S3Permission.Read, second.Permission);
             Assert.Equal(GrantType.Group, second.Grantee.Type);
 
-            if (provider == S3Provider.AmazonS3)
-            {
-                S3Grant third = getResp2.Grants[2];
-                Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", third.Grantee.Uri);
-                Assert.Equal(S3Permission.Write, third.Permission);
-                Assert.Equal(GrantType.Group, third.Grantee.Type);
-            }
+            //if (provider == S3Provider.AmazonS3)
+            //{
+            //    S3Grant third = getResp2.Grants[2];
+            //    Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", third.Grantee.Uri);
+            //    Assert.Equal(S3Permission.Write, third.Permission);
+            //    Assert.Equal(GrantType.Group, third.Grantee.Type);
+            //}
         }
     }
 }
