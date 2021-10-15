@@ -99,17 +99,17 @@ namespace Genbox.SimpleS3.BackBlazeB2
 
         public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
-            return Client.DeleteBucketTaggingAsync(bucketName, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
         {
-            return Client.PutBucketAccelerateConfigurationAsync(bucketName, enabled, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
         {
-            return Client.GetBucketAccelerateConfigurationAsync(bucketName, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
@@ -119,7 +119,7 @@ namespace Genbox.SimpleS3.BackBlazeB2
 
         public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
         {
-            return Client.PutBucketVersioningAsync(bucketName, enabled, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default)
@@ -164,7 +164,7 @@ namespace Genbox.SimpleS3.BackBlazeB2
 
         public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default)
         {
-            return Client.RestoreObjectAsync(bucketName, objectKey, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest>? config = null, CancellationToken token = default)
@@ -240,7 +240,7 @@ namespace Genbox.SimpleS3.BackBlazeB2
 #if COMMERCIAL
         public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
         {
-            return Client.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)

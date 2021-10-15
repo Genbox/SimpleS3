@@ -79,37 +79,37 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
 
         public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
         {
-            return Client.PutBucketLockConfigurationAsync(bucketName, enabled, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
         {
-            return Client.GetBucketLockConfigurationAsync(bucketName, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
-            return Client.GetBucketTaggingAsync(bucketName, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
-            return Client.PutBucketTaggingAsync(bucketName, tags, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default)
         {
-            return Client.DeleteBucketTaggingAsync(bucketName, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
         {
-            return Client.PutBucketAccelerateConfigurationAsync(bucketName, enabled, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
         {
-            return Client.GetBucketAccelerateConfigurationAsync(bucketName, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
@@ -134,12 +134,12 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
 
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default)
         {
-            return Client.DeleteObjectAsync(bucketName, objectKey, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default)
         {
-            return Client.DeleteObjectsAsync(bucketName, objectKeys, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest>? config = null, CancellationToken token = default)
@@ -164,7 +164,7 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
 
         public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default)
         {
-            return Client.RestoreObjectAsync(bucketName, objectKey, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest>? config = null, CancellationToken token = default)
@@ -174,22 +174,22 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
 
         public Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest>? config = null, CancellationToken token = default)
         {
-            return Client.PutObjectAclAsync(bucketName, objectKey, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest>? config = null, CancellationToken token = default)
         {
-            return Client.GetObjectAclAsync(bucketName, objectKey, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default)
         {
-            return Client.GetObjectLegalHoldAsync(bucketName, objectKey, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default)
         {
-            return Client.PutObjectLegalHoldAsync(bucketName, objectKey, lockStatus, config, token);
+            throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
         }
 
         public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default)
