@@ -59,7 +59,8 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All, ".", "\0")]
+        [MultipleProviders(S3Provider.All & ~S3Provider.Wasabi, ".", "\0")]
+        [MultipleProviders(S3Provider.Wasabi, ".")] //Wasabi seems to allow null bytes
         public async Task PutObjectInvalidCharacters(S3Provider _, string bucket, ISimpleClient client, string name)
         {
             //These 2 test cases came after an exhaustive search in the whole UTF-16 character space.
@@ -167,10 +168,11 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.All)]
-        public async Task PutObjectLargeMetadata(S3Provider _, string bucket, ISimpleClient client)
+        [MultipleProviders(S3Provider.All & ~S3Provider.Wasabi, 2047)]
+        [MultipleProviders(S3Provider.Wasabi, 2036)] //Wasabi seems to be off by 10
+        public async Task PutObjectLargeMetadata(S3Provider _, string bucket, ISimpleClient client, int limit)
         {
-            string value = new string('b', 2047);
+            string value = new string('b', limit);
 
             PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectMultipleMetadata), null, r =>
             {

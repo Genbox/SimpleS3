@@ -16,6 +16,7 @@ using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
+using Genbox.SimpleS3.Extensions.Wasabi.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -103,6 +104,8 @@ namespace Genbox.SimpleS3.Utility.Shared
                 coreBuilder.UseBackBlazeB2();
             else if (provider == S3Provider.GoogleCloudStorage)
                 coreBuilder.UseGoogleCloudStorage();
+            else if (provider == S3Provider.Wasabi)
+                coreBuilder.UseWasabi();
             else
                 throw new ArgumentOutOfRangeException(nameof(provider), provider, null);
 

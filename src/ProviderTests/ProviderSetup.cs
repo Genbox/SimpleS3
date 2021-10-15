@@ -14,6 +14,7 @@ namespace Genbox.ProviderTests
             BuildProvider(S3Provider.AmazonS3);
             BuildProvider(S3Provider.BackBlazeB2);
             BuildProvider(S3Provider.GoogleCloudStorage);
+            BuildProvider(S3Provider.Wasabi);
         }
 
         public static ProviderSetup Instance { get; } = new ProviderSetup();

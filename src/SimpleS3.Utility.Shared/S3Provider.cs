@@ -9,6 +9,7 @@ namespace Genbox.SimpleS3.Utility.Shared
         AmazonS3 = 1,
         BackBlazeB2 = 2,
         GoogleCloudStorage = 4,
+        Wasabi = 8,
 
         All = int.MaxValue
     }
