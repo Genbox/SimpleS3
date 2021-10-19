@@ -15,4 +15,4 @@ jobs:
     - name: Build free
       run: dotnet build -c Release src/SimpleS3.sln
     - name: Build commercial
-      run: dotnet build -c CommercialRelease src/SimpleS3.sln
+      run: dotnet build -c CommercialRelease src/SimpleS3.Commercial.sln

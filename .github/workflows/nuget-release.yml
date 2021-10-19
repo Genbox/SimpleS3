@@ -18,6 +18,6 @@ jobs:
     - name: Pack free release
       run: dotnet pack -c Release src/SimpleS3.sln -o Temp
     - name: Pack commercial release
-      run: dotnet pack -c CommercialRelease src/SimpleS3.sln -o Temp
+      run: dotnet pack -c CommercialRelease src/SimpleS3.Commercial.sln -o Temp
     - name: Upload to nuget
       run: dotnet nuget push --skip-duplicate -k ${{secrets.NUGET_KEY}} -s https://api.nuget.org/v3/index.json Temp/*
