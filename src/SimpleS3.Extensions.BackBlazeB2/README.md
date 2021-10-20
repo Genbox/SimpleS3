@@ -5,7 +5,7 @@ Note that this extension is only avaliable to [commercial tier sponsors](https:/
 To use it, add a reference to [Genbox.SimpleS3.Extensions.BackBlazeB2.Commercial](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.BackBlazeB2.Commercial)
 
 ### Using Microsoft.Extensions.DependencyInjection
-If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you can use B2 like so:
+If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you can use it like this:
 
 ```csharp
 ServiceCollection services = new ServiceCollection();
@@ -22,4 +22,4 @@ IServiceProvider serviceProvider = services.BuildServiceProvider();
 IObjectClient objectClient = serviceProvider.GetRequiredService<IObjectClient>();
 ```
 
-You can now use the `objectClient` to work with objects on B2.
+You can now use the `objectClient` to work with objects.

@@ -4,7 +4,7 @@ This extension adds retry, timeout and error handling to the [Genbox.SimpleS3.Ex
 To use it, install the package [Genbox.SimpleS3.Extensions.HttpClientFactory.Polly](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.HttpClientFactory.Polly)
 
 ### Using Microsoft.Extensions.DependencyInjection
-If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you simply add the extension like this
+If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you simply add the extension like this:
 
 ```csharp
 ServiceCollection services = new ServiceCollection();

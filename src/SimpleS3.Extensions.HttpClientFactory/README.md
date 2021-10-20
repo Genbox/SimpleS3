@@ -5,7 +5,7 @@ It is the default HTTP driver in SimpleS3, so you don't have to do anything if y
 However, if you want to build your own SimpleS3 setup, add a reference to [Genbox.SimpleS3.Core](https://www.nuget.org/packages/Genbox.SimpleS3.Core) and [Genbox.SimpleS3.Extensions.HttpClientFactory](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.HttpClientFactory).
 
 ### Using Microsoft.Extensions.DependencyInjection
-If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you simply add the driver like this
+If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you simply add the driver like this:
 
 ```csharp
 ServiceCollection services = new ServiceCollection();

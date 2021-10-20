@@ -21,4 +21,4 @@ IServiceProvider serviceProvider = services.BuildServiceProvider();
 IObjectClient objectClient = serviceProvider.GetRequiredService<IObjectClient>();
 ```
 
-You can now use the `objectClient` to work with objects on S3.
+You can now use the `objectClient` to work with objects.

@@ -5,7 +5,7 @@ Note that this extension is only avaliable to [commercial tier sponsors](https:/
 To use it, add a reference to [Genbox.SimpleS3.Extensions.GoogleCloudStorage.Commercial](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.GoogleCloudStorage.Commercial)
 
 ### Using Microsoft.Extensions.DependencyInjection
-If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you can use B2 like so:
+If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you can use it like this:
 
 ```csharp
 ServiceCollection services = new ServiceCollection();
