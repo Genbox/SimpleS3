@@ -107,7 +107,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             sb.Append(contentHash);
 
             string canonicalRequest = StringBuilderPool.Shared.ReturnString(sb);
-            
+
             _logger.LogDebug("CanonicalRequest: {CanonicalRequest}", canonicalRequest);
             return canonicalRequest;
         }
