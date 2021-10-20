@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.TestBase
+﻿namespace Genbox.ProviderTests
 {
     public static class TestConstants
     {
