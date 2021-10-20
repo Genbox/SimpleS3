@@ -51,6 +51,9 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <summary>Delete all objects within the bucket</summary>
         public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, string? prefix = null, [EnumeratorCancellation] CancellationToken token = default)
         {
+            Validator.RequireNotNull(client, nameof(client));
+            Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+
             ListObjectsResponse response;
             Task<ListObjectsResponse> responseTask = client.ListObjectsAsync(bucketName, req => req.Prefix = prefix, token);
 
@@ -97,6 +100,9 @@ namespace Genbox.SimpleS3.Core.Extensions
 
         public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(this IObjectClient client, string bucketName, string? prefix = null, [EnumeratorCancellation] CancellationToken token = default)
         {
+            Validator.RequireNotNull(client, nameof(client));
+            Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+
             ListObjectVersionsResponse response;
             Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucketName, req => req.Prefix = prefix, token);
 
