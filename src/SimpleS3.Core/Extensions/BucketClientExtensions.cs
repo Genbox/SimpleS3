@@ -19,7 +19,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             ListBucketsResponse response = await client.ListBucketsAsync(config, token).ConfigureAwait(false);
 
             if (!response.IsSuccess)
-                throw new S3RequestException(response.StatusCode, "Request failed");
+                throw new S3RequestException(response, "Request failed");
 
             if (token.IsCancellationRequested)
                 yield break;

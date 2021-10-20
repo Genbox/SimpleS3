@@ -49,7 +49,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
                 GetObjectResponse getResp = await _objectClient.GetObjectAsync(bucketName, objectKey, config, token).ConfigureAwait(false);
 
                 if (!getResp.IsSuccess)
-                    throw new S3RequestException(getResp.StatusCode);
+                    throw new S3RequestException(getResp);
 
                 await getResp.Content.CopyToAsync(output, 81920, token).ConfigureAwait(false);
 
@@ -122,7 +122,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
                     return new CompleteMultipartUploadResponse { BucketName = bucket, ObjectKey = objectKey };
 
                 if (!initResp.IsSuccess)
-                    throw new S3RequestException(initResp.StatusCode, "CreateMultipartUploadRequest was unsuccessful");
+                    throw new S3RequestException(initResp, "CreateMultipartUploadRequest was unsuccessful");
 
                 IEnumerable<ArraySegment<byte>> chunks = ReadChunks(data, partSize);
 

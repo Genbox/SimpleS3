@@ -202,7 +202,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
             _postMapper.PostMap(_options.Value, request, response);
 
             if (_options.Value.ThrowExceptionOnError && !response.IsSuccess)
-                throw new S3RequestException(response.StatusCode, $"Received error: '{response.Error?.Message}'. Details: '{response.Error?.GetErrorDetails()}'");
+                throw new S3RequestException(response, $"Received error: '{response.Error?.Message}'. Details: '{response.Error?.GetErrorDetails()}'");
 
             return response;
         }

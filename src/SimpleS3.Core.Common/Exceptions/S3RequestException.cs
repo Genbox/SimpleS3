@@ -1,14 +1,15 @@
 ﻿using System;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 
 namespace Genbox.SimpleS3.Core.Common.Exceptions
 {
     public class S3RequestException : S3Exception
     {
-        public S3RequestException(int statusCode, string? message = null, Exception? innException = null) : base(message, innException)
+        public S3RequestException(IResponse response, string? message = null, Exception? innerException = null) : base(message, innerException)
         {
-            StatusCode = statusCode;
+            Response = response;
         }
 
-        public int StatusCode { get; }
+        public IResponse Response { get; }
     }
 }
