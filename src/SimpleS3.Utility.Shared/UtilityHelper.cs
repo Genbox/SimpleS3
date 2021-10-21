@@ -12,6 +12,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
 using Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
 using Genbox.SimpleS3.Extensions.GoogleCloudStorage.Extensions;
+using Genbox.SimpleS3.Extensions.HttpClientFactory;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -19,6 +20,7 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Genbox.SimpleS3.Extensions.Wasabi.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using HttpVersion = Genbox.SimpleS3.Core.Common.HttpVersion;
 
 namespace Genbox.SimpleS3.Utility.Shared
 {
@@ -85,6 +87,8 @@ namespace Genbox.SimpleS3.Utility.Shared
                                             .Build();
 
             IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
+
+            services.Configure<HttpClientFactoryNetworkDriverConfig>(x => x.HttpVersion = HttpVersion.Http2);
 
             if (enableRetry)
                 httpBuilder.UseDefaultHttpPolicy();

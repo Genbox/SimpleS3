@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,9 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory
         private readonly IHttpClientFactory _clientFactory;
         private readonly IOptions<HttpClientFactoryNetworkDriverConfig> _options;
         private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
+        private readonly Version _httpVersion1 = new Version("1.1");
+        private readonly Version _httpVersion2 = new Version("2.0");
+        private readonly Version _httpVersion3 = new Version("3.0");
 
         public HttpClientFactoryNetworkDriver(IOptions<HttpClientFactoryNetworkDriverConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory)
         {
@@ -31,6 +35,19 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory
             HttpResponseMessage httpResponse;
             using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(method), url))
             {
+                if (_options.Value.HttpVersion == HttpVersion.Http1)
+                    httpRequest.Version = _httpVersion1;
+                else if (_options.Value.HttpVersion == HttpVersion.Http2)
+                    httpRequest.Version = _httpVersion2;
+                else if (_options.Value.HttpVersion == HttpVersion.Http3)
+                    httpRequest.Version = _httpVersion3;
+                else if (_options.Value.HttpVersion == HttpVersion.Unknown)
+                {
+                    //Do nothing. Use default.
+                }
+                else
+                    throw new ArgumentOutOfRangeException();
+
                 if (dataStream != null)
                     httpRequest.Content = new StreamContent(dataStream);
 

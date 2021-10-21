@@ -47,7 +47,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
                 client.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.DefaultUserAgent);
                 client.DefaultRequestHeaders.TransferEncodingChunked = false;
 
-                return new HttpClientNetworkDriver(logger, client);
+                return new HttpClientNetworkDriver(options, logger, client);
             });
 
             return builder;
