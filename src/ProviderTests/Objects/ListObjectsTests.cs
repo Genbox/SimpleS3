@@ -87,7 +87,7 @@ namespace Genbox.ProviderTests.Objects
         }
 
         [Theory]
-        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)] //Google supports delimiter, but it is sorely broken
+        [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2 | S3Provider.GoogleCloudStorage)]
         public async Task ListObjectsWithDelimiter(S3Provider provider, string _, ISimpleClient client)
         {
             await CreateTempBucketAsync(provider, client, async tempBucket =>
@@ -102,7 +102,10 @@ namespace Genbox.ProviderTests.Objects
                 Assert.Equal(200, listResp.StatusCode);
 
                 Assert.Equal("-", listResp.Delimiter);
-                Assert.Equal(2, listResp.KeyCount);
+
+                if (provider != S3Provider.GoogleCloudStorage)
+                    Assert.Equal(2, listResp.KeyCount);
+
                 Assert.Equal(2, listResp.CommonPrefixes.Count);
                 Assert.Equal("object-", listResp.CommonPrefixes[0]);
                 Assert.Equal("something-", listResp.CommonPrefixes[1]);
