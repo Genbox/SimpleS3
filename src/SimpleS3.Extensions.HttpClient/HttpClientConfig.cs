@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
         public bool UseProxy { get; set; }
 
         /// <summary>Use this to set a proxy to which all requests should be sent through.</summary>
-        public IWebProxy Proxy { get; set; }
+        public IWebProxy? Proxy { get; set; }
 
         public HttpVersion HttpVersion { get; set; }
     }

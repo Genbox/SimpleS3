@@ -17,13 +17,13 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory
     public class HttpClientFactoryNetworkDriver : INetworkDriver
     {
         private readonly IHttpClientFactory _clientFactory;
-        private readonly IOptions<HttpClientFactoryNetworkDriverConfig> _options;
+        private readonly IOptions<HttpClientFactoryConfig> _options;
         private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
         private readonly Version _httpVersion1 = new Version("1.1");
         private readonly Version _httpVersion2 = new Version("2.0");
         private readonly Version _httpVersion3 = new Version("3.0");
 
-        public HttpClientFactoryNetworkDriver(IOptions<HttpClientFactoryNetworkDriverConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory)
+        public HttpClientFactoryNetworkDriver(IOptions<HttpClientFactoryConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory)
         {
             _options = options;
             _logger = logger;

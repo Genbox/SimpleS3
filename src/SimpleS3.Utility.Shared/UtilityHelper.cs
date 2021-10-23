@@ -88,7 +88,7 @@ namespace Genbox.SimpleS3.Utility.Shared
 
             IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
 
-            services.Configure<HttpClientFactoryNetworkDriverConfig>(x => x.HttpVersion = HttpVersion.Http2);
+            services.Configure<HttpClientFactoryConfig>(x => x.HttpVersion = HttpVersion.Http2);
 
             if (enableRetry)
                 httpBuilder.UseDefaultHttpPolicy();

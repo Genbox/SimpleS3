@@ -58,7 +58,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions
                 });
             });
 
-            builder.Services.Configure<HttpClientFactoryNetworkDriverConfig>((options, services) =>
+            builder.Services.Configure<HttpClientFactoryConfig>((options, services) =>
             {
                 //Here we transfer over the HttpClientName from the upper API config to lower API config
                 IOptions<HttpClientFactoryConfig> factoryConfig = services.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
