@@ -58,7 +58,7 @@ namespace Genbox.ProviderTests.Objects
                 int concurrent = 10;
                 int count = 11;
 
-                IEnumerable<PutObjectResponse> responses = await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), i => client.PutObjectAsync(tempBucket, i.ToString(), null), concurrent, CancellationToken.None);
+                IEnumerable<PutObjectResponse> responses = await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), (val, token) => client.PutObjectAsync(tempBucket, val.ToString(), null, null, token), concurrent, CancellationToken.None);
 
                 foreach (PutObjectResponse putResp in responses)
                 {

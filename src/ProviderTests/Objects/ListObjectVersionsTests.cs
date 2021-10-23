@@ -144,7 +144,7 @@ namespace Genbox.ProviderTests.Objects
                 int concurrent = 10;
                 int count = 11;
 
-                await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), i => client.PutObjectAsync(tempBucket, i.ToString(), null), concurrent);
+                await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), (val, token) => client.PutObjectAsync(tempBucket, val.ToString(), null, null, token), concurrent);
 
                 ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(tempBucket, r => r.MaxKeys = count - 1).ConfigureAwait(false);
                 Assert.True(listResp.IsSuccess);

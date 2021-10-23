@@ -128,7 +128,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
 
                 int partNumber = 0;
 
-                IEnumerable<UploadPartResponse> responses = await ParallelHelper.ExecuteAsync(chunks, async bytes =>
+                IEnumerable<UploadPartResponse> responses = await ParallelHelper.ExecuteAsync(chunks, async (bytes, innerToken) =>
                 {
                     Interlocked.Increment(ref partNumber);
 
@@ -139,11 +139,10 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
                             uploadPart.SseCustomerAlgorithm = req.SseCustomerAlgorithm;
                             uploadPart.SseCustomerKey = encryptionKey;
                             uploadPart.SseCustomerKeyMd5 = req.SseCustomerKeyMd5;
-                        }, token).ConfigureAwait(false);
+                        }, innerToken).ConfigureAwait(false);
                         onPartResponse?.Invoke(resp);
                         return resp;
                     }
-
                 }, numParallelParts, token);
 
                 CompleteMultipartUploadResponse completeResp = await _multipartClient.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, responses.OrderBy(x => x.PartNumber), null, token).ConfigureAwait(false);
