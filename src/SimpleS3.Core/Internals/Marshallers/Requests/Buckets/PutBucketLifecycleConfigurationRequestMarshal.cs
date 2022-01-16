@@ -9,11 +9,9 @@ using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
 {
-    [UsedImplicitly]
     internal class PutBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<PutBucketLifecycleConfigurationRequest>
     {
         public Stream? MarshalRequest(PutBucketLifecycleConfigurationRequest request, Config config)

@@ -3,11 +3,9 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
 {
-    [UsedImplicitly]
     internal class CreateMultipartUploadRequestMarshal : IRequestMarshal<CreateMultipartUploadRequest>
     {
         public Stream? MarshalRequest(CreateMultipartUploadRequest request, Config config)

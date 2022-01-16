@@ -9,11 +9,9 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 {
-    [UsedImplicitly]
     internal class GetObjectAclResponseMarshal : IResponseMarshal<GetObjectAclResponse>
     {
         public void MarshalResponse(Config config, GetObjectAclResponse response, IDictionary<string, string> headers, Stream responseStream)

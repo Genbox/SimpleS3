@@ -8,7 +8,6 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.%ApiType%s
 {
-    [UsedImplicitly]
     internal class %ApiName%ResponseMarshal : IResponseMarshal<%ApiName%Request, %ApiName%Response>
     {
         public void MarshalResponse(IS3Config config, %ApiName%Request request, %ApiName%Response response, IDictionary<string, string> headers, Stream responseStream)

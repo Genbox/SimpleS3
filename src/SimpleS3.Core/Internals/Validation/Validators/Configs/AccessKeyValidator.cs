@@ -1,11 +1,9 @@
 ﻿using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs
 {
-    [UsedImplicitly]
-    internal class AccessKeyValidator : AbstractValidator<IAccessKey>
+    internal class AccessKeyValidator : ValidatorBase<IAccessKey>
     {
         public AccessKeyValidator()
         {
