@@ -5,10 +5,12 @@ using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests
 {
+    [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
     internal abstract class BaseRequestValidator<T> : ValidatorBase<T> where T : BaseRequest
     {
         protected BaseRequestValidator(IInputValidator validator, IOptions<Config> config)
