@@ -30,17 +30,15 @@ namespace Genbox.SimpleS3.Core.Internals.Network
         private readonly IOptions<Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
         private readonly IUrlBuilder _urlBuilder;
-        private readonly IValidatorFactory _validator;
+        private readonly IRequestValidatorFactory _validator;
 
-        public DefaultSignedRequestHandler(IOptions<Config> options, IScopeBuilder scopeBuilder, IValidatorFactory validator, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultSignedRequestHandler> logger)
+        public DefaultSignedRequestHandler(IOptions<Config> options, IScopeBuilder scopeBuilder, IRequestValidatorFactory validator, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultSignedRequestHandler> logger)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));
             Validator.RequireNotNull(marshaller, nameof(marshaller));
             Validator.RequireNotNull(authBuilder, nameof(authBuilder));
             Validator.RequireNotNull(logger, nameof(logger));
-
-            validator.ValidateAndThrow(options.Value);
 
             _validator = validator;
             _options = options;
@@ -60,8 +58,6 @@ namespace Genbox.SimpleS3.Core.Internals.Network
 
             Config config = _options.Value;
             _marshaller.MarshalRequest(config, request);
-
-            _validator.ValidateAndThrow(request);
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(200);
             RequestHelper.AppendScheme(sb, config);

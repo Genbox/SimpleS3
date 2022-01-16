@@ -28,7 +28,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using IValidatorFactory = Genbox.SimpleS3.Core.Abstracts.Factories.IValidatorFactory;
 
 namespace Genbox.SimpleS3.Core.Extensions
 {
@@ -74,7 +73,7 @@ namespace Genbox.SimpleS3.Core.Extensions
 
             //Misc
             collection.AddSingleton<IRequestHandler, DefaultRequestHandler>();
-            collection.AddSingleton<IValidatorFactory, ValidatorFactory>();
+            collection.AddSingleton<IRequestValidatorFactory, ValidatorFactory>();
             collection.AddSingleton<IMarshalFactory, MarshalFactory>();
             collection.AddSingleton<IPostMapperFactory, PostMapperFactory>();
             collection.AddSingleton<IRequestStreamWrapper, ChunkedContentRequestStreamWrapper>();
@@ -84,21 +83,50 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.AddSingleton<ITransfer, Transfer>();
             collection.AddSingleton<IMultipartTransfer, MultipartTransfer>();
 
+            //Default services
+            collection.TryAddSingleton<IInputValidator, NullInputValidator>();
+            collection.TryAddSingleton<IUrlBuilder, NullUrlBuilder>();
+
             Assembly assembly = typeof(SimpleS3CoreServices).Assembly; //Needs to be the assembly that contains the types
 
-            collection.TryAddEnumerable(CreateRegistrations(typeof(IRequestMarshal), assembly));
-            collection.TryAddEnumerable(CreateRegistrations(typeof(IResponseMarshal), assembly));
-            collection.TryAddEnumerable(CreateRegistrations(typeof(IPostMapper), assembly));
-            collection.TryAddEnumerable(CreateRegistrations(typeof(IValidator), assembly));
+            collection.TryAddEnumerable(RegisterAs(typeof(IRequestMarshal), assembly));
+            collection.TryAddEnumerable(RegisterAs(typeof(IResponseMarshal), assembly));
+            collection.TryAddEnumerable(RegisterAs(typeof(IPostMapper), assembly));
+            collection.TryAddEnumerable(RegisterAs(typeof(IValidator), assembly));
+            collection.TryAddEnumerable(RegisterAsActual(typeof(IValidator<>), assembly)); //We register IValidator twice to support IValidator<T> as well
+            collection.TryAddEnumerable(RegisterAsActual(typeof(IValidateOptions<>), assembly)); //Make sure that the options system validators are added too
 
             return new CoreBuilder(collection);
         }
 
-        private static IEnumerable<ServiceDescriptor> CreateRegistrations(Type abstractType, Assembly assembly)
+        /// <summary>
+        /// Register services as the interface type given
+        /// </summary>
+        private static IEnumerable<ServiceDescriptor> RegisterAs(Type abstractType, Assembly assembly)
         {
             foreach (Type type in TypeHelper.GetInstanceTypesInheritedFrom(abstractType, assembly))
             {
                 yield return ServiceDescriptor.Singleton(abstractType, type);
+            }
+        }
+
+        /// <summary>
+        /// Register a service that inherits from an open generic (e.g. Service&lt;&gt;) as the actual implementation (e.g. Service&lt;T&gt;)
+        /// </summary>
+        private static IEnumerable<ServiceDescriptor> RegisterAsActual(Type abstractType, Assembly assembly)
+        {
+            foreach (Type type in TypeHelper.GetInstanceTypesInheritedFrom(abstractType, assembly))
+            {
+                Type[] interfaceTypes = type.GetInterfaces();
+
+                foreach (Type iType in interfaceTypes)
+                {
+                    if (iType.IsGenericType && iType.GetGenericTypeDefinition() == abstractType)
+                    {
+                        yield return ServiceDescriptor.Singleton(iType, type);
+                        break;
+                    }
+                }
             }
         }
     }

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests.Bucket
 {
-    internal class PutBucketLifecycleConfigurationRequestValidator : BaseRequestValidator<PutBucketLifecycleConfigurationRequest>
+    internal class PutBucketLifecycleConfigurationRequestValidator : RequestValidatorBase<PutBucketLifecycleConfigurationRequest>
     {
         public PutBucketLifecycleConfigurationRequestValidator(IInputValidator validator, IOptions<Config> config) : base(validator, config)
         {

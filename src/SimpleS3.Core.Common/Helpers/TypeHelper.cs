@@ -44,7 +44,25 @@ namespace Genbox.SimpleS3.Core.Common.Helpers
 
                 if (type.IsAssignableFrom(exportedType))
                     yield return exportedType;
+                else if (type.IsAssignableFromGeneric(exportedType))
+                    yield return exportedType;
             }
+        }
+
+        private static bool IsAssignableFromGeneric(this Type type, Type exportedType)
+        {
+            if (exportedType.IsGenericType && exportedType.GetGenericTypeDefinition() == type)
+                return true;
+
+            Type[] interfaceTypes = exportedType.GetInterfaces();
+
+            foreach (Type ifaceType in interfaceTypes)
+            {
+                if (ifaceType.IsGenericType && ifaceType.GetGenericTypeDefinition() == type)
+                    return true;
+            }
+
+            return false;
         }
     }
 }
