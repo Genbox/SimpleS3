@@ -5,11 +5,9 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
 {
-    [UsedImplicitly]
     internal class PutBucketTaggingRequestMarshal : IRequestMarshal<PutBucketTaggingRequest>
     {
         public Stream? MarshalRequest(PutBucketTaggingRequest request, Config config)

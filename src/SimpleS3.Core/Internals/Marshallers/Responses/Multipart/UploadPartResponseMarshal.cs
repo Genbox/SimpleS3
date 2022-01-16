@@ -7,11 +7,9 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
 {
-    [UsedImplicitly]
     internal class UploadPartResponseMarshal : IResponseMarshal<UploadPartResponse>
     {
         public void MarshalResponse(Config config, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)

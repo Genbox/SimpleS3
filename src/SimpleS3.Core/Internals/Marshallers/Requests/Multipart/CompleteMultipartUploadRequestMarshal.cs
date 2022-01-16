@@ -5,11 +5,9 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
 {
-    [UsedImplicitly]
     internal class CompleteMultipartUploadRequestMarshal : IRequestMarshal<CompleteMultipartUploadRequest>
     {
         public Stream? MarshalRequest(CompleteMultipartUploadRequest request, Config config)

@@ -5,11 +5,9 @@ using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
 {
-    [UsedImplicitly]
     internal class DeleteObjectsRequestMarshal : IRequestMarshal<DeleteObjectsRequest>
     {
         public Stream? MarshalRequest(DeleteObjectsRequest request, Config config)

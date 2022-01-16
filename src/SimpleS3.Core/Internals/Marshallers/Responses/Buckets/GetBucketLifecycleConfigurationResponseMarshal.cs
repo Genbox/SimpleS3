@@ -9,11 +9,9 @@ using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
 {
-    [UsedImplicitly]
     internal class GetBucketLifecycleConfigurationResponseMarshal : IResponseMarshal<GetBucketLifecycleConfigurationResponse>
     {
         public void MarshalResponse(Config config, GetBucketLifecycleConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)

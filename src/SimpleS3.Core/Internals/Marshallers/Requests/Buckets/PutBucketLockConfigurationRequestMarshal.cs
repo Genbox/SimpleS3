@@ -7,11 +7,9 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
 {
-    [UsedImplicitly]
     internal class PutBucketLockConfigurationRequestMarshal : IRequestMarshal<PutBucketLockConfigurationRequest>
     {
         public Stream? MarshalRequest(PutBucketLockConfigurationRequest request, Config config)

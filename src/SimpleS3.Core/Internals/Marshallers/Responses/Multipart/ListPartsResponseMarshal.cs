@@ -12,11 +12,9 @@ using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
-using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
 {
-    [UsedImplicitly]
     internal class ListPartsResponseMarshal : IResponseMarshal<ListPartsResponse>
     {
         public void MarshalResponse(Config config, ListPartsResponse response, IDictionary<string, string> headers, Stream responseStream)

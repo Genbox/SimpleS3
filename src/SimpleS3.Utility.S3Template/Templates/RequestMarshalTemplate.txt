@@ -6,7 +6,6 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.%ApiType%s
 {
-    [UsedImplicitly]
     internal class %ApiName%RequestMarshal : IRequestMarshal<%ApiName%Request>
     {
         public Stream MarshalRequest(%ApiName%Request request, IS3Config config)
