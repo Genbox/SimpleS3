@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using FluentValidation;
@@ -7,6 +7,7 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
@@ -25,6 +26,8 @@ using Genbox.SimpleS3.Core.Internals.Validation;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using IValidatorFactory = Genbox.SimpleS3.Core.Abstracts.Factories.IValidatorFactory;
 
 namespace Genbox.SimpleS3.Core.Extensions
@@ -39,7 +42,13 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// <param name="collection">The service collection</param>
         public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection)
         {
-            collection.AddOptions();
+            //This is in place of collection.AddOptions();
+            collection.TryAdd(ServiceDescriptor.Singleton(typeof(IOptions<>), typeof(OptionsManager<>)));
+            collection.TryAdd(ServiceDescriptor.Transient(typeof(IOptionsFactory<>), typeof(OptionsFactory<>)));
+
+            //This is in place of collection.AddLogging()
+            collection.TryAdd(ServiceDescriptor.Singleton<ILoggerFactory, LoggerFactory>());
+            collection.TryAdd(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(Logger<>)));
 
             //Authentication
             collection.AddSingleton<ISigningKeyBuilder, SigningKeyBuilder>();

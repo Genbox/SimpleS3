@@ -10,6 +10,7 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;

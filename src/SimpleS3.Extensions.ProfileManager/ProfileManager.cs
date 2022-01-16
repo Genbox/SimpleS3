@@ -1,6 +1,6 @@
 ﻿using System;
-using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
