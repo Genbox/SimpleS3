@@ -6,7 +6,7 @@
     <Description>A simple, secure and high-performance library to communicate with Amazon S3 compatible APIs.</Description>
 
     <!-- Set copying files etc. to timeout faster -->
-    <CopyRetryCount>2</CopyRetryCount>
+    <CopyRetryCount>1</CopyRetryCount>
     <CopyRetryDelayMilliseconds>500</CopyRetryDelayMilliseconds>
 
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
@@ -32,8 +32,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MinVer" Version="2.5.0" PrivateAssets="all"/>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'CommercialDebug'">
@@ -75,9 +74,9 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3" PrivateAssets="all" />
-    <PackageReference Include="IDisposableAnalyzers" Version="3.4.15" PrivateAssets="all" />
-    <PackageReference Include="Roslynator.Analyzers" Version="3.2.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0" PrivateAssets="all" />
+    <PackageReference Include="IDisposableAnalyzers" Version="4.0.1" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="3.3.0" PrivateAssets="all" />
     <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" PrivateAssets="all" />
     <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0" PrivateAssets="all" />
   </ItemGroup>
