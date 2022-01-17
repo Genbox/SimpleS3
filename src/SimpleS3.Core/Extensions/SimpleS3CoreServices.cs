@@ -39,7 +39,8 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// method is strictly if you are an advanced user. Use AddSimpleS3() if you need something simple that works.
         /// </summary>
         /// <param name="collection">The service collection</param>
-        public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection)
+        /// <param name="configure">Use this to configure the configuration used by SimpleS3</param>
+        public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection, Action<Config>? configure = null)
         {
             //This is in place of collection.AddOptions();
             collection.TryAdd(ServiceDescriptor.Singleton(typeof(IOptions<>), typeof(OptionsManager<>)));
@@ -48,6 +49,10 @@ namespace Genbox.SimpleS3.Core.Extensions
             //This is in place of collection.AddLogging()
             collection.TryAdd(ServiceDescriptor.Singleton<ILoggerFactory, LoggerFactory>());
             collection.TryAdd(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(Logger<>)));
+
+            //Config
+            if (configure != null)
+                collection.Configure(configure);
 
             //Authentication
             collection.AddSingleton<ISigningKeyBuilder, SigningKeyBuilder>();
