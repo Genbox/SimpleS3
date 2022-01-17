@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="Microsoft Managed Recommended Rules" Description="These rules focus on the most critical problems in your code, including potential security holes, application crashes, and other important logic and design errors. It is recommended to include this rule set in any custom rule set you create for your projects." ToolsVersion="16.0">
+<RuleSet Name="Microsoft Managed Recommended Rules" Description="These rules focus on the most critical problems in your code, including potential security holes, application crashes, and other important logic and design errors. It is recommended to include this rule set in any custom rule set you create for your projects." ToolsVersion="17.0">
   <Localization ResourceAssembly="Microsoft.VisualStudio.CodeAnalysis.RuleSets.Strings.dll" ResourceBaseName="Microsoft.VisualStudio.CodeAnalysis.RuleSets.Strings.Localized">
     <Name Resource="MinimumRecommendedRules_Name" />
     <Description Resource="MinimumRecommendedRules_Description" />
@@ -171,7 +171,6 @@
     <Rule Id="RCS1066" Action="Error" />
     <Rule Id="RCS1075" Action="None" />
     <Rule Id="RCS1079" Action="Error" />
-    <Rule Id="RCS1090" Action="None" />
     <Rule Id="RCS1093" Action="Warning" />
     <Rule Id="RCS1096" Action="None" />
     <Rule Id="RCS1096i" Action="Warning" />
@@ -193,6 +192,7 @@
     <Rule Id="RCS1210" Action="Error" />
     <Rule Id="RCS1214" Action="Warning" />
     <Rule Id="RCS1215" Action="Error" />
+    <Rule Id="RCS1243" Action="Error" />
   </Rules>
   <Rules AnalyzerId="SerilogAnalyzer" RuleNamespace="SerilogAnalyzer">
     <Rule Id="Serilog001" Action="Error" />
