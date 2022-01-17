@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
         [InlineData("1.2.3.4")]
         public void BucketNameSuccessTest(string input)
         {
-            Assert.True(_validator.TryValidateBucketName(input, out _));
+            Assert.True(_validator.TryValidateBucketName(input, out _, out _));
         }
 
         [Theory]
@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
         [InlineData("-asd")] //Must not start with hyphen
         public void BucketNameFailTest(string input)
         {
-            Assert.False(_validator.TryValidateBucketName(input, out _));
+            Assert.False(_validator.TryValidateBucketName(input, out _, out _));
         }
 
         [Theory]
@@ -42,7 +42,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
         [InlineData("!\"#¤%&/()=?", ObjectKeyValidationMode.ExtendedAsciiMode)]
         public void ObjectKeySuccessTest(string input, ObjectKeyValidationMode mode)
         {
-            Assert.True(_validator.TryValidateObjectKey(input, mode, out _));
+            Assert.True(_validator.TryValidateObjectKey(input, mode, out _, out _));
         }
 
         [Theory]
@@ -51,7 +51,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
         [InlineData("a/b[].jpg", ObjectKeyValidationMode.SafeMode)]
         public void ObjectKeyFailTest(string input, ObjectKeyValidationMode mode)
         {
-            Assert.False(_validator.TryValidateObjectKey(input, mode, out _));
+            Assert.False(_validator.TryValidateObjectKey(input, mode, out _, out _));
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests
         [InlineData("!ABCDEF!", ValidationStatus.WrongFormat)]
         public void TestBucketName(string name, ValidationStatus expectedStatus)
         {
-            _validator.TryValidateBucketName(name, out ValidationStatus status);
+            _validator.TryValidateBucketName(name, out ValidationStatus status, out _);
 
             Assert.Equal(expectedStatus, status);
         }
@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests
         [InlineData("\0", ValidationStatus.WrongFormat)]
         public void TestObjectKey(string name, ValidationStatus expectedStatus)
         {
-            _validator.TryValidateObjectKey(name, ObjectKeyValidationMode.Unrestricted, out ValidationStatus status);
+            _validator.TryValidateObjectKey(name, ObjectKeyValidationMode.Unrestricted, out ValidationStatus status, out _);
 
             Assert.Equal(expectedStatus, status);
         }
@@ -47,7 +47,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests
         [InlineData("00261a951f6abb80000000001", ValidationStatus.Ok)]
         public void TestKeyId(string keyId, ValidationStatus expectedStatus)
         {
-            _validator.TryValidateKeyId(keyId, out ValidationStatus status);
+            _validator.TryValidateKeyId(keyId, out ValidationStatus status, out _);
 
             Assert.Equal(expectedStatus, status);
         }
@@ -58,7 +58,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests
         [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, ValidationStatus.Ok)]
         public void TestAccessKey(byte[] key, ValidationStatus expectedStatus)
         {
-            _validator.TryValidateAccessKey(key, out ValidationStatus status);
+            _validator.TryValidateAccessKey(key, out ValidationStatus status, out _);
 
             Assert.Equal(expectedStatus, status);
         }

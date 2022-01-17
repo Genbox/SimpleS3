@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Marshal;
+using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using Microsoft.Extensions.Options;
@@ -12,9 +13,13 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators
 {
     internal abstract class RequestValidatorBase<T> : ValidatorBase<T> where T : IRequest
     {
+        private readonly IInputValidator _validator;
+        private readonly Config _cfg;
+
         protected RequestValidatorBase(IInputValidator validator, IOptions<Config> config)
         {
-            Config cfg = config.Value;
+            _validator = validator;
+            _cfg = config.Value;
 
             RuleFor(x => x.Method).IsInEnum().Must(x => x != HttpMethod.Unknown);
 
@@ -33,23 +38,24 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators
             //- Must be between 3 and 63 long
             When(x => x is IHasBucketName,
                 () => RuleFor(x => ((IHasBucketName)x).BucketName)
-                      .Must(x => validator.TryValidateBucketName(x, out _))
-                      .When(x => cfg.EnableBucketNameValidation)
-                      .WithMessage("Amazon recommends naming buckets to be valid DNS names, as you can't change the name later on. To turn off DNS name validation, set S3Config.EnableBucketNameValidation to false"));
+                    .Custom(ValidateBucketName)
+                    .When(x => _cfg.EnableBucketNameValidation));
 
             When(x => x is IHasObjectKey,
                 () => RuleFor(x => ((IHasObjectKey)x).ObjectKey)
-                      .NotEmpty()
-                      .WithMessage("You must provide an object key")
-                      .Must(x => validator.TryValidateObjectKey(x, ObjectKeyValidationMode.SafeMode, out _))
-                      .When(x => cfg.ObjectKeyValidationMode == ObjectKeyValidationMode.SafeMode)
-                      .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\() are allowed when S3Config.{nameof(Config.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.SafeMode)}")
-                      .Must(x => validator.TryValidateObjectKey(x, ObjectKeyValidationMode.AsciiMode, out _))
-                      .When(x => cfg.ObjectKeyValidationMode == ObjectKeyValidationMode.AsciiMode)
-                      .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\()&$@=;:+ ,? and ASCII codes 0-31 and 127 are allowed when S3Config.{nameof(Config.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.AsciiMode)}")
-                      .Must(x => validator.TryValidateObjectKey(x, ObjectKeyValidationMode.ExtendedAsciiMode, out _))
-                      .When(x => cfg.ObjectKeyValidationMode == ObjectKeyValidationMode.ExtendedAsciiMode)
-                      .WithMessage($"Only a-z, A-Z, 0-9 and the characters /!-_.*\\()&$@=;:+ ,?\\{{}}^%`[]\"<>~#| and ASCII codes 0-31 and 128-255 are allowed when S3Config.{nameof(Config.ObjectKeyValidationMode)} is set to {nameof(ObjectKeyValidationMode.ExtendedAsciiMode)}"));
+                      .Custom(ValidateObjectKey));
+        }
+
+        private void ValidateObjectKey(string input, ValidationContext<T> context)
+        {
+            if (!_validator.TryValidateObjectKey(input, _cfg.ObjectKeyValidationMode, out ValidationStatus status, out string? allowed))
+                context.AddFailure("Invalid object key: " + ValidationMessages.GetMessage(status, allowed));
+        }
+
+        private void ValidateBucketName(string input, ValidationContext<T> context)
+        {
+            if (!_validator.TryValidateBucketName(input, out ValidationStatus status, out string? allowed))
+                context.AddFailure("Invalid bucket name: " + ValidationMessages.GetMessage(status, allowed));
         }
     }
 }

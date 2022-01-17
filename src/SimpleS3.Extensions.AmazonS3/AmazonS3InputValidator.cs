@@ -6,11 +6,12 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
 {
     public class AmazonS3InputValidator : InputValidatorBase
     {
-        protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status)
+        protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)
         {
             if (keyId.Length != 20)
             {
                 status = ValidationStatus.WrongLength;
+                message = null;
                 return false;
             }
 
@@ -23,30 +24,35 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
                     continue;
 
                 status = ValidationStatus.WrongFormat;
+                message = c.ToString();
                 return false;
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
 
-        protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status)
+        protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status, out string? message)
         {
             if (accessKey.Length != 40)
             {
                 status = ValidationStatus.WrongLength;
+                message = "40";
                 return false;
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
 
-        protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status)
+        protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
         {
             if (objectKey.Length < 1 || objectKey.Length > 1024)
             {
                 status = ValidationStatus.WrongLength;
+                message = "1-1024";
                 return false;
             }
 
@@ -63,12 +69,14 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
                 if (CharHelper.InRange(c, '\uD800', '\uDFFF'))
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
 
                 if (mode == ObjectKeyValidationMode.SafeMode)
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
 
@@ -81,6 +89,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
                 if (mode == ObjectKeyValidationMode.AsciiMode)
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
 
@@ -96,11 +105,13 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
                 if (mode == ObjectKeyValidationMode.ExtendedAsciiMode)
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
 
@@ -111,11 +122,12 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
         /// <param name="bucketName">The bucket name</param>
         /// <param name="status">Contains the error if validation failed</param>
         /// <returns>True if validation succeeded, false otherwise</returns>
-        protected override bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status)
+        protected override bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status, out string? message)
         {
             if (bucketName.Length < 3 || bucketName.Length > 63)
             {
                 status = ValidationStatus.WrongLength;
+                message = "2-63";
                 return false;
             }
 
@@ -137,6 +149,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
                 if (curPos == newPos || newPos - curPos > 63)
                 {
                     status = ValidationStatus.WrongLength;
+                    message = "1-63";
                     return false;
                 }
 
@@ -145,6 +158,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
                 if (!CharHelper.InRange(start, 'a', 'z') && !CharHelper.InRange(start, '0', '9'))
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = start.ToString();
                     return false;
                 }
 
@@ -159,6 +173,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
                         continue;
 
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
 
@@ -166,6 +181,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
             } while (curPos < end);
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
     }

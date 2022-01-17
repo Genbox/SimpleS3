@@ -8,12 +8,13 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
 {
     public class BackblazeB2InputValidator : InputValidatorBase
     {
-        protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status)
+        protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)
         {
             //B2 master keys are 12. Application keys are 25
             if (keyId.Length != 12 && keyId.Length != 25)
             {
                 status = ValidationStatus.WrongLength;
+                message = "12 / 25";
                 return false;
             }
 
@@ -23,32 +24,37 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
                     continue;
 
                 status = ValidationStatus.WrongFormat;
+                message = c.ToString();
                 return false;
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
 
-        protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status)
+        protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status, out string? message)
         {
             if (accessKey.Length != 31)
             {
                 status = ValidationStatus.WrongLength;
+                message = "31";
                 return false;
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
 
-        protected override bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status)
+        protected override bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status, out string? message)
         {
             //https://www.backblaze.com/b2/docs/buckets.html
             //Spec: A bucket name must be at least 6 characters long, and can be at most 50 characters
             if (bucketName.Length < 6 || bucketName.Length > 50)
             {
                 status = ValidationStatus.WrongLength;
+                message = "6-50";
                 return false;
             }
 
@@ -56,6 +62,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
             if (bucketName.StartsWith("b2-", StringComparison.OrdinalIgnoreCase))
             {
                 status = ValidationStatus.ReservedName;
+                message = bucketName;
                 return false;
             }
 
@@ -66,14 +73,16 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
                     continue;
 
                 status = ValidationStatus.WrongFormat;
+                message = c.ToString();
                 return false;
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
 
-        protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status)
+        protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
         {
             //https://www.backblaze.com/b2/docs/files.html
 
@@ -81,6 +90,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
             if (objectKey.Length < 1 || Encoding.UTF8.GetByteCount(objectKey) > 1024)
             {
                 status = ValidationStatus.WrongLength;
+                message = "1-1024";
                 return false;
             }
 
@@ -90,6 +100,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
                 if (CharHelper.InRange(c, '\uD800', '\uDFFF'))
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
 
@@ -97,6 +108,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
                 if (CharHelper.InRange(c, (char)0, (char)31) || c == (char)127)
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
 
@@ -109,6 +121,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
                 if (mode == ObjectKeyValidationMode.SafeMode)
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
 
@@ -118,6 +131,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
                 if (mode == ObjectKeyValidationMode.AsciiMode)
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
 
@@ -133,11 +147,13 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2
                 if (mode == ObjectKeyValidationMode.ExtendedAsciiMode)
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
     }

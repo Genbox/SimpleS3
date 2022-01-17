@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
 {
     public class GoogleCloudStorageValidator : InputValidatorBase
     {
-        protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status)
+        protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)
         {
             //https://cloud.google.com/storage/docs/authentication/hmackeys
 
@@ -17,6 +17,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
             if (keyId.Length != 61 && keyId.Length != 24)
             {
                 status = ValidationStatus.WrongLength;
+                message = "24 / 61";
                 return false;
             }
 
@@ -26,14 +27,16 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
                     continue;
 
                 status = ValidationStatus.WrongFormat;
+                message = c.ToString();
                 return false;
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
 
-        protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status)
+        protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status, out string? message)
         {
             //https://cloud.google.com/storage/docs/authentication/hmackeys
 
@@ -41,6 +44,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
             if (accessKey.Length != 40)
             {
                 status = ValidationStatus.WrongLength;
+                message = "40";
                 return false;
             }
 
@@ -53,14 +57,16 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
                     continue;
 
                 status = ValidationStatus.WrongFormat;
+                message = c.ToString();
                 return false;
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
 
-        protected override bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status)
+        protected override bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status, out string? message)
         {
             //https://cloud.google.com/storage/docs/naming-buckets
 
@@ -68,6 +74,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
             if (bucketName.Length is < 3 or > 222)
             {
                 status = ValidationStatus.WrongLength;
+                message = "3-63";
                 return false;
             }
 
@@ -83,6 +90,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
                 if (length > 63)
                 {
                     status = ValidationStatus.WrongLength;
+                    message = "1-63";
                     return false;
                 }
 
@@ -92,6 +100,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
             if (index == 0 && bucketName.Length > 63)
             {
                 status = ValidationStatus.WrongLength;
+                message = "1-63";
                 return false;
             }
 
@@ -102,12 +111,14 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
             if (!CharHelper.InRange(start, 'a', 'z') && !CharHelper.InRange(start, '0', '9'))
             {
                 status = ValidationStatus.WrongFormat;
+                message = start.ToString();
                 return false;
             }
 
             if (!CharHelper.InRange(end, 'a', 'z') && !CharHelper.InRange(end, '0', '9'))
             {
                 status = ValidationStatus.WrongFormat;
+                message = end.ToString();
                 return false;
             }
 
@@ -118,6 +129,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
                     continue;
 
                 status = ValidationStatus.WrongFormat;
+                message = c.ToString();
                 return false;
             }
 
@@ -126,14 +138,16 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
             if (bucketName.StartsWith("goog", StringComparison.Ordinal) || bucketName.Contains("google") || bucketName.Contains("g00gle"))
             {
                 status = ValidationStatus.ReservedName;
+                message = bucketName;
                 return false;
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
 
-        protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status)
+        protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
         {
             //https://cloud.google.com/storage/docs/request-endpoints#encoding
             //https://cloud.google.com/storage/docs/naming-objects
@@ -142,6 +156,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
             if (objectKey.Length < 1 || Encoding.UTF8.GetByteCount(objectKey) > 1024)
             {
                 status = ValidationStatus.WrongLength;
+                message = "1-1024";
                 return false;
             }
 
@@ -149,12 +164,14 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
             if (objectKey.Length == 1 && objectKey[0] == '.')
             {
                 status = ValidationStatus.WrongFormat;
+                message = ".";
                 return false;
             }
 
             if (objectKey.Length == 3 && objectKey[0] == '.' && objectKey[1] == '.' && objectKey[2] == '.')
             {
                 status = ValidationStatus.WrongFormat;
+                message = "...";
                 return false;
             }
 
@@ -164,12 +181,14 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
                 if (CharHelper.InRange(c, '\uD800', '\uDFFF'))
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
                 //Spec: Object names cannot contain Carriage Return or Line Feed characters.
                 if (CharHelper.OneOf(c, '\r', '\n'))
                 {
                     status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
                     return false;
                 }
 
@@ -183,6 +202,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
                     continue;
 
                 status = ValidationStatus.WrongFormat;
+                message = c.ToString();
                 return false;
             }
 
@@ -190,10 +210,12 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
             if (objectKey.StartsWith(".well-known/acme-challenge/", StringComparison.OrdinalIgnoreCase))
             {
                 status = ValidationStatus.WrongFormat;
+                message = ".well-known/acme-challenge/";
                 return false;
             }
 
             status = ValidationStatus.Ok;
+            message = null;
             return true;
         }
     }

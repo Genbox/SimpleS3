@@ -88,7 +88,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup
 
                 if (!string.IsNullOrEmpty(enteredKeyId))
                     enteredKeyId = enteredKeyId.Trim();
-            } while (!(validKeyId = _inputValidator.TryValidateKeyId(enteredKeyId, out _)));
+            } while (!(validKeyId = _inputValidator.TryValidateKeyId(enteredKeyId, out _, out _)));
 
             return enteredKeyId!;
         }
@@ -148,7 +148,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup
                 }
 
                 utf8AccessKey = Encoding.UTF8.GetBytes(enteredAccessKey);
-            } while (!(validAccessKey = _inputValidator.TryValidateAccessKey(utf8AccessKey, out _)));
+            } while (!(validAccessKey = _inputValidator.TryValidateAccessKey(utf8AccessKey, out _, out _)));
 
             //Clear the access key from memory
             Array.Clear(enteredAccessKey, 0, enteredAccessKey.Length);

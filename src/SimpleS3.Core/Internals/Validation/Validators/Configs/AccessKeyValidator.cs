@@ -2,7 +2,7 @@
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
-using Genbox.SimpleS3.Core.Common.Extensions;
+using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs
 {
@@ -25,14 +25,14 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs
 
         private void ValidateKeyId(string input, ValidationContext<IAccessKey> context)
         {
-            if (!_inputValidator.TryValidateKeyId(input, out ValidationStatus status))
-                context.AddFailure("Invalid key id: " + ValidationMessages.Messages[status]);
+            if (!_inputValidator.TryValidateKeyId(input, out ValidationStatus status, out string? allowed))
+                context.AddFailure("Invalid key id: " + ValidationMessages.GetMessage(status, allowed));
         }
 
         private void ValidateSecretKey(byte[] input, ValidationContext<IAccessKey> context)
         {
-            if (!_inputValidator.TryValidateAccessKey(input, out ValidationStatus status))
-                context.AddFailure("Invalid secret key: " + ValidationMessages.Messages[status]);
+            if (!_inputValidator.TryValidateAccessKey(input, out ValidationStatus status, out string? allowed))
+                context.AddFailure("Invalid secret key: " + ValidationMessages.GetMessage(status, allowed));
         }
     }
 }

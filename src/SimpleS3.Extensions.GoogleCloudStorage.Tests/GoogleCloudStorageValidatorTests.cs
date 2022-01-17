@@ -26,7 +26,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage.Tests
         [InlineData("test bucket", ValidationStatus.WrongFormat)] //contains space
         public void TestBucketName(string name, ValidationStatus expectedStatus)
         {
-            _validator.TryValidateBucketName(name, out ValidationStatus status);
+            _validator.TryValidateBucketName(name, out ValidationStatus status, out _);
 
             Assert.Equal(expectedStatus, status);
         }
@@ -41,7 +41,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage.Tests
         [InlineData("...", ValidationStatus.WrongFormat)] //must not be . or ...
         public void TestObjectKey(string name, ValidationStatus expectedStatus)
         {
-            _validator.TryValidateObjectKey(name, ObjectKeyValidationMode.Unrestricted, out ValidationStatus status);
+            _validator.TryValidateObjectKey(name, ObjectKeyValidationMode.Unrestricted, out ValidationStatus status, out _);
 
             Assert.Equal(expectedStatus, status);
         }
@@ -52,7 +52,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage.Tests
         [InlineData("GOOGTS7C7FUP3AIRVJTE2BCDKINB", ValidationStatus.WrongLength)]
         public void TestKeyId(string keyId, ValidationStatus expectedStatus)
         {
-            _validator.TryValidateKeyId(keyId, out ValidationStatus status);
+            _validator.TryValidateKeyId(keyId, out ValidationStatus status, out _);
 
             Assert.Equal(expectedStatus, status);
         }
@@ -63,7 +63,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage.Tests
         [InlineData(new byte[] { 98, 71, 111, 97, 43, 86, 55, 103, 47, 121, 113, 68, 88, 118, 75, 82, 113, 113, 43, 74, 84, 70, 110, 52, 117, 81, 90, 98, 80, 105, 81, 74, 111, 52, 112, 102, 57, 82, 122, 74 }, ValidationStatus.Ok)] //bGoa+V7g/yqDXvKRqq+JTFn4uQZbPiQJo4pf9RzJ
         public void TestAccessKey(byte[] key, ValidationStatus expectedStatus)
         {
-            _validator.TryValidateAccessKey(key, out ValidationStatus status);
+            _validator.TryValidateAccessKey(key, out ValidationStatus status, out _);
 
             Assert.Equal(expectedStatus, status);
         }
