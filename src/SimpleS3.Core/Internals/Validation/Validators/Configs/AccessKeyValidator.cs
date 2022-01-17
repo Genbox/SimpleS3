@@ -15,11 +15,11 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs
             _inputValidator = inputValidator;
 
             RuleFor(x => x.KeyId)
-                .NotEmpty().WithMessage("You must provide a key id.")
+                .NotEmpty().WithMessage("You must provide a key id")
                 .Custom(ValidateKeyId);
 
             RuleFor(x => x.SecretKey)
-                .NotNull().WithMessage("You must provide a secret key.")
+                .NotNull().WithMessage("You must provide a secret key")
                 .Custom(ValidateSecretKey);
         }
 
