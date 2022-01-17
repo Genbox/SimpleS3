@@ -1,50 +1,47 @@
 ﻿using System;
-using Genbox.SimpleS3.Core.Abstracts;
+using System.Collections.Generic;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
 
 namespace Genbox.SimpleS3.Core.Common.Extensions
 {
+    public static class ValidationMessages
+    {
+        public static IDictionary<ValidationStatus, string> Messages = new Dictionary<ValidationStatus, string>
+        {
+            {ValidationStatus.Ok, string.Empty},
+            {ValidationStatus.WrongFormat, "The input was not in the correct format"},
+            {ValidationStatus.WrongLength, "The input was not the correct length"},
+            {ValidationStatus.NullInput, "You supplied a null input where it is not allowed"},
+            {ValidationStatus.ReservedName, "You supplied a name that is reserved"},
+            {ValidationStatus.Unknown, "An unknown error occurred"},
+        };
+    }
+
     public static class ValidatorExtensions
     {
-        public static void ValidateKeyId(this IInputValidator validator, string? keyId)
+        public static void ValidateKeyIdAndThrow(this IInputValidator validator, string? keyId)
         {
             if (validator.TryValidateKeyId(keyId, out ValidationStatus status))
                 return;
 
-            throw status switch
-            {
-                ValidationStatus.WrongLength => new ArgumentException("Key id must be the correct length", nameof(keyId)),
-                ValidationStatus.WrongFormat => new ArgumentException("Key id must be in the correct format", nameof(keyId)),
-                ValidationStatus.NullInput => new ArgumentNullException(nameof(keyId)),
-                _ => new ArgumentException("Failed to validate key id")
-            };
+            throw new ArgumentException("Invalid key id: " + ValidationMessages.Messages[status], nameof(keyId));
         }
 
-        public static void ValidateAccessKey(this IInputValidator validator, byte[]? accessKey)
+        public static void ValidateAccessKeyAndThrow(this IInputValidator validator, byte[]? accessKey)
         {
             if (validator.TryValidateAccessKey(accessKey, out ValidationStatus status))
                 return;
 
-            throw status switch
-            {
-                ValidationStatus.WrongLength => new ArgumentException("Access key must be the correct length", nameof(accessKey)),
-                ValidationStatus.NullInput => new ArgumentNullException(nameof(accessKey)),
-                _ => new ArgumentException("Failed to validate access key")
-            };
+            throw new ArgumentException("Invalid access key: " + ValidationMessages.Messages[status], nameof(accessKey));
         }
 
-        public static void ValidateObjectKey(this IInputValidator validator, string? bucketName, ObjectKeyValidationMode mode)
+        public static void ValidateObjectKey(this IInputValidator validator, string? objectKey, ObjectKeyValidationMode mode)
         {
-            if (validator.TryValidateObjectKey(bucketName, mode, out ValidationStatus status))
+            if (validator.TryValidateObjectKey(objectKey, mode, out ValidationStatus status))
                 return;
 
-            throw status switch
-            {
-                ValidationStatus.WrongLength => new ArgumentException("Object key must be the correct length", nameof(bucketName)),
-                ValidationStatus.WrongFormat => new ArgumentException("Invalid character in object key", nameof(bucketName)),
-                ValidationStatus.NullInput => new ArgumentNullException(nameof(bucketName)),
-                _ => new ArgumentException("Failed to validate object key")
-            };
+            throw new ArgumentException("Invalid object key: " + ValidationMessages.Messages[status], nameof(objectKey));
         }
 
         public static void ValidateBucketName(this IInputValidator validator, string? bucketName)
@@ -52,13 +49,7 @@ namespace Genbox.SimpleS3.Core.Common.Extensions
             if (validator.TryValidateBucketName(bucketName, out ValidationStatus status))
                 return;
 
-            throw status switch
-            {
-                ValidationStatus.WrongLength => new ArgumentException("Bucket name must be the correct length", nameof(bucketName)),
-                ValidationStatus.WrongFormat => new ArgumentException("Invalid character in bucket name", nameof(bucketName)),
-                ValidationStatus.NullInput => new ArgumentNullException(nameof(bucketName)),
-                _ => new ArgumentException("Failed to validate bucket name")
-            };
+            throw new ArgumentException("Invalid bucket name: " + ValidationMessages.Messages[status], nameof(bucketName));
         }
     }
 }

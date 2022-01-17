@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
+using Genbox.SimpleS3.Core.Abstracts.Factories;
+using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Validation;
 using JetBrains.Annotations;
-using IValidatorFactory = Genbox.SimpleS3.Core.Abstracts.Factories.IValidatorFactory;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation
 {
     [PublicAPI]
-    internal class ValidatorFactory : IValidatorFactory
+    internal class ValidatorFactory : IRequestValidatorFactory
     {
         private readonly IDictionary<Type, IValidator> _validators;
 
@@ -32,7 +33,7 @@ namespace Genbox.SimpleS3.Core.Internals.Validation
             }, x => x);
         }
 
-        public void ValidateAndThrow<T>(T obj)
+        public void ValidateAndThrow<T>(T obj) where T : IRequest
         {
             if (_validators.TryGetValue(typeof(T), out IValidator validator))
             {

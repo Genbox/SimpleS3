@@ -1,17 +1,18 @@
 using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
+using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests
+namespace Genbox.SimpleS3.Core.Internals.Validation.Validators
 {
-    internal abstract class BaseRequestValidator<T> : ValidatorBase<T> where T : BaseRequest
+    internal abstract class RequestValidatorBase<T> : ValidatorBase<T> where T : IRequest
     {
-        protected BaseRequestValidator(IInputValidator validator, IOptions<Config> config)
+        protected RequestValidatorBase(IInputValidator validator, IOptions<Config> config)
         {
             Config cfg = config.Value;
 

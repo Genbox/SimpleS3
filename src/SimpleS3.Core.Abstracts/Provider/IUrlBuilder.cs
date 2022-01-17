@@ -1,7 +1,7 @@
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 
-namespace Genbox.SimpleS3.Core.Abstracts
+namespace Genbox.SimpleS3.Core.Abstracts.Provider
 {
     public interface IUrlBuilder
     {

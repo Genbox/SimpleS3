@@ -1,6 +1,6 @@
 ﻿using System;
-using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -61,8 +61,8 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager
 
         public IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, bool persist = true)
         {
-            _validator.ValidateKeyId(keyId);
-            _validator.ValidateAccessKey(accessKey);
+            _validator.ValidateKeyIdAndThrow(keyId);
+            _validator.ValidateAccessKeyAndThrow(accessKey);
 
             Profile profile = new Profile();
             profile.Name = name;

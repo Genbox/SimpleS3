@@ -10,6 +10,7 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
@@ -40,9 +41,9 @@ namespace Genbox.SimpleS3.Core.Internals.Network
         private readonly IPostMapperFactory _postMapper;
         private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
         private readonly IUrlBuilder _urlBuilder;
-        private readonly IValidatorFactory _validator;
+        private readonly IRequestValidatorFactory _requestValidator;
 
-        public DefaultRequestHandler(IOptions<Config> options, IValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
+        public DefaultRequestHandler(IOptions<Config> options, IRequestValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));
@@ -51,9 +52,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
             Validator.RequireNotNull(authBuilder, nameof(authBuilder));
             Validator.RequireNotNull(logger, nameof(logger));
 
-            validator.ValidateAndThrow(options.Value);
-
-            _validator = validator;
+            _requestValidator = validator;
             _options = options;
             _networkDriver = networkDriver;
             _authBuilder = authBuilder;
@@ -94,7 +93,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
             Config config = _options.Value;
             Stream? requestStream = _marshaller.MarshalRequest(config, request);
 
-            _validator.ValidateAndThrow(request);
+            _requestValidator.ValidateAndThrow(request);
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(200);
             RequestHelper.AppendScheme(sb, config);

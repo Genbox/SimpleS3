@@ -1,18 +1,38 @@
 ﻿using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
+using Genbox.SimpleS3.Core.Common.Extensions;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs
 {
     internal class AccessKeyValidator : ValidatorBase<IAccessKey>
     {
-        public AccessKeyValidator()
+        private readonly IInputValidator _inputValidator;
+
+        public AccessKeyValidator(IInputValidator inputValidator)
         {
+            _inputValidator = inputValidator;
+
             RuleFor(x => x.KeyId)
                 .NotEmpty().WithMessage("You must provide a key id.")
-                .Length(20).WithMessage("The key id must be 20 characters long.");
+                .Custom(ValidateKeyId);
 
             RuleFor(x => x.SecretKey)
-                .NotNull().WithMessage("You must provide a secret access key.");
+                .NotNull().WithMessage("You must provide a secret key.")
+                .Custom(ValidateSecretKey);
+        }
+
+        private void ValidateKeyId(string input, ValidationContext<IAccessKey> context)
+        {
+            if (!_inputValidator.TryValidateKeyId(input, out ValidationStatus status))
+                context.AddFailure("Invalid key id: " + ValidationMessages.Messages[status]);
+        }
+
+        private void ValidateSecretKey(byte[] input, ValidationContext<IAccessKey> context)
+        {
+            if (!_inputValidator.TryValidateAccessKey(input, out ValidationStatus status))
+                context.AddFailure("Invalid secret key: " + ValidationMessages.Messages[status]);
         }
     }
 }

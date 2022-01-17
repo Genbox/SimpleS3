@@ -4,7 +4,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Extensions;
-using Genbox.SimpleS3.Core.TestBase.Code;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -27,9 +26,6 @@ namespace Genbox.SimpleS3.Core.TestBase
             collection.Configure<Config>(configRoot);
             collection.Configure<Config>(ConfigureConfig);
 
-            collection.AddSingleton<IUrlBuilder, NullUrlBuilder>();
-            collection.AddSingleton<IInputValidator, NullInputValidator>();
-
             ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(collection);
             ConfigureCoreBuilder(coreBuilder, configRoot);
 
@@ -41,7 +37,6 @@ namespace Genbox.SimpleS3.Core.TestBase
 
             //A small hack to remove all validators, as we test them separately
             collection.RemoveAll(typeof(IValidator<>));
-            collection.Replace(ServiceDescriptor.Singleton<IInputValidator, NullInputValidator>());
 
             ConfigureServices(collection);
 
