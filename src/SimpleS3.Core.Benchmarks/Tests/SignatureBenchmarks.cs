@@ -5,11 +5,13 @@ using BenchmarkDotNet.Attributes;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Network;
 using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Extensions.AmazonS3;
@@ -37,8 +39,8 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests
 
             _signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
             IScopeBuilder scopeBuilder = new ScopeBuilder(options);
-            AmazonS3UrlBuilder urlBuilder = new AmazonS3UrlBuilder(options);
-            _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance);
+            IEndpointBuilder endpointBuilder = new EndpointBuilder(options);
+            _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, endpointBuilder, NullLogger<SignatureBuilder>.Instance);
             _chunkSigBuilder = new ChunkedSignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);
 
             byte[] data = Encoding.UTF8.GetBytes("Hello world");

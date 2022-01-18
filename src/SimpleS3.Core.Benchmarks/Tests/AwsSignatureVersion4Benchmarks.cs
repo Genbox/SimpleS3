@@ -11,6 +11,7 @@ using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Builders;
+using Genbox.SimpleS3.Core.Internals.Network;
 using Genbox.SimpleS3.Extensions.AmazonS3;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -40,8 +41,8 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests
 
                 SigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
                 ScopeBuilder scopeBuilder = new ScopeBuilder(options);
-                AmazonS3UrlBuilder urlBuilder = new AmazonS3UrlBuilder(options);
-                SignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, urlBuilder, NullLogger<SignatureBuilder>.Instance);
+                EndpointBuilder endpointBuilder = new EndpointBuilder(options);
+                SignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, endpointBuilder, NullLogger<SignatureBuilder>.Instance);
 
                 _builder = new HeaderAuthorizationBuilder(options, scopeBuilder, signatureBuilder, NullLogger<HeaderAuthorizationBuilder>.Instance);
 

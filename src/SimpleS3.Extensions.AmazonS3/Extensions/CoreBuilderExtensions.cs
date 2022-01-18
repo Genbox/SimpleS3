@@ -27,7 +27,6 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Extensions
         {
             clientBuilder.Services.AddSingleton<IRegionData, AmazonS3RegionData>();
             clientBuilder.Services.AddSingleton<IInputValidator, AmazonS3InputValidator>();
-            clientBuilder.Services.AddSingleton<IUrlBuilder, AmazonS3UrlBuilder>();
 
             clientBuilder.Services.PostConfigure<Config>((x, y) =>
             {

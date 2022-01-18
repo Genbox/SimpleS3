@@ -15,6 +15,7 @@ namespace Genbox.SimpleS3.Extensions.Wasabi
         public WasabiConfig()
         {
             ProviderName = "Wasabi";
+            EndpointTemplate = "{Scheme}://{Bucket}.s3.{Region}.wasabisys.com";
         }
 
         public WasabiConfig(string keyId, string secretKey, WasabiRegion region) : this(new StringAccessKey(keyId, secretKey), region) { }

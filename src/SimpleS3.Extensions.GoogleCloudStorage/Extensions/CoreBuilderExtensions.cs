@@ -26,7 +26,6 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage.Extensions
         {
             clientBuilder.Services.AddSingleton<IRegionData, GoogleCloudStorageRegionData>();
             clientBuilder.Services.AddSingleton<IInputValidator, GoogleCloudStorageValidator>();
-            clientBuilder.Services.AddSingleton<IUrlBuilder, GoogleCloudStorageUrlBuilder>();
 
             clientBuilder.Services.PostConfigure<Config>((x, y) =>
             {

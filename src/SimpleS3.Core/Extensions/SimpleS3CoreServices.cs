@@ -83,6 +83,7 @@ namespace Genbox.SimpleS3.Core.Extensions
             collection.AddSingleton<IPostMapperFactory, PostMapperFactory>();
             collection.AddSingleton<IRequestStreamWrapper, ChunkedContentRequestStreamWrapper>();
             collection.AddSingleton<IRegionConverter, RegionConverter>();
+            collection.TryAddSingleton<IEndpointBuilder, EndpointBuilder>();
 
             //Fluent
             collection.AddSingleton<ITransfer, Transfer>();
@@ -90,7 +91,6 @@ namespace Genbox.SimpleS3.Core.Extensions
 
             //Default services
             collection.TryAddSingleton<IInputValidator, NullInputValidator>();
-            collection.TryAddSingleton<IUrlBuilder, NullUrlBuilder>();
 
             Assembly assembly = typeof(SimpleS3CoreServices).Assembly; //Needs to be the assembly that contains the types
 

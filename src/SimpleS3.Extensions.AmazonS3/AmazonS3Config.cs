@@ -15,6 +15,8 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3
         public AmazonS3Config()
         {
             ProviderName = "AmazonS3";
+            
+            //We don't need to set a template since it defaults to AWS
         }
 
         public AmazonS3Config(string keyId, string secretKey, AmazonS3Region region) : this(new StringAccessKey(keyId, secretKey), region) { }

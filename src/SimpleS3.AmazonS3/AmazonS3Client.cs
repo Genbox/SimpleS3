@@ -50,9 +50,9 @@ namespace Genbox.SimpleS3.AmazonS3
         /// <summary>Creates a new instance of <see cref="AmazonS3Client" /></summary>
         /// <param name="config">The configuration you want to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public AmazonS3Client(AmazonS3Config config, IWebProxy? proxy = null) : base(new AmazonS3InputValidator(), new AmazonS3UrlBuilder(Options.Create(config)), config, proxy) { }
+        public AmazonS3Client(AmazonS3Config config, IWebProxy? proxy = null) : base(new AmazonS3InputValidator(), config, proxy) { }
 
-        public AmazonS3Client(AmazonS3Config config, INetworkDriver networkDriver) : base(new AmazonS3InputValidator(), new AmazonS3UrlBuilder(Options.Create(config)), config, networkDriver) { }
+        public AmazonS3Client(AmazonS3Config config, INetworkDriver networkDriver) : base(new AmazonS3InputValidator(), config, networkDriver) { }
 
         internal AmazonS3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) { }
 

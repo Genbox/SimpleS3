@@ -26,7 +26,6 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions
         {
             clientBuilder.Services.AddSingleton<IRegionData, BackblazeB2RegionData>();
             clientBuilder.Services.AddSingleton<IInputValidator, BackblazeB2InputValidator>();
-            clientBuilder.Services.AddSingleton<IUrlBuilder, BackblazeB2UrlBuilder>();
 
             clientBuilder.Services.PostConfigure<Config>((x, y) =>
             {

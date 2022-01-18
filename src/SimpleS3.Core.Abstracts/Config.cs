@@ -40,8 +40,14 @@ namespace Genbox.SimpleS3.Core.Abstracts
         /// <summary>Set to true if you want to use an encrypted connection.</summary>
         public bool UseTls { get; set; } = true;
 
-        /// <summary>Use this to set a custom endpoint. For example, when using minio, you can set it to https://miniohost.com/</summary>
+        /// <summary>Use this to set a custom endpoint. Note that <see cref="UseTls"/>, <see cref="RegionCode"/>, and <see cref="EndpointTemplate"/> will be ignored if you set an Endpoint manually</summary>
         public Uri? Endpoint { get; set; }
+
+        /// <summary>
+        /// You can either set an Endpoint manually or use the EndpointTemplate to have it calculated for you. If you set the Endpoint manually, you must hardcode the region to use (if using NamingMode.VirtualHost) or use NamingMode.PathStyle, where the bucket is inserted as part of the URL path.
+        /// However, with EndpointTemplate, you can use NamingMode.VirtualHost and SimpleS3 will insert the bucket name (from each request) and region code (from config) into an URL before sending requests.
+        /// </summary>
+        public string? EndpointTemplate { get; set; }
 
         /// <summary>
         /// If enabled, bucket names are validated to ensure they are valid DNS names. This is to ensure you can always access your bucket using virtual

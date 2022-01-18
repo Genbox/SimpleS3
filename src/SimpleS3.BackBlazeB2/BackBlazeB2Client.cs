@@ -51,9 +51,9 @@ namespace Genbox.SimpleS3.BackBlazeB2
         /// <summary>Creates a new instance of <see cref="BackBlazeB2Client" /></summary>
         /// <param name="config">The configuration you want to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public BackBlazeB2Client(BackBlazeB2Config config, IWebProxy? proxy = null) : base(new BackblazeB2InputValidator(), new BackblazeB2UrlBuilder(Options.Create(config)), config, proxy) { }
+        public BackBlazeB2Client(BackBlazeB2Config config, IWebProxy? proxy = null) : base(new BackblazeB2InputValidator(), config, proxy) { }
 
-        public BackBlazeB2Client(BackBlazeB2Config config, INetworkDriver networkDriver) : base(new BackblazeB2InputValidator(), new BackblazeB2UrlBuilder(Options.Create(config)), config, networkDriver) { }
+        public BackBlazeB2Client(BackBlazeB2Config config, INetworkDriver networkDriver) : base(new BackblazeB2InputValidator(), config, networkDriver) { }
 
         internal BackBlazeB2Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) { }
 

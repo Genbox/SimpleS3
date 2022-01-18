@@ -19,6 +19,7 @@ namespace Genbox.SimpleS3.Core.TestBase
         {
             config.RegionCode = "eu-west-1";
             config.Credentials = new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
+            config.EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
 
             base.ConfigureConfig(config);
         }

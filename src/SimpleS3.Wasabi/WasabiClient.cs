@@ -50,9 +50,9 @@ namespace Genbox.SimpleS3.Wasabi
         /// <summary>Creates a new instance of <see cref="WasabiClient" /></summary>
         /// <param name="config">The configuration you want to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public WasabiClient(WasabiConfig config, IWebProxy? proxy = null) : base(new WasabiInputValidator(), new WasabiUrlBuilder(Options.Create(config)), config, proxy) { }
+        public WasabiClient(WasabiConfig config, IWebProxy? proxy = null) : base(new WasabiInputValidator(), config, proxy) { }
 
-        public WasabiClient(WasabiConfig config, INetworkDriver networkDriver) : base(new WasabiInputValidator(), new WasabiUrlBuilder(Options.Create(config)), config, networkDriver) { }
+        public WasabiClient(WasabiConfig config, INetworkDriver networkDriver) : base(new WasabiInputValidator(), config, networkDriver) { }
 
         internal WasabiClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) { }
 

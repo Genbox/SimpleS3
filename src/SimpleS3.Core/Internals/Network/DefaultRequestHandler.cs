@@ -34,16 +34,16 @@ namespace Genbox.SimpleS3.Core.Internals.Network
     internal class DefaultRequestHandler : IRequestHandler
     {
         private readonly IAuthorizationBuilder _authBuilder;
+        private readonly IEndpointBuilder _endpointBuilder;
         private readonly ILogger<DefaultRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
         private readonly INetworkDriver _networkDriver;
         private readonly IOptions<Config> _options;
         private readonly IPostMapperFactory _postMapper;
         private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
-        private readonly IUrlBuilder _urlBuilder;
         private readonly IRequestValidatorFactory _requestValidator;
 
-        public DefaultRequestHandler(IOptions<Config> options, IRequestValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IUrlBuilder urlBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
+        public DefaultRequestHandler(IOptions<Config> options, IRequestValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));
@@ -56,7 +56,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
             _options = options;
             _networkDriver = networkDriver;
             _authBuilder = authBuilder;
-            _urlBuilder = urlBuilder;
+            _endpointBuilder = endpointBuilder;
             _marshaller = marshaller;
             _postMapper = postMapper;
             _logger = logger;
@@ -95,12 +95,8 @@ namespace Genbox.SimpleS3.Core.Internals.Network
 
             _requestValidator.ValidateAndThrow(request);
 
-            StringBuilder sb = StringBuilderPool.Shared.Rent(200);
-            RequestHelper.AppendScheme(sb, config);
-            int schemeLength = sb.Length;
-            _urlBuilder.AppendHost(sb, request);
-
-            request.SetHeader(HttpHeaders.Host, sb.ToString(schemeLength, sb.Length - schemeLength));
+            IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
+            request.SetHeader(HttpHeaders.Host, endpointData.Host);
             request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
 
             if (requestStream != null)
@@ -127,7 +123,8 @@ namespace Genbox.SimpleS3.Core.Internals.Network
             //We add the authorization header here because we need ALL other headers to be present when we do
             _authBuilder.BuildAuthorization(request);
 
-            _urlBuilder.AppendUrl(sb, request);
+            StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+            sb.Append(endpointData.Endpoint);
             RequestHelper.AppendQueryParameters(sb, request);
             string url = StringBuilderPool.Shared.ReturnString(sb);
 

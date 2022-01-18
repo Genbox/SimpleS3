@@ -19,6 +19,7 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
 
             //Google does not support chunked streaming uploads
             PayloadSignatureMode = SignatureMode.FullSignature;
+            EndpointTemplate = "{Scheme}://{Bucket}.storage.googleapis.com";
         }
 
         public GoogleCloudStorageConfig(string keyId, string secretKey, GoogleCloudStorageRegion region) : this(new StringAccessKey(keyId, secretKey), region) { }

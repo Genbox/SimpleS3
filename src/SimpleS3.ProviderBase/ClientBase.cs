@@ -18,11 +18,10 @@ namespace Genbox.SimpleS3.ProviderBase
     {
         private ServiceProvider? _serviceProvider;
 
-        protected internal ClientBase(IInputValidator inputValidator, IUrlBuilder urlBuilder, Config config, IWebProxy? proxy = null)
+        protected internal ClientBase(IInputValidator inputValidator, Config config, IWebProxy? proxy = null)
         {
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton(inputValidator);
-            services.AddSingleton(urlBuilder);
             services.AddSingleton(Options.Create(config));
             services.AddLogging();
 
@@ -36,11 +35,10 @@ namespace Genbox.SimpleS3.ProviderBase
             Build(services);
         }
 
-        protected internal ClientBase(IInputValidator inputValidator, IUrlBuilder urlBuilder, Config config, INetworkDriver networkDriver)
+        protected internal ClientBase(IInputValidator inputValidator, Config config, INetworkDriver networkDriver)
         {
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton(inputValidator);
-            services.AddSingleton(urlBuilder);
             services.AddLogging();
 
             SimpleS3CoreServices.AddSimpleS3Core(services);

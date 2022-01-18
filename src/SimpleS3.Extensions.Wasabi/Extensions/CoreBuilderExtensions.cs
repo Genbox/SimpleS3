@@ -27,7 +27,6 @@ namespace Genbox.SimpleS3.Extensions.Wasabi.Extensions
         {
             clientBuilder.Services.AddSingleton<IRegionData, WasabiRegionData>();
             clientBuilder.Services.AddSingleton<IInputValidator, WasabiInputValidator>();
-            clientBuilder.Services.AddSingleton<IUrlBuilder, WasabiUrlBuilder>();
 
             clientBuilder.Services.PostConfigure<Config>((x, y) =>
             {
