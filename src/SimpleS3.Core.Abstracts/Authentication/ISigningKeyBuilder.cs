@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Genbox.SimpleS3.Core.Abstracts.Authentication
+namespace Genbox.SimpleS3.Core.Abstracts.Authentication;
+
+public interface ISigningKeyBuilder
 {
-    public interface ISigningKeyBuilder
-    {
-        byte[] CreateSigningKey(DateTimeOffset dateTime);
-    }
+    byte[] CreateSigningKey(DateTimeOffset dateTime);
 }

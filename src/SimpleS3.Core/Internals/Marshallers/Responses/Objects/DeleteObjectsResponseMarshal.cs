@@ -10,95 +10,94 @@ using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
-namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
+namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
+
+internal class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObjectsResponse>
 {
-    internal class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObjectsResponse>
+    public void MarshalResponse(SimpleS3Config config, DeleteObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
-        public void MarshalResponse(SimpleS3Config config, DeleteObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
+
+        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
         {
-            response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
+            xmlReader.ReadToDescendant("DeleteResult");
 
-            using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
-            {
-                xmlReader.ReadToDescendant("DeleteResult");
-
-                foreach (string name in XmlHelper.ReadElements(xmlReader))
-                {
-                    switch (name)
-                    {
-                        case "Deleted":
-                            ParseDeleted(response, xmlReader);
-                            break;
-                        case "Error":
-                            ParseError(response, xmlReader);
-                            break;
-                    }
-                }
-            }
-        }
-
-        private static void ParseDeleted(DeleteObjectsResponse response, XmlReader xmlReader)
-        {
-            string? key = null;
-            string? versionId = null;
-            bool deleteMarker = false;
-            string? deleteVersionId = null;
-
-            foreach (string name in XmlHelper.ReadElements(xmlReader, "Deleted"))
+            foreach (string name in XmlHelper.ReadElements(xmlReader))
             {
                 switch (name)
                 {
-                    case "Key":
-                        key = xmlReader.ReadString();
+                    case "Deleted":
+                        ParseDeleted(response, xmlReader);
                         break;
-                    case "VersionId":
-                        versionId = xmlReader.ReadString();
-                        break;
-                    case "DeleteMarker":
-                        deleteMarker = ValueHelper.ParseBool(xmlReader.ReadString());
-                        break;
-                    case "DeleteMarkerVersionId":
-                        deleteVersionId = xmlReader.ReadString();
+                    case "Error":
+                        ParseError(response, xmlReader);
                         break;
                 }
             }
-
-            if (key == null)
-                throw new InvalidOperationException("Missing required values");
-
-            response.Deleted.Add(new S3DeletedObject(key, versionId, deleteMarker, deleteVersionId));
         }
+    }
 
-        private static void ParseError(DeleteObjectsResponse response, XmlReader xmlReader)
+    private static void ParseDeleted(DeleteObjectsResponse response, XmlReader xmlReader)
+    {
+        string? key = null;
+        string? versionId = null;
+        bool deleteMarker = false;
+        string? deleteVersionId = null;
+
+        foreach (string name in XmlHelper.ReadElements(xmlReader, "Deleted"))
         {
-            string? key = null;
-            string? versionId = null;
-            ErrorCode code = ErrorCode.Unknown;
-            string? message = null;
-
-            foreach (string name in XmlHelper.ReadElements(xmlReader, "Error"))
+            switch (name)
             {
-                switch (name)
-                {
-                    case "Key":
-                        key = xmlReader.ReadString();
-                        break;
-                    case "VersionId":
-                        versionId = xmlReader.ReadString();
-                        break;
-                    case "Code":
-                        code = ValueHelper.ParseEnum<ErrorCode>(xmlReader.ReadString());
-                        break;
-                    case "Message":
-                        message = xmlReader.ReadString();
-                        break;
-                }
+                case "Key":
+                    key = xmlReader.ReadString();
+                    break;
+                case "VersionId":
+                    versionId = xmlReader.ReadString();
+                    break;
+                case "DeleteMarker":
+                    deleteMarker = ValueHelper.ParseBool(xmlReader.ReadString());
+                    break;
+                case "DeleteMarkerVersionId":
+                    deleteVersionId = xmlReader.ReadString();
+                    break;
             }
-
-            if (key == null || message == null)
-                throw new InvalidOperationException("Missing required values");
-
-            response.Errors.Add(new S3DeleteError(key, code, message, versionId));
         }
+
+        if (key == null)
+            throw new InvalidOperationException("Missing required values");
+
+        response.Deleted.Add(new S3DeletedObject(key, versionId, deleteMarker, deleteVersionId));
+    }
+
+    private static void ParseError(DeleteObjectsResponse response, XmlReader xmlReader)
+    {
+        string? key = null;
+        string? versionId = null;
+        ErrorCode code = ErrorCode.Unknown;
+        string? message = null;
+
+        foreach (string name in XmlHelper.ReadElements(xmlReader, "Error"))
+        {
+            switch (name)
+            {
+                case "Key":
+                    key = xmlReader.ReadString();
+                    break;
+                case "VersionId":
+                    versionId = xmlReader.ReadString();
+                    break;
+                case "Code":
+                    code = ValueHelper.ParseEnum<ErrorCode>(xmlReader.ReadString());
+                    break;
+                case "Message":
+                    message = xmlReader.ReadString();
+                    break;
+            }
+        }
+
+        if (key == null || message == null)
+            throw new InvalidOperationException("Missing required values");
+
+        response.Errors.Add(new S3DeleteError(key, code, message, versionId));
     }
 }

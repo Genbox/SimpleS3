@@ -1,12 +1,11 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums
+﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums;
+
+public enum ObjectKeyValidationMode
 {
-    public enum ObjectKeyValidationMode
-    {
-        Unknown = 0,
-        SafeMode,
-        AsciiMode,
-        ExtendedAsciiMode,
-        Unrestricted,
-        Disabled
-    }
+    Unknown = 0,
+    SafeMode,
+    AsciiMode,
+    ExtendedAsciiMode,
+    Unrestricted,
+    Disabled
 }

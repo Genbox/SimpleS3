@@ -1,9 +1,8 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Request;
 
-namespace Genbox.SimpleS3.Core.Abstracts.Authentication
+namespace Genbox.SimpleS3.Core.Abstracts.Authentication;
+
+public interface IAuthorizationBuilder
 {
-    public interface IAuthorizationBuilder
-    {
-        void BuildAuthorization(IRequest request);
-    }
+    void BuildAuthorization(IRequest request);
 }

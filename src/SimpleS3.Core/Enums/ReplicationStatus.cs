@@ -1,21 +1,20 @@
 ﻿using Genbox.SimpleS3.Core.Common;
 
-namespace Genbox.SimpleS3.Core.Enums
+namespace Genbox.SimpleS3.Core.Enums;
+
+public enum ReplicationStatus
 {
-    public enum ReplicationStatus
-    {
-        Unknown = 0,
+    Unknown = 0,
 
-        [EnumValue("PENDING")]
-        Pending,
+    [EnumValue("PENDING")]
+    Pending,
 
-        [EnumValue("COMPLETED")]
-        Completed,
+    [EnumValue("COMPLETED")]
+    Completed,
 
-        [EnumValue("FAILED")]
-        Failed,
+    [EnumValue("FAILED")]
+    Failed,
 
-        [EnumValue("REPLICA")]
-        Replica
-    }
+    [EnumValue("REPLICA")]
+    Replica
 }

@@ -1,8 +1,7 @@
-﻿namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces
+﻿namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+
+public interface IHasLegalHold
 {
-    public interface IHasLegalHold
-    {
-        /// <summary>Specifies whether a legal hold will be applied to this object.</summary>
-        bool? LockLegalHold { get; set; }
-    }
+    /// <summary>Specifies whether a legal hold will be applied to this object.</summary>
+    bool? LockLegalHold { get; set; }
 }

@@ -1,11 +1,10 @@
-﻿namespace Genbox.SimpleS3.Core.Internals.Enums
+﻿namespace Genbox.SimpleS3.Core.Internals.Enums;
+
+internal enum DateTimeFormat
 {
-    internal enum DateTimeFormat
-    {
-        Unknown = 0,
-        Iso8601Date,
-        Iso8601DateTime,
-        Iso8601DateTimeExt,
-        Rfc1123
-    }
+    Unknown = 0,
+    Iso8601Date,
+    Iso8601DateTime,
+    Iso8601DateTimeExt,
+    Rfc1123
 }

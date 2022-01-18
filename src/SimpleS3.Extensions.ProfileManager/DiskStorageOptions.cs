@@ -2,14 +2,13 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Genbox.SimpleS3.Extensions.ProfileManager
+namespace Genbox.SimpleS3.Extensions.ProfileManager;
+
+public class DiskStorageOptions
 {
-    public class DiskStorageOptions
-    {
-        public static string DefaultLocation => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SimpleS3", "Profiles") : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SimpleS3", "Profiles");
+    public static string DefaultLocation => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SimpleS3", "Profiles") : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SimpleS3", "Profiles");
 
-        public string ProfileLocation { get; set; } = DefaultLocation;
+    public string ProfileLocation { get; set; } = DefaultLocation;
 
-        public bool OverwriteExisting { get; set; }
-    }
+    public bool OverwriteExisting { get; set; }
 }

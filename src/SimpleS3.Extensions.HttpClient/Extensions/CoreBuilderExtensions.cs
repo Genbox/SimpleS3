@@ -10,47 +10,46 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions
+namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions;
+
+public static class CoreBuilderExtensions
 {
-    public static class CoreBuilderExtensions
+    public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder, Action<HttpClientConfig, IServiceProvider> config)
     {
-        public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder, Action<HttpClientConfig, IServiceProvider> config)
+        clientBuilder.Services.Configure(config);
+        return UseHttpClient(clientBuilder);
+    }
+
+    public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder, Action<HttpClientConfig> config)
+    {
+        clientBuilder.Services.Configure(config);
+        return UseHttpClient(clientBuilder);
+    }
+
+    public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder)
+    {
+        CustomHttpClientBuilder builder = new CustomHttpClientBuilder(clientBuilder.Services);
+
+        builder.Services.AddSingleton<INetworkDriver, HttpClientNetworkDriver>(x =>
         {
-            clientBuilder.Services.Configure(config);
-            return UseHttpClient(clientBuilder);
-        }
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.UseCookies = false;
+            handler.MaxAutomaticRedirections = 3;
+            handler.SslProtocols = SslProtocols.None; //Let the OS handle the protocol to use
 
-        public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder, Action<HttpClientConfig> config)
-        {
-            clientBuilder.Services.Configure(config);
-            return UseHttpClient(clientBuilder);
-        }
+            IOptions<HttpClientConfig> options = x.GetRequiredService<IOptions<HttpClientConfig>>();
+            handler.UseProxy = options.Value.UseProxy;
+            handler.Proxy = options.Value.Proxy;
 
-        public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder)
-        {
-            CustomHttpClientBuilder builder = new CustomHttpClientBuilder(clientBuilder.Services);
+            ILogger<HttpClientNetworkDriver> logger = x.GetRequiredService<ILogger<HttpClientNetworkDriver>>();
 
-            builder.Services.AddSingleton<INetworkDriver, HttpClientNetworkDriver>(x =>
-            {
-                HttpClientHandler handler = new HttpClientHandler();
-                handler.UseCookies = false;
-                handler.MaxAutomaticRedirections = 3;
-                handler.SslProtocols = SslProtocols.None; //Let the OS handle the protocol to use
+            System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(handler);
+            client.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.DefaultUserAgent);
+            client.DefaultRequestHeaders.TransferEncodingChunked = false;
 
-                IOptions<HttpClientConfig> options = x.GetRequiredService<IOptions<HttpClientConfig>>();
-                handler.UseProxy = options.Value.UseProxy;
-                handler.Proxy = options.Value.Proxy;
+            return new HttpClientNetworkDriver(options, logger, client);
+        });
 
-                ILogger<HttpClientNetworkDriver> logger = x.GetRequiredService<ILogger<HttpClientNetworkDriver>>();
-
-                System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(handler);
-                client.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.DefaultUserAgent);
-                client.DefaultRequestHeaders.TransferEncodingChunked = false;
-
-                return new HttpClientNetworkDriver(options, logger, client);
-            });
-
-            return builder;
-        }
+        return builder;
     }
 }

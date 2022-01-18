@@ -2,18 +2,17 @@
 using FluentValidation.Results;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3.Core.Internals.Validation.Validators
+namespace Genbox.SimpleS3.Core.Internals.Validation.Validators;
+
+internal abstract class ConfigValidatorBase<T> : ValidatorBase<T>, IValidateOptions<T> where T : class
 {
-    internal abstract class ConfigValidatorBase<T> : ValidatorBase<T>, IValidateOptions<T> where T : class
+    public ValidateOptionsResult Validate(string name, T options)
     {
-        public ValidateOptionsResult Validate(string name, T options)
-        {
-            ValidationResult? results = ValidateAsync(options).Result;
+        ValidationResult? results = ValidateAsync(options).Result;
 
-            if (results.IsValid)
-                return ValidateOptionsResult.Success;
+        if (results.IsValid)
+            return ValidateOptionsResult.Success;
 
-            return ValidateOptionsResult.Fail(results.Errors.Select(x => x.ErrorMessage));
-        }
+        return ValidateOptionsResult.Fail(results.Errors.Select(x => x.ErrorMessage));
     }
 }

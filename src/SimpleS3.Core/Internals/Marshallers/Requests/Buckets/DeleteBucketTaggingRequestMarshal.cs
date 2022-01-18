@@ -4,14 +4,13 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
-namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
+namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
+
+internal class DeleteBucketTaggingRequestMarshal : IRequestMarshal<DeleteBucketTaggingRequest>
 {
-    internal class DeleteBucketTaggingRequestMarshal : IRequestMarshal<DeleteBucketTaggingRequest>
+    public Stream? MarshalRequest(DeleteBucketTaggingRequest request, SimpleS3Config config)
     {
-        public Stream? MarshalRequest(DeleteBucketTaggingRequest request, SimpleS3Config config)
-        {
-            request.SetQueryParameter(AmzParameters.Tagging, string.Empty);
-            return null;
-        }
+        request.SetQueryParameter(AmzParameters.Tagging, string.Empty);
+        return null;
     }
 }

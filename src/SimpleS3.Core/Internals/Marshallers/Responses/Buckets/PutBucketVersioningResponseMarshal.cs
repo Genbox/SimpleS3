@@ -4,27 +4,26 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
-namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
+namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
+
+internal class PutBucketVersioningResponseMarshal : IResponseMarshal<PutBucketVersioningResponse>
 {
-    internal class PutBucketVersioningResponseMarshal : IResponseMarshal<PutBucketVersioningResponse>
+    public void MarshalResponse(SimpleS3Config config, PutBucketVersioningResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
-        public void MarshalResponse(SimpleS3Config config, PutBucketVersioningResponse response, IDictionary<string, string> headers, Stream responseStream)
-        {
-            // The docs says there is an XML response, but there is none from the API.
+        // The docs says there is an XML response, but there is none from the API.
 
-            //using (XmlTextReader reader = new XmlTextReader(responseStream))
-            //{
-            //    reader.Namespaces = false;
+        //using (XmlTextReader reader = new XmlTextReader(responseStream))
+        //{
+        //    reader.Namespaces = false;
 
-            //    while (reader.Read())
-            //    {
-            //        if (reader.NodeType == XmlNodeType.Element && reader.Name == "Status")
-            //        {
-            //            response.Status = ValueHelper.ParseBool(reader.ReadString());
-            //            break;
-            //        }
-            //    }
-            //}
-        }
+        //    while (reader.Read())
+        //    {
+        //        if (reader.NodeType == XmlNodeType.Element && reader.Name == "Status")
+        //        {
+        //            response.Status = ValueHelper.ParseBool(reader.ReadString());
+        //            break;
+        //        }
+        //    }
+        //}
     }
 }

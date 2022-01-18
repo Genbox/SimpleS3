@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Genbox.SimpleS3.Extensions.ProfileManager.Abstracts
+namespace Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
+
+public interface IProfile
 {
-    public interface IProfile
-    {
-        string Name { get; }
-        string KeyId { get; }
-        byte[] AccessKey { get; }
-        string RegionCode { get; }
-        string Location { get; }
-        DateTimeOffset CreatedOn { get; }
-        IDictionary<string, string>? Tags { get; }
-        string? GetTag(string key);
-    }
+    string Name { get; }
+    string KeyId { get; }
+    byte[] AccessKey { get; }
+    string RegionCode { get; }
+    string Location { get; }
+    DateTimeOffset CreatedOn { get; }
+    IDictionary<string, string>? Tags { get; }
+    string? GetTag(string key);
 }

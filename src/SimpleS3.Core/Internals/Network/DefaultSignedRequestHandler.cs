@@ -20,71 +20,70 @@ using Genbox.SimpleS3.Core.Internals.Misc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3.Core.Internals.Network
+namespace Genbox.SimpleS3.Core.Internals.Network;
+
+internal class DefaultSignedRequestHandler : ISignedRequestHandler
 {
-    internal class DefaultSignedRequestHandler : ISignedRequestHandler
+    private readonly IAuthorizationBuilder _authBuilder;
+    private readonly IEndpointBuilder _endpointBuilder;
+    private readonly ILogger<DefaultSignedRequestHandler> _logger;
+    private readonly IMarshalFactory _marshaller;
+    private readonly IOptions<SimpleS3Config> _options;
+    private readonly IScopeBuilder _scopeBuilder;
+
+    public DefaultSignedRequestHandler(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultSignedRequestHandler> logger)
     {
-        private readonly IAuthorizationBuilder _authBuilder;
-        private readonly IEndpointBuilder _endpointBuilder;
-        private readonly ILogger<DefaultSignedRequestHandler> _logger;
-        private readonly IMarshalFactory _marshaller;
-        private readonly IOptions<SimpleS3Config> _options;
-        private readonly IScopeBuilder _scopeBuilder;
+        Validator.RequireNotNull(options, nameof(options));
+        Validator.RequireNotNull(marshaller, nameof(marshaller));
+        Validator.RequireNotNull(authBuilder, nameof(authBuilder));
+        Validator.RequireNotNull(logger, nameof(logger));
 
-        public DefaultSignedRequestHandler(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultSignedRequestHandler> logger)
+        _options = options;
+        _authBuilder = authBuilder;
+        _endpointBuilder = endpointBuilder;
+        _marshaller = marshaller;
+        _logger = logger;
+        _scopeBuilder = scopeBuilder;
+    }
+
+    public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest
+    {
+        request.Timestamp = DateTimeOffset.UtcNow;
+        request.RequestId = Guid.NewGuid();
+
+        _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
+
+        SimpleS3Config config = _options.Value;
+        _marshaller.MarshalRequest(config, request);
+
+        IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
+        request.SetHeader(HttpHeaders.Host, endpointData.Host);
+
+        string scope = _scopeBuilder.CreateScope("s3", request.Timestamp);
+        request.SetQueryParameter(AmzParameters.XAmzAlgorithm, SigningConstants.AlgorithmTag);
+        request.SetQueryParameter(AmzParameters.XAmzCredential, _options.Value.Credentials.KeyId + '/' + scope);
+        request.SetQueryParameter(AmzParameters.XAmzDate, request.Timestamp.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
+        request.SetQueryParameter(AmzParameters.XAmzExpires, expiresIn.TotalSeconds.ToString(NumberFormatInfo.InvariantInfo));
+        request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, string.Join(";", HeaderWhitelist.FilterHeaders(request.Headers).Select(x => x.Key)));
+
+        //Copy all headers to query parameters
+        foreach (KeyValuePair<string, string> header in request.Headers)
         {
-            Validator.RequireNotNull(options, nameof(options));
-            Validator.RequireNotNull(marshaller, nameof(marshaller));
-            Validator.RequireNotNull(authBuilder, nameof(authBuilder));
-            Validator.RequireNotNull(logger, nameof(logger));
+            if (header.Key == HttpHeaders.Host)
+                continue;
 
-            _options = options;
-            _authBuilder = authBuilder;
-            _endpointBuilder = endpointBuilder;
-            _marshaller = marshaller;
-            _logger = logger;
-            _scopeBuilder = scopeBuilder;
+            request.SetQueryParameter(header.Key, header.Value);
         }
 
-        public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest
-        {
-            request.Timestamp = DateTimeOffset.UtcNow;
-            request.RequestId = Guid.NewGuid();
+        _authBuilder.BuildAuthorization(request);
 
-            _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
+        //Clear sensitive material from the request
+        if (request is IContainSensitiveMaterial sensitive)
+            sensitive.ClearSensitiveMaterial();
 
-            SimpleS3Config config = _options.Value;
-            _marshaller.MarshalRequest(config, request);
-
-            IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
-            request.SetHeader(HttpHeaders.Host, endpointData.Host);
-
-            string scope = _scopeBuilder.CreateScope("s3", request.Timestamp);
-            request.SetQueryParameter(AmzParameters.XAmzAlgorithm, SigningConstants.AlgorithmTag);
-            request.SetQueryParameter(AmzParameters.XAmzCredential, _options.Value.Credentials.KeyId + '/' + scope);
-            request.SetQueryParameter(AmzParameters.XAmzDate, request.Timestamp.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
-            request.SetQueryParameter(AmzParameters.XAmzExpires, expiresIn.TotalSeconds.ToString(NumberFormatInfo.InvariantInfo));
-            request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, string.Join(";", HeaderWhitelist.FilterHeaders(request.Headers).Select(x => x.Key)));
-
-            //Copy all headers to query parameters
-            foreach (KeyValuePair<string, string> header in request.Headers)
-            {
-                if (header.Key == HttpHeaders.Host)
-                    continue;
-
-                request.SetQueryParameter(header.Key, header.Value);
-            }
-
-            _authBuilder.BuildAuthorization(request);
-
-            //Clear sensitive material from the request
-            if (request is IContainSensitiveMaterial sensitive)
-                sensitive.ClearSensitiveMaterial();
-
-            StringBuilder sb = StringBuilderPool.Shared.Rent(200);
-            sb.Append(endpointData.Endpoint);
-            RequestHelper.AppendQueryParameters(sb, request);
-            return StringBuilderPool.Shared.ReturnString(sb);
-        }
+        StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+        sb.Append(endpointData.Endpoint);
+        RequestHelper.AppendQueryParameters(sb, request);
+        return StringBuilderPool.Shared.ReturnString(sb);
     }
 }

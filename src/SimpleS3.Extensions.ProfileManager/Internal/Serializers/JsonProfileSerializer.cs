@@ -4,45 +4,44 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Serializers
+namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Serializers;
+
+internal class JsonProfileSerializer : IProfileSerializer
 {
-    internal class JsonProfileSerializer : IProfileSerializer
+    private readonly JsonSerializer _serializer;
+
+    public JsonProfileSerializer()
     {
-        private readonly JsonSerializer _serializer;
+        JsonSerializerSettings s = new JsonSerializerSettings();
+        s.Formatting = Formatting.Indented;
+        s.NullValueHandling = NullValueHandling.Ignore; //We don't need to keep null values
+        s.DateTimeZoneHandling = DateTimeZoneHandling.Utc; //Handle the dates as UTC
+        s.ContractResolver = new ProfileContractResolver();
+        s.Converters.Add(new StringEnumConverter());
+        _serializer = JsonSerializer.Create(s);
+    }
 
-        public JsonProfileSerializer()
+    public byte[] Serialize<T>(T profile) where T : IProfile
+    {
+        // Serialize as a single object
+        using (MemoryStream ms = new MemoryStream())
         {
-            JsonSerializerSettings s = new JsonSerializerSettings();
-            s.Formatting = Formatting.Indented;
-            s.NullValueHandling = NullValueHandling.Ignore; //We don't need to keep null values
-            s.DateTimeZoneHandling = DateTimeZoneHandling.Utc; //Handle the dates as UTC
-            s.ContractResolver = new ProfileContractResolver();
-            s.Converters.Add(new StringEnumConverter());
-            _serializer = JsonSerializer.Create(s);
-        }
-
-        public byte[] Serialize<T>(T profile) where T : IProfile
-        {
-            // Serialize as a single object
-            using (MemoryStream ms = new MemoryStream())
+            using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8, 4096, true))
+            using (JsonTextWriter jw = new JsonTextWriter(sw))
             {
-                using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8, 4096, true))
-                using (JsonTextWriter jw = new JsonTextWriter(sw))
-                {
-                    jw.CloseOutput = false;
-                    _serializer.Serialize(jw, profile);
-                }
-
-                return ms.ToArray();
+                jw.CloseOutput = false;
+                _serializer.Serialize(jw, profile);
             }
-        }
 
-        public T Deserialize<T>(byte[] data) where T : IProfile
-        {
-            using (MemoryStream ms = new MemoryStream(data))
-            using (StreamReader sr = new StreamReader(ms))
-            using (JsonTextReader jsonTextReader = new JsonTextReader(sr))
-                return _serializer.Deserialize<T>(jsonTextReader)!;
+            return ms.ToArray();
         }
+    }
+
+    public T Deserialize<T>(byte[] data) where T : IProfile
+    {
+        using (MemoryStream ms = new MemoryStream(data))
+        using (StreamReader sr = new StreamReader(ms))
+        using (JsonTextReader jsonTextReader = new JsonTextReader(sr))
+            return _serializer.Deserialize<T>(jsonTextReader)!;
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Region
+﻿namespace Genbox.SimpleS3.Core.Abstracts.Region;
+
+public interface IRegionConverter
 {
-    public interface IRegionConverter
-    {
-        IRegionInfo GetRegion(int enumValue);
-        IRegionInfo GetRegion(string regionCode);
-    }
+    IRegionInfo GetRegion(int enumValue);
+    IRegionInfo GetRegion(string regionCode);
 }

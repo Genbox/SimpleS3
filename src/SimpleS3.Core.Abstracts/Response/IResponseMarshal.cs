@@ -2,13 +2,12 @@ using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core.Abstracts.Response
-{
-    [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
-    public interface IResponseMarshal { }
+namespace Genbox.SimpleS3.Core.Abstracts.Response;
 
-    public interface IResponseMarshal<in TResponse> : IResponseMarshal where TResponse : IResponse
-    {
-        void MarshalResponse(SimpleS3Config config, TResponse response, IDictionary<string, string> headers, Stream responseStream);
-    }
+[UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
+public interface IResponseMarshal { }
+
+public interface IResponseMarshal<in TResponse> : IResponseMarshal where TResponse : IResponse
+{
+    void MarshalResponse(SimpleS3Config config, TResponse response, IDictionary<string, string> headers, Stream responseStream);
 }

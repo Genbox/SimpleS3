@@ -1,9 +1,8 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums
+﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums;
+
+public enum NamingMode
 {
-    public enum NamingMode
-    {
-        Unknown = 0,
-        VirtualHost,
-        PathStyle
-    }
+    Unknown = 0,
+    VirtualHost,
+    PathStyle
 }

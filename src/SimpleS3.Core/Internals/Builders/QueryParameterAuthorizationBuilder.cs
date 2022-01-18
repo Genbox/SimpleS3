@@ -5,25 +5,24 @@ using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Microsoft.Extensions.Logging;
 
-namespace Genbox.SimpleS3.Core.Internals.Builders
+namespace Genbox.SimpleS3.Core.Internals.Builders;
+
+internal class QueryParameterAuthorizationBuilder : IAuthorizationBuilder
 {
-    internal class QueryParameterAuthorizationBuilder : IAuthorizationBuilder
+    private readonly ILogger<QueryParameterAuthorizationBuilder> _logger;
+    private readonly ISignatureBuilder _signatureBuilder;
+
+    public QueryParameterAuthorizationBuilder(ISignatureBuilder signatureBuilder, ILogger<QueryParameterAuthorizationBuilder> logger)
     {
-        private readonly ILogger<QueryParameterAuthorizationBuilder> _logger;
-        private readonly ISignatureBuilder _signatureBuilder;
+        _signatureBuilder = signatureBuilder;
+        _logger = logger;
+    }
 
-        public QueryParameterAuthorizationBuilder(ISignatureBuilder signatureBuilder, ILogger<QueryParameterAuthorizationBuilder> logger)
-        {
-            _signatureBuilder = signatureBuilder;
-            _logger = logger;
-        }
+    public void BuildAuthorization(IRequest request)
+    {
+        Validator.RequireNotNull(request, nameof(request));
 
-        public void BuildAuthorization(IRequest request)
-        {
-            Validator.RequireNotNull(request, nameof(request));
-
-            _logger.LogTrace("Building parameter based authorization");
-            request.SetQueryParameter(AmzParameters.XAmzSignature, _signatureBuilder.CreateSignature(request, false).HexEncode());
-        }
+        _logger.LogTrace("Building parameter based authorization");
+        request.SetQueryParameter(AmzParameters.XAmzSignature, _signatureBuilder.CreateSignature(request, false).HexEncode());
     }
 }

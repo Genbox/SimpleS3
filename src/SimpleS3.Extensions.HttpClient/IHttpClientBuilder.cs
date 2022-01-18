@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.SimpleS3.Extensions.HttpClient
+namespace Genbox.SimpleS3.Extensions.HttpClient;
+
+public interface IHttpClientBuilder
 {
-    public interface IHttpClientBuilder
-    {
-        IServiceCollection Services { get; }
-    }
+    IServiceCollection Services { get; }
 }

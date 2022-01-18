@@ -1,18 +1,17 @@
 ﻿using Genbox.SimpleS3.Core.Common;
 
-namespace Genbox.SimpleS3.Core.Enums
+namespace Genbox.SimpleS3.Core.Enums;
+
+public enum CompressionType
 {
-    public enum CompressionType
-    {
-        Unknown = 0,
+    Unknown = 0,
 
-        [EnumValue("NONE")]
-        None,
+    [EnumValue("NONE")]
+    None,
 
-        [EnumValue("GZIP")]
-        Gzip,
+    [EnumValue("GZIP")]
+    Gzip,
 
-        [EnumValue("BZIP2")]
-        Bzip
-    }
+    [EnumValue("BZIP2")]
+    Bzip
 }

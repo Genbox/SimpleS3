@@ -1,9 +1,8 @@
-﻿namespace Genbox.SimpleS3.Utility.S3Template.Enums
+﻿namespace Genbox.SimpleS3.Utility.S3Template.Enums;
+
+public enum ApiType
 {
-    public enum ApiType
-    {
-        Unknown = 0,
-        Bucket,
-        Object
-    }
+    Unknown = 0,
+    Bucket,
+    Object
 }

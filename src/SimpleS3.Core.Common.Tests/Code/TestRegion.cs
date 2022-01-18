@@ -1,8 +1,7 @@
-﻿namespace Genbox.SimpleS3.Core.Common.Tests.Code
+﻿namespace Genbox.SimpleS3.Core.Common.Tests.Code;
+
+public enum TestRegion
 {
-    public enum TestRegion
-    {
-        RegionOne,
-        RegionTwo
-    }
+    RegionOne,
+    RegionTwo
 }

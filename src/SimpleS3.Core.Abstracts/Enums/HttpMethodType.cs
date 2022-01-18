@@ -1,12 +1,11 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums
+﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums;
+
+public enum HttpMethodType
 {
-    public enum HttpMethodType
-    {
-        Unknown = 0,
-        GET,
-        PUT,
-        HEAD,
-        DELETE,
-        POST
-    }
+    Unknown = 0,
+    GET,
+    PUT,
+    HEAD,
+    DELETE,
+    POST
 }

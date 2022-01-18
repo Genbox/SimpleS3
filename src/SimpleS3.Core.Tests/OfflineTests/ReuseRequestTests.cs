@@ -6,78 +6,77 @@ using Genbox.SimpleS3.Core.TestBase;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Genbox.SimpleS3.Core.Tests.OfflineTests
+namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
+
+public class ReuseRequestTests : OfflineTestBase
 {
-    public class ReuseRequestTests : OfflineTestBase
+    public ReuseRequestTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+
+    [Fact]
+    public async Task ReuseRequestSameData()
     {
-        public ReuseRequestTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+        GetObjectRequest req = new GetObjectRequest("testbucket", "testobject");
+        req.PartNumber = 5;
+        req.VersionId = "versionid";
 
-        [Fact]
-        public async Task ReuseRequestSameData()
+        string? prevHeader = null;
+
+        for (int i = 0; i < 2; i++)
         {
-            GetObjectRequest req = new GetObjectRequest("testbucket", "testobject");
-            req.PartNumber = 5;
-            req.VersionId = "versionid";
+            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);
+            Assert.True(resp.IsSuccess);
 
-            string? prevHeader = null;
+            //None of the essential properties must change
+            Assert.Equal("testbucket", req.BucketName);
+            Assert.Equal("testobject", req.ObjectKey);
 
-            for (int i = 0; i < 2; i++)
-            {
-                GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);
-                Assert.True(resp.IsSuccess);
+            //None of the user supplied properties must change
+            Assert.Equal(5, req.PartNumber);
+            Assert.Equal("versionid", req.VersionId);
 
-                //None of the essential properties must change
-                Assert.Equal("testbucket", req.BucketName);
-                Assert.Equal("testobject", req.ObjectKey);
+            await Task.Delay(2000).ConfigureAwait(false);
 
-                //None of the user supplied properties must change
-                Assert.Equal(5, req.PartNumber);
-                Assert.Equal("versionid", req.VersionId);
+            //The resolution on signatures is pr. second, so because we wait 2 seconds, it changes, and therefore the signature changes too
+            string currentHeader = req.Headers[HttpHeaders.Authorization];
 
-                await Task.Delay(2000).ConfigureAwait(false);
+            if (i > 0)
+                Assert.NotEqual(prevHeader, currentHeader);
 
-                //The resolution on signatures is pr. second, so because we wait 2 seconds, it changes, and therefore the signature changes too
-                string currentHeader = req.Headers[HttpHeaders.Authorization];
-
-                if (i > 0)
-                    Assert.NotEqual(prevHeader, currentHeader);
-
-                prevHeader = currentHeader;
-            }
+            prevHeader = currentHeader;
         }
+    }
 
-        [Fact]
-        public async Task ReuseRequestDifferentData()
+    [Fact]
+    public async Task ReuseRequestDifferentData()
+    {
+        GetObjectRequest req = new GetObjectRequest("testbucket", "notused-setbelow");
+        req.PartNumber = 5;
+        req.VersionId = "versionid";
+
+        string? prevHeader = null;
+
+        for (int i = 0; i < 10; i++)
         {
-            GetObjectRequest req = new GetObjectRequest("testbucket", "notused-setbelow");
-            req.PartNumber = 5;
-            req.VersionId = "versionid";
+            string key = i.ToString();
+            req.ObjectKey = key;
 
-            string? prevHeader = null;
+            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);
+            Assert.True(resp.IsSuccess);
 
-            for (int i = 0; i < 10; i++)
-            {
-                string key = i.ToString();
-                req.ObjectKey = key;
+            //The key must not change after the request is sent
+            Assert.Equal(key, req.ObjectKey);
 
-                GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);
-                Assert.True(resp.IsSuccess);
+            //None of the user supplied properties must change
+            Assert.Equal(5, req.PartNumber);
+            Assert.Equal("versionid", req.VersionId);
 
-                //The key must not change after the request is sent
-                Assert.Equal(key, req.ObjectKey);
+            //The authorization header should change with each request due changes in ObjectKey
+            string currentHeader = req.Headers[HttpHeaders.Authorization];
 
-                //None of the user supplied properties must change
-                Assert.Equal(5, req.PartNumber);
-                Assert.Equal("versionid", req.VersionId);
+            if (i > 0)
+                Assert.NotEqual(prevHeader, currentHeader);
 
-                //The authorization header should change with each request due changes in ObjectKey
-                string currentHeader = req.Headers[HttpHeaders.Authorization];
-
-                if (i > 0)
-                    Assert.NotEqual(prevHeader, currentHeader);
-
-                prevHeader = currentHeader;
-            }
+            prevHeader = currentHeader;
         }
     }
 }

@@ -1,11 +1,10 @@
 using System;
 
-namespace Genbox.SimpleS3.Core.Abstracts.Region
+namespace Genbox.SimpleS3.Core.Abstracts.Region;
+
+public interface IRegionInfo
 {
-    public interface IRegionInfo
-    {
-        Enum EnumValue { get; }
-        string Code { get; }
-        string Name { get; }
-    }
+    Enum EnumValue { get; }
+    string Code { get; }
+    string Name { get; }
 }

@@ -8,40 +8,39 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Validation;
 using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core.Internals.Validation
+namespace Genbox.SimpleS3.Core.Internals.Validation;
+
+[PublicAPI]
+internal class ValidatorFactory : IRequestValidatorFactory
 {
-    [PublicAPI]
-    internal class ValidatorFactory : IRequestValidatorFactory
+    private readonly IDictionary<Type, IValidator> _validators;
+
+    public ValidatorFactory(IEnumerable<IValidator> validators)
     {
-        private readonly IDictionary<Type, IValidator> _validators;
+        //The validators that come in here all inherit from AbstractValidator<T>
+        //So we take out the generic parameter type and use that for our internal lookup
 
-        public ValidatorFactory(IEnumerable<IValidator> validators)
+        _validators = validators.ToDictionary(x =>
         {
-            //The validators that come in here all inherit from AbstractValidator<T>
-            //So we take out the generic parameter type and use that for our internal lookup
+            Type type = x.GetType();
+            Type? baseType = type.BaseType;
 
-            _validators = validators.ToDictionary(x =>
-            {
-                Type type = x.GetType();
-                Type? baseType = type.BaseType;
+            Validator.RequireNotNull(baseType, nameof(baseType));
 
-                Validator.RequireNotNull(baseType, nameof(baseType));
+            Type[] args = baseType.GetGenericArguments();
 
-                Type[] args = baseType.GetGenericArguments();
+            return args[0];
+        }, x => x);
+    }
 
-                return args[0];
-            }, x => x);
-        }
-
-        public void ValidateAndThrow<T>(T obj) where T : IRequest
+    public void ValidateAndThrow<T>(T obj) where T : IRequest
+    {
+        if (_validators.TryGetValue(typeof(T), out IValidator validator))
         {
-            if (_validators.TryGetValue(typeof(T), out IValidator validator))
-            {
-                ValidationResult result = ((IValidator<T>)validator).Validate(obj);
+            ValidationResult result = ((IValidator<T>)validator).Validate(obj);
 
-                if (!result.IsValid)
-                    throw new ValidationException(result.Errors);
-            }
+            if (!result.IsValid)
+                throw new ValidationException(result.Errors);
         }
     }
 }

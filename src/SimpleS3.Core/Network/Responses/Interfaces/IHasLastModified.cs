@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces
+namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
+
+public interface IHasLastModified
 {
-    public interface IHasLastModified
-    {
-        DateTimeOffset? LastModified { get; }
-    }
+    DateTimeOffset? LastModified { get; }
 }

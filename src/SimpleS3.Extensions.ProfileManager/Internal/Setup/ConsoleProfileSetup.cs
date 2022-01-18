@@ -7,186 +7,185 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers;
 
-namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup
+namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup;
+
+internal class ConsoleProfileSetup : IProfileSetup
 {
-    internal class ConsoleProfileSetup : IProfileSetup
+    private readonly IInputValidator _inputValidator;
+    private readonly IProfileManager _profileManager;
+    private readonly IRegionConverter _regionConverter;
+    private readonly IRegionData _regionData;
+
+    public ConsoleProfileSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionConverter regionConverter, IRegionData regionData)
     {
-        private readonly IInputValidator _inputValidator;
-        private readonly IProfileManager _profileManager;
-        private readonly IRegionConverter _regionConverter;
-        private readonly IRegionData _regionData;
+        _profileManager = profileManager;
+        _inputValidator = inputValidator;
+        _regionConverter = regionConverter;
+        _regionData = regionData;
+    }
 
-        public ConsoleProfileSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionConverter regionConverter, IRegionData regionData)
+    public IProfile SetupProfile(string profileName, bool persist = true)
+    {
+        IProfile? existingProfile = _profileManager.GetProfile(profileName);
+
+        if (existingProfile != null)
+            return existingProfile;
+
+        start:
+
+        string enteredKeyId = GetKeyId();
+        byte[] accessKey = GetAccessKey();
+        IRegionInfo region = GetRegion();
+
+        Console.WriteLine();
+        Console.WriteLine("Please confirm the following information:");
+        Console.WriteLine("Key id: " + enteredKeyId);
+        Console.WriteLine("Region: " + region.Code + " -- " + region.Name);
+        Console.WriteLine();
+
+        ConsoleKey key;
+
+        do
         {
-            _profileManager = profileManager;
-            _inputValidator = inputValidator;
-            _regionConverter = regionConverter;
-            _regionData = regionData;
+            Console.WriteLine("Is it correct? Y/N");
+
+            key = Console.ReadKey(true).Key;
+        } while (key != ConsoleKey.Y && key != ConsoleKey.N);
+
+        if (key == ConsoleKey.N)
+            goto start;
+
+        IProfile profile = _profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region.Code, persist);
+
+        if (persist)
+        {
+            if (!string.IsNullOrEmpty(profile.Location))
+                Console.WriteLine("Successfully saved the profile to " + profile.Location);
+            else
+                Console.WriteLine("Successfully saved profile");
         }
 
-        public IProfile SetupProfile(string profileName, bool persist = true)
+        //Clear the access key from memory
+        Array.Clear(accessKey, 0, accessKey.Length);
+
+        return profile;
+    }
+
+    private string GetKeyId()
+    {
+        string? enteredKeyId;
+        bool validKeyId = true;
+
+        Console.WriteLine();
+        Console.WriteLine("Enter your key id - Example: AKIAIOSFODNN7EXAMPLE");
+
+        do
         {
-            IProfile? existingProfile = _profileManager.GetProfile(profileName);
+            if (!validKeyId)
+                Console.Error.WriteLine("Invalid key id. Try again.");
 
-            if (existingProfile != null)
-                return existingProfile;
+            enteredKeyId = Console.ReadLine();
 
-            start:
+            if (!string.IsNullOrEmpty(enteredKeyId))
+                enteredKeyId = enteredKeyId.Trim();
+        } while (!(validKeyId = _inputValidator.TryValidateKeyId(enteredKeyId, out _, out _)));
 
-            string enteredKeyId = GetKeyId();
-            byte[] accessKey = GetAccessKey();
-            IRegionInfo region = GetRegion();
+        return enteredKeyId!;
+    }
 
-            Console.WriteLine();
-            Console.WriteLine("Please confirm the following information:");
-            Console.WriteLine("Key id: " + enteredKeyId);
-            Console.WriteLine("Region: " + region.Code + " -- " + region.Name);
-            Console.WriteLine();
+    private byte[] GetAccessKey()
+    {
+        char[]? enteredAccessKey = null;
+        byte[]? utf8AccessKey = null;
+        bool validAccessKey = true;
 
-            ConsoleKey key;
+        Console.WriteLine();
+        Console.WriteLine("Enter your access key - Example: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
 
-            do
+        do
+        {
+            if (!validAccessKey)
             {
-                Console.WriteLine("Is it correct? Y/N");
-
-                key = Console.ReadKey(true).Key;
-            } while (key != ConsoleKey.Y && key != ConsoleKey.N);
-
-            if (key == ConsoleKey.N)
-                goto start;
-
-            IProfile profile = _profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region.Code, persist);
-
-            if (persist)
-            {
-                if (!string.IsNullOrEmpty(profile.Location))
-                    Console.WriteLine("Successfully saved the profile to " + profile.Location);
-                else
-                    Console.WriteLine("Successfully saved profile");
+                Console.Error.WriteLine("Invalid access key. Try again.");
+                Array.Clear(enteredAccessKey!, 0, enteredAccessKey!.Length);
+                Array.Clear(utf8AccessKey!, 0, utf8AccessKey!.Length);
             }
 
-            //Clear the access key from memory
-            Array.Clear(accessKey, 0, accessKey.Length);
+            enteredAccessKey = ConsoleHelper.ReadSecret(40);
 
-            return profile;
-        }
+            //Now we trim any whitespace characters the user might have entered
 
-        private string GetKeyId()
-        {
-            string? enteredKeyId;
-            bool validKeyId = true;
+            int end;
+            int start;
 
-            Console.WriteLine();
-            Console.WriteLine("Enter your key id - Example: AKIAIOSFODNN7EXAMPLE");
-
-            do
+            for (start = 0; start < enteredAccessKey.Length;)
             {
-                if (!validKeyId)
-                    Console.Error.WriteLine("Invalid key id. Try again.");
+                if (!char.IsWhiteSpace(enteredAccessKey[start]))
+                    break;
 
-                enteredKeyId = Console.ReadLine();
-
-                if (!string.IsNullOrEmpty(enteredKeyId))
-                    enteredKeyId = enteredKeyId.Trim();
-            } while (!(validKeyId = _inputValidator.TryValidateKeyId(enteredKeyId, out _, out _)));
-
-            return enteredKeyId!;
-        }
-
-        private byte[] GetAccessKey()
-        {
-            char[]? enteredAccessKey = null;
-            byte[]? utf8AccessKey = null;
-            bool validAccessKey = true;
-
-            Console.WriteLine();
-            Console.WriteLine("Enter your access key - Example: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
-
-            do
-            {
-                if (!validAccessKey)
-                {
-                    Console.Error.WriteLine("Invalid access key. Try again.");
-                    Array.Clear(enteredAccessKey!, 0, enteredAccessKey!.Length);
-                    Array.Clear(utf8AccessKey!, 0, utf8AccessKey!.Length);
-                }
-
-                enteredAccessKey = ConsoleHelper.ReadSecret(40);
-
-                //Now we trim any whitespace characters the user might have entered
-
-                int end;
-                int start;
-
-                for (start = 0; start < enteredAccessKey.Length;)
-                {
-                    if (!char.IsWhiteSpace(enteredAccessKey[start]))
-                        break;
-
-                    start++;
-                }
-
-                for (end = enteredAccessKey.Length - 1; end >= start; end--)
-                {
-                    if (!char.IsWhiteSpace(enteredAccessKey[end]))
-                        break;
-                }
-
-                if (start != 0 || end != enteredAccessKey.Length - 1)
-                {
-                    char[] trimmed = new char[end + 1 - start];
-
-                    int count = 0;
-                    for (int i = start; i < end + 1; i++, count++)
-                    {
-                        trimmed[count] = enteredAccessKey[i];
-                    }
-
-                    Array.Clear(enteredAccessKey, 0, enteredAccessKey.Length);
-
-                    enteredAccessKey = trimmed;
-                }
-
-                utf8AccessKey = Encoding.UTF8.GetBytes(enteredAccessKey);
-            } while (!(validAccessKey = _inputValidator.TryValidateAccessKey(utf8AccessKey, out _, out _)));
-
-            //Clear the access key from memory
-            Array.Clear(enteredAccessKey, 0, enteredAccessKey.Length);
-
-            return utf8AccessKey;
-        }
-
-        private IRegionInfo GetRegion()
-        {
-            Console.WriteLine();
-            Console.WriteLine("Choose the default region. You can choose it by index or region code");
-
-            HashSet<string> validRegionId = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            int counter = 0; //used for validation further down
-
-            Console.WriteLine("{0,-8}{1,-20}{2}", "Index", "Region Code", "Region Name");
-            foreach (IRegionInfo regionInfo in _regionData.GetRegions())
-            {
-                validRegionId.Add(regionInfo.Code);
-                Console.WriteLine("{0,-8}{1,-20}{2}", Convert.ChangeType(regionInfo.EnumValue, typeof(int), NumberFormatInfo.InvariantInfo), regionInfo.Code, regionInfo.Name);
-
-                counter++;
+                start++;
             }
 
-            start2:
-            string? enteredRegion = Console.ReadLine();
-
-            if (enteredRegion != null)
+            for (end = enteredAccessKey.Length - 1; end >= start; end--)
             {
-                if (int.TryParse(enteredRegion, out int index) && index >= 0 && index <= counter)
-                    return _regionConverter.GetRegion(index);
-
-                if (validRegionId.Contains(enteredRegion))
-                    return _regionConverter.GetRegion(enteredRegion);
+                if (!char.IsWhiteSpace(enteredAccessKey[end]))
+                    break;
             }
 
-            Console.Error.WriteLine("Invalid region. Try again.");
-            goto start2;
+            if (start != 0 || end != enteredAccessKey.Length - 1)
+            {
+                char[] trimmed = new char[end + 1 - start];
+
+                int count = 0;
+                for (int i = start; i < end + 1; i++, count++)
+                {
+                    trimmed[count] = enteredAccessKey[i];
+                }
+
+                Array.Clear(enteredAccessKey, 0, enteredAccessKey.Length);
+
+                enteredAccessKey = trimmed;
+            }
+
+            utf8AccessKey = Encoding.UTF8.GetBytes(enteredAccessKey);
+        } while (!(validAccessKey = _inputValidator.TryValidateAccessKey(utf8AccessKey, out _, out _)));
+
+        //Clear the access key from memory
+        Array.Clear(enteredAccessKey, 0, enteredAccessKey.Length);
+
+        return utf8AccessKey;
+    }
+
+    private IRegionInfo GetRegion()
+    {
+        Console.WriteLine();
+        Console.WriteLine("Choose the default region. You can choose it by index or region code");
+
+        HashSet<string> validRegionId = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        int counter = 0; //used for validation further down
+
+        Console.WriteLine("{0,-8}{1,-20}{2}", "Index", "Region Code", "Region Name");
+        foreach (IRegionInfo regionInfo in _regionData.GetRegions())
+        {
+            validRegionId.Add(regionInfo.Code);
+            Console.WriteLine("{0,-8}{1,-20}{2}", Convert.ChangeType(regionInfo.EnumValue, typeof(int), NumberFormatInfo.InvariantInfo), regionInfo.Code, regionInfo.Name);
+
+            counter++;
         }
+
+        start2:
+        string? enteredRegion = Console.ReadLine();
+
+        if (enteredRegion != null)
+        {
+            if (int.TryParse(enteredRegion, out int index) && index >= 0 && index <= counter)
+                return _regionConverter.GetRegion(index);
+
+            if (validRegionId.Contains(enteredRegion))
+                return _regionConverter.GetRegion(enteredRegion);
+        }
+
+        Console.Error.WriteLine("Invalid region. Try again.");
+        goto start2;
     }
 }

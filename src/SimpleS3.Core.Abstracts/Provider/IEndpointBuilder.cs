@@ -1,9 +1,8 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Request;
 
-namespace Genbox.SimpleS3.Core.Abstracts.Provider
+namespace Genbox.SimpleS3.Core.Abstracts.Provider;
+
+public interface IEndpointBuilder
 {
-    public interface IEndpointBuilder
-    {
-        IEndpointData GetEndpoint(IRequest request);
-    }
+    IEndpointData GetEndpoint(IRequest request);
 }

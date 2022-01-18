@@ -2,21 +2,20 @@
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using JetBrains.Annotations;
 
-namespace Genbox.SimpleS3.Core.Network.Responses.Errors
+namespace Genbox.SimpleS3.Core.Network.Responses.Errors;
+
+[PublicAPI]
+public class InvalidBucketNameError : GenericError
 {
-    [PublicAPI]
-    public class InvalidBucketNameError : GenericError
+    internal InvalidBucketNameError(IDictionary<string, string> lookup) : base(lookup)
     {
-        internal InvalidBucketNameError(IDictionary<string, string> lookup) : base(lookup)
-        {
-            BucketName = lookup.GetOptionalValue("BucketName");
-        }
+        BucketName = lookup.GetOptionalValue("BucketName");
+    }
 
-        public string? BucketName { get; }
+    public string? BucketName { get; }
 
-        public override string GetErrorDetails()
-        {
-            return "BucketName: " + BucketName;
-        }
+    public override string GetErrorDetails()
+    {
+        return "BucketName: " + BucketName;
     }
 }

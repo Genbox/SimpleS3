@@ -5,39 +5,38 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit.Sdk;
 
-namespace Genbox.ProviderTests.Misc
+namespace Genbox.ProviderTests.Misc;
+
+public sealed class MultipleProvidersAttribute : DataAttribute
 {
-    public sealed class MultipleProvidersAttribute : DataAttribute
+    private readonly object[] _otherData;
+    private readonly S3Provider _providers;
+    private bool _shouldSkip;
+
+    public MultipleProvidersAttribute(S3Provider providers, params object[] otherData)
     {
-        private readonly object[] _otherData;
-        private readonly S3Provider _providers;
-        private bool _shouldSkip;
+        _providers = providers;
+        _otherData = otherData;
+    }
 
-        public MultipleProvidersAttribute(S3Provider providers, params object[] otherData)
+    public override string? Skip => _shouldSkip ? "Not supported" : null;
+
+    public override IEnumerable<object?[]> GetData(MethodInfo testMethod)
+    {
+        foreach ((S3Provider provider, IProfile profile, ISimpleClient client) in ProviderSetup.Instance.Clients)
         {
-            _providers = providers;
-            _otherData = otherData;
-        }
+            _shouldSkip = !_providers.HasFlag(provider);
+            string bucket = UtilityHelper.GetTestBucket(profile);
 
-        public override string? Skip => _shouldSkip ? "Not supported" : null;
-
-        public override IEnumerable<object?[]> GetData(MethodInfo testMethod)
-        {
-            foreach ((S3Provider provider, IProfile profile, ISimpleClient client) in ProviderSetup.Instance.Clients)
+            if (_otherData.Length > 0)
             {
-                _shouldSkip = !_providers.HasFlag(provider);
-                string bucket = UtilityHelper.GetTestBucket(profile);
-
-                if (_otherData.Length > 0)
+                foreach (object o in _otherData)
                 {
-                    foreach (object o in _otherData)
-                    {
-                        yield return new[] { provider, bucket, client, o };
-                    }
+                    yield return new[] { provider, bucket, client, o };
                 }
-                else
-                    yield return new object?[] { provider, bucket, client };
             }
+            else
+                yield return new object?[] { provider, bucket, client };
         }
     }
 }

@@ -2,68 +2,67 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Genbox.SimpleS3.Core.Common.Helpers
+namespace Genbox.SimpleS3.Core.Common.Helpers;
+
+public static class CryptoHelper
 {
-    public static class CryptoHelper
+    [ThreadStatic]
+    private static HashAlgorithm? _sha256Cache;
+
+    [ThreadStatic]
+    private static HashAlgorithm? _md5Cache;
+
+    private static HashAlgorithm Sha256 => _sha256Cache ??= SHA256.Create();
+    private static HashAlgorithm Md5 => _md5Cache ??= MD5.Create();
+
+    public static byte[] Sha256Hash(byte[] data)
     {
-        [ThreadStatic]
-        private static HashAlgorithm? _sha256Cache;
+        return Sha256.ComputeHash(data);
+    }
 
-        [ThreadStatic]
-        private static HashAlgorithm? _md5Cache;
+    public static byte[] Sha256Hash(byte[] data, int offset, int length)
+    {
+        return Sha256.ComputeHash(data, offset, length);
+    }
 
-        private static HashAlgorithm Sha256 => _sha256Cache ??= SHA256.Create();
-        private static HashAlgorithm Md5 => _md5Cache ??= MD5.Create();
+    public static byte[] Sha256Hash(Stream data, bool restorePosition)
+    {
+        long position = 0;
 
-        public static byte[] Sha256Hash(byte[] data)
-        {
-            return Sha256.ComputeHash(data);
-        }
+        if (restorePosition)
+            position = data.Position;
 
-        public static byte[] Sha256Hash(byte[] data, int offset, int length)
-        {
-            return Sha256.ComputeHash(data, offset, length);
-        }
+        byte[] hash = Sha256.ComputeHash(data);
 
-        public static byte[] Sha256Hash(Stream data, bool restorePosition)
-        {
-            long position = 0;
+        if (restorePosition)
+            data.Position = position;
 
-            if (restorePosition)
-                position = data.Position;
+        return hash;
+    }
 
-            byte[] hash = Sha256.ComputeHash(data);
+    public static byte[] Md5Hash(byte[] data)
+    {
+        return Md5.ComputeHash(data);
+    }
 
-            if (restorePosition)
-                data.Position = position;
+    public static byte[] Md5Hash(Stream data, bool restorePosition)
+    {
+        long position = 0;
 
-            return hash;
-        }
+        if (restorePosition)
+            position = data.Position;
 
-        public static byte[] Md5Hash(byte[] data)
-        {
-            return Md5.ComputeHash(data);
-        }
+        byte[] hash = Md5.ComputeHash(data);
 
-        public static byte[] Md5Hash(Stream data, bool restorePosition)
-        {
-            long position = 0;
+        if (restorePosition)
+            data.Position = position;
 
-            if (restorePosition)
-                position = data.Position;
+        return hash;
+    }
 
-            byte[] hash = Md5.ComputeHash(data);
-
-            if (restorePosition)
-                data.Position = position;
-
-            return hash;
-        }
-
-        public static byte[] HmacSign(byte[] data, byte[] key)
-        {
-            using (KeyedHashAlgorithm algorithm = new HMACSHA256(key))
-                return algorithm.ComputeHash(data);
-        }
+    public static byte[] HmacSign(byte[] data, byte[] key)
+    {
+        using (KeyedHashAlgorithm algorithm = new HMACSHA256(key))
+            return algorithm.ComputeHash(data);
     }
 }

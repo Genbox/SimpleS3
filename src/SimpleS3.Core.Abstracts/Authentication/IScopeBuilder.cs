@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Genbox.SimpleS3.Core.Abstracts.Authentication
+namespace Genbox.SimpleS3.Core.Abstracts.Authentication;
+
+public interface IScopeBuilder
 {
-    public interface IScopeBuilder
-    {
-        string CreateScope(string service, DateTimeOffset date);
-    }
+    string CreateScope(string service, DateTimeOffset date);
 }

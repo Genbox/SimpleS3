@@ -1,18 +1,17 @@
 ﻿using Genbox.SimpleS3.Core.Common;
 
-namespace Genbox.SimpleS3.Core.Enums
+namespace Genbox.SimpleS3.Core.Enums;
+
+public enum HeaderUsage
 {
-    public enum HeaderUsage
-    {
-        Unknown = 0,
+    Unknown = 0,
 
-        [EnumValue("NONE")]
-        None,
+    [EnumValue("NONE")]
+    None,
 
-        [EnumValue("IGNORE")]
-        Ignore,
+    [EnumValue("IGNORE")]
+    Ignore,
 
-        [EnumValue("USE")]
-        Use
-    }
+    [EnumValue("USE")]
+    Use
 }

@@ -4,14 +4,13 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
-namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
+namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
+
+internal class GetBucketLockConfigurationRequestMarshal : IRequestMarshal<GetBucketLockConfigurationRequest>
 {
-    internal class GetBucketLockConfigurationRequestMarshal : IRequestMarshal<GetBucketLockConfigurationRequest>
+    public Stream? MarshalRequest(GetBucketLockConfigurationRequest request, SimpleS3Config config)
     {
-        public Stream? MarshalRequest(GetBucketLockConfigurationRequest request, SimpleS3Config config)
-        {
-            request.SetQueryParameter(AmzParameters.ObjectLock, string.Empty);
-            return null;
-        }
+        request.SetQueryParameter(AmzParameters.ObjectLock, string.Empty);
+        return null;
     }
 }

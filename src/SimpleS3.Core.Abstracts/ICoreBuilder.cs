@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.SimpleS3.Core.Abstracts
+namespace Genbox.SimpleS3.Core.Abstracts;
+
+public interface ICoreBuilder
 {
-    public interface ICoreBuilder
-    {
-        IServiceCollection Services { get; }
-    }
+    IServiceCollection Services { get; }
 }

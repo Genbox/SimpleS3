@@ -8,63 +8,62 @@ using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
-namespace Genbox.SimpleS3.Core.Internals.Clients
+namespace Genbox.SimpleS3.Core.Internals.Clients;
+
+internal class MultipartClient : IMultipartClient
 {
-    internal class MultipartClient : IMultipartClient
+    private readonly IMultipartOperations _multipartOperations;
+
+    public MultipartClient(IMultipartOperations multipartOperations)
     {
-        private readonly IMultipartOperations _multipartOperations;
+        _multipartOperations = multipartOperations;
+    }
 
-        public MultipartClient(IMultipartOperations multipartOperations)
-        {
-            _multipartOperations = multipartOperations;
-        }
+    public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default)
+    {
+        CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, objectKey);
+        config?.Invoke(req);
 
-        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default)
-        {
-            CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, objectKey);
-            config?.Invoke(req);
+        return _multipartOperations.CreateMultipartUploadAsync(req, token);
+    }
 
-            return _multipartOperations.CreateMultipartUploadAsync(req, token);
-        }
+    public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default)
+    {
+        UploadPartRequest req = new UploadPartRequest(bucketName, objectKey, partNumber, uploadId, content);
+        config?.Invoke(req);
 
-        public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default)
-        {
-            UploadPartRequest req = new UploadPartRequest(bucketName, objectKey, partNumber, uploadId, content);
-            config?.Invoke(req);
+        return _multipartOperations.UploadPartAsync(req, token);
+    }
 
-            return _multipartOperations.UploadPartAsync(req, token);
-        }
+    public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default)
+    {
+        ListPartsRequest req = new ListPartsRequest(bucketName, objectKey, uploadId);
+        config?.Invoke(req);
 
-        public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default)
-        {
-            ListPartsRequest req = new ListPartsRequest(bucketName, objectKey, uploadId);
-            config?.Invoke(req);
+        return _multipartOperations.ListPartsAsync(req, token);
+    }
 
-            return _multipartOperations.ListPartsAsync(req, token);
-        }
+    public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default)
+    {
+        CompleteMultipartUploadRequest req = new CompleteMultipartUploadRequest(bucketName, objectKey, uploadId, parts);
+        config?.Invoke(req);
 
-        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default)
-        {
-            CompleteMultipartUploadRequest req = new CompleteMultipartUploadRequest(bucketName, objectKey, uploadId, parts);
-            config?.Invoke(req);
+        return _multipartOperations.CompleteMultipartUploadAsync(req, token);
+    }
 
-            return _multipartOperations.CompleteMultipartUploadAsync(req, token);
-        }
+    public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default)
+    {
+        AbortMultipartUploadRequest req = new AbortMultipartUploadRequest(bucketName, objectKey, uploadId);
+        config?.Invoke(req);
 
-        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default)
-        {
-            AbortMultipartUploadRequest req = new AbortMultipartUploadRequest(bucketName, objectKey, uploadId);
-            config?.Invoke(req);
+        return _multipartOperations.AbortMultipartUploadAsync(req, token);
+    }
 
-            return _multipartOperations.AbortMultipartUploadAsync(req, token);
-        }
+    public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default)
+    {
+        ListMultipartUploadsRequest request = new ListMultipartUploadsRequest(bucketName);
+        config?.Invoke(request);
 
-        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default)
-        {
-            ListMultipartUploadsRequest request = new ListMultipartUploadsRequest(bucketName);
-            config?.Invoke(request);
-
-            return _multipartOperations.ListMultipartUploadsAsync(request, token);
-        }
+        return _multipartOperations.ListMultipartUploadsAsync(request, token);
     }
 }

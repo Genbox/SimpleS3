@@ -15,66 +15,65 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Genbox.SimpleS3.Core.Tests.OfflineTests
+namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
+
+/// <summary>Tests when the requests time out</summary>
+public class TimeoutTests : OfflineTestBase
 {
-    /// <summary>Tests when the requests time out</summary>
-    public class TimeoutTests : OfflineTestBase
+    private readonly BaseFailingHttpHandler _handler = new SlowHttpHandler(2, TimeSpan.FromSeconds(5));
+
+    public TimeoutTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+
+    protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
     {
-        private readonly BaseFailingHttpHandler _handler = new SlowHttpHandler(2, TimeSpan.FromSeconds(5));
+        coreBuilder.UseHttpClientFactory()
+            .ConfigurePrimaryHttpMessageHandler(() => _handler)
+            .UseRetryPolicy(3, attempt => TimeSpan.Zero)
 
-        public TimeoutTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+            // Set an extraordinary timeout
+            .UseTimeoutPolicy(TimeSpan.FromSeconds(3));
 
-        protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
-        {
-            coreBuilder.UseHttpClientFactory()
-                       .ConfigurePrimaryHttpMessageHandler(() => _handler)
-                       .UseRetryPolicy(3, attempt => TimeSpan.Zero)
+        base.ConfigureCoreBuilder(coreBuilder, configuration);
+    }
 
-                       // Set an extraordinary timeout
-                       .UseTimeoutPolicy(TimeSpan.FromSeconds(3));
+    [Fact]
+    public async Task TestClientCancellationToken()
+    {
+        using MemoryStream ms = new MemoryStream(new byte[4096]);
+        using CancellationTokenSource tcs = new CancellationTokenSource();
 
-            base.ConfigureCoreBuilder(coreBuilder, configuration);
-        }
+        Task<PutObjectResponse> task = ObjectClient.PutObjectAsync(BucketName, nameof(TestClientCancellationToken), ms, token: tcs.Token);
+        tcs.CancelAfter(500);
 
-        [Fact]
-        public async Task TestClientCancellationToken()
-        {
-            using MemoryStream ms = new MemoryStream(new byte[4096]);
-            using CancellationTokenSource tcs = new CancellationTokenSource();
+        Stopwatch sw = Stopwatch.StartNew();
+        await Assert.ThrowsAsync<TaskCanceledException>(async () => await task.ConfigureAwait(false)).ConfigureAwait(false);
+        sw.Stop();
 
-            Task<PutObjectResponse> task = ObjectClient.PutObjectAsync(BucketName, nameof(TestClientCancellationToken), ms, token: tcs.Token);
-            tcs.CancelAfter(500);
+        // We should have canceled within 750ms
+        Assert.True(sw.ElapsedMilliseconds < 750);
+    }
 
-            Stopwatch sw = Stopwatch.StartNew();
-            await Assert.ThrowsAsync<TaskCanceledException>(async () => await task.ConfigureAwait(false)).ConfigureAwait(false);
-            sw.Stop();
+    [Fact]
+    public async Task TestTimeoutError()
+    {
+        using MemoryStream ms = new MemoryStream(new byte[4096]);
 
-            // We should have canceled within 750ms
-            Assert.True(sw.ElapsedMilliseconds < 750);
-        }
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError), ms).ConfigureAwait(false);
 
-        [Fact]
-        public async Task TestTimeoutError()
-        {
-            using MemoryStream ms = new MemoryStream(new byte[4096]);
+        // Request should succeed after N tries
+        Assert.True(response.IsSuccess);
+        Assert.Equal(2, _handler.RequestCounter);
+    }
 
-            PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError), ms).ConfigureAwait(false);
+    [Fact]
+    public async Task TestTimeoutError_NonSeekableStream()
+    {
+        using NonSeekableStream ms = new NonSeekableStream(new byte[4096]);
 
-            // Request should succeed after N tries
-            Assert.True(response.IsSuccess);
-            Assert.Equal(2, _handler.RequestCounter);
-        }
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError_NonSeekableStream), ms).ConfigureAwait(false);
 
-        [Fact]
-        public async Task TestTimeoutError_NonSeekableStream()
-        {
-            using NonSeekableStream ms = new NonSeekableStream(new byte[4096]);
-
-            PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError_NonSeekableStream), ms).ConfigureAwait(false);
-
-            // Request should succeed after N tries
-            Assert.True(response.IsSuccess);
-            Assert.Equal(2, _handler.RequestCounter);
-        }
+        // Request should succeed after N tries
+        Assert.True(response.IsSuccess);
+        Assert.Equal(2, _handler.RequestCounter);
     }
 }

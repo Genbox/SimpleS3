@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Genbox.SimpleS3.Core.Abstracts.Request
+namespace Genbox.SimpleS3.Core.Abstracts.Request;
+
+public interface ISignedRequestHandler
 {
-    public interface ISignedRequestHandler
-    {
-        string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest;
-    }
+    string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest;
 }

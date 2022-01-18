@@ -1,8 +1,7 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Authentication
+﻿namespace Genbox.SimpleS3.Core.Abstracts.Authentication;
+
+public interface IAccessKeyProtector
 {
-    public interface IAccessKeyProtector
-    {
-        byte[] ProtectKey(byte[] key);
-        byte[] UnprotectKey(byte[] key);
-    }
+    byte[] ProtectKey(byte[] key);
+    byte[] UnprotectKey(byte[] key);
 }

@@ -1,12 +1,11 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums
+﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums;
+
+public enum ValidationStatus
 {
-    public enum ValidationStatus
-    {
-        Unknown = 0,
-        Ok,
-        NullInput,
-        WrongLength,
-        WrongFormat,
-        ReservedName
-    }
+    Unknown = 0,
+    Ok,
+    NullInput,
+    WrongLength,
+    WrongFormat,
+    ReservedName
 }

@@ -7,22 +7,21 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup;
 using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions
+namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
+
+public static class CoreBuilderExtensions
 {
-    public static class CoreBuilderExtensions
+    /// <summary>Adds a profile manager that is configured to use the disk for storage and JSON for serialization</summary>
+    public static IProfileManagerBuilder UseProfileManager(this ICoreBuilder builder, Action<DiskStorageOptions>? config = null)
     {
-        /// <summary>Adds a profile manager that is configured to use the disk for storage and JSON for serialization</summary>
-        public static IProfileManagerBuilder UseProfileManager(this ICoreBuilder builder, Action<DiskStorageOptions>? config = null)
-        {
-            builder.Services.AddSingleton<IProfileSetup, ConsoleProfileSetup>();
-            builder.Services.AddSingleton<IProfileManager, ProfileManager>();
-            builder.Services.AddSingleton<IStorage, DiskStorage>();
-            builder.Services.AddSingleton<IProfileSerializer, JsonProfileSerializer>();
+        builder.Services.AddSingleton<IProfileSetup, ConsoleProfileSetup>();
+        builder.Services.AddSingleton<IProfileManager, ProfileManager>();
+        builder.Services.AddSingleton<IStorage, DiskStorage>();
+        builder.Services.AddSingleton<IProfileSerializer, JsonProfileSerializer>();
 
-            if (config != null)
-                builder.Services.Configure(config);
+        if (config != null)
+            builder.Services.Configure(config);
 
-            return new ProfileManagerBuilder(builder.Services);
-        }
+        return new ProfileManagerBuilder(builder.Services);
     }
 }

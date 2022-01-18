@@ -5,34 +5,33 @@ using System.Threading;
 using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Common.Validation;
 
-namespace Genbox.SimpleS3.Core.Tests.Code.Handlers
+namespace Genbox.SimpleS3.Core.Tests.Code.Handlers;
+
+/// <summary>HTTP handler that delays all request, except each N requests</summary>
+internal class SlowHttpHandler : BaseFailingHttpHandler
 {
-    /// <summary>HTTP handler that delays all request, except each N requests</summary>
-    internal class SlowHttpHandler : BaseFailingHttpHandler
+    private readonly TimeSpan _delay;
+    private readonly int _successRate;
+
+    public SlowHttpHandler(int successRate, TimeSpan delay)
     {
-        private readonly TimeSpan _delay;
-        private readonly int _successRate;
+        Validator.RequireThat(successRate >= 1, nameof(successRate), "successRate must be greater than or equal 1");
 
-        public SlowHttpHandler(int successRate, TimeSpan delay)
-        {
-            Validator.RequireThat(successRate >= 1, nameof(successRate), "successRate must be greater than or equal 1");
+        _successRate = successRate;
+        _delay = delay;
+    }
 
-            _successRate = successRate;
-            _delay = delay;
-        }
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        await ConsumeRequestAsync(request).ConfigureAwait(false);
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            await ConsumeRequestAsync(request).ConfigureAwait(false);
+        // After N requests we should succeed
+        if (++RequestCounter % _successRate == 0)
+            return CreateResponse(request, HttpStatusCode.OK);
 
-            // After N requests we should succeed
-            if (++RequestCounter % _successRate == 0)
-                return CreateResponse(request, HttpStatusCode.OK);
+        // Delay for some time to let timeout occur
+        await Task.Delay(_delay, cancellationToken).ConfigureAwait(false);
 
-            // Delay for some time to let timeout occur
-            await Task.Delay(_delay, cancellationToken).ConfigureAwait(false);
-
-            return CreateResponse(request, HttpStatusCode.RequestTimeout);
-        }
+        return CreateResponse(request, HttpStatusCode.RequestTimeout);
     }
 }

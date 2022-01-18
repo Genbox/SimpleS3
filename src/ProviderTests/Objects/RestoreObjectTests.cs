@@ -9,56 +9,55 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit;
 
-namespace Genbox.ProviderTests.Objects
+namespace Genbox.ProviderTests.Objects;
+
+public class RestoreObjectTests : TestBase
 {
-    public class RestoreObjectTests : TestBase
+    [Theory]
+    [MultipleProviders(S3Provider.AmazonS3)]
+    public async Task Restore(S3Provider _, string bucket, ISimpleClient client)
     {
-        [Theory]
-        [MultipleProviders(S3Provider.AmazonS3)]
-        public async Task Restore(S3Provider _, string bucket, ISimpleClient client)
+        //Upload an object to glacier
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(Restore), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
+        Assert.Equal(StorageClass.Glacier, putResp.StorageClass);
+
+        RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(Restore), r => r.Days = 2).ConfigureAwait(false);
+
+        Assert.Equal(202, restoreResp.StatusCode);
+    }
+
+    [Theory(Skip = "Amazon Glacier retrievals are too often offline for this test to pass.")]
+    [MultipleProviders(S3Provider.AmazonS3)]
+    public async Task RestoreWithSelect(S3Provider _, string bucket, ISimpleClient client)
+    {
+        await using (StringWriter sw = new StringWriter())
         {
-            //Upload an object to glacier
-            PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(Restore), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
-            Assert.Equal(StorageClass.Glacier, putResp.StorageClass);
+            sw.WriteLine("name,age,status");
+            sw.WriteLine("santa,800,missing");
+            sw.WriteLine("\"donald trump\",7,present");
+            sw.WriteLine("fantastic fox,31,missing");
 
-            RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(Restore), r => r.Days = 2).ConfigureAwait(false);
-
-            Assert.Equal(202, restoreResp.StatusCode);
+            await client.PutObjectStringAsync(bucket, nameof(RestoreWithSelect), sw.ToString(), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
         }
 
-        [Theory(Skip = "Amazon Glacier retrievals are too often offline for this test to pass.")]
-        [MultipleProviders(S3Provider.AmazonS3)]
-        public async Task RestoreWithSelect(S3Provider _, string bucket, ISimpleClient client)
+        RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(RestoreWithSelect), r =>
         {
-            await using (StringWriter sw = new StringWriter())
-            {
-                sw.WriteLine("name,age,status");
-                sw.WriteLine("santa,800,missing");
-                sw.WriteLine("\"donald trump\",7,present");
-                sw.WriteLine("fantastic fox,31,missing");
+            r.RequestType = RestoreRequestType.Select;
+            r.Description = "This is a description";
+            r.RequestTier = RetrievalTier.Standard;
 
-                await client.PutObjectStringAsync(bucket, nameof(RestoreWithSelect), sw.ToString(), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
-            }
+            S3CsvInputFormat inputFormat = new S3CsvInputFormat();
+            inputFormat.HeaderUsage = HeaderUsage.Use;
 
-            RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(RestoreWithSelect), r =>
-            {
-                r.RequestType = RestoreRequestType.Select;
-                r.Description = "This is a description";
-                r.RequestTier = RetrievalTier.Standard;
+            S3CsvOutputFormat outputFormat = new S3CsvOutputFormat();
+            r.SelectParameters = new S3SelectParameters("SELECT * FROM object WHERE age > 7", inputFormat, outputFormat);
 
-                S3CsvInputFormat inputFormat = new S3CsvInputFormat();
-                inputFormat.HeaderUsage = HeaderUsage.Use;
+            r.OutputLocation = new S3OutputLocation(bucket, "outputJob");
+            r.OutputLocation.StorageClass = StorageClass.Standard;
+        }).ConfigureAwait(false);
 
-                S3CsvOutputFormat outputFormat = new S3CsvOutputFormat();
-                r.SelectParameters = new S3SelectParameters("SELECT * FROM object WHERE age > 7", inputFormat, outputFormat);
+        Assert.Equal(202, restoreResp.StatusCode);
 
-                r.OutputLocation = new S3OutputLocation(bucket, "outputJob");
-                r.OutputLocation.StorageClass = StorageClass.Standard;
-            }).ConfigureAwait(false);
-
-            Assert.Equal(202, restoreResp.StatusCode);
-
-            //TODO: List objects beneath outputJob/* and GET file to determine if format is correct
-        }
+        //TODO: List objects beneath outputJob/* and GET file to determine if format is correct
     }
 }

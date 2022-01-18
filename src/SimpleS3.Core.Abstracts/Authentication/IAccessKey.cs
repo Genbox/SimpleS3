@@ -1,8 +1,7 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Authentication
+﻿namespace Genbox.SimpleS3.Core.Abstracts.Authentication;
+
+public interface IAccessKey
 {
-    public interface IAccessKey
-    {
-        string KeyId { get; }
-        byte[] SecretKey { get; }
-    }
+    string KeyId { get; }
+    byte[] SecretKey { get; }
 }

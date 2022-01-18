@@ -1,16 +1,15 @@
 ﻿using System;
 
-namespace Genbox.SimpleS3.Utility.Shared
-{
-    [Flags]
-    public enum S3Provider
-    {
-        Unknown = 0,
-        AmazonS3 = 1,
-        BackBlazeB2 = 2,
-        GoogleCloudStorage = 4,
-        Wasabi = 8,
+namespace Genbox.SimpleS3.Utility.Shared;
 
-        All = int.MaxValue
-    }
+[Flags]
+public enum S3Provider
+{
+    Unknown = 0,
+    AmazonS3 = 1,
+    BackBlazeB2 = 2,
+    GoogleCloudStorage = 4,
+    Wasabi = 8,
+
+    All = int.MaxValue
 }

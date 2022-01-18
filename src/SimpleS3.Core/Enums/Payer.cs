@@ -1,9 +1,8 @@
-﻿namespace Genbox.SimpleS3.Core.Enums
+﻿namespace Genbox.SimpleS3.Core.Enums;
+
+public enum Payer
 {
-    public enum Payer
-    {
-        Unknown = 0,
-        Requester,
-        Me
-    }
+    Unknown = 0,
+    Requester,
+    Me
 }

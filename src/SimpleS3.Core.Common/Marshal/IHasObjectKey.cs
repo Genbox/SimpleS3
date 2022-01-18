@@ -1,7 +1,6 @@
-﻿namespace Genbox.SimpleS3.Core.Common.Marshal
+﻿namespace Genbox.SimpleS3.Core.Common.Marshal;
+
+public interface IHasObjectKey
 {
-    public interface IHasObjectKey
-    {
-        string ObjectKey { get; }
-    }
+    string ObjectKey { get; }
 }

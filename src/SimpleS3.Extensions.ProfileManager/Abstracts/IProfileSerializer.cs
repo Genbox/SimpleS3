@@ -1,8 +1,7 @@
-﻿namespace Genbox.SimpleS3.Extensions.ProfileManager.Abstracts
+﻿namespace Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
+
+public interface IProfileSerializer
 {
-    public interface IProfileSerializer
-    {
-        byte[] Serialize<T>(T profile) where T : IProfile;
-        T Deserialize<T>(byte[] data) where T : IProfile;
-    }
+    byte[] Serialize<T>(T profile) where T : IProfile;
+    T Deserialize<T>(byte[] data) where T : IProfile;
 }

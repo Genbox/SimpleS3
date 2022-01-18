@@ -4,35 +4,34 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Genbox.SimpleS3.Core.TestBase.Helpers
+namespace Genbox.SimpleS3.Core.TestBase.Helpers;
+
+public static class ResourceHelper
 {
-    public static class ResourceHelper
+    public static IEnumerable<(string name, string content)> GetResources(Assembly assembly, string filter)
     {
-        public static IEnumerable<(string name, string content)> GetResources(Assembly assembly, string filter)
+        Regex regex = new Regex(filter, RegexOptions.Compiled);
+
+        foreach (string resourceName in assembly.GetManifestResourceNames())
         {
-            Regex regex = new Regex(filter, RegexOptions.Compiled);
+            if (!regex.IsMatch(resourceName))
+                continue;
 
-            foreach (string resourceName in assembly.GetManifestResourceNames())
-            {
-                if (!regex.IsMatch(resourceName))
-                    continue;
-
-                yield return (resourceName, GetResource(assembly, resourceName));
-            }
+            yield return (resourceName, GetResource(assembly, resourceName));
         }
+    }
 
-        public static string GetResource(Assembly assembly, string name)
+    public static string GetResource(Assembly assembly, string name)
+    {
+        using (MemoryStream ms = new MemoryStream())
+        using (Stream? s = assembly.GetManifestResourceStream(name))
         {
-            using (MemoryStream ms = new MemoryStream())
-            using (Stream? s = assembly.GetManifestResourceStream(name))
-            {
-                if (s == null)
-                    return string.Empty;
+            if (s == null)
+                return string.Empty;
 
-                s.CopyTo(ms);
+            s.CopyTo(ms);
 
-                return Encoding.UTF8.GetString(ms.ToArray());
-            }
+            return Encoding.UTF8.GetString(ms.ToArray());
         }
     }
 }

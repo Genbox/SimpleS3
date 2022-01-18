@@ -1,9 +1,8 @@
-﻿namespace Genbox.SimpleS3.Core.Internals.Xml
+﻿namespace Genbox.SimpleS3.Core.Internals.Xml;
+
+internal enum XmlStandard
 {
-    internal enum XmlStandard
-    {
-        Unknown = 0,
-        Xml10,
-        Xml11
-    }
+    Unknown = 0,
+    Xml10,
+    Xml11
 }

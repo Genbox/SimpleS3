@@ -1,10 +1,9 @@
-﻿namespace Genbox.SimpleS3.Core.Common
+﻿namespace Genbox.SimpleS3.Core.Common;
+
+public enum HttpVersion
 {
-    public enum HttpVersion
-    {
-        Unknown,
-        Http1,
-        Http2,
-        Http3
-    }
+    Unknown,
+    Http1,
+    Http2,
+    Http3
 }

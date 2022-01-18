@@ -8,19 +8,18 @@ using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
-namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
+namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart;
+
+internal class UploadPartResponseMarshal : IResponseMarshal<UploadPartResponse>
 {
-    internal class UploadPartResponseMarshal : IResponseMarshal<UploadPartResponse>
+    public void MarshalResponse(SimpleS3Config config, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
-        public void MarshalResponse(SimpleS3Config config, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)
-        {
-            response.ETag = headers.GetRequiredValue(HttpHeaders.ETag);
-            response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
-            response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
-            response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
-            response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSseCustomerAlgorithm);
-            response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
-            response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
-        }
+        response.ETag = headers.GetRequiredValue(HttpHeaders.ETag);
+        response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
+        response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
+        response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
+        response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSseCustomerAlgorithm);
+        response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
+        response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
     }
 }

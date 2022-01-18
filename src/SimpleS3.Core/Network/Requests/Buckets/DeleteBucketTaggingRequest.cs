@@ -1,26 +1,25 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Marshal;
 
-namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
+namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
+
+/// <summary>
+/// Deletes the tags from the bucket. o use this operation, you must have permission to perform the s3:PutBucketTagging action. By default, the
+/// bucket owner has this permission and can grant this permission to others.
+/// </summary>
+public class DeleteBucketTaggingRequest : BaseRequest, IHasBucketName
 {
-    /// <summary>
-    /// Deletes the tags from the bucket. o use this operation, you must have permission to perform the s3:PutBucketTagging action. By default, the
-    /// bucket owner has this permission and can grant this permission to others.
-    /// </summary>
-    public class DeleteBucketTaggingRequest : BaseRequest, IHasBucketName
+    internal DeleteBucketTaggingRequest() : base(HttpMethodType.DELETE) { }
+
+    public DeleteBucketTaggingRequest(string bucketName) : this()
     {
-        internal DeleteBucketTaggingRequest() : base(HttpMethodType.DELETE) { }
+        Initialize(bucketName);
+    }
 
-        public DeleteBucketTaggingRequest(string bucketName) : this()
-        {
-            Initialize(bucketName);
-        }
+    public string BucketName { get; set; }
 
-        public string BucketName { get; set; }
-
-        internal void Initialize(string bucketName)
-        {
-            BucketName = bucketName;
-        }
+    internal void Initialize(string bucketName)
+    {
+        BucketName = bucketName;
     }
 }

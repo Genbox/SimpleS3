@@ -1,27 +1,26 @@
 ﻿using System.Collections.Generic;
 
-namespace Genbox.SimpleS3.Core.Common.Extensions
+namespace Genbox.SimpleS3.Core.Common.Extensions;
+
+public static class EnumerableExtensions
 {
-    public static class EnumerableExtensions
+    public static IEnumerable<List<T>> Chunk<T>(this IEnumerable<T> enumerable, int chunkSize)
     {
-        public static IEnumerable<List<T>> Chunk<T>(this IEnumerable<T> enumerable, int chunkSize)
+        List<T> chunk = new List<T>(chunkSize);
+
+        foreach (T item in enumerable)
         {
-            List<T> chunk = new List<T>(chunkSize);
+            chunk.Add(item);
 
-            foreach (T item in enumerable)
+            if (chunk.Count == chunkSize)
             {
-                chunk.Add(item);
-
-                if (chunk.Count == chunkSize)
-                {
-                    yield return chunk;
-                    chunk = new List<T>(chunkSize);
-                }
-            }
-
-            //Last chunk
-            if (chunk.Count > 0)
                 yield return chunk;
+                chunk = new List<T>(chunkSize);
+            }
         }
+
+        //Last chunk
+        if (chunk.Count > 0)
+            yield return chunk;
     }
 }

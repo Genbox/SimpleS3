@@ -1,11 +1,10 @@
 ﻿using Genbox.SimpleS3.Core.Enums;
 
-namespace Genbox.SimpleS3.Core.Network.Requests.S3Types
-{
-    public abstract class S3InputFormat
-    {
-        public CompressionType CompressionType { get; set; }
+namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
-        internal abstract void Reset();
-    }
+public abstract class S3InputFormat
+{
+    public CompressionType CompressionType { get; set; }
+
+    internal abstract void Reset();
 }

@@ -1,9 +1,8 @@
-﻿namespace Genbox.SimpleS3.Core.Enums
+﻿namespace Genbox.SimpleS3.Core.Enums;
+
+public enum GrantType
 {
-    public enum GrantType
-    {
-        Unknown = 0,
-        Group,
-        CanonicalUser
-    }
+    Unknown = 0,
+    Group,
+    CanonicalUser
 }

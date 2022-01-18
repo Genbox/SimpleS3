@@ -1,7 +1,6 @@
-﻿namespace Genbox.SimpleS3.Core.Common.Marshal
+﻿namespace Genbox.SimpleS3.Core.Common.Marshal;
+
+public interface IHasBucketName
 {
-    public interface IHasBucketName
-    {
-        string BucketName { get; }
-    }
+    string BucketName { get; }
 }

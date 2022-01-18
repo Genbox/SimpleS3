@@ -1,26 +1,25 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Marshal;
 
-namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
+namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
+
+/// <summary>
+/// Deletes a bucket. All objects (including all object versions and delete markers) in the bucket must be deleted before the bucket itself can
+/// be deleted.
+/// </summary>
+public class DeleteBucketRequest : BaseRequest, IHasBucketName
 {
-    /// <summary>
-    /// Deletes a bucket. All objects (including all object versions and delete markers) in the bucket must be deleted before the bucket itself can
-    /// be deleted.
-    /// </summary>
-    public class DeleteBucketRequest : BaseRequest, IHasBucketName
+    internal DeleteBucketRequest() : base(HttpMethodType.DELETE) { }
+
+    public DeleteBucketRequest(string bucketName) : this()
     {
-        internal DeleteBucketRequest() : base(HttpMethodType.DELETE) { }
+        Initialize(bucketName);
+    }
 
-        public DeleteBucketRequest(string bucketName) : this()
-        {
-            Initialize(bucketName);
-        }
+    public string BucketName { get; set; }
 
-        public string BucketName { get; set; }
-
-        internal void Initialize(string bucketName)
-        {
-            BucketName = bucketName;
-        }
+    internal void Initialize(string bucketName)
+    {
+        BucketName = bucketName;
     }
 }

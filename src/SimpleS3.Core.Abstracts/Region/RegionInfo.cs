@@ -1,18 +1,17 @@
 ﻿using System;
 
-namespace Genbox.SimpleS3.Core.Abstracts.Region
-{
-    public class RegionInfo : IRegionInfo
-    {
-        public RegionInfo(Enum enumValue, string code, string name)
-        {
-            EnumValue = enumValue;
-            Code = code;
-            Name = name;
-        }
+namespace Genbox.SimpleS3.Core.Abstracts.Region;
 
-        public Enum EnumValue { get; }
-        public string Code { get; }
-        public string Name { get; }
+public class RegionInfo : IRegionInfo
+{
+    public RegionInfo(Enum enumValue, string code, string name)
+    {
+        EnumValue = enumValue;
+        Code = code;
+        Name = name;
     }
+
+    public Enum EnumValue { get; }
+    public string Code { get; }
+    public string Name { get; }
 }

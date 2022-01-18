@@ -1,11 +1,10 @@
-﻿namespace Genbox.SimpleS3.Utility.S3Template.Enums
+﻿namespace Genbox.SimpleS3.Utility.S3Template.Enums;
+
+public enum DataType
 {
-    public enum DataType
-    {
-        Unknown = 0,
-        Request,
-        RequestMarshal,
-        Response,
-        ResponseMarshal,
-    }
+    Unknown = 0,
+    Request,
+    RequestMarshal,
+    Response,
+    ResponseMarshal,
 }

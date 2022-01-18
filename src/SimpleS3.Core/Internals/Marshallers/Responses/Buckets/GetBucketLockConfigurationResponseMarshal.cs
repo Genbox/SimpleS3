@@ -8,30 +8,29 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
-namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
-{
-    internal class GetBucketLockConfigurationResponseMarshal : IResponseMarshal<GetBucketLockConfigurationResponse>
-    {
-        public void MarshalResponse(SimpleS3Config config, GetBucketLockConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
-        {
-            using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
-            {
-                xmlReader.ReadToDescendant("DefaultRetention");
+namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
 
-                foreach (string name in XmlHelper.ReadElements(xmlReader))
+internal class GetBucketLockConfigurationResponseMarshal : IResponseMarshal<GetBucketLockConfigurationResponse>
+{
+    public void MarshalResponse(SimpleS3Config config, GetBucketLockConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
+    {
+        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
+        {
+            xmlReader.ReadToDescendant("DefaultRetention");
+
+            foreach (string name in XmlHelper.ReadElements(xmlReader))
+            {
+                switch (name)
                 {
-                    switch (name)
-                    {
-                        case "Mode":
-                            response.LockMode = ValueHelper.ParseEnum<LockMode>(xmlReader.ReadString());
-                            break;
-                        case "Days":
-                            response.LockRetainUntil = DateTimeOffset.UtcNow.AddDays(xmlReader.ReadElementContentAsInt());
-                            break;
-                        case "Years":
-                            response.LockRetainUntil = DateTimeOffset.UtcNow.AddYears(xmlReader.ReadElementContentAsInt());
-                            break;
-                    }
+                    case "Mode":
+                        response.LockMode = ValueHelper.ParseEnum<LockMode>(xmlReader.ReadString());
+                        break;
+                    case "Days":
+                        response.LockRetainUntil = DateTimeOffset.UtcNow.AddDays(xmlReader.ReadElementContentAsInt());
+                        break;
+                    case "Years":
+                        response.LockRetainUntil = DateTimeOffset.UtcNow.AddYears(xmlReader.ReadElementContentAsInt());
+                        break;
                 }
             }
         }
