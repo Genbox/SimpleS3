@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs
 {
-    internal class ConfigValidator : ConfigValidatorBase<Config>
+    internal class ConfigValidator : ConfigValidatorBase<SimpleS3Config>
     {
         public ConfigValidator(IValidator<IAccessKey> validator)
         {
@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs
 
             RuleFor(x => x.ObjectKeyValidationMode).IsInEnum().Must(x => x != ObjectKeyValidationMode.Unknown).WithMessage("You must provide a valid object key validation mode");
 
-            IRuleBuilderOptions<Config, IAccessKey> validatorRule = RuleFor(x => x.Credentials).NotNull().WithMessage("You must provide credentials");
+            IRuleBuilderOptions<SimpleS3Config, IAccessKey> validatorRule = RuleFor(x => x.Credentials).NotNull().WithMessage("You must provide credentials");
             validatorRule.SetValidator(validator);
 
             //See https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html

@@ -40,7 +40,7 @@ namespace Genbox.SimpleS3.Core.Extensions
         /// </summary>
         /// <param name="collection">The service collection</param>
         /// <param name="configure">Use this to configure the configuration used by SimpleS3</param>
-        public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection, Action<Config>? configure = null)
+        public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection, Action<SimpleS3Config>? configure = null)
         {
             //This is in place of collection.AddOptions();
             collection.TryAdd(ServiceDescriptor.Singleton(typeof(IOptions<>), typeof(OptionsManager<>)));

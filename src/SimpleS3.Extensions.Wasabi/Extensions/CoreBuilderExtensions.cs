@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Extensions.Wasabi.Extensions
             clientBuilder.Services.AddSingleton<IRegionData, WasabiRegionData>();
             clientBuilder.Services.AddSingleton<IInputValidator, WasabiInputValidator>();
 
-            clientBuilder.Services.PostConfigure<Config>((x, y) =>
+            clientBuilder.Services.PostConfigure<SimpleS3Config>((x, y) =>
             {
                 IOptions<WasabiConfig> awsCfg = y.GetRequiredService<IOptions<WasabiConfig>>();
                 PropertyHelper.MapObjects(awsCfg.Value, x);

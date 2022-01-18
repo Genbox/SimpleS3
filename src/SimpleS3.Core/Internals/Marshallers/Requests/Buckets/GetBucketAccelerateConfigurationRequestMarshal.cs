@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
 {
     internal class GetBucketAccelerateConfigurationRequestMarshal : IRequestMarshal<GetBucketAccelerateConfigurationRequest>
     {
-        public Stream? MarshalRequest(GetBucketAccelerateConfigurationRequest request, Config config)
+        public Stream? MarshalRequest(GetBucketAccelerateConfigurationRequest request, SimpleS3Config config)
         {
             request.SetQueryParameter(AmzParameters.Accelerate, string.Empty);
             return null;

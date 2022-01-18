@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.TestBase
             BucketName = "main-test-bucket";
         }
 
-        protected override void ConfigureConfig(Config config)
+        protected override void ConfigureConfig(SimpleS3Config config)
         {
             config.RegionCode = "eu-west-1";
             config.Credentials = new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");

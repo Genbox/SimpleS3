@@ -15,7 +15,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
 {
     internal class ListMultipartUploadsResponseMarshal : IResponseMarshal<ListMultipartUploadsResponse>
     {
-        public void MarshalResponse(Config config, ListMultipartUploadsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(SimpleS3Config config, ListMultipartUploadsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {

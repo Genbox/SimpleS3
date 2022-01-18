@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Factories
 {
     public interface IMarshalFactory
     {
-        Stream? MarshalRequest<TRequest>(Config config, TRequest request) where TRequest : IRequest;
-        void MarshalResponse<TResponse>(Config config, TResponse response, IDictionary<string, string> headers, Stream responseStream) where TResponse : IResponse;
+        Stream? MarshalRequest<TRequest>(SimpleS3Config config, TRequest request) where TRequest : IRequest;
+        void MarshalResponse<TResponse>(SimpleS3Config config, TResponse response, IDictionary<string, string> headers, Stream responseStream) where TResponse : IResponse;
     }
 }

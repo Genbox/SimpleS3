@@ -36,7 +36,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
         private long _position;
         private byte[] _previousSignature;
 
-        public ChunkedStream(IOptions<Config> options, IChunkedSignatureBuilder chunkedSigBuilder, IRequest request, byte[] seedSignature, Stream originalStream)
+        public ChunkedStream(IOptions<SimpleS3Config> options, IChunkedSignatureBuilder chunkedSigBuilder, IRequest request, byte[] seedSignature, Stream originalStream)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(chunkedSigBuilder, nameof(chunkedSigBuilder));

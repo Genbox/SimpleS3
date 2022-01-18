@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
 {
     internal class GetBucketVersioningRequestMarshal : IRequestMarshal<GetBucketVersioningRequest>
     {
-        public Stream? MarshalRequest(GetBucketVersioningRequest request, Config config)
+        public Stream? MarshalRequest(GetBucketVersioningRequest request, SimpleS3Config config)
         {
             request.SetQueryParameter(AmzParameters.Versioning, string.Empty);
             return null;

@@ -23,7 +23,7 @@ namespace Genbox.SimpleS3.Core.Tests.Code
         [InlineData("http://s3.{Region}.{Region}-amazonaws.com", null, "http://s3.eu-west-1.eu-west-1-amazonaws.com")] //Test that we can use a label twice
         public void ParseEndpointTest(string template, string? bucketName, string result)
         {
-            Config config = new Config(null!, "eu-west-1");
+            SimpleS3Config config = new SimpleS3Config(null!, "eu-west-1");
             config.EndpointTemplate = template;
             config.NamingMode = NamingMode.VirtualHost;
 

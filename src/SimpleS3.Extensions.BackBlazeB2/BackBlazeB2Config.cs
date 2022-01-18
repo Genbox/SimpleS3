@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Common.Extensions;
 
 namespace Genbox.SimpleS3.Extensions.BackBlazeB2
 {
-    public class BackBlazeB2Config : Config
+    public class BackBlazeB2Config : SimpleS3Config
     {
         private readonly IRegionConverter _converter = new RegionConverter(BackblazeB2RegionData.Instance);
         private BackBlazeB2Region _region;

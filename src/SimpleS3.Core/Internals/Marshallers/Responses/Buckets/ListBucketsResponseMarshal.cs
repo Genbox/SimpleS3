@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
 {
     internal class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsResponse>
     {
-        public void MarshalResponse(Config config, ListBucketsResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(SimpleS3Config config, ListBucketsResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
             {

@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
 {
     internal class ListPartsRequestMarshal : IRequestMarshal<ListPartsRequest>
     {
-        public Stream? MarshalRequest(ListPartsRequest request, Config config)
+        public Stream? MarshalRequest(ListPartsRequest request, SimpleS3Config config)
         {
             request.SetQueryParameter(AmzParameters.EncodingType, request.EncodingType);
             request.SetQueryParameter(AmzParameters.MaxParts, request.MaxParts);

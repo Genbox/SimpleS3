@@ -28,10 +28,10 @@ namespace Genbox.SimpleS3.Core.Internals.Network
         private readonly IEndpointBuilder _endpointBuilder;
         private readonly ILogger<DefaultSignedRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
-        private readonly IOptions<Config> _options;
+        private readonly IOptions<SimpleS3Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
 
-        public DefaultSignedRequestHandler(IOptions<Config> options, IScopeBuilder scopeBuilder, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultSignedRequestHandler> logger)
+        public DefaultSignedRequestHandler(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultSignedRequestHandler> logger)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(marshaller, nameof(marshaller));
@@ -53,7 +53,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
 
             _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
-            Config config = _options.Value;
+            SimpleS3Config config = _options.Value;
             _marshaller.MarshalRequest(config, request);
 
             IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);

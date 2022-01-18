@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
 {
     internal class CopyObjectRequestMarshal : IRequestMarshal<CopyObjectRequest>
     {
-        public Stream? MarshalRequest(CopyObjectRequest request, Config config)
+        public Stream? MarshalRequest(CopyObjectRequest request, SimpleS3Config config)
         {
             request.SetHeader(AmzHeaders.XAmzCopySource, '/' + request.SourceBucketName + '/' + request.SourceObjectKey);
             request.SetHeader(AmzHeaders.XAmzCopySourceIfMatch, request.IfETagMatch);

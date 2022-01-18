@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart
 {
     internal class ListMultipartUploadsRequestMarshal : IRequestMarshal<ListMultipartUploadsRequest>
     {
-        public Stream? MarshalRequest(ListMultipartUploadsRequest request, Config config)
+        public Stream? MarshalRequest(ListMultipartUploadsRequest request, SimpleS3Config config)
         {
             request.SetQueryParameter(AmzParameters.Uploads, string.Empty);
             request.SetOptionalQueryParameter(AmzParameters.Delimiter, request.Delimiter);

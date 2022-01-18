@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
 {
     internal class ListObjectVersionsRequestMarshal : IRequestMarshal<ListObjectVersionsRequest>
     {
-        public Stream? MarshalRequest(ListObjectVersionsRequest request, Config config)
+        public Stream? MarshalRequest(ListObjectVersionsRequest request, SimpleS3Config config)
         {
             request.SetQueryParameter(AmzParameters.Versions, string.Empty);
 

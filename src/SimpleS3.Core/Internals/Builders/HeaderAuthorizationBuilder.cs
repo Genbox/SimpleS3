@@ -20,11 +20,11 @@ namespace Genbox.SimpleS3.Core.Internals.Builders
     internal class HeaderAuthorizationBuilder : IAuthorizationBuilder
     {
         private readonly ILogger<HeaderAuthorizationBuilder> _logger;
-        private readonly IOptions<Config> _options;
+        private readonly IOptions<SimpleS3Config> _options;
         private readonly IScopeBuilder _scopeBuilder;
         private readonly ISignatureBuilder _signatureBuilder;
 
-        public HeaderAuthorizationBuilder(IOptions<Config> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<HeaderAuthorizationBuilder> logger)
+        public HeaderAuthorizationBuilder(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<HeaderAuthorizationBuilder> logger)
         {
             _options = options;
             _scopeBuilder = scopeBuilder;

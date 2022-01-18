@@ -19,7 +19,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
 {
     public class SignedUrlTests
     {
-        private readonly IOptions<Config> _options;
+        private readonly IOptions<SimpleS3Config> _options;
         private readonly ScopeBuilder _scopeBuilder;
         private readonly SignatureBuilder _sigBuilder;
         private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
@@ -44,7 +44,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
 
             _scopeBuilder = (ScopeBuilder)provider.GetRequiredService<IScopeBuilder>();
             _sigBuilder = (SignatureBuilder)provider.GetRequiredService<ISignatureBuilder>();
-            _options = provider.GetRequiredService<IOptions<Config>>();
+            _options = provider.GetRequiredService<IOptions<SimpleS3Config>>();
         }
 
         [Fact]

@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects
 {
     internal class GetObjectAclRequestMarshal : IRequestMarshal<GetObjectAclRequest>
     {
-        public Stream? MarshalRequest(GetObjectAclRequest request, Config config)
+        public Stream? MarshalRequest(GetObjectAclRequest request, SimpleS3Config config)
         {
             request.SetQueryParameter(AmzParameters.Acl, string.Empty);
             return null;

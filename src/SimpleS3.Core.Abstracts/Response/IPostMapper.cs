@@ -8,6 +8,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Response
 
     public interface IPostMapper<in TRequest, in TResponse> : IPostMapper where TRequest : IRequest where TResponse : IResponse
     {
-        void PostMap(Config config, TRequest request, TResponse response);
+        void PostMap(SimpleS3Config config, TRequest request, TResponse response);
     }
 }

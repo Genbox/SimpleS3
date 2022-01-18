@@ -17,10 +17,10 @@ namespace Genbox.SimpleS3.Core.Internals.Network
     internal sealed class ChunkedContentRequestStreamWrapper : IRequestStreamWrapper
     {
         private readonly IChunkedSignatureBuilder _chunkedSigBuilder;
-        private readonly IOptions<Config> _config;
+        private readonly IOptions<SimpleS3Config> _config;
         private readonly ISignatureBuilder _signatureBuilder;
 
-        public ChunkedContentRequestStreamWrapper(IOptions<Config> config, IChunkedSignatureBuilder chunkedSigBuilder, ISignatureBuilder signatureBuilder)
+        public ChunkedContentRequestStreamWrapper(IOptions<SimpleS3Config> config, IChunkedSignatureBuilder chunkedSigBuilder, ISignatureBuilder signatureBuilder)
         {
             Validator.RequireNotNull(config, nameof(config));
             Validator.RequireNotNull(chunkedSigBuilder, nameof(chunkedSigBuilder));

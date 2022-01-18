@@ -37,7 +37,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests
                 config.Region = AmazonS3Region.EuWest1;
                 config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
 
-                IOptions<Config> options = Options.Create(config);
+                IOptions<SimpleS3Config> options = Options.Create(config);
 
                 SigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
                 ScopeBuilder scopeBuilder = new ScopeBuilder(options);

@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets
 {
     internal class PutBucketVersioningResponseMarshal : IResponseMarshal<PutBucketVersioningResponse>
     {
-        public void MarshalResponse(Config config, PutBucketVersioningResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(SimpleS3Config config, PutBucketVersioningResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             // The docs says there is an XML response, but there is none from the API.
 

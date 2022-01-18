@@ -8,7 +8,7 @@ using Genbox.SimpleS3.Core.Common.Extensions;
 
 namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage
 {
-    public class GoogleCloudStorageConfig : Config
+    public class GoogleCloudStorageConfig : SimpleS3Config
     {
         private readonly IRegionConverter _converter = new RegionConverter(GoogleCloudStorageRegionData.Instance);
         private GoogleCloudStorageRegion _region;

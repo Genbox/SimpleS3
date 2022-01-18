@@ -23,8 +23,8 @@ namespace Genbox.SimpleS3.Core.TestBase
 
             ServiceCollection collection = new ServiceCollection();
             collection.AddSingleton(configRoot);
-            collection.Configure<Config>(configRoot);
-            collection.Configure<Config>(ConfigureConfig);
+            collection.Configure<SimpleS3Config>(configRoot);
+            collection.Configure<SimpleS3Config>(ConfigureConfig);
 
             ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(collection);
             ConfigureCoreBuilder(coreBuilder, configRoot);
@@ -57,6 +57,6 @@ namespace Genbox.SimpleS3.Core.TestBase
 
         protected virtual void ConfigureServices(IServiceCollection services) { }
         protected virtual void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration) { }
-        protected virtual void ConfigureConfig(Config config) { }
+        protected virtual void ConfigureConfig(SimpleS3Config config) { }
     }
 }

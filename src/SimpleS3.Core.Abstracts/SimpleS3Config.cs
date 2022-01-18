@@ -4,11 +4,11 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Abstracts
 {
-    public class Config
+    public class SimpleS3Config
     {
-        public Config() { }
+        public SimpleS3Config() { }
 
-        public Config(IAccessKey credentials, string region)
+        public SimpleS3Config(IAccessKey credentials, string region)
         {
             Credentials = credentials;
             RegionCode = region;

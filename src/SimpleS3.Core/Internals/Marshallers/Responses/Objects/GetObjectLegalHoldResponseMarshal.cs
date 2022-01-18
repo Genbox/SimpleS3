@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 {
     internal class GetObjectLegalHoldResponseMarshal : IResponseMarshal<GetObjectLegalHoldResponse>
     {
-        public void MarshalResponse(Config config, GetObjectLegalHoldResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(SimpleS3Config config, GetObjectLegalHoldResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 

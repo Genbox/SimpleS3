@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
 {
     internal class GetBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<GetBucketLifecycleConfigurationRequest>
     {
-        public Stream? MarshalRequest(GetBucketLifecycleConfigurationRequest request, Config config)
+        public Stream? MarshalRequest(GetBucketLifecycleConfigurationRequest request, SimpleS3Config config)
         {
             request.SetQueryParameter(AmzParameters.Lifecycle, string.Empty);
             return null;

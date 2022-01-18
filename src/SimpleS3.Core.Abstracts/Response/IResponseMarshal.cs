@@ -9,6 +9,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Response
 
     public interface IResponseMarshal<in TResponse> : IResponseMarshal where TResponse : IResponse
     {
-        void MarshalResponse(Config config, TResponse response, IDictionary<string, string> headers, Stream responseStream);
+        void MarshalResponse(SimpleS3Config config, TResponse response, IDictionary<string, string> headers, Stream responseStream);
     }
 }

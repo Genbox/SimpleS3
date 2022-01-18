@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects
 {
     internal class GetObjectResponseMarshal : IResponseMarshal<GetObjectResponse>
     {
-        public void MarshalResponse(Config config, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(SimpleS3Config config, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.Metadata = ParserHelper.ParseMetadata(headers);
             response.ETag = headers.GetOptionalValue(HttpHeaders.ETag);

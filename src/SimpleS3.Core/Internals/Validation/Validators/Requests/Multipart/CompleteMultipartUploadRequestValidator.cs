@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests.Multipar
 {
     internal class CompleteMultipartUploadRequestValidator : RequestValidatorBase<CompleteMultipartUploadRequest>
     {
-        public CompleteMultipartUploadRequestValidator(IInputValidator validator, IOptions<Config> config) : base(validator, config)
+        public CompleteMultipartUploadRequestValidator(IInputValidator validator, IOptions<SimpleS3Config> config) : base(validator, config)
         {
             RuleFor(x => x.UploadParts).Must(x =>
             {

@@ -28,7 +28,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Extensions
             clientBuilder.Services.AddSingleton<IRegionData, AmazonS3RegionData>();
             clientBuilder.Services.AddSingleton<IInputValidator, AmazonS3InputValidator>();
 
-            clientBuilder.Services.PostConfigure<Config>((x, y) =>
+            clientBuilder.Services.PostConfigure<SimpleS3Config>((x, y) =>
             {
                 IOptions<AmazonS3Config> awsCfg = y.GetRequiredService<IOptions<AmazonS3Config>>();
                 PropertyHelper.MapObjects(awsCfg.Value, x);

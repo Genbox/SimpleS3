@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Common.Extensions;
 
 namespace Genbox.SimpleS3.Extensions.Wasabi
 {
-    public class WasabiConfig : Config
+    public class WasabiConfig : SimpleS3Config
     {
         private readonly IRegionConverter _converter = new RegionConverter(WasabiRegionData.Instance);
         private WasabiRegion _region;

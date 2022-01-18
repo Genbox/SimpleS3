@@ -14,9 +14,9 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators
     internal abstract class RequestValidatorBase<T> : ValidatorBase<T> where T : IRequest
     {
         private readonly IInputValidator _validator;
-        private readonly Config _cfg;
+        private readonly SimpleS3Config _cfg;
 
-        protected RequestValidatorBase(IInputValidator validator, IOptions<Config> config)
+        protected RequestValidatorBase(IInputValidator validator, IOptions<SimpleS3Config> config)
         {
             _validator = validator;
             _cfg = config.Value;

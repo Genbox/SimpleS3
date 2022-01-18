@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart
 {
     internal class UploadPartResponseMarshal : IResponseMarshal<UploadPartResponse>
     {
-        public void MarshalResponse(Config config, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)
+        public void MarshalResponse(SimpleS3Config config, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)
         {
             response.ETag = headers.GetRequiredValue(HttpHeaders.ETag);
             response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);

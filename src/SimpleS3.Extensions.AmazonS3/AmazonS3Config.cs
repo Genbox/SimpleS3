@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Common.Extensions;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3
 {
-    public class AmazonS3Config : Config
+    public class AmazonS3Config : SimpleS3Config
     {
         private readonly IRegionConverter _converter = new RegionConverter(AmazonS3RegionData.Instance);
         private AmazonS3Region _region;

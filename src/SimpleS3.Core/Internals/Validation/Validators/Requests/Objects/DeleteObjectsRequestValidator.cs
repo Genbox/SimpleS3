@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests.Objects
 {
     internal class DeleteObjectsRequestValidator : RequestValidatorBase<DeleteObjectsRequest>
     {
-        public DeleteObjectsRequestValidator(IInputValidator validator, IOptions<Config> config) : base(validator, config)
+        public DeleteObjectsRequestValidator(IInputValidator validator, IOptions<SimpleS3Config> config) : base(validator, config)
         {
             RuleFor(x => x.Objects).NotEmpty();
         }

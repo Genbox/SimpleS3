@@ -38,12 +38,12 @@ namespace Genbox.SimpleS3.Core.Internals.Network
         private readonly ILogger<DefaultRequestHandler> _logger;
         private readonly IMarshalFactory _marshaller;
         private readonly INetworkDriver _networkDriver;
-        private readonly IOptions<Config> _options;
+        private readonly IOptions<SimpleS3Config> _options;
         private readonly IPostMapperFactory _postMapper;
         private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
         private readonly IRequestValidatorFactory _requestValidator;
 
-        public DefaultRequestHandler(IOptions<Config> options, IRequestValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
+        public DefaultRequestHandler(IOptions<SimpleS3Config> options, IRequestValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
         {
             Validator.RequireNotNull(options, nameof(options));
             Validator.RequireNotNull(validator, nameof(validator));
@@ -90,7 +90,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
 
             _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
-            Config config = _options.Value;
+            SimpleS3Config config = _options.Value;
             Stream? requestStream = _marshaller.MarshalRequest(config, request);
 
             _requestValidator.ValidateAndThrow(request);

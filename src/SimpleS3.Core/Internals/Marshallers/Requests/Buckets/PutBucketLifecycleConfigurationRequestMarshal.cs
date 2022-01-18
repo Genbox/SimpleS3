@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets
 {
     internal class PutBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<PutBucketLifecycleConfigurationRequest>
     {
-        public Stream? MarshalRequest(PutBucketLifecycleConfigurationRequest request, Config config)
+        public Stream? MarshalRequest(PutBucketLifecycleConfigurationRequest request, SimpleS3Config config)
         {
             request.SetQueryParameter(AmzParameters.Lifecycle, string.Empty);
 

@@ -11,17 +11,17 @@ namespace Genbox.SimpleS3.Core.Internals.Network
 {
     internal class EndpointBuilder : IEndpointBuilder
     {
-        private readonly Config _config;
+        private readonly SimpleS3Config _config;
         private readonly Regex _regex = new Regex("{(?:(?<pre>[^:}]*?):)?(?<val>Region|Bucket|Scheme)(?::(?<post>[^}]*?))?}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public EndpointBuilder(IOptions<Config> config)
+        public EndpointBuilder(IOptions<SimpleS3Config> config)
         {
             _config = config.Value;
         }
 
         public IEndpointData GetEndpoint(IRequest request)
         {
-            Validator.RequireNotNull(_config.EndpointTemplate, nameof(Config.EndpointTemplate), "Unable to determine endpoint because both Endpoint and EndpointTemplate was null");
+            Validator.RequireNotNull(_config.EndpointTemplate, nameof(SimpleS3Config.EndpointTemplate), "Unable to determine endpoint because both Endpoint and EndpointTemplate was null");
 
             string endpoint = _regex.Replace(_config.EndpointTemplate, match =>
             {
@@ -44,7 +44,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network
             });
 
             if (!Uri.TryCreate(endpoint, UriKind.Absolute, out Uri parsed))
-                throw new InvalidOperationException(nameof(Config.EndpointTemplate) + " was invalid.");
+                throw new InvalidOperationException(nameof(SimpleS3Config.EndpointTemplate) + " was invalid.");
 
             return new EndpointData(parsed.Host, parsed.AbsoluteUri.TrimEnd('/'));
         }
