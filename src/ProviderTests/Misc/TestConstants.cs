@@ -1,4 +1,4 @@
-﻿namespace Genbox.ProviderTests
+﻿namespace Genbox.ProviderTests.Misc
 {
     public static class TestConstants
     {

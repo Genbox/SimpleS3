@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.ProviderTests
+namespace Genbox.ProviderTests.Misc
 {
     public class ProviderSetup
     {

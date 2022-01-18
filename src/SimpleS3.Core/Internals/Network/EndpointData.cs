@@ -1,4 +1,6 @@
-﻿namespace Genbox.SimpleS3.Core.Internals.Network;
+﻿using Genbox.SimpleS3.Core.Abstracts.Provider;
+
+namespace Genbox.SimpleS3.Core.Internals.Network;
 
 public class EndpointData : IEndpointData
 {
