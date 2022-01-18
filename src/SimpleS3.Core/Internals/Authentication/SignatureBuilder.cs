@@ -10,6 +10,7 @@ using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Misc;
 using Microsoft.Extensions.Logging;
 
@@ -57,10 +58,14 @@ internal class SignatureBuilder : ISignatureBuilder
         _logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
 
         IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
-            
+        StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+        sb.Append(endpointData.Endpoint);
+        RequestHelper.AppendQueryParameters(sb, request);
+        string url = StringBuilderPool.Shared.ReturnString(sb);
+
         string payloadSignature = enablePayloadSignature ? request.Headers[AmzHeaders.XAmzContentSha256] : "UNSIGNED-PAYLOAD";
 
-        string canonicalRequest = CreateCanonicalRequest(request.RequestId, endpointData.Endpoint, request.Method, request.Headers, request.QueryParameters, payloadSignature);
+        string canonicalRequest = CreateCanonicalRequest(request.RequestId, url, request.Method, request.Headers, request.QueryParameters, payloadSignature);
         string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), canonicalRequest);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 

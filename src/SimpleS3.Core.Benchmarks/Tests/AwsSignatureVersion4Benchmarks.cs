@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
+
 //This benchmark tests against https://github.com/FantasticFiasco/aws-signature-version-4
 
 [MemoryDiagnoser]
@@ -66,7 +67,7 @@ public class AwsSignatureVersion4Benchmarks
     }
 
     [Benchmark]
-    public string ASV4()
+    public string AWS4()
     {
         // Build the canonical request
         (string canonicalRequest, string signedHeaders) = CanonicalRequest.Build("s3", _request2, new Dictionary<string, IEnumerable<string>>(), string.Empty);

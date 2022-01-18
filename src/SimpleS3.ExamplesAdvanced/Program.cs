@@ -51,7 +51,6 @@ internal class Program
             Console.WriteLine("The uploaded and downloaded data are the same");
         else
             Console.WriteLine("The uploaded and downloaded data are NOT the same");
-
     }
 
     private static async Task UploadData(ISimpleClient client, string bucketName, string objectName, byte[] data, byte[] encryptionKey)

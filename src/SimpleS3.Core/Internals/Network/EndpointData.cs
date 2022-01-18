@@ -4,21 +4,16 @@ namespace Genbox.SimpleS3.Core.Internals.Network;
 
 public class EndpointData : IEndpointData
 {
-    private readonly int _hashCode;
-
-    public EndpointData(string host, string endpoint)
+    public EndpointData(string host, string? bucket, string regionCode, string endpoint)
     {
         Host = host;
+        Bucket = bucket;
+        RegionCode = regionCode;
         Endpoint = endpoint;
-
-        _hashCode = Endpoint.GetHashCode();
     }
 
+    public string? Bucket { get; }
+    public string RegionCode { get; }
     public string Host { get; }
     public string Endpoint { get; }
-
-    public override int GetHashCode()
-    {
-        return _hashCode;
-    }
 }

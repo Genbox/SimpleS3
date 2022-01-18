@@ -15,8 +15,7 @@ public class AmazonS3Config : SimpleS3Config
     public AmazonS3Config()
     {
         ProviderName = "AmazonS3";
-            
-        //We don't need to set a template since it defaults to AWS
+        EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
     }
 
     public AmazonS3Config(string keyId, string secretKey, AmazonS3Region region) : this(new StringAccessKey(keyId, secretKey), region) { }

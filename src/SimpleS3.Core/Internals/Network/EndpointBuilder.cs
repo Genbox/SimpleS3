@@ -12,6 +12,7 @@ internal class EndpointBuilder : IEndpointBuilder
 {
     private readonly SimpleS3Config _config;
     private readonly Regex _regex = new Regex("{(?:(?<pre>[^:}]*?):)?(?<val>Region|Bucket|Scheme)(?::(?<post>[^}]*?))?}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private EndpointData? _lastCache;
 
     public EndpointBuilder(IOptions<SimpleS3Config> config)
     {
@@ -20,31 +21,51 @@ internal class EndpointBuilder : IEndpointBuilder
 
     public IEndpointData GetEndpoint(IRequest request)
     {
-        Validator.RequireNotNull(_config.EndpointTemplate, nameof(SimpleS3Config.EndpointTemplate), "Unable to determine endpoint because both Endpoint and EndpointTemplate was null");
+        string? bucket = null;
 
-        string endpoint = _regex.Replace(_config.EndpointTemplate, match =>
+        if (request is IHasBucketName bucketRequest)
+            bucket = bucketRequest.BucketName;
+
+        //Bucket is set
+        if (_lastCache != null && _lastCache.Bucket == bucket && _lastCache.RegionCode == _config.RegionCode)
+            return _lastCache;
+
+        _lastCache = GetEndpointData(bucket, _config.RegionCode);
+        return _lastCache;
+    }
+
+    private EndpointData GetEndpointData(string? bucket, string regionCode)
+    {
+        string? endpoint = _config.Endpoint?.ToString();
+
+        if (endpoint == null)
         {
-            string? str;
+            Validator.RequireNotNull(_config.EndpointTemplate, nameof(SimpleS3Config.EndpointTemplate), "Unable to determine endpoint because both Endpoint and EndpointTemplate was null");
 
-            string value = match.Groups["val"].Value.ToLowerInvariant();
+            endpoint = _regex.Replace(_config.EndpointTemplate, match =>
+            {
+                string? str;
 
-            if (value == "bucket" && request is IHasBucketName bucketRequest)
-                str = bucketRequest.BucketName;
-            else if (value == "scheme")
-                str = _config.UseTls ? "https" : "http";
-            else if (value == "region")
-                str = _config.RegionCode;
-            else
-                return null;
+                string value = match.Groups["val"].Value.ToLowerInvariant();
 
-            string pre = match.Groups["pre"].Value;
-            string post = match.Groups["post"].Value;
-            return pre + str + post;
-        });
+                if (value == "bucket" && bucket != null)
+                    str = bucket;
+                else if (value == "scheme")
+                    str = _config.UseTls ? "https" : "http";
+                else if (value == "region")
+                    str = _config.RegionCode;
+                else
+                    return null;
+
+                string pre = match.Groups["pre"].Value;
+                string post = match.Groups["post"].Value;
+                return pre + str + post;
+            });
+        }
 
         if (!Uri.TryCreate(endpoint, UriKind.Absolute, out Uri parsed))
-            throw new InvalidOperationException(nameof(SimpleS3Config.EndpointTemplate) + " was invalid.");
+            throw new InvalidOperationException(nameof(SimpleS3Config.EndpointTemplate) + " was resolved to an invalid url: " + endpoint);
 
-        return new EndpointData(parsed.Host, parsed.AbsoluteUri.TrimEnd('/'));
+        return new EndpointData(parsed.Host, bucket, regionCode, parsed.AbsoluteUri.TrimEnd('/'));
     }
 }
