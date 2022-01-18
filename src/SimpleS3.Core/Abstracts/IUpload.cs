@@ -31,7 +31,7 @@ namespace Genbox.SimpleS3.Core.Abstracts
         IUpload WithEncryption();
 
         /// <summary>Enables Server Side Encryption (SSE) with Amazon's Key Management Service (KMS)</summary>
-        /// <param name="kmsKeyId">You can use this this specify which KMS master key you want to use.</param>
+        /// <param name="kmsKeyId">You can use this specify which KMS master key you want to use.</param>
         /// <param name="kmsContext">Here you can specify the encryption context.</param>
         IUpload WithEncryptionKms(string? kmsKeyId = null, KmsContextBuilder? kmsContext = null);
 
