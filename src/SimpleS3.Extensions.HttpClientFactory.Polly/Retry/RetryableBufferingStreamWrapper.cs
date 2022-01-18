@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Genbox.SimpleS3.Core.Abstracts.Request;
+﻿using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;

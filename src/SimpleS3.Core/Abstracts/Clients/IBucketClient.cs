@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Network.Requests.Buckets;
+﻿using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 

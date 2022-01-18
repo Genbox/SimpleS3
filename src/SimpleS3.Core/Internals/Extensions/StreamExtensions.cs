@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Genbox.SimpleS3.Core.Internals.Extensions;
+﻿namespace Genbox.SimpleS3.Core.Internals.Extensions;
 
 internal static class StreamExtensions
 {

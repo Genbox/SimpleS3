@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Buckets;

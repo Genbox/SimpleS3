@@ -1,6 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
+﻿using System.Security.Cryptography;
 using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;

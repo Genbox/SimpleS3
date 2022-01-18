@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;

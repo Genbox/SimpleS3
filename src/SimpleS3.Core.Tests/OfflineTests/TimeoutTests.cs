@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase;

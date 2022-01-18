@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Genbox.SimpleS3.Core.Tests.Code.Streams;
+﻿namespace Genbox.SimpleS3.Core.Tests.Code.Streams;
 
 internal class NonSeekableStream : Stream
 {

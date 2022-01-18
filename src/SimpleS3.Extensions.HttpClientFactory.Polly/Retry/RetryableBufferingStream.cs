@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Common.Validation;
+﻿using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 

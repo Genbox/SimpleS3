@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+﻿namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 public interface IHasExpiresOn
 {

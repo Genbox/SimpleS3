@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
+﻿using System.Xml;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Errors;
 

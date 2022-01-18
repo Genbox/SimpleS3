@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Text;
 using Genbox.HttpBuilders.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;

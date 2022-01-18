@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Provider;

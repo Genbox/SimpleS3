@@ -1,5 +1,4 @@
-﻿using System;
-using Genbox.SimpleS3.Core.Enums;
+﻿using Genbox.SimpleS3.Core.Enums;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;

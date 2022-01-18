@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Abstracts.Operations;
+﻿using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Genbox.SimpleS3.Core.Internals.Extensions;
+﻿namespace Genbox.SimpleS3.Core.Internals.Extensions;
 
 /// <summary>This class is only necessary as long as we target .NET Standard 2.0</summary>
 internal static class QueueExtensions

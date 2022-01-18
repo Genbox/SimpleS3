@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using Genbox.SimpleS3.Core.Builders;
 using Xunit;
 

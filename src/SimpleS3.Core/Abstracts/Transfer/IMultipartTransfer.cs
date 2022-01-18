@@ -1,14 +1,9 @@
 #if COMMERCIAL
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-using System;
 #endif
 
 namespace Genbox.SimpleS3.Core.Abstracts.Transfer

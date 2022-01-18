@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using Amazon.Runtime;
+﻿using Amazon.Runtime;
 using Amazon.Util;
 using AwsSignatureVersion4.Private;
 using BenchmarkDotNet.Attributes;

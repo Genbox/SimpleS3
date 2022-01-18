@@ -1,5 +1,4 @@
-﻿using System;
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using Genbox.SimpleS3.Core.Benchmarks.Misc;
 using Genbox.SimpleS3.Core.Common.Helpers;
 

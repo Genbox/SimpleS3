@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 

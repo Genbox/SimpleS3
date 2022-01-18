@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Core.Tests.Code.Handlers;

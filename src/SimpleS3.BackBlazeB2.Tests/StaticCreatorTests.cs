@@ -1,5 +1,4 @@
 #if COMMERCIAL
-using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.TestBase;
 using Genbox.SimpleS3.Extensions.BackBlazeB2;

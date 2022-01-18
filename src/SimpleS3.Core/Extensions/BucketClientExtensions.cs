@@ -1,8 +1,5 @@
 #if COMMERCIAL
-using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;

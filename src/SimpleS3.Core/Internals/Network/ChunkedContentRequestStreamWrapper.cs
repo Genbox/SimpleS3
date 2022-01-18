@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;

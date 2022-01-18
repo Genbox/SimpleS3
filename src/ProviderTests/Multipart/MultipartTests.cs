@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Genbox.ProviderTests.Misc;
+﻿using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;

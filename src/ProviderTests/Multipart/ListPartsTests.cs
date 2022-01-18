@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;

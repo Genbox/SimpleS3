@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers;
+﻿namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers;
 
 internal static class ConsoleHelper
 {

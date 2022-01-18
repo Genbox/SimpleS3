@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.IO;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 

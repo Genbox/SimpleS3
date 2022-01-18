@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Genbox.SimpleS3.Core.Network.Responses.S3Types;
+﻿using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Buckets;
 

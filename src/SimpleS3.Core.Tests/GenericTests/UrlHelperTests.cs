@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Xunit;
 

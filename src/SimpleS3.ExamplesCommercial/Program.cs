@@ -1,6 +1,4 @@
 ﻿#if COMMERCIAL
-using System;
-using System.Threading.Tasks;
 using Genbox.SimpleS3.BackBlazeB2.Extensions;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;

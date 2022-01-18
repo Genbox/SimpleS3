@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Genbox.SimpleS3.Core.Abstracts.Request;
+﻿namespace Genbox.SimpleS3.Core.Abstracts.Request;
 
 public interface ISignedRequestHandler
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Genbox.SimpleS3.Core.Abstracts.Region;
+﻿namespace Genbox.SimpleS3.Core.Abstracts.Region;
 
 public class RegionInfo : IRegionInfo
 {

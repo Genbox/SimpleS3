@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Genbox.SimpleS3.Core.Common.Constants;
+﻿using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using JetBrains.Annotations;
 

@@ -1,10 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;

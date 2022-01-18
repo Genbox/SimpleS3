@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 
 namespace Genbox.SimpleS3.Core.Common.Extensions;

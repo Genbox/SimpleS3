@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.AmazonS3;
 using Genbox.SimpleS3.Core.Abstracts;

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Errors;

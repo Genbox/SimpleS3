@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Text;
+﻿using System.Text;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;

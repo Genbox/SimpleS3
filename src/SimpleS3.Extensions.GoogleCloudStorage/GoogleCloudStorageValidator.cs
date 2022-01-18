@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;

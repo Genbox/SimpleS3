@@ -1,5 +1,4 @@
-﻿using System;
-using Genbox.SimpleS3.Core.Abstracts.Response;
+﻿using Genbox.SimpleS3.Core.Abstracts.Response;
 
 namespace Genbox.SimpleS3.Core.Common.Exceptions;
 

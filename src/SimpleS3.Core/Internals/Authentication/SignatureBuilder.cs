@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
@@ -14,7 +11,6 @@ using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Misc;
-using Genbox.SimpleS3.Core.Internals.Network;
 using Microsoft.Extensions.Logging;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;

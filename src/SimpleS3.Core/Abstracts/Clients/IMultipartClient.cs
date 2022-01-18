@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Genbox.SimpleS3.Core.Network.Requests.Multipart;
+﻿using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using JetBrains.Annotations;
 

@@ -1,10 +1,5 @@
 ﻿#if COMMERCIAL
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -21,7 +16,6 @@ using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Extensions.GoogleCloudStorage;
 using Genbox.SimpleS3.ProviderBase;
-using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.GoogleCloudStorage
 {

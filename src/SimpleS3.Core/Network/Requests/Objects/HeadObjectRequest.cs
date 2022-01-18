@@ -1,4 +1,3 @@
-using System;
 using Genbox.HttpBuilders;
 using Genbox.HttpBuilders.BuilderOptions;
 using Genbox.SimpleS3.Core.Abstracts.Enums;

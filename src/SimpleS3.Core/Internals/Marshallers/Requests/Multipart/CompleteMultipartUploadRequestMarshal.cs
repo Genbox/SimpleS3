@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.IO;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Internals.Xml;

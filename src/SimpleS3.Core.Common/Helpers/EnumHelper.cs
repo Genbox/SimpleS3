@@ -1,5 +1,4 @@
-﻿using System;
-using Genbox.SimpleS3.Core.Common.Internals;
+﻿using Genbox.SimpleS3.Core.Common.Internals;
 
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 

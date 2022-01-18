@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Genbox.HttpBuilders;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
@@ -11,8 +8,6 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 #if COMMERCIAL
-using System.Collections.Generic;
-using System.IO;
 #endif
 
 namespace Genbox.SimpleS3.Core.Internals.Fluent

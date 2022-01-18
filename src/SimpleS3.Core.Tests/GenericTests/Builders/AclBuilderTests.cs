@@ -1,5 +1,4 @@
-﻿using System;
-using Genbox.SimpleS3.Core.Builders;
+﻿using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using Xunit;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Genbox.SimpleS3.Core.Common.Exceptions;
+﻿using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 

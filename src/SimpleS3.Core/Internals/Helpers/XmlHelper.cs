@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml;
 
 namespace Genbox.SimpleS3.Core.Internals.Helpers;

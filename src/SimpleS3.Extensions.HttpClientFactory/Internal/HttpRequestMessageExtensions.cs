@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using Genbox.SimpleS3.Core.Common.Constants;
+﻿using Genbox.SimpleS3.Core.Common.Constants;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Internal;
 

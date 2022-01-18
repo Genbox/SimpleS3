@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Text;
 using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Internals.Pools;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Security.Authentication;
+﻿using System.Security.Authentication;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Constants;

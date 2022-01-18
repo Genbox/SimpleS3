@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Request;

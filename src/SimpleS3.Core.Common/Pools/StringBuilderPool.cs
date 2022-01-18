@@ -1,7 +1,5 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 
 namespace Genbox.SimpleS3.Core.Common.Pools;
 

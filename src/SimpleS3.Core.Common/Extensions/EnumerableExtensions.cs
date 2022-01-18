@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Genbox.SimpleS3.Core.Common.Extensions;
+﻿namespace Genbox.SimpleS3.Core.Common.Extensions;
 
 public static class EnumerableExtensions
 {

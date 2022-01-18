@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Response;
 

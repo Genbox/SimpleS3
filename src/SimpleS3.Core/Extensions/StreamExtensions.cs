@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Genbox.SimpleS3.Core.Common.Constants;
 
 namespace Genbox.SimpleS3.Core.Extensions;

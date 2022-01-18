@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Genbox.SimpleS3.Core.Abstracts.Region;
+﻿namespace Genbox.SimpleS3.Core.Abstracts.Region;
 
 public interface IRegionData
 {

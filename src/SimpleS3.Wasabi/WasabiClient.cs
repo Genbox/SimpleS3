@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -20,7 +15,6 @@ using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Extensions.Wasabi;
 using Genbox.SimpleS3.ProviderBase;
-using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Wasabi;
 

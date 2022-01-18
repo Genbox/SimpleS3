@@ -1,5 +1,4 @@
-﻿using System;
-using Genbox.SimpleS3.Core.Abstracts.Authentication;
+﻿using Genbox.SimpleS3.Core.Abstracts.Authentication;
 
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 
