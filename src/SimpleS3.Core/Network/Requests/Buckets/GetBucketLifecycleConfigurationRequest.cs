@@ -6,7 +6,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// <summary>Returns the lifecycle configuration information set on the bucket.</summary>
     public class GetBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketName
     {
-        internal GetBucketLifecycleConfigurationRequest() : base(HttpMethod.GET) { }
+        internal GetBucketLifecycleConfigurationRequest() : base(HttpMethodType.GET) { }
 
         public GetBucketLifecycleConfigurationRequest(string bucketName) : this()
         {

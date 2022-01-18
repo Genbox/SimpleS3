@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators
             _validator = validator;
             _cfg = config.Value;
 
-            RuleFor(x => x.Method).IsInEnum().Must(x => x != HttpMethod.Unknown);
+            RuleFor(x => x.Method).IsInEnum().Must(x => x != HttpMethodType.Unknown);
 
             When(x => x is IHasUploadId, () => RuleFor(x => ((IHasUploadId)x).UploadId).NotEmpty());
 

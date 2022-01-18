@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     {
         private byte[]? _sseCustomerKey;
 
-        internal UploadPartRequest() : base(HttpMethod.PUT) { }
+        internal UploadPartRequest() : base(HttpMethodType.PUT) { }
 
         public UploadPartRequest(string bucketName, string objectKey, int partNumber, string uploadId, Stream content) : this()
         {

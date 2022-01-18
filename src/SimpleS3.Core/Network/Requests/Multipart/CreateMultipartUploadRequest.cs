@@ -18,9 +18,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     {
         private byte[]? _sseCustomerKey;
 
-        internal CreateMultipartUploadRequest() : this(HttpMethod.POST) { }
+        internal CreateMultipartUploadRequest() : this(HttpMethodType.POST) { }
 
-        internal CreateMultipartUploadRequest(HttpMethod method) : base(method)
+        internal CreateMultipartUploadRequest(HttpMethodType method) : base(method)
         {
             Tags = new TagBuilder();
             Metadata = new MetadataBuilder();

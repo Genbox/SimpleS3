@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasObjectAcl, IHasVersionId, IHasContentMd5, IHasRequestPayer
     {
-        internal PutObjectAclRequest() : base(HttpMethod.PUT)
+        internal PutObjectAclRequest() : base(HttpMethodType.PUT)
         {
             AclGrantRead = new AclBuilder();
             AclGrantReadAcp = new AclBuilder();

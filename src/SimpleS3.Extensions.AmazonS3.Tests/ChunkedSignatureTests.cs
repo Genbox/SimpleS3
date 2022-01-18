@@ -95,7 +95,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
             //Override the header signing filter and just sign everything
             HeaderWhitelist.ShouldSignHeader += s => true;
 
-            string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethod.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(query), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
+            string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethodType.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(query), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
             Assert.Equal(expectedSeedCr, actualSeedCr);
 
             string scope = _scopeBuilder.CreateScope("s3", _testDate);

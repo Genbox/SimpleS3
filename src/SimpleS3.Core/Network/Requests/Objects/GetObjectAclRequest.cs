@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// <summary>Returns the access control list (ACL) of an object. To use this operation, you must have READ_ACP access to the object.</summary>
     public class GetObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasVersionId, IHasRequestPayer
     {
-        internal GetObjectAclRequest() : base(HttpMethod.GET) { }
+        internal GetObjectAclRequest() : base(HttpMethodType.GET) { }
 
         public GetObjectAclRequest(string bucketName, string objectKey) : this()
         {

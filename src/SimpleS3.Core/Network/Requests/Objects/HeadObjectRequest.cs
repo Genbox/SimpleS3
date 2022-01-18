@@ -19,9 +19,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     {
         private byte[]? _sseCustomerKey;
 
-        internal HeadObjectRequest() : this(HttpMethod.HEAD) { }
+        internal HeadObjectRequest() : this(HttpMethodType.HEAD) { }
 
-        internal HeadObjectRequest(HttpMethod method) : base(method)
+        internal HeadObjectRequest(HttpMethodType method) : base(method)
         {
             Range = new RangeBuilder();
             IfETagMatch = new ETagBuilder();

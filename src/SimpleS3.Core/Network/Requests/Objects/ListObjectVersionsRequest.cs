@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public class ListObjectVersionsRequest : BaseRequest, IHasBucketName
     {
-        internal ListObjectVersionsRequest() : base(HttpMethod.GET) { }
+        internal ListObjectVersionsRequest() : base(HttpMethodType.GET) { }
 
         public ListObjectVersionsRequest(string bucketName) : this()
         {

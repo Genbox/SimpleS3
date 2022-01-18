@@ -5,12 +5,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Extensions.HttpClient.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using HttpMethod = Genbox.SimpleS3.Core.Abstracts.Enums.HttpMethod;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient
 {
@@ -35,7 +35,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
             _client?.Dispose();
         }
 
-        public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethod method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
+        public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethodType method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
         {
             HttpResponseMessage httpResponse;
             using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(method), url))
@@ -94,19 +94,19 @@ namespace Genbox.SimpleS3.Extensions.HttpClient
             return ((int)httpResponse.StatusCode, responseHeaders, responseStream);
         }
 
-        private static System.Net.Http.HttpMethod ConvertToMethod(HttpMethod method)
+        private static System.Net.Http.HttpMethod ConvertToMethod(HttpMethodType method)
         {
             switch (method)
             {
-                case HttpMethod.GET:
+                case HttpMethodType.GET:
                     return System.Net.Http.HttpMethod.Get;
-                case HttpMethod.PUT:
+                case HttpMethodType.PUT:
                     return System.Net.Http.HttpMethod.Put;
-                case HttpMethod.HEAD:
+                case HttpMethodType.HEAD:
                     return System.Net.Http.HttpMethod.Head;
-                case HttpMethod.DELETE:
+                case HttpMethodType.DELETE:
                     return System.Net.Http.HttpMethod.Delete;
-                case HttpMethod.POST:
+                case HttpMethodType.POST:
                     return System.Net.Http.HttpMethod.Post;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(method), method, null);

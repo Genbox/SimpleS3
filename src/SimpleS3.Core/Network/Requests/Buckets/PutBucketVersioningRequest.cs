@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// <summary>Sets the versioning state of an existing bucket. To set the versioning state, you must be the bucket owner.</summary>
     public class PutBucketVersioningRequest : BaseRequest, IHasBucketName, IContentMd5Config, IHasMfa
     {
-        internal PutBucketVersioningRequest() : base(HttpMethod.PUT)
+        internal PutBucketVersioningRequest() : base(HttpMethodType.PUT)
         {
             Mfa = new MfaAuthenticationBuilder();
         }

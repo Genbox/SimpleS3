@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public class DeleteBucketTaggingRequest : BaseRequest, IHasBucketName
     {
-        internal DeleteBucketTaggingRequest() : base(HttpMethod.DELETE) { }
+        internal DeleteBucketTaggingRequest() : base(HttpMethodType.DELETE) { }
 
         public DeleteBucketTaggingRequest(string bucketName) : this()
         {

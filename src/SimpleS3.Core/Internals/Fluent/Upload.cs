@@ -198,7 +198,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
 #if COMMERCIAL
         public Task<CompleteMultipartUploadResponse> UploadMultipartAsync(Stream data, CancellationToken token = default)
         {
-            _request.Method = HttpMethod.POST;
+            _request.Method = HttpMethodType.POST;
             _request.Content = null;
 
             return _multipartTransfer.MultipartUploadAsync(_request, data, token: token);
@@ -207,7 +207,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent
 
         public Task<PutObjectResponse> UploadAsync(Stream? data, CancellationToken token = default)
         {
-            _request.Method = HttpMethod.PUT;
+            _request.Method = HttpMethodType.PUT;
             _request.Content = data;
 
             return _objectOperations.PutObjectAsync(_request, token);

@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketName
     {
-        internal PutBucketAccelerateConfigurationRequest() : base(HttpMethod.PUT) { }
+        internal PutBucketAccelerateConfigurationRequest() : base(HttpMethodType.PUT) { }
 
         public PutBucketAccelerateConfigurationRequest(string bucketName, bool enabled) : this()
         {

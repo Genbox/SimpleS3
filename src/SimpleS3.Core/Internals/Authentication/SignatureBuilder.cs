@@ -81,7 +81,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication
             return CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date));
         }
 
-        internal string CreateCanonicalRequest(Guid requestId, string url, HttpMethod method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
+        internal string CreateCanonicalRequest(Guid requestId, string url, HttpMethodType method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
         {
             _logger.LogTrace("Creating canonical request for {RequestId}", requestId);
 

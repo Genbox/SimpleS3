@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart
     /// </summary>
     public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId
     {
-        internal CompleteMultipartUploadRequest() : base(HttpMethod.POST)
+        internal CompleteMultipartUploadRequest() : base(HttpMethodType.POST)
         {
             UploadParts = new List<S3PartInfo>();
         }

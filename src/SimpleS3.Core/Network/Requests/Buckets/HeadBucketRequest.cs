@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public class HeadBucketRequest : BaseRequest, IHasBucketName
     {
-        internal HeadBucketRequest() : base(HttpMethod.HEAD) { }
+        internal HeadBucketRequest() : base(HttpMethodType.HEAD) { }
 
         public HeadBucketRequest(string bucketName) : this()
         {

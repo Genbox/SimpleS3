@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention, IHasBucketName, IHasMfa, IContentMd5Config
     {
-        internal DeleteObjectsRequest() : base(HttpMethod.POST)
+        internal DeleteObjectsRequest() : base(HttpMethodType.POST)
         {
             Mfa = new MfaAuthenticationBuilder();
             Quiet = true;

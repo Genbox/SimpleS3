@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// <summary>Creates a new lifecycle configuration for the bucket or replaces an existing lifecycle configuration.</summary>
     public class PutBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketName, IContentMd5Config
     {
-        internal PutBucketLifecycleConfigurationRequest() : base(HttpMethod.PUT)
+        internal PutBucketLifecycleConfigurationRequest() : base(HttpMethodType.PUT)
         {
             Rules = new List<S3Rule>();
         }

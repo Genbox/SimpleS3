@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// <summary>Gets an object's current Legal Hold status.</summary>
     public class GetObjectLegalHoldRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasVersionId, IHasRequestPayer
     {
-        internal GetObjectLegalHoldRequest() : base(HttpMethod.GET) { }
+        internal GetObjectLegalHoldRequest() : base(HttpMethodType.GET) { }
 
         public GetObjectLegalHoldRequest(string bucketName, string objectKey) : this()
         {

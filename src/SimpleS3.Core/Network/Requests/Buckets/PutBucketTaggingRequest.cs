@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
     /// </summary>
     public class PutBucketTaggingRequest : BaseRequest, IHasBucketName, IContentMd5Config, IHasTags
     {
-        internal PutBucketTaggingRequest() : base(HttpMethod.PUT)
+        internal PutBucketTaggingRequest() : base(HttpMethodType.PUT)
         {
             Tags = new TagBuilder();
         }

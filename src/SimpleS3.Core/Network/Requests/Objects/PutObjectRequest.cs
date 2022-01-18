@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     /// </summary>
     public sealed class PutObjectRequest : CreateMultipartUploadRequest, IHasContent, ISupportStreaming, IContentMd5Config
     {
-        internal PutObjectRequest() : base(HttpMethod.PUT) { }
+        internal PutObjectRequest() : base(HttpMethodType.PUT) { }
 
         public PutObjectRequest(string bucketName, string objectKey, Stream? content) : this()
         {

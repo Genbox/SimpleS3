@@ -4,7 +4,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Signed
 {
     public class SignedHeadObjectRequest : SignedBaseRequest
     {
-        internal SignedHeadObjectRequest() : base(HttpMethod.HEAD) { }
+        internal SignedHeadObjectRequest() : base(HttpMethodType.HEAD) { }
 
         public SignedHeadObjectRequest(string url) : this()
         {

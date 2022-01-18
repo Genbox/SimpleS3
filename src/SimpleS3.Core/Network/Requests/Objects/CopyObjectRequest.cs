@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects
     {
         private byte[]? _sseCustomerKey;
 
-        internal CopyObjectRequest() : base(HttpMethod.PUT)
+        internal CopyObjectRequest() : base(HttpMethodType.PUT)
         {
             MetadataDirective = MetadataDirective.Copy;
             TaggingDirective = TaggingDirective.Copy;

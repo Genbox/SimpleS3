@@ -5,7 +5,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets
 {
     public class GetBucketVersioningRequest : BaseRequest, IHasBucketName
     {
-        internal GetBucketVersioningRequest() : base(HttpMethod.GET) { }
+        internal GetBucketVersioningRequest() : base(HttpMethodType.GET) { }
 
         public GetBucketVersioningRequest(string bucketName) : this()
         {

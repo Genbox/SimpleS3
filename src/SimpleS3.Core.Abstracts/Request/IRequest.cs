@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Abstracts.Request
         DateTimeOffset Timestamp { get; set; }
 
         /// <summary>The method to use when performing the request</summary>
-        HttpMethod Method { get; }
+        HttpMethodType Method { get; }
 
         /// <summary>Headers to apply to the request</summary>
         IReadOnlyDictionary<string, string> Headers { get; }

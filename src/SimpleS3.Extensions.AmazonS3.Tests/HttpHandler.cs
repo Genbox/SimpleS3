@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Extensions.AmazonS3.Tests.Helpers;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
-using HttpMethod = Genbox.SimpleS3.Core.Abstracts.Enums.HttpMethod;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
 {
@@ -17,7 +17,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
 
         public IDictionary<string, string> Headers { get; }
         public IDictionary<string, string> QueryParameters { get; private set; }
-        public HttpMethod Method { get; private set; }
+        public HttpMethodType Method { get; private set; }
         public string Target { get; private set; }
         public string Path { get; private set; }
         public string RawQuery { get; private set; }
@@ -30,7 +30,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests
 
         public void OnStartLine(Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod method, HttpVersion version, Span<byte> target, Span<byte> path, Span<byte> query, Span<byte> customMethod, bool pathEncoded)
         {
-            Method = Enum.Parse<HttpMethod>(method.ToString().ToUpperInvariant());
+            Method = Enum.Parse<HttpMethodType>(method.ToString().ToUpperInvariant());
             Target = Encoding.UTF8.GetString(target);
 
             //We need to remove parameters from the target
