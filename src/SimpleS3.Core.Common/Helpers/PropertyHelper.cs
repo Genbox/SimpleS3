@@ -4,7 +4,7 @@ namespace Genbox.SimpleS3.Core.Common.Helpers;
 
 public static class PropertyHelper
 {
-    public static void MapObjects<T, T2>(T source, T2 destination)
+    public static void MapObjects<T, T2>(T source, T2 destination) where T : T2 where T2 : new()
     {
         if (source == null || destination == null)
             return;
@@ -15,20 +15,37 @@ public static class PropertyHelper
         Type destType = destination.GetType();
         PropertyInfo[] destProperties = destType.GetProperties();
 
-        foreach (PropertyInfo sourceProp in sourceProperties)
+        T2 defaultDestObj = new T2();
+
+        int diff = sourceProperties.Length - destProperties.Length;
+
+        for (var i = 0; i < destProperties.Length; i++)
         {
-            foreach (PropertyInfo destProp in destProperties)
-            {
-                if (destProp.Name == sourceProp.Name)
-                {
-                    object? sourceVal = sourceProp.GetValue(source, null);
+            PropertyInfo prop = sourceProperties[i + diff];
 
-                    if (sourceVal == null)
-                        continue;
+            object? sourceVal = prop.GetValue(source, null);
+            object? destVal = prop.GetValue(destination, null);
 
-                    destProp.SetValue(destination, sourceProp.GetValue(source, null), null);
-                }
-            }
+            if (!IsDefaultValue(prop, destVal, defaultDestObj))
+                continue;
+
+            prop.SetValue(destination, sourceVal, null);
         }
+    }
+
+    private static bool IsDefaultValue(PropertyInfo propInfo, object? value, object defaultObj)
+    {
+        object? val = propInfo.GetValue(defaultObj, null);
+
+        if (value == null && val == null)
+            return true;
+
+        if (value == null || val == null)
+            return false;
+
+        if (value.Equals(val))
+            return true;
+
+        return false;
     }
 }
