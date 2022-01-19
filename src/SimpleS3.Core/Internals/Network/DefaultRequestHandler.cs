@@ -119,6 +119,7 @@ internal class DefaultRequestHandler : IRequestHandler
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
         sb.Append(endpointData.Endpoint);
+        RequestHelper.AppendPath(sb, config, request);
         RequestHelper.AppendQueryParameters(sb, request);
         string url = StringBuilderPool.Shared.ReturnString(sb);
 

@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
@@ -13,6 +14,7 @@ using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Misc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
@@ -41,13 +43,13 @@ internal class SignatureBuilder : ISignatureBuilder
     private readonly ISigningKeyBuilder _keyBuilder;
     private readonly ILogger<SignatureBuilder> _logger;
     private readonly IScopeBuilder _scopeBuilder;
-    private readonly IEndpointBuilder _endpointBuilder;
+    private readonly SimpleS3Config _options;
 
-    public SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IEndpointBuilder endpointBuilder, ILogger<SignatureBuilder> logger)
+    public SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<SignatureBuilder> logger)
     {
         _keyBuilder = keyBuilder;
         _scopeBuilder = scopeBuilder;
-        _endpointBuilder = endpointBuilder;
+        _options = options.Value;
         _logger = logger;
     }
 
@@ -57,14 +59,11 @@ internal class SignatureBuilder : ISignatureBuilder
 
         _logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
 
-        IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
-        sb.Append(endpointData.Endpoint);
-        RequestHelper.AppendQueryParameters(sb, request);
+        RequestHelper.AppendPath(sb, _options, request);
         string url = StringBuilderPool.Shared.ReturnString(sb);
 
         string payloadSignature = enablePayloadSignature ? request.Headers[AmzHeaders.XAmzContentSha256] : "UNSIGNED-PAYLOAD";
-
         string canonicalRequest = CreateCanonicalRequest(request.RequestId, url, request.Method, request.Headers, request.QueryParameters, payloadSignature);
         string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), canonicalRequest);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);

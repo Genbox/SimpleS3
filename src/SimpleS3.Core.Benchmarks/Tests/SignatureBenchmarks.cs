@@ -37,8 +37,7 @@ public class SignatureBenchmarks
 
         _signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
         IScopeBuilder scopeBuilder = new ScopeBuilder(options);
-        IEndpointBuilder endpointBuilder = new EndpointBuilder(options);
-        _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, endpointBuilder, NullLogger<SignatureBuilder>.Instance);
+        _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, options, NullLogger<SignatureBuilder>.Instance);
         _chunkSigBuilder = new ChunkedSignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);
 
         byte[] data = Encoding.UTF8.GetBytes("Hello world");

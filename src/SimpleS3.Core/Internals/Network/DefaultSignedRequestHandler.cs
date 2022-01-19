@@ -80,6 +80,7 @@ internal class DefaultSignedRequestHandler : ISignedRequestHandler
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
         sb.Append(endpointData.Endpoint);
+        RequestHelper.AppendPath(sb, config, request);
         RequestHelper.AppendQueryParameters(sb, request);
         return StringBuilderPool.Shared.ReturnString(sb);
     }

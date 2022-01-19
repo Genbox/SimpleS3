@@ -38,8 +38,7 @@ public class AwsSignatureVersion4Benchmarks
 
             SigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
             ScopeBuilder scopeBuilder = new ScopeBuilder(options);
-            EndpointBuilder endpointBuilder = new EndpointBuilder(options);
-            SignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, endpointBuilder, NullLogger<SignatureBuilder>.Instance);
+            SignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, options, NullLogger<SignatureBuilder>.Instance);
 
             _builder = new HeaderAuthorizationBuilder(options, scopeBuilder, signatureBuilder, NullLogger<HeaderAuthorizationBuilder>.Instance);
 
