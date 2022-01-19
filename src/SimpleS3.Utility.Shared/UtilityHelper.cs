@@ -72,10 +72,10 @@ public static class UtilityHelper
         return bucketName.StartsWith("tempbucket-", StringComparison.OrdinalIgnoreCase);
     }
 
-    public static ServiceProvider CreateSimpleS3(S3Provider provider, string profileName, bool enableRetry)
+    public static ServiceProvider CreateSimpleS3(S3Provider provider, string profileName, bool enableRetry, Action<SimpleS3Config>? configure = null)
     {
         ServiceCollection services = new ServiceCollection();
-        ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services);
+        ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services, configure);
 
         IConfigurationRoot configRoot = new ConfigurationBuilder()
             .SetBasePath(Environment.CurrentDirectory)

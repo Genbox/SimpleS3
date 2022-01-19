@@ -1,7 +1,9 @@
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.ProviderTests.Misc;
 
@@ -20,7 +22,7 @@ public class ProviderSetup
 
     private void BuildProvider(S3Provider provider)
     {
-        ServiceProvider services = UtilityHelper.CreateSimpleS3(provider, "TestSetup-" + provider, false);
+        ServiceProvider services = UtilityHelper.CreateSimpleS3(provider, "TestSetup-" + provider, false, c => c.ObjectKeyValidationMode = ObjectKeyValidationMode.Disabled);
 
         IProfileManager profileManager = services.GetRequiredService<IProfileManager>();
 
