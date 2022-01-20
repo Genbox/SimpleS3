@@ -38,8 +38,7 @@ internal abstract class RequestValidatorBase<T> : ValidatorBase<T> where T : IRe
         //- Must be between 3 and 63 long
         When(x => x is IHasBucketName,
             () => RuleFor(x => ((IHasBucketName)x).BucketName)
-                .Custom(ValidateBucketName)
-                .When(x => _cfg.EnableBucketNameValidation));
+                .Custom(ValidateBucketName));
 
         When(x => x is IHasObjectKey,
             () => RuleFor(x => ((IHasObjectKey)x).ObjectKey)
@@ -54,7 +53,7 @@ internal abstract class RequestValidatorBase<T> : ValidatorBase<T> where T : IRe
 
     private void ValidateBucketName(string input, ValidationContext<T> context)
     {
-        if (!_validator.TryValidateBucketName(input, out ValidationStatus status, out string? allowed))
+        if (!_validator.TryValidateBucketName(input, _cfg.BucketNameValidationMode, out ValidationStatus status, out string? allowed))
             context.AddFailure("Invalid bucket name: " + ValidationMessages.GetMessage(status, allowed));
     }
 }

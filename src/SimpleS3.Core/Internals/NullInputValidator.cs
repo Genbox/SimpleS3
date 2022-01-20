@@ -19,7 +19,7 @@ public class NullInputValidator : IInputValidator
         return true;
     }
 
-    public bool TryValidateBucketName(string? bucketName, out ValidationStatus status, out string? message)
+    public bool TryValidateBucketName(string? bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {
         status = ValidationStatus.Unknown;
         message = null;

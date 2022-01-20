@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage;
 
-public class GoogleCloudStorageValidator : InputValidatorBase
+public class GoogleCloudStorageInputValidator : InputValidatorBase
 {
     protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)
     {
@@ -64,47 +64,21 @@ public class GoogleCloudStorageValidator : InputValidatorBase
         return true;
     }
 
-    protected override bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status, out string? message)
+    protected override bool TryValidateBucketNameInternal(string bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {
         //https://cloud.google.com/storage/docs/naming-buckets
 
         //Spec: Bucket names must contain 3-63 characters. Names containing dots can contain up to 222 characters, but each dot-separated component can be no longer than 63 characters.
-        if (bucketName.Length is < 3 or > 222)
+        if (bucketName.Length < 3 || bucketName.Length > 63)
         {
             status = ValidationStatus.WrongLength;
             message = "3-63";
             return false;
         }
 
-        int index = 0;
-
-        for (int i = 0; i < bucketName.Length; i++)
-        {
-            if (bucketName[i] != '.')
-                continue;
-
-            int length = i - index;
-
-            if (length > 63)
-            {
-                status = ValidationStatus.WrongLength;
-                message = "1-63";
-                return false;
-            }
-
-            index = i;
-        }
-
-        if (index == 0 && bucketName.Length > 63)
-        {
-            status = ValidationStatus.WrongLength;
-            message = "1-63";
-            return false;
-        }
-
         //Spec: Bucket names must start and end with a number or letter.
         char start = bucketName[0];
-        char end = bucketName.Last();
+        char end = bucketName[bucketName.Length - 1];
 
         if (!CharHelper.InRange(start, 'a', 'z') && !CharHelper.InRange(start, '0', '9'))
         {
@@ -173,15 +147,16 @@ public class GoogleCloudStorageValidator : InputValidatorBase
             return false;
         }
 
+        //Spec: Object names cannot start with .well-known/acme-challenge/.
+        if (objectKey.StartsWith(".well-known/acme-challenge/", StringComparison.OrdinalIgnoreCase))
+        {
+            status = ValidationStatus.WrongFormat;
+            message = ".well-known/acme-challenge/";
+            return false;
+        }
+
         foreach (char c in objectKey)
         {
-            //0xD800 to 0xDFFF are reserved code points in UTF-16. Since they will always be URL encoded to %EF%BF%BD (the � char) in UTF-8
-            if (CharHelper.InRange(c, '\uD800', '\uDFFF'))
-            {
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
             //Spec: Object names cannot contain Carriage Return or Line Feed characters.
             if (CharHelper.OneOf(c, '\r', '\n'))
             {
@@ -190,26 +165,17 @@ public class GoogleCloudStorageValidator : InputValidatorBase
                 return false;
             }
 
-            if (CharHelper.InRange(c, 'a', 'z') || CharHelper.InRange(c, 'A', 'Z') || CharHelper.InRange(c, '0', '9'))
-                continue;
-
-            if (CharHelper.OneOf(c, '!', '#', '$', '&', '\'', '(', ')', '*', '+', ',', '/', ':', ';', '=', '?', '@', '[', ']'))
-                continue;
-
-            if (mode == ObjectKeyValidationMode.Unrestricted)
-                continue;
-
-            status = ValidationStatus.WrongFormat;
-            message = c.ToString();
-            return false;
-        }
-
-        //Spec: Object names cannot start with .well-known/acme-challenge/.
-        if (objectKey.StartsWith(".well-known/acme-challenge/", StringComparison.OrdinalIgnoreCase))
-        {
-            status = ValidationStatus.WrongFormat;
-            message = ".well-known/acme-challenge/";
-            return false;
+            if (mode == ObjectKeyValidationMode.DefaultStrict)
+            {
+                //Spec: Avoid the "#" character: gsutil interprets object names ending with #<numeric string> as version identifiers, so including "#" in object names can make it difficult or impossible to perform operations on such versioned objects using gsutil.
+                //Spec: Avoid the "[", "]", "*", or "?" characters: gsutil interprets these characters as wildcards, so including them in object names can make it difficult or impossible to perform wildcard operations using gsutil.
+                if (CharHelper.OneOf(c, '#', '[', ']', '*', '?'))
+                {
+                    status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
+                    return false;
+                }
+            }
         }
 
         status = ValidationStatus.Ok;

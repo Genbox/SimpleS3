@@ -1,4 +1,6 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using System.Text.RegularExpressions;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
 
@@ -6,6 +8,8 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3;
 
 public class AmazonS3InputValidator : InputValidatorBase
 {
+    private readonly Regex _ipRegex = new Regex(@"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
     protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)
     {
         if (keyId.Length != 20)
@@ -17,10 +21,7 @@ public class AmazonS3InputValidator : InputValidatorBase
 
         foreach (char c in keyId)
         {
-            if (c >= 'A' || c <= 'Z')
-                continue;
-
-            if (c >= '0' || c <= '9')
+            if (CharHelper.InRange(c, 'A', 'Z') || CharHelper.InRange(c, '0', '9'))
                 continue;
 
             status = ValidationStatus.WrongFormat;
@@ -47,67 +48,69 @@ public class AmazonS3InputValidator : InputValidatorBase
         return true;
     }
 
-    protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
+    protected override bool TryValidateBucketNameInternal(string bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {
-        if (objectKey.Length < 1 || objectKey.Length > 1024)
+        //Source: https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
+
+        //Spec: Bucket names must be between 3 and 63 characters long.
+        if (bucketName.Length < 3 || bucketName.Length > 63)
         {
             status = ValidationStatus.WrongLength;
-            message = "1-1024";
+            message = "3-63";
             return false;
         }
 
-        foreach (char c in objectKey)
+        //Spec: Bucket names can consist only of lowercase letters, numbers, dots (.), and hyphens (-).
+        foreach (char c in bucketName)
         {
-            if (CharHelper.InRange(c, 'a', 'z') || CharHelper.InRange(c, 'A', 'Z') || CharHelper.InRange(c, '0', '9'))
+            if (CharHelper.InRange(c, 'a', 'z') || CharHelper.InRange(c, '0', '9') || CharHelper.OneOf(c, '.', '-'))
                 continue;
 
-            //See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
-            if (CharHelper.OneOf(c, '/', '!', '-', '_', '.', '*', '\'', '(', ')'))
-                continue;
+            status = ValidationStatus.WrongFormat;
+            message = c.ToString();
+            return false;
+        }
 
-            //0xD800 to 0xDFFF are reserved code points in UTF-16. Since they will always be URL encoded to %EF%BF%BD (the � char) in UTF-8
-            if (CharHelper.InRange(c, '\uD800', '\uDFFF'))
-            {
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
+        //Spec: Bucket names must begin and end with a letter or number.
+        char start = bucketName[0];
+        if (!CharHelper.InRange(start, 'a', 'z') && !CharHelper.InRange(start, '0', '9'))
+        {
+            status = ValidationStatus.WrongFormat;
+            message = start.ToString();
+            return false;
+        }
 
-            if (mode == ObjectKeyValidationMode.SafeMode)
-            {
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
+        //Spec: Bucket names must begin and end with a letter or number.
+        char end = bucketName[bucketName.Length - 1];
+        if (!CharHelper.InRange(end, 'a', 'z') && !CharHelper.InRange(end, '0', '9'))
+        {
+            status = ValidationStatus.WrongFormat;
+            message = end.ToString();
+            return false;
+        }
 
-            if (CharHelper.OneOf(c, '&', '$', '@', '=', ';', ':', '+', ' ', ',', '?'))
-                continue;
+        //Spec: Bucket names must not be formatted as an IP address (for example, 192.168.5.4).
+        if (_ipRegex.IsMatch(bucketName))
+        {
+            status = ValidationStatus.WrongFormat;
+            message = bucketName;
+            return false;
+        }
 
-            if (CharHelper.InRange(c, (char)0, (char)31) || c == (char)127)
-                continue;
+        //Spec: Bucket names must not start with the prefix xn--.
+        if (bucketName.StartsWith("xn--", StringComparison.Ordinal))
+        {
+            status = ValidationStatus.WrongFormat;
+            message = "xn--";
+            return false;
+        }
 
-            if (mode == ObjectKeyValidationMode.AsciiMode)
-            {
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
-
-            if (CharHelper.OneOf(c, '\\', '{', '}', '^', '%', '`', '[', ']', '"', '<', '>', '~', '#', '|'))
-                continue;
-
-            if (CharHelper.InRange(c, (char)128, (char)255))
-                continue;
-
-            if (mode == ObjectKeyValidationMode.Unrestricted)
-                continue;
-
-            if (mode == ObjectKeyValidationMode.ExtendedAsciiMode)
-            {
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
+        //Spec: Bucket names must not end with the suffix -s3alias. This suffix is reserved for access point alias names. For more information, see Using a bucket-style alias for your access point.
+        if (bucketName.EndsWith("-s3alias", StringComparison.Ordinal))
+        {
+            status = ValidationStatus.WrongFormat;
+            message = "-s3alias";
+            return false;
         }
 
         status = ValidationStatus.Ok;
@@ -115,70 +118,48 @@ public class AmazonS3InputValidator : InputValidatorBase
         return true;
     }
 
-    /// <summary>
-    /// Validates a bucket name according to standard DNS rules. See
-    /// https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html#bucketnamingrules for more details.
-    /// </summary>
-    /// <param name="bucketName">The bucket name</param>
-    /// <param name="status">Contains the error if validation failed</param>
-    /// <returns>True if validation succeeded, false otherwise</returns>
-    protected override bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status, out string? message)
+    protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
     {
-        if (bucketName.Length < 3 || bucketName.Length > 63)
+        //Source: https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html
+
+        //Spec: The name for a key is a sequence of Unicode characters whose UTF-8 encoding is at most 1,024 bytes long.
+        if (objectKey.Length < 1 || Constants.Utf8NoBom.GetByteCount(objectKey) > 1024)
         {
             status = ValidationStatus.WrongLength;
-            message = "2-63";
+            message = "1-1024";
             return false;
         }
 
-        int curPos = 0;
-        int end = bucketName.Length;
-
-        do
+        //Spec: You can use any UTF-8 character in an object key name. However, using certain characters in key names can cause problems with some applications and protocols.
+        foreach (char c in objectKey)
         {
-            //find the dot or hit the end
-            int newPos = curPos;
-            while (newPos < end)
+            //Spec: Safe characters
+            if (CharHelper.InRange(c, 'a', 'z') || CharHelper.InRange(c, 'A', 'Z') || CharHelper.InRange(c, '0', '9'))
+                continue;
+
+            //Spec: Safe characters
+            if (CharHelper.OneOf(c, '/', '!', '-', '_', '.', '*', '\'', '(', ')'))
+                continue;
+
+            if (mode == ObjectKeyValidationMode.DefaultStrict)
             {
-                if (bucketName[newPos] == '.')
-                    break;
+                //Spec: Characters that might require special handling
+                if (CharHelper.OneOf(c, '&', '$', '@', '=', ';', ':', '+', ' ', ',', '?') || CharHelper.InRange(c, (char)0, (char)31) || c == (char)127)
+                {
+                    status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
+                    return false;
+                }
 
-                ++newPos;
+                //Spec: Characters to avoid
+                if (CharHelper.OneOf(c, '\\', '{', '}', '^', '%', '`', '[', ']', '"', '<', '>', '~', '#', '|'))
+                {
+                    status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
+                    return false;
+                }
             }
-
-            if (curPos == newPos || newPos - curPos > 63)
-            {
-                status = ValidationStatus.WrongLength;
-                message = "1-63";
-                return false;
-            }
-
-            char start = bucketName[curPos];
-
-            if (!CharHelper.InRange(start, 'a', 'z') && !CharHelper.InRange(start, '0', '9'))
-            {
-                status = ValidationStatus.WrongFormat;
-                message = start.ToString();
-                return false;
-            }
-
-            curPos++;
-
-            //check the label content
-            while (curPos < newPos)
-            {
-                char c = bucketName[curPos++];
-
-                if (CharHelper.InRange(c, 'a', 'z') || CharHelper.InRange(c, '0', '9') || c == '-')
-                    continue;
-
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
-
-            ++curPos;
-        } while (curPos < end);
+        }
 
         status = ValidationStatus.Ok;
         message = null;

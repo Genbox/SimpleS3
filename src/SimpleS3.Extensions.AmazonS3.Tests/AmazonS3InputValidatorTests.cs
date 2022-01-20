@@ -1,15 +1,15 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Xunit;
 
-namespace Genbox.SimpleS3.Extensions.Wasabi.Tests;
+namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 
-public class WasabiInputValidatorTests
+public class AmazonS3InputValidatorTests
 {
-    private readonly WasabiInputValidator _validator;
+    private readonly AmazonS3InputValidator _validator;
 
-    public WasabiInputValidatorTests()
+    public AmazonS3InputValidatorTests()
     {
-        _validator = new WasabiInputValidator();
+        _validator = new AmazonS3InputValidator();
     }
 
     [Theory]
@@ -47,6 +47,8 @@ public class WasabiInputValidatorTests
     [InlineData("^bucket", ValidationStatus.WrongFormat)] //Must must begin and end with a letter or number
     [InlineData("bucket^", ValidationStatus.WrongFormat)] //Must must begin and end with a letter or number
     [InlineData("127.0.0.1", ValidationStatus.WrongFormat)] //Must not be formatted as an IP address (for example, 192.168.5.4)
+    [InlineData("xn--punyhulk", ValidationStatus.WrongFormat)] //Must not start with the prefix xn--
+    [InlineData("bucket-s3alias", ValidationStatus.WrongFormat)] //Must not end with the suffix -s3alias. This suffix is reserved for access point alias names
     public void TryValidateBucketNameTest(string input, ValidationStatus expectedStatus)
     {
         _validator.TryValidateBucketName(input, BucketNameValidationMode.Default, out ValidationStatus status, out _);

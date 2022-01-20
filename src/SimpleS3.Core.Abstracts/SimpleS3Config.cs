@@ -48,14 +48,11 @@ public class SimpleS3Config
     /// </summary>
     public string? EndpointTemplate { get; set; }
 
-    /// <summary>
-    /// If enabled, bucket names are validated to ensure they are valid DNS names. This is to ensure you can always access your bucket using virtual
-    /// host naming style.
-    /// </summary>
-    public bool EnableBucketNameValidation { get; set; }
+    /// <summary>Controls the level of validation performed on bucket names. You should only create buckets that are valid DNS names.</summary>
+    public BucketNameValidationMode BucketNameValidationMode { get; set; } = BucketNameValidationMode.Default;
 
-    /// <summary>Controls the mode of validation that is applied to object keys. By default we only allow safe ASCII characters and a few special chars.</summary>
-    public ObjectKeyValidationMode ObjectKeyValidationMode { get; set; } = ObjectKeyValidationMode.AsciiMode;
+    /// <summary>Controls the mode of validation that is applied to object keys. By default provider specific validation is performed. If you are not using a provider, it will default to <see cref="ObjectKeyValidationMode.Unrestricted"/>.</summary>
+    public ObjectKeyValidationMode ObjectKeyValidationMode { get; set; } = ObjectKeyValidationMode.Default;
 
     /// <summary>If a response has EncodingType set to Url, SimpleS3 will automatically URL decode the encoded part of the response if this setting is true.</summary>
     public bool AutoUrlDecodeResponses { get; set; }

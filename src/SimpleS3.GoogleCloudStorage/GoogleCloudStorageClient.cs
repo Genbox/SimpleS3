@@ -45,9 +45,9 @@ namespace Genbox.SimpleS3.GoogleCloudStorage
         /// <summary>Creates a new instance of <see cref="GoogleCloudStorageClient" /></summary>
         /// <param name="config">The configuration you want to use</param>
         /// <param name="proxy">A web proxy (optional)</param>
-        public GoogleCloudStorageClient(GoogleCloudStorageConfig config, IWebProxy? proxy = null) : base(new GoogleCloudStorageValidator(), config, proxy) { }
+        public GoogleCloudStorageClient(GoogleCloudStorageConfig config, IWebProxy? proxy = null) : base(new GoogleCloudStorageInputValidator(), config, proxy) { }
 
-        public GoogleCloudStorageClient(GoogleCloudStorageConfig config, INetworkDriver networkDriver) : base(new GoogleCloudStorageValidator(), config, networkDriver) { }
+        public GoogleCloudStorageClient(GoogleCloudStorageConfig config, INetworkDriver networkDriver) : base(new GoogleCloudStorageInputValidator(), config, networkDriver) { }
 
         internal GoogleCloudStorageClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) { }
 

@@ -1,4 +1,6 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using System.Text.RegularExpressions;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Common.Constants;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
 
@@ -6,21 +8,20 @@ namespace Genbox.SimpleS3.Extensions.Wasabi;
 
 public class WasabiInputValidator : InputValidatorBase
 {
+    private readonly Regex _ipRegex = new Regex(@"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
     protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)
     {
         if (keyId.Length != 20)
         {
             status = ValidationStatus.WrongLength;
-            message = "20";
+            message = null;
             return false;
         }
 
         foreach (char c in keyId)
         {
-            if (c >= 'A' || c <= 'Z')
-                continue;
-
-            if (c >= '0' || c <= '9')
+            if (CharHelper.InRange(c, 'A', 'Z') || CharHelper.InRange(c, '0', '9'))
                 continue;
 
             status = ValidationStatus.WrongFormat;
@@ -47,67 +48,53 @@ public class WasabiInputValidator : InputValidatorBase
         return true;
     }
 
-    protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
+    protected override bool TryValidateBucketNameInternal(string bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {
-        if (objectKey.Length < 1 || objectKey.Length > 1024)
+        //Source: https://wasabi.com/wp-content/themes/wasabi/docs/User_Guide/topics/Creating_a_Bucket.htm
+
+        //Spec: A bucket name can consist of 3 to 63 characters
+        if (bucketName.Length < 3 || bucketName.Length > 63)
         {
             status = ValidationStatus.WrongLength;
-            message = "1-1024";
+            message = "3-63";
             return false;
         }
 
-        foreach (char c in objectKey)
+        //Spec: lowercase letters, numbers, periods, and dashes.
+        foreach (char c in bucketName)
         {
-            if (CharHelper.InRange(c, 'a', 'z') || CharHelper.InRange(c, 'A', 'Z') || CharHelper.InRange(c, '0', '9'))
+            if (CharHelper.InRange(c, 'a', 'z') || CharHelper.InRange(c, '0', '9') || CharHelper.OneOf(c, '.', '-'))
                 continue;
 
-            //See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
-            if (CharHelper.OneOf(c, '/', '!', '-', '_', '.', '*', '\'', '(', ')'))
-                continue;
+            status = ValidationStatus.WrongFormat;
+            message = c.ToString();
+            return false;
+        }
 
-            //0xD800 to 0xDFFF are reserved code points in UTF-16. Since they will always be URL encoded to %EF%BF%BD (the � char) in UTF-8
-            if (CharHelper.InRange(c, '\uD800', '\uDFFF'))
-            {
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
+        //Spec: The name must begin with a lower­case letter or number.
+        char start = bucketName[0];
+        if (!CharHelper.InRange(start, 'a', 'z') && !CharHelper.InRange(start, '0', '9'))
+        {
+            status = ValidationStatus.WrongFormat;
+            message = start.ToString();
+            return false;
+        }
 
-            if (mode == ObjectKeyValidationMode.SafeMode)
-            {
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
+        //Spec: The name must begin with a lower­case letter or number.
+        char end = bucketName[bucketName.Length - 1];
+        if (!CharHelper.InRange(end, 'a', 'z') && !CharHelper.InRange(end, '0', '9'))
+        {
+            status = ValidationStatus.WrongFormat;
+            message = end.ToString();
+            return false;
+        }
 
-            if (CharHelper.OneOf(c, '&', '$', '@', '=', ';', ':', '+', ' ', ',', '?'))
-                continue;
-
-            if (CharHelper.InRange(c, (char)0, (char)31) || c == (char)127)
-                continue;
-
-            if (mode == ObjectKeyValidationMode.AsciiMode)
-            {
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
-
-            if (CharHelper.OneOf(c, '\\', '{', '}', '^', '%', '`', '[', ']', '"', '<', '>', '~', '#', '|'))
-                continue;
-
-            if (CharHelper.InRange(c, (char)128, (char)255))
-                continue;
-
-            if (mode == ObjectKeyValidationMode.Unrestricted)
-                continue;
-
-            if (mode == ObjectKeyValidationMode.ExtendedAsciiMode)
-            {
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
+        //Spec: name cannot be formatted as an IP address (123.45.678.90)
+        if (_ipRegex.IsMatch(bucketName))
+        {
+            status = ValidationStatus.WrongFormat;
+            message = bucketName;
+            return false;
         }
 
         status = ValidationStatus.Ok;
@@ -115,70 +102,37 @@ public class WasabiInputValidator : InputValidatorBase
         return true;
     }
 
-    /// <summary>
-    /// Validates a bucket name according to standard DNS rules. See
-    /// https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html#bucketnamingrules for more details.
-    /// </summary>
-    /// <param name="bucketName">The bucket name</param>
-    /// <param name="status">Contains the error if validation failed</param>
-    /// <returns>True if validation succeeded, false otherwise</returns>
-    protected override bool TryValidateBucketNameInternal(string bucketName, out ValidationStatus status, out string? message)
+    protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
     {
-        if (bucketName.Length < 3 || bucketName.Length > 63)
+        //Source: https://wasabi.com/wp-content/themes/wasabi/docs/User_Guide/topics/Storing_Objects_in_a_Bucket.htm
+
+        if (objectKey.Length < 1 || Constants.Utf8NoBom.GetByteCount(objectKey) > 1024)
         {
             status = ValidationStatus.WrongLength;
-            message = "2-63";
+            message = "1-1024";
             return false;
         }
 
-        int curPos = 0;
-        int end = bucketName.Length;
-
-        do
+        if (mode == ObjectKeyValidationMode.DefaultStrict)
         {
-            //find the dot or hit the end
-            int newPos = curPos;
-            while (newPos < end)
+            //Spec: Avoid the use of the following special characters in a file name:
+            // % (percent)
+            // < (less than symbol)
+            // > (greater than symbol)
+            // \ (backslash)
+            // # (pound sign)
+            // ? (question mark)
+
+            foreach (char c in objectKey)
             {
-                if (bucketName[newPos] == '.')
-                    break;
-
-                ++newPos;
+                if (CharHelper.OneOf(c, '%', '<', '>', '\\', '#', '?'))
+                {
+                    status = ValidationStatus.WrongFormat;
+                    message = c.ToString();
+                    return false;
+                }
             }
-
-            if (curPos == newPos || newPos - curPos > 63)
-            {
-                status = ValidationStatus.WrongLength;
-                message = "1-63";
-                return false;
-            }
-
-            char start = bucketName[curPos];
-
-            if (!CharHelper.InRange(start, 'a', 'z') && !CharHelper.InRange(start, '0', '9'))
-            {
-                status = ValidationStatus.WrongFormat;
-                message = start.ToString();
-                return false;
-            }
-
-            curPos++;
-
-            //check the label content
-            while (curPos < newPos)
-            {
-                char c = bucketName[curPos++];
-
-                if (CharHelper.InRange(c, 'a', 'z') || CharHelper.InRange(c, '0', '9') || c == '-')
-                    continue;
-
-                status = ValidationStatus.WrongFormat;
-                message = c.ToString();
-                return false;
-            }
-
-            ++curPos;
-        } while (curPos < end);
+        }
 
         status = ValidationStatus.Ok;
         message = null;

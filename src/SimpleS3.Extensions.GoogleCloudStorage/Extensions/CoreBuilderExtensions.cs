@@ -24,7 +24,7 @@ public static class CoreBuilderExtensions
     public static ICoreBuilder UseGoogleCloudStorage(this ICoreBuilder clientBuilder)
     {
         clientBuilder.Services.AddSingleton<IRegionData, GoogleCloudStorageRegionData>();
-        clientBuilder.Services.AddSingleton<IInputValidator, GoogleCloudStorageValidator>();
+        clientBuilder.Services.AddSingleton<IInputValidator, GoogleCloudStorageInputValidator>();
 
         clientBuilder.Services.PostConfigure<SimpleS3Config>((x, y) =>
         {

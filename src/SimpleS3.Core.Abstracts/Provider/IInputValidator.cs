@@ -6,6 +6,6 @@ public interface IInputValidator
 {
     bool TryValidateKeyId(string? keyId, out ValidationStatus status, out string? message);
     bool TryValidateAccessKey(byte[]? accessKey, out ValidationStatus status, out string? message);
-    bool TryValidateBucketName(string? bucketName, out ValidationStatus status, out string? message);
+    bool TryValidateBucketName(string? bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message);
     bool TryValidateObjectKey(string? objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message);
 }

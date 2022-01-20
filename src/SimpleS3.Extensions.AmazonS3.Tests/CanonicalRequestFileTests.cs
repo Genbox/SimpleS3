@@ -7,7 +7,6 @@ using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.TestBase.Helpers;
-using Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
 using Genbox.SimpleS3.Extensions.AmazonS3.Tests.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -25,11 +24,11 @@ public class CanonicalRequestFileTests
         ServiceCollection services = new ServiceCollection();
         services.AddLogging();
 
-        SimpleS3CoreServices.AddSimpleS3Core(services).UseAmazonS3(x =>
-        {
-            x.Credentials = new StringAccessKey("KeyIdExampleExampleE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
-            x.Region = AmazonS3Region.UsEast1;
-        });
+        SimpleS3CoreServices.AddSimpleS3Core(services, x =>
+         {
+             x.Credentials = new StringAccessKey("KeyIdExampleExampleE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
+             x.RegionCode = "us-east-1";
+         });
 
         ServiceProvider? provider = services.BuildServiceProvider();
 

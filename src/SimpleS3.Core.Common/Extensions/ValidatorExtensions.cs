@@ -30,9 +30,9 @@ public static class ValidatorExtensions
         throw new ArgumentException("Invalid object key: " + ValidationMessages.GetMessage(status, message), nameof(objectKey));
     }
 
-    public static void ValidateBucketName(this IInputValidator validator, string? bucketName)
+    public static void ValidateBucketName(this IInputValidator validator, BucketNameValidationMode mode, string? bucketName)
     {
-        if (validator.TryValidateBucketName(bucketName, out ValidationStatus status, out string? message))
+        if (validator.TryValidateBucketName(bucketName, mode, out ValidationStatus status, out string? message))
             return;
 
         throw new ArgumentException("Invalid bucket name: " + ValidationMessages.GetMessage(status, message), nameof(bucketName));
