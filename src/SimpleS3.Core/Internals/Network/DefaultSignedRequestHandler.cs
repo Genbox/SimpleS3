@@ -25,7 +25,7 @@ internal class DefaultSignedRequestHandler : ISignedRequestHandler
     private readonly IEndpointBuilder _endpointBuilder;
     private readonly ILogger<DefaultSignedRequestHandler> _logger;
     private readonly IMarshalFactory _marshaller;
-    private readonly IOptions<SimpleS3Config> _options;
+    private readonly SimpleS3Config _config;
     private readonly IScopeBuilder _scopeBuilder;
 
     public DefaultSignedRequestHandler(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultSignedRequestHandler> logger)
@@ -35,7 +35,7 @@ internal class DefaultSignedRequestHandler : ISignedRequestHandler
         Validator.RequireNotNull(authBuilder, nameof(authBuilder));
         Validator.RequireNotNull(logger, nameof(logger));
 
-        _options = options;
+        _config = options.Value;
         _authBuilder = authBuilder;
         _endpointBuilder = endpointBuilder;
         _marshaller = marshaller;
@@ -50,15 +50,14 @@ internal class DefaultSignedRequestHandler : ISignedRequestHandler
 
         _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
-        SimpleS3Config config = _options.Value;
-        _marshaller.MarshalRequest(config, request);
+        _marshaller.MarshalRequest(_config, request);
 
         IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
         request.SetHeader(HttpHeaders.Host, endpointData.Host);
 
         string scope = _scopeBuilder.CreateScope("s3", request.Timestamp);
         request.SetQueryParameter(AmzParameters.XAmzAlgorithm, SigningConstants.AlgorithmTag);
-        request.SetQueryParameter(AmzParameters.XAmzCredential, _options.Value.Credentials.KeyId + '/' + scope);
+        request.SetQueryParameter(AmzParameters.XAmzCredential, _config.Credentials.KeyId + '/' + scope);
         request.SetQueryParameter(AmzParameters.XAmzDate, request.Timestamp.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
         request.SetQueryParameter(AmzParameters.XAmzExpires, expiresIn.TotalSeconds.ToString(NumberFormatInfo.InvariantInfo));
         request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, string.Join(";", HeaderWhitelist.FilterHeaders(request.Headers).Select(x => x.Key)));
@@ -80,7 +79,7 @@ internal class DefaultSignedRequestHandler : ISignedRequestHandler
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
         sb.Append(endpointData.Endpoint);
-        RequestHelper.AppendPath(sb, config, request);
+        RequestHelper.AppendPath(sb, _config, request);
         RequestHelper.AppendQueryParameters(sb, request);
         return StringBuilderPool.Shared.ReturnString(sb);
     }

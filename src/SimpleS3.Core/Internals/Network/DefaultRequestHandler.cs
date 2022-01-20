@@ -32,7 +32,7 @@ internal class DefaultRequestHandler : IRequestHandler
     private readonly ILogger<DefaultRequestHandler> _logger;
     private readonly IMarshalFactory _marshaller;
     private readonly INetworkDriver _networkDriver;
-    private readonly IOptions<SimpleS3Config> _options;
+    private readonly SimpleS3Config _config;
     private readonly IPostMapperFactory _postMapper;
     private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
     private readonly IRequestValidatorFactory _requestValidator;
@@ -47,7 +47,7 @@ internal class DefaultRequestHandler : IRequestHandler
         Validator.RequireNotNull(logger, nameof(logger));
 
         _requestValidator = validator;
-        _options = options;
+        _config = options.Value;
         _networkDriver = networkDriver;
         _authBuilder = authBuilder;
         _endpointBuilder = endpointBuilder;
@@ -73,7 +73,7 @@ internal class DefaultRequestHandler : IRequestHandler
 
     private Task<TResp> SendPreSignedAsync<TResp>(SignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
     {
-        Stream? requestStream = _marshaller.MarshalRequest(_options.Value, preSigned);
+        Stream? requestStream = _marshaller.MarshalRequest(_config, preSigned);
         return HandleResponse<SignedBaseRequest, TResp>(preSigned, preSigned.Url, requestStream, token);
     }
 
@@ -84,8 +84,7 @@ internal class DefaultRequestHandler : IRequestHandler
 
         _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
-        SimpleS3Config config = _options.Value;
-        Stream? requestStream = _marshaller.MarshalRequest(config, request);
+        Stream? requestStream = _marshaller.MarshalRequest(_config, request);
 
         _requestValidator.ValidateAndThrow(request);
 
@@ -104,7 +103,7 @@ internal class DefaultRequestHandler : IRequestHandler
 
         if (!request.Headers.TryGetValue(AmzHeaders.XAmzContentSha256, out string contentHash))
         {
-            if (config.PayloadSignatureMode == SignatureMode.Unsigned)
+            if (_config.PayloadSignatureMode == SignatureMode.Unsigned)
                 contentHash = "UNSIGNED-PAYLOAD";
             else
                 contentHash = requestStream == null ? Constants.EmptySha256 : CryptoHelper.Sha256Hash(requestStream, true).HexEncode();
@@ -119,7 +118,7 @@ internal class DefaultRequestHandler : IRequestHandler
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
         sb.Append(endpointData.Endpoint);
-        RequestHelper.AppendPath(sb, config, request);
+        RequestHelper.AppendPath(sb, _config, request);
         RequestHelper.AppendQueryParameters(sb, request);
         string url = StringBuilderPool.Shared.ReturnString(sb);
 
@@ -163,7 +162,7 @@ internal class DefaultRequestHandler : IRequestHandler
 
         //Only marshal successful responses
         if (response.IsSuccess)
-            _marshaller.MarshalResponse(_options.Value, response, headers, responseStream ?? Stream.Null);
+            _marshaller.MarshalResponse(_config, response, headers, responseStream ?? Stream.Null);
         else if (responseStream != null)
         {
             try
@@ -190,9 +189,9 @@ internal class DefaultRequestHandler : IRequestHandler
         }
 
         //We always map even if the request is not successful
-        _postMapper.PostMap(_options.Value, request, response);
+        _postMapper.PostMap(_config, request, response);
 
-        if (_options.Value.ThrowExceptionOnError && !response.IsSuccess)
+        if (_config.ThrowExceptionOnError && !response.IsSuccess)
             throw new S3RequestException(response, $"Received error: '{response.Error?.Message}'. Details: '{response.Error?.GetErrorDetails()}'");
 
         return response;

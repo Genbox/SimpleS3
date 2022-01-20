@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 
 public class SignedUrlTests
 {
-    private readonly IOptions<SimpleS3Config> _options;
+    private readonly SimpleS3Config _options;
     private readonly ScopeBuilder _scopeBuilder;
     private readonly SignatureBuilder _sigBuilder;
     private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
@@ -43,7 +43,7 @@ public class SignedUrlTests
 
         _scopeBuilder = (ScopeBuilder)provider.GetRequiredService<IScopeBuilder>();
         _sigBuilder = (SignatureBuilder)provider.GetRequiredService<ISignatureBuilder>();
-        _options = provider.GetRequiredService<IOptions<SimpleS3Config>>();
+        _options = provider.GetRequiredService<IOptions<SimpleS3Config>>().Value;
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class SignedUrlTests
         GetObjectRequest request = new GetObjectRequest("examplebucket", "test.txt");
         request.SetHeader("host", "examplebucket.s3.amazonaws.com");
         request.SetQueryParameter(AmzParameters.XAmzAlgorithm, SigningConstants.AlgorithmTag);
-        request.SetQueryParameter(AmzParameters.XAmzCredential, _options.Value.Credentials.KeyId + '/' + scope);
+        request.SetQueryParameter(AmzParameters.XAmzCredential, _options.Credentials.KeyId + '/' + scope);
         request.SetQueryParameter(AmzParameters.XAmzDate, _testDate.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
         request.SetQueryParameter(AmzParameters.XAmzExpires, "86400");
         request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, "host");

@@ -1,4 +1,4 @@
-using Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Extensions.HttpClient.Internal;
@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClient;
 public sealed class HttpClientNetworkDriver : INetworkDriver, IDisposable
 {
     private readonly System.Net.Http.HttpClient _client;
-    private readonly IOptions<HttpClientConfig> _options;
+    private readonly HttpClientConfig _config;
     private readonly ILogger<HttpClientNetworkDriver> _logger;
     private readonly Version _httpVersion1 = new Version("1.1");
     private readonly Version _httpVersion2 = new Version("2.0");
@@ -18,7 +18,7 @@ public sealed class HttpClientNetworkDriver : INetworkDriver, IDisposable
 
     public HttpClientNetworkDriver(IOptions<HttpClientConfig> options, ILogger<HttpClientNetworkDriver> logger, System.Net.Http.HttpClient client)
     {
-        _options = options;
+        _config = options.Value;
         _logger = logger;
         _client = client;
     }
@@ -33,13 +33,13 @@ public sealed class HttpClientNetworkDriver : INetworkDriver, IDisposable
         HttpResponseMessage httpResponse;
         using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(method), url))
         {
-            if (_options.Value.HttpVersion == HttpVersion.Http1)
+            if (_config.HttpVersion == HttpVersion.Http1)
                 httpRequest.Version = _httpVersion1;
-            else if (_options.Value.HttpVersion == HttpVersion.Http2)
+            else if (_config.HttpVersion == HttpVersion.Http2)
                 httpRequest.Version = _httpVersion2;
-            else if (_options.Value.HttpVersion == HttpVersion.Http3)
+            else if (_config.HttpVersion == HttpVersion.Http3)
                 httpRequest.Version = _httpVersion3;
-            else if (_options.Value.HttpVersion == HttpVersion.Unknown)
+            else if (_config.HttpVersion == HttpVersion.Unknown)
             {
                 //Do nothing. Use default.
             }

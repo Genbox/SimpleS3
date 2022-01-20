@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication;
 internal class SigningKeyBuilder : ISigningKeyBuilder
 {
     private readonly ILogger<SigningKeyBuilder> _logger;
-    private readonly IOptions<SimpleS3Config> _options;
+    private readonly SimpleS3Config _config;
     private readonly IAccessKeyProtector? _protector;
     private readonly byte[] _serviceBytes;
     private readonly byte[] _regionBytes;
@@ -22,13 +22,13 @@ internal class SigningKeyBuilder : ISigningKeyBuilder
 
     public SigningKeyBuilder(IOptions<SimpleS3Config> options, ILogger<SigningKeyBuilder> logger, IAccessKeyProtector? protector = null)
     {
-        _options = options;
+        _config = options.Value;
         _logger = logger;
         _protector = protector;
 
         //Cache ac couple of things to make signing faster
         _serviceBytes = Encoding.UTF8.GetBytes("s3");
-        _regionBytes = Encoding.UTF8.GetBytes(_options.Value.RegionCode);
+        _regionBytes = Encoding.UTF8.GetBytes(_config.RegionCode);
         _requestBytes = Encoding.UTF8.GetBytes("aws4_request");
         _schemeBytes = Encoding.UTF8.GetBytes(SigningConstants.Scheme);
         _dateBytes = new byte[8];
@@ -43,7 +43,7 @@ internal class SigningKeyBuilder : ISigningKeyBuilder
         string date = dateTime.ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo);
         Encoding.UTF8.GetBytes(date, 0, date.Length, _dateBytes, 0);
 
-        byte[] accessKey = KeyHelper.UnprotectKey(_options.Value.Credentials.SecretKey, _protector);
+        byte[] accessKey = KeyHelper.UnprotectKey(_config.Credentials.SecretKey, _protector);
 
         byte[] key = new byte[_schemeBytes.Length + accessKey.Length];
         Array.Copy(_schemeBytes, 0, key, 0, _schemeBytes.Length);

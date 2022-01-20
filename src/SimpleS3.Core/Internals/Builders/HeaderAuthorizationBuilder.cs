@@ -17,13 +17,13 @@ namespace Genbox.SimpleS3.Core.Internals.Builders;
 internal class HeaderAuthorizationBuilder : IAuthorizationBuilder
 {
     private readonly ILogger<HeaderAuthorizationBuilder> _logger;
-    private readonly IOptions<SimpleS3Config> _options;
+    private readonly SimpleS3Config _config;
     private readonly IScopeBuilder _scopeBuilder;
     private readonly ISignatureBuilder _signatureBuilder;
 
     public HeaderAuthorizationBuilder(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<HeaderAuthorizationBuilder> logger)
     {
-        _options = options;
+        _config = options.Value;
         _scopeBuilder = scopeBuilder;
         _signatureBuilder = signatureBuilder;
         _logger = logger;
@@ -46,7 +46,7 @@ internal class HeaderAuthorizationBuilder : IAuthorizationBuilder
 
         StringBuilder header = StringBuilderPool.Shared.Rent(250);
         header.Append(SigningConstants.AlgorithmTag);
-        header.AppendFormat(CultureInfo.InvariantCulture, " Credential={0}/{1},", _options.Value.Credentials.KeyId, scope);
+        header.AppendFormat(CultureInfo.InvariantCulture, " Credential={0}/{1},", _config.Credentials.KeyId, scope);
         header.AppendFormat(CultureInfo.InvariantCulture, "SignedHeaders={0},", string.Join(";", HeaderWhitelist.FilterHeaders(headers).Select(x => x.Key)));
         header.AppendFormat(CultureInfo.InvariantCulture, "Signature={0}", signature.HexEncode());
 

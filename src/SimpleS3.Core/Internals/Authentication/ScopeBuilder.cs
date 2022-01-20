@@ -8,15 +8,15 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
 internal class ScopeBuilder : IScopeBuilder
 {
-    private readonly IOptions<SimpleS3Config> _options;
+    private readonly SimpleS3Config _options;
 
     public ScopeBuilder(IOptions<SimpleS3Config> options)
     {
-        _options = options;
+        _options = options.Value;
     }
 
     public string CreateScope(string service, DateTimeOffset date)
     {
-        return $"{ValueHelper.DateToString(date, DateTimeFormat.Iso8601Date)}/{_options.Value.RegionCode}/{service}/aws4_request";
+        return $"{ValueHelper.DateToString(date, DateTimeFormat.Iso8601Date)}/{_options.RegionCode}/{service}/aws4_request";
     }
 }

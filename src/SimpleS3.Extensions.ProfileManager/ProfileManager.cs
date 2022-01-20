@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager;
 public class ProfileManager : IProfileManager
 {
     public const string DefaultProfile = "DefaultProfile";
-    private readonly IOptions<ProfileManagerOptions> _options;
+    private readonly ProfileManagerOptions _config;
     private readonly IAccessKeyProtector? _protector;
     private readonly IProfileSerializer _serializer;
     private readonly IStorage _storage;
@@ -24,7 +24,7 @@ public class ProfileManager : IProfileManager
         _validator = validator;
         _serializer = serializer;
         _storage = storage;
-        _options = options;
+        _config = options.Value;
         _protector = protector;
     }
 
@@ -66,7 +66,7 @@ public class ProfileManager : IProfileManager
         Profile profile = new Profile();
         profile.Name = name;
         profile.KeyId = keyId;
-        profile.AccessKey = KeyHelper.ProtectKey(accessKey, _protector, _options.Value.ClearInputKey);
+        profile.AccessKey = KeyHelper.ProtectKey(accessKey, _protector, _config.ClearInputKey);
 
         if (_protector != null)
             profile.AddTag("Protector", _protector.GetType().Name);

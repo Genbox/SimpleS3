@@ -6,7 +6,6 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Extensions;
-using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
@@ -32,9 +31,9 @@ internal class ChunkedStream : Stream
     private long _position;
     private byte[] _previousSignature;
 
-    public ChunkedStream(IOptions<SimpleS3Config> options, IChunkedSignatureBuilder chunkedSigBuilder, IRequest request, byte[] seedSignature, Stream originalStream)
+    public ChunkedStream(SimpleS3Config config, IChunkedSignatureBuilder chunkedSigBuilder, IRequest request, byte[] seedSignature, Stream originalStream)
     {
-        Validator.RequireNotNull(options, nameof(options));
+        Validator.RequireNotNull(config, nameof(config));
         Validator.RequireNotNull(chunkedSigBuilder, nameof(chunkedSigBuilder));
         Validator.RequireNotNull(request, nameof(request));
         Validator.RequireNotNull(seedSignature, nameof(seedSignature));
@@ -46,7 +45,7 @@ internal class ChunkedStream : Stream
         _seedSignature = seedSignature;
         _previousSignature = seedSignature;
 
-        _chunkSize = options.Value.StreamingChunkSize;
+        _chunkSize = config.StreamingChunkSize;
 
         _headerSize = CalculateChunkHeaderLength(_chunkSize, seedSignature.Length * 2);
         _buffer = new byte[_chunkSize + _headerSize + _newline.Length];

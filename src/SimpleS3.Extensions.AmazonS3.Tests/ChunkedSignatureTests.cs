@@ -23,7 +23,7 @@ public class ChunkedSignatureTests
 {
     private readonly HeaderAuthorizationBuilder _authBuilder;
     private readonly ChunkedSignatureBuilder _chunkedSigBuilder;
-    private readonly IOptions<SimpleS3Config> _options;
+    private readonly SimpleS3Config _config;
     private readonly ScopeBuilder _scopeBuilder;
     private readonly SignatureBuilder _sigBuilder;
     private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
@@ -48,7 +48,7 @@ public class ChunkedSignatureTests
         _sigBuilder = (SignatureBuilder)provider.GetRequiredService<ISignatureBuilder>();
         _chunkedSigBuilder = (ChunkedSignatureBuilder)provider.GetRequiredService<IChunkedSignatureBuilder>();
         _authBuilder = provider.GetRequiredService<HeaderAuthorizationBuilder>();
-        _options = provider.GetRequiredService<IOptions<SimpleS3Config>>();
+        _config = provider.GetRequiredService<IOptions<SimpleS3Config>>().Value;
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public class ChunkedSignatureTests
 
         byte[] seedSignature = _sigBuilder.CreateSignature(req);
 
-        using (ChunkedStream stream = new ChunkedStream(_options, _chunkedSigBuilder, req, seedSignature, req.Content!))
+        using (ChunkedStream stream = new ChunkedStream(_config, _chunkedSigBuilder, req, seedSignature, req.Content!))
         using (StreamReader sr = new StreamReader(stream, Encoding.UTF8))
         {
             StringBuilder sbExpected = new StringBuilder();
@@ -193,7 +193,7 @@ public class ChunkedSignatureTests
             int remaining = dataSize;
             for (int i = 0; i < expectedSignatures.Length; i++)
             {
-                int size = Math.Min(_options.Value.StreamingChunkSize, remaining);
+                int size = Math.Min(_config.StreamingChunkSize, remaining);
                 remaining -= size;
 
                 sbExpected.Append(size.ToString("X"));
