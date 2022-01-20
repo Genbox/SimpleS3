@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Marshal;
@@ -48,7 +49,8 @@ internal class EndpointBuilder : IEndpointBuilder
 
                 string value = match.Groups["val"].Value.ToLowerInvariant();
 
-                if (value == "bucket" && bucket != null)
+                //We only replace bucket if there is one and the naming mode is VirtualHost
+                if (value == "bucket" && bucket != null && _config.NamingMode == NamingMode.VirtualHost)
                     str = bucket;
                 else if (value == "scheme")
                     str = _config.UseTls ? "https" : "http";
