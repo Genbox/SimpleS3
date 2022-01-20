@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Extensions.HttpClient.Internal;
@@ -87,20 +87,20 @@ public sealed class HttpClientNetworkDriver : INetworkDriver, IDisposable
         return ((int)httpResponse.StatusCode, responseHeaders, responseStream);
     }
 
-    private static System.Net.Http.HttpMethod ConvertToMethod(HttpMethodType method)
+    private static HttpMethod ConvertToMethod(HttpMethodType method)
     {
         switch (method)
         {
             case HttpMethodType.GET:
-                return System.Net.Http.HttpMethod.Get;
+                return HttpMethod.Get;
             case HttpMethodType.PUT:
-                return System.Net.Http.HttpMethod.Put;
+                return HttpMethod.Put;
             case HttpMethodType.HEAD:
-                return System.Net.Http.HttpMethod.Head;
+                return HttpMethod.Head;
             case HttpMethodType.DELETE:
-                return System.Net.Http.HttpMethod.Delete;
+                return HttpMethod.Delete;
             case HttpMethodType.POST:
-                return System.Net.Http.HttpMethod.Post;
+                return HttpMethod.Post;
             default:
                 throw new ArgumentOutOfRangeException(nameof(method), method, null);
         }
