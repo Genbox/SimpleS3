@@ -1,5 +1,6 @@
+#if COMMERCIAL
 using Genbox.SimpleS3.Core.Common.Authentication;
-using Genbox.SimpleS3.Core.TestBase;
+using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.Wasabi;
 using Xunit;
 
@@ -10,7 +11,7 @@ public class StaticCreatorTests
     [Fact]
     public async Task StaticClient()
     {
-        FakeNetworkDriver driver = new FakeNetworkDriver();
+        NullNetworkDriver driver = new NullNetworkDriver();
 
         WasabiConfig config = new WasabiConfig();
         config.Credentials = new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
@@ -19,6 +20,7 @@ public class StaticCreatorTests
         using WasabiClient client = new WasabiClient(config, driver);
 
         await client.GetObjectAsync("testbucket", "GetObjectAsync").ConfigureAwait(false);
-        Assert.Equal("https://testbucket.s3.eu-central-1.wasabisys.com/GetObjectAsync", driver.SendResource);
+        Assert.Equal("https://testbucket.s3.eu-central-1.wasabisys.com/GetObjectAsync", driver.LastUrl);
     }
 }
+#endif
