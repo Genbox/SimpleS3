@@ -111,7 +111,7 @@ public class ChunkedSignatureTests
 
         int chunkSize = 64 * 1024; //64 KB
 
-        List<List<byte>> chunks = file.Chunk(chunkSize).ToList();
+        List<byte[]> chunks = file.Chunk(chunkSize).ToList();
 
         Assert.Equal(2, chunks.Count);
 
