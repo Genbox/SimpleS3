@@ -11,9 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Examples", "Simple
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Items", "_Items", "{7C26C924-7B82-4A50-8BF0-584930DEF401}"
 	ProjectSection(SolutionItems) = preProject
+		..\.gitattributes = ..\.gitattributes
+		..\.gitignore = ..\.gitignore
 		..\Config.json = ..\Config.json
 		..\Global.ruleset = ..\Global.ruleset
+		..\LICENSE.txt = ..\LICENSE.txt
 		..\README.md = ..\README.md
+		..\SECURITY.md = ..\SECURITY.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core.Benchmarks", "SimpleS3.Core.Benchmarks\SimpleS3.Core.Benchmarks.csproj", "{C35C127C-BE44-4991-B7E3-56E9A2F77D25}"
@@ -50,14 +54,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core.TestBase", "S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Imports", "_Imports", "{62F2C837-5670-4C27-9609-90F8B67BEC8E}"
 	ProjectSection(SolutionItems) = preProject
-		..\.gitattributes = ..\.gitattributes
-		..\.gitignore = ..\.gitignore
-		..\Config.json = ..\Config.json
 		..\Directory.Build.props = ..\Directory.Build.props
-		..\Global.ruleset = ..\Global.ruleset
-		..\LICENSE.txt = ..\LICENSE.txt
-		..\README.md = ..\README.md
-		..\SECURITY.md = ..\SECURITY.md
 		..\Imports\TestImport.props = ..\Imports\TestImport.props
 		..\Imports\UtilityImport.props = ..\Imports\UtilityImport.props
 	EndProjectSection
