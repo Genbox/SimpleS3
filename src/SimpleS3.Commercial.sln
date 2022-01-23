@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28922.388
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core", "SimpleS3.Core\SimpleS3.Core.csproj", "{C9E0C330-EE8C-4478-8E5E-6A9A7860EDD4}"
 EndProject
@@ -50,7 +50,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Core.TestBase", "S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Imports", "_Imports", "{62F2C837-5670-4C27-9609-90F8B67BEC8E}"
 	ProjectSection(SolutionItems) = preProject
+		..\.gitattributes = ..\.gitattributes
+		..\.gitignore = ..\.gitignore
+		..\Config.json = ..\Config.json
 		..\Directory.Build.props = ..\Directory.Build.props
+		..\Global.ruleset = ..\Global.ruleset
+		..\LICENSE.txt = ..\LICENSE.txt
+		..\README.md = ..\README.md
+		..\SECURITY.md = ..\SECURITY.md
 		..\Imports\TestImport.props = ..\Imports\TestImport.props
 		..\Imports\UtilityImport.props = ..\Imports\UtilityImport.props
 	EndProjectSection
