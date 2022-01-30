@@ -59,13 +59,17 @@
 
   <!--Analyzers-->
   <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0" PrivateAssets="all" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.1" PrivateAssets="all" />
     <PackageReference Include="Roslynator.Analyzers" Version="4.0.0" PrivateAssets="all" />
     <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" PrivateAssets="all" />
     <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0" PrivateAssets="all" />
     <PackageReference Include="AspNetCoreAnalyzers" Version="0.3.0" />
     <PackageReference Include="ReflectionAnalyzers" Version="0.3.1" />
+    <PackageReference Include="Lindhart.Analyser.MissingAwaitWarning" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true' and !$(MSBuildProjectName.EndsWith('Tests'))">
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.3" PrivateAssets="all" />
   </ItemGroup>
 
   <!--Only analyze when using Visual Studio-->
