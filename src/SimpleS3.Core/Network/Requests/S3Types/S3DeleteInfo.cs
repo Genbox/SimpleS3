@@ -18,14 +18,14 @@ public class S3DeleteInfo : IPooledObject, IHasObjectKey, IHasVersionId
     public string ObjectKey { get; set; }
     public string? VersionId { get; set; }
 
+    public void Reset()
+    {
+        //Do nothing as both variables are set through initialize
+    }
+
     public void Initialize(string objectKey, string? versionId = null)
     {
         ObjectKey = objectKey;
         VersionId = versionId;
-    }
-
-    public void Reset()
-    {
-        //Do nothing as both variables are set through initialize
     }
 }

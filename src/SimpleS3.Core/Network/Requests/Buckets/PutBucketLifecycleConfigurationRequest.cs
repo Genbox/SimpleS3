@@ -29,9 +29,7 @@ public class PutBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
         BucketName = bucketName;
 
         foreach (S3Rule s3Rule in rules)
-        {
             Rules.Add(s3Rule);
-        }
     }
 
     public override void Reset()

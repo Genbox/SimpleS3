@@ -6,6 +6,5 @@ public enum RestoreRequestType
 {
     Unknown = 0,
 
-    [EnumValue("SELECT")]
-    Select
+    [EnumValue("SELECT")] Select
 }

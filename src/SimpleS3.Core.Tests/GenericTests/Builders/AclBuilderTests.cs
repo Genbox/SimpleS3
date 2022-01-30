@@ -6,8 +6,8 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests.Builders;
 
 public class AclBuilderTests
 {
-    private string _testUserId = "deadbeefcafe0000000000000000000000000000000000000000000000000000";
-    private string _testUserEmail = "email1@example.com";
+    private readonly string _testUserEmail = "email1@example.com";
+    private readonly string _testUserId = "deadbeefcafe0000000000000000000000000000000000000000000000000000";
 
     [Fact]
     public void GenericTest()

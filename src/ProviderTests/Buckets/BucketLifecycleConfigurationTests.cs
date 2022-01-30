@@ -79,7 +79,6 @@ public class BucketLifecycleConfigurationTests : TestBase
             Assert.Equal(rule.Enabled, rule1A.Enabled);
             Assert.Equal(rule.Filter.Prefix, rule1A.Filter?.Prefix);
             Assert.Equal(rule.Expiration.ExpireAfterDays, rule1A.Expiration?.ExpireAfterDays);
-
         }).ConfigureAwait(false);
     }
 
@@ -113,7 +112,6 @@ public class BucketLifecycleConfigurationTests : TestBase
             Assert.NotNull(conditions1);
             Assert.Equal(conditions.Prefix, conditions1!.Prefix);
             Assert.Equal(conditions.Tags, conditions1.Tags);
-
         }).ConfigureAwait(false);
     }
 }

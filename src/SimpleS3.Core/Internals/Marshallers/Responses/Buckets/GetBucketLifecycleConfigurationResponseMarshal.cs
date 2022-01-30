@@ -87,17 +87,13 @@ internal class GetBucketLifecycleConfigurationResponseMarshal : IResponseMarshal
         if (nonCurrentVersionTransitions != null)
         {
             foreach (S3NonCurrentVersionTransition transition in nonCurrentVersionTransitions)
-            {
                 rule.NonCurrentVersionTransitions.Add(transition);
-            }
         }
 
         if (transitions != null)
         {
             foreach (S3Transition transition in transitions)
-            {
                 rule.Transitions.Add(transition);
-            }
         }
 
         response.Rules.Add(rule);

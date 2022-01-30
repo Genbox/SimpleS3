@@ -6,5 +6,5 @@ public enum DataType
     Request,
     RequestMarshal,
     Response,
-    ResponseMarshal,
+    ResponseMarshal
 }

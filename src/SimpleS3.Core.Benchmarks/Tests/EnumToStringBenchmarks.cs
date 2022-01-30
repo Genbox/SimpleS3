@@ -9,20 +9,11 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 public class EnumToStringBenchmarks
 {
     [Benchmark]
-    public string? EnumsDotNet()
-    {
-        return TestEnum.Value3.AsString(EnumFormat.EnumMemberValue);
-    }
+    public string? EnumsDotNet() => TestEnum.Value3.AsString(EnumFormat.EnumMemberValue);
 
     [Benchmark]
-    public string DotNet()
-    {
-        return TestEnum.Value3.ToString();
-    }
+    public string DotNet() => TestEnum.Value3.ToString();
 
     [Benchmark]
-    public string Custom()
-    {
-        return EnumHelper.AsString(TestEnum.Value3);
-    }
+    public string Custom() => EnumHelper.AsString(TestEnum.Value3);
 }

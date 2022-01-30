@@ -7,9 +7,6 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
-#if COMMERCIAL
-#endif
-
 namespace Genbox.SimpleS3.Core.Internals.Fluent;
 
 internal class Download : IDownload
@@ -26,10 +23,7 @@ internal class Download : IDownload
     }
 
 #if COMMERCIAL
-    public IAsyncEnumerable<GetObjectResponse> DownloadMultipartAsync(Stream output, CancellationToken token = default)
-    {
-        return _multipartTransfer.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
-    }
+    public IAsyncEnumerable<GetObjectResponse> DownloadMultipartAsync(Stream output, CancellationToken token = default) => _multipartTransfer.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
 #endif
 
     /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
@@ -94,10 +88,7 @@ internal class Download : IDownload
         return this;
     }
 
-    public Task<GetObjectResponse> DownloadAsync(CancellationToken token = default)
-    {
-        return _operations.GetObjectAsync(_request, token);
-    }
+    public Task<GetObjectResponse> DownloadAsync(CancellationToken token = default) => _operations.GetObjectAsync(_request, token);
 
     private void CopyProperties(GetObjectRequest req)
     {

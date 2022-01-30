@@ -14,8 +14,5 @@ public class PreconditionFailedError : GenericError
 
     public string? Condition { get; }
 
-    public override string GetErrorDetails()
-    {
-        return "Condition: " + Condition;
-    }
+    public override string GetErrorDetails() => "Condition: " + Condition;
 }

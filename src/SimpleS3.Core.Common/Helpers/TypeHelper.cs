@@ -4,10 +4,7 @@ namespace Genbox.SimpleS3.Core.Common.Helpers;
 
 public static class TypeHelper
 {
-    public static IEnumerable<Type> GetInstanceTypesInheritedFrom<T>(Assembly? assembly = null)
-    {
-        return GetInstanceTypesInheritedFrom(typeof(T), assembly);
-    }
+    public static IEnumerable<Type> GetInstanceTypesInheritedFrom<T>(Assembly? assembly = null) => GetInstanceTypesInheritedFrom(typeof(T), assembly);
 
     public static IEnumerable<Type> GetInstanceTypesInheritedFrom(Type type, Assembly? assembly = null)
     {

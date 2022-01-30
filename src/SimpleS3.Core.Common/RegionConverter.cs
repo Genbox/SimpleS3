@@ -20,13 +20,7 @@ public class RegionConverter : IRegionConverter
         }
     }
 
-    public IRegionInfo GetRegion(int enumValue)
-    {
-        return _enumMap[enumValue];
-    }
+    public IRegionInfo GetRegion(int enumValue) => _enumMap[enumValue];
 
-    public IRegionInfo GetRegion(string regionCode)
-    {
-        return _stringMap[regionCode];
-    }
+    public IRegionInfo GetRegion(string regionCode) => _stringMap[regionCode];
 }

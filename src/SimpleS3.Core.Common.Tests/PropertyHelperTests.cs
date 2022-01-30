@@ -5,24 +5,6 @@ namespace Genbox.SimpleS3.Core.Common.Tests;
 
 public class PropertyHelperTests
 {
-    private class BaseConfig
-    {
-        public string? NullDefaultValue { get; set; }
-        public int IntDefaultValue { get; set; }
-        public string StringCtorValue { get; set; } = "my value";
-        public int IntCtorValue { get; set; } = 42;
-    }
-
-    private class Config : BaseConfig
-    {
-        public Config()
-        {
-            StringCtorValue = "new value";
-        }
-
-        public string OtherValue { get; set; }
-    }
-
     [Fact]
     public void TestDefaultValues()
     {
@@ -63,5 +45,23 @@ public class PropertyHelperTests
         Assert.Equal(1, b.IntDefaultValue);
         Assert.Equal("different value", b.StringCtorValue);
         Assert.Equal(100, b.IntCtorValue);
+    }
+
+    private class BaseConfig
+    {
+        public string? NullDefaultValue { get; set; }
+        public int IntDefaultValue { get; set; }
+        public string StringCtorValue { get; set; } = "my value";
+        public int IntCtorValue { get; set; } = 42;
+    }
+
+    private class Config : BaseConfig
+    {
+        public Config()
+        {
+            StringCtorValue = "new value";
+        }
+
+        public string OtherValue { get; set; }
     }
 }

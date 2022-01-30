@@ -24,7 +24,7 @@ public class GoogleCloudStorageInputValidatorTests
 
     [Theory]
     [InlineData(null, ValidationStatus.NullInput)]
-    [InlineData(new byte[] { 0, 0, }, ValidationStatus.WrongLength)]
+    [InlineData(new byte[] { 0, 0 }, ValidationStatus.WrongLength)]
     [InlineData(new byte[] { 98, 71, 111, 97, 43, 86, 55, 103, 47, 121, 113, 68, 88, 118, 75, 82, 113, 113, 43, 74, 84, 70, 110, 52, 117, 81, 90, 98, 80, 105, 81, 74, 111, 52, 112, 102, 57, 82, 122, 74 }, ValidationStatus.Ok)] //bGoa+V7g/yqDXvKRqq+JTFn4uQZbPiQJo4pf9RzJ
     public void TryValidateAccessKeyTest(byte[] key, ValidationStatus expectedStatus)
     {

@@ -55,12 +55,7 @@ internal class ChunkedSignatureBuilder : IChunkedSignatureBuilder
         return sts;
     }
 
-    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign)
-    {
-        //See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
-        //Consists of:
-        // Hmac-Sha256(SigningKey, StringToSign)
-
-        return CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date));
-    }
+    /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of:
+    /// Hmac-Sha256(SigningKey, StringToSign)</summary>
+    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign) => CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date));
 }

@@ -6,9 +6,7 @@ public enum MetadataDirective
 {
     Unknown = 0,
 
-    [EnumValue("COPY")]
-    Copy,
+    [EnumValue("COPY")] Copy,
 
-    [EnumValue("REPLACE")]
-    Replace
+    [EnumValue("REPLACE")] Replace
 }

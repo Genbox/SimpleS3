@@ -12,9 +12,9 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication;
 internal class ChunkedStream : Stream
 {
     private const string _newlineStr = "\r\n";
-    private static readonly byte[] _newline = { 13, 10 };
 
     private const string _chunkSignature = ";chunk-signature=";
+    private static readonly byte[] _newline = { 13, 10 };
     private readonly byte[] _buffer;
     private readonly IChunkedSignatureBuilder _chunkedSigBuilder;
     private readonly int _chunkSize;
@@ -120,10 +120,7 @@ internal class ChunkedStream : Stream
         return count;
     }
 
-    public override int Read(byte[] buffer, int offset, int count)
-    {
-        return ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
-    }
+    public override int Read(byte[] buffer, int offset, int count) => ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
 
     public override long Seek(long offset, SeekOrigin origin)
     {
@@ -161,18 +158,14 @@ internal class ChunkedStream : Stream
         throw new NotSupportedException();
     }
 
-    private static int CalculateChunkHeaderLength(long chunkSize, int signatureLength)
-    {
-        return chunkSize.ToString("X", NumberFormatInfo.InvariantInfo).Length
-               + _chunkSignature.Length
-               + signatureLength
-               + _newline.Length;
-    }
+    private static int CalculateChunkHeaderLength(long chunkSize, int signatureLength) =>
+            chunkSize.ToString("X", NumberFormatInfo.InvariantInfo).Length
+            + _chunkSignature.Length
+            + signatureLength
+            + _newline.Length;
 
-    /// <summary>
-    /// Computes the total size of the data payload, including the chunk metadata. Called externally so as to be able to set the correct
-    /// Content-Length header value.
-    /// </summary>
+    /// <summary>Computes the total size of the data payload, including the chunk metadata. Called externally so as to be able
+    /// to set the correct Content-Length header value.</summary>
     private long ComputeChunkedContentLength(long originalLength)
     {
         if (originalLength < 0)
@@ -194,10 +187,10 @@ internal class ChunkedStream : Stream
         StringBuilder chunkHeader = StringBuilderPool.Shared.Rent(100);
 
         chunkHeader
-            .Append(contentLength.ToString("X", CultureInfo.InvariantCulture))
-            .Append(_chunkSignature)
-            .Append(chunkSignature.HexEncode())
-            .Append(_newlineStr);
+               .Append(contentLength.ToString("X", CultureInfo.InvariantCulture))
+               .Append(_chunkSignature)
+               .Append(chunkSignature.HexEncode())
+               .Append(_newlineStr);
 
         string value = StringBuilderPool.Shared.ReturnString(chunkHeader);
 

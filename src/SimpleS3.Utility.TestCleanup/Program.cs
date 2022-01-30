@@ -63,8 +63,6 @@ internal static class Program
         ListBucketsResponse response = await client.ListBucketsAsync().ConfigureAwait(false);
 
         foreach (S3Bucket bucket in response.Buckets)
-        {
             yield return bucket;
-        }
     }
 }

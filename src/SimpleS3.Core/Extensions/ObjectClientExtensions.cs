@@ -86,9 +86,7 @@ public static class ObjectClientExtensions
                 throw new S3RequestException(response, $"Unable to delete objects in bucket '{bucketName}");
 
             foreach (S3DeleteError error in multiDelResponse.Errors)
-            {
                 yield return error;
-            }
         } while (response.IsTruncated);
     }
 
@@ -132,9 +130,7 @@ public static class ObjectClientExtensions
                 throw new S3RequestException(response, $"Unable to delete objects in bucket '{bucketName}");
 
             foreach (S3DeleteError error in multiDelResponse.Errors)
-            {
                 yield return error;
-            }
         } while (response.IsTruncated);
     }
 
@@ -206,9 +202,7 @@ public static class ObjectClientExtensions
                 throw new S3RequestException(response, "Request failed");
 
             foreach (S3Object responseObject in response.Objects)
-            {
                 yield return responseObject;
-            }
 
             continuationToken = response.NextContinuationToken;
         } while (response.IsTruncated);

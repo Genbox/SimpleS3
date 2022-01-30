@@ -2,10 +2,8 @@
 
 internal static class ConsoleHelper
 {
-    /// <summary>
-    /// Securely reads a secret from console. Not only does it print out '*' for each entry, it also reads it into a char[], which can be cleared,
-    /// which strings cannot.
-    /// </summary>
+    /// <summary>Securely reads a secret from console. Not only does it print out '*' for each entry, it also reads it into a
+    /// char[], which can be cleared, which strings cannot.</summary>
     public static char[] ReadSecret(int expectedLength = 12)
     {
         List<char> pass = new List<char>(expectedLength);

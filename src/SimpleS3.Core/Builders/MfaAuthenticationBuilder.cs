@@ -21,10 +21,7 @@ public class MfaAuthenticationBuilder : IHttpHeaderBuilder
         _value = null;
     }
 
-    public bool HasData()
-    {
-        return _serialNumber != null;
-    }
+    public bool HasData() => _serialNumber != null;
 
     public string? HeaderName => null;
 

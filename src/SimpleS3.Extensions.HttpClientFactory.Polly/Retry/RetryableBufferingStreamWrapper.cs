@@ -5,10 +5,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 
 internal class RetryableBufferingStreamWrapper : IRequestStreamWrapper
 {
-    public bool IsSupported(IRequest request)
-    {
-        return true;
-    }
+    public bool IsSupported(IRequest request) => true;
 
     public Stream Wrap(Stream input, IRequest request)
     {

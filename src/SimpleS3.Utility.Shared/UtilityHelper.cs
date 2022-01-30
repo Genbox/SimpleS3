@@ -37,9 +37,7 @@ public static class UtilityHelper
             Console.WriteLine("Please select which provider you want to use:");
 
             for (int i = 0; i < choices.Length; i++)
-            {
                 Console.WriteLine($"{i + 1}. {choices[i]}");
-            }
 
             key = Console.ReadKey(true);
         } while (!choices.Any(x => int.TryParse(key.KeyChar.ToString(), out intVal) && intVal >= 0 && intVal <= choices.Length));
@@ -47,30 +45,15 @@ public static class UtilityHelper
         return choices[intVal - 1];
     }
 
-    public static string GetProfileName(S3Provider provider)
-    {
-        return "TestSetup-" + provider;
-    }
+    public static string GetProfileName(S3Provider provider) => "TestSetup-" + provider;
 
-    public static string GetTestBucket(IProfile profile)
-    {
-        return "testbucket-" + profile.KeyId[..8].ToLowerInvariant();
-    }
+    public static string GetTestBucket(IProfile profile) => "testbucket-" + profile.KeyId[..8].ToLowerInvariant();
 
-    public static string GetTemporaryBucket()
-    {
-        return "tempbucket-" + Guid.NewGuid();
-    }
+    public static string GetTemporaryBucket() => "tempbucket-" + Guid.NewGuid();
 
-    public static bool IsTestBucket(string bucketName, IProfile profile)
-    {
-        return string.Equals(bucketName, GetTestBucket(profile), StringComparison.Ordinal);
-    }
+    public static bool IsTestBucket(string bucketName, IProfile profile) => string.Equals(bucketName, GetTestBucket(profile), StringComparison.Ordinal);
 
-    public static bool IsTemporaryBucket(string bucketName)
-    {
-        return bucketName.StartsWith("tempbucket-", StringComparison.OrdinalIgnoreCase);
-    }
+    public static bool IsTemporaryBucket(string bucketName) => bucketName.StartsWith("tempbucket-", StringComparison.OrdinalIgnoreCase);
 
     public static ServiceProvider CreateSimpleS3(S3Provider provider, string profileName, bool enableRetry, Action<SimpleS3Config>? configure = null)
     {
@@ -78,9 +61,9 @@ public static class UtilityHelper
         ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services, configure);
 
         IConfigurationRoot configRoot = new ConfigurationBuilder()
-            .SetBasePath(Environment.CurrentDirectory)
-            .AddJsonFile("Config.json", false)
-            .Build();
+                                       .SetBasePath(Environment.CurrentDirectory)
+                                       .AddJsonFile("Config.json", false)
+                                       .Build();
 
         IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
 
@@ -95,8 +78,8 @@ public static class UtilityHelper
             httpBuilder.UseProxy(new WebProxy(proxySection.GetValue<string>("ProxyAddress")));
 
         coreBuilder.UseProfileManager()
-            .BindConfigToProfile(profileName)
-            .UseConsoleSetup();
+                   .BindConfigToProfile(profileName)
+                   .UseConsoleSetup();
 
         if (provider == S3Provider.AmazonS3)
             coreBuilder.UseAmazonS3();
@@ -196,15 +179,13 @@ public static class UtilityHelper
             }
 
             IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
-                .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
+                                                       .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
 
             //Google does not support DeleteObjects
             if (provider == S3Provider.GoogleCloudStorage)
             {
                 foreach (S3DeleteInfo info in delete)
-                {
                     await client.DeleteObjectAsync(bucket, info.ObjectKey, info.VersionId);
-                }
             }
             else
             {
@@ -214,9 +195,7 @@ public static class UtilityHelper
                     yield break;
 
                 foreach (S3DeleteError error in multiDelResponse.Errors)
-                {
                     yield return error;
-                }
             }
         } while (response.IsTruncated);
     }

@@ -6,9 +6,7 @@ public enum QuoteField
 {
     Unknown = 0,
 
-    [EnumValue("ALWAYS")]
-    Always,
+    [EnumValue("ALWAYS")] Always,
 
-    [EnumValue("ASNEEDED")]
-    AsNeeded
+    [EnumValue("ASNEEDED")] AsNeeded
 }

@@ -11,10 +11,10 @@ public sealed class HttpClientNetworkDriver : INetworkDriver, IDisposable
 {
     private readonly System.Net.Http.HttpClient _client;
     private readonly HttpClientConfig _config;
-    private readonly ILogger<HttpClientNetworkDriver> _logger;
     private readonly Version _httpVersion1 = new Version("1.1");
     private readonly Version _httpVersion2 = new Version("2.0");
     private readonly Version _httpVersion3 = new Version("3.0");
+    private readonly ILogger<HttpClientNetworkDriver> _logger;
 
     public HttpClientNetworkDriver(IOptions<HttpClientConfig> options, ILogger<HttpClientNetworkDriver> logger, System.Net.Http.HttpClient client)
     {
@@ -53,9 +53,7 @@ public sealed class HttpClientNetworkDriver : INetworkDriver, IDisposable
             if (headers != null)
             {
                 foreach (KeyValuePair<string, string> item in headers)
-                {
                     httpRequest.AddHeader(item.Key, item.Value);
-                }
             }
 
             _logger.LogTrace("Sending HTTP request");
@@ -68,18 +66,14 @@ public sealed class HttpClientNetworkDriver : INetworkDriver, IDisposable
         IDictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Headers)
-        {
             responseHeaders.Add(header.Key, header.Value.First());
-        }
 
         Stream? responseStream = null;
 
         if (httpResponse.Content != null)
         {
             foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
-            {
                 responseHeaders.Add(header.Key, header.Value.First());
-            }
 
             responseStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }

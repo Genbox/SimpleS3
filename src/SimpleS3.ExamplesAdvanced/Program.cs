@@ -109,8 +109,8 @@ internal class Program
 
         //Here we add the profile manager. It is a profile system that persist your credentials to disk in a very secure way.
         coreBuilder.UseProfileManager()
-            .BindConfigToDefaultProfile() //We can either name the profile (so you can have more than one) or use the default one.
-            .UseConsoleSetup(); //This adds a service that ask you to setup your profile if it does not exist.
+                   .BindConfigToDefaultProfile() //We can either name the profile (so you can have more than one) or use the default one.
+                   .UseConsoleSetup(); //This adds a service that ask you to setup your profile if it does not exist.
 
         //Finally we build the service provider and return the S3Client
         IServiceProvider serviceProvider = services.BuildServiceProvider();

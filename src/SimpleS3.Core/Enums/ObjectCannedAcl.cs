@@ -15,14 +15,13 @@ public enum ObjectCannedAcl
     [EnumValue("public-read")]
     PublicRead,
 
-    /// <summary>
-    /// Owner gets full control. The <see cref="PredefinedGroup.AllUsers" /> group gets read and write access. Granting this on a bucket is
-    /// generally not recommended.
-    /// </summary>
+    /// <summary>Owner gets full control. The <see cref="PredefinedGroup.AllUsers" /> group gets read and write access.
+    /// Granting this on a bucket is generally not recommended.</summary>
     [EnumValue("public-read-write")]
     PublicReadWrite,
 
-    /// <summary>Owner gets full control. Amazon EC2 gets Read access to GET an Amazon Machine Image (AMI) bundle from Amazon S3.</summary>
+    /// <summary>Owner gets full control. Amazon EC2 gets Read access to GET an Amazon Machine Image (AMI) bundle from Amazon
+    /// S3.</summary>
     [EnumValue("aws-exec-read")]
     AwsExecRead,
 

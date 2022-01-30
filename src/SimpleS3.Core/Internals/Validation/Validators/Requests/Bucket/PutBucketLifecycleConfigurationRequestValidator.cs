@@ -13,15 +13,15 @@ internal class PutBucketLifecycleConfigurationRequestValidator : RequestValidato
     {
         RuleFor(x => x.Rules).NotEmpty();
         RuleForEach(x => x.Rules)
-            .ChildRules(x2 =>
-            {
-                x2.RuleForEach(x3 => x3.Transitions)
-                    .ChildRules(x4 =>
-                    {
-                        x4.RuleFor(x5 => x5.TransitionAfterDays)
-                            .GreaterThanOrEqualTo(30)
-                            .When(x5 => x5.StorageClass == StorageClass.OneZoneIa);
-                    });
-            });
+               .ChildRules(x2 =>
+                {
+                    x2.RuleForEach(x3 => x3.Transitions)
+                      .ChildRules(x4 =>
+                       {
+                           x4.RuleFor(x5 => x5.TransitionAfterDays)
+                             .GreaterThanOrEqualTo(30)
+                             .When(x5 => x5.StorageClass == StorageClass.OneZoneIa);
+                       });
+                });
     }
 }

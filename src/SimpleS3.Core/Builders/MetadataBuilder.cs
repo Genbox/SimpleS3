@@ -26,10 +26,7 @@ public class MetadataBuilder : IEnumerable<KeyValuePair<string, string>>, IPoole
         return _metadata.GetEnumerator();
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public void Reset()
     {
@@ -65,8 +62,6 @@ public class MetadataBuilder : IEnumerable<KeyValuePair<string, string>>, IPoole
     internal IEnumerable<KeyValuePair<string, string>> GetPrefixed()
     {
         foreach (KeyValuePair<string, string> item in this)
-        {
             yield return new KeyValuePair<string, string>(Constants.AmzMetadata + item.Key, item.Value);
-        }
     }
 }

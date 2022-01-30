@@ -19,8 +19,5 @@ public class XAmzContentSha256MismatchError : GenericError
     public string? RequestId { get; }
     public string? HostId { get; }
 
-    public override string GetErrorDetails()
-    {
-        return $"Client SHA256: {ClientSha256} S3Sha256: {S3Sha256}";
-    }
+    public override string GetErrorDetails() => $"Client SHA256: {ClientSha256} S3Sha256: {S3Sha256}";
 }

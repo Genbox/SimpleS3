@@ -17,8 +17,5 @@ public class S3Part : IHasETag
     public long Size { get; }
     public string? ETag { get; }
 
-    public override string ToString()
-    {
-        return $"Part: {PartNumber}";
-    }
+    public override string ToString() => $"Part: {PartNumber}";
 }

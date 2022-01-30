@@ -1,6 +1,5 @@
 ﻿using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
@@ -233,9 +232,7 @@ public class MultipartTests : TestBase
         byte[] data = new byte[20 * 1024 * 1024]; //20 Mb
 
         for (int i = 0; i < data.Length; i++)
-        {
             data[i] = (byte)(i % 255);
-        }
 
         await using (MemoryStream ms = new MemoryStream(data))
         {
@@ -259,11 +256,9 @@ public class MultipartTests : TestBase
             {
                 IAsyncEnumerable<GetObjectResponse> responses = client.MultipartDownloadAsync(bucket, nameof(MultipartViaClient), ms);
 
+                //We use IsSuccess here since providers return different return code
                 await foreach (GetObjectResponse resp in responses)
-                {
-                    //We use IsSuccess here since providers return different return code
                     Assert.True(resp.IsSuccess);
-                }
 
                 Assert.Equal(data, ms.ToArray());
             }
@@ -281,9 +276,7 @@ public class MultipartTests : TestBase
         byte[] data = new byte[100 * 1024 * 1024]; //100 Mb
 
         for (int i = 0; i < data.Length; i++)
-        {
             data[i] = (byte)'A';
-        }
 
         int count = 0;
         await using (MemoryStream ms = new MemoryStream(data))

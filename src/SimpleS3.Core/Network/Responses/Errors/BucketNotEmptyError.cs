@@ -13,8 +13,5 @@ public class BucketNotEmptyError : GenericError
 
     public string? BucketName { get; }
 
-    public override string GetErrorDetails()
-    {
-        return $"BucketName: {BucketName}";
-    }
+    public override string GetErrorDetails() => $"BucketName: {BucketName}";
 }

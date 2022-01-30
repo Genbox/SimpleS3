@@ -8,6 +8,5 @@ internal enum TestEnum
     Value1 = 1,
     Value2 = 2,
 
-    [EnumMember(Value = "Value3")]
-    Value3 = 3,
+    [EnumMember(Value = "Value3")] Value3 = 3
 }

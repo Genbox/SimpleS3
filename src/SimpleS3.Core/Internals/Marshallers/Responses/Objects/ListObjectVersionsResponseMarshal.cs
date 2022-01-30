@@ -74,14 +74,10 @@ internal class ListObjectVersionsResponseMarshal : IResponseMarshal<ListObjectVe
             response.Delimiter = WebUtility.UrlDecode(response.Delimiter);
 
             foreach (S3Version version in response.Versions)
-            {
                 version.ObjectKey = WebUtility.UrlDecode(version.ObjectKey);
-            }
 
             foreach (S3DeleteMarker marker in response.DeleteMarkers)
-            {
                 marker.ObjectKey = WebUtility.UrlDecode(marker.ObjectKey);
-            }
         }
     }
 

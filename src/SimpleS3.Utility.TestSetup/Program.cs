@@ -63,15 +63,15 @@ internal static class Program
             Console.Error.WriteLine("Failed to apply lock configuration.");
 
         List<S3Rule> rules = new List<S3Rule>
-        {
-            new S3Rule("ExpireAll", true)
-            {
-                AbortIncompleteMultipartUploadDays = 1,
-                NonCurrentVersionExpirationDays = 1,
-                Expiration = new S3Expiration(1),
-                Filter = new S3Filter { Prefix = "" }
-            }
-        };
+                             {
+                                 new S3Rule("ExpireAll", true)
+                                 {
+                                     AbortIncompleteMultipartUploadDays = 1,
+                                     NonCurrentVersionExpirationDays = 1,
+                                     Expiration = new S3Expiration(1),
+                                     Filter = new S3Filter { Prefix = "" }
+                                 }
+                             };
 
         Console.WriteLine("Adding lifecycle configuration");
 
@@ -81,7 +81,6 @@ internal static class Program
             Console.WriteLine("Successfully applied lifecycle configuration.");
         else
             Console.Error.WriteLine("Failed to apply lifecycle configuration.");
-
     }
 
     private static async Task<bool> TryCreateBucketAsync(IBucketClient bucketClient, string bucketName)

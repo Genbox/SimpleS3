@@ -136,9 +136,7 @@ internal class ConsoleProfileSetup : IProfileSetup
 
                 int count = 0;
                 for (int i = start; i < end + 1; i++, count++)
-                {
                     trimmed[count] = enteredAccessKey[i];
-                }
 
                 Array.Clear(enteredAccessKey, 0, enteredAccessKey.Length);
 

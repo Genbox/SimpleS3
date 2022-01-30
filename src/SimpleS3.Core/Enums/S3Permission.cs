@@ -6,12 +6,9 @@ public enum S3Permission
 {
     Unknown = 0,
 
-    [EnumValue("FULL_CONTROL")]
-    FullControl,
+    [EnumValue("FULL_CONTROL")] FullControl,
 
-    [EnumValue("READ")]
-    Read,
+    [EnumValue("READ")] Read,
 
-    [EnumValue("WRITE")]
-    Write
+    [EnumValue("WRITE")] Write
 }

@@ -13,25 +13,20 @@ public class ListObjectsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt
         CommonPrefixes = new List<string>();
     }
 
-    /// <summary>Name of the bucket.</summary>
-    public string BucketName { get; internal set; }
-
-    /// <summary>
-    /// KeyCount is the number of keys returned with this request. KeyCount will always be less than equals to MaxKeys field. Say you ask for 50
-    /// keys, your result will include less than equals 50 keys
-    /// </summary>
+    /// <summary>KeyCount is the number of keys returned with this request. KeyCount will always be less than equals to MaxKeys
+    /// field. Say you ask for 50 keys, your result will include less than equals 50 keys</summary>
     public int KeyCount { get; internal set; }
 
-    /// <summary>Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.</summary>
+    /// <summary>Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never
+    /// contain more.</summary>
     public int MaxKeys { get; internal set; }
 
     /// <summary>If ContinuationToken was sent with the request, it is included in the response.</summary>
     public string ContinuationToken { get; internal set; }
 
-    /// <summary>
-    /// NextContinuationToken is sent when isTruncated is true which means there are more keys in the bucket that can be listed. The next list
-    /// requests to Amazon S3 can be continued with this NextContinuationToken. NextContinuationToken is obfuscated and is not a real key
-    /// </summary>
+    /// <summary>NextContinuationToken is sent when isTruncated is true which means there are more keys in the bucket that can
+    /// be listed. The next list requests to Amazon S3 can be continued with this NextContinuationToken. NextContinuationToken
+    /// is obfuscated and is not a real key</summary>
     public string NextContinuationToken { get; internal set; }
 
     /// <summary>If StartAfter was sent with the request, it is included in the response.</summary>
@@ -39,6 +34,9 @@ public class ListObjectsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt
 
     /// <summary>The list of objects</summary>
     public IList<S3Object> Objects { get; }
+
+    /// <summary>Name of the bucket.</summary>
+    public string BucketName { get; internal set; }
 
     public bool RequestCharged { get; internal set; }
 

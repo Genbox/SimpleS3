@@ -11,14 +11,7 @@ public class MetadataBuilderTests
     {
         MetadataBuilder b = new MetadataBuilder();
 
-        string invalidChars = "\t\0\n";
-
-        foreach (char invalidChar in invalidChars)
-        {
-            Assert.Throws<ArgumentException>(() =>
-            {
-                b.Add("a", invalidChar.ToString(CultureInfo.InvariantCulture));
-            });
-        }
+        foreach (char invalidChar in "\t\0\n")
+            Assert.Throws<ArgumentException>(() => { b.Add("a", invalidChar.ToString(CultureInfo.InvariantCulture)); });
     }
 }

@@ -17,8 +17,8 @@ public abstract class UnitTestBase : IDisposable
     {
         ProfileName = profileName;
         IConfigurationRoot configRoot = new ConfigurationBuilder()
-            .AddJsonFile("Config.json", false)
-            .Build();
+                                       .AddJsonFile("Config.json", false)
+                                       .Build();
 
         ServiceCollection collection = new ServiceCollection();
         collection.AddSingleton(configRoot);

@@ -31,8 +31,5 @@ public class GenericError : IError
     public string Message { get; }
     public IDictionary<string, string> Data { get; }
 
-    public virtual string GetErrorDetails()
-    {
-        return string.Empty;
-    }
+    public virtual string GetErrorDetails() => string.Empty;
 }

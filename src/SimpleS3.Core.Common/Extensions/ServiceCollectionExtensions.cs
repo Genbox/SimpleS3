@@ -7,10 +7,7 @@ public static class ServiceCollectionExtensions
 {
     //The extensions here add the ability to get the IServiceProvider when binding options
 
-    public static IServiceCollection Configure<TOptions>(this IServiceCollection services, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
-    {
-        return services.Configure(Options.DefaultName, configureOptions);
-    }
+    public static IServiceCollection Configure<TOptions>(this IServiceCollection services, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class => services.Configure(Options.DefaultName, configureOptions);
 
     public static IServiceCollection Configure<TOptions>(this IServiceCollection services, string name, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
     {
@@ -25,10 +22,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection PostConfigure<TOptions>(this IServiceCollection services, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
-    {
-        return services.PostConfigure(Options.DefaultName, configureOptions);
-    }
+    public static IServiceCollection PostConfigure<TOptions>(this IServiceCollection services, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class => services.PostConfigure(Options.DefaultName, configureOptions);
 
     public static IServiceCollection PostConfigure<TOptions>(this IServiceCollection services, string name, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
     {

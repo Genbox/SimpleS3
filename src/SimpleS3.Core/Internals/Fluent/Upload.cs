@@ -12,7 +12,6 @@ using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
-
 #if COMMERCIAL
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 #endif
@@ -209,10 +208,7 @@ internal class Upload : IUpload
         return _objectOperations.PutObjectAsync(_request, token);
     }
 
-    public Task<PutObjectResponse> UploadDataAsync(byte[] data, CancellationToken token = default)
-    {
-        return UploadAsync(new MemoryStream(data), token);
-    }
+    public Task<PutObjectResponse> UploadDataAsync(byte[] data, CancellationToken token = default) => UploadAsync(new MemoryStream(data), token);
 
     public Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default)
     {

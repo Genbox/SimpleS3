@@ -82,7 +82,6 @@ public class BucketLockConfigurationTests : TestBase
             Assert.Equal(200, getResp2.StatusCode);
             Assert.Equal(LockMode.Governance, getResp2.LockMode);
             Assert.Equal(DateTimeOffset.UtcNow.AddDays(5 - 1).DateTime, getResp2.LockRetainUntil!.Value.DateTime, TimeSpan.FromMinutes(1));
-
         }).ConfigureAwait(false);
     }
 }

@@ -6,12 +6,10 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 
-/// <summary>
-/// Uses the acl subresource to set the access control list (ACL) permissions for an object that already exists in a bucket. You must have
-/// WRITE_ACP permission to set the ACL of an object. Depending on your application needs, you can choose to set the ACL on an object using either the
-/// request body or the headers. For example, if you have an existing application that updates a bucket ACL using the request body, you can continue to
-/// use that approach.
-/// </summary>
+/// <summary>Uses the acl subresource to set the access control list (ACL) permissions for an object that already exists in
+/// a bucket. You must have WRITE_ACP permission to set the ACL of an object. Depending on your application needs, you can
+/// choose to set the ACL on an object using either the request body or the headers. For example, if you have an existing
+/// application that updates a bucket ACL using the request body, you can continue to use that approach.</summary>
 public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasObjectAcl, IHasVersionId, IHasContentMd5, IHasRequestPayer
 {
     internal PutObjectAclRequest() : base(HttpMethodType.PUT)

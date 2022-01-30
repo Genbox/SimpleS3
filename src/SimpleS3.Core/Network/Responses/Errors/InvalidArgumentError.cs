@@ -15,8 +15,5 @@ public class InvalidArgumentError : GenericError
     public string? ArgumentName { get; }
     public string? ArgumentValue { get; }
 
-    public override string GetErrorDetails()
-    {
-        return $"Argument: {ArgumentName} - Value: {ArgumentValue}";
-    }
+    public override string GetErrorDetails() => $"Argument: {ArgumentName} - Value: {ArgumentValue}";
 }

@@ -15,8 +15,8 @@ public class S3DeleteMarker : IHasObjectKey, IHasVersionId
     }
 
     public bool IsLatest { get; }
-    public string ObjectKey { get; internal set; }
     public DateTimeOffset LastModified { get; }
     public S3Identity Owner { get; }
+    public string ObjectKey { get; internal set; }
     public string VersionId { get; }
 }

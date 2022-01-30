@@ -4,8 +4,6 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal;
 
 internal class Profile : IProfile
 {
-    internal Profile() { }
-
     public IDictionary<string, string>? Tags { get; private set; }
 
     public string Name { get; internal set; }
@@ -20,17 +18,17 @@ internal class Profile : IProfile
 
     public DateTimeOffset CreatedOn { get; internal set; }
 
-    public void AddTag(string key, string value)
-    {
-        Tags ??= new Dictionary<string, string>(1);
-        Tags.Add(key, value);
-    }
-
     public string? GetTag(string key)
     {
         if (Tags == null)
             return null;
 
         return Tags.TryGetValue(key, out string value) ? value : null;
+    }
+
+    public void AddTag(string key, string value)
+    {
+        Tags ??= new Dictionary<string, string>(1);
+        Tags.Add(key, value);
     }
 }

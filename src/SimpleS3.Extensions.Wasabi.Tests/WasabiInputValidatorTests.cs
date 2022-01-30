@@ -25,7 +25,7 @@ public class WasabiInputValidatorTests
 
     [Theory]
     [InlineData(null, ValidationStatus.NullInput)]
-    [InlineData(new byte[] { 0, 0, }, ValidationStatus.WrongLength)]
+    [InlineData(new byte[] { 0, 0 }, ValidationStatus.WrongLength)]
     [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, ValidationStatus.Ok)]
     public void TryValidateAccessKeyTest(byte[] key, ValidationStatus expectedStatus)
     {

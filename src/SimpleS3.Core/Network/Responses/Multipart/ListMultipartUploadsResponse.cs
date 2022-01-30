@@ -21,23 +21,20 @@ public class ListMultipartUploadsResponse : BaseResponse, IHasTruncated, IHasTru
     /// <summary>Upload ID after which listing began.</summary>
     public string UploadIdMarker { get; internal set; }
 
-    /// <summary>When a list is truncated, this element specifies the value that should be used for the key-marker request parameter in a subsequent request.</summary>
+    /// <summary>When a list is truncated, this element specifies the value that should be used for the key-marker request
+    /// parameter in a subsequent request.</summary>
     public string NextKeyMarker { get; internal set; }
 
-    /// <summary>
-    /// When a list is truncated, this element specifies the value that should be used for the upload-id-marker request parameter in a subsequent
-    /// request.
-    /// </summary>
+    /// <summary>When a list is truncated, this element specifies the value that should be used for the upload-id-marker
+    /// request parameter in a subsequent request.</summary>
     public string NextUploadIdMarker { get; internal set; }
 
     /// <summary>Maximum number of multipart uploads that could have been included in the response.</summary>
     public int MaxUploads { get; internal set; }
 
-    /// <summary>
-    /// A list of all the uploads in this response. The uploads are sorted by key. If your application has initiated more than one multipart upload
-    /// using the same object key, then uploads in the response are first sorted by key. Additionally, uploads are sorted in ascending order within each key
-    /// by the upload initiation time.
-    /// </summary>
+    /// <summary>A list of all the uploads in this response. The uploads are sorted by key. If your application has initiated
+    /// more than one multipart upload using the same object key, then uploads in the response are first sorted by key.
+    /// Additionally, uploads are sorted in ascending order within each key by the upload initiation time.</summary>
     public IList<S3Upload> Uploads { get; }
 
     public EncodingType EncodingType { get; internal set; }

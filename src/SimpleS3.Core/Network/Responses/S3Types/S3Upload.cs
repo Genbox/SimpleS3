@@ -16,13 +16,9 @@ public class S3Upload : IHasStorageClass, IHasUploadId, IHasObjectKey
         Initiated = initiated;
     }
 
-    /// <summary>The object key</summary>
-    public string ObjectKey { get; internal set; }
-
-    /// <summary>
-    /// Identifies who initiated the multipart upload. If the initiator is an AWS account, this element provides the same information as the Owner
-    /// element. If the initiator is an IAM User, then this element provides the user ARN and display name.
-    /// </summary>
+    /// <summary>Identifies who initiated the multipart upload. If the initiator is an AWS account, this element provides the
+    /// same information as the Owner element. If the initiator is an IAM User, then this element provides the user ARN and
+    /// display name.</summary>
     public S3Identity? Initiator { get; }
 
     /// <summary>Owner of the upload</summary>
@@ -31,12 +27,12 @@ public class S3Upload : IHasStorageClass, IHasUploadId, IHasObjectKey
     /// <summary>The user who initiated the upload</summary>
     public DateTimeOffset Initiated { get; }
 
+    /// <summary>The object key</summary>
+    public string ObjectKey { get; internal set; }
+
     public StorageClass StorageClass { get; }
 
     public string UploadId { get; }
 
-    public override string ToString()
-    {
-        return $"{ObjectKey} ({UploadId})";
-    }
+    public override string ToString() => $"{ObjectKey} ({UploadId})";
 }

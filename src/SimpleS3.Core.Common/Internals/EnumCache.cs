@@ -42,8 +42,5 @@ internal class EnumCache<T> where T : Enum
         return attributes?.Value;
     }
 
-    public bool TryGetValueFromString(string value, out T enumVal)
-    {
-        return _map2.TryGetValue(value, out enumVal);
-    }
+    public bool TryGetValueFromString(string value, out T enumVal) => _map2.TryGetValue(value, out enumVal);
 }

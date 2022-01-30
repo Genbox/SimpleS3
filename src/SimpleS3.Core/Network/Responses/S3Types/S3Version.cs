@@ -20,10 +20,10 @@ public class S3Version : IHasObjectKey, IHasVersionId
 
     public string Etag { get; }
     public bool IsLatest { get; }
-    public string ObjectKey { get; internal set; }
     public DateTimeOffset LastModified { get; }
     public S3Identity? Owner { get; }
     public int Size { get; }
     public StorageClass StorageClass { get; }
+    public string ObjectKey { get; internal set; }
     public string? VersionId { get; }
 }

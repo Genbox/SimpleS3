@@ -22,16 +22,13 @@ public class S3OutputLocation : IHasSse, IHasObjectAcl, IHasStorageClass, IHasBu
         SseContext = new KmsContextBuilder();
     }
 
-    /// <summary>
-    /// Header starting with this prefix are user-defined metadata. Each one is stored and returned as a set of key-value pairs. Amazon S3 doesn't
-    /// validate or interpret user-defined metadata.
-    /// </summary>
+    /// <summary>Header starting with this prefix are user-defined metadata. Each one is stored and returned as a set of
+    /// key-value pairs. Amazon S3 doesn't validate or interpret user-defined metadata.</summary>
     public MetadataBuilder Metadata { get; }
 
-    /// <summary>
-    /// Specifies a set of one or more tags to associate with the object. These tags are stored in the tagging subresource that is associated with
-    /// the object. To specify tags on an object, the requester must have s3:PutObjectTagging included in the list of permitted actions in their IAM policy.
-    /// </summary>
+    /// <summary>Specifies a set of one or more tags to associate with the object. These tags are stored in the tagging
+    /// subresource that is associated with the object. To specify tags on an object, the requester must have
+    /// s3:PutObjectTagging included in the list of permitted actions in their IAM policy.</summary>
     public TagBuilder Tags { get; }
 
     /// <summary>The prefix that is prepended to the restore results for this request.</summary>

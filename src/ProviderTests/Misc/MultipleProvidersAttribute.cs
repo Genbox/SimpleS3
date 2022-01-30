@@ -30,9 +30,7 @@ public sealed class MultipleProvidersAttribute : DataAttribute
             if (_otherData.Length > 0)
             {
                 foreach (object o in _otherData)
-                {
                     yield return new[] { provider, bucket, client, o };
-                }
             }
             else
                 yield return new object?[] { provider, bucket, client };

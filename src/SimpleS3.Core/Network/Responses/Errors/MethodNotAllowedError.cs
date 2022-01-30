@@ -19,8 +19,5 @@ public class MethodNotAllowedError : GenericError
     public string? RequestId { get; }
     public string? HostId { get; }
 
-    public override string GetErrorDetails()
-    {
-        return $"Method: {Method} ResourceType: {ResourceType}";
-    }
+    public override string GetErrorDetails() => $"Method: {Method} ResourceType: {ResourceType}";
 }

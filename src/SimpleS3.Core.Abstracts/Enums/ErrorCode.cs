@@ -22,17 +22,13 @@ public enum ErrorCode
     /// <summary>The Content-MD5 you specified did not match what we received.</summary>
     BadDigest,
 
-    /// <summary>
-    /// The requested bucket name is not available. The bucket namespace is shared by all users of the system. Please select a different name and
-    /// try again.
-    /// </summary>
+    /// <summary>The requested bucket name is not available. The bucket namespace is shared by all users of the system. Please
+    /// select a different name and try again.</summary>
     BucketAlreadyExists,
 
-    /// <summary>
-    /// The bucket you tried to create already exists, and you own it. Amazon S3 returns this error in all AWS Regions except us-east-1 (N.
-    /// Virginia). For legacy compatibility, if you re-create an existing bucket that you already own in us-east-1, Amazon S3 returns 200 OK and resets the
-    /// bucket access control lists (ACLs).
-    /// </summary>
+    /// <summary>The bucket you tried to create already exists, and you own it. Amazon S3 returns this error in all AWS Regions
+    /// except us-east-1 (N. Virginia). For legacy compatibility, if you re-create an existing bucket that you already own in
+    /// us-east-1, Amazon S3 returns 200 OK and resets the bucket access control lists (ACLs).</summary>
     BucketAlreadyOwnedByYou,
 
     /// <summary>The bucket you tried to delete is not empty.</summary>
@@ -41,7 +37,8 @@ public enum ErrorCode
     /// <summary>This request does not support credentials.</summary>
     CredentialsNotSupported,
 
-    /// <summary>Cross-location logging not allowed. Buckets in one geographic location cannot log information to a bucket in another location.</summary>
+    /// <summary>Cross-location logging not allowed. Buckets in one geographic location cannot log information to a bucket in
+    /// another location.</summary>
     CrossLocationLoggingProhibited,
 
     /// <summary>Your proposed upload is smaller than the minimum allowed object size.</summary>
@@ -95,10 +92,8 @@ public enum ErrorCode
     /// <summary>The operation is not valid for the current state of the object.</summary>
     InvalidObjectState,
 
-    /// <summary>
-    /// One or more of the specified parts could not be found. The part might not have been uploaded, or the specified entity tag might not have
-    /// matched the part's entity tag.
-    /// </summary>
+    /// <summary>One or more of the specified parts could not be found. The part might not have been uploaded, or the specified
+    /// entity tag might not have matched the part's entity tag.</summary>
     InvalidPart,
 
     /// <summary>The list of parts was not in ascending order. Parts list must be specified in order by part number.</summary>
@@ -125,7 +120,8 @@ public enum ErrorCode
     /// <summary>The storage class you specified is not valid.</summary>
     InvalidStorageClass,
 
-    /// <summary>The target bucket for logging does not exist, is not owned by you, or does not have the appropriate grants for the log-delivery group.</summary>
+    /// <summary>The target bucket for logging does not exist, is not owned by you, or does not have the appropriate grants for
+    /// the log-delivery group.</summary>
     InvalidTargetBucketForLogging,
 
     /// <summary>The provided token is malformed or otherwise invalid.</summary>
@@ -143,10 +139,9 @@ public enum ErrorCode
     /// <summary>The body of your POST request is not well-formed multipart/form-data.</summary>
     MalformedPOSTRequest,
 
-    /// <summary>
-    /// This happens when the user sends malformed XML (XML that doesn't conform to the published XSD) for the configuration. The error message is,
-    /// "The XML you provided was not well-formed or did not validate against our published schema."
-    /// </summary>
+    /// <summary>This happens when the user sends malformed XML (XML that doesn't conform to the published XSD) for the
+    /// configuration. The error message is, "The XML you provided was not well-formed or did not validate against our
+    /// published schema."</summary>
     MalformedXML,
 
     /// <summary>Your request was too big.</summary>
@@ -167,7 +162,8 @@ public enum ErrorCode
     /// <summary>You must provide the Content-Length HTTP header.</summary>
     MissingContentLength,
 
-    /// <summary>This happens when the user sends an empty XML document as a request. The error message is, "Request body is empty."</summary>
+    /// <summary>This happens when the user sends an empty XML document as a request. The error message is, "Request body is
+    /// empty."</summary>
     MissingRequestBodyError,
 
     /// <summary>The SOAP 1.1 request is missing a security element.</summary>
@@ -191,7 +187,8 @@ public enum ErrorCode
     /// <summary>The lifecycle configuration does not exist.</summary>
     NoSuchLifecycleConfiguration,
 
-    /// <summary>The specified multipart upload does not exist. The upload ID might be invalid, or the multipart upload might have been aborted or completed.</summary>
+    /// <summary>The specified multipart upload does not exist. The upload ID might be invalid, or the multipart upload might
+    /// have been aborted or completed.</summary>
     NoSuchUpload,
 
     /// <summary>Indicates that the version ID specified in the request does not match an existing version.</summary>
@@ -206,7 +203,8 @@ public enum ErrorCode
     /// <summary>A conflicting conditional operation is currently in progress against this resource. Try again.</summary>
     OperationAborted,
 
-    /// <summary>The bucket you are attempting to access must be addressed using the specified endpoint. Send all future requests to this endpoint.</summary>
+    /// <summary>The bucket you are attempting to access must be addressed using the specified endpoint. Send all future
+    /// requests to this endpoint.</summary>
     PermanentRedirect,
 
     /// <summary>At least one of the preconditions you specified did not hold.</summary>

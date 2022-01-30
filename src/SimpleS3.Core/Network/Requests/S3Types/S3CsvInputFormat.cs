@@ -22,10 +22,8 @@ public class S3CsvInputFormat : S3InputFormat
     /// <summary>Value used for escaping where the field delimiter is part of the value.</summary>
     public char? QuoteCharacter { get; set; }
 
-    /// <summary>
-    /// Specifies that CSV field values may contain quoted record delimiters and such records should be allowed. Default value is FALSE. Setting
-    /// this value to TRUE may lower performance.
-    /// </summary>
+    /// <summary>Specifies that CSV field values may contain quoted record delimiters and such records should be allowed.
+    /// Default value is FALSE. Setting this value to TRUE may lower performance.</summary>
     public bool? AllowQuotedRecordDelimiter { get; set; }
 
     internal override void Reset()

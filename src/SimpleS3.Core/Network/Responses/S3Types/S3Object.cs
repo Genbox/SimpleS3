@@ -16,16 +16,14 @@ public class S3Object : IHasStorageClass, IHasETag, IHasObjectKey
         StorageClass = storageClass;
     }
 
-    public string ObjectKey { get; internal set; }
     public DateTimeOffset LastModifiedOn { get; }
     public long Size { get; }
 
     public S3Identity? Owner { get; }
     public string? ETag { get; }
+
+    public string ObjectKey { get; internal set; }
     public StorageClass StorageClass { get; }
 
-    public override string ToString()
-    {
-        return ObjectKey;
-    }
+    public override string ToString() => ObjectKey;
 }

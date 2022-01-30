@@ -11,10 +11,10 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
 {
     private readonly IHttpClientFactory _clientFactory;
     private readonly HttpClientFactoryConfig _config;
-    private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
     private readonly Version _httpVersion1 = new Version("1.1");
     private readonly Version _httpVersion2 = new Version("2.0");
     private readonly Version _httpVersion3 = new Version("3.0");
+    private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
 
     public HttpClientFactoryNetworkDriver(IOptions<HttpClientFactoryConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory)
     {
@@ -48,9 +48,7 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
             {
                 //Map all the headers to the HTTP request headers. We have to do this after setting the content as some headers are related to content
                 foreach (KeyValuePair<string, string> item in headers)
-                {
                     httpRequest.AddHeader(item.Key, item.Value);
-                }
             }
 
             _logger.LogTrace("Sending HTTP request");
@@ -64,18 +62,14 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
         IDictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Headers)
-        {
             responseHeaders.Add(header.Key, header.Value.First());
-        }
 
         Stream? contentStream = null;
 
         if (httpResponse.Content != null)
         {
             foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
-            {
                 responseHeaders.Add(header.Key, header.Value.First());
-            }
 
             contentStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }

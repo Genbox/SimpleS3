@@ -25,20 +25,11 @@ internal class NonSeekableStream : Stream
         throw new NotSupportedException();
     }
 
-    public override int Read(byte[] buffer, int offset, int count)
-    {
-        return _backingStream.Read(buffer, offset, count);
-    }
+    public override int Read(byte[] buffer, int offset, int count) => _backingStream.Read(buffer, offset, count);
 
-    public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
-    {
-        return _backingStream.ReadAsync(buffer, offset, count, cancellationToken);
-    }
+    public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => _backingStream.ReadAsync(buffer, offset, count, cancellationToken);
 
-    public override long Seek(long offset, SeekOrigin origin)
-    {
-        throw new NotSupportedException();
-    }
+    public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
 
     public override void SetLength(long value)
     {

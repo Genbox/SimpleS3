@@ -10,14 +10,11 @@ public class S3Bucket : IHasBucketName
         CreatedOn = createdOn;
     }
 
-    /// <summary>Name of the bucket</summary>
-    public string BucketName { get; }
-
     /// <summary>The date the bucket was created</summary>
     public DateTimeOffset CreatedOn { get; }
 
-    public override string ToString()
-    {
-        return BucketName;
-    }
+    /// <summary>Name of the bucket</summary>
+    public string BucketName { get; }
+
+    public override string ToString() => BucketName;
 }

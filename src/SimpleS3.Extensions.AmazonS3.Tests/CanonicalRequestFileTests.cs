@@ -25,10 +25,10 @@ public class CanonicalRequestFileTests
         services.AddLogging();
 
         SimpleS3CoreServices.AddSimpleS3Core(services, x =>
-         {
-             x.Credentials = new StringAccessKey("KeyIdExampleExampleE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
-             x.RegionCode = "us-east-1";
-         });
+        {
+            x.Credentials = new StringAccessKey("KeyIdExampleExampleE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
+            x.RegionCode = "us-east-1";
+        });
 
         ServiceProvider? provider = services.BuildServiceProvider();
 

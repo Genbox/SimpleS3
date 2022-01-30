@@ -79,9 +79,7 @@ public class FastXmlWriterTests
         StringBuilder sb = new StringBuilder(ushort.MaxValue);
 
         for (int i = 0; i < ushort.MaxValue; i++)
-        {
             sb.Append((char)i);
-        }
 
         writer.WriteElement("test", sb.ToString());
 
@@ -98,9 +96,7 @@ public class FastXmlWriterTests
         StringBuilder sb = new StringBuilder(ushort.MaxValue);
 
         for (int i = 0; i < ushort.MaxValue; i++)
-        {
             sb.Append((char)i);
-        }
 
         writer.WriteElement("test", sb.ToString());
 

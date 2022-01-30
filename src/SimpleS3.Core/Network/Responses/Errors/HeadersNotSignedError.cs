@@ -13,8 +13,5 @@ public class HeadersNotSignedError : GenericError
 
     public string? HeadersNotSigned { get; }
 
-    public override string GetErrorDetails()
-    {
-        return "Headers not signed: " + HeadersNotSigned;
-    }
+    public override string GetErrorDetails() => "Headers not signed: " + HeadersNotSigned;
 }

@@ -226,9 +226,7 @@ public class PutObjectTests : TestBase
         PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectMultipleMetadata), null, r =>
         {
             for (int i = 0; i < 10; i++)
-            {
                 r.Metadata.Add("mykey" + i, "myvalue" + i);
-            }
         }).ConfigureAwait(false);
         Assert.Equal(200, putResp.StatusCode);
 
@@ -327,9 +325,7 @@ public class PutObjectTests : TestBase
         await Assert.ThrowsAsync<InvalidOperationException>(async () => await client.PutObjectAsync(bucket, nameof(PutObjectTooManyTags), null, r =>
         {
             for (int i = 0; i < 51; i++)
-            {
                 r.Tags.Add(i.ToString(NumberFormatInfo.InvariantInfo), i.ToString(NumberFormatInfo.InvariantInfo));
-            }
         }).ConfigureAwait(false)).ConfigureAwait(false);
     }
 

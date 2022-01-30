@@ -6,8 +6,8 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 public class TypeLookupBenchmarks
 {
     private readonly HashSet<string> _stringDict = new HashSet<string>();
-    private readonly HashSet<Type> _typeDict = new HashSet<Type>();
     private readonly Type _type = typeof(TypeLookupBenchmarks);
+    private readonly HashSet<Type> _typeDict = new HashSet<Type>();
 
     [IterationCleanup]
     public void Cleanup()
@@ -23,10 +23,7 @@ public class TypeLookupBenchmarks
     }
 
     [Benchmark]
-    public bool LookupWithString()
-    {
-        return _stringDict.Contains(_type.Name);
-    }
+    public bool LookupWithString() => _stringDict.Contains(_type.Name);
 
     [Benchmark]
     public void AddWithType()
@@ -35,8 +32,5 @@ public class TypeLookupBenchmarks
     }
 
     [Benchmark]
-    public bool LookupWithType()
-    {
-        return _typeDict.Contains(_type);
-    }
+    public bool LookupWithType() => _typeDict.Contains(_type);
 }

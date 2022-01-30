@@ -2,6 +2,7 @@ using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Extensions.AmazonS3.Tests.Helpers;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 
@@ -25,7 +26,7 @@ internal class HttpHandler : IHttpHeadersHandler, IHttpRequestLineHandler
         Headers.Add(Encoding.UTF8.GetString(name), Encoding.UTF8.GetString(value));
     }
 
-    public void OnStartLine(Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod method, HttpVersion version, Span<byte> target, Span<byte> path, Span<byte> query, Span<byte> customMethod, bool pathEncoded)
+    public void OnStartLine(HttpMethod method, HttpVersion version, Span<byte> target, Span<byte> path, Span<byte> query, Span<byte> customMethod, bool pathEncoded)
     {
         Method = Enum.Parse<HttpMethodType>(method.ToString().ToUpperInvariant());
         Target = Encoding.UTF8.GetString(target);

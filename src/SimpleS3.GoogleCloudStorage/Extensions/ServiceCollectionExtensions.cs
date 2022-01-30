@@ -38,8 +38,8 @@ public static class ServiceCollectionExtensions
 
         coreBuilder.Services.AddSingleton(x =>
         {
-                //We have to call a specific constructor for dependency injection
-                IObjectClient objectClient = x.GetRequiredService<IObjectClient>();
+            //We have to call a specific constructor for dependency injection
+            IObjectClient objectClient = x.GetRequiredService<IObjectClient>();
             IBucketClient bucketClient = x.GetRequiredService<IBucketClient>();
             IMultipartClient multipartClient = x.GetRequiredService<IMultipartClient>();
             IMultipartTransfer multipartTransfer = x.GetRequiredService<IMultipartTransfer>();

@@ -72,9 +72,7 @@ internal class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsResponse
             response.StartAfter = WebUtility.UrlDecode(response.StartAfter);
 
             foreach (S3Object obj in response.Objects)
-            {
                 obj.ObjectKey = WebUtility.UrlDecode(obj.ObjectKey);
-            }
         }
     }
 

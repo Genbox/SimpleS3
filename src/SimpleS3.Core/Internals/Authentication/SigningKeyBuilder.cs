@@ -11,14 +11,14 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
 internal class SigningKeyBuilder : ISigningKeyBuilder
 {
-    private readonly ILogger<SigningKeyBuilder> _logger;
     private readonly SimpleS3Config _config;
+    private readonly byte[] _dateBytes;
+    private readonly ILogger<SigningKeyBuilder> _logger;
     private readonly IAccessKeyProtector? _protector;
-    private readonly byte[] _serviceBytes;
     private readonly byte[] _regionBytes;
     private readonly byte[] _requestBytes;
     private readonly byte[] _schemeBytes;
-    private readonly byte[] _dateBytes;
+    private readonly byte[] _serviceBytes;
 
     public SigningKeyBuilder(IOptions<SimpleS3Config> options, ILogger<SigningKeyBuilder> logger, IAccessKeyProtector? protector = null)
     {

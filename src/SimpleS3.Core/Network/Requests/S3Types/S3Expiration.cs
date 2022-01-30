@@ -11,7 +11,8 @@ public class S3Expiration
         ExpireOnDate = expireOn;
     }
 
-    /// <summary>Indicates the lifetime, in days, of the objects that are subject to the rule. The value must be a non-zero positive integer.</summary>
+    /// <summary>Indicates the lifetime, in days, of the objects that are subject to the rule. The value must be a non-zero
+    /// positive integer.</summary>
     /// <param name="expireAfterDays">A non-zero positive integer</param>
     public S3Expiration(int expireAfterDays)
     {
@@ -21,7 +22,8 @@ public class S3Expiration
     }
 
     /// <summary>Indicates whether Amazon S3 will remove a delete marker with no noncurrent versions.</summary>
-    /// <param name="expireDeleteMarker">If set to true, the delete marker will be expired; if set to false the policy takes no action.</param>
+    /// <param name="expireDeleteMarker">If set to true, the delete marker will be expired; if set to false the policy takes no
+    /// action.</param>
     public S3Expiration(bool expireDeleteMarker)
     {
         ExpireObjectDeleteMarker = expireDeleteMarker;

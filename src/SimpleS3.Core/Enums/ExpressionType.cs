@@ -6,6 +6,5 @@ public enum ExpressionType
 {
     Unknown = 0,
 
-    [EnumValue("SQL")]
-    Sql
+    [EnumValue("SQL")] Sql
 }

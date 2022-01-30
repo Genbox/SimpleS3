@@ -13,9 +13,7 @@ public class KeyValueTupleBenchmarks
         Random r = new Random(42);
 
         for (int i = 0; i < 100; i++)
-        {
             _dict.Add(r.Next(10000, int.MaxValue).ToString(), r.Next(10000, int.MaxValue).ToString());
-        }
     }
 
     [Benchmark]
@@ -30,9 +28,7 @@ public class KeyValueTupleBenchmarks
         IList<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>();
 
         foreach (KeyValuePair<string, string> pair in _dict)
-        {
             list.Add(pair);
-        }
 
         return list;
     }

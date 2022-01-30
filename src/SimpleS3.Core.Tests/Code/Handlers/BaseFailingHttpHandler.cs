@@ -9,10 +9,7 @@ internal abstract class BaseFailingHttpHandler : HttpMessageHandler
 {
     public int RequestCounter { get; set; }
 
-    protected HttpContent GetEmptyXmlContent()
-    {
-        return new StringContent(string.Empty, Encoding.UTF8, MediaTypeNames.Application.Xml);
-    }
+    protected HttpContent GetEmptyXmlContent() => new StringContent(string.Empty, Encoding.UTF8, MediaTypeNames.Application.Xml);
 
     protected async Task ConsumeRequestAsync(HttpRequestMessage request)
     {
@@ -28,12 +25,10 @@ internal abstract class BaseFailingHttpHandler : HttpMessageHandler
         }
     }
 
-    protected HttpResponseMessage CreateResponse(HttpRequestMessage request, HttpStatusCode statusCode)
-    {
-        return new HttpResponseMessage(statusCode)
-        {
-            Content = GetEmptyXmlContent(),
-            RequestMessage = request
-        };
-    }
+    protected HttpResponseMessage CreateResponse(HttpRequestMessage request, HttpStatusCode statusCode) =>
+            new HttpResponseMessage(statusCode)
+            {
+                Content = GetEmptyXmlContent(),
+                RequestMessage = request
+            };
 }

@@ -31,7 +31,7 @@ public class InputValidatorTests
     [InlineData("自由", BucketNameValidationMode.Unrestricted, ValidationStatus.Ok)] //Anything should be allowed when it is unrestricted
     public void TryValidateBucketNameSuccessTest(string input, BucketNameValidationMode mode, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateBucketName(input, mode, out var status, out _);
+        _validator.TryValidateBucketName(input, mode, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
     }
 }

@@ -47,20 +47,11 @@ public class SignatureBenchmarks
     }
 
     [Benchmark]
-    public byte[] SignatureKeyBuilder()
-    {
-        return _signingKeyBuilder.CreateSigningKey(_date);
-    }
+    public byte[] SignatureKeyBuilder() => _signingKeyBuilder.CreateSigningKey(_date);
 
     [Benchmark]
-    public byte[] SignatureBuilder()
-    {
-        return _signatureBuilder.CreateSignature(_req);
-    }
+    public byte[] SignatureBuilder() => _signatureBuilder.CreateSignature(_req);
 
     [Benchmark]
-    public byte[] ChunkedSignatureBuilder()
-    {
-        return _chunkSigBuilder.CreateChunkSignature(_req, new byte[32], new byte[32], 0, 32);
-    }
+    public byte[] ChunkedSignatureBuilder() => _chunkSigBuilder.CreateChunkSignature(_req, new byte[32], new byte[32], 0, 32);
 }

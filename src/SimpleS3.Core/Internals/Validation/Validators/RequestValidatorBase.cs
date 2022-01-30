@@ -13,8 +13,8 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators;
 
 internal abstract class RequestValidatorBase<T> : ValidatorBase<T> where T : IRequest
 {
-    private readonly IInputValidator _validator;
     private readonly SimpleS3Config _cfg;
+    private readonly IInputValidator _validator;
 
     protected RequestValidatorBase(IInputValidator validator, IOptions<SimpleS3Config> config)
     {
@@ -37,12 +37,12 @@ internal abstract class RequestValidatorBase<T> : ValidatorBase<T> where T : IRe
         //- Other than the start character, it must also contain hyphens
         //- Must be between 3 and 63 long
         When(x => x is IHasBucketName,
-            () => RuleFor(x => ((IHasBucketName)x).BucketName)
-                .Custom(ValidateBucketName));
+                () => RuleFor(x => ((IHasBucketName)x).BucketName)
+                       .Custom(ValidateBucketName));
 
         When(x => x is IHasObjectKey,
-            () => RuleFor(x => ((IHasObjectKey)x).ObjectKey)
-                .Custom(ValidateObjectKey));
+                () => RuleFor(x => ((IHasObjectKey)x).ObjectKey)
+                       .Custom(ValidateObjectKey));
     }
 
     private void ValidateObjectKey(string input, ValidationContext<T> context)

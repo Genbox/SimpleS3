@@ -32,14 +32,8 @@ public class EndpointBuilderBenchmarks
     }
 
     [Benchmark]
-    public IEndpointData EndpointTemplate()
-    {
-        return _builder.GetEndpoint(_request);
-    }
+    public IEndpointData EndpointTemplate() => _builder.GetEndpoint(_request);
 
     [Benchmark]
-    public IEndpointData Endpoint()
-    {
-        return _builder2.GetEndpoint(_request);
-    }
+    public IEndpointData Endpoint() => _builder2.GetEndpoint(_request);
 }

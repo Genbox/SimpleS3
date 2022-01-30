@@ -2,7 +2,8 @@
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 
-/// <summary>Stream that will buffer / record data as it's read, and be able to seek in it afterwards Used for retrying forward-only streams</summary>
+/// <summary>Stream that will buffer / record data as it's read, and be able to seek in it afterwards Used for retrying
+/// forward-only streams</summary>
 internal class RetryableBufferingStream : Stream
 {
     private readonly MemoryStream _bufferStream;
@@ -53,10 +54,7 @@ internal class RetryableBufferingStream : Stream
         return await _bufferStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
     }
 
-    public override long Seek(long offset, SeekOrigin origin)
-    {
-        return _bufferStream.Seek(offset, origin);
-    }
+    public override long Seek(long offset, SeekOrigin origin) => _bufferStream.Seek(offset, origin);
 
     public override void SetLength(long value)
     {

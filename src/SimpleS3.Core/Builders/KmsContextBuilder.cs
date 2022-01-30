@@ -14,9 +14,7 @@ public class KmsContextBuilder : IHttpHeaderBuilder
             return;
 
         foreach (KeyValuePair<string, string> pair in dict)
-        {
             AddEntry(pair.Key, pair.Value);
-        }
     }
 
     public string? Build()
@@ -32,10 +30,7 @@ public class KmsContextBuilder : IHttpHeaderBuilder
         _dict?.Clear();
     }
 
-    public bool HasData()
-    {
-        return _dict != null && _dict.Count > 0;
-    }
+    public bool HasData() => _dict != null && _dict.Count > 0;
 
     public string? HeaderName => null;
 

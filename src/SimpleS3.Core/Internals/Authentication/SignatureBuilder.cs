@@ -41,8 +41,8 @@ internal class SignatureBuilder : ISignatureBuilder
 
     private readonly ISigningKeyBuilder _keyBuilder;
     private readonly ILogger<SignatureBuilder> _logger;
-    private readonly IScopeBuilder _scopeBuilder;
     private readonly SimpleS3Config _options;
+    private readonly IScopeBuilder _scopeBuilder;
 
     public SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<SignatureBuilder> logger)
     {
@@ -71,14 +71,9 @@ internal class SignatureBuilder : ISignatureBuilder
         return signature;
     }
 
-    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign)
-    {
-        //See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
-        //Consists of:
-        // Hmac-Sha256(SigningKey, StringToSign)
-
-        return CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date));
-    }
+    /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of:
+    /// Hmac-Sha256(SigningKey, StringToSign)</summary>
+    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign) => CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date));
 
     internal string CreateCanonicalRequest(Guid requestId, string url, HttpMethodType method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
     {
@@ -162,9 +157,9 @@ internal class SignatureBuilder : ISignatureBuilder
         foreach (KeyValuePair<string, string> item in headers)
         {
             sb.Append(item.Key)
-                .Append(SigningConstants.Colon)
-                .Append(item.Value)
-                .Append(SigningConstants.Newline);
+              .Append(SigningConstants.Colon)
+              .Append(item.Value)
+              .Append(SigningConstants.Newline);
         }
 
         return StringBuilderPool.Shared.ReturnString(sb);

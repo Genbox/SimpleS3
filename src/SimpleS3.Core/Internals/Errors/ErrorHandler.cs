@@ -15,9 +15,7 @@ internal static class ErrorHandler
             xmlReader.ReadToDescendant("Error");
 
             foreach (string name in XmlHelper.ReadElements(xmlReader))
-            {
                 lookup.Add(name, xmlReader.ReadString());
-            }
         }
 
         string code = lookup["Code"];

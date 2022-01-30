@@ -1,9 +1,6 @@
 using Genbox.HttpBuilders;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
-#if COMMERCIAL
-#endif
-
 namespace Genbox.SimpleS3.Core.Abstracts;
 
 public interface IDownload

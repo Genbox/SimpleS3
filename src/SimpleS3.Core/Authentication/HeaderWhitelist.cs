@@ -9,11 +9,11 @@ public static class HeaderWhitelist
 {
     //These headers are always signed
     public static ISet<string> Whitelist { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-    {
-        HttpHeaders.Host,
-        HttpHeaders.ContentType,
-        HttpHeaders.ContentMd5
-    };
+                                                         {
+                                                             HttpHeaders.Host,
+                                                             HttpHeaders.ContentType,
+                                                             HttpHeaders.ContentMd5
+                                                         };
 
     public static Func<string, bool> ShouldSignHeader { get; set; } = DefaultHeaderCheck;
 

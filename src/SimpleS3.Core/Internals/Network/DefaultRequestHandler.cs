@@ -28,11 +28,11 @@ namespace Genbox.SimpleS3.Core.Internals.Network;
 internal class DefaultRequestHandler : IRequestHandler
 {
     private readonly IAuthorizationBuilder _authBuilder;
+    private readonly SimpleS3Config _config;
     private readonly IEndpointBuilder _endpointBuilder;
     private readonly ILogger<DefaultRequestHandler> _logger;
     private readonly IMarshalFactory _marshaller;
     private readonly INetworkDriver _networkDriver;
-    private readonly SimpleS3Config _config;
     private readonly IPostMapperFactory _postMapper;
     private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
     private readonly IRequestValidatorFactory _requestValidator;

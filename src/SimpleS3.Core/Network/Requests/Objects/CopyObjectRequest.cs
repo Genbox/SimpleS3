@@ -8,11 +8,9 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 
-/// <summary>
-/// Creates a copy of an object that is already stored in Amazon S3. When copying an object, you can preserve all metadata (default) or specify
-/// new metadata. However, the ACL is not preserved and is set to private for the user making the request. To override the default ACL setting, specify a
-/// new ACL when generating a copy request.
-/// </summary>
+/// <summary>Creates a copy of an object that is already stored in Amazon S3. When copying an object, you can preserve all
+/// metadata (default) or specify new metadata. However, the ACL is not preserved and is set to private for the user making
+/// the request. To override the default ACL setting, specify a new ACL when generating a copy request.</summary>
 public class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey, IHasLegalHold
 {
     private byte[]? _sseCustomerKey;

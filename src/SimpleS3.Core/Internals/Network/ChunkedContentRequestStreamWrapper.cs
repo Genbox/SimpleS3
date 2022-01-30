@@ -30,10 +30,7 @@ internal sealed class ChunkedContentRequestStreamWrapper : IRequestStreamWrapper
         _config = config.Value;
     }
 
-    public bool IsSupported(IRequest request)
-    {
-        return _config.PayloadSignatureMode == SignatureMode.StreamingSignature && request is ISupportStreaming;
-    }
+    public bool IsSupported(IRequest request) => _config.PayloadSignatureMode == SignatureMode.StreamingSignature && request is ISupportStreaming;
 
     public Stream Wrap(Stream input, IRequest request)
     {

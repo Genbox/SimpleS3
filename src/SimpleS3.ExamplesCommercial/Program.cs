@@ -25,9 +25,7 @@ internal class Program
         Console.WriteLine("# Listing buckets");
 
         await foreach (S3Bucket bucket in client.ListAllBucketsAsync()) //This is a commercial feature
-        {
             Console.WriteLine($" - {bucket.BucketName}");
-        }
 
         Console.WriteLine("# Creating a temporary bucket");
 
@@ -54,9 +52,7 @@ internal class Program
             Console.WriteLine("# Deleting all objects in temporary bucket");
 
             await foreach (S3DeleteError obj in client.DeleteAllObjectVersionsAsync(bucketName)) //This is a commercial feature
-            {
                 Console.WriteLine("Deleted " + obj.ObjectKey);
-            }
 
             DeleteBucketResponse delResp = await client.DeleteBucketAsync(bucketName);
 

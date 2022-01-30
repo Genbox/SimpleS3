@@ -18,10 +18,7 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
         return _tags.GetEnumerator();
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public string? Build()
     {
@@ -36,10 +33,7 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
         _tags?.Clear();
     }
 
-    public bool HasData()
-    {
-        return _tags != null && _tags.Count > 0;
-    }
+    public bool HasData() => _tags != null && _tags.Count > 0;
 
     public string? HeaderName => null;
 

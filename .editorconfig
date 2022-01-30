@@ -1,25 +1,29 @@
 
+# XML based formats
 [*.{appxmanifest,axml,build,config,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_style = space
 indent_size = 2
-tab_width = 4
 
-[*.{c,c++,cc,cginc,compute,cp,cpp,cu,cuh,cxx,h,hh,hlsl,hlsli,hlslinc,hpp,hxx,inc,inl,ino,ipp,mpp,mq4,mq5,mqh,proto,tpp,usf,ush}]
-indent_style = space
-indent_size = 4
-tab_width = 4
-
-[*.{asax,ascx,aspx,axaml,cs,cshtml,css,htm,html,js,jsx,master,paml,razor,skin,ts,tsx,vb,xaml,xamlx,xoml}]
-indent_style = space
-indent_size = 4
-tab_width = 4
-
+# JSON based formats
 [*.{json,resjson}]
 indent_style = space
 indent_size = 2
-tab_width = 2
+
+# Web languages
+[*.{css,htm,html,js}]
+indent_style = space
+indent_size = 2
+
+# Programming languages
+[*.{asax,ascx,aspx,axaml,cs,cshtml}]
+indent_style = space
+indent_size = 4
+tab_width = 4
 
 [*]
+charset = utf-8,
+trim_trailing_whitespace = true,
+insert_final_newline = false
 
 # Microsoft .NET properties
 csharp_new_line_before_members_in_object_initializers = false
@@ -76,11 +80,16 @@ resharper_keep_existing_embedded_arrangement = false
 resharper_local_function_body = expression_body
 resharper_method_or_operator_body = expression_body
 resharper_object_creation_when_type_evident = explicitly_typed
+resharper_place_field_attribute_on_same_line = if_owner_is_single_line
 resharper_place_simple_embedded_statement_on_same_line = false
+resharper_place_simple_enum_on_single_line = true
 resharper_show_autodetect_configure_formatting_tip = false
+resharper_space_after_attributes = true
 resharper_space_before_trailing_comment = true
+resharper_space_between_attribute_sections = false
 resharper_space_within_single_line_array_initializer_braces = true
 resharper_use_continuous_indent_inside_initializer_braces = false
+resharper_use_indent_from_vs = false
 resharper_wrap_before_eq = true
 resharper_xmldoc_attribute_indent = align_by_first_attribute
 resharper_xmldoc_indent_text = ZeroIndent
@@ -89,6 +98,7 @@ resharper_xmldoc_linebreaks_inside_tags_for_multiline_elements = false
 resharper_xmldoc_linebreak_before_multiline_elements = false
 resharper_xmldoc_pi_attribute_style = on_single_line
 resharper_xmldoc_use_indent_from_vs = false
+resharper_xml_wrap_lines = false
 
 # ReSharper inspection severities
 resharper_arrange_object_creation_when_type_evident_highlighting = none

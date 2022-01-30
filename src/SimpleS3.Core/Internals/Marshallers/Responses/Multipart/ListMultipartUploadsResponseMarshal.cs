@@ -61,9 +61,7 @@ internal class ListMultipartUploadsResponseMarshal : IResponseMarshal<ListMultip
             response.NextKeyMarker = WebUtility.UrlDecode(response.NextKeyMarker);
 
             foreach (S3Upload upload in response.Uploads)
-            {
                 upload.ObjectKey = WebUtility.UrlDecode(upload.ObjectKey);
-            }
         }
     }
 

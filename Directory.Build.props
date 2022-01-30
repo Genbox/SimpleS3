@@ -68,7 +68,7 @@
     <PackageReference Include="Lindhart.Analyser.MissingAwaitWarning" Version="2.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true' and !$(MSBuildProjectName.EndsWith('Tests'))">
+  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true' and !($(MSBuildProjectName.EndsWith('.Tests')) or $(MSBuildProjectName.Contains('.Benchmarks')))">
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.3" PrivateAssets="all" />
   </ItemGroup>
 

@@ -72,20 +72,20 @@ public class AwsSignatureVersion4Benchmarks
 
         // Build the string to sign
         (string stringToSign, string credentialScope) = StringToSign.Build(
-            DateTime.UtcNow,
-            "eu-west-1",
-            "S3",
-            canonicalRequest);
+                DateTime.UtcNow,
+                "eu-west-1",
+                "S3",
+                canonicalRequest);
 
         // Build the authorization header
         string authorizationHeader = AuthorizationHeader.Build(
-            DateTime.UtcNow,
-            "eu-west-1",
-            "S3",
-            _credentials,
-            signedHeaders,
-            credentialScope,
-            stringToSign);
+                DateTime.UtcNow,
+                "eu-west-1",
+                "S3",
+                _credentials,
+                signedHeaders,
+                credentialScope,
+                stringToSign);
 
         return authorizationHeader;
     }

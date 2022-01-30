@@ -15,8 +15,5 @@ internal class ScopeBuilder : IScopeBuilder
         _options = options.Value;
     }
 
-    public string CreateScope(string service, DateTimeOffset date)
-    {
-        return $"{ValueHelper.DateToString(date, DateTimeFormat.Iso8601Date)}/{_options.RegionCode}/{service}/aws4_request";
-    }
+    public string CreateScope(string service, DateTimeOffset date) => $"{ValueHelper.DateToString(date, DateTimeFormat.Iso8601Date)}/{_options.RegionCode}/{service}/aws4_request";
 }

@@ -20,8 +20,8 @@ public class ListObjectVersionsResponse : BaseResponse, IHasTruncated, IHasTrunc
     public string NextVersionIdMarker { get; internal set; }
     public IList<S3Version> Versions { get; }
     public IList<S3DeleteMarker> DeleteMarkers { get; }
-    public string BucketName { get; internal set; }
     public int MaxKeys { get; internal set; }
+    public string BucketName { get; internal set; }
     public bool IsTruncated { get; internal set; }
     public EncodingType EncodingType { get; internal set; }
     public string? Prefix { get; internal set; }

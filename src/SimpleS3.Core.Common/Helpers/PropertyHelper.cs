@@ -19,7 +19,7 @@ public static class PropertyHelper
 
         int diff = sourceProperties.Length - destProperties.Length;
 
-        for (var i = 0; i < destProperties.Length; i++)
+        for (int i = 0; i < destProperties.Length; i++)
         {
             PropertyInfo prop = sourceProperties[i + diff];
 

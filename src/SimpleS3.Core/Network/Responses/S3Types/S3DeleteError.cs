@@ -14,13 +14,11 @@ public class S3DeleteError : IHasVersionId, IHasObjectKey
         VersionId = versionId;
     }
 
-    public string ObjectKey { get; }
     public ErrorCode Code { get; }
     public string Message { get; }
+
+    public string ObjectKey { get; }
     public string? VersionId { get; }
 
-    public override string ToString()
-    {
-        return $"Error on {ObjectKey}: {Message}";
-    }
+    public override string ToString() => $"Error on {ObjectKey}: {Message}";
 }

@@ -128,7 +128,6 @@ public class ListObjectVersionsTests : TestBase
                 Assert.Equal(TestConstants.TestUserId, delMarker.Owner.Id);
                 Assert.Equal(TestConstants.TestUsername, delMarker.Owner.Name);
             }
-
         }).ConfigureAwait(false);
     }
 
@@ -155,7 +154,6 @@ public class ListObjectVersionsTests : TestBase
 
             if (provider != S3Provider.GoogleCloudStorage)
                 Assert.Equal(1, listResp2.Versions.Count);
-
         }).ConfigureAwait(false);
     }
 

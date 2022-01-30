@@ -30,9 +30,8 @@ public abstract class InputValidatorBase : IInputValidator
         return TryValidateAccessKeyInternal(accessKey, out status, out message);
     }
 
-    /// <summary>
-    /// Validate a bucket name. See https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html#bucketnamingrules for more info
-    /// </summary>
+    /// <summary>Validate a bucket name. See
+    /// https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html#bucketnamingrules for more info</summary>
     /// <returns>True if the bucket name passed validation</returns>
     public bool TryValidateBucketName(string? bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {

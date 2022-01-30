@@ -27,25 +27,27 @@ public sealed class StringBuilderPool
     private readonly int _maxBuilderCapacity;
 
     /// <summary>First builder.</summary>
-    /// <remarks>The first builder is stored in a dedicated field, because we expect to be able to satisfy most requests from it.</remarks>
+    /// <remarks>The first builder is stored in a dedicated field, because we expect to be able to satisfy most requests from
+    /// it.</remarks>
     private StringBuilder? _firstBuilder;
 
     /// <summary>Constructs an instance of the default pool of string builders using the default configuration settings.</summary>
     internal StringBuilderPool()
-        : this(DefaultInitialBuilderCapacity, DefaultMaxBuilderCapacity, Environment.ProcessorCount * BuilderCountPerProcessor) { }
+            : this(DefaultInitialBuilderCapacity, DefaultMaxBuilderCapacity, Environment.ProcessorCount * BuilderCountPerProcessor) { }
 
     /// <summary>Constructs an instance of the default pool of string builders using the specified pool size.</summary>
     /// <param name="poolSize">Maximum number of builders stored in the pool.</param>
     internal StringBuilderPool(int poolSize)
-        : this(DefaultInitialBuilderCapacity, DefaultMaxBuilderCapacity, poolSize) { }
+            : this(DefaultInitialBuilderCapacity, DefaultMaxBuilderCapacity, poolSize) { }
 
     /// <summary>Constructs an instance of the default pool of string builders using the specified capacity settings.</summary>
     /// <param name="initialBuilderCapacity">Initial capacity of builder.</param>
     /// <param name="maxBuilderCapacity">Maximum capacity of builder.</param>
     internal StringBuilderPool(int initialBuilderCapacity, int maxBuilderCapacity)
-        : this(initialBuilderCapacity, maxBuilderCapacity, Environment.ProcessorCount * BuilderCountPerProcessor) { }
+            : this(initialBuilderCapacity, maxBuilderCapacity, Environment.ProcessorCount * BuilderCountPerProcessor) { }
 
-    /// <summary>Constructs an instance of the default pool of string builders using the specified capacity settings and pool size.</summary>
+    /// <summary>Constructs an instance of the default pool of string builders using the specified capacity settings and pool
+    /// size.</summary>
     /// <param name="initialBuilderCapacity">Initial capacity of builder.</param>
     /// <param name="maxBuilderCapacity">Maximum capacity of builder.</param>
     /// <param name="poolSize">Maximum number of builders stored in the pool.</param>

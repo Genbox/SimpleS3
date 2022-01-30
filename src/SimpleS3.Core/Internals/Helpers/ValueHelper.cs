@@ -10,25 +10,13 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers;
 
 internal static class ValueHelper
 {
-    public static T ParseEnum<T>(string? value) where T : struct, Enum
-    {
-        return EnumHelper.TryParse(value, out T parsedValue) ? parsedValue : default;
-    }
+    public static T ParseEnum<T>(string? value) where T : struct, Enum => EnumHelper.TryParse(value, out T parsedValue) ? parsedValue : default;
 
-    public static int ParseInt(string? value)
-    {
-        return int.TryParse(value, NumberStyles.None, NumberFormatInfo.InvariantInfo, out int result) ? result : 0;
-    }
+    public static int ParseInt(string? value) => int.TryParse(value, NumberStyles.None, NumberFormatInfo.InvariantInfo, out int result) ? result : 0;
 
-    public static long ParseLong(string? value)
-    {
-        return long.TryParse(value, NumberStyles.None, NumberFormatInfo.InvariantInfo, out long result) ? result : 0;
-    }
+    public static long ParseLong(string? value) => long.TryParse(value, NumberStyles.None, NumberFormatInfo.InvariantInfo, out long result) ? result : 0;
 
-    public static bool ParseBool(string? value)
-    {
-        return bool.TryParse(value, out bool result) && result;
-    }
+    public static bool ParseBool(string? value) => bool.TryParse(value, out bool result) && result;
 
     public static DateTimeOffset ParseDate(string? value, DateTimeFormat format)
     {
@@ -75,20 +63,11 @@ internal static class ValueHelper
         return str;
     }
 
-    public static string BoolToString(bool value)
-    {
-        return value.ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
-    }
+    public static string BoolToString(bool value) => value.ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
-    public static string IntToString(int value)
-    {
-        return value.ToString(NumberFormatInfo.InvariantInfo);
-    }
+    public static string IntToString(int value) => value.ToString(NumberFormatInfo.InvariantInfo);
 
-    public static string LongToString(long value)
-    {
-        return value.ToString(NumberFormatInfo.InvariantInfo);
-    }
+    public static string LongToString(long value) => value.ToString(NumberFormatInfo.InvariantInfo);
 
     public static string DateToString(DateTimeOffset date, DateTimeFormat format)
     {

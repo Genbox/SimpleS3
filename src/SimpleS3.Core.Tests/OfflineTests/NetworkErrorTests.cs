@@ -21,8 +21,8 @@ public class NetworkErrorTests : OfflineTestBase
     protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
     {
         coreBuilder.UseHttpClientFactory()
-            .ConfigurePrimaryHttpMessageHandler(() => _handler)
-            .UseRetryPolicy(3, attempt => TimeSpan.Zero);
+                   .ConfigurePrimaryHttpMessageHandler(() => _handler)
+                   .UseRetryPolicy(3, attempt => TimeSpan.Zero);
 
         base.ConfigureCoreBuilder(coreBuilder, configuration);
     }

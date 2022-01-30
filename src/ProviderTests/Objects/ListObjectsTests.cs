@@ -56,9 +56,7 @@ public class ListObjectsTests : TestBase
             IEnumerable<PutObjectResponse> responses = await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), (val, token) => client.PutObjectAsync(tempBucket, val.ToString(), null, null, token), concurrent, CancellationToken.None);
 
             foreach (PutObjectResponse putResp in responses)
-            {
                 Assert.Equal(200, putResp.StatusCode);
-            }
 
             ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, r => r.MaxKeys = count - 1).ConfigureAwait(false);
             Assert.Equal(200, listResp.StatusCode);
@@ -151,7 +149,6 @@ public class ListObjectsTests : TestBase
             }
             else
                 Assert.NotNull(obj.Owner);
-
         }).ConfigureAwait(false);
     }
 

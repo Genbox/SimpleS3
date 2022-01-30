@@ -13,14 +13,8 @@ internal class DataProtectionKeyProtector : IAccessKeyProtector
         _protector = provider.CreateProtector(nameof(DataProtectionKeyProtector));
     }
 
-    public byte[] ProtectKey(byte[] key)
-    {
-        return _protector.Protect(key);
-    }
+    public byte[] ProtectKey(byte[] key) => _protector.Protect(key);
 
-    public byte[] UnprotectKey(byte[] key)
-    {
-        return _protector.Unprotect(key);
-    }
+    public byte[] UnprotectKey(byte[] key) => _protector.Unprotect(key);
 }
 #endif

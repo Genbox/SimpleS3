@@ -15,13 +15,7 @@ internal class Transfer : ITransfer
         _multipartTransfer = multipartTransfer;
     }
 
-    public IUpload CreateUpload(string bucket, string objectKey)
-    {
-        return new Upload(_objectOperations, _multipartTransfer, bucket, objectKey);
-    }
+    public IUpload CreateUpload(string bucket, string objectKey) => new Upload(_objectOperations, _multipartTransfer, bucket, objectKey);
 
-    public IDownload CreateDownload(string bucket, string objectKey)
-    {
-        return new Download(_objectOperations, _multipartTransfer, bucket, objectKey);
-    }
+    public IDownload CreateDownload(string bucket, string objectKey) => new Download(_objectOperations, _multipartTransfer, bucket, objectKey);
 }

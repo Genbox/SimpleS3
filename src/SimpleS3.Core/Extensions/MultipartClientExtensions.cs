@@ -27,9 +27,7 @@ public static class MultipartClientExtensions
             response = await client.ListMultipartUploadsAsync(bucketName, req => req.UploadIdMarker = marker, token).ConfigureAwait(false);
 
             foreach (S3Upload responseObject in response.Uploads)
-            {
                 yield return responseObject;
-            }
 
             uploadIdMarker = response.NextUploadIdMarker;
         } while (response.IsTruncated);

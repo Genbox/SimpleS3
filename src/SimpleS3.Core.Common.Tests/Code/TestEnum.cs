@@ -6,6 +6,5 @@ internal enum TestEnum
     Value1 = 1,
     Value2 = 2,
 
-    [EnumValue("Value3-FromAttribute")]
-    Value3 = 3,
+    [EnumValue("Value3-FromAttribute")] Value3 = 3
 }

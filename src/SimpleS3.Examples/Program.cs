@@ -73,9 +73,9 @@ internal class Program
 
         //The Transfer API is an easy-to-use API for building requests.
         IUpload upload = client.CreateUpload(bucketName, objectName)
-            .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
-            .WithCacheControl(CacheControlType.NoCache)
-            .WithEncryption();
+                               .WithAccessControl(ObjectCannedAcl.PublicReadWrite)
+                               .WithCacheControl(CacheControlType.NoCache)
+                               .WithEncryption();
 
         PutObjectResponse putResp = await upload.UploadStringAsync("Hello World!");
 
@@ -85,7 +85,7 @@ internal class Program
 
             //Download string
             IDownload download = client.CreateDownload(bucketName, objectName)
-                .WithRange(0, 5); //Adjust this to return only part of the string
+                                       .WithRange(0, 5); //Adjust this to return only part of the string
 
             GetObjectResponse getResp = await download.DownloadAsync();
 

@@ -15,14 +15,14 @@ public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId
         Initialize(bucketName, objectKey);
     }
 
-    /// <summary>
-    /// The number of days that you want the restored copy to exist. After the specified period, Amazon S3 deletes the temporary copy but the object
-    /// remains archived in the <see cref="StorageClass.Glacier" /> or <see cref="StorageClass.DeepArchive" /> storage class that object was restored from.
-    /// Do not use with restores that specify OutputLocation.
-    /// </summary>
+    /// <summary>The number of days that you want the restored copy to exist. After the specified period, Amazon S3 deletes the
+    /// temporary copy but the object remains archived in the <see cref="StorageClass.Glacier" /> or
+    /// <see cref="StorageClass.DeepArchive" /> storage class that object was restored from. Do not use with restores that
+    /// specify OutputLocation.</summary>
     public int Days { get; set; }
 
-    /// <summary>Set the tier you want the Glacier job to be handled with. Do not use with restores that specify OutputLocation.</summary>
+    /// <summary>Set the tier you want the Glacier job to be handled with. Do not use with restores that specify
+    /// OutputLocation.</summary>
     public RetrievalTier GlacierTier { get; set; }
 
     /// <summary>Glacier retrieval tier at which the restore will be processed.</summary>

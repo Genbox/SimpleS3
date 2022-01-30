@@ -26,18 +26,10 @@ public class StringBuilderBenchmarks
     }
 
     [Benchmark]
-    public string NormalAdd()
-    {
-        //We use a field here to avoid a smart compiler from creating a constant
-        return "MyKey" + EqualSign + "MyValue";
-    }
+    public string NormalAdd() => "MyKey" + EqualSign + "MyValue"; //We use a field here to avoid a smart compiler from creating a constant
 
     [Benchmark]
-    public string Interpolation()
-    {
-        //We use a field here to avoid a smart compiler from creating a constant
-        return $"MyKey{EqualSign}MyValue";
-    }
+    public string Interpolation() => $"MyKey{EqualSign}MyValue"; //We use a field here to avoid a smart compiler from creating a constant
 
     [Benchmark]
     public string FromPool()

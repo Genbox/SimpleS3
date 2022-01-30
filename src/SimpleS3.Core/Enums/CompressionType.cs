@@ -6,12 +6,9 @@ public enum CompressionType
 {
     Unknown = 0,
 
-    [EnumValue("NONE")]
-    None,
+    [EnumValue("NONE")] None,
 
-    [EnumValue("GZIP")]
-    Gzip,
+    [EnumValue("GZIP")] Gzip,
 
-    [EnumValue("BZIP2")]
-    Bzip
+    [EnumValue("BZIP2")] Bzip
 }
