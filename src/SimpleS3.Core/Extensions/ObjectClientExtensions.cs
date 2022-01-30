@@ -42,14 +42,19 @@ public static class ObjectClientExtensions
         return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x)), config, token);
     }
 
+    public static IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, string prefix, CancellationToken token = default)
+    {
+        return DeleteAllObjectsAsync(client, bucketName, req => req.Prefix = prefix, token);
+    }
+
     /// <summary>Delete all objects within the bucket</summary>
-    public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, string? prefix = null, [EnumeratorCancellation] CancellationToken token = default)
+    public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, Action<ListObjectsRequest>? configure = null, [EnumeratorCancellation] CancellationToken token = default)
     {
         Validator.RequireNotNull(client, nameof(client));
         Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
 
         ListObjectsResponse response;
-        Task<ListObjectsResponse> responseTask = client.ListObjectsAsync(bucketName, req => req.Prefix = prefix, token);
+        Task<ListObjectsResponse> responseTask = client.ListObjectsAsync(bucketName, configure, token);
 
         ObjectPool<S3DeleteInfo> pool = ObjectPool<S3DeleteInfo>.Shared;
 
@@ -71,8 +76,8 @@ public static class ObjectClientExtensions
                 string localToken = response.NextContinuationToken;
                 responseTask = client.ListObjectsAsync(bucketName, req =>
                 {
-                    req.Prefix = prefix;
                     req.ContinuationToken = localToken;
+                    configure?.Invoke(req);
                 }, token);
             }
 
@@ -90,13 +95,18 @@ public static class ObjectClientExtensions
         } while (response.IsTruncated);
     }
 
-    public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(this IObjectClient client, string bucketName, string? prefix = null, [EnumeratorCancellation] CancellationToken token = default)
+    public static IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(this IObjectClient client, string bucketName, string prefix, CancellationToken token = default)
+    {
+        return DeleteAllObjectVersionsAsync(client, bucketName, req => req.Prefix = prefix, token);
+    }
+
+    public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(this IObjectClient client, string bucketName, Action<ListObjectVersionsRequest>? configure = null, [EnumeratorCancellation] CancellationToken token = default)
     {
         Validator.RequireNotNull(client, nameof(client));
         Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
 
         ListObjectVersionsResponse response;
-        Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucketName, req => req.Prefix = prefix, token);
+        Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucketName, configure, token);
 
         do
         {
@@ -116,8 +126,8 @@ public static class ObjectClientExtensions
                 string keyMarker = response.NextKeyMarker;
                 responseTask = client.ListObjectVersionsAsync(bucketName, req =>
                 {
-                    req.Prefix = prefix;
                     req.KeyMarker = keyMarker;
+                    configure?.Invoke(req);
                 }, token);
             }
 
@@ -168,13 +178,21 @@ public static class ObjectClientExtensions
             return await client.PutObjectAsync(bucketName, objectKey, fs, config, token).ConfigureAwait(false);
     }
 
+    public static IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, string prefix, bool getOwnerInfo = false, CancellationToken token = default)
+    {
+        return ListAllObjectsAsync(client, bucketName, req =>
+        {
+            req.Prefix = prefix;
+            req.FetchOwner = getOwnerInfo;
+        }, token);
+    }
+
     /// <summary>List all objects in a bucket</summary>
     /// <param name="client">The BucketClient</param>
     /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
-    /// <param name="getOwnerInfo">Set to true if you want to get object owner information as well.</param>
     /// <param name="config">Delegate to configure the ListObjectsRequest before sending it</param>
     /// <param name="token">A cancellation token</param>
-    public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, bool getOwnerInfo = false, Action<ListObjectsRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
+    public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, Action<ListObjectsRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
     {
         Validator.RequireNotNull(client, nameof(client));
         Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
@@ -191,9 +209,6 @@ public static class ObjectClientExtensions
             response = await client.ListObjectsAsync(bucketName, req =>
             {
                 req.ContinuationToken = cToken;
-
-                if (getOwnerInfo)
-                    req.FetchOwner = true;
 
                 config?.Invoke(req);
             }, token).ConfigureAwait(false);
