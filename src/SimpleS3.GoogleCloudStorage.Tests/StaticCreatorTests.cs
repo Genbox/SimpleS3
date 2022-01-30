@@ -1,4 +1,3 @@
-#if COMMERCIAL
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.GoogleCloudStorage;
@@ -23,4 +22,3 @@ public class StaticCreatorTests
         Assert.Equal("https://testbucket.storage.googleapis.com/GetObjectAsync", driver.LastUrl);
     }
 }
-#endif

@@ -1,5 +1,4 @@
-﻿#if COMMERCIAL
-using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Common.Extensions;
@@ -54,4 +53,3 @@ public static class ServiceCollectionExtensions
         return new ClientBuilder(collection, httpBuilder, coreBuilder);
     }
 }
-#endif

@@ -1,5 +1,4 @@
-﻿#if COMMERCIAL
-using Genbox.SimpleS3.BackBlazeB2.Extensions;
+﻿using Genbox.SimpleS3.BackBlazeB2.Extensions;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
@@ -91,11 +90,3 @@ internal class Program
         return serviceProvider.GetRequiredService<ISimpleClient>();
     }
 }
-#else
-internal class Program
-{
-    private static void Main(string[] args)
-    {
-    }
-}
-#endif

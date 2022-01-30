@@ -1,4 +1,3 @@
-#if COMMERCIAL
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.Wasabi;
@@ -23,4 +22,3 @@ public class StaticCreatorTests
         Assert.Equal("https://testbucket.s3.eu-central-1.wasabisys.com/GetObjectAsync", driver.LastUrl);
     }
 }
-#endif

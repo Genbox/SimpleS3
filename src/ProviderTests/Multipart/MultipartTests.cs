@@ -224,7 +224,6 @@ public class MultipartTests : TestBase
         }
     }
 
-#if COMMERCIAL
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task MultipartViaClient(S3Provider provider, string bucket, ISimpleClient client)
@@ -292,5 +291,4 @@ public class MultipartTests : TestBase
 
         Assert.Equal(10, count);
     }
-#endif
 }
