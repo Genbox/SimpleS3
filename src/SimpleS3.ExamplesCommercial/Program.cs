@@ -10,90 +10,89 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Genbox.SimpleS3.ProviderBase.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.SimpleS3.ExamplesCommercial
+namespace Genbox.SimpleS3.ExamplesCommercial;
+
+internal class Program
 {
-    internal class Program
+    private static async Task Main(string[] args)
     {
-        private static async Task Main(string[] args)
+        // This example uses BackBlaze B2. Go here to create a key: https://secure.backblaze.com/app_keys.htm
+
+        ISimpleClient client = BuildClient();
+
+        string bucketName = "test-" + Guid.NewGuid();
+
+        Console.WriteLine("# Listing buckets");
+
+        await foreach (S3Bucket bucket in client.ListAllBucketsAsync()) //This is a commercial feature
         {
-            // This example uses BackBlaze B2. Go here to create a key: https://secure.backblaze.com/app_keys.htm
+            Console.WriteLine($" - {bucket.BucketName}");
+        }
 
-            ISimpleClient client = BuildClient();
+        Console.WriteLine("# Creating a temporary bucket");
 
-            string bucketName = "test-" + Guid.NewGuid();
+        CreateBucketResponse putBucket = await client.CreateBucketAsync(bucketName);
 
-            Console.WriteLine("# Listing buckets");
+        if (putBucket.IsSuccess)
+        {
+            Console.WriteLine($" - Successfully created {bucketName}");
 
-            await foreach (S3Bucket bucket in client.ListAllBucketsAsync()) //This is a commercial feature
+            Console.WriteLine("# Creating 10 objects");
+
+            for (int i = 0; i < 10; i++)
             {
-                Console.WriteLine($" - {bucket.BucketName}");
-            }
+                string objectName = Guid.NewGuid().ToString();
 
-            Console.WriteLine("# Creating a temporary bucket");
+                PutObjectResponse putReq = await client.PutObjectStringAsync(bucketName, objectName, "This is a test"); //This is a commercial feature
 
-            CreateBucketResponse putBucket = await client.CreateBucketAsync(bucketName);
-
-            if (putBucket.IsSuccess)
-            {
-                Console.WriteLine($" - Successfully created {bucketName}");
-
-                Console.WriteLine("# Creating 10 objects");
-
-                for (int i = 0; i < 10; i++)
-                {
-                    string objectName = Guid.NewGuid().ToString();
-
-                    PutObjectResponse putReq = await client.PutObjectStringAsync(bucketName, objectName, "This is a test"); //This is a commercial feature
-
-                    if (putReq.IsSuccess)
-                        Console.WriteLine($" - Successfully created {objectName}");
-                    else
-                        Console.WriteLine($" - Failed to create {objectName}");
-                }
-
-                Console.WriteLine("# Deleting all objects in temporary bucket");
-
-                await foreach (S3DeleteError obj in client.DeleteAllObjectVersionsAsync(bucketName)) //This is a commercial feature
-                {
-                    Console.WriteLine("Deleted " + obj.ObjectKey);
-                }
-
-                DeleteBucketResponse delResp = await client.DeleteBucketAsync(bucketName);
-
-                if (delResp.IsSuccess)
-                    Console.WriteLine($" - Successfully deleted {bucketName}");
+                if (putReq.IsSuccess)
+                    Console.WriteLine($" - Successfully created {objectName}");
                 else
-                    Console.WriteLine($" - Failed to delete {bucketName}");
+                    Console.WriteLine($" - Failed to create {objectName}");
             }
-            else
-                Console.WriteLine("Failed to create " + bucketName);
-        }
 
-        private static ISimpleClient BuildClient()
-        {
-            ServiceCollection services = new ServiceCollection();
+            Console.WriteLine("# Deleting all objects in temporary bucket");
 
-            IClientBuilder builder = services.AddBackBlazeB2(); //This is a commercial feature
-            builder.CoreBuilder.UsePooledClients(); //This is a commercial feature
-
-            builder.CoreBuilder.UseProfileManager()
-                   .BindConfigToDefaultProfile()
-                   .UseConsoleSetup()
-                   .UseDataProtection(); //This is a commercial feature
-
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
-
-            IProfileManager profileManager = serviceProvider.GetRequiredService<IProfileManager>();
-            IProfile? profile = profileManager.GetDefaultProfile();
-
-            if (profile == null)
+            await foreach (S3DeleteError obj in client.DeleteAllObjectVersionsAsync(bucketName)) //This is a commercial feature
             {
-                IProfileSetup setup = serviceProvider.GetRequiredService<IProfileSetup>();
-                setup.SetupDefaultProfile();
+                Console.WriteLine("Deleted " + obj.ObjectKey);
             }
 
-            return serviceProvider.GetRequiredService<ISimpleClient>();
+            DeleteBucketResponse delResp = await client.DeleteBucketAsync(bucketName);
+
+            if (delResp.IsSuccess)
+                Console.WriteLine($" - Successfully deleted {bucketName}");
+            else
+                Console.WriteLine($" - Failed to delete {bucketName}");
         }
+        else
+            Console.WriteLine("Failed to create " + bucketName);
+    }
+
+    private static ISimpleClient BuildClient()
+    {
+        ServiceCollection services = new ServiceCollection();
+
+        IClientBuilder builder = services.AddBackBlazeB2(); //This is a commercial feature
+        builder.CoreBuilder.UsePooledClients(); //This is a commercial feature
+
+        builder.CoreBuilder.UseProfileManager()
+               .BindConfigToDefaultProfile()
+               .UseConsoleSetup()
+               .UseDataProtection(); //This is a commercial feature
+
+        IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+        IProfileManager profileManager = serviceProvider.GetRequiredService<IProfileManager>();
+        IProfile? profile = profileManager.GetDefaultProfile();
+
+        if (profile == null)
+        {
+            IProfileSetup setup = serviceProvider.GetRequiredService<IProfileSetup>();
+            setup.SetupDefaultProfile();
+        }
+
+        return serviceProvider.GetRequiredService<ISimpleClient>();
     }
 }
 #else

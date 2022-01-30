@@ -10,100 +10,99 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 #if COMMERCIAL
 #endif
 
-namespace Genbox.SimpleS3.Core.Internals.Fluent
-{
-    internal class Download : IDownload
-    {
-        private readonly IMultipartTransfer _multipartTransfer;
-        private readonly IObjectOperations _operations;
-        private readonly GetObjectRequest _request;
+namespace Genbox.SimpleS3.Core.Internals.Fluent;
 
-        internal Download(IObjectOperations operations, IMultipartTransfer multipartTransfer, string bucket, string objectKey)
-        {
-            _request = new GetObjectRequest(bucket, objectKey);
-            _operations = operations;
-            _multipartTransfer = multipartTransfer;
-        }
+internal class Download : IDownload
+{
+    private readonly IMultipartTransfer _multipartTransfer;
+    private readonly IObjectOperations _operations;
+    private readonly GetObjectRequest _request;
+
+    internal Download(IObjectOperations operations, IMultipartTransfer multipartTransfer, string bucket, string objectKey)
+    {
+        _request = new GetObjectRequest(bucket, objectKey);
+        _operations = operations;
+        _multipartTransfer = multipartTransfer;
+    }
 
 #if COMMERCIAL
-        public IAsyncEnumerable<GetObjectResponse> DownloadMultipartAsync(Stream output, CancellationToken token = default)
-        {
-            return _multipartTransfer.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
-        }
+    public IAsyncEnumerable<GetObjectResponse> DownloadMultipartAsync(Stream output, CancellationToken token = default)
+    {
+        return _multipartTransfer.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
+    }
 #endif
 
-        /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
-        public IDownload WithEncryptionCustomerKey(byte[] encryptionKey)
-        {
-            _request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
-            _request.SseCustomerKey = encryptionKey;
-            _request.SseCustomerKeyMd5 = CryptoHelper.Md5Hash(encryptionKey);
-            return this;
-        }
+    /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
+    public IDownload WithEncryptionCustomerKey(byte[] encryptionKey)
+    {
+        _request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
+        _request.SseCustomerKey = encryptionKey;
+        _request.SseCustomerKeyMd5 = CryptoHelper.Md5Hash(encryptionKey);
+        return this;
+    }
 
-        public IDownload WithRange(RangeBuilder builder)
-        {
-            _request.Range = builder;
-            return this;
-        }
+    public IDownload WithRange(RangeBuilder builder)
+    {
+        _request.Range = builder;
+        return this;
+    }
 
-        public IDownload WithRange(long start, long end)
-        {
-            _request.Range.Add(start, end);
-            return this;
-        }
+    public IDownload WithRange(long start, long end)
+    {
+        _request.Range.Add(start, end);
+        return this;
+    }
 
-        public IDownload WithMultipart(int partNumber)
-        {
-            _request.PartNumber = partNumber;
-            return this;
-        }
+    public IDownload WithMultipart(int partNumber)
+    {
+        _request.PartNumber = partNumber;
+        return this;
+    }
 
-        public IDownload WithVersionId(string versionId)
-        {
-            _request.VersionId = versionId;
-            return this;
-        }
+    public IDownload WithVersionId(string versionId)
+    {
+        _request.VersionId = versionId;
+        return this;
+    }
 
-        public IDownload WithDateTimeConditional(DateTimeOffset? ifModifiedSince = null, DateTimeOffset? ifUnmodifiedSince = null)
-        {
-            _request.IfModifiedSince = ifModifiedSince;
-            _request.IfUnmodifiedSince = ifUnmodifiedSince;
-            return this;
-        }
+    public IDownload WithDateTimeConditional(DateTimeOffset? ifModifiedSince = null, DateTimeOffset? ifUnmodifiedSince = null)
+    {
+        _request.IfModifiedSince = ifModifiedSince;
+        _request.IfUnmodifiedSince = ifUnmodifiedSince;
+        return this;
+    }
 
-        public IDownload WithEtagConditional(ETagBuilder? ifETagMatch = null, ETagBuilder? ifETagNotMatch = null)
-        {
-            if (ifETagMatch != null)
-                _request.IfETagMatch = ifETagMatch;
+    public IDownload WithEtagConditional(ETagBuilder? ifETagMatch = null, ETagBuilder? ifETagNotMatch = null)
+    {
+        if (ifETagMatch != null)
+            _request.IfETagMatch = ifETagMatch;
 
-            if (ifETagNotMatch != null)
-                _request.IfETagNotMatch = ifETagNotMatch;
+        if (ifETagNotMatch != null)
+            _request.IfETagNotMatch = ifETagNotMatch;
 
-            return this;
-        }
+        return this;
+    }
 
-        public IDownload WithEtagConditional(string? ifETagMatch = null, string? ifETagNotMatch = null)
-        {
-            if (ifETagMatch != null)
-                _request.IfETagMatch.Set(ifETagMatch);
+    public IDownload WithEtagConditional(string? ifETagMatch = null, string? ifETagNotMatch = null)
+    {
+        if (ifETagMatch != null)
+            _request.IfETagMatch.Set(ifETagMatch);
 
-            if (ifETagNotMatch != null)
-                _request.IfETagNotMatch.Set(ifETagNotMatch);
+        if (ifETagNotMatch != null)
+            _request.IfETagNotMatch.Set(ifETagNotMatch);
 
-            return this;
-        }
+        return this;
+    }
 
-        public Task<GetObjectResponse> DownloadAsync(CancellationToken token = default)
-        {
-            return _operations.GetObjectAsync(_request, token);
-        }
+    public Task<GetObjectResponse> DownloadAsync(CancellationToken token = default)
+    {
+        return _operations.GetObjectAsync(_request, token);
+    }
 
-        private void CopyProperties(GetObjectRequest req)
-        {
-            int? partNum = req.PartNumber;
-            req = _request;
-            req.PartNumber = partNum;
-        }
+    private void CopyProperties(GetObjectRequest req)
+    {
+        int? partNum = req.PartNumber;
+        req = _request;
+        req.PartNumber = partNum;
     }
 }
