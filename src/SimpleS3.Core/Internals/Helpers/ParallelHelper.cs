@@ -1,6 +1,6 @@
 ﻿namespace Genbox.SimpleS3.Core.Internals.Helpers;
 
-public static class ParallelHelper
+internal static class ParallelHelper
 {
     public static async Task ExecuteAsync<T>(IEnumerable<T> source, Func<T, CancellationToken, Task> action, int concurrentThreads, CancellationToken token = default)
     {
