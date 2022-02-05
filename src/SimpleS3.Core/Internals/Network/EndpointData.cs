@@ -2,7 +2,7 @@
 
 namespace Genbox.SimpleS3.Core.Internals.Network;
 
-public class EndpointData : IEndpointData
+internal class EndpointData : IEndpointData
 {
     public EndpointData(string host, string? bucket, string regionCode, string endpoint)
     {

@@ -3,7 +3,7 @@ using Genbox.SimpleS3.Core.Abstracts.Provider;
 
 namespace Genbox.SimpleS3.Core.Internals;
 
-public class NullInputValidator : IInputValidator
+internal class NullInputValidator : IInputValidator
 {
     public bool TryValidateKeyId(string? keyId, out ValidationStatus status, out string? message)
     {
