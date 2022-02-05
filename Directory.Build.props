@@ -60,7 +60,7 @@
   <!--Analyzers-->
   <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.1" PrivateAssets="all" />
-    <PackageReference Include="Roslynator.Analyzers" Version="4.0.0" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.0.2" PrivateAssets="all" />
     <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" PrivateAssets="all" />
     <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0" PrivateAssets="all" />
     <PackageReference Include="AspNetCoreAnalyzers" Version="0.3.0" />
