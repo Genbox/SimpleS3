@@ -139,3 +139,5 @@ dotnet_diagnostic.RS0017.severity=error
 dotnet_diagnostic.RS0025.severity=error
 dotnet_diagnostic.RS0024.severity=error
 dotnet_diagnostic.RS0026.severity=silent
+dotnet_diagnostic.xUnit1026.severity=suggestion
+dotnet_diagnostic.RCS1194.severity=suggestion
