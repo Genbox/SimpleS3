@@ -63,7 +63,7 @@ public static class ObjectClientExtensions
             if (token.IsCancellationRequested)
                 yield break;
 
-            response = await responseTask;
+            response = await responseTask.ConfigureAwait(false);
 
             if (!response.IsSuccess)
                 throw new S3RequestException(response, $"Unable to list objects in bucket '{bucketName}");
@@ -113,7 +113,7 @@ public static class ObjectClientExtensions
             if (token.IsCancellationRequested)
                 break;
 
-            response = await responseTask;
+            response = await responseTask.ConfigureAwait(false);
 
             if (!response.IsSuccess)
                 throw new S3RequestException(response, $"Unable to list objects in bucket '{bucketName}");

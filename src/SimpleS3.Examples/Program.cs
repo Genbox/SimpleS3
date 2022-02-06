@@ -9,9 +9,9 @@ using Genbox.SimpleS3.Extensions.AmazonS3;
 
 namespace Genbox.SimpleS3.Examples;
 
-internal class Program
+internal static class Program
 {
-    private static async Task Main(string[] args)
+    private static async Task Main()
     {
         //
         // Go here and login with your account to create an access key: https://console.aws.amazon.com/iam/home?#/security_credentials

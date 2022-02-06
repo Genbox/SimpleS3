@@ -32,7 +32,7 @@ public abstract class ClientBase : IDisposable
         if (proxy != null)
             httpBuilder.UseProxy(proxy);
 
-        Build(services);
+        Client = Build(services);
     }
 
     protected internal ClientBase(IInputValidator inputValidator, SimpleS3Config config, INetworkDriver networkDriver)
@@ -46,7 +46,7 @@ public abstract class ClientBase : IDisposable
         services.AddSingleton(networkDriver);
         services.AddSingleton(Options.Create(config));
 
-        Build(services);
+        Client = Build(services);
     }
 
     protected internal ClientBase(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient)
@@ -54,7 +54,7 @@ public abstract class ClientBase : IDisposable
         Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
     }
 
-    protected SimpleClient Client { get; private set; }
+    protected SimpleClient Client { get; }
 
     public void Dispose()
     {
@@ -62,7 +62,7 @@ public abstract class ClientBase : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    private void Build(IServiceCollection services)
+    private SimpleClient Build(IServiceCollection services)
     {
         _serviceProvider = services.BuildServiceProvider();
 
@@ -73,11 +73,12 @@ public abstract class ClientBase : IDisposable
         ITransfer transfer = _serviceProvider.GetRequiredService<ITransfer>();
         ISignedObjectClient signedObjectClient = _serviceProvider.GetRequiredService<ISignedObjectClient>();
 
-        Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
+        return new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
     }
 
     protected virtual void Dispose(bool disposing)
     {
-        _serviceProvider?.Dispose();
+        if (disposing)
+            _serviceProvider?.Dispose();
     }
 }

@@ -7,9 +7,9 @@ public class NullNetworkDriver : INetworkDriver
 {
     public string LastUrl { get; set; }
 
-    public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethodType method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
+    public Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethodType method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
     {
         LastUrl = url;
-        return (200, new Dictionary<string, string>(), null);
+        return Task.FromResult<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)>((200, new Dictionary<string, string>(), null));
     }
 }

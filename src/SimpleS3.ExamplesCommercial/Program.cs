@@ -11,9 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.ExamplesCommercial;
 
-internal class Program
+internal static class Program
 {
-    private static async Task Main(string[] args)
+    private static async Task Main()
     {
         // This example uses BackBlaze B2. Go here to create a key: https://secure.backblaze.com/app_keys.htm
 

@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
@@ -137,7 +137,7 @@ internal class MultipartTransfer : IMultipartTransfer
                     onPartResponse?.Invoke(resp);
                     return resp;
                 }
-            }, numParallelParts, token);
+            }, numParallelParts, token).ConfigureAwait(false);
 
             CompleteMultipartUploadResponse completeResp = await _multipartClient.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, responses.OrderBy(x => x.PartNumber), null, token).ConfigureAwait(false);
 

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient;
 
-public sealed class HttpClientNetworkDriver : INetworkDriver, IDisposable
+public sealed class HttpClientNetworkDriver : INetworkDriver
 {
     private readonly System.Net.Http.HttpClient _client;
     private readonly HttpClientConfig _config;
@@ -21,11 +21,6 @@ public sealed class HttpClientNetworkDriver : INetworkDriver, IDisposable
         _config = options.Value;
         _logger = logger;
         _client = client;
-    }
-
-    public void Dispose()
-    {
-        _client?.Dispose();
     }
 
     public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethodType method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
