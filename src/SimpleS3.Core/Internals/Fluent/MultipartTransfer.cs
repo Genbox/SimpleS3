@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
@@ -71,8 +71,7 @@ internal class MultipartTransfer : IMultipartTransfer
                     if (token.IsCancellationRequested)
                         yield break;
 
-                    GetObjectResponse response = await task!.ConfigureAwait(false);
-                    yield return response;
+                    yield return await task!.ConfigureAwait(false);
                 }
             }
         }
@@ -154,34 +153,31 @@ internal class MultipartTransfer : IMultipartTransfer
     {
         try
         {
-            GetObjectResponse getResp = await _objectClient.GetObjectAsync(bucketName, objectKey, req =>
+            using GetObjectResponse getResp = await _objectClient.GetObjectAsync(bucketName, objectKey, req =>
             {
                 req.PartNumber = partNumber;
                 config?.Invoke(req);
             }, token).ConfigureAwait(false);
 
-            using (getResp.Content)
+            long offset = (partNumber - 1) * partSize;
+            byte[] buffer = new byte[bufferSize];
+
+            while (true)
             {
-                long offset = (partNumber - 1) * partSize;
-                byte[] buffer = new byte[bufferSize];
+                int read = await getResp.Content.ReadUpToAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
 
-                while (true)
+                if (read > 0)
                 {
-                    int read = await getResp.Content.ReadUpToAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
+                    mutex.WaitOne();
 
-                    if (read > 0)
-                    {
-                        mutex.WaitOne();
+                    output.Seek(offset, SeekOrigin.Begin);
+                    await output.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
+                    offset += read;
 
-                        output.Seek(offset, SeekOrigin.Begin);
-                        await output.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
-                        offset += read;
-
-                        mutex.ReleaseMutex();
-                    }
-                    else
-                        break;
+                    mutex.ReleaseMutex();
                 }
+                else
+                    break;
             }
 
             return getResp;

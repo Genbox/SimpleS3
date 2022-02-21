@@ -61,7 +61,7 @@ internal class DefaultRequestHandler : IRequestHandler
             _requestStreamWrappers = requestStreamWrappers.ToList();
     }
 
-    public Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken token = default) where TResp : IResponse, new() where TReq : IRequest
+    public Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken token = default) where TReq : IRequest where TResp : IResponse, new()
     {
         token.ThrowIfCancellationRequested();
 
@@ -71,13 +71,13 @@ internal class DefaultRequestHandler : IRequestHandler
         return SendRequestInternalAsync<TReq, TResp>(request, token);
     }
 
-    private Task<TResp> SendPreSignedAsync<TResp>(SignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
+    private async Task<TResp> SendPreSignedAsync<TResp>(SignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
     {
-        Stream? requestStream = _marshaller.MarshalRequest(_config, preSigned);
-        return HandleResponse<SignedBaseRequest, TResp>(preSigned, preSigned.Url, requestStream, token);
+        using Stream? requestStream = _marshaller.MarshalRequest(_config, preSigned);
+        return await HandleResponseAsync<SignedBaseRequest, TResp>(preSigned, preSigned.Url, requestStream, token).ConfigureAwait(false);
     }
 
-    private Task<TResp> SendRequestInternalAsync<TReq, TResp>(TReq request, CancellationToken token) where TResp : IResponse, new() where TReq : IRequest
+    private Task<TResp> SendRequestInternalAsync<TReq, TResp>(TReq request, CancellationToken token) where TReq : IRequest where TResp : IResponse, new()
     {
         request.Timestamp = DateTimeOffset.UtcNow;
         request.RequestId = Guid.NewGuid();
@@ -122,10 +122,10 @@ internal class DefaultRequestHandler : IRequestHandler
         RequestHelper.AppendQueryParameters(sb, request);
         string url = StringBuilderPool.Shared.ReturnString(sb);
 
-        return HandleResponse<TReq, TResp>(request, url, requestStream, token);
+        return HandleResponseAsync<TReq, TResp>(request, url, requestStream, token);
     }
 
-    public async Task<TResp> HandleResponse<TReq, TResp>(TReq request, string url, Stream? requestStream, CancellationToken token) where TResp : IResponse, new() where TReq : IRequest
+    private async Task<TResp> HandleResponseAsync<TReq, TResp>(TReq request, string url, Stream? requestStream, CancellationToken token) where TReq : IRequest where TResp : IResponse, new()
     {
         _logger.LogDebug("Sending request to {Url}", url);
 
