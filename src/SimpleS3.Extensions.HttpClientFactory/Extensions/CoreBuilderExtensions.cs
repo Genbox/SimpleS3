@@ -32,25 +32,44 @@ public static class CoreBuilderExtensions
         builder.Services.AddHttpClient();
         builder.Services.AddSingleton<INetworkDriver, HttpClientFactoryNetworkDriver>();
 
-        builder.Services.Configure<HttpClientFactoryOptions>((options, services) =>
+        builder.Services.Configure<HttpBuilderActions>(clientBuilder.Name, x =>
         {
-            IOptions<HttpClientFactoryConfig> factoryConfig = services.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
-            options.HandlerLifetime = factoryConfig.Value.HandlerLifetime;
-
-            options.HttpClientActions.Add(client =>
+            x.HttpClientActions.Add((_, client) =>
             {
                 client.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.DefaultUserAgent);
                 client.DefaultRequestHeaders.TransferEncodingChunked = false;
             });
 
-            options.HttpMessageHandlerBuilderActions.Add(b =>
+            x.HttpHandlerActions.Add((provider, handler) =>
             {
-                HttpClientHandler handler = new HttpClientHandler();
+                IOptionsMonitor<HttpClientFactoryConfig>? options = provider.GetRequiredService<IOptionsMonitor<HttpClientFactoryConfig>>();
+                HttpClientFactoryConfig? config = options.Get(clientBuilder.Name);
+
                 handler.UseCookies = false;
                 handler.MaxAutomaticRedirections = 3;
                 handler.SslProtocols = SslProtocols.None; //Let the OS handle the protocol to use
-                handler.UseProxy = factoryConfig.Value.UseProxy;
-                handler.Proxy = factoryConfig.Value.Proxy;
+                handler.UseProxy = config.UseProxy;
+                handler.Proxy = config.Proxy;
+            });
+        });
+
+        builder.Services.Configure<HttpClientFactoryOptions>(clientBuilder.Name, (options, services) =>
+        {
+            HttpBuilderActions actions = services.GetRequiredService<HttpBuilderActions>();
+
+            foreach (Action<IServiceProvider, HttpClient> httpClientAction in actions.HttpClientActions)
+            {
+                options.HttpClientActions.Add(client => httpClientAction(services, client));
+            }
+
+            options.HttpMessageHandlerBuilderActions.Add(b =>
+            {
+                HttpClientHandler handler = new HttpClientHandler();
+
+                foreach (Action<IServiceProvider, HttpClientHandler> action in actions.HttpHandlerActions)
+                {
+                    action(services, handler);
+                }
 
                 b.PrimaryHandler = handler;
             });

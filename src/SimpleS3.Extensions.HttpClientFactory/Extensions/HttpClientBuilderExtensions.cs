@@ -1,19 +1,17 @@
 ﻿using System.Net;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Http;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 
 public static class HttpClientBuilderExtensions
 {
-    public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, IWebProxy proxy)
+    public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, Func<IServiceProvider, IWebProxy> proxyFactory)
     {
-        builder.Services.Configure<HttpClientFactoryOptions>(builder.Name, options =>
+        builder.Services.Configure<HttpBuilderActions>(builder.Name, actions =>
         {
-            options.HttpMessageHandlerBuilderActions.Add(b =>
+            actions.HttpHandlerActions.Add((provider, handler) =>
             {
-                HttpClientHandler handler = (HttpClientHandler)b.PrimaryHandler;
-                handler.Proxy = proxy;
+                handler.Proxy = proxyFactory(provider);
                 handler.UseProxy = true;
             });
         });
@@ -21,18 +19,13 @@ public static class HttpClientBuilderExtensions
         return builder;
     }
 
+    public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, IWebProxy proxy)
+    {
+        return UseProxy(builder, _ => proxy);
+    }
+
     public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, string proxyUrl)
     {
-        builder.Services.Configure<HttpClientFactoryOptions>(builder.Name, options =>
-        {
-            options.HttpMessageHandlerBuilderActions.Add(b =>
-            {
-                HttpClientHandler handler = (HttpClientHandler)b.PrimaryHandler;
-                handler.Proxy = new WebProxy(proxyUrl);
-                handler.UseProxy = true;
-            });
-        });
-
-        return builder;
+        return UseProxy(builder, new WebProxy(proxyUrl));
     }
 }

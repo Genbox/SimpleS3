@@ -6,7 +6,7 @@ namespace Genbox.SimpleS3.ProviderBase;
 
 public class ClientBuilder : ServiceBuilderBase, IClientBuilder
 {
-    public ClientBuilder(IServiceCollection services, IHttpClientBuilder httpBuilder, ICoreBuilder coreBuilder) : base(services)
+    public ClientBuilder(IServiceCollection services, IHttpClientBuilder httpBuilder, ICoreBuilder coreBuilder, string? name = null) : base(services, name)
     {
         HttpBuilder = httpBuilder;
         CoreBuilder = coreBuilder;
