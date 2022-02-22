@@ -57,7 +57,7 @@ public static class CoreBuilderExtensions
         {
             HttpBuilderActions actions = services.GetRequiredService<HttpBuilderActions>();
 
-            foreach (Action<IServiceProvider, HttpClient> httpClientAction in actions.HttpClientActions)
+            foreach (Action<IServiceProvider, System.Net.Http.HttpClient> httpClientAction in actions.HttpClientActions)
             {
                 options.HttpClientActions.Add(client => httpClientAction(services, client));
             }
