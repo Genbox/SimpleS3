@@ -52,14 +52,14 @@
 
   <!--Default packages-->
   <ItemGroup>
-    <PackageReference Include="MinVer" Version="2.5.0" PrivateAssets="all" />
+    <PackageReference Include="MinVer" Version="3.1.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
     <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" PrivateAssets="all" />
   </ItemGroup>
 
   <!--Analyzers-->
   <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">
-    <PackageReference Include="IDisposableAnalyzers" Version="4.0.1" PrivateAssets="all" />
+    <PackageReference Include="IDisposableAnalyzers" Version="4.0.2" PrivateAssets="all" />
     <PackageReference Include="Roslynator.Analyzers" Version="4.0.2" PrivateAssets="all" />
     <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" PrivateAssets="all" />
     <PackageReference Include="ReflectionAnalyzers" Version="0.3.1" />
