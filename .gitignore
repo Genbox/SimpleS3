@@ -18,3 +18,7 @@
 
 # Visual Studio cache folder
 .vs/
+
+# Jetbrains Rider cache folder
+.idea/
+*.sln.DotSettings.user
