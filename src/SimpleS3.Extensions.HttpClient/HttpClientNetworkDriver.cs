@@ -1,5 +1,6 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Extensions.HttpClient.Internal;
 using Microsoft.Extensions.Logging;
@@ -23,10 +24,10 @@ public sealed class HttpClientNetworkDriver : INetworkDriver
         _client = client;
     }
 
-    public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethodType method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
+    public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         HttpResponseMessage httpResponse;
-        using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(method), url))
+        using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(request.Method), url))
         {
             if (_config.HttpVersion == HttpVersion.Http1)
                 httpRequest.Version = _httpVersion1;
@@ -41,39 +42,40 @@ public sealed class HttpClientNetworkDriver : INetworkDriver
             else
                 throw new ArgumentOutOfRangeException();
 
-            if (dataStream != null)
-                httpRequest.Content = new StreamContent(dataStream);
+            if (requestStream != null)
+                httpRequest.Content = new StreamContent(requestStream);
 
             //Map all the headers to the HTTP request headers. We have to do this after setting the content as some headers are related to content
-            if (headers != null)
-            {
-                foreach (KeyValuePair<string, string> item in headers)
-                    httpRequest.AddHeader(item.Key, item.Value);
-            }
+            foreach (KeyValuePair<string, string> pair in request.Headers)
+                httpRequest.AddHeader(pair.Key, pair.Value);
 
             _logger.LogTrace("Sending HTTP request");
 
             httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
         }
 
-        _logger.LogDebug("Got an {status} response with {Code}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
+        _logger.LogDebug("Got an {Status} response with {StatusCode}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
 
         IDictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Headers)
             responseHeaders.Add(header.Key, header.Value.First());
 
-        Stream? responseStream = null;
+        Stream? contentStream = null;
 
         if (httpResponse.Content != null)
         {
             foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
                 responseHeaders.Add(header.Key, header.Value.First());
 
-            responseStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            contentStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
 
-        return ((int)httpResponse.StatusCode, responseHeaders, responseStream);
+        HttpResponse returnResp = new HttpResponse();
+        returnResp.Content = contentStream;
+        returnResp.Headers = responseHeaders;
+        returnResp.StatusCode = (int)httpResponse.StatusCode;
+        return returnResp;
     }
 
     private static HttpMethod ConvertToMethod(HttpMethodType method)

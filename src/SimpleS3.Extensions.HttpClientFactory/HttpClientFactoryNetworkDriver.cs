@@ -1,5 +1,6 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Internal;
 using Microsoft.Extensions.Logging;
@@ -23,10 +24,10 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
         _clientFactory = clientFactory;
     }
 
-    public async Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethodType method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
+    public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         HttpResponseMessage httpResponse;
-        using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(method), url))
+        using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(request.Method), url))
         {
             if (_config.HttpVersion == HttpVersion.Http1)
                 httpRequest.Version = _httpVersion1;
@@ -41,15 +42,12 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
             else
                 throw new ArgumentOutOfRangeException();
 
-            if (dataStream != null)
-                httpRequest.Content = new StreamContent(dataStream);
+            if (requestStream != null)
+                httpRequest.Content = new StreamContent(requestStream);
 
-            if (headers != null)
-            {
-                //Map all the headers to the HTTP request headers. We have to do this after setting the content as some headers are related to content
-                foreach (KeyValuePair<string, string> item in headers)
-                    httpRequest.AddHeader(item.Key, item.Value);
-            }
+            //Map all the headers to the HTTP request headers. We have to do this after setting the content as some headers are related to content
+            foreach (KeyValuePair<string, string> item in request.Headers)
+                httpRequest.AddHeader(item.Key, item.Value);
 
             _logger.LogTrace("Sending HTTP request");
 
@@ -57,7 +55,7 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
             httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
         }
 
-        _logger.LogDebug("Got an {status} response with {Code}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
+        _logger.LogDebug("Got an {Status} response with {StatusCode}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
 
         IDictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -74,7 +72,11 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
             contentStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
 
-        return ((int)httpResponse.StatusCode, responseHeaders, contentStream);
+        HttpResponse returnResp = new HttpResponse();
+        returnResp.Content = contentStream;
+        returnResp.Headers = responseHeaders;
+        returnResp.StatusCode = (int)httpResponse.StatusCode;
+        return returnResp;
     }
 
     private static HttpMethod ConvertToMethod(HttpMethodType method)

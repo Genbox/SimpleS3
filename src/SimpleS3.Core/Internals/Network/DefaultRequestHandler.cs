@@ -129,16 +129,19 @@ internal class DefaultRequestHandler : IRequestHandler
     {
         _logger.LogDebug("Sending request to {Url}", url);
 
-        (int statusCode, IDictionary<string, string> headers, Stream? responseStream) = await _networkDriver.SendRequestAsync(request.Method, url, request.Headers, requestStream, token).ConfigureAwait(false);
+        HttpResponse httpResp = await _networkDriver.SendRequestAsync<TResp>(request, url, requestStream, token).ConfigureAwait(false);
 
         //Clear sensitive material from the request
         if (request is IContainSensitiveMaterial sensitive)
             sensitive.ClearSensitiveMaterial();
 
+        IDictionary<string, string> headers = httpResp.Headers;
+        int statusCode = httpResp.StatusCode;
+
         TResp response = new TResp();
         response.StatusCode = statusCode;
         response.ContentLength = headers.GetHeaderLong(HttpHeaders.ContentLength);
-        response.ConnectionClosed = "closed".Equals(headers.GetOptionalValue(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
+        response.ConnectionClosed = string.Equals("closed", headers.GetOptionalValue(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
         response.Date = headers.GetHeaderDate(HttpHeaders.Date, DateTimeFormat.Rfc1123);
         response.Server = headers.GetOptionalValue(HttpHeaders.Server);
         response.ResponseId = headers.GetOptionalValue(AmzHeaders.XAmzId2);
@@ -160,6 +163,8 @@ internal class DefaultRequestHandler : IRequestHandler
                                || statusCode == 409 //Conflict
                                || statusCode == 503); //ServiceUnavailable
 
+        Stream? responseStream = httpResp.Content;
+
         //Only marshal successful responses
         if (response.IsSuccess)
             _marshaller.MarshalResponse(_config, response, headers, responseStream ?? Stream.Null);
@@ -167,19 +172,17 @@ internal class DefaultRequestHandler : IRequestHandler
         {
             try
             {
-                using (MemoryStream ms = new MemoryStream())
+                using MemoryStream ms = new MemoryStream();
+                await responseStream.CopyToAsync(ms, 81920, token).ConfigureAwait(false);
+
+                if (ms.Length > 0)
                 {
-                    await responseStream.CopyToAsync(ms, 81920, token).ConfigureAwait(false);
+                    ms.Seek(0, SeekOrigin.Begin);
 
-                    if (ms.Length > 0)
-                    {
-                        ms.Seek(0, SeekOrigin.Begin);
+                    using (responseStream)
+                        response.Error = ErrorHandler.Create(ms);
 
-                        using (responseStream)
-                            response.Error = ErrorHandler.Create(ms);
-
-                        _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
-                    }
+                    _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
                 }
             }
             catch

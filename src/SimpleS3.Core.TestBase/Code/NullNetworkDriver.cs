@@ -1,5 +1,5 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Abstracts.Request;
+﻿using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 
 namespace Genbox.SimpleS3.Core.TestBase.Code;
 
@@ -7,9 +7,9 @@ public class NullNetworkDriver : INetworkDriver
 {
     public string LastUrl { get; set; }
 
-    public Task<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)> SendRequestAsync(HttpMethodType method, string url, IReadOnlyDictionary<string, string>? headers = null, Stream? dataStream = null, CancellationToken cancellationToken = default)
+    public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         LastUrl = url;
-        return Task.FromResult<(int statusCode, IDictionary<string, string> headers, Stream? responseStream)>((200, new Dictionary<string, string>(), null));
+        return new HttpResponse();
     }
 }
