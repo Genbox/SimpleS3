@@ -17,7 +17,7 @@ public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCusto
 {
     private byte[]? _sseCustomerKey;
 
-    internal HeadObjectRequest() : this(HttpMethodType.HEAD) { }
+    internal HeadObjectRequest() : this(HttpMethodType.HEAD) {}
 
     internal HeadObjectRequest(HttpMethodType method) : base(method)
     {

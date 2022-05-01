@@ -16,7 +16,7 @@ public class NetworkErrorTests : OfflineTestBase
 {
     private readonly BaseFailingHttpHandler _handler = new NetworkFailingHttpHandler(1);
 
-    public NetworkErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+    public NetworkErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
     protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
     {

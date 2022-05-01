@@ -59,7 +59,6 @@ public static class UtilityHelper
                 success = true;
                 returnChoices[i] = choices[intVal - 1];
             }
-
         } while (!success);
 
         //Special case if 'All' was chosen
@@ -85,9 +84,9 @@ public static class UtilityHelper
         ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services, configure);
 
         IConfigurationRoot configRoot = new ConfigurationBuilder()
-                                       .SetBasePath(Environment.CurrentDirectory)
-                                       .AddJsonFile("Config.json", false)
-                                       .Build();
+                                        .SetBasePath(Environment.CurrentDirectory)
+                                        .AddJsonFile("Config.json", false)
+                                        .Build();
 
         IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
 
@@ -159,9 +158,7 @@ public static class UtilityHelper
 
         //Try to delete all objects
         await foreach (S3DeleteError error in DeleteAllObjects(provider, client, bucket))
-        {
             errors.Add(error);
-        }
 
         //If we have any errors at this point, it might be because of legal hold. Force delete them too.
         if (errors.Count > 0)
@@ -228,9 +225,8 @@ public static class UtilityHelper
 
     private class ErrorComparer : IEqualityComparer<S3DeleteError>
     {
-        private ErrorComparer() { }
-
         public static readonly ErrorComparer Instance = new ErrorComparer();
+        private ErrorComparer() {}
 
         public bool Equals(S3DeleteError x, S3DeleteError y)
         {
@@ -245,9 +241,6 @@ public static class UtilityHelper
             return x.ObjectKey == y.ObjectKey && x.VersionId == y.VersionId;
         }
 
-        public int GetHashCode(S3DeleteError obj)
-        {
-            return HashCode.Combine(obj.ObjectKey, obj.VersionId);
-        }
+        public int GetHashCode(S3DeleteError obj) => HashCode.Combine(obj.ObjectKey, obj.VersionId);
     }
 }

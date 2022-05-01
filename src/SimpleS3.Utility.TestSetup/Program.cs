@@ -87,15 +87,15 @@ internal static class Program
         Console.Write("- Lifecycle configuration: ");
 
         List<S3Rule> rules = new List<S3Rule>
-                             {
-                                 new S3Rule("ExpireAll", true)
-                                 {
-                                     AbortIncompleteMultipartUploadDays = 1,
-                                     NonCurrentVersionExpirationDays = 1,
-                                     Expiration = new S3Expiration(1),
-                                     Filter = new S3Filter { Prefix = "" }
-                                 }
-                             };
+        {
+            new S3Rule("ExpireAll", true)
+            {
+                AbortIncompleteMultipartUploadDays = 1,
+                NonCurrentVersionExpirationDays = 1,
+                Expiration = new S3Expiration(1),
+                Filter = new S3Filter { Prefix = "" }
+            }
+        };
 
         PutBucketLifecycleConfigurationResponse resp = await bucketClient.PutBucketLifecycleConfigurationAsync(bucketName, rules).ConfigureAwait(false);
         Console.WriteLine(resp.IsSuccess ? "[x]" : "[ ]");

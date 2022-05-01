@@ -18,7 +18,7 @@ public class TimeoutTests : OfflineTestBase
 {
     private readonly BaseFailingHttpHandler _handler = new SlowHttpHandler(2, TimeSpan.FromSeconds(5));
 
-    public TimeoutTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+    public TimeoutTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
     protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
     {
@@ -26,7 +26,7 @@ public class TimeoutTests : OfflineTestBase
                    .ConfigurePrimaryHttpMessageHandler(() => _handler)
                    .UseRetryPolicy(3, attempt => TimeSpan.Zero)
 
-                    // Set an extraordinary timeout
+                   // Set an extraordinary timeout
                    .UseTimeoutPolicy(TimeSpan.FromSeconds(3));
 
         base.ConfigureCoreBuilder(coreBuilder, configuration);

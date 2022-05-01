@@ -2,5 +2,5 @@
 
 public class S3ParquetInputFormat : S3InputFormat
 {
-    internal override void Reset() { }
+    internal override void Reset() {}
 }

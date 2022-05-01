@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// the object.</summary>
 public class GetObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasVersionId, IHasRequestPayer
 {
-    internal GetObjectAclRequest() : base(HttpMethodType.GET) { }
+    internal GetObjectAclRequest() : base(HttpMethodType.GET) {}
 
     public GetObjectAclRequest(string bucketName, string objectKey) : this()
     {

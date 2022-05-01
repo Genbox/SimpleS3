@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Extensions;
 public static class MultipartClientExtensions
 {
     /// <summary>List all multipart uploads</summary>
-    public static async IAsyncEnumerable<S3Upload> ListAllMultipartUploadsAsync(this IMultipartClient client, string bucketName, [EnumeratorCancellation] CancellationToken token = default)
+    public static async IAsyncEnumerable<S3Upload> ListAllMultipartUploadsAsync(this IMultipartClient client, string bucketName, [EnumeratorCancellation]CancellationToken token = default)
     {
         Validator.RequireNotNull(client, nameof(client));
         Validator.RequireNotNull(bucketName, nameof(bucketName));

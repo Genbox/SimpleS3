@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// owner has this permission by default and can grant this permission to others.</summary>
 public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
 {
-    internal ListObjectsRequest() : base(HttpMethodType.GET) { }
+    internal ListObjectsRequest() : base(HttpMethodType.GET) {}
 
     public ListObjectsRequest(string bucketName) : this()
     {

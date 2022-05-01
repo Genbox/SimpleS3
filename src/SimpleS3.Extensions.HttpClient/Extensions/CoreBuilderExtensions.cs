@@ -59,16 +59,12 @@ public static class CoreBuilderExtensions
             HttpClientHandler handler = new HttpClientHandler();
 
             foreach (Action<IServiceProvider, HttpClientHandler>? action in actions.HttpHandlerActions)
-            {
                 action(provider, handler);
-            }
 
             System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(handler);
 
             foreach (Action<IServiceProvider, System.Net.Http.HttpClient> action in actions.HttpClientActions)
-            {
                 action(provider, client);
-            }
 
             return ActivatorUtilities.CreateInstance<HttpClientNetworkDriver>(provider, client);
         });

@@ -256,7 +256,7 @@ internal class GetBucketLifecycleConfigurationResponseMarshal : IResponseMarshal
             }
         }
 
-        if (date == null && days == null || storageClass == StorageClass.Unknown)
+        if ((date == null && days == null) || storageClass == StorageClass.Unknown)
             throw new InvalidOperationException("Missing required values");
 
         list.Add(new S3Transition(date, days, storageClass));

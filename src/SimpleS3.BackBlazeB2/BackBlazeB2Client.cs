@@ -27,29 +27,29 @@ public sealed class BackBlazeB2Client : ClientBase, ISimpleClient
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public BackBlazeB2Client(string keyId, byte[] accessKey, BackBlazeB2Region region, IWebProxy? proxy = null) : this(new BackBlazeB2Config(new AccessKey(keyId, accessKey), region), proxy) { }
+    public BackBlazeB2Client(string keyId, byte[] accessKey, BackBlazeB2Region region, IWebProxy? proxy = null) : this(new BackBlazeB2Config(new AccessKey(keyId, accessKey), region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="BackBlazeB2Client" /></summary>
     /// <param name="keyId">The key id</param>
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public BackBlazeB2Client(string keyId, string accessKey, BackBlazeB2Region region, IWebProxy? proxy = null) : this(new BackBlazeB2Config(new StringAccessKey(keyId, accessKey), region), proxy) { }
+    public BackBlazeB2Client(string keyId, string accessKey, BackBlazeB2Region region, IWebProxy? proxy = null) : this(new BackBlazeB2Config(new StringAccessKey(keyId, accessKey), region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="BackBlazeB2Client" /></summary>
     /// <param name="credentials">The credentials to use</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public BackBlazeB2Client(IAccessKey credentials, BackBlazeB2Region region, IWebProxy? proxy = null) : this(new BackBlazeB2Config(credentials, region), proxy) { }
+    public BackBlazeB2Client(IAccessKey credentials, BackBlazeB2Region region, IWebProxy? proxy = null) : this(new BackBlazeB2Config(credentials, region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="BackBlazeB2Client" /></summary>
     /// <param name="config">The configuration you want to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public BackBlazeB2Client(BackBlazeB2Config config, IWebProxy? proxy = null) : base(new BackblazeB2InputValidator(), config, proxy) { }
+    public BackBlazeB2Client(BackBlazeB2Config config, IWebProxy? proxy = null) : base(new BackblazeB2InputValidator(), config, proxy) {}
 
-    public BackBlazeB2Client(BackBlazeB2Config config, INetworkDriver networkDriver) : base(new BackblazeB2InputValidator(), config, networkDriver) { }
+    public BackBlazeB2Client(BackBlazeB2Config config, INetworkDriver networkDriver) : base(new BackblazeB2InputValidator(), config, networkDriver) {}
 
-    internal BackBlazeB2Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) { }
+    internal BackBlazeB2Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) {}
 
     public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default) => Client.CreateBucketAsync(bucketName, config, token);
 

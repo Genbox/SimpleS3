@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// can grant this permission to others.</summary>
 public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketName
 {
-    internal PutBucketAccelerateConfigurationRequest() : base(HttpMethodType.PUT) { }
+    internal PutBucketAccelerateConfigurationRequest() : base(HttpMethodType.PUT) {}
 
     public PutBucketAccelerateConfigurationRequest(string bucketName, bool enabled) : this()
     {

@@ -10,17 +10,18 @@ public class GetObjectResponse : HeadObjectResponse, IHasContent, IHasRequestCha
     }
 
     public Stream Content { get; internal set; }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
     public bool RequestCharged { get; internal set; }
 
     protected virtual void Dispose(bool disposing)
     {
         if (disposing)
             Content.Dispose();
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 }

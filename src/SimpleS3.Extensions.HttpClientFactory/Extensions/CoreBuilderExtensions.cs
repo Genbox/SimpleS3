@@ -64,18 +64,14 @@ public static class CoreBuilderExtensions
             HttpBuilderActions actions = opt.Value;
 
             foreach (Action<IServiceProvider, HttpClient> httpClientAction in actions.HttpClientActions)
-            {
                 options.HttpClientActions.Add(client => httpClientAction(services, client));
-            }
 
             options.HttpMessageHandlerBuilderActions.Add(b =>
             {
                 HttpClientHandler handler = new HttpClientHandler();
 
                 foreach (Action<IServiceProvider, HttpClientHandler> action in actions.HttpHandlerActions)
-                {
                     action(services, handler);
-                }
 
                 b.PrimaryHandler = handler;
             });

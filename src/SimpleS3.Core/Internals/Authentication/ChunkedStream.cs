@@ -159,10 +159,10 @@ internal class ChunkedStream : Stream
     }
 
     private static int CalculateChunkHeaderLength(long chunkSize, int signatureLength) =>
-            chunkSize.ToString("X", NumberFormatInfo.InvariantInfo).Length
-            + _chunkSignature.Length
-            + signatureLength
-            + _newline.Length;
+        chunkSize.ToString("X", NumberFormatInfo.InvariantInfo).Length
+        + _chunkSignature.Length
+        + signatureLength
+        + _newline.Length;
 
     /// <summary>Computes the total size of the data payload, including the chunk metadata. Called externally so as to be able
     /// to set the correct Content-Length header value.</summary>
@@ -187,10 +187,10 @@ internal class ChunkedStream : Stream
         StringBuilder chunkHeader = StringBuilderPool.Shared.Rent(100);
 
         chunkHeader
-               .Append(contentLength.ToString("X", CultureInfo.InvariantCulture))
-               .Append(_chunkSignature)
-               .Append(chunkSignature.HexEncode())
-               .Append(_newlineStr);
+            .Append(contentLength.ToString("X", CultureInfo.InvariantCulture))
+            .Append(_chunkSignature)
+            .Append(chunkSignature.HexEncode())
+            .Append(_newlineStr);
 
         string value = StringBuilderPool.Shared.ReturnString(chunkHeader);
 

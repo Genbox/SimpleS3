@@ -5,7 +5,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Signed;
 
 public class SignedPutObjectRequest : SignedBaseRequest, IHasContent
 {
-    internal SignedPutObjectRequest() : base(HttpMethodType.PUT) { }
+    internal SignedPutObjectRequest() : base(HttpMethodType.PUT) {}
 
     public SignedPutObjectRequest(string url, Stream? content) : this()
     {

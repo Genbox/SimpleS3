@@ -7,6 +7,8 @@ public class MfaAuthenticationBuilder : IHttpHeaderBuilder
     private string? _serialNumber;
     private string? _value;
 
+    public string? HeaderName => null;
+
     public string? Build()
     {
         if (!HasData())
@@ -22,8 +24,6 @@ public class MfaAuthenticationBuilder : IHttpHeaderBuilder
     }
 
     public bool HasData() => _serialNumber != null;
-
-    public string? HeaderName => null;
 
     public void SetAuth(string serialNumber, string value)
     {

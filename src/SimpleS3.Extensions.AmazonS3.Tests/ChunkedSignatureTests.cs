@@ -56,25 +56,25 @@ public class ChunkedSignatureTests
         //Test is based on the test example at the bottom here: https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
 
         string expectedSeedCr =
-                "PUT\n" +
-                "/examplebucket/chunkObject.txt\n" +
-                "\n" +
-                "content-encoding:aws-chunked\n" +
-                "content-length:66824\n" +
-                "host:s3.amazonaws.com\n" +
-                "x-amz-content-sha256:STREAMING-AWS4-HMAC-SHA256-PAYLOAD\n" +
-                "x-amz-date:20130524T000000Z\n" +
-                "x-amz-decoded-content-length:66560\n" +
-                "x-amz-storage-class:REDUCED_REDUNDANCY\n" +
-                "\n" +
-                "content-encoding;content-length;host;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length;x-amz-storage-class\n" +
-                "STREAMING-AWS4-HMAC-SHA256-PAYLOAD";
+            "PUT\n" +
+            "/examplebucket/chunkObject.txt\n" +
+            "\n" +
+            "content-encoding:aws-chunked\n" +
+            "content-length:66824\n" +
+            "host:s3.amazonaws.com\n" +
+            "x-amz-content-sha256:STREAMING-AWS4-HMAC-SHA256-PAYLOAD\n" +
+            "x-amz-date:20130524T000000Z\n" +
+            "x-amz-decoded-content-length:66560\n" +
+            "x-amz-storage-class:REDUCED_REDUNDANCY\n" +
+            "\n" +
+            "content-encoding;content-length;host;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length;x-amz-storage-class\n" +
+            "STREAMING-AWS4-HMAC-SHA256-PAYLOAD";
 
         string expectedSeedSts =
-                "AWS4-HMAC-SHA256\n" +
-                "20130524T000000Z\n" +
-                "20130524/us-east-1/s3/aws4_request\n" +
-                "cee3fed04b70f867d036f722359b0b1f2f0e5dc0efadbc082b76c4c60e316455";
+            "AWS4-HMAC-SHA256\n" +
+            "20130524T000000Z\n" +
+            "20130524/us-east-1/s3/aws4_request\n" +
+            "cee3fed04b70f867d036f722359b0b1f2f0e5dc0efadbc082b76c4c60e316455";
 
         Dictionary<string, string> headers = new Dictionary<string, string>();
         headers.Add(HttpHeaders.ContentEncoding, "aws-chunked");

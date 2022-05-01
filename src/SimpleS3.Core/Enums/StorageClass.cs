@@ -29,7 +29,7 @@ public enum StorageClass
     [EnumValue("STANDARD")]
     Standard,
 
-    [EnumValue("REDUCED_REDUNDANCY")] ReducedRedundancy,
+    [EnumValue("REDUCED_REDUNDANCY")]ReducedRedundancy,
 
     /// <summary>S3 Glacier is a secure, durable, and low-cost storage class for data archiving. You can reliably store any
     /// amount of data at costs that are competitive with or cheaper than on-premises solutions. To keep costs low yet suitable

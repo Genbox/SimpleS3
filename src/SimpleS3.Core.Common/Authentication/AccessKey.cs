@@ -4,5 +4,5 @@
 /// backing byte array can be garbage collected.</summary>
 public class AccessKey : AccessKeyBase
 {
-    public AccessKey(string keyId, byte[] secretKey) : base(keyId, secretKey) { }
+    public AccessKey(string keyId, byte[] secretKey) : base(keyId, secretKey) {}
 }

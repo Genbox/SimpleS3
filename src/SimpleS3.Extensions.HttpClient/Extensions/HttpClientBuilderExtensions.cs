@@ -24,8 +24,5 @@ public static class HttpClientBuilderExtensions
         return UseProxy(builder, _ => proxy);
     }
 
-    public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, string proxyUrl)
-    {
-        return UseProxy(builder, new WebProxy(proxyUrl));
-    }
+    public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, string proxyUrl) => UseProxy(builder, new WebProxy(proxyUrl));
 }

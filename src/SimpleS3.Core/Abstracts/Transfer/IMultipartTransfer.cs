@@ -1,5 +1,4 @@
 #if COMMERCIAL
-using System.Runtime.CompilerServices;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;

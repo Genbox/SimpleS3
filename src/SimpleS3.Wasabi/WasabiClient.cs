@@ -27,29 +27,29 @@ public sealed class WasabiClient : ClientBase, ISimpleClient
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public WasabiClient(string keyId, byte[] accessKey, WasabiRegion region, IWebProxy? proxy = null) : this(new WasabiConfig(new AccessKey(keyId, accessKey), region), proxy) { }
+    public WasabiClient(string keyId, byte[] accessKey, WasabiRegion region, IWebProxy? proxy = null) : this(new WasabiConfig(new AccessKey(keyId, accessKey), region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="WasabiClient" /></summary>
     /// <param name="keyId">The key id</param>
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public WasabiClient(string keyId, string accessKey, WasabiRegion region, IWebProxy? proxy = null) : this(new WasabiConfig(new StringAccessKey(keyId, accessKey), region), proxy) { }
+    public WasabiClient(string keyId, string accessKey, WasabiRegion region, IWebProxy? proxy = null) : this(new WasabiConfig(new StringAccessKey(keyId, accessKey), region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="WasabiClient" /></summary>
     /// <param name="credentials">The credentials to use</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public WasabiClient(IAccessKey credentials, WasabiRegion region, IWebProxy? proxy = null) : this(new WasabiConfig(credentials, region), proxy) { }
+    public WasabiClient(IAccessKey credentials, WasabiRegion region, IWebProxy? proxy = null) : this(new WasabiConfig(credentials, region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="WasabiClient" /></summary>
     /// <param name="config">The configuration you want to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public WasabiClient(WasabiConfig config, IWebProxy? proxy = null) : base(new WasabiInputValidator(), config, proxy) { }
+    public WasabiClient(WasabiConfig config, IWebProxy? proxy = null) : base(new WasabiInputValidator(), config, proxy) {}
 
-    public WasabiClient(WasabiConfig config, INetworkDriver networkDriver) : base(new WasabiInputValidator(), config, networkDriver) { }
+    public WasabiClient(WasabiConfig config, INetworkDriver networkDriver) : base(new WasabiInputValidator(), config, networkDriver) {}
 
-    internal WasabiClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) { }
+    internal WasabiClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) {}
 
     public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default) => Client.CreateBucketAsync(bucketName, config, token);
 

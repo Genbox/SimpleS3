@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// responses such as 404 Not Found and 403 Forbidden.</summary>
 public class HeadBucketRequest : BaseRequest, IHasBucketName
 {
-    internal HeadBucketRequest() : base(HttpMethodType.HEAD) { }
+    internal HeadBucketRequest() : base(HttpMethodType.HEAD) {}
 
     public HeadBucketRequest(string bucketName) : this()
     {

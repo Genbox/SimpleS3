@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// authorization header.</summary>
 public class GetObjectRequest : HeadObjectRequest, IHasRequestPayer
 {
-    internal GetObjectRequest() : base(HttpMethodType.GET) { }
+    internal GetObjectRequest() : base(HttpMethodType.GET) {}
 
     public GetObjectRequest(string bucketName, string objectKey) : this()
     {

@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
 
 public class ReuseRequestTests : OfflineTestBase
 {
-    public ReuseRequestTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+    public ReuseRequestTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
     [Fact]
     public async Task ReuseRequestSameData()

@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart;
 /// List Parts operation and ensure the parts list is empty.</summary>
 public class AbortMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId
 {
-    internal AbortMultipartUploadRequest() : base(HttpMethodType.DELETE) { }
+    internal AbortMultipartUploadRequest() : base(HttpMethodType.DELETE) {}
 
     public AbortMultipartUploadRequest(string bucketName, string objectKey, string uploadId) : this()
     {

@@ -16,7 +16,7 @@ public class NonTransientServerErrorTests : OfflineTestBase
 {
     private readonly BaseFailingHttpHandler _handler = new NonTransientFailingHttpHandler(1);
 
-    public NonTransientServerErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+    public NonTransientServerErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
     protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
     {

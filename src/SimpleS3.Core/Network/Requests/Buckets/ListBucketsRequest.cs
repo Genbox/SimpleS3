@@ -6,5 +6,5 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// the request.</summary>
 public class ListBucketsRequest : BaseRequest
 {
-    public ListBucketsRequest() : base(HttpMethodType.GET) { }
+    public ListBucketsRequest() : base(HttpMethodType.GET) {}
 }

@@ -22,7 +22,7 @@ public class GoogleCloudStorageConfig : SimpleS3Config
         EndpointTemplate = "{Scheme}://{Bucket:.}storage.googleapis.com";
     }
 
-    public GoogleCloudStorageConfig(string keyId, string secretKey, GoogleCloudStorageRegion region) : this(new StringAccessKey(keyId, secretKey), region) { }
+    public GoogleCloudStorageConfig(string keyId, string secretKey, GoogleCloudStorageRegion region) : this(new StringAccessKey(keyId, secretKey), region) {}
 
     public GoogleCloudStorageConfig(IAccessKey credentials, GoogleCloudStorageRegion region) : this()
     {

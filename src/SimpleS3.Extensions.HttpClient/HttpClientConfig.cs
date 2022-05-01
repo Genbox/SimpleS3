@@ -1,4 +1,4 @@
-﻿using HttpVersion = Genbox.SimpleS3.Core.Common.HttpVersion;
+﻿using Genbox.SimpleS3.Core.Common;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient;
 

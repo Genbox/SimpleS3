@@ -6,11 +6,11 @@ public enum ReplicationStatus
 {
     Unknown = 0,
 
-    [EnumValue("PENDING")] Pending,
+    [EnumValue("PENDING")]Pending,
 
-    [EnumValue("COMPLETED")] Completed,
+    [EnumValue("COMPLETED")]Completed,
 
-    [EnumValue("FAILED")] Failed,
+    [EnumValue("FAILED")]Failed,
 
-    [EnumValue("REPLICA")] Replica
+    [EnumValue("REPLICA")]Replica
 }

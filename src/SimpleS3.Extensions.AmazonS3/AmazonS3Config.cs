@@ -18,7 +18,7 @@ public class AmazonS3Config : SimpleS3Config
         EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
     }
 
-    public AmazonS3Config(string keyId, string secretKey, AmazonS3Region region) : this(new StringAccessKey(keyId, secretKey), region) { }
+    public AmazonS3Config(string keyId, string secretKey, AmazonS3Region region) : this(new StringAccessKey(keyId, secretKey), region) {}
 
     public AmazonS3Config(IAccessKey credentials, AmazonS3Region region) : this()
     {

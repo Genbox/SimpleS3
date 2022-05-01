@@ -26,9 +26,9 @@ internal abstract class BaseFailingHttpHandler : HttpMessageHandler
     }
 
     protected HttpResponseMessage CreateResponse(HttpRequestMessage request, HttpStatusCode statusCode) =>
-            new HttpResponseMessage(statusCode)
-            {
-                Content = GetEmptyXmlContent(),
-                RequestMessage = request
-            };
+        new HttpResponseMessage(statusCode)
+        {
+            Content = GetEmptyXmlContent(),
+            RequestMessage = request
+        };
 }

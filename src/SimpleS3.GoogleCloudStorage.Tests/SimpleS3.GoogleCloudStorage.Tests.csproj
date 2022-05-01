@@ -10,5 +10,4 @@
     <ProjectReference Include="..\SimpleS3.GoogleCloudStorage\SimpleS3.GoogleCloudStorage.csproj" />
   </ItemGroup>
 
-
 </Project>

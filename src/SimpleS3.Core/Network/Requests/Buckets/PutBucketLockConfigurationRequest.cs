@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// configuration will be applied by default to every new object placed in the specified bucket.</summary>
 public sealed class PutBucketLockConfigurationRequest : BaseRequest, IHasBucketName, IHasRequestPayer, IHasLock, IContentMd5Config, IAutoMapConfig
 {
-    internal PutBucketLockConfigurationRequest() : base(HttpMethodType.PUT) { }
+    internal PutBucketLockConfigurationRequest() : base(HttpMethodType.PUT) {}
 
     public PutBucketLockConfigurationRequest(string bucketName, bool enabled) : this()
     {

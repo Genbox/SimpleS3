@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// s3:PutBucketTagging action. By default, the bucket owner has this permission and can grant this permission to others.</summary>
 public class DeleteBucketTaggingRequest : BaseRequest, IHasBucketName
 {
-    internal DeleteBucketTaggingRequest() : base(HttpMethodType.DELETE) { }
+    internal DeleteBucketTaggingRequest() : base(HttpMethodType.DELETE) {}
 
     public DeleteBucketTaggingRequest(string bucketName) : this()
     {

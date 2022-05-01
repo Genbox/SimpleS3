@@ -15,6 +15,8 @@ public class AclBuilder : IHttpHeaderBuilder
     private StringBuilder? _sb;
     private ISet<string>? _uris;
 
+    public string? HeaderName => null;
+
     public string? Build()
     {
         if (!HasData())
@@ -79,9 +81,7 @@ public class AclBuilder : IHttpHeaderBuilder
         _uris?.Clear();
     }
 
-    public bool HasData() => _emails != null && _emails.Count > 0 || _ids != null && _ids.Count > 0 || _uris != null && _uris.Count > 0;
-
-    public string? HeaderName => null;
+    public bool HasData() => (_emails != null && _emails.Count > 0) || (_ids != null && _ids.Count > 0) || (_uris != null && _uris.Count > 0);
 
     /// <summary>Add an email to the ACL. Note that email support is only in these AWS regions: <list type="bullet">
     ///     <item>

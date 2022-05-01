@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 [PublicAPI]
 public class S3DeleteInfo : IPooledObject, IHasObjectKey, IHasVersionId
 {
-    internal S3DeleteInfo() { }
+    internal S3DeleteInfo() {}
 
     public S3DeleteInfo(string objectKey, string? versionId = null)
     {

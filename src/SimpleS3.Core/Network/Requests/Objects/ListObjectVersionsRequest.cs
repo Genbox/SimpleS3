@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// selection criteria to return metadata about a subset of all the object versions.</summary>
 public class ListObjectVersionsRequest : BaseRequest, IHasBucketName
 {
-    internal ListObjectVersionsRequest() : base(HttpMethodType.GET) { }
+    internal ListObjectVersionsRequest() : base(HttpMethodType.GET) {}
 
     public ListObjectVersionsRequest(string bucketName) : this()
     {

@@ -21,10 +21,10 @@ internal class NonTransientFailingHttpHandler : BaseFailingHttpHandler
         {
             // Blow up with an non-transient HTTP response
             return new HttpResponseMessage(HttpStatusCode.NotFound)
-                   {
-                       Content = GetEmptyXmlContent(),
-                       RequestMessage = request
-                   };
+            {
+                Content = GetEmptyXmlContent(),
+                RequestMessage = request
+            };
         }
 
         await ConsumeRequestAsync(request).ConfigureAwait(false);

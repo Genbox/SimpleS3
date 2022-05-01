@@ -2,9 +2,11 @@ namespace Genbox.SimpleS3.Core.Common.Constants;
 
 public static class AmzHeaders
 {
-#region Streaming
+    #region Streaming
+
     public const string XAmzDecodedContentLength = "x-amz-decoded-content-length";
-#endregion
+
+    #endregion
 
     public const string XAmzId2 = "x-amz-id-2";
     public const string XAmzWebsiteRedirectLocation = "x-amz-website-redirect-location";
@@ -21,19 +23,24 @@ public static class AmzHeaders
     public const string XAmzRequestCharged = "x-amz-request-charged";
     public const string XAmzRestoreOutputPath = "x-amz-restore-output-path";
 
-#region Requests
+    #region Requests
+
     public const string XAmzRequestId = "x-amz-request-id";
     public const string XAmzDate = "x-amz-date";
     public const string XAmzContentSha256 = "x-amz-content-sha256";
-#endregion
 
-#region Objects
+    #endregion
+
+    #region Objects
+
     public const string XAmzStorageClass = "x-amz-storage-class";
     public const string XAmzVersionId = "x-amz-version-id";
     public const string XAmzExpiration = "x-amz-expiration";
-#endregion
 
-#region ServerSideEncryption
+    #endregion
+
+    #region ServerSideEncryption
+
     public const string XAmzSse = "x-amz-server-side-encryption";
     public const string XAmzSseAwsKmsKeyId = "x-amz-server-side-encryption-aws-kms-key-id";
     public const string XAmzSseContext = "x-amz-server-side-encryption-context";
@@ -41,29 +48,37 @@ public static class AmzHeaders
     public const string XAmzSseCustomerAlgorithm = "x-amz-server-side-encryption-customer-algorithm";
     public const string XAmzSseCustomerKey = "x-amz-server-side-encryption-customer-key";
     public const string XAmzSseCustomerKeyMd5 = "x-amz-server-side-encryption-customer-key-MD5";
-#endregion
 
-#region ObjectLocking
+    #endregion
+
+    #region ObjectLocking
+
     public const string XAmzObjectLockMode = "x-amz-object-lock-mode";
     public const string XAmzObjectLockRetainUntilDate = "x-amz-object-lock-retain-until-date";
     public const string XAmzObjectLockLegalHold = "x-amz-object-lock-legal-hold";
-#endregion
 
-#region Tags
+    #endregion
+
+    #region Tags
+
     public const string XAmzTagging = "x-amz-tagging";
     public const string XAmzTaggingCount = "x-amz-tagging-count";
-#endregion
 
-#region ACL
+    #endregion
+
+    #region ACL
+
     public const string XAmzAcl = "x-amz-acl";
     public const string XAmzGrantRead = "x-amz-grant-read";
     public const string XAmzGrantReadAcp = "x-amz-grant-read-acp";
     public const string XAmzGrantWrite = "x-amz-grant-write";
     public const string XAmzGrantWriteAcp = "x-amz-grant-write-acp";
     public const string XAmzGrantFullControl = "x-amz-grant-full-control";
-#endregion
 
-#region CopyObject
+    #endregion
+
+    #region CopyObject
+
     public const string XAmzCopySource = "x-amz-copy-source";
     public const string XAmzCopySourceIfMatch = "x-amz-copy-source-if-match";
     public const string XAmzCopySourceIfModifiedSince = "x-amz-copy-source-if-modified-since";
@@ -75,5 +90,6 @@ public static class AmzHeaders
     public const string XAmzTaggingDirective = "x-amz-tagging-directive";
     public const string XAmzMetadataDirective = "x-amz-metadata-directive";
     public const string XAmzCopySourceVersionId = "x-amz-copy-source-version-id";
-#endregion
+
+    #endregion
 }

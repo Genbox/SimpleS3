@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// the entire object to the bucket.</summary>
 public sealed class PutObjectRequest : CreateMultipartUploadRequest, IHasContent, ISupportStreaming, IContentMd5Config
 {
-    internal PutObjectRequest() : base(HttpMethodType.PUT) { }
+    internal PutObjectRequest() : base(HttpMethodType.PUT) {}
 
     public PutObjectRequest(string bucketName, string objectKey, Stream? content) : this()
     {
@@ -19,7 +19,7 @@ public sealed class PutObjectRequest : CreateMultipartUploadRequest, IHasContent
     }
 
     public byte[]? ContentMd5 { get; set; }
-    Func<bool> IContentMd5Config.ForceContentMd5 => () => LockLegalHold.HasValue && LockLegalHold.Value || LockMode != LockMode.Unknown;
+    Func<bool> IContentMd5Config.ForceContentMd5 => () => (LockLegalHold.HasValue && LockLegalHold.Value) || LockMode != LockMode.Unknown;
 
     public Stream? Content { get; internal set; }
 

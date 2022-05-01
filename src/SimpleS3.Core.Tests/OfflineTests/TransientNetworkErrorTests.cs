@@ -16,7 +16,7 @@ public class TransientNetworkErrorTests : OfflineTestBase
 {
     private readonly BaseFailingHttpHandler _handler = new TransientFailingHttpHandler();
 
-    public TransientNetworkErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+    public TransientNetworkErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
     protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
     {

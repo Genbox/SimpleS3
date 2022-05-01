@@ -18,7 +18,7 @@ public class WasabiConfig : SimpleS3Config
         EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}wasabisys.com";
     }
 
-    public WasabiConfig(string keyId, string secretKey, WasabiRegion region) : this(new StringAccessKey(keyId, secretKey), region) { }
+    public WasabiConfig(string keyId, string secretKey, WasabiRegion region) : this(new StringAccessKey(keyId, secretKey), region) {}
 
     public WasabiConfig(IAccessKey credentials, WasabiRegion region) : this()
     {

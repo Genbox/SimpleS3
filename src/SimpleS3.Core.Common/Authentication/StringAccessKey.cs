@@ -6,5 +6,5 @@ namespace Genbox.SimpleS3.Core.Common.Authentication;
 /// a string that does not get garbage collected.</summary>
 public class StringAccessKey : AccessKeyBase
 {
-    public StringAccessKey(string keyId, string secretKey) : base(keyId, Encoding.UTF8.GetBytes(secretKey)) { }
+    public StringAccessKey(string keyId, string secretKey) : base(keyId, Encoding.UTF8.GetBytes(secretKey)) {}
 }

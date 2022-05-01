@@ -6,5 +6,5 @@ public enum SseCustomerAlgorithm
 {
     Unknown = 0,
 
-    [EnumValue("AES256")] Aes256
+    [EnumValue("AES256")]Aes256
 }

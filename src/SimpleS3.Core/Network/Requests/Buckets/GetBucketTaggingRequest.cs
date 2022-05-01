@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// s3:GetBucketTagging action. By default, the bucket owner has this permission and can grant this permission to others.</summary>
 public class GetBucketTaggingRequest : BaseRequest, IHasBucketName
 {
-    internal GetBucketTaggingRequest() : base(HttpMethodType.GET) { }
+    internal GetBucketTaggingRequest() : base(HttpMethodType.GET) {}
 
     public GetBucketTaggingRequest(string bucketName) : this()
     {

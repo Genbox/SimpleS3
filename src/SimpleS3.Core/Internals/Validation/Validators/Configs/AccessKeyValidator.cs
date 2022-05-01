@@ -15,12 +15,12 @@ internal class AccessKeyValidator : ValidatorBase<IAccessKey>
         _inputValidator = inputValidator;
 
         RuleFor(x => x.KeyId)
-               .NotEmpty().WithMessage("You must provide a key id")
-               .Custom(ValidateKeyId);
+            .NotEmpty().WithMessage("You must provide a key id")
+            .Custom(ValidateKeyId);
 
         RuleFor(x => x.SecretKey)
-               .NotNull().WithMessage("You must provide a secret key")
-               .Custom(ValidateSecretKey);
+            .NotNull().WithMessage("You must provide a secret key")
+            .Custom(ValidateSecretKey);
     }
 
     private void ValidateKeyId(string input, ValidationContext<IAccessKey> context)

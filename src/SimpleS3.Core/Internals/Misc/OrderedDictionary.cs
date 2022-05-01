@@ -358,7 +358,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
         }
 
         /// <summary>Releases all resources used by the <see cref="OrderedDictionary{TKey, TValue}.Enumerator" />.</summary>
-        public void Dispose() { }
+        public void Dispose() {}
 
         /// <summary>Advances the enumerator to the next element of the <see cref="OrderedDictionary{TKey, TValue}" />.</summary>
         /// <returns>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the

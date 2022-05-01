@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// before the bucket itself can be deleted.</summary>
 public class DeleteBucketRequest : BaseRequest, IHasBucketName
 {
-    internal DeleteBucketRequest() : base(HttpMethodType.DELETE) { }
+    internal DeleteBucketRequest() : base(HttpMethodType.DELETE) {}
 
     public DeleteBucketRequest(string bucketName) : this()
     {

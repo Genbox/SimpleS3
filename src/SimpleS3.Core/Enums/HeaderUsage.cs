@@ -6,9 +6,9 @@ public enum HeaderUsage
 {
     Unknown = 0,
 
-    [EnumValue("NONE")] None,
+    [EnumValue("NONE")]None,
 
-    [EnumValue("IGNORE")] Ignore,
+    [EnumValue("IGNORE")]Ignore,
 
-    [EnumValue("USE")] Use
+    [EnumValue("USE")]Use
 }

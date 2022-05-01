@@ -6,7 +6,7 @@ public enum JsonType
 {
     Unknown = 0,
 
-    [EnumValue("DOCUMENT")] Document,
+    [EnumValue("DOCUMENT")]Document,
 
-    [EnumValue("LINES")] Lines
+    [EnumValue("LINES")]Lines
 }

@@ -27,29 +27,29 @@ public sealed class GoogleCloudStorageClient : ClientBase, ISimpleClient
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public GoogleCloudStorageClient(string keyId, byte[] accessKey, GoogleCloudStorageRegion region, IWebProxy? proxy = null) : this(new GoogleCloudStorageConfig(new AccessKey(keyId, accessKey), region), proxy) { }
+    public GoogleCloudStorageClient(string keyId, byte[] accessKey, GoogleCloudStorageRegion region, IWebProxy? proxy = null) : this(new GoogleCloudStorageConfig(new AccessKey(keyId, accessKey), region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="GoogleCloudStorageClient" /></summary>
     /// <param name="keyId">The key id</param>
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public GoogleCloudStorageClient(string keyId, string accessKey, GoogleCloudStorageRegion region, IWebProxy? proxy = null) : this(new GoogleCloudStorageConfig(new StringAccessKey(keyId, accessKey), region), proxy) { }
+    public GoogleCloudStorageClient(string keyId, string accessKey, GoogleCloudStorageRegion region, IWebProxy? proxy = null) : this(new GoogleCloudStorageConfig(new StringAccessKey(keyId, accessKey), region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="GoogleCloudStorageClient" /></summary>
     /// <param name="credentials">The credentials to use</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public GoogleCloudStorageClient(IAccessKey credentials, GoogleCloudStorageRegion region, IWebProxy? proxy = null) : this(new GoogleCloudStorageConfig(credentials, region), proxy) { }
+    public GoogleCloudStorageClient(IAccessKey credentials, GoogleCloudStorageRegion region, IWebProxy? proxy = null) : this(new GoogleCloudStorageConfig(credentials, region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="GoogleCloudStorageClient" /></summary>
     /// <param name="config">The configuration you want to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public GoogleCloudStorageClient(GoogleCloudStorageConfig config, IWebProxy? proxy = null) : base(new GoogleCloudStorageInputValidator(), config, proxy) { }
+    public GoogleCloudStorageClient(GoogleCloudStorageConfig config, IWebProxy? proxy = null) : base(new GoogleCloudStorageInputValidator(), config, proxy) {}
 
-    public GoogleCloudStorageClient(GoogleCloudStorageConfig config, INetworkDriver networkDriver) : base(new GoogleCloudStorageInputValidator(), config, networkDriver) { }
+    public GoogleCloudStorageClient(GoogleCloudStorageConfig config, INetworkDriver networkDriver) : base(new GoogleCloudStorageInputValidator(), config, networkDriver) {}
 
-    internal GoogleCloudStorageClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) { }
+    internal GoogleCloudStorageClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) {}
 
     public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default) => Client.CreateBucketAsync(bucketName, config, token);
 

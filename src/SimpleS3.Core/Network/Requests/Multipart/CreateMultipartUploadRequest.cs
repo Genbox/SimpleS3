@@ -16,7 +16,7 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
 {
     private byte[]? _sseCustomerKey;
 
-    internal CreateMultipartUploadRequest() : this(HttpMethodType.POST) { }
+    internal CreateMultipartUploadRequest() : this(HttpMethodType.POST) {}
 
     internal CreateMultipartUploadRequest(HttpMethodType method) : base(method)
     {

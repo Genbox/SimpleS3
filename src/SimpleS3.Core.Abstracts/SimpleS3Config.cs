@@ -5,7 +5,7 @@ namespace Genbox.SimpleS3.Core.Abstracts;
 
 public class SimpleS3Config
 {
-    public SimpleS3Config() { }
+    public SimpleS3Config() {}
 
     public SimpleS3Config(IAccessKey credentials, string region)
     {

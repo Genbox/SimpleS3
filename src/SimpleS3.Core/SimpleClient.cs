@@ -28,7 +28,7 @@ public class SimpleClient : ISimpleClient
         Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObject);
     }
 
-    protected SimpleClient() { }
+    protected SimpleClient() {}
 
     public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default) => _objectClient.ListObjectsAsync(bucketName, config, token);
 

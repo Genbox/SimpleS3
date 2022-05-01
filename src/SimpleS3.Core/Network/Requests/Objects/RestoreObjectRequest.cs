@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 
 public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId, IHasBucketName, IHasObjectKey
 {
-    internal RestoreObjectRequest() : base(HttpMethodType.POST) { }
+    internal RestoreObjectRequest() : base(HttpMethodType.POST) {}
 
     public RestoreObjectRequest(string bucketName, string objectKey) : this()
     {

@@ -27,29 +27,29 @@ public sealed class AmazonS3Client : ClientBase, ISimpleClient
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public AmazonS3Client(string keyId, byte[] accessKey, AmazonS3Region region, IWebProxy? proxy = null) : this(new AmazonS3Config(new AccessKey(keyId, accessKey), region), proxy) { }
+    public AmazonS3Client(string keyId, byte[] accessKey, AmazonS3Region region, IWebProxy? proxy = null) : this(new AmazonS3Config(new AccessKey(keyId, accessKey), region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="AmazonS3Client" /></summary>
     /// <param name="keyId">The key id</param>
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public AmazonS3Client(string keyId, string accessKey, AmazonS3Region region, IWebProxy? proxy = null) : this(new AmazonS3Config(new StringAccessKey(keyId, accessKey), region), proxy) { }
+    public AmazonS3Client(string keyId, string accessKey, AmazonS3Region region, IWebProxy? proxy = null) : this(new AmazonS3Config(new StringAccessKey(keyId, accessKey), region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="AmazonS3Client" /></summary>
     /// <param name="credentials">The credentials to use</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public AmazonS3Client(IAccessKey credentials, AmazonS3Region region, IWebProxy? proxy = null) : this(new AmazonS3Config(credentials, region), proxy) { }
+    public AmazonS3Client(IAccessKey credentials, AmazonS3Region region, IWebProxy? proxy = null) : this(new AmazonS3Config(credentials, region), proxy) {}
 
     /// <summary>Creates a new instance of <see cref="AmazonS3Client" /></summary>
     /// <param name="config">The configuration you want to use</param>
     /// <param name="proxy">A web proxy (optional)</param>
-    public AmazonS3Client(AmazonS3Config config, IWebProxy? proxy = null) : base(new AmazonS3InputValidator(), config, proxy) { }
+    public AmazonS3Client(AmazonS3Config config, IWebProxy? proxy = null) : base(new AmazonS3InputValidator(), config, proxy) {}
 
-    public AmazonS3Client(AmazonS3Config config, INetworkDriver networkDriver) : base(new AmazonS3InputValidator(), config, networkDriver) { }
+    public AmazonS3Client(AmazonS3Config config, INetworkDriver networkDriver) : base(new AmazonS3InputValidator(), config, networkDriver) {}
 
-    internal AmazonS3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) { }
+    internal AmazonS3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) {}
 
     public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default) => Client.CreateBucketAsync(bucketName, config, token);
 

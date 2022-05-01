@@ -17,8 +17,8 @@ public abstract class UnitTestBase : IDisposable
     {
         ProfileName = profileName;
         IConfigurationRoot configRoot = new ConfigurationBuilder()
-                                       .AddJsonFile("Config.json", false)
-                                       .Build();
+                                        .AddJsonFile("Config.json", false)
+                                        .Build();
 
         ServiceCollection collection = new ServiceCollection();
         collection.AddSingleton(configRoot);
@@ -54,7 +54,7 @@ public abstract class UnitTestBase : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    protected virtual void ConfigureServices(IServiceCollection services) { }
-    protected virtual void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration) { }
-    protected virtual void ConfigureConfig(SimpleS3Config config) { }
+    protected virtual void ConfigureServices(IServiceCollection services) {}
+    protected virtual void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration) {}
+    protected virtual void ConfigureConfig(SimpleS3Config config) {}
 }

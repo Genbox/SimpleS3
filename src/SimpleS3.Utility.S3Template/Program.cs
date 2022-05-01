@@ -5,12 +5,12 @@ namespace Genbox.SimpleS3.Utility.S3Template;
 internal static class Program
 {
     private static readonly IDictionary<DataType, (string, string)> Data = new Dictionary<DataType, (string, string)>
-                                                                           {
-                                                                               { DataType.Request, ("Network/Requests/%Type%s/", "Request.cs") },
-                                                                               { DataType.RequestMarshal, ("Internals/Marshallers/Requests/%Type%s/", "RequestMarshal.cs") },
-                                                                               { DataType.Response, ("Network/Responses/%Type%s/", "Response.cs") },
-                                                                               { DataType.ResponseMarshal, ("Internals/Marshallers/Responses/%Type%s/", "ResponseMarshal.cs") }
-                                                                           };
+    {
+        { DataType.Request, ("Network/Requests/%Type%s/", "Request.cs") },
+        { DataType.RequestMarshal, ("Internals/Marshallers/Requests/%Type%s/", "RequestMarshal.cs") },
+        { DataType.Response, ("Network/Responses/%Type%s/", "Response.cs") },
+        { DataType.ResponseMarshal, ("Internals/Marshallers/Responses/%Type%s/", "ResponseMarshal.cs") }
+    };
 
     private static readonly string RequestTemplate = File.ReadAllText("Templates/RequestTemplate.txt");
     private static readonly string RequestMarshalTemplate = File.ReadAllText("Templates/RequestMarshalTemplate.txt");
@@ -97,8 +97,8 @@ internal static class Program
         }
 
         return template
-              .Replace("%ApiName%", apiName, StringComparison.Ordinal)
-              .Replace("%ApiType%", apiType.ToString(), StringComparison.Ordinal)
-              .Replace("%ApiTypeLower%", apiType.ToString().ToLowerInvariant(), StringComparison.Ordinal);
+               .Replace("%ApiName%", apiName, StringComparison.Ordinal)
+               .Replace("%ApiType%", apiType.ToString(), StringComparison.Ordinal)
+               .Replace("%ApiTypeLower%", apiType.ToString().ToLowerInvariant(), StringComparison.Ordinal);
     }
 }

@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart;
 /// time.</summary>
 public class ListMultipartUploadsRequest : BaseRequest, IHasBucketName
 {
-    internal ListMultipartUploadsRequest() : base(HttpMethodType.GET) { }
+    internal ListMultipartUploadsRequest() : base(HttpMethodType.GET) {}
 
     public ListMultipartUploadsRequest(string bucketName) : this()
     {

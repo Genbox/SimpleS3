@@ -12,7 +12,7 @@ public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5
 {
     private byte[]? _sseCustomerKey;
 
-    internal UploadPartRequest() : base(HttpMethodType.PUT) { }
+    internal UploadPartRequest() : base(HttpMethodType.PUT) {}
 
     public UploadPartRequest(string bucketName, string objectKey, int partNumber, string uploadId, Stream content) : this()
     {

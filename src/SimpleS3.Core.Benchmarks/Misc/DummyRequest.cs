@@ -5,5 +5,5 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Misc;
 
 public class DummyRequest : BaseRequest
 {
-    public DummyRequest() : base(HttpMethodType.GET) { }
+    public DummyRequest() : base(HttpMethodType.GET) {}
 }

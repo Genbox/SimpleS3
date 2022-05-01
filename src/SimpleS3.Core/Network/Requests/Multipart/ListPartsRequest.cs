@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart;
 /// <summary>This operation lists the parts that have been uploaded for a specific multipart upload.</summary>
 public class ListPartsRequest : BaseRequest, IHasUploadId, IHasRequestPayer, IHasBucketName, IHasObjectKey
 {
-    internal ListPartsRequest() : base(HttpMethodType.GET) { }
+    internal ListPartsRequest() : base(HttpMethodType.GET) {}
 
     public ListPartsRequest(string bucketName, string objectKey, string uploadId) : this()
     {

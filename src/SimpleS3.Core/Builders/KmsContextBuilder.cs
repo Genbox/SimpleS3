@@ -17,6 +17,8 @@ public class KmsContextBuilder : IHttpHeaderBuilder
             AddEntry(pair.Key, pair.Value);
     }
 
+    public string? HeaderName => null;
+
     public string? Build()
     {
         if (!HasData())
@@ -31,8 +33,6 @@ public class KmsContextBuilder : IHttpHeaderBuilder
     }
 
     public bool HasData() => _dict != null && _dict.Count > 0;
-
-    public string? HeaderName => null;
 
     public void AddEntry(string key, string value)
     {

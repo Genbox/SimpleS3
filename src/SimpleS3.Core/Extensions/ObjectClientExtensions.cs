@@ -48,7 +48,7 @@ public static class ObjectClientExtensions
     }
 
     /// <summary>Delete all objects within the bucket</summary>
-    public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, Action<ListObjectsRequest>? configure = null, [EnumeratorCancellation] CancellationToken token = default)
+    public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, Action<ListObjectsRequest>? configure = null, [EnumeratorCancellation]CancellationToken token = default)
     {
         Validator.RequireNotNull(client, nameof(client));
         Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
@@ -100,7 +100,7 @@ public static class ObjectClientExtensions
         return DeleteAllObjectVersionsAsync(client, bucketName, req => req.Prefix = prefix, token);
     }
 
-    public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(this IObjectClient client, string bucketName, Action<ListObjectVersionsRequest>? configure = null, [EnumeratorCancellation] CancellationToken token = default)
+    public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(this IObjectClient client, string bucketName, Action<ListObjectVersionsRequest>? configure = null, [EnumeratorCancellation]CancellationToken token = default)
     {
         Validator.RequireNotNull(client, nameof(client));
         Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
@@ -192,7 +192,7 @@ public static class ObjectClientExtensions
     /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
     /// <param name="config">Delegate to configure the ListObjectsRequest before sending it</param>
     /// <param name="token">A cancellation token</param>
-    public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, Action<ListObjectsRequest>? config = null, [EnumeratorCancellation] CancellationToken token = default)
+    public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, Action<ListObjectsRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
     {
         Validator.RequireNotNull(client, nameof(client));
         Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));

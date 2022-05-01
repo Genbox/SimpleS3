@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// permission by default. The bucket owner can grant this permission to others.</summary>
 public class GetBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketName
 {
-    internal GetBucketAccelerateConfigurationRequest() : base(HttpMethodType.GET) { }
+    internal GetBucketAccelerateConfigurationRequest() : base(HttpMethodType.GET) {}
 
     public GetBucketAccelerateConfigurationRequest(string bucketName) : this()
     {

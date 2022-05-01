@@ -7,5 +7,5 @@ public enum EncodingType
 {
     Unknown,
 
-    [EnumValue("url")] Url
+    [EnumValue("url")]Url
 }

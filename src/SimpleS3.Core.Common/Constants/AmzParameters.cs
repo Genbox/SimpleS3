@@ -39,7 +39,8 @@ public static class AmzParameters
     public const string Lifecycle = "lifecycle";
     public const string VersionIdMarker = "version-id-marker";
 
-#region Presigning
+    #region Presigning
+
     //Note: These are actually case-sensitive
     public const string XAmzAlgorithm = "X-Amz-Algorithm";
     public const string XAmzCredential = "X-Amz-Credential";
@@ -47,5 +48,6 @@ public static class AmzParameters
     public const string XAmzSignature = "X-Amz-Signature";
     public const string XAmzExpires = "X-Amz-Expires";
     public const string XAmzDate = "X-Amz-Date";
-#endregion
+
+    #endregion
 }

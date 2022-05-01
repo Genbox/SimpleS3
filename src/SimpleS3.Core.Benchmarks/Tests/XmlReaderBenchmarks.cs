@@ -90,6 +90,6 @@ public class XmlReaderBenchmarks
     [XmlRoot]
     public class XmlTestObject
     {
-        [XmlElement("Person")] public List<Person> People { get; set; }
+        [XmlElement("Person")]public List<Person> People { get; set; }
     }
 }

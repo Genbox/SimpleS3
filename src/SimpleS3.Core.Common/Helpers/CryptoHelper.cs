@@ -4,9 +4,9 @@ namespace Genbox.SimpleS3.Core.Common.Helpers;
 
 public static class CryptoHelper
 {
-    [ThreadStatic] private static HashAlgorithm? _sha256Cache;
+    [ThreadStatic]private static HashAlgorithm? _sha256Cache;
 
-    [ThreadStatic] private static HashAlgorithm? _md5Cache;
+    [ThreadStatic]private static HashAlgorithm? _md5Cache;
 
     private static HashAlgorithm Sha256 => _sha256Cache ??= SHA256.Create();
     private static HashAlgorithm Md5 => _md5Cache ??= MD5.Create();
