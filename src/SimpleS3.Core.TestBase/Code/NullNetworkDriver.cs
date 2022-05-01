@@ -10,6 +10,6 @@ public class NullNetworkDriver : INetworkDriver
     public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         LastUrl = url;
-        return new HttpResponse();
+        return new HttpResponse { Headers = new Dictionary<string, string>() };
     }
 }
