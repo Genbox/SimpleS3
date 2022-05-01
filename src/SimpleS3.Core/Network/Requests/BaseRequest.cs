@@ -6,8 +6,9 @@ namespace Genbox.SimpleS3.Core.Network.Requests;
 
 public abstract class BaseRequest : IRequest, IPooledObject
 {
-    private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
-    private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>();
+    private readonly Dictionary<string, string> _headers = new Dictionary<string, string>(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> _trailers = new Dictionary<string, string>(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>(StringComparer.Ordinal);
 
     protected BaseRequest(HttpMethodType method)
     {
@@ -25,6 +26,7 @@ public abstract class BaseRequest : IRequest, IPooledObject
     public HttpMethodType Method { get; internal set; }
     public IReadOnlyDictionary<string, string> Headers => _headers;
     public IReadOnlyDictionary<string, string> QueryParameters => _queryParameters;
+    public IReadOnlyDictionary<string, string> Trailers => _trailers;
 
     public void SetQueryParameter(string key, string value)
     {
@@ -33,6 +35,13 @@ public abstract class BaseRequest : IRequest, IPooledObject
 
     public void SetHeader(string key, string value)
     {
-        _headers[key.ToLowerInvariant()] = value!;
+        //Headers are case-insensitive. See https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+        _headers[key.ToLowerInvariant()] = value;
+    }
+
+    public void SetTrailer(string key, string value)
+    {
+        //Headers are case-insensitive. See https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+        _trailers[key.ToLowerInvariant()] = value;
     }
 }

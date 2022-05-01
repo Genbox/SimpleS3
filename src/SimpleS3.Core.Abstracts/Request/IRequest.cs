@@ -18,6 +18,9 @@ public interface IRequest
     /// <summary>Query parameters to apply to the request</summary>
     IReadOnlyDictionary<string, string> QueryParameters { get; }
 
+    /// <summary>Trailers to apply to the request</summary>
+    IReadOnlyDictionary<string, string> Trailers { get; }
+
     /// <summary>Adds a query parameter</summary>
     /// <param name="key">Name of the parameter</param>
     /// <param name="value">Value of the parameter</param>
@@ -27,4 +30,9 @@ public interface IRequest
     /// <param name="key">Name of the header</param>
     /// <param name="value">Value of the header</param>
     void SetHeader(string key, string value);
+
+    /// <summary>Adds a trailing header</summary>
+    /// <param name="key">Name of the trailer</param>
+    /// <param name="value">Value of the header</param>
+    void SetTrailer(string key, string value);
 }
