@@ -11,17 +11,19 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory;
 public class HttpClientFactoryNetworkDriver : INetworkDriver
 {
     private readonly IHttpClientFactory _clientFactory;
+    private readonly string _optionsName;
     private readonly HttpClientFactoryConfig _config;
     private readonly Version _httpVersion1 = new Version("1.1");
     private readonly Version _httpVersion2 = new Version("2.0");
     private readonly Version _httpVersion3 = new Version("3.0");
     private readonly ILogger<HttpClientFactoryNetworkDriver> _logger;
 
-    public HttpClientFactoryNetworkDriver(IOptions<HttpClientFactoryConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory)
+    public HttpClientFactoryNetworkDriver(IOptions<HttpClientFactoryConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory, string optionsName)
     {
         _config = options.Value;
         _logger = logger;
         _clientFactory = clientFactory;
+        _optionsName = optionsName;
     }
 
     public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
@@ -51,7 +53,7 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
 
             _logger.LogTrace("Sending HTTP request");
 
-            HttpClient client = _clientFactory.CreateClient(_config.HttpClientName);
+            HttpClient client = _clientFactory.CreateClient(_optionsName);
             httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
         }
 

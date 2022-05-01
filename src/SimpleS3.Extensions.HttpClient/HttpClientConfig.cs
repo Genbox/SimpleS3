@@ -1,5 +1,4 @@
-﻿using System.Net;
-using HttpVersion = Genbox.SimpleS3.Core.Common.HttpVersion;
+﻿using HttpVersion = Genbox.SimpleS3.Core.Common.HttpVersion;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient;
 
@@ -10,7 +9,7 @@ public class HttpClientConfig
     public bool UseProxy { get; set; }
 
     /// <summary>Use this to set a proxy to which all requests should be sent through.</summary>
-    public IWebProxy? Proxy { get; set; }
+    public string? Proxy { get; set; }
 
     public HttpVersion HttpVersion { get; set; }
 }

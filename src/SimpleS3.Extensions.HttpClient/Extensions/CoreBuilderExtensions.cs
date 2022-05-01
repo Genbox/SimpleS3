@@ -1,4 +1,5 @@
-﻿using System.Security.Authentication;
+﻿using System.Net;
+using System.Security.Authentication;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Constants;
@@ -27,19 +28,23 @@ public static class CoreBuilderExtensions
     {
         CustomHttpClientBuilder builder = new CustomHttpClientBuilder(clientBuilder.Services, clientBuilder.Name);
 
-        builder.Services.Configure<HttpBuilderActions>(clientBuilder.Name, actions =>
+        builder.Services.Configure<HttpBuilderActions>(actions =>
         {
-            actions.HttpHandlerActions.Add((x, handler) =>
+            actions.HttpHandlerActions.Add((provider, handler) =>
             {
-                IOptions<HttpClientConfig> options = x.GetRequiredService<IOptions<HttpClientConfig>>();
+                IOptions<HttpClientConfig> opt = provider.GetRequiredService<IOptions<HttpClientConfig>>();
+                HttpClientConfig options = opt.Value;
+
                 handler.UseCookies = false;
                 handler.MaxAutomaticRedirections = 3;
                 handler.SslProtocols = SslProtocols.None; //Let the OS handle the protocol to use
-                handler.UseProxy = options.Value.UseProxy;
-                handler.Proxy = options.Value.Proxy;
+                handler.UseProxy = options.UseProxy;
+
+                if (options.Proxy != null)
+                    handler.Proxy = new WebProxy(options.Proxy);
             });
 
-            actions.HttpClientActions.Add((x, client) =>
+            actions.HttpClientActions.Add((_, client) =>
             {
                 client.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.DefaultUserAgent);
                 client.DefaultRequestHeaders.TransferEncodingChunked = false;
@@ -48,8 +53,8 @@ public static class CoreBuilderExtensions
 
         builder.Services.AddSingleton<INetworkDriver, HttpClientNetworkDriver>(provider =>
         {
-            IOptionsMonitor<HttpBuilderActions> options = provider.GetRequiredService<IOptionsMonitor<HttpBuilderActions>>();
-            HttpBuilderActions? actions = options.Get(clientBuilder.Name);
+            IOptions<HttpBuilderActions> opt = provider.GetRequiredService<IOptions<HttpBuilderActions>>();
+            HttpBuilderActions? actions = opt.Value;
 
             HttpClientHandler handler = new HttpClientHandler();
 

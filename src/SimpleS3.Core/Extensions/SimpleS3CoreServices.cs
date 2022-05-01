@@ -98,6 +98,7 @@ public static class SimpleS3CoreServices
         collection.TryAddEnumerable(RegisterAsActual(typeof(IValidator<>), assembly)); //We register IValidator twice to support IValidator<T> as well
         collection.TryAddEnumerable(RegisterAsActual(typeof(IValidateOptions<>), assembly)); //Make sure that the options system validators are added too
 
+        //NOTE: I have not given the user a chance to set the name (named configs) here yet. It will eventually be used for config isolation between instances.
         return new CoreBuilder(collection);
     }
 

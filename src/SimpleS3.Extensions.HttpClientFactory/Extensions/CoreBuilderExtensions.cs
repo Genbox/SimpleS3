@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Authentication;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -12,27 +13,29 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 
 public static class CoreBuilderExtensions
 {
-    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig, IServiceProvider> config)
+    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig, IServiceProvider> config, string? name = null)
     {
         clientBuilder.Services.Configure(config);
         return UseHttpClientFactory(clientBuilder);
     }
 
-    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig> config)
+    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig> config, string? name = null)
     {
         clientBuilder.Services.Configure(config);
         return UseHttpClientFactory(clientBuilder);
     }
 
-    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder)
+    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, string? name = null)
     {
-        CustomHttpClientFactoryBuilder builder = new CustomHttpClientFactoryBuilder(clientBuilder.Services);
+        CustomHttpClientFactoryBuilder builder = new CustomHttpClientFactoryBuilder(clientBuilder.Services, name);
 
         //Contrary to the naming, this does not add a HttpClient to the services. It is the factories etc. necessary for HttpClientFactory to work.
         builder.Services.AddHttpClient();
-        builder.Services.AddSingleton<INetworkDriver, HttpClientFactoryNetworkDriver>();
 
-        builder.Services.Configure<HttpBuilderActions>(clientBuilder.Name, x =>
+        //We register the driver this way in order to support named configs in case the user want config isolation
+        builder.Services.AddSingleton<INetworkDriver, HttpClientFactoryNetworkDriver>(x => ActivatorUtilities.CreateInstance<HttpClientFactoryNetworkDriver>(x, builder.Name));
+
+        builder.Services.Configure<HttpBuilderActions>(x =>
         {
             x.HttpClientActions.Add((_, client) =>
             {
@@ -42,20 +45,23 @@ public static class CoreBuilderExtensions
 
             x.HttpHandlerActions.Add((provider, handler) =>
             {
-                IOptionsMonitor<HttpClientFactoryConfig>? options = provider.GetRequiredService<IOptionsMonitor<HttpClientFactoryConfig>>();
-                HttpClientFactoryConfig? config = options.Get(clientBuilder.Name);
+                IOptions<HttpClientFactoryConfig>? opt = provider.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
+                HttpClientFactoryConfig? config = opt.Value;
 
                 handler.UseCookies = false;
                 handler.MaxAutomaticRedirections = 3;
                 handler.SslProtocols = SslProtocols.None; //Let the OS handle the protocol to use
                 handler.UseProxy = config.UseProxy;
-                handler.Proxy = config.Proxy;
+
+                if (config.Proxy != null)
+                    handler.Proxy = new WebProxy(config.Proxy);
             });
         });
 
-        builder.Services.Configure<HttpClientFactoryOptions>(clientBuilder.Name, (options, services) =>
+        builder.Services.Configure<HttpClientFactoryOptions>(builder.Name, (options, services) =>
         {
-            HttpBuilderActions actions = services.GetRequiredService<HttpBuilderActions>();
+            IOptions<HttpBuilderActions> opt = services.GetRequiredService<IOptions<HttpBuilderActions>>();
+            HttpBuilderActions actions = opt.Value;
 
             foreach (Action<IServiceProvider, HttpClient> httpClientAction in actions.HttpClientActions)
             {

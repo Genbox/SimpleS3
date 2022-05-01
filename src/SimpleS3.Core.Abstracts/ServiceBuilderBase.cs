@@ -4,7 +4,7 @@ namespace Genbox.SimpleS3.Core.Abstracts;
 
 public abstract class ServiceBuilderBase
 {
-    public static string DefaultName => "SimpleS3";
+    public static string DefaultName => string.Empty;
 
     protected ServiceBuilderBase(IServiceCollection services, string? name = null)
     {
