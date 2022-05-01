@@ -1,6 +1,4 @@
 {
-  "ProfileName": "TestSetup-AmazonS3", //TestSetup-AmazonS3, TestSetup-BackBlazeB2
-
   "Proxy": {
     "UseProxy": false,
     "ProxyAddress": "http://127.0.0.1:8888"

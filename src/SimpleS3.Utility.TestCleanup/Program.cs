@@ -12,49 +12,63 @@ internal static class Program
 {
     private static async Task Main(string[] args)
     {
-        S3Provider s3Provider = UtilityHelper.SelectProvider();
+        S3Provider[] providers = UtilityHelper.SelectProviders().ToArray();
 
         Console.WriteLine();
 
-        string profileName = UtilityHelper.GetProfileName(s3Provider);
-
-        Console.WriteLine("This program will delete all buckets beginning with 'testbucket-'. Are you sure? Y/N");
+        Console.WriteLine($"This action will delete all buckets beginning with 'testbucket-' in {providers.Length} providers");
+        Console.WriteLine("Are you sure? Y/N");
 
         ConsoleKeyInfo key = Console.ReadKey(true);
 
-        if (key.KeyChar != 'y')
+        while (key.KeyChar != 'y' && key.KeyChar != 'n')
+        {
+            Console.WriteLine($"Invalid choice '{key.KeyChar}'. Try again.");
+            key = Console.ReadKey(true);
+        }
+
+        if (key.KeyChar == 'n')
             return;
 
-        using ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
+        Console.WriteLine();
 
-        IProfile profile = UtilityHelper.GetOrSetupProfile(provider, s3Provider, profileName);
-
-        ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
-
-        await foreach (S3Bucket bucket in ListAllBucketsAsync(client))
+        foreach (S3Provider s3Provider in providers)
         {
-            if (!UtilityHelper.IsTestBucket(bucket.BucketName, profile) && !UtilityHelper.IsTemporaryBucket(bucket.BucketName))
-                continue;
+            string profileName = UtilityHelper.GetProfileName(s3Provider);
+            using ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
 
-            Console.Write(bucket.BucketName);
+            IProfile profile = UtilityHelper.GetOrSetupProfile(provider, s3Provider, profileName);
 
-            int errors = await UtilityHelper.ForceDeleteBucketAsync(s3Provider, client, bucket.BucketName);
+            ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
 
-            if (errors == 0)
+            List<S3Bucket> buckets = await ListAllBucketsAsync(client).Where(x => UtilityHelper.IsTestBucket(x.BucketName, profile) || UtilityHelper.IsTemporaryBucket(x.BucketName)).ToListAsync();
+
+            Console.WriteLine($"# {s3Provider}: {buckets.Count} bucket(s)");
+
+            foreach (S3Bucket bucket in buckets)
             {
-                Console.Write(" [x] emptied ");
+                string bucketName = bucket.BucketName;
 
-                DeleteBucketResponse delBucketResp = await client.DeleteBucketAsync(bucket.BucketName).ConfigureAwait(false);
+                Console.Write(bucketName);
 
-                if (delBucketResp.IsSuccess)
-                    Console.Write("[x] deleted");
+                int errors = await UtilityHelper.ForceEmptyBucketAsync(s3Provider, client, bucketName);
+
+                if (errors == 0)
+                {
+                    Console.Write(" [x] emptied ");
+
+                    DeleteBucketResponse delBucketResp = await client.DeleteBucketAsync(bucketName).ConfigureAwait(false);
+
+                    if (delBucketResp.IsSuccess)
+                        Console.Write("[x] deleted");
+                    else
+                        Console.Write("[ ] deleted");
+                }
                 else
-                    Console.Write("[ ] deleted");
-            }
-            else
-                Console.Write(" [ ] emptied [ ] deleted");
+                    Console.Write(" [ ] emptied [ ] deleted");
 
-            Console.WriteLine();
+                Console.WriteLine();
+            }
         }
     }
 

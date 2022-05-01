@@ -23,27 +23,50 @@ namespace Genbox.SimpleS3.Utility.Shared;
 
 public static class UtilityHelper
 {
-    public static S3Provider SelectProvider()
+    public static IEnumerable<S3Provider> SelectProviders()
     {
-        ConsoleKeyInfo key;
-        int intVal = 0;
+        //Skip 'unknown'
+        S3Provider[] choices = Enum.GetValues<S3Provider>().Skip(1).ToArray();
 
-        S3Provider[] enumValues = Enum.GetValues<S3Provider>();
+        bool success = false;
+        int i;
 
-        //Skip 'unknown' and 'all'
-        S3Provider[] choices = enumValues.Skip(1).Take(enumValues.Length - 2).ToArray();
+        S3Provider[] returnChoices = new S3Provider[choices.Length];
+
+        Console.WriteLine("Please select which providers you want to use. Use ',' to select more than one.");
+
+        for (i = 0; i < choices.Length; i++)
+            Console.WriteLine($"{i + 1}. {choices[i]}");
 
         do
         {
-            Console.WriteLine("Please select which provider you want to use:");
+            string input = Console.ReadLine();
 
-            for (int i = 0; i < choices.Length; i++)
-                Console.WriteLine($"{i + 1}. {choices[i]}");
+            string[] userChoices = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-            key = Console.ReadKey(true);
-        } while (!choices.Any(x => int.TryParse(key.KeyChar.ToString(), out intVal) && intVal >= 0 && intVal <= choices.Length));
+            for (i = 0; i < userChoices.Length; i++)
+            {
+                string c = userChoices[i];
 
-        return choices[intVal - 1];
+                if (!int.TryParse(c, out int intVal) || intVal < 0 || intVal > choices.Length)
+                {
+                    Console.WriteLine($"Invalid input '{c}'. Try again.");
+                    Array.Clear(returnChoices);
+                    success = false;
+                    break;
+                }
+
+                success = true;
+                returnChoices[i] = choices[intVal - 1];
+            }
+
+        } while (!success);
+
+        //Special case if 'All' was chosen
+        if (returnChoices.Any(x => x == S3Provider.All))
+            return choices.Take(choices.Length - 1);
+
+        return returnChoices.Take(i);
     }
 
     public static string GetProfileName(S3Provider provider) => "TestSetup-" + provider;
@@ -118,7 +141,7 @@ public static class UtilityHelper
         return profile;
     }
 
-    public static async Task<int> ForceDeleteBucketAsync(S3Provider provider, ISimpleClient client, string bucket)
+    public static async Task<int> ForceEmptyBucketAsync(S3Provider provider, ISimpleClient client, string bucket)
     {
         HashSet<S3DeleteError> errors = new HashSet<S3DeleteError>(ErrorComparer.Instance);
 

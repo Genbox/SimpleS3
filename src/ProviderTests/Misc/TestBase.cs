@@ -23,7 +23,14 @@ public abstract class TestBase
         }
         finally
         {
-            int errors = await UtilityHelper.ForceDeleteBucketAsync(provider, client, tempBucket);
+            int errors = await UtilityHelper.ForceEmptyBucketAsync(provider, client, tempBucket);
+
+            if (errors == 0)
+            {
+                DeleteBucketResponse delBucketResp = await client.DeleteBucketAsync(tempBucket).ConfigureAwait(false);
+                Assert.True(delBucketResp.IsSuccess);
+            }
+
             Assert.Equal(0, errors);
         }
     }
