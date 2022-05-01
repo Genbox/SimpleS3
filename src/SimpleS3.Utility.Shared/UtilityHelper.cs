@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -119,42 +120,44 @@ public static class UtilityHelper
 
     public static async Task<int> ForceDeleteBucketAsync(S3Provider provider, ISimpleClient client, string bucket)
     {
-        int errors = 0;
+        HashSet<S3DeleteError> errors = new HashSet<S3DeleteError>(ErrorComparer.Instance);
 
-        await foreach (S3DeleteError error in DeleteAllObjects(provider, client, bucket))
+        //Google and BackBlaze counts multipart uploads as part of bucket
+        //Abort all incomplete multipart uploads
+        IAsyncEnumerable<S3Upload> partUploads = client.ListAllMultipartUploadsAsync(bucket);
+
+        await foreach (S3Upload partUpload in partUploads)
         {
-            errors++;
+            AbortMultipartUploadResponse abortResp = await client.AbortMultipartUploadAsync(bucket, partUpload.ObjectKey, partUpload.UploadId);
 
-            PutObjectLegalHoldResponse legalResp = await client.PutObjectLegalHoldAsync(bucket, error.ObjectKey, false, r => r.VersionId = error.VersionId);
-
-            if (legalResp.IsSuccess)
-            {
-                DeleteObjectResponse delResp = await client.DeleteObjectAsync(bucket, error.ObjectKey, x => x.VersionId = error.VersionId);
-
-                if (delResp.IsSuccess)
-                    errors--;
-            }
+            if (!abortResp.IsSuccess)
+                errors.Add(new S3DeleteError(partUpload.ObjectKey, ErrorCode.Unknown, string.Empty, null));
         }
 
-        if (errors > 0)
+        //Try to delete all objects
+        await foreach (S3DeleteError error in DeleteAllObjects(provider, client, bucket))
         {
-            //Google counts multipart uploads as part of bucket
-            if (provider == S3Provider.GoogleCloudStorage)
+            errors.Add(error);
+        }
+
+        //If we have any errors at this point, it might be because of legal hold. Force delete them too.
+        if (errors.Count > 0)
+        {
+            foreach (S3DeleteError error in errors)
             {
-                //Abort all incomplete multipart uploads
-                IAsyncEnumerable<S3Upload> partUploads = client.ListAllMultipartUploadsAsync(bucket);
+                PutObjectLegalHoldResponse legalResp = await client.PutObjectLegalHoldAsync(bucket, error.ObjectKey, false, r => r.VersionId = error.VersionId);
 
-                await foreach (S3Upload partUpload in partUploads)
+                if (legalResp.IsSuccess)
                 {
-                    AbortMultipartUploadResponse abortResp = await client.AbortMultipartUploadAsync(bucket, partUpload.ObjectKey, partUpload.UploadId);
+                    DeleteObjectResponse delResp = await client.DeleteObjectAsync(bucket, error.ObjectKey, x => x.VersionId = error.VersionId);
 
-                    if (abortResp.IsSuccess)
-                        errors--;
+                    if (delResp.IsSuccess)
+                        errors.Remove(error);
                 }
             }
         }
 
-        return errors;
+        return errors.Count;
     }
 
     private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjects(S3Provider provider, ISimpleClient client, string bucket)
@@ -198,5 +201,30 @@ public static class UtilityHelper
                     yield return error;
             }
         } while (response.IsTruncated);
+    }
+
+    private class ErrorComparer : IEqualityComparer<S3DeleteError>
+    {
+        private ErrorComparer() { }
+
+        public static readonly ErrorComparer Instance = new ErrorComparer();
+
+        public bool Equals(S3DeleteError x, S3DeleteError y)
+        {
+            if (ReferenceEquals(x, y))
+                return true;
+            if (ReferenceEquals(x, null))
+                return false;
+            if (ReferenceEquals(y, null))
+                return false;
+            if (x.GetType() != y.GetType())
+                return false;
+            return x.ObjectKey == y.ObjectKey && x.VersionId == y.VersionId;
+        }
+
+        public int GetHashCode(S3DeleteError obj)
+        {
+            return HashCode.Combine(obj.ObjectKey, obj.VersionId);
+        }
     }
 }
