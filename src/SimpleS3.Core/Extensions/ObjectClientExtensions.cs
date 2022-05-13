@@ -45,13 +45,13 @@ public static class ObjectClientExtensions
     /// <param name="bucketName">The bucket the object resides in</param>
     /// <param name="objectKeys">A list of keys you want to delete</param>
     /// <param name="token">A cancellation token to cancel the request</param>
-    public static async Task<DeleteObjectsResponse> DeleteObjectsAsync(this IObjectClient client, string bucketName, IEnumerable<string> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default)
+    public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IObjectClient client, string bucketName, IEnumerable<string> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default)
     {
         Validator.RequireNotNull(client, nameof(client));
         Validator.RequireNotNull(bucketName, nameof(bucketName));
         Validator.RequireNotNull(objectKeys, nameof(objectKeys));
 
-        return await client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x)), config, token);
+        return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x)), config, token);
     }
 
     /// <summary> Delete all objects within a bucket </summary>
@@ -183,14 +183,14 @@ public static class ObjectClientExtensions
         } while (response.IsTruncated);
     }
 
-    public static async Task<PutObjectResponse> PutObjectDataAsync(this IObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
+    public static Task<PutObjectResponse> PutObjectDataAsync(this IObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
     {
         Validator.RequireNotNull(client, nameof(client));
         Validator.RequireNotNull(bucketName, nameof(bucketName));
         Validator.RequireNotNull(objectKey, nameof(objectKey));
 
         using MemoryStream ms = new MemoryStream(data);
-        return await client.PutObjectAsync(bucketName, objectKey, ms, config, token).ConfigureAwait(false);
+        return client.PutObjectAsync(bucketName, objectKey, ms, config, token);
     }
 
     public static Task<PutObjectResponse> PutObjectStringAsync(this IObjectClient client, string bucketName, string objectKey, string content, Encoding? encoding = null, Action<PutObjectRequest>? config = null, CancellationToken token = default)
