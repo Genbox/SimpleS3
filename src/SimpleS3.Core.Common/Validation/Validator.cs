@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Common.Validation;
 
@@ -16,6 +17,11 @@ public static class Validator
     }
 
     public static void RequireNotNull<T>(T? value, string parameterName, string? message = null) where T : class
+    {
+        RequireThat(value != null, () => new ArgumentNullException(parameterName, message));
+    }
+
+    public static void RequireNotNull<T>([NoEnumeration]IEnumerable<T>? value, string parameterName, string? message = null) where T : class
     {
         RequireThat(value != null, () => new ArgumentNullException(parameterName, message));
     }
