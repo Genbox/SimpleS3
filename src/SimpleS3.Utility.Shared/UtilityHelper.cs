@@ -157,7 +157,7 @@ public static class UtilityHelper
         }
 
         //Try to delete all objects
-        await foreach (S3DeleteError error in DeleteAllObjects(provider, client, bucket))
+        await foreach (S3DeleteError error in DeleteAllObjectVersions(provider, client, bucket))
             errors.Add(error);
 
         //If we have any errors at this point, it might be because of legal hold. Force delete them too.
@@ -180,7 +180,7 @@ public static class UtilityHelper
         return errors.Count;
     }
 
-    private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjects(S3Provider provider, ISimpleClient client, string bucket)
+    private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersions(S3Provider provider, ISimpleClient client, string bucket)
     {
         ListObjectVersionsResponse response;
         Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucket);
