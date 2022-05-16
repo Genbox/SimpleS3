@@ -11,12 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Examples", "Simple
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Items", "_Items", "{7C26C924-7B82-4A50-8BF0-584930DEF401}"
 	ProjectSection(SolutionItems) = preProject
-		..\.editorconfig = ..\.editorconfig
 		..\.gitattributes = ..\.gitattributes
 		..\.gitignore = ..\.gitignore
 		..\Config.json = ..\Config.json
 		..\.github\FUNDING.yml = ..\.github\FUNDING.yml
-		..\Global.ruleset = ..\Global.ruleset
 		..\LICENSE.txt = ..\LICENSE.txt
 		..\README.md = ..\README.md
 		..\SECURITY.md = ..\SECURITY.md
