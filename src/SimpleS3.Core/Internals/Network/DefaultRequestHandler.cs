@@ -71,10 +71,10 @@ internal class DefaultRequestHandler : IRequestHandler
         return SendRequestInternalAsync<TReq, TResp>(request, token);
     }
 
-    private async Task<TResp> SendPreSignedAsync<TResp>(SignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
+    private Task<TResp> SendPreSignedAsync<TResp>(SignedBaseRequest preSigned, CancellationToken token) where TResp : IResponse, new()
     {
         using Stream? requestStream = _marshaller.MarshalRequest(_config, preSigned);
-        return await HandleResponseAsync<SignedBaseRequest, TResp>(preSigned, preSigned.Url, requestStream, token).ConfigureAwait(false);
+        return HandleResponseAsync<SignedBaseRequest, TResp>(preSigned, preSigned.Url, requestStream, token);
     }
 
     private Task<TResp> SendRequestInternalAsync<TReq, TResp>(TReq request, CancellationToken token) where TReq : IRequest where TResp : IResponse, new()

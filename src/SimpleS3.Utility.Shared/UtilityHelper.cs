@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -40,7 +41,10 @@ public static class UtilityHelper
 
         do
         {
-            string input = Console.ReadLine();
+            string? input = Console.ReadLine();
+
+            if (input == null)
+                throw new Exception("Unexpected null from ReadLine");
 
             string[] userChoices = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
@@ -228,7 +232,7 @@ public static class UtilityHelper
         public static readonly ErrorComparer Instance = new ErrorComparer();
         private ErrorComparer() {}
 
-        public bool Equals(S3DeleteError x, S3DeleteError y)
+        public bool Equals(S3DeleteError? x, S3DeleteError? y)
         {
             if (ReferenceEquals(x, y))
                 return true;
