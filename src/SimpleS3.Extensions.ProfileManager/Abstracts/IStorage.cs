@@ -4,4 +4,5 @@ public interface IStorage
 {
     byte[]? Get(string name);
     string Put(string name, byte[] data);
+    IEnumerable<string> List();
 }

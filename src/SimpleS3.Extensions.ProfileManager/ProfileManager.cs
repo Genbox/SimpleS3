@@ -80,6 +80,19 @@ public class ProfileManager : IProfileManager
         return profile;
     }
 
+    public IEnumerable<IProfile> List()
+    {
+        foreach (string name in _storage.List())
+        {
+            IProfile? profile = GetProfile(name);
+
+            if (profile == null)
+                throw new Exception("Concurrency: A profile was deleted white iterating them");
+
+            yield return profile;
+        }
+    }
+
     public string SaveProfile(IProfile profile)
     {
         byte[] data = _serializer.Serialize(profile);

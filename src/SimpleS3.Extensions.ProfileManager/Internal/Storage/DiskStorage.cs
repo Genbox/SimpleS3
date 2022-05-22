@@ -42,4 +42,12 @@ internal class DiskStorage : IStorage
 
         return path;
     }
+
+    public IEnumerable<string> List()
+    {
+        if (!Directory.Exists(_options.ProfileLocation))
+            return Array.Empty<string>();
+
+        return Directory.EnumerateFiles(_options.ProfileLocation);
+    }
 }
