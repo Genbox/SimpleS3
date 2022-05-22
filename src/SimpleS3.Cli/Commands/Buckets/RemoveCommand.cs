@@ -4,7 +4,7 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace Genbox.SimpleS3.Cli.Commands.Buckets;
 
-[Command("rm", Description = "Delete all the objects in a bucket along with the bucket itself")]
+[Command("remove", Description = "Delete all the objects in a bucket along with the bucket itself")]
 internal class RemoveCommand : OnlineCommandBase
 {
     [Argument(0, Description = "Bucket name")]
