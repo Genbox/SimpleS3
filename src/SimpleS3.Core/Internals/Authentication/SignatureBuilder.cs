@@ -67,7 +67,7 @@ internal class SignatureBuilder : ISignatureBuilder
         string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), canonicalRequest);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
-        _logger.LogDebug("Signature: {signature}", signature);
+        _logger.LogDebug("Signature: {Signature}", signature);
         return signature;
     }
 

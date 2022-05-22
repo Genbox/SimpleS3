@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -33,7 +33,7 @@ internal class ChunkedSignatureBuilder : IChunkedSignatureBuilder
         string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, content, offset, length);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
-        _logger.LogDebug("Chunk signature: {signature}", signature);
+        _logger.LogDebug("Chunk signature: {Signature}", signature);
         return signature;
     }
 

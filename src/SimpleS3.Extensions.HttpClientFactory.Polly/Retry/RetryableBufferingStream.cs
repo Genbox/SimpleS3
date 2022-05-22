@@ -1,4 +1,4 @@
-using Genbox.SimpleS3.Core.Common.Validation;
+﻿using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 
@@ -9,10 +9,10 @@ internal class RetryableBufferingStream : Stream
     private readonly MemoryStream _bufferStream;
     private readonly Stream _underlyingStream;
     private bool _buffered;
+    private bool _disposed;
 
     public RetryableBufferingStream(Stream underlyingStream)
     {
-        // Note: Maybe validation is superfluous?
         Validator.RequireThat(!underlyingStream.CanSeek, $"The {nameof(RetryableBufferingStream)} should not be used on seekable streams");
 
         _underlyingStream = underlyingStream;
@@ -30,20 +30,29 @@ internal class RetryableBufferingStream : Stream
         set => _bufferStream.Position = value;
     }
 
+    protected override void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        _disposed = true;
+
+        if (disposing)
+            _bufferStream.Dispose();
+
+        base.Dispose(disposing);
+    }
+
     private async Task ReadSourceAsync()
     {
         await _underlyingStream.CopyToAsync(_bufferStream).ConfigureAwait(false);
         _bufferStream.Seek(0, SeekOrigin.Begin);
-
         _buffered = true;
     }
 
     public override int Read(byte[] buffer, int offset, int count)
     {
-        if (!_buffered)
-            ReadSourceAsync().GetAwaiter().GetResult();
-
-        return _bufferStream.Read(buffer, offset, count);
+        return ReadAsync(buffer, offset, count, CancellationToken.None).GetAwaiter().GetResult();
     }
 
     public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)

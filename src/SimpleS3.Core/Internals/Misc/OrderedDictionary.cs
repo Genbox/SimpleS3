@@ -139,8 +139,8 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
                 return prime;
         }
 
-        //outside of our predefined table. 
-        //compute the hard way. 
+        //outside of our predefined table.
+        //compute the hard way.
         for (int i = min | 1; i < int.MaxValue; i += 2)
         {
             if (IsPrime(i) && (i - 1) % _hashPrime != 0)
@@ -340,7 +340,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
     }
 
     /// <summary>Enumerates the elements of a <see cref="OrderedDictionary{TKey, TValue}" />.</summary>
-    public struct Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
+    private struct Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
     {
         private readonly OrderedDictionary<TKey, TValue> _orderedDictionary;
         private int _index;
@@ -355,6 +355,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
         {
             _orderedDictionary = orderedDictionary;
             _index = 0;
+            Current = default;
         }
 
         /// <summary>Releases all resources used by the <see cref="OrderedDictionary{TKey, TValue}.Enumerator" />.</summary>

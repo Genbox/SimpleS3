@@ -23,7 +23,7 @@ internal sealed class CommandLineService<T> : IDisposable, ICommandLineService w
         _logger = logger;
         _state = state;
 
-        logger.LogDebug("Constructing CommandLineApplication<{type}> with args [{args}]", typeof(T).FullName, string.Join(",", state.Arguments));
+        logger.LogDebug("Constructing CommandLineApplication<{Type}> with args [{Args}]", typeof(T).FullName, string.Join(",", state.Arguments));
         _application = new CommandLineApplication<T>(state.Console, state.WorkingDirectory);
         _application.Conventions
                     .UseAttributes()
