@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -22,7 +22,7 @@ internal class ValidatorFactory : IRequestValidatorFactory
             Type type = x.GetType();
             Type? baseType = type.BaseType;
 
-            Validator.RequireNotNull(baseType, nameof(baseType));
+            Validator.RequireNotNull(baseType);
 
             Type[] args = baseType.GetGenericArguments();
 

@@ -10,7 +10,7 @@ internal class NonTransientFailingHttpHandler : BaseFailingHttpHandler
 
     public NonTransientFailingHttpHandler(int afterNRequests)
     {
-        Validator.RequireThat(afterNRequests >= 1, nameof(afterNRequests), "afterNRequests must be greater than or equal 1");
+        Validator.RequireThat(afterNRequests >= 1, "Value must be greater than or equal 1");
 
         _afterNRequests = afterNRequests;
     }

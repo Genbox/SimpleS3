@@ -11,7 +11,7 @@ public class S3Transition
     /// <param name="storageClass">The storage class to which you want the object to transition.</param>
     public S3Transition(DateTimeOffset date, StorageClass storageClass)
     {
-        Validator.RequireThat(storageClass != StorageClass.Unknown, nameof(storageClass));
+        Validator.RequireValidEnum(storageClass);
 
         TransitionOnDate = date;
         StorageClass = storageClass;
@@ -22,8 +22,8 @@ public class S3Transition
     /// <param name="storageClass">The storage class to which you want the object to transition.</param>
     public S3Transition(int transitionAfterDays, StorageClass storageClass)
     {
-        Validator.RequireThat(transitionAfterDays > 0, nameof(transitionAfterDays));
-        Validator.RequireThat(storageClass != StorageClass.Unknown, nameof(storageClass));
+        Validator.RequireThat(transitionAfterDays > 0);
+        Validator.RequireValidEnum(storageClass);
 
         TransitionAfterDays = transitionAfterDays;
         StorageClass = storageClass;

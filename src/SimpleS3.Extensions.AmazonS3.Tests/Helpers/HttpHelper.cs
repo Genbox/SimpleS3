@@ -11,7 +11,7 @@ internal static class HttpHelper
 {
     public static HttpHandler ParseHttpRequest(string request)
     {
-        Validator.RequireNotNull(request, nameof(request));
+        Validator.RequireNotNull(request);
 
         //Hack to change linux newlines into windows newlines
         request = request.Replace("\n", Environment.NewLine, false, CultureInfo.InvariantCulture);

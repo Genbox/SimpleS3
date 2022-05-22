@@ -28,7 +28,7 @@ internal class ObjectOperations : IObjectOperations
 
     public Task<PutObjectResponse> PutObjectAsync(PutObjectRequest request, CancellationToken token = default)
     {
-        Validator.RequireNotNull(request, nameof(request));
+        Validator.RequireNotNull(request);
 
         if (request.Content != null)
         {

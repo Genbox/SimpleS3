@@ -11,14 +11,16 @@ public static class RequestHelper
 {
     public static async Task ExecuteRequestAsync(ISimpleClient client, Func<ISimpleClient, Task> func)
     {
-        Validator.RequireNotNull(func, nameof(func));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNull(func);
 
         await func(client).ConfigureAwait(false);
     }
 
     public static async Task<T> ExecuteRequestAsync<T>(ISimpleClient client, Func<ISimpleClient, Task<T>> func) where T : BaseResponse
     {
-        Validator.RequireNotNull(func, nameof(func));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNull(func);
 
         T resp = await func(client).ConfigureAwait(false);
 
@@ -26,16 +28,16 @@ public static class RequestHelper
             return resp;
 
         StringBuilder sb = StringBuilderPool.Shared.Rent();
-        sb.Append("Request failed with error ").Append(resp.StatusCode).AppendLine();
+        sb.Append("Request failed with error ").AppendLine(resp.StatusCode.ToString());
 
         if (resp.Error != null)
         {
-            sb.Append("Message: ").Append(resp.Error.Message).AppendLine();
+            sb.Append("Message: ").AppendLine(resp.Error.Message);
 
             string extraData = resp.Error.GetErrorDetails();
 
             if (!string.IsNullOrWhiteSpace(extraData))
-                sb.Append("Details: ").Append(extraData).AppendLine();
+                sb.Append("Details: ").AppendLine(extraData);
         }
 
         throw new S3Exception(StringBuilderPool.Shared.ReturnString(sb));
@@ -43,7 +45,8 @@ public static class RequestHelper
 
     public static IAsyncEnumerable<T> ExecuteAsyncEnumerable<T>(ISimpleClient client, Func<ISimpleClient, IAsyncEnumerable<T>> func)
     {
-        Validator.RequireNotNull(func, nameof(func));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNull(func);
 
         return func(client);
     }

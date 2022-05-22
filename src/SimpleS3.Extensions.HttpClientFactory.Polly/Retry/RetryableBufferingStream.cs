@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Common.Validation;
+using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 
@@ -13,7 +13,7 @@ internal class RetryableBufferingStream : Stream
     public RetryableBufferingStream(Stream underlyingStream)
     {
         // Note: Maybe validation is superfluous?
-        Validator.RequireThat(!underlyingStream.CanSeek, nameof(underlyingStream), $"The {nameof(RetryableBufferingStream)} should not be used on seekable streams");
+        Validator.RequireThat(!underlyingStream.CanSeek, $"The {nameof(RetryableBufferingStream)} should not be used on seekable streams");
 
         _underlyingStream = underlyingStream;
         _bufferStream = new MemoryStream();

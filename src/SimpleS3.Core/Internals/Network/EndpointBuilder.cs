@@ -41,7 +41,7 @@ internal class EndpointBuilder : IEndpointBuilder
 
         if (endpoint == null)
         {
-            Validator.RequireNotNull(_config.EndpointTemplate, nameof(SimpleS3Config.EndpointTemplate), "Unable to determine endpoint because both Endpoint and EndpointTemplate was null");
+            Validator.RequireNotNull(_config.EndpointTemplate, "Unable to determine endpoint because both Endpoint and EndpointTemplate was null");
 
             endpoint = _regex.Replace(_config.EndpointTemplate, match =>
             {

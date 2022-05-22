@@ -33,11 +33,11 @@ internal class ChunkedStream : Stream
 
     public ChunkedStream(SimpleS3Config config, IChunkedSignatureBuilder chunkedSigBuilder, IRequest request, byte[] seedSignature, Stream originalStream)
     {
-        Validator.RequireNotNull(config, nameof(config));
-        Validator.RequireNotNull(chunkedSigBuilder, nameof(chunkedSigBuilder));
-        Validator.RequireNotNull(request, nameof(request));
-        Validator.RequireNotNull(seedSignature, nameof(seedSignature));
-        Validator.RequireNotNull(originalStream, nameof(originalStream));
+        Validator.RequireNotNull(config);
+        Validator.RequireNotNull(chunkedSigBuilder);
+        Validator.RequireNotNull(request);
+        Validator.RequireNotNull(seedSignature);
+        Validator.RequireNotNull(originalStream);
 
         _originalStream = originalStream;
         _chunkedSigBuilder = chunkedSigBuilder;

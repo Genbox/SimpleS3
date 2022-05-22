@@ -52,8 +52,8 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
 
     public TagBuilder Add(string key, string value)
     {
-        Validator.RequireNotNull(key, nameof(key));
-        Validator.RequireNotNull(value, nameof(value));
+        Validator.RequireNotNull(key);
+        Validator.RequireNotNull(value);
 
         if (_tags == null)
             _tags = new Dictionary<string, string>();

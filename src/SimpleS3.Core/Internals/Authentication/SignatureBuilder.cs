@@ -54,7 +54,7 @@ internal class SignatureBuilder : ISignatureBuilder
 
     public byte[] CreateSignature(IRequest request, bool enablePayloadSignature = true)
     {
-        Validator.RequireNotNull(request, nameof(request));
+        Validator.RequireNotNull(request);
 
         _logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
 

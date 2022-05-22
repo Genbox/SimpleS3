@@ -20,7 +20,7 @@ internal static class ValueHelper
 
     public static DateTimeOffset ParseDate(string? value, DateTimeFormat format)
     {
-        Validator.RequireNotNull(value, nameof(value));
+        Validator.RequireNotNullOrWhiteSpace(value);
 
         switch (format)
         {

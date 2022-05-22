@@ -39,12 +39,12 @@ internal class DefaultRequestHandler : IRequestHandler
 
     public DefaultRequestHandler(IOptions<SimpleS3Config> options, IRequestValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
     {
-        Validator.RequireNotNull(options, nameof(options));
-        Validator.RequireNotNull(validator, nameof(validator));
-        Validator.RequireNotNull(marshaller, nameof(marshaller));
-        Validator.RequireNotNull(networkDriver, nameof(networkDriver));
-        Validator.RequireNotNull(authBuilder, nameof(authBuilder));
-        Validator.RequireNotNull(logger, nameof(logger));
+        Validator.RequireNotNull(options);
+        Validator.RequireNotNull(validator);
+        Validator.RequireNotNull(marshaller);
+        Validator.RequireNotNull(networkDriver);
+        Validator.RequireNotNull(authBuilder);
+        Validator.RequireNotNull(logger);
 
         _requestValidator = validator;
         _config = options.Value;

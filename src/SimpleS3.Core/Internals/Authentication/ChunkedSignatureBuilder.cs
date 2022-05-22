@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -26,7 +26,7 @@ internal class ChunkedSignatureBuilder : IChunkedSignatureBuilder
 
     public byte[] CreateChunkSignature(IRequest request, byte[] previousSignature, byte[] content, int offset, int length)
     {
-        Validator.RequireNotNull(request, nameof(request));
+        Validator.RequireNotNull(request);
 
         _logger.LogTrace("Creating chunk signature for {RequestId}", request.RequestId);
 

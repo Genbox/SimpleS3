@@ -11,7 +11,7 @@ internal class SlowHttpHandler : BaseFailingHttpHandler
 
     public SlowHttpHandler(int successRate, TimeSpan delay)
     {
-        Validator.RequireThat(successRate >= 1, nameof(successRate), "successRate must be greater than or equal 1");
+        Validator.RequireThat(successRate >= 1, "Value must be greater than or equal 1");
 
         _successRate = successRate;
         _delay = delay;

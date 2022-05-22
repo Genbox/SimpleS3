@@ -25,9 +25,9 @@ public static class ObjectClientExtensions
     /// <param name="token">A cancellation token to cancel the request</param>
     public static async Task<DeleteObjectResponse> DeleteObjectAsync(this IObjectClient client, string bucketName, string objectKey, string? versionId = null, MfaAuthenticationBuilder? mfa = null, CancellationToken token = default)
     {
-        Validator.RequireNotNull(client, nameof(client));
-        Validator.RequireNotNull(bucketName, nameof(bucketName));
-        Validator.RequireNotNull(objectKey, nameof(objectKey));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNull(bucketName);
+        Validator.RequireNotNull(objectKey);
 
         DeleteObjectResponse resp = await client.DeleteObjectAsync(bucketName, objectKey, req =>
         {
@@ -47,9 +47,9 @@ public static class ObjectClientExtensions
     /// <param name="token">A cancellation token to cancel the request</param>
     public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IObjectClient client, string bucketName, IEnumerable<string> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default)
     {
-        Validator.RequireNotNull(client, nameof(client));
-        Validator.RequireNotNull(bucketName, nameof(bucketName));
-        Validator.RequireNotNull(objectKeys, nameof(objectKeys));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNull(bucketName);
+        Validator.RequireNotNull(objectKeys);
 
         return client.DeleteObjectsAsync(bucketName, objectKeys.Select(x => new S3DeleteInfo(x)), config, token);
     }
@@ -75,8 +75,8 @@ public static class ObjectClientExtensions
     /// <exception cref="S3RequestException">If any of the requests fails this exception will be thrown</exception>
     public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, Action<ListObjectsRequest>? configure = null, [EnumeratorCancellation]CancellationToken token = default)
     {
-        Validator.RequireNotNull(client, nameof(client));
-        Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNullOrEmpty(bucketName);
 
         ListObjectsResponse response;
         Task<ListObjectsResponse> responseTask = client.ListObjectsAsync(bucketName, configure, token);
@@ -141,8 +141,8 @@ public static class ObjectClientExtensions
     /// <exception cref="S3RequestException">If any of the requests fails this exception will be thrown</exception>
     public static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(this IObjectClient client, string bucketName, Action<ListObjectVersionsRequest>? configure = null, [EnumeratorCancellation]CancellationToken token = default)
     {
-        Validator.RequireNotNull(client, nameof(client));
-        Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNullOrEmpty(bucketName);
 
         ListObjectVersionsResponse response;
         Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucketName, configure, token);
@@ -185,9 +185,9 @@ public static class ObjectClientExtensions
 
     public static Task<PutObjectResponse> PutObjectDataAsync(this IObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
     {
-        Validator.RequireNotNull(client, nameof(client));
-        Validator.RequireNotNull(bucketName, nameof(bucketName));
-        Validator.RequireNotNull(objectKey, nameof(objectKey));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNull(bucketName);
+        Validator.RequireNotNull(objectKey);
 
         using MemoryStream ms = new MemoryStream(data);
         return client.PutObjectAsync(bucketName, objectKey, ms, config, token);
@@ -195,9 +195,9 @@ public static class ObjectClientExtensions
 
     public static Task<PutObjectResponse> PutObjectStringAsync(this IObjectClient client, string bucketName, string objectKey, string content, Encoding? encoding = null, Action<PutObjectRequest>? config = null, CancellationToken token = default)
     {
-        Validator.RequireNotNull(client, nameof(client));
-        Validator.RequireNotNull(bucketName, nameof(bucketName));
-        Validator.RequireNotNull(objectKey, nameof(objectKey));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNull(bucketName);
+        Validator.RequireNotNull(objectKey);
 
         encoding ??= Constants.Utf8NoBom;
 
@@ -206,9 +206,9 @@ public static class ObjectClientExtensions
 
     public static async Task<PutObjectResponse> PutObjectFileAsync(this IObjectClient client, string bucketName, string objectKey, string file, Action<PutObjectRequest>? config = null, CancellationToken token = default)
     {
-        Validator.RequireNotNull(client, nameof(client));
-        Validator.RequireNotNull(bucketName, nameof(bucketName));
-        Validator.RequireNotNull(objectKey, nameof(objectKey));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNull(bucketName);
+        Validator.RequireNotNull(objectKey);
 
         if (!File.Exists(file))
             throw new FileNotFoundException("The file does not exist.", file);
@@ -242,8 +242,8 @@ public static class ObjectClientExtensions
     /// <exception cref="S3RequestException">If any of the requests fails this exception will be thrown</exception>
     public static async IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, Action<ListObjectsRequest>? configure = null, [EnumeratorCancellation]CancellationToken token = default)
     {
-        Validator.RequireNotNull(client, nameof(client));
-        Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNullOrEmpty(bucketName);
 
         ListObjectsResponse response;
         Task<ListObjectsResponse> responseTask = client.ListObjectsAsync(bucketName, configure, token);
@@ -295,8 +295,8 @@ public static class ObjectClientExtensions
     /// <param name="token">A cancellation token</param>
     public static async IAsyncEnumerable<S3Version> ListAllObjectVersionsAsync(this IObjectClient client, string bucketName, Action<ListObjectVersionsRequest>? configure = null, [EnumeratorCancellation]CancellationToken token = default)
     {
-        Validator.RequireNotNull(client, nameof(client));
-        Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+        Validator.RequireNotNull(client);
+        Validator.RequireNotNullOrEmpty(bucketName);
 
         ListObjectVersionsResponse response;
         Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucketName, configure, token);

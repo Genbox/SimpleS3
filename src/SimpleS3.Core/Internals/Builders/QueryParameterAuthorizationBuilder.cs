@@ -20,7 +20,7 @@ internal class QueryParameterAuthorizationBuilder : IAuthorizationBuilder
 
     public void BuildAuthorization(IRequest request)
     {
-        Validator.RequireNotNull(request, nameof(request));
+        Validator.RequireNotNull(request);
 
         _logger.LogTrace("Building parameter based authorization");
         request.SetQueryParameter(AmzParameters.XAmzSignature, _signatureBuilder.CreateSignature(request, false).HexEncode());

@@ -10,7 +10,7 @@ internal class TransientFailingHttpHandler : BaseFailingHttpHandler
 
     public TransientFailingHttpHandler(int successRate = 3)
     {
-        Validator.RequireThat(successRate >= 1, nameof(successRate), "successRate must be greater than or equal 1");
+        Validator.RequireThat(successRate >= 1, "Value must be greater than or equal 1");
 
         _successRate = successRate;
     }

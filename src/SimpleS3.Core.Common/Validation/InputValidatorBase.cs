@@ -35,7 +35,7 @@ public abstract class InputValidatorBase : IInputValidator
     /// <returns>True if the bucket name passed validation</returns>
     public bool TryValidateBucketName(string? bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {
-        Validator.RequireThat(mode != BucketNameValidationMode.Unknown, nameof(mode), "Mode must not be Unknown");
+        Validator.RequireValidEnum(mode, "Mode must not be Unknown");
 
         if (mode == BucketNameValidationMode.Disabled)
         {
@@ -67,7 +67,7 @@ public abstract class InputValidatorBase : IInputValidator
 
     public bool TryValidateObjectKey(string? objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
     {
-        Validator.RequireThat(mode != ObjectKeyValidationMode.Unknown, nameof(mode), "Mode must not be Unknown");
+        Validator.RequireValidEnum(mode, "Mode must not be Unknown");
 
         if (mode == ObjectKeyValidationMode.Disabled)
         {

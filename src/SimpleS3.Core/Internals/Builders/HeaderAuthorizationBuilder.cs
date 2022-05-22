@@ -31,7 +31,7 @@ internal class HeaderAuthorizationBuilder : IAuthorizationBuilder
 
     public void BuildAuthorization(IRequest request)
     {
-        Validator.RequireNotNull(request, nameof(request));
+        Validator.RequireNotNull(request);
 
         string auth = BuildInternal(request.Timestamp, request.Headers, _signatureBuilder.CreateSignature(request));
 

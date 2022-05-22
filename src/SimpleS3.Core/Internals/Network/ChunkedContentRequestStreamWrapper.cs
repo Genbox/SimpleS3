@@ -21,9 +21,9 @@ internal sealed class ChunkedContentRequestStreamWrapper : IRequestStreamWrapper
 
     public ChunkedContentRequestStreamWrapper(IOptions<SimpleS3Config> config, IChunkedSignatureBuilder chunkedSigBuilder, ISignatureBuilder signatureBuilder)
     {
-        Validator.RequireNotNull(config, nameof(config));
-        Validator.RequireNotNull(chunkedSigBuilder, nameof(chunkedSigBuilder));
-        Validator.RequireNotNull(signatureBuilder, nameof(signatureBuilder));
+        Validator.RequireNotNull(config);
+        Validator.RequireNotNull(chunkedSigBuilder);
+        Validator.RequireNotNull(signatureBuilder);
 
         _chunkedSigBuilder = chunkedSigBuilder;
         _signatureBuilder = signatureBuilder;

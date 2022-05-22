@@ -11,7 +11,7 @@ public class GenericError : IError
 {
     public GenericError(IDictionary<string, string> lookup)
     {
-        Validator.RequireNotNull(lookup, nameof(lookup));
+        Validator.RequireNotNull(lookup);
 
         Code = ValueHelper.ParseEnum<ErrorCode>(lookup["Code"]);
         Message = lookup["Message"];

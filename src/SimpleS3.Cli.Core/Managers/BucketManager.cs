@@ -22,7 +22,7 @@ public class BucketManager
 
     public Task CreateAsync(string bucketName, bool enableLocking, BucketCannedAcl cannedAcl)
     {
-        Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+        Validator.RequireNotNullOrEmpty(bucketName);
 
         return RequestHelper.ExecuteRequestAsync(_client, c => c.CreateBucketAsync(bucketName, r =>
         {
@@ -33,7 +33,7 @@ public class BucketManager
 
     public async IAsyncEnumerable<S3DeleteError> EmptyAsync(string bucketName, bool force)
     {
-        Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+        Validator.RequireNotNullOrEmpty(bucketName);
 
         Dictionary<string, S3DeleteError> errors = new Dictionary<string, S3DeleteError>(StringComparer.OrdinalIgnoreCase);
 
@@ -73,7 +73,7 @@ public class BucketManager
 
     public async IAsyncEnumerable<S3DeleteError> DeleteAsync(string bucketName, bool force)
     {
-        Validator.RequireNotNullOrEmpty(bucketName, nameof(bucketName));
+        Validator.RequireNotNullOrEmpty(bucketName);
 
         List<S3DeleteError> errors = new List<S3DeleteError>();
 

@@ -31,7 +31,7 @@ internal class MultipartTransfer : IMultipartTransfer
 
     public async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
     {
-        Validator.RequireNotNull(output, nameof(output));
+        Validator.RequireNotNull(output);
 
         //Use a HEAD request on the object key to determine if the file was originally uploaded with multipart
         HeadObjectResponse headResp = await _objectClient.HeadObjectAsync(bucketName, objectKey, req => req.PartNumber = 1, token).ConfigureAwait(false);
@@ -87,8 +87,8 @@ internal class MultipartTransfer : IMultipartTransfer
 
     public async Task<CompleteMultipartUploadResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
     {
-        Validator.RequireNotNull(req, nameof(req));
-        Validator.RequireNotNull(data, nameof(data));
+        Validator.RequireNotNull(req);
+        Validator.RequireNotNull(data);
 
         foreach (IRequestWrapper wrapper in _requestWrappers)
         {

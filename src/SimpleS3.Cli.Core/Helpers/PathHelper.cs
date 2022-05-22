@@ -8,8 +8,7 @@ public static class PathHelper
 {
     public static string Combine(char orgChar, char replaceChar, params string?[] components)
     {
-        Validator.RequireNotNullOrEmpty(components, nameof(components));
-        Validator.RequireThat(components.Any(x => x != null), nameof(components));
+        Validator.RequireValueAndItemsNotNull(components);
 
         StringBuilder sb = StringBuilderPool.Shared.Rent();
 

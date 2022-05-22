@@ -120,7 +120,7 @@ public class AclBuilder : IHttpHeaderBuilder
     /// <param name="id">The user id, for example 79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be</param>
     public AclBuilder AddUserId(string id)
     {
-        Validator.RequireNotNull(id, nameof(id));
+        Validator.RequireNotNullOrWhiteSpace(id);
 
         if (_ids == null)
             _ids = new HashSet<string>( /*1*/);
@@ -138,6 +138,8 @@ public class AclBuilder : IHttpHeaderBuilder
     /// <param name="uri">An URI to the group</param>
     public AclBuilder AddGroup(string uri)
     {
+        Validator.RequireNotNullOrWhiteSpace(uri);
+
         if (_uris == null)
             _uris = new HashSet<string>( /*1*/);
 
@@ -151,9 +153,11 @@ public class AclBuilder : IHttpHeaderBuilder
     /// <param name="group">One of Amazon's predefined groups</param>
     public AclBuilder AddGroup(PredefinedGroup group)
     {
+        Validator.RequireValidEnum(group);
+
         string groupStr = EnumHelper.AsString(group);
 
-        Validator.RequireNotNull(groupStr, nameof(group), "Bug: PredefinedGroup is missing EnumValue");
+        Validator.RequireNotNull(groupStr, "Bug: PredefinedGroup is missing EnumValue");
 
         return AddGroup(groupStr!);
     }

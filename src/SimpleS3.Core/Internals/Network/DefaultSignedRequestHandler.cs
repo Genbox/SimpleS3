@@ -30,10 +30,10 @@ internal class DefaultSignedRequestHandler : ISignedRequestHandler
 
     public DefaultSignedRequestHandler(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultSignedRequestHandler> logger)
     {
-        Validator.RequireNotNull(options, nameof(options));
-        Validator.RequireNotNull(marshaller, nameof(marshaller));
-        Validator.RequireNotNull(authBuilder, nameof(authBuilder));
-        Validator.RequireNotNull(logger, nameof(logger));
+        Validator.RequireNotNull(options);
+        Validator.RequireNotNull(marshaller);
+        Validator.RequireNotNull(authBuilder);
+        Validator.RequireNotNull(logger);
 
         _config = options.Value;
         _authBuilder = authBuilder;

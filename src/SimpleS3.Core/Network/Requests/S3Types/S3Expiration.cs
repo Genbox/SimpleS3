@@ -16,7 +16,7 @@ public class S3Expiration
     /// <param name="expireAfterDays">A non-zero positive integer</param>
     public S3Expiration(int expireAfterDays)
     {
-        Validator.RequireThat(expireAfterDays > 0, nameof(expireAfterDays));
+        Validator.RequireThat(expireAfterDays > 0);
 
         ExpireAfterDays = expireAfterDays;
     }

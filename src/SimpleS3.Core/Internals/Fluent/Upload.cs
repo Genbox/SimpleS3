@@ -156,7 +156,7 @@ internal class Upload : IUpload
 
     public IUpload WithAccessControl(ObjectAclBuilder acl)
     {
-        Validator.RequireNotNull(acl, nameof(acl));
+        Validator.RequireNotNull(acl);
 
         _request.AclGrantRead = acl.ReadObject;
         _request.AclGrantReadAcp = acl.ReadAcl;

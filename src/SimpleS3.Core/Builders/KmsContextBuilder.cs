@@ -36,8 +36,8 @@ public class KmsContextBuilder : IHttpHeaderBuilder
 
     public void AddEntry(string key, string value)
     {
-        Validator.RequireNotNull(key, nameof(key));
-        Validator.RequireNotNull(value, nameof(value));
+        Validator.RequireNotNull(key);
+        Validator.RequireNotNull(value);
 
         if (_dict == null)
             _dict = new Dictionary<string, string>();
