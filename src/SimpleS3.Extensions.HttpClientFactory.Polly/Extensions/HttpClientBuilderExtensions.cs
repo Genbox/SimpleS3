@@ -35,22 +35,22 @@ public static class HttpClientBuilderExtensions
     public static IHttpClientBuilder UseRetryPolicy(this IHttpClientBuilder builder, int retries, BackoffTime backoffTime)
     {
         // Add a policy that will handle transient HTTP & Networking errors
-        RetryPolicy<HttpResponseMessage>? exceptionPolicy = Policy<HttpResponseMessage>
+        AsyncRetryPolicy<HttpResponseMessage> exceptionPolicy = Policy<HttpResponseMessage>
 
-                                                            // Handle network errors
-                                                            .Handle<IOException>()
+                                                                // Handle network errors
+                                                                .Handle<IOException>()
 
-                                                            // Handle other HttpClient errors
-                                                            .Or<HttpRequestException>()
+                                                                // Handle other HttpClient errors
+                                                                .Or<HttpRequestException>()
 
-                                                            // Handle Polly timeouts
-                                                            .Or<TimeoutRejectedException>()
+                                                                // Handle Polly timeouts
+                                                                .Or<TimeoutRejectedException>()
 
-                                                            // Handle transient-error status codes
-                                                            .OrResult(_transientHttpStatusCodePredicate)
+                                                                // Handle transient-error status codes
+                                                                .OrResult(_transientHttpStatusCodePredicate)
 
-                                                            // Action
-                                                            .WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt));
+                                                                // Action
+                                                                .WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt));
 
         builder.AddPolicyHandler(exceptionPolicy);
         builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
@@ -59,7 +59,7 @@ public static class HttpClientBuilderExtensions
 
     public static IHttpClientBuilder UseTimeoutPolicy(this IHttpClientBuilder builder, TimeSpan timeout)
     {
-        TimeoutPolicy<HttpResponseMessage>? timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(timeout);
+        AsyncTimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(timeout);
         builder.AddPolicyHandler(timeoutPolicy);
         return builder;
     }
