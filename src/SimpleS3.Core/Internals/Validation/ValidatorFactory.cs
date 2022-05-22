@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.Results;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -32,7 +32,7 @@ internal class ValidatorFactory : IRequestValidatorFactory
 
     public void ValidateAndThrow<T>(T obj) where T : IRequest
     {
-        if (_validators.TryGetValue(typeof(T), out IValidator validator))
+        if (_validators.TryGetValue(typeof(T), out IValidator? validator))
         {
             ValidationResult result = ((IValidator<T>)validator).Validate(obj);
 

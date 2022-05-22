@@ -23,7 +23,7 @@ internal class PostMapperFactory : IPostMapperFactory
 
     public void PostMap<TRequest, TResponse>(SimpleS3Config config, TRequest request, TResponse response) where TRequest : IRequest where TResponse : IResponse
     {
-        if (_postMappers.TryGetValue($"{typeof(TRequest).Name}-{typeof(TResponse).Name}", out IPostMapper marshaller))
+        if (_postMappers.TryGetValue($"{typeof(TRequest).Name}-{typeof(TResponse).Name}", out IPostMapper? marshaller))
             ((IPostMapper<TRequest, TResponse>)marshaller).PostMap(config, request, response);
     }
 }

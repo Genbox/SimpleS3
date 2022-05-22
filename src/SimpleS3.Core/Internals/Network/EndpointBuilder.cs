@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
@@ -65,7 +65,7 @@ internal class EndpointBuilder : IEndpointBuilder
             });
         }
 
-        if (!Uri.TryCreate(endpoint, UriKind.Absolute, out Uri parsed))
+        if (!Uri.TryCreate(endpoint, UriKind.Absolute, out Uri? parsed))
             throw new InvalidOperationException(nameof(SimpleS3Config.EndpointTemplate) + " was resolved to an invalid url: " + endpoint);
 
         return new EndpointData(parsed.Host, bucket, regionCode, parsed.AbsoluteUri.TrimEnd('/'));

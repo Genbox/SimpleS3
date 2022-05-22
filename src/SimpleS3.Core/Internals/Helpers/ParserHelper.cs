@@ -31,7 +31,7 @@ internal static class ParserHelper
     {
         data = default;
 
-        if (!headers.TryGetValue(AmzHeaders.XAmzExpiration, out string expiration))
+        if (!headers.TryGetValue(AmzHeaders.XAmzExpiration, out string? expiration))
             return false;
 
         Match match = _expirationRegex.Match(expiration);

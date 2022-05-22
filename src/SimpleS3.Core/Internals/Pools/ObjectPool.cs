@@ -20,8 +20,8 @@ internal class ObjectPool<T> where T : IPooledObject
 
     public T Rent(Action<T> setup)
     {
-        if (!_pool.TryTake(out T obj))
-            obj = (T)Activator.CreateInstance(typeof(T), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture);
+        if (!_pool.TryTake(out T? obj))
+            obj = (T)Activator.CreateInstance(typeof(T), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture)!;
 
         setup(obj);
         return obj;

@@ -8,10 +8,10 @@ public class TooManyBucketsError : GenericError
 {
     internal TooManyBucketsError(IDictionary<string, string> lookup) : base(lookup)
     {
-        if (lookup.TryGetValue("CurrentNumberOfBuckets", out string current))
+        if (lookup.TryGetValue("CurrentNumberOfBuckets", out string? current))
             CurrentNumberOfBuckets = int.Parse(current, NumberFormatInfo.InvariantInfo);
 
-        if (lookup.TryGetValue("AllowedNumberOfBuckets", out string allowed))
+        if (lookup.TryGetValue("AllowedNumberOfBuckets", out string? allowed))
             AllowedNumberOfBuckets = int.Parse(allowed, NumberFormatInfo.InvariantInfo);
     }
 

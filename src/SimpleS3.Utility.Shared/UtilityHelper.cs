@@ -98,7 +98,7 @@ public static class UtilityHelper
         if (enableRetry)
             httpBuilder.UseDefaultHttpPolicy();
 
-        IConfigurationSection? proxySection = configRoot.GetSection("Proxy");
+        IConfigurationSection proxySection = configRoot.GetSection("Proxy");
 
         if (proxySection != null && proxySection.GetValue<bool>("UseProxy"))
             httpBuilder.UseProxy(new WebProxy(proxySection.GetValue<string>("ProxyAddress")));

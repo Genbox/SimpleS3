@@ -228,6 +228,6 @@ internal class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjectReques
         if (c == '\t')
             return "\\t";
 
-        return c.ToString();
+        return c.ToString()!;
     }
 }

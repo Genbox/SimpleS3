@@ -145,7 +145,7 @@ internal class ListObjectVersionsResponseMarshal : IResponseMarshal<ListObjectVe
         bool isLatest = false;
         string? versionId = null;
         string? objectKey = null;
-        DateTimeOffset lastModified;
+        DateTimeOffset? lastModified = null;
         S3Identity? owner = null;
 
         foreach (string name in XmlHelper.ReadElements(xmlReader, "DeleteMarker"))
@@ -170,9 +170,9 @@ internal class ListObjectVersionsResponseMarshal : IResponseMarshal<ListObjectVe
             }
         }
 
-        if (owner == null || objectKey == null || versionId == null)
+        if (owner == null || objectKey == null || versionId == null || lastModified == null)
             throw new InvalidOperationException("Missing required values");
 
-        return new S3DeleteMarker(isLatest, objectKey, lastModified, owner, versionId);
+        return new S3DeleteMarker(isLatest, objectKey, lastModified.Value, owner, versionId);
     }
 }

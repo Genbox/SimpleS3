@@ -23,7 +23,7 @@ internal class Profile : IProfile
         if (Tags == null)
             return null;
 
-        return Tags.TryGetValue(key, out string value) ? value : null;
+        return Tags.TryGetValue(key, out string? value) ? value : null;
     }
 
     public void AddTag(string key, string value)

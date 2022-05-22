@@ -101,7 +101,7 @@ internal class DefaultRequestHandler : IRequestHandler
             }
         }
 
-        if (!request.Headers.TryGetValue(AmzHeaders.XAmzContentSha256, out string contentHash))
+        if (!request.Headers.TryGetValue(AmzHeaders.XAmzContentSha256, out string? contentHash))
         {
             if (_config.PayloadSignatureMode == SignatureMode.Unsigned)
                 contentHash = "UNSIGNED-PAYLOAD";

@@ -30,7 +30,7 @@ internal class EnumCache<T> where T : Enum
 
     public string AsString(ref T value)
     {
-        if (!_map.TryGetValue(value, out string str))
+        if (!_map.TryGetValue(value, out string? str))
             throw new InvalidOperationException("Invalid enum value " + value);
 
         return str;
@@ -38,9 +38,9 @@ internal class EnumCache<T> where T : Enum
 
     private string? GetAttributeValue(string name)
     {
-        EnumValueAttribute attributes = _type.GetField(name).GetCustomAttribute<EnumValueAttribute>();
+        EnumValueAttribute? attributes = _type.GetField(name)?.GetCustomAttribute<EnumValueAttribute>();
         return attributes?.Value;
     }
 
-    public bool TryGetValueFromString(string value, out T enumVal) => _map2.TryGetValue(value, out enumVal);
+    public bool TryGetValueFromString(string value, out T? enumVal) => _map2.TryGetValue(value, out enumVal);
 }

@@ -46,7 +46,7 @@ internal class MarshalFactory : IMarshalFactory
         Stream? content = null;
 
         //Map specific properties. Get the content if there is any.
-        if (_requestMarshals.TryGetValue(typeof(TRequest), out IRequestMarshal marshaller))
+        if (_requestMarshals.TryGetValue(typeof(TRequest), out IRequestMarshal? marshaller))
             content = ((IRequestMarshal<TRequest>)marshaller).MarshalRequest(request, config);
 
         //If the specific mapper did not return a content, but the request has content, then map it here
@@ -69,7 +69,7 @@ internal class MarshalFactory : IMarshalFactory
 
     public void MarshalResponse<TResponse>(SimpleS3Config config, TResponse response, IDictionary<string, string> headers, Stream responseStream) where TResponse : IResponse
     {
-        if (_responseMarshals.TryGetValue(typeof(TResponse), out IResponseMarshal marshaller))
+        if (_responseMarshals.TryGetValue(typeof(TResponse), out IResponseMarshal? marshaller))
             ((IResponseMarshal<TResponse>)marshaller).MarshalResponse(config, response, headers, responseStream);
     }
 }

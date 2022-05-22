@@ -10,7 +10,7 @@ internal static class DictionaryExtensions
 
     public static string GetRequiredValue(this IDictionary<string, string> response, string key)
     {
-        if (response.TryGetValue(key, out string value))
+        if (response.TryGetValue(key, out string? value))
             return value;
 
         throw new S3Exception($"Failed to get required header '{key}'");
