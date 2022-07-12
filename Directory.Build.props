@@ -52,7 +52,7 @@
 
   <!--Default packages-->
   <ItemGroup>
-    <PackageReference Include="MinVer" Version="4.0.0" PrivateAssets="all" />
+    <PackageReference Include="MinVer" Version="4.1.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" PrivateAssets="all" />
   </ItemGroup>
@@ -60,7 +60,7 @@
   <!--Analyzers-->
   <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true' OR '$(BuildingByReSharper)' == 'true'">
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.2" PrivateAssets="all" />
-    <PackageReference Include="Roslynator.Analyzers" Version="4.1.0" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.1.1" PrivateAssets="all" />
     <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" PrivateAssets="all" />
     <PackageReference Include="ReflectionAnalyzers" Version="0.3.1" />
     <PackageReference Include="Lindhart.Analyser.MissingAwaitWarning" Version="2.0.0" />
@@ -72,7 +72,7 @@
 
   <ItemGroup Condition="('$(BuildingInsideVisualStudio)' == 'true' OR '$(BuildingByReSharper)' == 'true') and !($(MSBuildProjectName.EndsWith('.Tests')) or $(MSBuildProjectName.Contains('.Benchmarks')) or $(MSBuildProjectName.Contains('.Examples')))">
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.3" PrivateAssets="all" />
-    <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0" PrivateAssets="all" />
+    <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0.1" PrivateAssets="all" />
   </ItemGroup>
 
   <!--Only analyze when using Visual Studio-->

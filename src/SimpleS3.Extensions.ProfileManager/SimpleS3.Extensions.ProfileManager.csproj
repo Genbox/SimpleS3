@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(DefineConstants.Contains(COMMERCIAL))">
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="6.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="6.0.7" />
   </ItemGroup>
 
   <ItemGroup>
