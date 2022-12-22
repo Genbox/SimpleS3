@@ -1,4 +1,4 @@
-namespace Genbox.SimpleS3.Core.Common.Constants;
+namespace Genbox.SimpleS3.Core.Common.Misc;
 
 public static class AmzHeaders
 {

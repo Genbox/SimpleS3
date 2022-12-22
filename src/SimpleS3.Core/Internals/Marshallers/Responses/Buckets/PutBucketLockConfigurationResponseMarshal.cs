@@ -1,6 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
-using Genbox.SimpleS3.Core.Common.Constants;
+using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;

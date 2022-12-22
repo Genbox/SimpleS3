@@ -2,7 +2,7 @@
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace Genbox.SimpleS3.Cli.Commands.Profile;
+namespace Genbox.SimpleS3.Cli.Commands.Profiles;
 
 [Command(Description = "Create a new profile")]
 internal class CreateCommand : CommandBase

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Genbox.SimpleS3.Cli.Commands.Buckets;
+using Genbox.SimpleS3.Cli.Commands.Profiles;
 using McMaster.Extensions.CommandLineUtils;
 using Object = Genbox.SimpleS3.Cli.Commands.Objects.Object;
 
@@ -7,7 +8,7 @@ namespace Genbox.SimpleS3.Cli.Commands;
 
 [VersionOptionFromMember("--version", MemberName = nameof(GetVersion))]
 [Command("s3cli")]
-[Subcommand(typeof(Bucket), typeof(Profile.Profile), typeof(Object))]
+[Subcommand(typeof(Bucket), typeof(Profile), typeof(Object))]
 public sealed class S3Cli : CommandBase
 {
     [Option("-p <profile>", Description = "Set the profile to use")]

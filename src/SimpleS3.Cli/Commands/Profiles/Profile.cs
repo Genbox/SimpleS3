@@ -1,6 +1,6 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
 
-namespace Genbox.SimpleS3.Cli.Commands.Profile;
+namespace Genbox.SimpleS3.Cli.Commands.Profiles;
 
 [Command("profile")]
 [Subcommand(typeof(CreateCommand), typeof(ListCommand))]

@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Genbox.SimpleS3.Core.Common.Constants;
+using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Internals.Misc;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 

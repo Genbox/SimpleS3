@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Common.Constants;
+﻿using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using JetBrains.Annotations;
 

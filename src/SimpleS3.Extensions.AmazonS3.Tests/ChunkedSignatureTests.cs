@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Common.Authentication;
-using Genbox.SimpleS3.Core.Common.Constants;
+using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Builders;

@@ -150,12 +150,12 @@ internal class ChunkedStream : Stream
 
     public override void SetLength(long value)
     {
-        throw new NotSupportedException();
+        throw new NotSupportedException(nameof(ChunkedStream) + " does not support length");
     }
 
     public override void Write(byte[] buffer, int offset, int count)
     {
-        throw new NotSupportedException();
+        throw new NotSupportedException(nameof(ChunkedStream) + " does not support writing");
     }
 
     private static int CalculateChunkHeaderLength(long chunkSize, int signatureLength) =>

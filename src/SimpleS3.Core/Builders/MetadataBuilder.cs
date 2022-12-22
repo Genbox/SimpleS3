@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Text;
-using Genbox.SimpleS3.Core.Common.Constants;
+using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Internals.Pools;
 
 namespace Genbox.SimpleS3.Core.Builders;
