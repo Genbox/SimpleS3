@@ -1,10 +1,10 @@
-using Genbox.SimpleS3.Core.Common.Misc;
+﻿using Genbox.SimpleS3.Core.Common.Misc;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Internal;
 
 internal static class HttpRequestMessageExtensions
 {
-    private static readonly ISet<string> _contentHeaders = new HashSet<string>
+    private static readonly ISet<string> _contentHeaders = new HashSet<string>(StringComparer.Ordinal)
     {
         HttpHeaders.ContentDisposition,
         HttpHeaders.ContentEncoding,
