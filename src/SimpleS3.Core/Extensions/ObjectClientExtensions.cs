@@ -183,14 +183,14 @@ public static class ObjectClientExtensions
         } while (response.IsTruncated);
     }
 
-    public static Task<PutObjectResponse> PutObjectDataAsync(this IObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
+    public static async Task<PutObjectResponse> PutObjectDataAsync(this IObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
     {
         Validator.RequireNotNull(client);
         Validator.RequireNotNull(bucketName);
         Validator.RequireNotNull(objectKey);
 
         using MemoryStream ms = new MemoryStream(data);
-        return client.PutObjectAsync(bucketName, objectKey, ms, config, token);
+        return await client.PutObjectAsync(bucketName, objectKey, ms, config, token).ConfigureAwait(false);
     }
 
     public static Task<PutObjectResponse> PutObjectStringAsync(this IObjectClient client, string bucketName, string objectKey, string content, Encoding? encoding = null, Action<PutObjectRequest>? config = null, CancellationToken token = default)

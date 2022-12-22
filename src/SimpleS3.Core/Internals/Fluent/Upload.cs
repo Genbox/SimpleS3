@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using Genbox.HttpBuilders;
 using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -208,10 +208,10 @@ internal class Upload : IUpload
         return _objectOperations.PutObjectAsync(_request, token);
     }
 
-    public Task<PutObjectResponse> UploadDataAsync(byte[] data, CancellationToken token = default)
+    public async Task<PutObjectResponse> UploadDataAsync(byte[] data, CancellationToken token = default)
     {
         using MemoryStream ms = new MemoryStream(data);
-        return UploadAsync(ms, token);
+        return await UploadAsync(ms, token).ConfigureAwait(false);
     }
 
     public Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default)
