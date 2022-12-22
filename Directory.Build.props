@@ -39,7 +39,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-    <!--Analyzers-->
+    <!--Disable analyzers by default-->
     <WarningLevel>0</WarningLevel>
     <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
@@ -50,20 +50,39 @@
     <ErrorReport>none</ErrorReport>
   </PropertyGroup>
 
-  <!--Default packages-->
+  <!--Development packages-->
   <ItemGroup>
-    <PackageReference Include="MinVer" Version="4.1.0" PrivateAssets="all" />
+    <PackageReference Include="MinVer" Version="4.2.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
-    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" PrivateAssets="all" />
+    <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!--Analyzers for test projects only-->
+  <ItemGroup Condition="('$(BuildingInsideVisualStudio)' == 'true' OR '$(BuildingByReSharper)' == 'true') and $(MSBuildProjectName.EndsWith('.Tests'))">
+    <PackageReference Include="Moq.Analyzers" Version="0.0.9" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Testing.CSharp.Xunit" Version="4.2.0" PrivateAssets="all" />
+    <PackageReference Include="xunit.analyzers" Version="1.1.0" PrivateAssets="all" />
   </ItemGroup>
 
   <!--Analyzers-->
-  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true' OR '$(BuildingByReSharper)' == 'true'">
+  <ItemGroup Condition="('$(BuildingInsideVisualStudio)' == 'true' OR '$(BuildingByReSharper)' == 'true') and !($(MSBuildProjectName.EndsWith('.Tests')) or $(MSBuildProjectName.Contains('.Benchmarks')) or $(MSBuildProjectName.Contains('.Examples')))">
+    <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0.1" PrivateAssets="all" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.2" PrivateAssets="all" />
-    <PackageReference Include="Roslynator.Analyzers" Version="4.1.1" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.2.0" PrivateAssets="all" />
     <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" PrivateAssets="all" />
-    <PackageReference Include="ReflectionAnalyzers" Version="0.3.1" />
-    <PackageReference Include="Lindhart.Analyser.MissingAwaitWarning" Version="2.0.0" />
+    <PackageReference Include="AspNetCoreAnalyzers" Version="0.3.0" PrivateAssets="all" />
+    <PackageReference Include="ReflectionAnalyzers" Version="0.3.1" PrivateAssets="all" />
+    <PackageReference Include="Lindhart.Analyser.MissingAwaitWarning" Version="2.0.0" PrivateAssets="all" />
+    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.7" PrivateAssets="all" />
+    <PackageReference Include="Puma.Security.Rules.2022" Version="2.4.23" PrivateAssets="all" />
+    <PackageReference Include="SmartanAlyzers.ExceptionAnalyzer" Version="1.0.10" PrivateAssets="all" />
+    <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.4.27" PrivateAssets="all" />
+    <PackageReference Include="SharpSource" Version="1.14.1" PrivateAssets="All" />
+    <PackageReference Include="Blowin.Required" Version="1.0.4" PrivateAssets="all" />
+    <PackageReference Include="Meziantou.Analyzer" Version="1.0.757" PrivateAssets="all" />
+    <PackageReference Include="NetFabric.Hyperlinq.Analyzer" Version="2.0.4" PrivateAssets="all" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.51.0.59060" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' AND '$(BuildingInsideVisualStudio)' == 'true' OR '$(BuildingByReSharper)' == 'true'">
@@ -71,7 +90,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="('$(BuildingInsideVisualStudio)' == 'true' OR '$(BuildingByReSharper)' == 'true') and !($(MSBuildProjectName.EndsWith('.Tests')) or $(MSBuildProjectName.Contains('.Benchmarks')) or $(MSBuildProjectName.Contains('.Examples')))">
-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.3" PrivateAssets="all" />
+    <!--    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.3" PrivateAssets="all" />-->
     <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0.1" PrivateAssets="all" />
   </ItemGroup>
 
