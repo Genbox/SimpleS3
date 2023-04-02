@@ -10,6 +10,6 @@
     <ProjectReference Include="../$(BaseProject)/$(BaseProject).csproj" Condition="Exists('../$(BaseProject)/$(BaseProject).csproj')" />
   </ItemGroup>
 
-  <Import Project="../local/Examples.props" Condition="Exists('../local/Examples.props')" />
+  <Import Project="../Local/Examples.props" Condition="Exists('../Local/Examples.props')" />
 
 </Project>

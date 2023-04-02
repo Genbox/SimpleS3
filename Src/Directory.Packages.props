@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="../local/Directory.Packages.props" Condition="Exists('../local/Directory.Packages.props')" />
+  <Import Project="../Local/Directory.Packages.props" Condition="Exists('../Local/Directory.Packages.props')" />
   <Import Project="Directory.Packages.Analyzers.props" />
 
   <ItemGroup>

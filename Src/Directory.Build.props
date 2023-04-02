@@ -71,7 +71,7 @@
     <ProjectType Condition="$(_LastDot) &gt; 0">$(MSBuildProjectName.Substring($([MSBuild]::Add($(_LastDot), 1))))</ProjectType>
   </PropertyGroup>
 
-  <Import Project="../local/Directory.Build.props" Condition="Exists('../local/Directory.Build.props')" />
-  <Import Project="../imports/$(ProjectType).props" Condition="Exists('../imports/$(ProjectType).props')" />
+  <Import Project="../Local/Directory.Build.props" Condition="Exists('../Local/Directory.Build.props')" />
+  <Import Project="../Imports/$(ProjectType).props" Condition="Exists('../Imports/$(ProjectType).props')" />
 
 </Project>

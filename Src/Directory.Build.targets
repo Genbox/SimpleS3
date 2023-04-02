@@ -25,6 +25,6 @@
     </PropertyGroup>
   </Target>
 
-  <Import Project="../local/Directory.Build.targets" Condition="Exists('../local/Directory.Build.targets')" />
+  <Import Project="../Local/Directory.Build.targets" Condition="Exists('../Local/Directory.Build.targets')" />
 
 </Project>

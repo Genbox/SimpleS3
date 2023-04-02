@@ -40,6 +40,6 @@
     <PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="all" />
   </ItemGroup>
 
-  <Import Project="../local/Library.props" Condition="Exists('../local/Library.props')" />
+  <Import Project="../Local/Library.props" Condition="Exists('../Local/Library.props')" />
 
 </Project>
