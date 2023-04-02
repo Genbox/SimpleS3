@@ -67,16 +67,16 @@ internal class RetryableBufferingStream : Stream
 
     public override void SetLength(long value)
     {
-        throw new NotSupportedException();
+        throw new NotSupportedException("SetLength is not supported");
     }
 
     public override void Flush()
     {
-        throw new NotSupportedException();
+        throw new NotSupportedException("Flush is not supported");
     }
 
     public override void Write(byte[] buffer, int offset, int count)
     {
-        throw new NotSupportedException();
+        throw new NotSupportedException("Write is not supported");
     }
 }

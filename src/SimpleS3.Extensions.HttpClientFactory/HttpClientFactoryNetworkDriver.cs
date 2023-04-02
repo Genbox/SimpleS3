@@ -42,7 +42,7 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
                 //Do nothing. Use default.
             }
             else
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(_config.HttpVersion + " is not a supported HTTP version");
 
             if (requestStream != null)
                 httpRequest.Content = new StreamContent(requestStream);
@@ -59,7 +59,7 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
 
         _logger.LogDebug("Got an {Status} response with {StatusCode}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
 
-        IDictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Headers)
             responseHeaders.Add(header.Key, header.Value.First());

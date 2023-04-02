@@ -40,7 +40,7 @@ public sealed class HttpClientNetworkDriver : INetworkDriver
                 //Do nothing. Use default.
             }
             else
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(_config.HttpVersion + " is not a supported HTTP version");
 
             if (requestStream != null)
                 httpRequest.Content = new StreamContent(requestStream);

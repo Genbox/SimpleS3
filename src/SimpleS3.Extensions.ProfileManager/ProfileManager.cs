@@ -87,7 +87,7 @@ public class ProfileManager : IProfileManager
             IProfile? profile = GetProfile(name);
 
             if (profile == null)
-                throw new Exception("Concurrency: A profile was deleted white iterating them");
+                throw new InvalidOperationException("Concurrency: A profile was deleted white iterating them");
 
             yield return profile;
         }

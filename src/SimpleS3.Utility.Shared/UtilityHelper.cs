@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Globalization;
+using System.Net;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Extensions;
@@ -43,7 +44,7 @@ public static class UtilityHelper
             string? input = Console.ReadLine();
 
             if (input == null)
-                throw new Exception("Unexpected null from ReadLine");
+                throw new NullReferenceException("Unexpected null from ReadLine");
 
             string[] userChoices = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
@@ -51,7 +52,7 @@ public static class UtilityHelper
             {
                 string c = userChoices[i];
 
-                if (!int.TryParse(c, out int intVal) || intVal < 0 || intVal > choices.Length)
+                if (!int.TryParse(c, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out int intVal) || intVal < 0 || intVal > choices.Length)
                 {
                     Console.WriteLine($"Invalid input '{c}'. Try again.");
                     Array.Clear(returnChoices);

@@ -58,14 +58,14 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
         {
             int index = IndexOf(key);
             if (index < 0)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException(key + " was not found");
             return _entries[index].Value;
         }
         set => TryInsert(null, key, value, InsertionBehavior.OverwriteExisting);
     }
 
-    public IEnumerable<TKey> Keys => throw new NotSupportedException();
-    public IEnumerable<TValue> Values => throw new NotSupportedException();
+    public IEnumerable<TKey> Keys => throw new NotSupportedException("Keys is not available on this type.");
+    public IEnumerable<TValue> Values => throw new NotSupportedException("Values is not available on this type.");
 
     /// <summary>Determines whether the <see cref="OrderedDictionary{TKey, TValue}" /> contains the specified key as an O(1)
     /// operation.</summary>
@@ -209,7 +209,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
                 {
                     // The chain of entries forms a loop; which means a concurrent update has happened.
                     // Break out of the loop and throw, rather than looping forever.
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("There were too many collisions");
                 }
 
                 ++collisionCount;
@@ -230,7 +230,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
                     _entries[i].Value = value;
                     return true;
                 case InsertionBehavior.ThrowOnExisting:
-                    throw new ArgumentException();
+                    throw new ArgumentException(key + " already exists");
                 default:
                     return false;
             }
@@ -317,7 +317,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
                 {
                     // The chain of entries forms a loop; which means a concurrent update has happened.
                     // Break out of the loop and throw, rather than looping forever.
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("There were too many collisions");
                 }
 
                 ++collisionCount;
