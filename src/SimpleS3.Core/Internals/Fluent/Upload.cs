@@ -40,7 +40,7 @@ internal class Upload : IUpload
 
     public IUpload WithCacheControl(CacheControlType type, int seconds = -1)
     {
-        _request.CacheControl.Set(type, seconds);
+        _request.CacheControl.Add(type, seconds);
         return this;
     }
 

@@ -70,7 +70,7 @@ public class HeadObjectTests : TestBase
 
         HeadObjectResponse resp = await client.HeadObjectAsync(bucket, nameof(HeadObjectResponseHeaders), r =>
         {
-            r.ResponseCacheControl.Set(CacheControlType.MaxAge, 42);
+            r.ResponseCacheControl.Add(CacheControlType.MaxAge, 42);
             r.ResponseContentDisposition.Set(ContentDispositionType.Attachment, "filename.txt");
             r.ResponseContentEncoding.Add(ContentEncodingType.Gzip);
             r.ResponseContentLanguage.Add("da-DK");

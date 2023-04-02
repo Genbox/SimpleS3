@@ -31,6 +31,7 @@ public class DeleteObjectsTests : TestBase
         S3DeletedObject? delObj = Assert.Single(delResp.Deleted);
         Assert.Equal(resources[0].ObjectKey, delObj.ObjectKey);
         Assert.True(delObj.IsDeleteMarker);
+        Assert.NotNull(delObj.DeleteMarkerVersionId);
         Assert.NotEmpty(delObj.DeleteMarkerVersionId);
 
         S3DeleteError? errorObj = Assert.Single(delResp.Errors);

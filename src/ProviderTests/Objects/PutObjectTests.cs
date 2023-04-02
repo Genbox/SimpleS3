@@ -121,7 +121,7 @@ public class PutObjectTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task PutObjectCacheControl(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectCacheControl), null, r => r.CacheControl.Set(CacheControlType.MaxAge, 100)).ConfigureAwait(false);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectCacheControl), null, r => r.CacheControl.Add(CacheControlType.MaxAge, 100)).ConfigureAwait(false);
         Assert.Equal(200, putResp.StatusCode);
 
         GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectCacheControl)).ConfigureAwait(false);
@@ -261,7 +261,7 @@ public class PutObjectTests : TestBase
 
         GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectResponseHeaders), req =>
         {
-            req.ResponseCacheControl.Set(CacheControlType.MaxAge, 42);
+            req.ResponseCacheControl.Add(CacheControlType.MaxAge, 42);
             req.ResponseContentDisposition.Set(ContentDispositionType.Attachment, "filename.txt");
             req.ResponseContentEncoding.Add(ContentEncodingType.Gzip);
             req.ResponseContentLanguage.Add("da-DK");

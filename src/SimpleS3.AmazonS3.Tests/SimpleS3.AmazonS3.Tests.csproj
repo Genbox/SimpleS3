@@ -1,11 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup>
-
-  <Import Project="..\..\Imports\TestImport.props" />
-
   <ItemGroup>
     <ProjectReference Include="..\SimpleS3.AmazonS3\SimpleS3.AmazonS3.csproj" />
   </ItemGroup>

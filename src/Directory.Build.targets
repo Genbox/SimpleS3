@@ -1,0 +1,30 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup>
+    <!--Don't show the packages.lock file in projects-->
+    <None Remove="packages.lock.json" />
+  </ItemGroup>
+
+  <Target Name="NugetChanges" BeforeTargets="Build">
+    <!--Only include readme as a project item during build-->
+    <ItemGroup Condition="'$(Configuration)' == 'Release' AND '$(IsPackable)' == 'true'">
+      <None Include="..\..\README.md" Pack="true" PackagePath="" />
+    </ItemGroup>
+
+    <!--other settings nuget packages-->
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+      <DeterministicSourcePaths>true</DeterministicSourcePaths>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+  </Target>
+
+  <!--MinVer versioning-->
+  <Target Name="ModifyAssemblyVersion" AfterTargets="MinVer">
+    <PropertyGroup>
+      <AssemblyVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).0</AssemblyVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Import Project="../local/Directory.Build.targets" Condition="Exists('../local/Directory.Build.targets')" />
+
+</Project>

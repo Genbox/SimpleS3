@@ -1,0 +1,15 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Condition="$(MSBuildProjectName) != 'SimpleS3.Core.TestBase'" Include="..\SimpleS3.Core.TestBase\SimpleS3.Core.TestBase.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MartinCostello.Logging.XUnit" />
+  </ItemGroup>
+
+</Project>

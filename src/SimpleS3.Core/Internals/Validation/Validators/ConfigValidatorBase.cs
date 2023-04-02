@@ -5,9 +5,9 @@ namespace Genbox.SimpleS3.Core.Internals.Validation.Validators;
 
 internal abstract class ConfigValidatorBase<T> : ValidatorBase<T>, IValidateOptions<T> where T : class
 {
-    public ValidateOptionsResult Validate(string name, T options)
+    public ValidateOptionsResult Validate(string? name, T options)
     {
-        ValidationResult? results = ValidateAsync(options).Result;
+        ValidationResult? results = base.Validate(options);
 
         if (results.IsValid)
             return ValidateOptionsResult.Success;

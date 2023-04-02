@@ -1,0 +1,77 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--Default project info-->
+  <PropertyGroup>
+    <Authors>Ian Qvist</Authors>
+    <Copyright>Copyright 2023, by Ian Qvist. All rights reserved.</Copyright>
+  </PropertyGroup>
+
+  <!--Default project settings-->
+  <PropertyGroup>
+    <!--Assembly settings-->
+    <RootNamespace>Genbox.$(MSBuildProjectName)</RootNamespace>
+    <AssemblyName>Genbox.$(MSBuildProjectName)</AssemblyName>
+
+    <!--C# settings-->
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <Features>strict</Features>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <WarningLevel>0</WarningLevel>
+
+    <!--.NET settings-->
+    <ImplicitUsings>true</ImplicitUsings>
+
+    <!--Package settings-->
+    <RepositoryType>Git</RepositoryType>
+    <PackageProjectUrl>https://github.com/Genbox/$(MSBuildProjectName)</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+    <!--Enable analyzers by default, but not during builds-->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+    <AnalysisMode>all</AnalysisMode>
+    <AnalysisLevel>latest</AnalysisLevel>
+
+    <!--Nuget settings-->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
+    <!--Other settings-->
+    <CopyRetryCount>2</CopyRetryCount>
+    <CopyRetryDelayMilliseconds>500</CopyRetryDelayMilliseconds>
+    <ErrorReport>none</ErrorReport>
+
+    <!--Force reproducible builds-->
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <DisableImplicitLibraryPacksFolder>true</DisableImplicitLibraryPacksFolder>
+
+    <!--SourceLink-->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>false</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+  <!--Only report compiler warnings when compiling in Visual Studio or Rider-->
+  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' == 'true' OR '$(BuildingByReSharper)' == 'true'">
+    <WarningLevel>5</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <_LastDot>$(MSBuildProjectName.LastIndexOf('.', StringComparison.Ordinal))</_LastDot>
+    <BaseProject Condition="$(_LastDot) &gt; 0">$(MSBuildProjectName.Substring(0, $(_LastDot)))</BaseProject>
+    <ProjectType Condition="$(_LastDot) &gt; 0">$(MSBuildProjectName.Substring($([MSBuild]::Add($(_LastDot), 1))))</ProjectType>
+  </PropertyGroup>
+
+  <Import Project="../local/Directory.Build.props" Condition="Exists('../local/Directory.Build.props')" />
+  <Import Project="../imports/$(ProjectType).props" Condition="Exists('../imports/$(ProjectType).props')" />
+
+</Project>

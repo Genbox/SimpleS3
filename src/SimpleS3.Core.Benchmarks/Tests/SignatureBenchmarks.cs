@@ -10,7 +10,6 @@ using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
-using Genbox.SimpleS3.Extensions.AmazonS3;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -28,7 +27,8 @@ public class SignatureBenchmarks
 
     public SignatureBenchmarks()
     {
-        AmazonS3Config config = new AmazonS3Config(new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"), AmazonS3Region.UsEast1);
+        IAccessKey creds = new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
+        SimpleS3Config config = new SimpleS3Config(creds, "eu1-region");
         config.PayloadSignatureMode = SignatureMode.FullSignature;
 
         IOptions<SimpleS3Config> options = Options.Create(config);

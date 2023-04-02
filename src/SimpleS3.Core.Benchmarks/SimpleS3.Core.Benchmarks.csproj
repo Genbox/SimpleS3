@@ -1,21 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="AwsSignatureVersion4" Version="4.0.0" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
-    <PackageReference Include="Enums.NET" Version="4.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SimpleS3.Core\SimpleS3.Core.csproj" />
-    <ProjectReference Include="..\SimpleS3.Extensions.AmazonS3\SimpleS3.Extensions.AmazonS3.csproj" />
+    <PackageReference Include="AwsSignatureVersion4" />
+    <PackageReference Include="Enums.NET" />
   </ItemGroup>
 
 </Project>

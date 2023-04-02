@@ -3,12 +3,12 @@ using Amazon.Util;
 using AwsSignatureVersion4.Private;
 using BenchmarkDotNet.Attributes;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Benchmarks.Misc;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Builders;
-using Genbox.SimpleS3.Extensions.AmazonS3;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -25,13 +25,13 @@ public class AwsSignatureVersion4Benchmarks
     private DummyRequest _request;
     private HttpRequestMessage _request2;
 
+
     [GlobalSetup]
     public void Setup()
     {
         {
-            AmazonS3Config config = new AmazonS3Config();
-            config.Region = AmazonS3Region.EuWest1;
-            config.Credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
+            IAccessKey creds = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
+            SimpleS3Config config = new SimpleS3Config(creds, "eu1-region");
 
             IOptions<SimpleS3Config> options = Options.Create(config);
 
