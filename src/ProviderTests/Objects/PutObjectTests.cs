@@ -49,7 +49,7 @@ public class PutObjectTests : TestBase
     [MultipleProviders(S3Provider.All, "NormalFile", "This/Should/Look/Like/Directories/File.txt", "_\\_", "~", "/", " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~/")]
     public async Task PutObjectValidCharacters(S3Provider _, string bucket, ISimpleClient client, string name)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, name, null).ConfigureAwait(false);
+        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, name, "test").ConfigureAwait(false);
         Assert.Equal(200, putResp.StatusCode);
 
         GetObjectResponse getResp = await client.GetObjectAsync(bucket, name).ConfigureAwait(false);
