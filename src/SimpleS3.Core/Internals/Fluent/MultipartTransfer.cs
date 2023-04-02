@@ -170,11 +170,16 @@ internal class MultipartTransfer : IMultipartTransfer
                 {
                     mutex.WaitOne();
 
-                    output.Seek(offset, SeekOrigin.Begin);
-                    await output.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
-                    offset += read;
-
-                    mutex.ReleaseMutex();
+                    try
+                    {
+                        output.Seek(offset, SeekOrigin.Begin);
+                        await output.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
+                        offset += read;
+                    }
+                    finally
+                    {
+                        mutex.ReleaseMutex();
+                    }
                 }
                 else
                     break;
