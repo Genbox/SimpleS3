@@ -187,7 +187,7 @@ internal class ChunkedStream : Stream
         StringBuilder chunkHeader = StringBuilderPool.Shared.Rent(100);
 
         chunkHeader
-            .Append(contentLength.ToString("X", CultureInfo.InvariantCulture))
+            .Append(contentLength.ToString("X", NumberFormatInfo.InvariantInfo))
             .Append(_chunkSignature)
             .Append(chunkSignature.HexEncode())
             .Append(_newlineStr);

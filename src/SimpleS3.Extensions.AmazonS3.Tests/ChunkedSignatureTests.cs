@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
@@ -195,7 +196,7 @@ public class ChunkedSignatureTests
                 int size = Math.Min(_config.StreamingChunkSize, remaining);
                 remaining -= size;
 
-                sbExpected.Append(size.ToString("X"));
+                sbExpected.Append(size.ToString("X", NumberFormatInfo.InvariantInfo));
                 sbExpected.Append(";chunk-signature=");
                 sbExpected.Append(expectedSignatures[i]);
                 sbExpected.Append("\r\n");

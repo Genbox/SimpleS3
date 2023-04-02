@@ -166,14 +166,14 @@ public class MultipartTests : TestBase
 
         await using MemoryStream ms1 = new MemoryStream(parts[0]);
         UploadPartResponse uploadResp1 = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms1).ConfigureAwait(false);
-        Assert.Equal(provider == S3Provider.BackBlazeB2 ? 400 : 200, uploadResp1.StatusCode);
+        Assert.Equal(200, uploadResp1.StatusCode);
 
         await using MemoryStream ms2 = new MemoryStream(parts[0]);
         UploadPartResponse uploadResp2 = await client.UploadPartAsync(bucket, objectKey, 2, initResp.UploadId, ms2).ConfigureAwait(false);
-        Assert.Equal(provider == S3Provider.BackBlazeB2 ? 400 : 200, uploadResp2.StatusCode);
+        Assert.Equal(200, uploadResp2.StatusCode);
 
         CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { uploadResp1, uploadResp2 }).ConfigureAwait(false);
-        Assert.Equal(provider == S3Provider.BackBlazeB2 ? 500 : 400, completeResp.StatusCode);
+        Assert.Equal(400, completeResp.StatusCode);
     }
 
     [Theory]
