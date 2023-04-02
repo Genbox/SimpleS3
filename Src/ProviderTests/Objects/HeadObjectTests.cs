@@ -4,7 +4,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Utility.Shared;
-using Xunit;
 
 namespace Genbox.ProviderTests.Objects;
 

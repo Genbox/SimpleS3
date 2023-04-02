@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Runtime.CompilerServices;
 using NoEnumeration = JetBrains.Annotations.NoEnumerationAttribute;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Genbox.SimpleS3.Core.Common.Validation;
 

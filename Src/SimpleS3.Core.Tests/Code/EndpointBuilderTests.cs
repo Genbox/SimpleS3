@@ -6,7 +6,6 @@ using Genbox.SimpleS3.Core.Internals.Network;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Options;
-using Xunit;
 
 namespace Genbox.SimpleS3.Core.Tests.Code;
 

@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using System.Text;
-using Xunit;
 
 namespace Genbox.SimpleS3.Core.Tests.Code.Handlers;
 

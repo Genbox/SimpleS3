@@ -1,7 +1,6 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Tests.Code;
-using Xunit;
 
 namespace Genbox.SimpleS3.Core.Common.Tests;
 

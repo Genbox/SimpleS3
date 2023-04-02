@@ -9,7 +9,6 @@ using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.TestBase.Helpers;
 using Genbox.SimpleS3.Extensions.AmazonS3.Tests.Helpers;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 

@@ -12,7 +12,6 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Xunit;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 

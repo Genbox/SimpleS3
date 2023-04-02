@@ -4,7 +4,6 @@ using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Core.TestBase;
 

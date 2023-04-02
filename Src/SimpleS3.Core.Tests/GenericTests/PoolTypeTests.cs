@@ -2,7 +2,6 @@
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
-using Xunit;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 

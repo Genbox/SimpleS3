@@ -1,7 +1,6 @@
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.Wasabi;
-using Xunit;
 
 namespace Genbox.SimpleS3.Wasabi.Tests;
 

@@ -2,7 +2,6 @@
 using System.Xml;
 using System.Xml.Linq;
 using Genbox.SimpleS3.Core.Internals.Xml;
-using Xunit;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 

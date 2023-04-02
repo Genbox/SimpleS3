@@ -1,5 +1,4 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Xunit;
 
 namespace Genbox.SimpleS3.Extensions.Wasabi.Tests;
 

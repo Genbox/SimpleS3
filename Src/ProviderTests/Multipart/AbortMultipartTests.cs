@@ -2,7 +2,6 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Utility.Shared;
-using Xunit;
 
 namespace Genbox.ProviderTests.Multipart;
 

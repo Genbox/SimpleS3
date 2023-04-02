@@ -2,8 +2,6 @@
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
 
