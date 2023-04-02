@@ -1,7 +1,5 @@
 # SimpleS3
 
-[![Build](https://img.shields.io/github/workflow/status/Genbox/SimpleS3/Generic%20build?label=Build)](https://github.com/Genbox/SimpleS3/actions)
-[![Release](https://img.shields.io/github/workflow/status/Genbox/SimpleS3/Nuget%20release?label=Release)](https://github.com/Genbox/SimpleS3/actions)
 [![License](https://img.shields.io/github/license/Genbox/SimpleS3)](https://github.com/Genbox/SimpleS3/blob/master/LICENSE.txt)
 
 ### Description
