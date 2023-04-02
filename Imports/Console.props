@@ -5,6 +5,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <Import Project="../Local/Console.props" Condition="Exists('../Local/Console.props')" />
+  <Import Project="../Locals/Console.props" Condition="Exists('../Locals/Console.props')" />
 
 </Project>

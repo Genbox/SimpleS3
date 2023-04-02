@@ -109,21 +109,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{D2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Local", "Local", "{42708EFE-D307-407D-BF8F-51554F52207F}"
 	ProjectSection(SolutionItems) = preProject
-		Local\Directory.Build.props = Local\Directory.Build.props
+		Locals\Directory.Build.props = Locals\Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{48AE12D0-60CD-40E7-8C5C-883B68322396}"
 	ProjectSection(SolutionItems) = preProject
-		Local\Benchmarks.props = Local\Benchmarks.props
-		Local\Console.props = Local\Console.props
-		Local\Examples.props = Local\Examples.props
-		Local\Library.props = Local\Library.props
-		Local\Tests.props = Local\Tests.props
+		Locals\Benchmarks.props = Locals\Benchmarks.props
+		Locals\Console.props = Locals\Console.props
+		Locals\Examples.props = Locals\Examples.props
+		Locals\Library.props = Locals\Library.props
+		Locals\Tests.props = Locals\Tests.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DADE79C3-616F-4EDB-87EA-0558DD9EDBB7}"
 	ProjectSection(SolutionItems) = preProject
-		Local\Directory.Packages.props = Local\Directory.Packages.props
+		Locals\Directory.Packages.props = Locals\Directory.Packages.props
 	EndProjectSection
 EndProject
 Global

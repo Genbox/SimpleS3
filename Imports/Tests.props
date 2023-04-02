@@ -25,6 +25,6 @@
     <PackageReference Include="xunit.analyzers" PrivateAssets="all" />
   </ItemGroup>
 
-  <Import Project="../Local/Tests.props" Condition="Exists('../Local/Tests.props')" />
+  <Import Project="../Locals/Tests.props" Condition="Exists('../Locals/Tests.props')" />
 
 </Project>
