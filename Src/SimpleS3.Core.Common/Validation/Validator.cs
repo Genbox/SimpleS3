@@ -1,28 +1,9 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using NoEnumeration = JetBrains.Annotations.NoEnumerationAttribute;
 
 namespace Genbox.SimpleS3.Core.Common.Validation;
-
-#if NETSTANDARD2_0
-[AttributeUsage(AttributeTargets.Parameter)]
-public sealed class CallerArgumentExpressionAttribute : Attribute
-{
-    public CallerArgumentExpressionAttribute(string notUsed) {}
-}
-
-[AttributeUsage(AttributeTargets.Parameter)]
-public sealed class DoesNotReturnIf : Attribute
-{
-    public DoesNotReturnIf(bool notUsed) {}
-}
-
-[AttributeUsage(AttributeTargets.Parameter)]
-public sealed class NotNull : Attribute
-{
-    public NotNull() {}
-}
-#endif
 
 // ReSharper disable ExplicitCallerInfoArgument
 public static class Validator

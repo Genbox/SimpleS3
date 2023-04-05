@@ -1,10 +1,11 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using System.Globalization;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Common.Validation;
 
 public static class ValidationMessages
 {
-    public static readonly IDictionary<ValidationStatus, string> Messages = new Dictionary<ValidationStatus, string>
+    public static IDictionary<ValidationStatus, string> Messages { get; } = new Dictionary<ValidationStatus, string>
     {
         { ValidationStatus.Ok, string.Empty },
         { ValidationStatus.WrongFormat, "The input was not in the correct format. The disallowed value was '{0}'" },
@@ -19,7 +20,7 @@ public static class ValidationMessages
         string message = Messages[status];
 
         if (disallowed != null)
-            message = string.Format(message, disallowed);
+            message = string.Format(CultureInfo.InvariantCulture, message, disallowed);
 
         return message;
     }
