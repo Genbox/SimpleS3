@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Serializers;
+namespace Genbox.SimpleS3.Extensions.ProfileManager.Serializers;
 
 /// <summary>This resolver enables the serializer to deserialize properties with internal/private setters</summary>
 internal class ProfileContractResolver : DefaultContractResolver

@@ -282,7 +282,7 @@ public class PutObjectTests : TestBase
     public async Task PutObjectServerSideEncryptionCustomerKey(S3Provider _, string bucket, ISimpleClient client)
     {
         byte[] key = new byte[32];
-        new Random(42).NextBytes(key);
+        Random.Shared.NextBytes(key);
 
         byte[] keyHash = CryptoHelper.Md5Hash(key);
 

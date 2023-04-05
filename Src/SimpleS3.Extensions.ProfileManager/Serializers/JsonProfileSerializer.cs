@@ -3,9 +3,9 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Serializers;
+namespace Genbox.SimpleS3.Extensions.ProfileManager.Serializers;
 
-internal class JsonProfileSerializer : IProfileSerializer
+public class JsonProfileSerializer : IProfileSerializer
 {
     private readonly JsonSerializer _serializer;
 

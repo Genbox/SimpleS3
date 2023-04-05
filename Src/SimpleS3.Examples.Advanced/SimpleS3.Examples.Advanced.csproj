@@ -2,9 +2,9 @@
 
   <Import Project="..\..\Imports\Examples.props" />
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
-  </ItemGroup>
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SimpleS3.Extensions.ProfileManager\SimpleS3.Extensions.ProfileManager.csproj" />

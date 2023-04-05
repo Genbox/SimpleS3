@@ -6,6 +6,12 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 
 public static class ConfigExtensions
 {
+    public static void UseProfile(this SimpleS3Config config, IProfile profile)
+    {
+        config.Credentials = new ProfileAccessKey(profile);
+        config.RegionCode = profile.RegionCode;
+    }
+
     public static void UseProfile(this SimpleS3Config config, IProfileManager profileManager, string profileName)
     {
         IProfile? profile = profileManager.GetProfile(profileName);

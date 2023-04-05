@@ -5,9 +5,9 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers;
 
-namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Setup;
+namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 
-internal class ConsoleProfileSetup : IProfileSetup
+public class ConsoleProfileSetup : IProfileSetup
 {
     private readonly IInputValidator _inputValidator;
     private readonly IProfileManager _profileManager;

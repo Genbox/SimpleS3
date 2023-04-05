@@ -9,7 +9,7 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Genbox.SimpleS3.ProviderBase.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.SimpleS3.ExamplesCommercial;
+namespace Genbox.SimpleS3.Examples.Commercial;
 
 internal static class Program
 {

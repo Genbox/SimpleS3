@@ -2,9 +2,9 @@
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.Storage;
+namespace Genbox.SimpleS3.Extensions.ProfileManager.Storage;
 
-internal class DiskStorage : IStorage
+public class DiskStorage : IStorage
 {
     private readonly DiskStorageOptions _options;
 
