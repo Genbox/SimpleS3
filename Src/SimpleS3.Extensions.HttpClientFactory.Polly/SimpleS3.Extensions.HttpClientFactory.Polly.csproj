@@ -3,7 +3,8 @@
   <Import Project="..\..\Imports\Library.props" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" />
+    <PackageReference Include="Polly" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
   </ItemGroup>
 
   <ItemGroup>

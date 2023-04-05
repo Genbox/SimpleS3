@@ -41,7 +41,7 @@ public static class ServiceCollectionExtensions
         coreBuilder.UseWasabi();
 
         IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
-        httpBuilder.UseDefaultHttpPolicy();
+        httpBuilder.UseRetryAndTimeout();
 
         coreBuilder.Services.AddSingleton(x =>
         {

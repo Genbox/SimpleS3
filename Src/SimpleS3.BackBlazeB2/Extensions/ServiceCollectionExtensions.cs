@@ -33,7 +33,8 @@ public static class ServiceCollectionExtensions
         coreBuilder.UseBackBlazeB2();
 
         IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
-        httpBuilder.UseDefaultHttpPolicy();
+        httpBuilder.UseRetryAndTimeout();
+
 
         coreBuilder.Services.AddSingleton(x =>
         {

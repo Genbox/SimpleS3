@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.TestBase;
 using Genbox.SimpleS3.Core.Tests.Code.Handlers;
 using Genbox.SimpleS3.Core.Tests.Code.Streams;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
+using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +21,11 @@ public class TransientNetworkErrorTests : OfflineTestBase
     {
         coreBuilder.UseHttpClientFactory()
                    .ConfigurePrimaryHttpMessageHandler(() => _handler)
-                   .UseRetryPolicy(3, attempt => TimeSpan.Zero);
+                   .UseRetryAndTimeout(x =>
+                   {
+                       x.Retries = 3;
+                       x.RetryMode = RetryMode.NoDelay;
+                   });
 
         base.ConfigureCoreBuilder(coreBuilder, configuration);
     }
@@ -37,11 +42,11 @@ public class TransientNetworkErrorTests : OfflineTestBase
     }
 
     [Fact]
-    public async Task TestTransientNetworkError_Nonseekable()
+    public async Task TestTransientNetworkError_NonSeekable()
     {
         using NonSeekableStream ms = new NonSeekableStream(new byte[4096]);
 
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTransientNetworkError_Nonseekable), ms).ConfigureAwait(false);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTransientNetworkError_NonSeekable), ms).ConfigureAwait(false);
 
         Assert.True(response.IsSuccess);
         Assert.True(_handler.RequestCounter >= 2);

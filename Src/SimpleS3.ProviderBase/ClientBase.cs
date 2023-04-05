@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Genbox.SimpleS3.Core;
+﻿using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
@@ -7,6 +6,7 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
+using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -18,7 +18,7 @@ public abstract class ClientBase : IDisposable
 {
     private ServiceProvider? _serviceProvider;
 
-    protected internal ClientBase(IInputValidator inputValidator, SimpleS3Config config, IWebProxy? proxy = null)
+    protected internal ClientBase(IInputValidator inputValidator, SimpleS3Config config, NetworkConfig? networkConfig = null)
     {
         ServiceCollection services = new ServiceCollection();
         services.AddSingleton(inputValidator);
@@ -29,8 +29,19 @@ public abstract class ClientBase : IDisposable
 
         IHttpClientBuilder httpBuilder = builder.UseHttpClientFactory();
 
-        if (proxy != null)
-            httpBuilder.UseProxy(proxy);
+        if (networkConfig != null)
+        {
+            if (networkConfig.Proxy != null)
+                httpBuilder.UseProxy(networkConfig.Proxy);
+
+            httpBuilder.UseRetryAndTimeout(x =>
+            {
+                x.Retries = networkConfig.Retries;
+                x.RetryMode = networkConfig.RetryMode;
+                x.Timeout = networkConfig.Timeout;
+                x.MaxRandomDelay = networkConfig.MaxRandomDelay;
+            });
+        }
 
         Client = Build(services);
     }

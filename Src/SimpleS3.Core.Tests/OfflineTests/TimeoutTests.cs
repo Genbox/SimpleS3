@@ -22,10 +22,7 @@ public class TimeoutTests : OfflineTestBase
     {
         coreBuilder.UseHttpClientFactory()
                    .ConfigurePrimaryHttpMessageHandler(() => _handler)
-                   .UseRetryPolicy(3, attempt => TimeSpan.Zero)
-
-                   // Set an extraordinary timeout
-                   .UseTimeoutPolicy(TimeSpan.FromSeconds(3));
+                   .UseRetryAndTimeout(3, TimeSpan.FromSeconds(3));
 
         base.ConfigureCoreBuilder(coreBuilder, configuration);
     }

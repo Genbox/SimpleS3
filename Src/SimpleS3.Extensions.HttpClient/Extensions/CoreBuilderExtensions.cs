@@ -28,9 +28,9 @@ public static class CoreBuilderExtensions
     {
         CustomHttpClientBuilder builder = new CustomHttpClientBuilder(clientBuilder.Services, clientBuilder.Name);
 
-        builder.Services.Configure<HttpBuilderActions>(actions =>
+        builder.Services.Configure<HttpBuilderActions>(clientBuilder.Name, x =>
         {
-            actions.HttpHandlerActions.Add((provider, handler) =>
+            x.HttpHandlerActions.Add((provider, handler) =>
             {
                 IOptions<HttpClientConfig> opt = provider.GetRequiredService<IOptions<HttpClientConfig>>();
                 HttpClientConfig options = opt.Value;
@@ -44,7 +44,7 @@ public static class CoreBuilderExtensions
                     handler.Proxy = new WebProxy(options.Proxy);
             });
 
-            actions.HttpClientActions.Add((_, client) =>
+            x.HttpClientActions.Add((_, client) =>
             {
                 client.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.DefaultUserAgent);
                 client.DefaultRequestHeaders.TransferEncodingChunked = false;

@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase;
 using Genbox.SimpleS3.Core.Tests.Code.Handlers;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
+using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +21,11 @@ public class NetworkErrorTests : OfflineTestBase
     {
         coreBuilder.UseHttpClientFactory()
                    .ConfigurePrimaryHttpMessageHandler(() => _handler)
-                   .UseRetryPolicy(3, attempt => TimeSpan.Zero);
+                   .UseRetryAndTimeout(x =>
+                   {
+                       x.Retries = 3;
+                       x.RetryMode = RetryMode.NoDelay;
+                   });
 
         base.ConfigureCoreBuilder(coreBuilder, configuration);
     }

@@ -33,7 +33,7 @@ public static class ServiceCollectionExtensions
         coreBuilder.UseGoogleCloudStorage();
 
         IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
-        httpBuilder.UseDefaultHttpPolicy();
+        httpBuilder.UseRetryAndTimeout();
 
         coreBuilder.Services.AddSingleton(x =>
         {

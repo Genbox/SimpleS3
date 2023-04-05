@@ -29,7 +29,7 @@ public class ServiceManager
         builder.UseProfileManager();
 
         IHttpClientBuilder httpBuilder = builder.UseHttpClientFactory()
-                                                .UseDefaultHttpPolicy();
+                                                .UseRetryAndTimeout();
 
         if (proxyUrl != null)
             httpBuilder.UseProxy(proxyUrl);

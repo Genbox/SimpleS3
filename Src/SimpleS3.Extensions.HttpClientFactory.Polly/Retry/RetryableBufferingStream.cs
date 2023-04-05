@@ -50,9 +50,19 @@ internal class RetryableBufferingStream : Stream
         _buffered = true;
     }
 
+    private void ReadSource()
+    {
+        _underlyingStream.CopyTo(_bufferStream);
+        _bufferStream.Seek(0, SeekOrigin.Begin);
+        _buffered = true;
+    }
+
     public override int Read(byte[] buffer, int offset, int count)
     {
-        return ReadAsync(buffer, offset, count, CancellationToken.None).GetAwaiter().GetResult();
+        if (!_buffered)
+            ReadSource();
+
+        return _bufferStream.Read(buffer, offset, count);
     }
 
     public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)

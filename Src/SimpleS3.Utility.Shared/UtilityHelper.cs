@@ -97,7 +97,7 @@ public static class UtilityHelper
         services.Configure<HttpClientFactoryConfig>(x => x.HttpVersion = HttpVersion.Http2);
 
         if (enableRetry)
-            httpBuilder.UseDefaultHttpPolicy();
+            httpBuilder.UseRetryAndTimeout();
 
         IConfigurationSection proxySection = configRoot.GetSection("Proxy");
 

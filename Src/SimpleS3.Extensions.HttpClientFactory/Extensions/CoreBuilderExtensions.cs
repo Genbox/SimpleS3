@@ -13,29 +13,29 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 
 public static class CoreBuilderExtensions
 {
-    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig, IServiceProvider> config, string? name = null)
+    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(config);
         return UseHttpClientFactory(clientBuilder);
     }
 
-    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig> config, string? name = null)
+    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig> config)
     {
         clientBuilder.Services.Configure(config);
         return UseHttpClientFactory(clientBuilder);
     }
 
-    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, string? name = null)
+    public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder)
     {
-        CustomHttpClientFactoryBuilder builder = new CustomHttpClientFactoryBuilder(clientBuilder.Services, name);
+        CustomHttpClientFactoryBuilder builder = new CustomHttpClientFactoryBuilder(clientBuilder.Services, clientBuilder.Name);
 
-        //Contrary to the naming, this does not add a HttpClient to the services. It is the factories etc. necessary for HttpClientFactory to work.
-        builder.Services.AddHttpClient();
+        //Add HttpClientFactory and friends. Register it only for HttpClientFactoryNetworkDriver.
+        builder.Services.AddHttpClient<HttpClientFactoryNetworkDriver>(builder.Name);
 
         //We register the driver this way in order to support named configs in case the user want config isolation
         builder.Services.AddSingleton<INetworkDriver, HttpClientFactoryNetworkDriver>(x => ActivatorUtilities.CreateInstance<HttpClientFactoryNetworkDriver>(x, builder.Name));
 
-        builder.Services.Configure<HttpBuilderActions>(x =>
+        builder.Services.Configure<HttpBuilderActions>(builder.Name, x =>
         {
             x.HttpClientActions.Add((_, client) =>
             {

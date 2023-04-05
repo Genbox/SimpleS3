@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -26,26 +25,26 @@ public sealed class BackBlazeB2Client : ClientBase, ISimpleClient
     /// <param name="keyId">The key id</param>
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
-    /// <param name="proxy">A web proxy (optional)</param>
-    public BackBlazeB2Client(string keyId, byte[] accessKey, BackBlazeB2Region region, IWebProxy? proxy = null) : this(new BackBlazeB2Config(new AccessKey(keyId, accessKey), region), proxy) {}
+    /// <param name="networkConfig">Network configuration</param>
+    public BackBlazeB2Client(string keyId, byte[] accessKey, BackBlazeB2Region region, NetworkConfig? networkConfig = null) : this(new BackBlazeB2Config(new AccessKey(keyId, accessKey), region), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="BackBlazeB2Client" /></summary>
     /// <param name="keyId">The key id</param>
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
-    /// <param name="proxy">A web proxy (optional)</param>
-    public BackBlazeB2Client(string keyId, string accessKey, BackBlazeB2Region region, IWebProxy? proxy = null) : this(new BackBlazeB2Config(new StringAccessKey(keyId, accessKey), region), proxy) {}
+    /// <param name="networkConfig">Network configuration</param>
+    public BackBlazeB2Client(string keyId, string accessKey, BackBlazeB2Region region, NetworkConfig? networkConfig = null) : this(new BackBlazeB2Config(new StringAccessKey(keyId, accessKey), region), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="BackBlazeB2Client" /></summary>
     /// <param name="credentials">The credentials to use</param>
     /// <param name="region">The region you wish to use</param>
-    /// <param name="proxy">A web proxy (optional)</param>
-    public BackBlazeB2Client(IAccessKey credentials, BackBlazeB2Region region, IWebProxy? proxy = null) : this(new BackBlazeB2Config(credentials, region), proxy) {}
+    /// <param name="networkConfig">Network configuration</param>
+    public BackBlazeB2Client(IAccessKey credentials, BackBlazeB2Region region, NetworkConfig? networkConfig = null) : this(new BackBlazeB2Config(credentials, region), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="BackBlazeB2Client" /></summary>
     /// <param name="config">The configuration you want to use</param>
-    /// <param name="proxy">A web proxy (optional)</param>
-    public BackBlazeB2Client(BackBlazeB2Config config, IWebProxy? proxy = null) : base(new BackblazeB2InputValidator(), config, proxy) {}
+    /// <param name="networkConfig">Network configuration</param>
+    public BackBlazeB2Client(BackBlazeB2Config config, NetworkConfig? networkConfig = null) : base(new BackblazeB2InputValidator(), config, networkConfig) {}
 
     public BackBlazeB2Client(BackBlazeB2Config config, INetworkDriver networkDriver) : base(new BackblazeB2InputValidator(), config, networkDriver) {}
 

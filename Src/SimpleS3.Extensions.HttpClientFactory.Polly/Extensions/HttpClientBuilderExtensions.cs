@@ -1,7 +1,11 @@
-using System.Net;
+﻿using System.Net;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
+using Genbox.SimpleS3.Core.Common.Extensions;
+using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Internal;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Retry;
 using Polly.Timeout;
@@ -10,57 +14,57 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 
 public static class HttpClientBuilderExtensions
 {
-    public delegate TimeSpan BackoffTime(int retryAttempt);
+    private static readonly Func<HttpResponseMessage, bool> _statusCodes = resp => (int)resp.StatusCode >= (int)HttpStatusCode.InternalServerError || resp.StatusCode == HttpStatusCode.RequestTimeout;
+    private static readonly Random _rng = new Random();
 
-    // Polly default transient codes: >500 & 408
-    // https://github.com/App-vNext/Polly.Extensions.Http/blob/master/src/Polly.Extensions.Http/HttpPolicyExtensions.cs
-    private static readonly Func<HttpResponseMessage, bool> _transientHttpStatusCodePredicate = resp => (int)resp.StatusCode >= 500 || resp.StatusCode == HttpStatusCode.RequestTimeout;
-
-    /// <summary>Adds a retry policy with 3 retries. Also adds a timeout policy that waits for 10 minutes before it terminates
-    /// a request.</summary>
-    public static IHttpClientBuilder UseDefaultHttpPolicy(this IHttpClientBuilder builder) => builder.UseRetryPolicy(3).UseTimeoutPolicy(TimeSpan.FromMinutes(10));
-
-    public static IHttpClientBuilder UseRetryPolicy(this IHttpClientBuilder builder, int retries)
+    public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder, int retries, TimeSpan timeout)
     {
-        Random random = new Random();
+        builder.Services.Configure<PollyConfig>(x =>
+        {
+            x.Timeout = timeout;
+            x.Retries = retries;
+        });
 
-        // Policy is:
-        // Retries: 3
-        // Timeout: 2^attempt seconds (2, 4, 8 seconds) + -100 to 100 ms jitter
-        return builder.UseRetryPolicy(retries, retryAttempt =>
-            TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) +
-            TimeSpan.FromMilliseconds(random.Next(-100, 100)));
+        return UseRetryAndTimeout(builder);
     }
 
-    public static IHttpClientBuilder UseRetryPolicy(this IHttpClientBuilder builder, int retries, BackoffTime backoffTime)
+    public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder, Action<PollyConfig> configure)
     {
-        // Add a policy that will handle transient HTTP & Networking errors
-        AsyncRetryPolicy<HttpResponseMessage> exceptionPolicy = Policy<HttpResponseMessage>
-
-                                                                // Handle network errors
-                                                                .Handle<IOException>()
-
-                                                                // Handle other HttpClient errors
-                                                                .Or<HttpRequestException>()
-
-                                                                // Handle Polly timeouts
-                                                                .Or<TimeoutRejectedException>()
-
-                                                                // Handle transient-error status codes
-                                                                .OrResult(_transientHttpStatusCodePredicate)
-
-                                                                // Action
-                                                                .WaitAndRetryAsync(retries, retryAttempt => backoffTime(retryAttempt));
-
-        builder.AddPolicyHandler(exceptionPolicy);
-        builder.Services.AddSingleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>();
-        return builder;
+        builder.Services.Configure(configure);
+        return UseRetryAndTimeout(builder);
     }
 
-    public static IHttpClientBuilder UseTimeoutPolicy(this IHttpClientBuilder builder, TimeSpan timeout)
+    public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder)
     {
-        AsyncTimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(timeout);
-        builder.AddPolicyHandler(timeoutPolicy);
+        //Add IRequestStreamWrapper if it does not already exist. We need to add it such that it is combined with other IRequestStreamWrapper
+        if (builder.Services.TryAddEnumerableRet(ServiceDescriptor.Singleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>()))
+        {
+            builder.Services.Configure<HttpClientFactoryOptions>(builder.Name, (x, provider) =>
+            {
+                IOptions<PollyConfig> options = provider.GetRequiredService<IOptions<PollyConfig>>();
+                PollyConfig config = options.Value;
+
+                // Add a policy that will handle transient HTTP & Networking errors
+                PolicyBuilder<HttpResponseMessage> b = Policy<HttpResponseMessage>
+                                                       .Handle<IOException>() // Handle network errors
+                                                       .Or<HttpRequestException>() // Handle other HttpClient errors
+                                                       .Or<TimeoutRejectedException>() // Handle Polly timeouts
+                                                       .OrResult(_statusCodes); // Handle transient-error status codes
+
+                //When we use Polly, we don't want to use HttpClient's weird timeout
+                x.HttpClientActions.Add(client => client.Timeout = TimeSpan.FromHours(100));
+
+                AsyncRetryPolicy<HttpResponseMessage> retryPolicy = b.WaitAndRetryAsync(config.Retries, retryAttempt =>
+                    TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) +
+                    TimeSpan.FromMilliseconds(_rng.Next(0, (int)config.MaxRandomDelay.TotalMilliseconds)));
+
+                AsyncTimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(config.Timeout);
+
+                IAsyncPolicy<HttpResponseMessage>? finalPolicy = retryPolicy.WrapAsync(timeoutPolicy);
+                x.HttpMessageHandlerBuilderActions.Add(b => b.AdditionalHandlers.Add(new PollyHttpMessageHandler(finalPolicy)));
+            });
+        }
+
         return builder;
     }
 }

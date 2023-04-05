@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -26,26 +25,26 @@ public sealed class WasabiClient : ClientBase, ISimpleClient
     /// <param name="keyId">The key id</param>
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
-    /// <param name="proxy">A web proxy (optional)</param>
-    public WasabiClient(string keyId, byte[] accessKey, WasabiRegion region, IWebProxy? proxy = null) : this(new WasabiConfig(new AccessKey(keyId, accessKey), region), proxy) {}
+    /// <param name="networkConfig">Network configuration</param>
+    public WasabiClient(string keyId, byte[] accessKey, WasabiRegion region, NetworkConfig? networkConfig = null) : this(new WasabiConfig(new AccessKey(keyId, accessKey), region), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="WasabiClient" /></summary>
     /// <param name="keyId">The key id</param>
     /// <param name="accessKey">The secret access key</param>
     /// <param name="region">The region you wish to use</param>
-    /// <param name="proxy">A web proxy (optional)</param>
-    public WasabiClient(string keyId, string accessKey, WasabiRegion region, IWebProxy? proxy = null) : this(new WasabiConfig(new StringAccessKey(keyId, accessKey), region), proxy) {}
+    /// <param name="networkConfig">Network configuration</param>
+    public WasabiClient(string keyId, string accessKey, WasabiRegion region, NetworkConfig? networkConfig = null) : this(new WasabiConfig(new StringAccessKey(keyId, accessKey), region), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="WasabiClient" /></summary>
     /// <param name="credentials">The credentials to use</param>
     /// <param name="region">The region you wish to use</param>
-    /// <param name="proxy">A web proxy (optional)</param>
-    public WasabiClient(IAccessKey credentials, WasabiRegion region, IWebProxy? proxy = null) : this(new WasabiConfig(credentials, region), proxy) {}
+    /// <param name="networkConfig">Network configuration</param>
+    public WasabiClient(IAccessKey credentials, WasabiRegion region, NetworkConfig? networkConfig = null) : this(new WasabiConfig(credentials, region), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="WasabiClient" /></summary>
     /// <param name="config">The configuration you want to use</param>
-    /// <param name="proxy">A web proxy (optional)</param>
-    public WasabiClient(WasabiConfig config, IWebProxy? proxy = null) : base(new WasabiInputValidator(), config, proxy) {}
+    /// <param name="networkConfig">Network configuration</param>
+    public WasabiClient(WasabiConfig config, NetworkConfig? networkConfig = null) : base(new WasabiInputValidator(), config, networkConfig) {}
 
     public WasabiClient(WasabiConfig config, INetworkDriver networkDriver) : base(new WasabiInputValidator(), config, networkDriver) {}
 
