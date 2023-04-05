@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
@@ -55,7 +55,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Imports", "_Imports", "{62
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Utility.Shared", "Src\SimpleS3.Utility.Shared\SimpleS3.Utility.Shared.csproj", "{258C9BD8-DF98-4662-BA67-FC79083FC1C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.ExamplesAdvanced", "Src\SimpleS3.ExamplesAdvanced\SimpleS3.ExamplesAdvanced.csproj", "{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Examples.Advanced", "Src\SimpleS3.Examples.Advanced\SimpleS3.Examples.Advanced.csproj", "{1003FE0A-F3E3-4B9F-80EC-2E7F1D0FE37E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.AmazonS3", "Src\SimpleS3.Extensions.AmazonS3\SimpleS3.Extensions.AmazonS3.csproj", "{289A434D-1570-4F73-80D8-015CB7D92DEE}"
 EndProject
@@ -71,7 +71,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.AmazonS3.Tests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.BackBlazeB2.Tests", "Src\SimpleS3.BackBlazeB2.Tests\SimpleS3.BackBlazeB2.Tests.csproj", "{80CC1F33-48AC-4079-9D60-BD6A99F7CC6B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.ExamplesCommercial", "Src\SimpleS3.ExamplesCommercial\SimpleS3.ExamplesCommercial.csproj", "{2ED2E01F-0471-4920-AA6A-8BC737D24E52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Examples.Commercial", "Src\SimpleS3.Examples.Commercial\SimpleS3.Examples.Commercial.csproj", "{2ED2E01F-0471-4920-AA6A-8BC737D24E52}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleS3.Extensions.GoogleCloudStorage", "Src\SimpleS3.Extensions.GoogleCloudStorage\SimpleS3.Extensions.GoogleCloudStorage.csproj", "{4606FC18-3B68-4C45-9107-7F1EDC8B32BE}"
 EndProject
