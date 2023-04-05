@@ -83,20 +83,14 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
 
     private static HttpMethod ConvertToMethod(HttpMethodType method)
     {
-        switch (method)
+        return method switch
         {
-            case HttpMethodType.GET:
-                return HttpMethod.Get;
-            case HttpMethodType.PUT:
-                return HttpMethod.Put;
-            case HttpMethodType.HEAD:
-                return HttpMethod.Head;
-            case HttpMethodType.DELETE:
-                return HttpMethod.Delete;
-            case HttpMethodType.POST:
-                return HttpMethod.Post;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(method), method, null);
-        }
+            HttpMethodType.GET => HttpMethod.Get,
+            HttpMethodType.PUT => HttpMethod.Put,
+            HttpMethodType.HEAD => HttpMethod.Head,
+            HttpMethodType.DELETE => HttpMethod.Delete,
+            HttpMethodType.POST => HttpMethod.Post,
+            _ => throw new ArgumentOutOfRangeException(nameof(method), method, "Unsupported HTTP method")
+        };
     }
 }

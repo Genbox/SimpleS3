@@ -22,19 +22,14 @@ internal static class ValueHelper
     {
         Validator.RequireNotNullOrWhiteSpace(value);
 
-        switch (format)
+        return format switch
         {
-            case DateTimeFormat.Iso8601Date:
-                return DateTimeOffset.TryParseExact(value, DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out DateTimeOffset result) ? result : DateTimeOffset.MinValue;
-            case DateTimeFormat.Iso8601DateTime:
-                return DateTimeOffset.TryParseExact(value, DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out result) ? result : DateTimeOffset.MinValue;
-            case DateTimeFormat.Iso8601DateTimeExt:
-                return DateTimeOffset.TryParseExact(value, DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out result) ? result : DateTimeOffset.MinValue;
-            case DateTimeFormat.Rfc1123:
-                return DateTimeOffset.TryParseExact(value, DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out result) ? result : DateTimeOffset.MinValue;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(format), format, null);
-        }
+            DateTimeFormat.Iso8601Date => DateTimeOffset.TryParseExact(value, DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out DateTimeOffset result) ? result : DateTimeOffset.MinValue,
+            DateTimeFormat.Iso8601DateTime => DateTimeOffset.TryParseExact(value, DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out DateTimeOffset result) ? result : DateTimeOffset.MinValue,
+            DateTimeFormat.Iso8601DateTimeExt => DateTimeOffset.TryParseExact(value, DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out DateTimeOffset result) ? result : DateTimeOffset.MinValue,
+            DateTimeFormat.Rfc1123 => DateTimeOffset.TryParseExact(value, DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out DateTimeOffset result) ? result : DateTimeOffset.MinValue,
+            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+        };
     }
 
     public static byte[]? ParseByteArray(string? value, BinaryEncoding encoding)
@@ -42,15 +37,12 @@ internal static class ValueHelper
         if (value == null)
             return null;
 
-        switch (encoding)
+        return encoding switch
         {
-            case BinaryEncoding.Hex:
-                return value.HexDecode();
-            case BinaryEncoding.Base64:
-                return Convert.FromBase64String(value);
-            default:
-                throw new ArgumentOutOfRangeException(nameof(encoding), encoding, null);
-        }
+            BinaryEncoding.Hex => value.HexDecode(),
+            BinaryEncoding.Base64 => Convert.FromBase64String(value),
+            _ => throw new ArgumentOutOfRangeException(nameof(encoding), encoding, null)
+        };
     }
 
     public static string EnumToString<T>(T value) where T : struct, Enum
@@ -71,18 +63,13 @@ internal static class ValueHelper
 
     public static string DateToString(DateTimeOffset date, DateTimeFormat format)
     {
-        switch (format)
+        return format switch
         {
-            case DateTimeFormat.Iso8601Date:
-                return date.ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo);
-            case DateTimeFormat.Iso8601DateTime:
-                return date.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo);
-            case DateTimeFormat.Iso8601DateTimeExt:
-                return date.ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo);
-            case DateTimeFormat.Rfc1123:
-                return date.ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo);
-            default:
-                throw new ArgumentOutOfRangeException(nameof(format), format, null);
-        }
+            DateTimeFormat.Iso8601Date => date.ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo),
+            DateTimeFormat.Iso8601DateTime => date.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo),
+            DateTimeFormat.Iso8601DateTimeExt => date.ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo),
+            DateTimeFormat.Rfc1123 => date.ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo),
+            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+        };
     }
 }

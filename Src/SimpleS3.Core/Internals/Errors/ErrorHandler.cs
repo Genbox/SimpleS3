@@ -20,30 +20,19 @@ internal static class ErrorHandler
 
         string code = lookup["Code"];
 
-        switch (code)
+        return code switch
         {
-            case "HeadersNotSigned":
-                return new HeadersNotSignedError(lookup);
-            case "MethodNotAllowed":
-                return new MethodNotAllowedError(lookup);
-            case "XAmzContentSHA256Mismatch":
-                return new XAmzContentSha256MismatchError(lookup);
-            case "InvalidBucketName":
-                return new InvalidBucketNameError(lookup);
-            case "BucketAlreadyExists":
-                return new BucketAlreadyExistsError(lookup);
-            case "InvalidArgument":
-                return new InvalidArgumentError(lookup);
-            case "TooManyBuckets":
-                return new TooManyBucketsError(lookup);
-            case "NoSuchBucket":
-                return new NoSuchBucketError(lookup);
-            case "BucketNotEmpty":
-                return new BucketNotEmptyError(lookup);
-            case "PreconditionFailed":
-                return new PreconditionFailedError(lookup);
-            default:
-                return new GenericError(lookup);
-        }
+            "HeadersNotSigned" => new HeadersNotSignedError(lookup),
+            "MethodNotAllowed" => new MethodNotAllowedError(lookup),
+            "XAmzContentSHA256Mismatch" => new XAmzContentSha256MismatchError(lookup),
+            "InvalidBucketName" => new InvalidBucketNameError(lookup),
+            "BucketAlreadyExists" => new BucketAlreadyExistsError(lookup),
+            "InvalidArgument" => new InvalidArgumentError(lookup),
+            "TooManyBuckets" => new TooManyBucketsError(lookup),
+            "NoSuchBucket" => new NoSuchBucketError(lookup),
+            "BucketNotEmpty" => new BucketNotEmptyError(lookup),
+            "PreconditionFailed" => new PreconditionFailedError(lookup),
+            _ => new GenericError(lookup)
+        };
     }
 }

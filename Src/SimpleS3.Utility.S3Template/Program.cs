@@ -76,25 +76,14 @@ internal static class Program
 
     private static string GetTemplate(DataType dataType, ApiType apiType, string apiName)
     {
-        string template;
-
-        switch (dataType)
+        string template = dataType switch
         {
-            case DataType.Request:
-                template = RequestTemplate;
-                break;
-            case DataType.RequestMarshal:
-                template = RequestMarshalTemplate;
-                break;
-            case DataType.Response:
-                template = ResponseTemplate;
-                break;
-            case DataType.ResponseMarshal:
-                template = ResponseMarshalTemplate;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
-        }
+            DataType.Request => RequestTemplate,
+            DataType.RequestMarshal => RequestMarshalTemplate,
+            DataType.Response => ResponseTemplate,
+            DataType.ResponseMarshal => ResponseMarshalTemplate,
+            _ => throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null)
+        };
 
         return template
                .Replace("%ApiName%", apiName, StringComparison.Ordinal)
