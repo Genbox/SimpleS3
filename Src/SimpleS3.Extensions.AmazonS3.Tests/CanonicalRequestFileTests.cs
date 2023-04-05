@@ -29,7 +29,7 @@ public class CanonicalRequestFileTests
             x.RegionCode = "us-east-1";
         });
 
-        ServiceProvider? provider = services.BuildServiceProvider();
+        ServiceProvider provider = services.BuildServiceProvider();
 
         _scopeBuilder = (ScopeBuilder)provider.GetRequiredService<IScopeBuilder>();
         _sigBuilder = (SignatureBuilder)provider.GetRequiredService<ISignatureBuilder>();

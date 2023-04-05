@@ -43,7 +43,7 @@ public static class ServiceCollectionExtensions
             IMultipartClient multipartClient = x.GetRequiredService<IMultipartClient>();
             IMultipartTransfer multipartTransfer = x.GetRequiredService<IMultipartTransfer>();
             ITransfer transfer = x.GetRequiredService<ITransfer>();
-            ISignedObjectClient? signedObjectClient = x.GetRequiredService<ISignedObjectClient>();
+            ISignedObjectClient signedObjectClient = x.GetRequiredService<ISignedObjectClient>();
             return new GoogleCloudStorageClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
         });
 

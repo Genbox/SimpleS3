@@ -41,7 +41,7 @@ public class ChunkedSignatureTests
             x.NamingMode = NamingMode.PathStyle;
         });
 
-        ServiceProvider? provider = services.BuildServiceProvider();
+        ServiceProvider provider = services.BuildServiceProvider();
 
         _scopeBuilder = (ScopeBuilder)provider.GetRequiredService<IScopeBuilder>();
         _sigBuilder = (SignatureBuilder)provider.GetRequiredService<ISignatureBuilder>();

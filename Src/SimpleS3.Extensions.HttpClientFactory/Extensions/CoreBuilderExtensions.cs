@@ -45,8 +45,8 @@ public static class CoreBuilderExtensions
 
             x.HttpHandlerActions.Add((provider, handler) =>
             {
-                IOptions<HttpClientFactoryConfig>? opt = provider.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
-                HttpClientFactoryConfig? config = opt.Value;
+                IOptions<HttpClientFactoryConfig> opt = provider.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
+                HttpClientFactoryConfig config = opt.Value;
 
                 handler.UseCookies = false;
                 handler.MaxAutomaticRedirections = 3;

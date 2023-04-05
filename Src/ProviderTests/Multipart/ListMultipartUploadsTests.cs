@@ -40,7 +40,7 @@ public class ListMultipartUploadsTests : TestBase
             Assert.Equal(1000, listResp.MaxUploads);
             Assert.False(listResp.IsTruncated);
 
-            S3Upload? upload = Assert.Single(listResp.Uploads);
+            S3Upload upload = Assert.Single(listResp.Uploads);
             Assert.Equal(WebUtility.UrlEncode(objName), upload.ObjectKey);
 
             if (provider == S3Provider.AmazonS3)

@@ -105,7 +105,7 @@ public class BucketLifecycleConfigurationTests : TestBase
             GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket).ConfigureAwait(false);
             Assert.True(getResp.IsSuccess);
 
-            S3Rule? rule1 = Assert.Single(getResp.Rules);
+            S3Rule rule1 = Assert.Single(getResp.Rules);
             S3AndCondition? conditions1 = rule1.Filter?.AndConditions;
 
             Assert.NotNull(conditions1);

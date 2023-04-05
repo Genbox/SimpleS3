@@ -27,13 +27,13 @@ public class DeleteObjectsTests : TestBase
         DeleteObjectsResponse delResp = await client.DeleteObjectsAsync(bucket, resources, r => r.Quiet = false).ConfigureAwait(false);
         Assert.Equal(200, delResp.StatusCode);
 
-        S3DeletedObject? delObj = Assert.Single(delResp.Deleted);
+        S3DeletedObject delObj = Assert.Single(delResp.Deleted);
         Assert.Equal(resources[0].ObjectKey, delObj.ObjectKey);
         Assert.True(delObj.IsDeleteMarker);
         Assert.NotNull(delObj.DeleteMarkerVersionId);
         Assert.NotEmpty(delObj.DeleteMarkerVersionId);
 
-        S3DeleteError? errorObj = Assert.Single(delResp.Errors);
+        S3DeleteError errorObj = Assert.Single(delResp.Errors);
 
         Assert.Equal(resources[1].ObjectKey, errorObj.ObjectKey);
         Assert.Equal(resources[1].VersionId, errorObj.VersionId);

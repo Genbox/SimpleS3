@@ -23,7 +23,7 @@ public class ObjectAclTests : TestBase
         GetObjectAclResponse getResp = await client.GetObjectAclAsync(bucket, objectKey).ConfigureAwait(false);
         Assert.Equal(200, getResp.StatusCode);
 
-        S3Grant? grant = Assert.Single(getResp.Grants);
+        S3Grant grant = Assert.Single(getResp.Grants);
         Assert.Equal(S3Permission.FullControl, grant.Permission);
 
         if (provider == S3Provider.AmazonS3)

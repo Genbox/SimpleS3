@@ -68,7 +68,7 @@ public class ListPartsTests : TestBase
             if (provider == S3Provider.AmazonS3)
                 Assert.Equal(TestConstants.TestUsername, listResp2.Owner.Name);
 
-            S3Part? part = Assert.Single(listResp2.Parts);
+            S3Part part = Assert.Single(listResp2.Parts);
 
             Assert.Equal(1, part.PartNumber);
             Assert.Equal(DateTime.UtcNow, part.LastModified.DateTime, TimeSpan.FromSeconds(5));

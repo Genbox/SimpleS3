@@ -54,7 +54,7 @@ public static class CoreBuilderExtensions
         builder.Services.AddSingleton<INetworkDriver, HttpClientNetworkDriver>(provider =>
         {
             IOptions<HttpBuilderActions> opt = provider.GetRequiredService<IOptions<HttpBuilderActions>>();
-            HttpBuilderActions? actions = opt.Value;
+            HttpBuilderActions actions = opt.Value;
 
             HttpClientHandler handler = new HttpClientHandler();
 

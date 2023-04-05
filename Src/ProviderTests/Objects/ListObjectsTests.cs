@@ -120,7 +120,7 @@ public class ListObjectsTests : TestBase
 
             Assert.Equal(EncodingType.Url, listResp.EncodingType);
 
-            S3Object? obj = Assert.Single(listResp.Objects);
+            S3Object obj = Assert.Single(listResp.Objects);
 
             Assert.Equal("%21%23/%28%29", obj.ObjectKey);
         }).ConfigureAwait(false);
@@ -172,7 +172,7 @@ public class ListObjectsTests : TestBase
             Assert.Equal(1, listResp.KeyCount);
             Assert.Equal("object", listResp.Prefix);
 
-            S3Object? obj = Assert.Single(listResp.Objects);
+            S3Object obj = Assert.Single(listResp.Objects);
 
             Assert.Equal(tempObjName, obj.ObjectKey);
         }).ConfigureAwait(false);
