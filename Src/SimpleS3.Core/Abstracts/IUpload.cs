@@ -50,6 +50,7 @@ public interface IUpload
 #endif
 
     Task<PutObjectResponse> UploadAsync(Stream? data, CancellationToken token = default);
+    Task<PutObjectResponse> UploadFileAsync(string filePath, CancellationToken token = default);
     Task<PutObjectResponse> UploadDataAsync(byte[] data, CancellationToken token = default);
     Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default);
     IUpload WithWebsiteRedirectLocation(string url);

@@ -208,6 +208,12 @@ internal class Upload : IUpload
         return _objectOperations.PutObjectAsync(_request, token);
     }
 
+    public async Task<PutObjectResponse> UploadFileAsync(string filePath, CancellationToken token = default)
+    {
+        using FileStream fs = File.OpenRead(filePath);
+        return await UploadAsync(fs, token).ConfigureAwait(false);
+    }
+
     public async Task<PutObjectResponse> UploadDataAsync(byte[] data, CancellationToken token = default)
     {
         using MemoryStream ms = new MemoryStream(data);
