@@ -35,7 +35,6 @@ public static class ServiceCollectionExtensions
         IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
         httpBuilder.UseRetryAndTimeout();
 
-
         coreBuilder.Services.AddSingleton(x =>
         {
             //We have to call a specific constructor for dependency injection

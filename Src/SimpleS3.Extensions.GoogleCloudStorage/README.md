@@ -1,9 +1,11 @@
 ﻿# SimpleS3.Extensions.GoogleCloudStorage
+
 This extension adds support for [Google's Cloud Storage (S3 compatible) serivce](https://cloud.google.com/storage/docs/migrating).
 
 To use it, add a reference to [Genbox.SimpleS3.Extensions.GoogleCloudStorage](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.GoogleCloudStorage)
 
 ### Using Microsoft.Extensions.DependencyInjection
+
 If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you can use it like this:
 
 ```csharp

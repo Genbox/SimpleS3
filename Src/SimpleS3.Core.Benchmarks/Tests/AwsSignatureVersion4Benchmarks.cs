@@ -25,7 +25,6 @@ public class AwsSignatureVersion4Benchmarks
     private DummyRequest _request;
     private HttpRequestMessage _request2;
 
-
     [GlobalSetup]
     public void Setup()
     {

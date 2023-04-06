@@ -271,9 +271,7 @@ public static class ObjectClientExtensions
             }
 
             foreach (S3Object obj in response.Objects)
-            {
                 yield return obj;
-            }
         } while (response.IsTruncated);
     }
 
@@ -324,9 +322,7 @@ public static class ObjectClientExtensions
             }
 
             foreach (S3Version s3Version in response.Versions)
-            {
                 yield return s3Version;
-            }
         } while (response.IsTruncated);
     }
 }

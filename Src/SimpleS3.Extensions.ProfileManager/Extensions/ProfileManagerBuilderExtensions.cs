@@ -1,13 +1,13 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
-using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
-using Microsoft.Extensions.DependencyInjection;
 using Genbox.SimpleS3.Extensions.ProfileManager.Internal.DataProtection;
-using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 

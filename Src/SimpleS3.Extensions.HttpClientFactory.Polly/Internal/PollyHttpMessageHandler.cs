@@ -4,8 +4,8 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Internal;
 
 internal class PollyHttpMessageHandler : DelegatingHandler
 {
-    private readonly IAsyncPolicy<HttpResponseMessage> _policy;
     private readonly Context _context;
+    private readonly IAsyncPolicy<HttpResponseMessage> _policy;
 
     public PollyHttpMessageHandler(IAsyncPolicy<HttpResponseMessage> policy)
     {
@@ -18,8 +18,5 @@ internal class PollyHttpMessageHandler : DelegatingHandler
         return await _policy.ExecuteAsync((c, ct) => SendCoreAsync(request, ct), _context, cancellationToken).ConfigureAwait(false);
     }
 
-    protected virtual Task<HttpResponseMessage> SendCoreAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-    {
-        return base.SendAsync(request, cancellationToken);
-    }
+    protected virtual Task<HttpResponseMessage> SendCoreAsync(HttpRequestMessage request, CancellationToken cancellationToken) => base.SendAsync(request, cancellationToken);
 }

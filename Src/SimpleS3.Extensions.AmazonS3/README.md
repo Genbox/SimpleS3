@@ -1,9 +1,11 @@
 ﻿# SimpleS3.Extensions.AmazonS3
+
 This extension adds support for [Amazon's S3 serivce](https://aws.amazon.com/s3/).
 
 To use it, add a reference to [Genbox.SimpleS3.Extensions.AmazonS3](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.AmazonS3)
 
 ### Using Microsoft.Extensions.DependencyInjection
+
 If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you can use it like so:
 
 ```csharp
