@@ -4,9 +4,6 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(DefineConstants.Contains(COMMERCIAL))">
     <PackageReference Include="Microsoft.AspNetCore.DataProtection" />
   </ItemGroup>
 

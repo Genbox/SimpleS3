@@ -1,4 +1,3 @@
-#if COMMERCIAL
 using System.Runtime.CompilerServices;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -331,4 +330,3 @@ public static class ObjectClientExtensions
         } while (response.IsTruncated);
     }
 }
-#endif

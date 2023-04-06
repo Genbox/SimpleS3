@@ -1,4 +1,3 @@
-#if COMMERCIAL
 using System.Runtime.CompilerServices;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Common.Exceptions;
@@ -30,4 +29,3 @@ public static class BucketClientExtensions
         }
     }
 }
-#endif

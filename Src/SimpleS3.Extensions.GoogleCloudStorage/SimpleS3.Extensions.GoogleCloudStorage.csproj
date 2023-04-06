@@ -2,10 +2,6 @@
 
   <Import Project="..\..\Imports\Library.props" />
 
-  <PropertyGroup Condition="!$(DefineConstants.Contains(COMMERCIAL))">
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\SimpleS3.Core.Common\SimpleS3.Core.Common.csproj" />
   </ItemGroup>

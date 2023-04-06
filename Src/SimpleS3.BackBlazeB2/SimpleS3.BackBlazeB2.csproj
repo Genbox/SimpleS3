@@ -2,10 +2,6 @@
 
   <Import Project="..\..\Imports\Library.props" />
 
-  <PropertyGroup Condition="!$(DefineConstants.Contains(COMMERCIAL))">
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\SimpleS3.Extensions.BackBlazeB2\SimpleS3.Extensions.BackBlazeB2.csproj" />
     <ProjectReference Include="..\SimpleS3.ProviderBase\SimpleS3.ProviderBase.csproj" />

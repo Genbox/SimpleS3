@@ -6,13 +6,4 @@
     <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(SolutionName.EndsWith('Commercial'))">
-    <DefineConstants>$(DefineConstants);COMMERCIAL</DefineConstants>
-    <AssemblyName>Genbox.$(MSBuildProjectName).Commercial</AssemblyName>
-    <Description>
-      $(Description)
-      This is a commercial version of the package. You must be a Github commercial tier sponsor to use it. See https://github.com/sponsors/Genbox/ for more info.
-    </Description>
-  </PropertyGroup>
-
 </Project>

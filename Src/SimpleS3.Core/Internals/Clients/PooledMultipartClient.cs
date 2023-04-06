@@ -1,5 +1,4 @@
-﻿#if COMMERCIAL
-using Genbox.SimpleS3.Core.Abstracts.Clients;
+﻿using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
@@ -94,4 +93,3 @@ internal class PooledMultipartClient : IMultipartClient
         return ObjectPool<ListMultipartUploadsRequest>.Shared.RentAndUseAsync(Setup, Action);
     }
 }
-#endif

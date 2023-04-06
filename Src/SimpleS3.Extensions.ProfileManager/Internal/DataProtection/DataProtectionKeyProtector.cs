@@ -1,5 +1,4 @@
-﻿#if COMMERCIAL
-using Genbox.SimpleS3.Core.Abstracts.Authentication;
+﻿using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.DataProtection;
@@ -17,4 +16,3 @@ internal class DataProtectionKeyProtector : IAccessKeyProtector
 
     public byte[] UnprotectKey(byte[] key) => _protector.Unprotect(key);
 }
-#endif

@@ -1,4 +1,3 @@
-#if COMMERCIAL
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Internals.Pools;
@@ -208,4 +207,3 @@ internal class PooledBucketClient : IBucketClient
         return ObjectPool<GetBucketLifecycleConfigurationRequest>.Shared.RentAndUseAsync(Setup, Action);
     }
 }
-#endif

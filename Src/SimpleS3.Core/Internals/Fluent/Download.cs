@@ -22,9 +22,7 @@ internal class Download : IDownload
         _multipartTransfer = multipartTransfer;
     }
 
-#if COMMERCIAL
     public IAsyncEnumerable<GetObjectResponse> DownloadMultipartAsync(Stream output, CancellationToken token = default) => _multipartTransfer.MultipartDownloadAsync(_request.BucketName, _request.ObjectKey, output, config: CopyProperties, token: token);
-#endif
 
     /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
     public IDownload WithEncryptionCustomerKey(byte[] encryptionKey)

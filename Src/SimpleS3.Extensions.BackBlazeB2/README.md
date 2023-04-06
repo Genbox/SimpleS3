@@ -1,8 +1,7 @@
 ﻿# SimpleS3.Extensions.BackBlazeB2
 This extension adds support for [BackBlaze's B2 serivce](https://www.backblaze.com/b2/cloud-storage.html).
-Note that this extension is only avaliable to [commercial tier sponsors](https://github.com/sponsors/Genbox).
 
-To use it, add a reference to [Genbox.SimpleS3.Extensions.BackBlazeB2.Commercial](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.BackBlazeB2.Commercial)
+To use it, add a reference to [Genbox.SimpleS3.Extensions.BackBlazeB2](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.BackBlazeB2)
 
 ### Using Microsoft.Extensions.DependencyInjection
 If you are using [Microsoft's dependency injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/) (recommended), then you can use it like this:

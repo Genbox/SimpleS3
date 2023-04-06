@@ -24,7 +24,5 @@ jobs:
           dotnet-version: '7.0.x'
       - name: Pack free release
         run: dotnet pack -c Release SimpleS3.sln -o tmp
-      - name: Pack commercial release
-        run: dotnet pack -c Release SimpleS3.Commercial.sln -o tmp
       - name: Upload to nuget
         run: dotnet nuget push --skip-duplicate -k ${{secrets.NUGET_KEY}} -s https://api.nuget.org/v3/index.json tmp/*

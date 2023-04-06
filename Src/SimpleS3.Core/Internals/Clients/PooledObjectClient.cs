@@ -1,4 +1,3 @@
-#if COMMERCIAL
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Internals.Pools;
@@ -162,4 +161,3 @@ internal class PooledObjectClient : IObjectClient
         return ObjectPool<ListObjectVersionsRequest>.Shared.RentAndUseAsync(Setup, request => ObjectOperations.ListObjectVersionsAsync(request, token));
     }
 }
-#endif

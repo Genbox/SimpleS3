@@ -24,7 +24,5 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.0.x'
-      - name: Build free
+      - name: Build
         run: dotnet build -c Release SimpleS3.sln
-      - name: Build commercial
-        run: dotnet build -c Release SimpleS3.Commercial.sln

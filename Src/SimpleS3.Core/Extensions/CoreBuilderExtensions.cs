@@ -1,5 +1,4 @@
-﻿#if COMMERCIAL
-using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Internals.Clients;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,4 +17,3 @@ public static class CoreBuilderExtensions
         return builder;
     }
 }
-#endif

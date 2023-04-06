@@ -5,24 +5,20 @@ using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 using Microsoft.Extensions.DependencyInjection;
-#if COMMERCIAL
 using Genbox.SimpleS3.Extensions.ProfileManager.Internal.DataProtection;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Microsoft.AspNetCore.DataProtection;
-#endif
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 
 public static class ProfileManagerBuilderExtensions
 {
-#if COMMERCIAL
     public static IDataProtectionBuilder UseDataProtection(this IProfileManagerBuilder builder)
     {
         IDataProtectionBuilder dataProtectionBuilder = builder.Services.AddDataProtection(options => options.ApplicationDiscriminator = "SimpleS3");
         builder.Services.AddSingleton<IAccessKeyProtector, DataProtectionKeyProtector>();
         return dataProtectionBuilder;
     }
-#endif
 
     public static IProfileManagerBuilder BindConfigToProfile(this IProfileManagerBuilder builder, string profileName)
     {

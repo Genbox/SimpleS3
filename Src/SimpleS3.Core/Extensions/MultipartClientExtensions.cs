@@ -1,5 +1,4 @@
-﻿#if COMMERCIAL
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -33,4 +32,3 @@ public static class MultipartClientExtensions
         } while (response.IsTruncated);
     }
 }
-#endif

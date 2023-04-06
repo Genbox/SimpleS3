@@ -1,5 +1,4 @@
-﻿#if COMMERCIAL
-using Genbox.SimpleS3.Core.Abstracts.Clients;
+﻿using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
@@ -121,4 +120,3 @@ internal class PooledSignedObjectClient : ISignedObjectClient
         return ObjectPool<SignedHeadObjectRequest>.Shared.RentAndUseAsync(Setup, Action);
     }
 }
-#endif
