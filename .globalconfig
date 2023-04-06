@@ -188,3 +188,8 @@ dotnet_diagnostic.s2479.severity = none # Replace control character at <offset> 
 dotnet_diagnostic.ca1848.severity = none # Use the LoggerMessage delegates
 dotnet_diagnostic.ca1416.severity = none # Validate platform compatibility
 dotnet_diagnostic.ma0049.severity = none # Type name should not match containing namespace
+dotnet_diagnostic.ma0007.severity = none # Add a comma after the last value
+dotnet_diagnostic.ss019.severity = none # Switch is missing a default label. Include this to provide fallback behaviour for any missing cases, including when the upstream API adds them later on.
+dotnet_diagnostic.xunit1026.severity = none # Theory methods should use all of their parameters
+dotnet_diagnostic.ca1032.severity = none # Implement constructors for exception
+
