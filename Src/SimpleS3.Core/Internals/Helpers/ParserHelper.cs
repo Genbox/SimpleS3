@@ -13,7 +13,7 @@ internal static class ParserHelper
 
     public static IDictionary<string, string> ParseMetadata(IDictionary<string, string> headers)
     {
-        IDictionary<string, string> metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, string> metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (KeyValuePair<string, string> item in headers)
         {

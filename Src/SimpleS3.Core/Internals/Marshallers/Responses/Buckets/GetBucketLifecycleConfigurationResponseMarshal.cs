@@ -162,7 +162,7 @@ internal class GetBucketLifecycleConfigurationResponseMarshal : IResponseMarshal
     private static S3AndCondition ReadAndCondition(XmlReader xmlReader)
     {
         string? prefix = null;
-        IList<KeyValuePair<string, string>> tags = new List<KeyValuePair<string, string>>();
+        List<KeyValuePair<string, string>> tags = new List<KeyValuePair<string, string>>();
 
         foreach (string name in XmlHelper.ReadElements(xmlReader, "And"))
         {

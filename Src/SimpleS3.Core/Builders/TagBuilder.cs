@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Builders;
 public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, string>>
 {
     private readonly Regex _validChar = new Regex(@"^[a-z0-9 \+\-=\._:/]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private IDictionary<string, string>? _tags;
+    private Dictionary<string, string>? _tags;
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
     {
@@ -56,7 +56,7 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
         Validator.RequireNotNull(value);
 
         if (_tags == null)
-            _tags = new Dictionary<string, string>();
+            _tags = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         if (_tags.Count == 50)
             throw new InvalidOperationException("Only 50 tags allowed per. object");

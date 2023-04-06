@@ -7,8 +7,8 @@ namespace Genbox.SimpleS3.Core.Builders;
 
 public class MetadataBuilder : IEnumerable<KeyValuePair<string, string>>, IPooledObject
 {
-    private readonly ISet<byte> _allowed;
-    private IDictionary<string, string>? _metadata;
+    private readonly HashSet<byte> _allowed;
+    private Dictionary<string, string>? _metadata;
     private int _totalSize;
 
     public MetadataBuilder()

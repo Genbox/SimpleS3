@@ -10,10 +10,10 @@ namespace Genbox.SimpleS3.Core.Builders;
 /// https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html</summary>
 public class AclBuilder : IHttpHeaderBuilder
 {
-    private ISet<string>? _emails;
-    private ISet<string>? _ids;
+    private HashSet<string>? _emails;
+    private HashSet<string>? _ids;
     private StringBuilder? _sb;
-    private ISet<string>? _uris;
+    private HashSet<string>? _uris;
 
     public string? HeaderName => null;
 
@@ -106,7 +106,7 @@ public class AclBuilder : IHttpHeaderBuilder
     public AclBuilder AddEmail(string email)
     {
         if (_emails == null)
-            _emails = new HashSet<string>( /*1*/);
+            _emails = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         if (!_emails.Add(email))
             throw new ArgumentException($"You already added the email {email}");
@@ -123,7 +123,7 @@ public class AclBuilder : IHttpHeaderBuilder
         Validator.RequireNotNullOrWhiteSpace(id);
 
         if (_ids == null)
-            _ids = new HashSet<string>( /*1*/);
+            _ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         if (id.Length != 64)
             throw new ArgumentException($"The user id {id} is not 64 characters long");
@@ -141,7 +141,7 @@ public class AclBuilder : IHttpHeaderBuilder
         Validator.RequireNotNullOrWhiteSpace(uri);
 
         if (_uris == null)
-            _uris = new HashSet<string>( /*1*/);
+            _uris = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         if (!_uris.Add(uri))
             throw new ArgumentException($"You already added the URI {uri}");

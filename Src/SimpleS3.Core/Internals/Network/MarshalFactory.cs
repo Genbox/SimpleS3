@@ -14,8 +14,8 @@ namespace Genbox.SimpleS3.Core.Internals.Network;
 
 internal class MarshalFactory : IMarshalFactory
 {
-    private readonly IDictionary<Type, IRequestMarshal> _requestMarshals;
-    private readonly IDictionary<Type, IResponseMarshal> _responseMarshals;
+    private readonly Dictionary<Type, IRequestMarshal> _requestMarshals;
+    private readonly Dictionary<Type, IResponseMarshal> _responseMarshals;
 
     public MarshalFactory(IEnumerable<IRequestMarshal> requestMarshals, IEnumerable<IResponseMarshal> responseMarshals)
     {

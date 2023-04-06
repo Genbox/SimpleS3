@@ -28,7 +28,7 @@ internal class Profile : IProfile
 
     public void AddTag(string key, string value)
     {
-        Tags ??= new Dictionary<string, string>(1);
+        Tags ??= new Dictionary<string, string>(1, StringComparer.OrdinalIgnoreCase);
         Tags.Add(key, value);
     }
 }

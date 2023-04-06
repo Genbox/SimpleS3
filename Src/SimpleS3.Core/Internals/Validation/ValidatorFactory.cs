@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Internals.Validation;
 [PublicAPI]
 internal class ValidatorFactory : IRequestValidatorFactory
 {
-    private readonly IDictionary<Type, IValidator> _validators;
+    private readonly Dictionary<Type, IValidator> _validators;
 
     public ValidatorFactory(IEnumerable<IValidator> validators)
     {

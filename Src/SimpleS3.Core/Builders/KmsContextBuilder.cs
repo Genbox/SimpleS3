@@ -6,7 +6,7 @@ namespace Genbox.SimpleS3.Core.Builders;
 
 public class KmsContextBuilder : IHttpHeaderBuilder
 {
-    private IDictionary<string, string>? _dict;
+    private Dictionary<string, string>? _dict;
 
     public KmsContextBuilder(IDictionary<string, string>? dict = null)
     {
@@ -40,7 +40,7 @@ public class KmsContextBuilder : IHttpHeaderBuilder
         Validator.RequireNotNull(value);
 
         if (_dict == null)
-            _dict = new Dictionary<string, string>();
+            _dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         if (!Valid(key))
             throw new ArgumentException("Invalid character in key. Only digits, letters and the follow characters are allowed _, -, /, \\, :", nameof(key));

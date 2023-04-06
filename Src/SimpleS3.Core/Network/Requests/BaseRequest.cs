@@ -6,8 +6,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests;
 
 public abstract class BaseRequest : IRequest, IPooledObject
 {
-    private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
-    private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>();
+    private readonly Dictionary<string, string> _headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
     protected BaseRequest(HttpMethodType method)
     {

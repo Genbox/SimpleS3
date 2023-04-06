@@ -34,7 +34,7 @@ internal class DefaultRequestHandler : IRequestHandler
     private readonly IMarshalFactory _marshaller;
     private readonly INetworkDriver _networkDriver;
     private readonly IPostMapperFactory _postMapper;
-    private readonly IList<IRequestStreamWrapper> _requestStreamWrappers;
+    private readonly List<IRequestStreamWrapper>? _requestStreamWrappers;
     private readonly IRequestValidatorFactory _requestValidator;
 
     public DefaultRequestHandler(IOptions<SimpleS3Config> options, IRequestValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
@@ -55,10 +55,7 @@ internal class DefaultRequestHandler : IRequestHandler
         _postMapper = postMapper;
         _logger = logger;
 
-        if (requestStreamWrappers == null)
-            _requestStreamWrappers = Array.Empty<IRequestStreamWrapper>();
-        else
-            _requestStreamWrappers = requestStreamWrappers.ToList();
+        _requestStreamWrappers = requestStreamWrappers?.ToList();
     }
 
     public Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken token = default) where TReq : IRequest where TResp : IResponse, new()
@@ -92,7 +89,7 @@ internal class DefaultRequestHandler : IRequestHandler
         request.SetHeader(HttpHeaders.Host, endpointData.Host);
         request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
 
-        if (requestStream != null)
+        if (requestStream != null && _requestStreamWrappers != null)
         {
             foreach (IRequestStreamWrapper wrapper in _requestStreamWrappers)
             {

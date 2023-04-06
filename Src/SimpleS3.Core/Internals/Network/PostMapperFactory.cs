@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network;
 
 internal class PostMapperFactory : IPostMapperFactory
 {
-    private readonly IDictionary<string, IPostMapper> _postMappers;
+    private readonly Dictionary<string, IPostMapper> _postMappers;
 
     public PostMapperFactory(IEnumerable<IPostMapper> postMappers)
     {
@@ -18,7 +18,7 @@ internal class PostMapperFactory : IPostMapperFactory
             Type[] args = iType.GetGenericArguments();
 
             return $"{args[0].Name}-{args[1].Name}";
-        }, x => x);
+        }, x => x, StringComparer.Ordinal);
     }
 
     public void PostMap<TRequest, TResponse>(SimpleS3Config config, TRequest request, TResponse response) where TRequest : IRequest where TResponse : IResponse

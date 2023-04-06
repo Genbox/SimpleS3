@@ -56,7 +56,7 @@ public sealed class HttpClientNetworkDriver : INetworkDriver
 
         _logger.LogDebug("Got an {Status} response with {StatusCode}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
 
-        IDictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Headers)
             responseHeaders.Add(header.Key, header.Value.First());
