@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
+using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
@@ -12,8 +13,6 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.ProviderBase;
 
-/// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and
-/// objects at the same time.</summary>
 public abstract class ClientBase : IDisposable
 {
     private ServiceProvider? _serviceProvider;
@@ -75,6 +74,8 @@ public abstract class ClientBase : IDisposable
 
     private SimpleClient Build(IServiceCollection services)
     {
+        Validator.RequireThat(_serviceProvider == null, "You should only call Build once.");
+
         _serviceProvider = services.BuildServiceProvider();
 
         IObjectClient objectClient = _serviceProvider.GetRequiredService<IObjectClient>();
