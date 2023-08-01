@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Imports\Library.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleS3.Core.Common\SimpleS3.Core.Common.csproj" />
+  </ItemGroup>
+
+</Project>

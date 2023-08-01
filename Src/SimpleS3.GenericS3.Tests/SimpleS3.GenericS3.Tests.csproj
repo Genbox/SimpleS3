@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleS3.GenericS3\SimpleS3.GenericS3.csproj" />
+  </ItemGroup>
+
+</Project>
