@@ -5,14 +5,14 @@
 
   <ItemGroup>
     <!--test packages-->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageVersion Include="xunit" Version="2.4.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
+    <PackageVersion Include="xunit" Version="2.5.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
     <!--dev packages-->
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
     <PackageVersion Include="MinVer" Version="4.3.0" />
-    <PackageVersion Include="JetBrains.Annotations" Version="2022.3.1" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2023.2.0" />
     <!--benchmark packages-->
-    <PackageVersion Include="BenchmarkDotNet" Version="0.13.5" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.13.6" />
   </ItemGroup>
 </Project>
