@@ -8,6 +8,11 @@
 
   <!--Default project settings-->
   <PropertyGroup>
+    <!--Template system-->
+    <IncludeBaseProject>true</IncludeBaseProject>
+    <IncludeInternalsVisibleTo>true</IncludeInternalsVisibleTo>
+    <IncludeAnalyzers>true</IncludeAnalyzers>
+
     <!--Assembly settings-->
     <RootNamespace>Genbox.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>Genbox.$(MSBuildProjectName)</AssemblyName>
@@ -29,14 +34,14 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
 
     <!--Enable analyzers by default, but not during builds-->
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnableNETAnalyzers>$(IncludeAnalyzers)</EnableNETAnalyzers>
     <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
     <AnalysisMode>all</AnalysisMode>
     <AnalysisLevel>latest</AnalysisLevel>
 
     <!--Nuget settings-->
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
     <!--Other settings-->

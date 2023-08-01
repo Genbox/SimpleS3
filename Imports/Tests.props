@@ -9,18 +9,18 @@
     <Using Include="Xunit" />
     <Using Include="Xunit.Abstractions" />
     <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IncludeBaseProject)' == 'True'">
     <ProjectReference Include="../$(BaseProject)/$(BaseProject).csproj" Condition="Exists('../$(BaseProject)/$(BaseProject).csproj')" />
   </ItemGroup>
 
-  <!--packages-->
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" PrivateAssets="all" />
     <PackageReference Include="xunit" PrivateAssets="all" />
-    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
   </ItemGroup>
 
-  <!--analyzers-->
-  <ItemGroup>
+  <ItemGroup Condition="'$(IncludeAnalyzers)' == 'True'">
     <PackageReference Include="Roslynator.Testing.CSharp.Xunit" PrivateAssets="all" />
     <PackageReference Include="xunit.analyzers" PrivateAssets="all" />
   </ItemGroup>

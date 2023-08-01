@@ -7,6 +7,9 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IncludeBaseProject)' == 'True'">
     <ProjectReference Include="../$(BaseProject)/$(BaseProject).csproj" Condition="Exists('../$(BaseProject)/$(BaseProject).csproj')" />
   </ItemGroup>
 
