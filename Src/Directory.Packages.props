@@ -5,7 +5,7 @@
 
   <ItemGroup>
     <!--test packages-->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.0" />
     <PackageVersion Include="xunit" Version="2.5.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
     <!--dev packages-->
@@ -13,6 +13,6 @@
     <PackageVersion Include="MinVer" Version="4.3.0" />
     <PackageVersion Include="JetBrains.Annotations" Version="2023.2.0" />
     <!--benchmark packages-->
-    <PackageVersion Include="BenchmarkDotNet" Version="0.13.6" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.13.7" />
   </ItemGroup>
 </Project>
