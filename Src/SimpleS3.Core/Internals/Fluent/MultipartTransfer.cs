@@ -153,7 +153,7 @@ internal class MultipartTransfer : IMultipartTransfer
     {
         try
         {
-            using GetObjectResponse getResp = await _objectClient.GetObjectAsync(bucketName, objectKey, req =>
+            GetObjectResponse getResp = await _objectClient.GetObjectAsync(bucketName, objectKey, req =>
             {
                 req.PartNumber = partNumber;
                 config?.Invoke(req);
