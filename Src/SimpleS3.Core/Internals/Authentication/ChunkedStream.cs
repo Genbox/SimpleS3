@@ -120,7 +120,58 @@ internal class ChunkedStream : Stream
         return count;
     }
 
-    public override int Read(byte[] buffer, int offset, int count) => ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+        if (_bufferPosition == -1)
+        {
+            if (_inputStreamConsumed && _outputBufferIsTerminatingChunk)
+                return 0;
+
+            int totalRead = 0;
+            if (!_inputStreamConsumed)
+            {
+                while (_headerSize + totalRead < _chunkSize && !_inputStreamConsumed)
+                {
+                    int remaining = Math.Min(_chunkSize, _buffer.Length - totalRead - _headerSize);
+                    int read = _originalStream.Read(_buffer, _headerSize + totalRead, remaining);
+
+                    if (read == 0)
+                        _inputStreamConsumed = true;
+                    else
+                        totalRead += read;
+                }
+            }
+
+            // Calculate header, and place in buffers beginning
+            _previousSignature = _chunkedSigBuilder.CreateChunkSignature(_request, _previousSignature, _buffer, _headerSize, totalRead);
+            int headerSize = CreateChunkHeader(_previousSignature, totalRead, _buffer);
+
+            // Append final newline
+            Buffer.BlockCopy(_newline, 0, _buffer, _headerSize + totalRead, _newline.Length);
+
+            // Move data payload in buffer, if header is smaller than expected
+            if (_headerSize != headerSize)
+                Buffer.BlockCopy(_buffer, _headerSize, _buffer, headerSize, totalRead + _newline.Length);
+
+            _bufferLength = headerSize + totalRead + _newline.Length;
+            _bufferPosition = 0;
+
+            // Fill buffer from N (header size) position to its full length
+            _outputBufferIsTerminatingChunk = _inputStreamConsumed && totalRead == 0;
+        }
+
+        //Use the smaller of either data we have remaining, or the count being asked for
+        count = Math.Min(_bufferLength - _bufferPosition, count);
+
+        //Copy part of our output buffer into buffer
+        Buffer.BlockCopy(_buffer, _bufferPosition, buffer, offset, count);
+        _bufferPosition += count;
+
+        if (_bufferPosition >= _bufferLength)
+            _bufferPosition = -1;
+
+        return count;
+    }
 
     public override long Seek(long offset, SeekOrigin origin)
     {
