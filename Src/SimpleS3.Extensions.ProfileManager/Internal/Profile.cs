@@ -1,18 +1,21 @@
 ﻿using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal;
 
 internal class Profile : IProfile
 {
-    public IDictionary<string, string>? Tags { get; private set; }
+    [UsedImplicitly]
+    public Profile() {}
 
-    public string Name { get; internal set; } = null!;
-    public string KeyId { get; internal set; } = null!;
-    public byte[] AccessKey { get; internal set; } = null!;
-    public string RegionCode { get; internal set; } = null!;
-    public string Location { get; internal set; } = null!;
+    public IDictionary<string, string>? Tags { get; set; }
 
-    public DateTimeOffset CreatedOn { get; internal set; }
+    public string Name { get; set; } = null!;
+    public string KeyId { get; set; } = null!;
+    public byte[] AccessKey { get; set; } = null!;
+    public string RegionCode { get; set; } = null!;
+    public string Location { get; set; } = null!;
+    public DateTimeOffset CreatedOn { get; set; }
 
     public string? GetTag(string key)
     {

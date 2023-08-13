@@ -16,7 +16,7 @@ public static class CoreBuilderExtensions
         builder.Services.AddSingleton<IProfileSetup, ConsoleProfileSetup>();
         builder.Services.AddSingleton<IProfileManager, ProfileManager>();
         builder.Services.AddSingleton<IStorage, DiskStorage>();
-        builder.Services.AddSingleton<IProfileSerializer, JsonProfileSerializer>();
+        builder.Services.AddSingleton<IProfileSerializer, DefaultProfileSerializer>();
 
         if (config != null)
             builder.Services.Configure(config);

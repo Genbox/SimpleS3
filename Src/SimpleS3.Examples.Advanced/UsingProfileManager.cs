@@ -51,7 +51,7 @@ public static class UsingProfileManager
     public static void ExampleWithClient()
     {
         AmazonS3InputValidator validator = new AmazonS3InputValidator();
-        JsonProfileSerializer serializer = new JsonProfileSerializer();
+        DefaultProfileSerializer serializer = new DefaultProfileSerializer();
 
         IOptions<DiskStorageOptions> storageOptions = Options.Create(new DiskStorageOptions());
         DiskStorage storage = new DiskStorage(storageOptions);
