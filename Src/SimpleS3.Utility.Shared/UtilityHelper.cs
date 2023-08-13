@@ -2,6 +2,7 @@
 using System.Net;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -42,11 +43,9 @@ public static class UtilityHelper
         do
         {
             string? input = Console.ReadLine();
+            Validator.RequireNotNull(input);
 
-            if (input == null)
-                throw new NullReferenceException("Unexpected null from ReadLine");
-
-            string[] userChoices = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            string[] userChoices = input!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             for (i = 0; i < userChoices.Length; i++)
             {
@@ -80,7 +79,7 @@ public static class UtilityHelper
 
     public static bool IsTestBucket(string bucketName, IProfile profile) => string.Equals(bucketName, GetTestBucket(profile), StringComparison.Ordinal);
 
-    public static bool IsTemporaryBucket(string bucketName) => bucketName.StartsWith("tempbucket-", StringComparison.OrdinalIgnoreCase);
+    public static bool IsTemporaryBucket(string bucketName) => Guid.TryParse(bucketName, out _) || bucketName.StartsWith("tempbucket-", StringComparison.OrdinalIgnoreCase);
 
     public static ServiceProvider CreateSimpleS3(S3Provider provider, string profileName, bool enableRetry, Action<SimpleS3Config>? configure = null)
     {
@@ -101,7 +100,7 @@ public static class UtilityHelper
 
         IConfigurationSection proxySection = configRoot.GetSection("Proxy");
 
-        if (proxySection != null && proxySection.GetValue<bool>("UseProxy"))
+        if (proxySection.GetValue<bool>("UseProxy"))
             httpBuilder.UseProxy(new WebProxy(proxySection.GetValue<string>("ProxyAddress")));
 
         coreBuilder.UseProfileManager()

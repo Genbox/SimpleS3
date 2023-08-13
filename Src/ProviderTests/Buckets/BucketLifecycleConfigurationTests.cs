@@ -109,7 +109,7 @@ public class BucketLifecycleConfigurationTests : TestBase
             S3AndCondition? conditions1 = rule1.Filter?.AndConditions;
 
             Assert.NotNull(conditions1);
-            Assert.Equal(conditions.Prefix, conditions1!.Prefix);
+            Assert.Equal(conditions.Prefix, conditions1.Prefix);
             Assert.Equal(conditions.Tags, conditions1.Tags);
         }).ConfigureAwait(false);
     }

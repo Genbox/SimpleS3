@@ -13,7 +13,7 @@ internal static class GenericRequestMapper
 {
     public static void Map<T>(T req) where T : IRequest
     {
-        Func<Type, bool> disabledFor = x => false;
+        Func<Type, bool> disabledFor = _ => false;
 
         if (req is IAutoMapConfig autoMap)
             disabledFor = autoMap.AutoMapDisabledFor;

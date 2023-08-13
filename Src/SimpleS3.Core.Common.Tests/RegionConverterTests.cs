@@ -1,12 +1,11 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Region;
-using Genbox.SimpleS3.Core.Common.Extensions;
+﻿using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Tests.Code;
 
 namespace Genbox.SimpleS3.Core.Common.Tests;
 
 public class RegionConverterTests
 {
-    private readonly IRegionConverter _converter;
+    private readonly RegionConverter _converter;
 
     public RegionConverterTests()
     {

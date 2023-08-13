@@ -24,10 +24,10 @@ public class ListPartsRequest : BaseRequest, IHasUploadId, IHasRequestPayer, IHa
     /// <summary>Specifies the part after which listing should begin. Only parts with higher part numbers will be listed.</summary>
     public string? PartNumberMarker { get; set; }
 
-    public string BucketName { get; set; }
-    public string ObjectKey { get; set; }
+    public string BucketName { get; set; } = null!;
+    public string ObjectKey { get; set; } = null!;
     public Payer RequestPayer { get; set; }
-    public string UploadId { get; set; }
+    public string UploadId { get; set; } = null!;
 
     internal void Initialize(string bucketName, string objectKey, string uploadId)
     {

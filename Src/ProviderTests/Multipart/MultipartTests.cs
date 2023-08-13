@@ -217,7 +217,7 @@ public class MultipartTests : TestBase
             GetObjectResponse getResp2 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 1).ConfigureAwait(false);
             Assert.Equal(206, getResp2.StatusCode);
 
-            byte[] contentData = await getResp2.Content!.AsDataAsync().ConfigureAwait(false);
+            byte[] contentData = await getResp2.Content.AsDataAsync().ConfigureAwait(false);
             Assert.Equal(parts[0].Length, contentData.Length);
             Assert.Equal(parts[0], contentData);
         }
@@ -279,6 +279,7 @@ public class MultipartTests : TestBase
         int count = 0;
         await using (MemoryStream ms = new MemoryStream(data))
         {
+            // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
             CompleteMultipartUploadResponse uploadResp = await client.MultipartUploadAsync(bucket, nameof(MultipartViaExtensions), ms, 10 * 1024 * 1024, 2, null, response =>
             {
                 Assert.Equal(200, response.StatusCode);

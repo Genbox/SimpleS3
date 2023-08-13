@@ -16,7 +16,7 @@ public class GetBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketNa
         Initialize(bucketName);
     }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)
     {

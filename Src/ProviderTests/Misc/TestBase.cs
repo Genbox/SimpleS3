@@ -7,9 +7,9 @@ namespace Genbox.ProviderTests.Misc;
 
 public abstract class TestBase
 {
-    protected string GetTemporaryBucket() => UtilityHelper.GetTemporaryBucket();
+    protected static string GetTemporaryBucket() => UtilityHelper.GetTemporaryBucket();
 
-    protected async Task CreateTempBucketAsync(S3Provider provider, ISimpleClient client, Func<string, Task> action, Action<CreateBucketRequest>? config = null)
+    protected static async Task CreateTempBucketAsync(S3Provider provider, ISimpleClient client, Func<string, Task> action, Action<CreateBucketRequest>? config = null)
     {
         string tempBucket = GetTemporaryBucket();
 

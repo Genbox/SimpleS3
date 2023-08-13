@@ -35,7 +35,7 @@ internal static class Program
         foreach (S3Provider s3Provider in providers)
         {
             string profileName = UtilityHelper.GetProfileName(s3Provider);
-            using ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
+            await using ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
 
             IProfile profile = UtilityHelper.GetOrSetupProfile(provider, s3Provider, profileName);
 

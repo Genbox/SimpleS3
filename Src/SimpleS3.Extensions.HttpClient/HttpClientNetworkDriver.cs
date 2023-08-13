@@ -51,9 +51,10 @@ public sealed class HttpClientNetworkDriver : INetworkDriver
 
             _logger.LogTrace("Sending HTTP request");
 
+ #pragma warning disable IDISP001 - We cannot dispose the response as the stream it delivers is reused by our response object
             httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+ #pragma warning restore IDISP001
         }
-
         _logger.LogDebug("Got an {Status} response with {StatusCode}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
 
         Dictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -71,11 +72,7 @@ public sealed class HttpClientNetworkDriver : INetworkDriver
             contentStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
 
-        HttpResponse returnResp = new HttpResponse();
-        returnResp.Content = contentStream;
-        returnResp.Headers = responseHeaders;
-        returnResp.StatusCode = (int)httpResponse.StatusCode;
-        return returnResp;
+        return new HttpResponse(contentStream, responseHeaders, (int)httpResponse.StatusCode);
     }
 
     private static HttpMethod ConvertToMethod(HttpMethodType method)

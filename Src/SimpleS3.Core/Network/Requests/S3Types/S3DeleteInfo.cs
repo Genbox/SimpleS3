@@ -15,7 +15,7 @@ public class S3DeleteInfo : IPooledObject, IHasObjectKey, IHasVersionId
         Initialize(objectKey, versionId);
     }
 
-    public string ObjectKey { get; set; }
+    public string ObjectKey { get; set; } = null!;
     public string? VersionId { get; set; }
 
     public void Reset()

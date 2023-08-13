@@ -48,10 +48,9 @@ public class NetworkErrorTests : OfflineTestBase
         Assert.Equal(5, _handler.RequestCounter);
     }
 
-    public override void Dispose()
+    protected override void Dispose(bool disposing)
     {
         _handler.Dispose();
-        GC.SuppressFinalize(this);
-        base.Dispose();
+        base.Dispose(disposing);
     }
 }

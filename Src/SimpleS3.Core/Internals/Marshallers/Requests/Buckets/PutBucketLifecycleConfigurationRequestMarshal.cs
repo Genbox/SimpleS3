@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
 internal class PutBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<PutBucketLifecycleConfigurationRequest>
 {
-    public Stream? MarshalRequest(PutBucketLifecycleConfigurationRequest request, SimpleS3Config config)
+    public Stream MarshalRequest(PutBucketLifecycleConfigurationRequest request, SimpleS3Config config)
     {
         request.SetQueryParameter(AmzParameters.Lifecycle, string.Empty);
 
@@ -70,15 +70,12 @@ internal class PutBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<P
                     if (andCondition.Prefix != null)
                         writer.WriteElement("Prefix", andCondition.Prefix);
 
-                    if (andCondition.Tags != null)
+                    foreach (KeyValuePair<string, string> tag in andCondition.Tags)
                     {
-                        foreach (KeyValuePair<string, string> tag in andCondition.Tags)
-                        {
-                            writer.WriteStartElement("Tag");
-                            writer.WriteElement("Key", tag.Key);
-                            writer.WriteElement("Value", tag.Value);
-                            writer.WriteEndElement("Tag");
-                        }
+                        writer.WriteStartElement("Tag");
+                        writer.WriteElement("Key", tag.Key);
+                        writer.WriteElement("Value", tag.Value);
+                        writer.WriteEndElement("Tag");
                     }
 
                     writer.WriteEndElement("And");

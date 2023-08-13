@@ -1,4 +1,5 @@
-﻿using Genbox.ProviderTests.Misc;
+﻿using System.Globalization;
+using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Enums;
@@ -38,7 +39,7 @@ public class ListObjectVersionsTests : TestBase
 
             if (provider == S3Provider.AmazonS3)
             {
-                Assert.Equal(1, listResp.DeleteMarkers.Count);
+                Assert.Single(listResp.DeleteMarkers);
                 Assert.Equal(1000, listResp.MaxKeys);
             }
 
@@ -136,10 +137,10 @@ public class ListObjectVersionsTests : TestBase
     {
         await CreateTempBucketAsync(provider, client, async tempBucket =>
         {
-            int concurrent = 10;
-            int count = 11;
+            const int concurrent = 10;
+            const int count = 11;
 
-            await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), (val, token) => client.PutObjectAsync(tempBucket, val.ToString(), null, null, token), concurrent);
+            await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), (val, token) => client.PutObjectAsync(tempBucket, val.ToString(NumberFormatInfo.InvariantInfo), null, null, token), concurrent);
 
             ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(tempBucket, r => r.MaxKeys = count - 1).ConfigureAwait(false);
             Assert.True(listResp.IsSuccess);
@@ -152,7 +153,7 @@ public class ListObjectVersionsTests : TestBase
             Assert.False(listResp2.IsTruncated);
 
             if (provider != S3Provider.GoogleCloudStorage)
-                Assert.Equal(1, listResp2.Versions.Count);
+                Assert.Single(listResp2.Versions);
         }).ConfigureAwait(false);
     }
 
@@ -172,7 +173,7 @@ public class ListObjectVersionsTests : TestBase
             Assert.True(resp.IsSuccess);
 
             Assert.Equal("-", resp.Delimiter);
-            Assert.Equal(2, resp.CommonPrefixes!.Count);
+            Assert.Equal(2, resp.CommonPrefixes.Count);
             Assert.Equal("object-", resp.CommonPrefixes[0]);
             Assert.Equal("something-", resp.CommonPrefixes[1]);
         }).ConfigureAwait(false);

@@ -17,7 +17,7 @@ public class GetBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
     /// fail with an HTTP 403 (Access Denied) error.</summary>
     public string? ExpectedBucketOwner { get; set; }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)
     {

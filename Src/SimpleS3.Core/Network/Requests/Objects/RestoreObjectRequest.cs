@@ -35,8 +35,8 @@ public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId
 
     public S3SelectParameters? SelectParameters { get; set; }
     public S3OutputLocation? OutputLocation { get; set; }
-    public string BucketName { get; set; }
-    public string ObjectKey { get; set; }
+    public string BucketName { get; set; } = null!;
+    public string ObjectKey { get; set; } = null!;
     public Payer RequestPayer { get; set; }
     public string? VersionId { get; set; }
 

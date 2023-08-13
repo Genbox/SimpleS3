@@ -18,19 +18,19 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 
 [MemoryDiagnoser]
 [InProcess]
-public class AwsSignatureVersion4Benchmarks
+public sealed class AwsSignatureVersion4Benchmarks : IDisposable
 {
-    private HeaderAuthorizationBuilder _builder;
-    private ImmutableCredentials _credentials;
-    private DummyRequest _request;
-    private HttpRequestMessage _request2;
+    private HeaderAuthorizationBuilder _builder = null!;
+    private ImmutableCredentials _credentials = null!;
+    private DummyRequest _request = null!;
+    private HttpRequestMessage _request2 = null!;
 
     [GlobalSetup]
     public void Setup()
     {
         {
-            IAccessKey creds = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
-            SimpleS3Config config = new SimpleS3Config(creds, "eu1-region");
+            IAccessKey credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
+            SimpleS3Config config = new SimpleS3Config(credentials, "eu1-region");
 
             IOptions<SimpleS3Config> options = Options.Create(config);
 
@@ -64,7 +64,7 @@ public class AwsSignatureVersion4Benchmarks
     }
 
     [Benchmark]
-    public string AWS4()
+    public string Aws4()
     {
         // Build the canonical request
         (string canonicalRequest, string signedHeaders) = CanonicalRequest.Build("s3", _request2, new Dictionary<string, IEnumerable<string>>(), string.Empty);
@@ -88,4 +88,6 @@ public class AwsSignatureVersion4Benchmarks
 
         return authorizationHeader;
     }
+
+    public void Dispose() => _request2.Dispose();
 }

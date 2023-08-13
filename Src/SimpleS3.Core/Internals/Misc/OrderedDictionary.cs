@@ -18,7 +18,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
     // Arrays are wrapped in a class to avoid being duplicated for each <TKey, TValue>
     private static readonly Entry[] _initialEntries = new Entry[1];
 
-    private readonly IEqualityComparer<TKey> _comparer = EqualityComparer<TKey>.Default;
+    private readonly EqualityComparer<TKey> _comparer = EqualityComparer<TKey>.Default;
 
     private readonly int[] _primes =
     {

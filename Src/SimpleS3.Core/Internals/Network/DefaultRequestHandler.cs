@@ -1,6 +1,5 @@
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
@@ -27,14 +26,14 @@ namespace Genbox.SimpleS3.Core.Internals.Network;
 /// <summary>Handles common request and response logic before sending to transport drivers.</summary>
 internal class DefaultRequestHandler : IRequestHandler
 {
-    private readonly IAuthorizationBuilder _authBuilder;
+    private readonly HeaderAuthorizationBuilder _authBuilder;
     private readonly SimpleS3Config _config;
     private readonly IEndpointBuilder _endpointBuilder;
     private readonly ILogger<DefaultRequestHandler> _logger;
     private readonly IMarshalFactory _marshaller;
     private readonly INetworkDriver _networkDriver;
     private readonly IPostMapperFactory _postMapper;
-    private readonly List<IRequestStreamWrapper>? _requestStreamWrappers;
+    private readonly IRequestStreamWrapper[]? _requestStreamWrappers;
     private readonly IRequestValidatorFactory _requestValidator;
 
     public DefaultRequestHandler(IOptions<SimpleS3Config> options, IRequestValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, HeaderAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultRequestHandler> logger, IEnumerable<IRequestStreamWrapper>? requestStreamWrappers = null)
@@ -55,7 +54,7 @@ internal class DefaultRequestHandler : IRequestHandler
         _postMapper = postMapper;
         _logger = logger;
 
-        _requestStreamWrappers = requestStreamWrappers?.ToList();
+        _requestStreamWrappers = requestStreamWrappers?.ToArray();
     }
 
     public Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken token = default) where TReq : IRequest where TResp : IResponse, new()

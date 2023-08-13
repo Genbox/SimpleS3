@@ -16,16 +16,21 @@ namespace Genbox.SimpleS3.Core;
 /// objects at the same time.</summary>
 public class SimpleClient : ISimpleClient
 {
-    private IBucketClient _bucketClient;
-    private IMultipartClient _multipartClient;
-    private IMultipartTransfer _multipartTransfer;
-    private IObjectClient _objectClient;
-    private ISignedObjectClient _signedObjectClient;
-    private ITransfer _transfer;
+    private readonly IBucketClient _bucketClient;
+    private readonly IMultipartClient _multipartClient;
+    private readonly IMultipartTransfer _multipartTransfer;
+    private readonly IObjectClient _objectClient;
+    private readonly ISignedObjectClient _signedObjectClient;
+    private readonly ITransfer _transfer;
 
     public SimpleClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObject)
     {
-        Initialize(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObject);
+        _objectClient = objectClient;
+        _bucketClient = bucketClient;
+        _multipartClient = multipartClient;
+        _multipartTransfer = multipartTransfer;
+        _transfer = transfer;
+        _signedObjectClient = signedObject;
     }
 
     protected SimpleClient() {}
@@ -117,16 +122,6 @@ public class SimpleClient : ISimpleClient
     public string SignHeadObject(string bucketName, string objectKey, TimeSpan expires, Action<HeadObjectRequest>? config = null) => _signedObjectClient.SignHeadObject(bucketName, objectKey, expires, config);
 
     public Task<HeadObjectResponse> HeadObjectAsync(string url, Action<SignedHeadObjectRequest>? config = null, CancellationToken token = default) => _signedObjectClient.HeadObjectAsync(url, config, token);
-
-    protected void Initialize(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient)
-    {
-        _objectClient = objectClient;
-        _bucketClient = bucketClient;
-        _multipartClient = multipartClient;
-        _multipartTransfer = multipartTransfer;
-        _transfer = transfer;
-        _signedObjectClient = signedObjectClient;
-    }
 
     public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default) => _multipartTransfer.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
 

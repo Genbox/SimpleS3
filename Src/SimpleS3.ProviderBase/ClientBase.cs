@@ -17,7 +17,7 @@ public abstract class ClientBase : IDisposable
 {
     private ServiceProvider? _serviceProvider;
 
-    protected internal ClientBase(IInputValidator inputValidator, SimpleS3Config config, NetworkConfig? networkConfig = null)
+    protected ClientBase(IInputValidator inputValidator, SimpleS3Config config, NetworkConfig? networkConfig = null)
     {
         ServiceCollection services = new ServiceCollection();
         services.AddSingleton(inputValidator);
@@ -45,7 +45,7 @@ public abstract class ClientBase : IDisposable
         Client = Build(services);
     }
 
-    protected internal ClientBase(IInputValidator inputValidator, SimpleS3Config config, INetworkDriver networkDriver)
+    protected ClientBase(IInputValidator inputValidator, SimpleS3Config config, INetworkDriver networkDriver)
     {
         ServiceCollection services = new ServiceCollection();
         services.AddSingleton(inputValidator);
@@ -59,7 +59,7 @@ public abstract class ClientBase : IDisposable
         Client = Build(services);
     }
 
-    protected internal ClientBase(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient)
+    protected ClientBase(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient)
     {
         Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
     }
@@ -76,7 +76,9 @@ public abstract class ClientBase : IDisposable
     {
         Validator.RequireThat(_serviceProvider == null, "You should only call Build once.");
 
+ #pragma warning disable IDISP003
         _serviceProvider = services.BuildServiceProvider();
+ #pragma warning restore IDISP003
 
         IObjectClient objectClient = _serviceProvider.GetRequiredService<IObjectClient>();
         IBucketClient bucketClient = _serviceProvider.GetRequiredService<IBucketClient>();

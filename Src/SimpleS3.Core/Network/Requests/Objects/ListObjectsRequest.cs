@@ -56,7 +56,7 @@ public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
     /// parameter, and then Amazon S3 ignores this parameter.</summary>
     public string? StartAfter { get; set; }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
 
     public Payer RequestPayer { get; set; }
 

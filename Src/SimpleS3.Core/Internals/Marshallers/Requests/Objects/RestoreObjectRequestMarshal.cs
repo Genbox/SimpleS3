@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects;
 
 internal class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjectRequest>
 {
-    public Stream? MarshalRequest(RestoreObjectRequest request, SimpleS3Config config)
+    public Stream MarshalRequest(RestoreObjectRequest request, SimpleS3Config config)
     {
         request.SetQueryParameter(AmzParameters.Restore, string.Empty);
 
@@ -173,9 +173,9 @@ internal class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjectReques
                 xml.WriteEndElement("Encryption");
             }
 
-            List<KeyValuePair<string, string>> tags = request.OutputLocation.Tags.ToList();
+            KeyValuePair<string, string>[] tags = request.OutputLocation.Tags.ToArray();
 
-            if (tags.Count > 0)
+            if (tags.Length > 0)
             {
                 xml.WriteStartElement("Tagging");
                 xml.WriteStartElement("TagSet");
@@ -192,9 +192,9 @@ internal class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjectReques
                 xml.WriteEndElement("Tagging");
             }
 
-            List<KeyValuePair<string, string>> metadata = request.OutputLocation.Metadata.ToList();
+            KeyValuePair<string,string>[] metadata = request.OutputLocation.Metadata.ToArray();
 
-            if (metadata.Count > 0)
+            if (metadata.Length > 0)
             {
                 xml.WriteStartElement("UserMetadata");
 

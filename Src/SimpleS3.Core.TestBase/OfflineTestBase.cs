@@ -9,10 +9,7 @@ namespace Genbox.SimpleS3.Core.TestBase;
 
 public abstract class OfflineTestBase : UnitTestBase
 {
-    protected OfflineTestBase(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-        BucketName = "main-test-bucket";
-    }
+    protected OfflineTestBase(ITestOutputHelper outputHelper) : base(outputHelper, "main-test-bucket") {}
 
     protected override void ConfigureConfig(SimpleS3Config config)
     {

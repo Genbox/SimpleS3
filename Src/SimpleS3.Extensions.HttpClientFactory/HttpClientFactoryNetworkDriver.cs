@@ -53,8 +53,11 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
 
             _logger.LogTrace("Sending HTTP request");
 
-            HttpClient client = _clientFactory.CreateClient(_optionsName);
+            using HttpClient client = _clientFactory.CreateClient(_optionsName);
+
+ #pragma warning disable IDISP001 - We cannot dispose as we need the response stream
             httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+ #pragma warning restore IDISP001
         }
 
         _logger.LogDebug("Got an {Status} response with {StatusCode}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
@@ -74,11 +77,7 @@ public class HttpClientFactoryNetworkDriver : INetworkDriver
             contentStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
 
-        HttpResponse returnResp = new HttpResponse();
-        returnResp.Content = contentStream;
-        returnResp.Headers = responseHeaders;
-        returnResp.StatusCode = (int)httpResponse.StatusCode;
-        return returnResp;
+        return new HttpResponse(contentStream, responseHeaders, (int)httpResponse.StatusCode);
     }
 
     private static HttpMethod ConvertToMethod(HttpMethodType method)

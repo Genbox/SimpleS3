@@ -22,7 +22,7 @@ internal class MarshalFactory : IMarshalFactory
         _requestMarshals = requestMarshals.ToDictionary(x =>
         {
             Type type = x.GetType();
-            Type iType = type.GetInterfaces().First();
+            Type iType = type.GetInterfaces()[0];
             Type[] args = iType.GetGenericArguments();
 
             return args[0];
@@ -31,7 +31,7 @@ internal class MarshalFactory : IMarshalFactory
         _responseMarshals = responseMarshals.ToDictionary(x =>
         {
             Type type = x.GetType();
-            Type iType = type.GetInterfaces().First();
+            Type iType = type.GetInterfaces()[0];
             Type[] args = iType.GetGenericArguments();
 
             return args[0];

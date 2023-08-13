@@ -44,7 +44,7 @@ public class ProfileManager : IProfileManager
         if (data == null)
             return null;
 
-        IProfile profile = _serializer.Deserialize<Profile>(data);
+        Profile profile = _serializer.Deserialize<Profile>(data);
 
         //Check if the we have the right protector
         string? protector = profile.GetTag("Protector");

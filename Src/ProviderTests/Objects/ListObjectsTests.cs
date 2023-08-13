@@ -1,4 +1,5 @@
-﻿using Genbox.ProviderTests.Misc;
+﻿using System.Globalization;
+using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Enums;
@@ -49,10 +50,10 @@ public class ListObjectsTests : TestBase
     {
         await CreateTempBucketAsync(provider, client, async tempBucket =>
         {
-            int concurrent = 10;
-            int count = 11;
+            const int concurrent = 10;
+            const int count = 11;
 
-            IEnumerable<PutObjectResponse> responses = await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), (val, token) => client.PutObjectAsync(tempBucket, val.ToString(), null, null, token), concurrent, CancellationToken.None);
+            IEnumerable<PutObjectResponse> responses = await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), (val, token) => client.PutObjectAsync(tempBucket, val.ToString(NumberFormatInfo.InvariantInfo), null, null, token), concurrent, CancellationToken.None);
 
             foreach (PutObjectResponse putResp in responses)
                 Assert.Equal(200, putResp.StatusCode);
@@ -71,7 +72,7 @@ public class ListObjectsTests : TestBase
             Assert.Equal(200, listResp2.StatusCode);
 
             Assert.Equal(1, listResp2.KeyCount);
-            Assert.Equal(1, listResp2.Objects.Count);
+            Assert.Single(listResp2.Objects);
             Assert.Equal(listResp.NextContinuationToken, listResp2.ContinuationToken);
             Assert.Null(listResp2.NextContinuationToken);
             Assert.False(listResp2.IsTruncated);

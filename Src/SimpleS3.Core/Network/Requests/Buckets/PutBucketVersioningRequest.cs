@@ -22,8 +22,7 @@ public class PutBucketVersioningRequest : BaseRequest, IHasBucketName, IContentM
     public bool Status { get; set; }
     public Func<bool> ForceContentMd5 => () => true;
     public byte[]? ContentMd5 { get; set; }
-
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
     public MfaAuthenticationBuilder Mfa { get; }
 
     internal void Initialize(string bucketName, bool enabled)

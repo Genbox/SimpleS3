@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
 internal class PutBucketAccelerateConfigurationRequestMarshal : IRequestMarshal<PutBucketAccelerateConfigurationRequest>
 {
-    public Stream? MarshalRequest(PutBucketAccelerateConfigurationRequest request, SimpleS3Config config)
+    public Stream MarshalRequest(PutBucketAccelerateConfigurationRequest request, SimpleS3Config config)
     {
         request.SetQueryParameter(AmzParameters.Accelerate, string.Empty);
 

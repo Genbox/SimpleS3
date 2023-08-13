@@ -1,4 +1,5 @@
-﻿using Genbox.SimpleS3.Core.Common.Misc;
+﻿using System.Globalization;
+using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase;
@@ -54,7 +55,7 @@ public class ReuseRequestTests : OfflineTestBase
 
         for (int i = 0; i < 10; i++)
         {
-            string key = i.ToString();
+            string key = i.ToString(NumberFormatInfo.InvariantInfo);
             req.ObjectKey = key;
 
             GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);

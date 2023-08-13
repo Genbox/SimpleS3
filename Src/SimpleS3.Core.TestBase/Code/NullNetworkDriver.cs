@@ -5,11 +5,11 @@ namespace Genbox.SimpleS3.Core.TestBase.Code;
 
 public class NullNetworkDriver : INetworkDriver
 {
-    public string LastUrl { get; set; }
+    public string? LastUrl { get; private set; }
 
-    public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
+    public Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         LastUrl = url;
-        return new HttpResponse { Headers = new Dictionary<string, string>() };
+        return Task.FromResult(new HttpResponse());
     }
 }

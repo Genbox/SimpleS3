@@ -3,7 +3,7 @@
 [Flags]
 public enum ObjectPermissions
 {
-    Unknown = 0,
+    None = 0,
 
     /// <summary>Equivalent to s3:GetObject, s3:GetObjectVersion, and s3:GetObjectTorrent</summary>
     Read = 1,

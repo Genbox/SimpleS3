@@ -6,15 +6,11 @@ internal class Profile : IProfile
 {
     public IDictionary<string, string>? Tags { get; private set; }
 
-    public string Name { get; internal set; }
-
-    public string KeyId { get; internal set; }
-
-    public byte[] AccessKey { get; internal set; }
-
-    public string RegionCode { get; internal set; }
-
-    public string Location { get; internal set; }
+    public string Name { get; internal set; } = null!;
+    public string KeyId { get; internal set; } = null!;
+    public byte[] AccessKey { get; internal set; } = null!;
+    public string RegionCode { get; internal set; } = null!;
+    public string Location { get; internal set; } = null!;
 
     public DateTimeOffset CreatedOn { get; internal set; }
 

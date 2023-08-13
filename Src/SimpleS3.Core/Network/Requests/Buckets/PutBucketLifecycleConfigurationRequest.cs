@@ -22,7 +22,7 @@ public class PutBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
     public Func<bool> ForceContentMd5 => () => true;
     public byte[]? ContentMd5 { get; set; }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName, IEnumerable<S3Rule> rules)
     {

@@ -34,7 +34,7 @@ public class CreateBucketRequest : BaseRequest, IHasBucketAcl, IHasBucketName
     public AclBuilder AclGrantReadAcp { get; }
     public AclBuilder AclGrantWriteAcp { get; }
     public AclBuilder AclGrantFullControl { get; }
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)
     {

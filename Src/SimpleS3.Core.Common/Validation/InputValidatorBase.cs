@@ -1,9 +1,11 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Common.Helpers;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Common.Validation;
 
+[PublicAPI]
 public abstract class InputValidatorBase : IInputValidator
 {
     public bool TryValidateKeyId(string? keyId, out ValidationStatus status, out string? message)
@@ -109,7 +111,7 @@ public abstract class InputValidatorBase : IInputValidator
 
     protected abstract bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message);
 
-    protected bool TryValidateBlacklisted(string input, out ValidationStatus status, out string? message)
+    protected static bool TryValidateBlacklisted(string input, out ValidationStatus status, out string? message)
     {
         foreach (char c in input)
         {
@@ -127,7 +129,7 @@ public abstract class InputValidatorBase : IInputValidator
         return true;
     }
 
-    protected bool TryValidateObjectSafeOnly(string input, out ValidationStatus status, out string? message)
+    protected static bool TryValidateObjectSafeOnly(string input, out ValidationStatus status, out string? message)
     {
         foreach (char c in input)
         {
@@ -144,7 +146,7 @@ public abstract class InputValidatorBase : IInputValidator
         return true;
     }
 
-    protected bool TryValidateObjectAsciiOnly(string input, out ValidationStatus status, out string? message)
+    protected static bool TryValidateObjectAsciiOnly(string input, out ValidationStatus status, out string? message)
     {
         foreach (char c in input)
         {
@@ -161,7 +163,7 @@ public abstract class InputValidatorBase : IInputValidator
         return true;
     }
 
-    protected bool TryValidateObjectExtAsciiOnly(string input, out ValidationStatus status, out string? message)
+    protected static bool TryValidateObjectExtAsciiOnly(string input, out ValidationStatus status, out string? message)
     {
         foreach (char c in input)
         {
@@ -178,7 +180,7 @@ public abstract class InputValidatorBase : IInputValidator
         return true;
     }
 
-    protected bool TryValidateBucketDns(string input, out ValidationStatus status, out string? message)
+    protected static bool TryValidateBucketDns(string input, out ValidationStatus status, out string? message)
     {
         int curPos = 0;
         int end = input.Length;

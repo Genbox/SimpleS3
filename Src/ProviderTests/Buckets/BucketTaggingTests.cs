@@ -13,7 +13,7 @@ public class BucketTaggingTests : TestBase
     {
         await CreateTempBucketAsync(provider, client, async tempBucket =>
         {
-            IDictionary<string, string> tags = new Dictionary<string, string>();
+            Dictionary<string, string> tags = new Dictionary<string, string>();
             tags.Add("MyKey", "MyValue");
             tags.Add("MyKey2", "MyValue2");
 

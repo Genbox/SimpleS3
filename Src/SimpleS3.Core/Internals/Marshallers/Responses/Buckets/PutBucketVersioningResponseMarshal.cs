@@ -9,19 +9,5 @@ internal class PutBucketVersioningResponseMarshal : IResponseMarshal<PutBucketVe
     public void MarshalResponse(SimpleS3Config config, PutBucketVersioningResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
         // The docs says there is an XML response, but there is none from the API.
-
-        //using (XmlTextReader reader = new XmlTextReader(responseStream))
-        //{
-        //    reader.Namespaces = false;
-
-        //    while (reader.Read())
-        //    {
-        //        if (reader.NodeType == XmlNodeType.Element && reader.Name == "Status")
-        //        {
-        //            response.Status = ValueHelper.ParseBool(reader.ReadString());
-        //            break;
-        //        }
-        //    }
-        //}
     }
 }

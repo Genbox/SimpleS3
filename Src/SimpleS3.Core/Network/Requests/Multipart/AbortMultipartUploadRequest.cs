@@ -20,10 +20,10 @@ public class AbortMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBu
         Initialize(bucketName, objectKey, uploadId);
     }
 
-    public string BucketName { get; set; }
-    public string ObjectKey { get; set; }
+    public string BucketName { get; set; } = null!;
+    public string ObjectKey { get; set; } = null!;
     public Payer RequestPayer { get; set; }
-    public string UploadId { get; set; }
+    public string UploadId { get; set; } = null!;
 
     internal void Initialize(string bucketName, string objectKey, string uploadId)
     {

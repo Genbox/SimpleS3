@@ -12,11 +12,8 @@ internal static class XmlHelper
 
         while (xmlReader.Read())
         {
-            if (tagName != null)
-            {
-                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == tagName)
-                    break;
-            }
+            if (tagName != null && xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == tagName)
+                break;
 
             if (xmlReader.NodeType != XmlNodeType.Element)
                 continue;

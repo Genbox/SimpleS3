@@ -14,7 +14,7 @@ internal class PostMapperFactory : IPostMapperFactory
         _postMappers = postMappers.ToDictionary(x =>
         {
             Type type = x.GetType();
-            Type iType = type.GetInterfaces().First();
+            Type iType = type.GetInterfaces()[0];
             Type[] args = iType.GetGenericArguments();
 
             return $"{args[0].Name}-{args[1].Name}";

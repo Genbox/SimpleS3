@@ -10,16 +10,15 @@ internal class HttpHandler : IHttpHeadersHandler, IHttpRequestLineHandler
 {
     public HttpHandler()
     {
-        Headers = new Dictionary<string, string>();
+        Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     }
 
     public IDictionary<string, string> Headers { get; }
-    public IDictionary<string, string> QueryParameters { get; private set; }
-    public HttpMethodType Method { get; private set; }
-    public string Target { get; private set; }
-    public string Path { get; private set; }
-    public string RawQuery { get; private set; }
-    public byte[] Body { get; internal set; }
+    public IDictionary<string, string> QueryParameters { get; private set; } = null!;
+    public HttpMethodType Method { get; private set; } = HttpMethodType.Unknown;
+    public string Target { get; private set; } = null!;
+    public string RawQuery { get; private set; } = null!;
+    public byte[] Body { get; internal set; } = null!;
 
     public void OnHeader(Span<byte> name, Span<byte> value)
     {
@@ -35,9 +34,8 @@ internal class HttpHandler : IHttpHeadersHandler, IHttpRequestLineHandler
         int paramIndex = Target.IndexOf('?', StringComparison.Ordinal);
 
         if (paramIndex > 0)
-            Target = Target.Substring(0, paramIndex);
+            Target = Target[..paramIndex];
 
-        Path = Encoding.UTF8.GetString(path);
         RawQuery = Encoding.UTF8.GetString(query);
         QueryParameters = HttpHelper.ParseQueryString(RawQuery).ToDictionary(x => x.key, x => x.value, StringComparer.OrdinalIgnoreCase);
     }

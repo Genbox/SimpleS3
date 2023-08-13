@@ -12,9 +12,9 @@ namespace Genbox.SimpleS3.Core.TestBase;
 
 public abstract class UnitTestBase : IDisposable
 {
-    protected UnitTestBase(ITestOutputHelper outputHelper, string? profileName = null)
+    protected UnitTestBase(ITestOutputHelper outputHelper, string bucketName)
     {
-        ProfileName = profileName;
+        BucketName = bucketName;
         IConfigurationRoot configRoot = new ConfigurationBuilder()
                                         .AddJsonFile("Config.json", false)
                                         .Build();
@@ -42,14 +42,19 @@ public abstract class UnitTestBase : IDisposable
     }
 
     protected ServiceProvider Services { get; }
-    protected string BucketName { get; set; }
-    protected string? ProfileName { get; }
+    protected string BucketName { get; }
     protected IObjectOperations ObjectOperations => Services.GetRequiredService<IObjectOperations>();
     protected IObjectClient ObjectClient => Services.GetRequiredService<IObjectClient>();
 
-    public virtual void Dispose()
+    protected virtual void Dispose(bool disposing)
     {
-        Services?.Dispose();
+        if (disposing)
+            Services.Dispose();
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
         GC.SuppressFinalize(this);
     }
 

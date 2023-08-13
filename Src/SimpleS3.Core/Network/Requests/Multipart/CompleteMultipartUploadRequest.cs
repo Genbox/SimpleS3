@@ -33,10 +33,10 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
     }
 
     public IList<S3PartInfo> UploadParts { get; }
-    public string BucketName { get; set; }
-    public string ObjectKey { get; set; }
+    public string BucketName { get; set; } = null!;
+    public string ObjectKey { get; set; } = null!;
     public Payer RequestPayer { get; set; }
-    public string UploadId { get; set; }
+    public string UploadId { get; set; } = null!;
 
     internal void Initialize(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts)
     {

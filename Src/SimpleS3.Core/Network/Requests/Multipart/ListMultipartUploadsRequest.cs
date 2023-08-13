@@ -57,7 +57,7 @@ public class ListMultipartUploadsRequest : BaseRequest, IHasBucketName
     /// upload-id-marker.</summary>
     public string? UploadIdMarker { get; set; }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)
     {

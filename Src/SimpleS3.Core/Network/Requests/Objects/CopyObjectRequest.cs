@@ -36,10 +36,10 @@ public class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMeta
         Initialize(sourceBucketName, sourceObjectKey, destinationBucketName, destinationObjectKey);
     }
 
-    public string SourceBucketName { get; private set; }
-    public string SourceObjectKey { get; private set; }
-    public string DestinationBucketName { get; private set; }
-    public string DestinationObjectKey { get; private set; }
+    public string SourceBucketName { get; private set; } = null!;
+    public string SourceObjectKey { get; private set; } = null!;
+    public string DestinationBucketName { get; private set; } = null!;
+    public string DestinationObjectKey { get; private set; } = null!;
     public MetadataDirective MetadataDirective { get; set; }
     public TaggingDirective TaggingDirective { get; set; }
     string IHasBucketName.BucketName => DestinationBucketName;

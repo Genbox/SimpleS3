@@ -6,5 +6,5 @@ public abstract class SignedBaseRequest : BaseRequest
 {
     protected SignedBaseRequest(HttpMethodType method) : base(method) {}
 
-    public string Url { get; internal set; }
+    public string Url { get; internal set; } = null!;
 }

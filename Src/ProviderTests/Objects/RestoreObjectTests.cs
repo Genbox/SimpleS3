@@ -29,10 +29,10 @@ public class RestoreObjectTests : TestBase
     {
         await using (StringWriter sw = new StringWriter())
         {
-            sw.WriteLine("name,age,status");
-            sw.WriteLine("santa,800,missing");
-            sw.WriteLine("\"donald trump\",7,present");
-            sw.WriteLine("fantastic fox,31,missing");
+            await sw.WriteLineAsync("name,age,status");
+            await sw.WriteLineAsync("santa,800,missing");
+            await sw.WriteLineAsync("\"donald trump\",7,present");
+            await sw.WriteLineAsync("fantastic fox,31,missing");
 
             await client.PutObjectStringAsync(bucket, nameof(RestoreWithSelect), sw.ToString(), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
         }

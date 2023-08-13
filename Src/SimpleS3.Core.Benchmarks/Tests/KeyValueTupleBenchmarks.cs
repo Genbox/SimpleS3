@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
+using System.Globalization;
+using BenchmarkDotNet.Attributes;
 
 namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 
@@ -6,14 +7,14 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 [InProcess]
 public class KeyValueTupleBenchmarks
 {
-    private readonly IDictionary<string, string> _dict = new Dictionary<string, string>();
+    private readonly Dictionary<string, string> _dict = new Dictionary<string, string>();
 
     public KeyValueTupleBenchmarks()
     {
         Random r = new Random(42);
 
         for (int i = 0; i < 100; i++)
-            _dict.Add(r.Next(10000, int.MaxValue).ToString(), r.Next(10000, int.MaxValue).ToString());
+            _dict.Add(r.Next(10000, int.MaxValue).ToString(NumberFormatInfo.InvariantInfo), r.Next(10000, int.MaxValue).ToString(NumberFormatInfo.InvariantInfo));
     }
 
     [Benchmark]
@@ -25,7 +26,7 @@ public class KeyValueTupleBenchmarks
     [Benchmark]
     public IList<KeyValuePair<string, string>> ToKeyValue()
     {
-        IList<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>();
+        List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>();
 
         foreach (KeyValuePair<string, string> pair in _dict)
             list.Add(pair);

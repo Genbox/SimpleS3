@@ -4,7 +4,7 @@ namespace Genbox.SimpleS3.Core.Internals.Extensions;
 
 internal static class HexExtensions
 {
-    private static readonly uint[] Lookup32 = CreateLookup32();
+    private static readonly uint[] _lookup32 = CreateLookup32();
 
     private static uint[] CreateLookup32()
     {
@@ -49,7 +49,7 @@ internal static class HexExtensions
         char[] result = new char[bytes.Length * 2];
         for (int i = 0; i < bytes.Length; i++)
         {
-            uint val = Lookup32[bytes[i]];
+            uint val = _lookup32[bytes[i]];
             unchecked
             {
                 result[2 * i] = (char)val;

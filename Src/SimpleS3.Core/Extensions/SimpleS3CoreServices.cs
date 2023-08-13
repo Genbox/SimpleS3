@@ -39,11 +39,13 @@ public static class SimpleS3CoreServices
     /// <param name="configure">Use this to configure the configuration used by SimpleS3</param>
     public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection, Action<SimpleS3Config>? configure = null)
     {
-        //This is in place of collection.AddOptions();
+        //We don't use the microsoft extension here as we only want a subset of services.
+
+        //Add options
         collection.TryAdd(ServiceDescriptor.Singleton(typeof(IOptions<>), typeof(OptionsManager<>)));
         collection.TryAdd(ServiceDescriptor.Transient(typeof(IOptionsFactory<>), typeof(OptionsFactory<>)));
 
-        //This is in place of collection.AddLogging()
+        //Add logging
         collection.TryAdd(ServiceDescriptor.Singleton<ILoggerFactory, LoggerFactory>());
         collection.TryAdd(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(Logger<>)));
 

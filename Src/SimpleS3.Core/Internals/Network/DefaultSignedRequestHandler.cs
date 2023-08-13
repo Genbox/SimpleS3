@@ -21,7 +21,7 @@ namespace Genbox.SimpleS3.Core.Internals.Network;
 
 internal class DefaultSignedRequestHandler : ISignedRequestHandler
 {
-    private readonly IAuthorizationBuilder _authBuilder;
+    private readonly QueryParameterAuthorizationBuilder _authBuilder;
     private readonly SimpleS3Config _config;
     private readonly IEndpointBuilder _endpointBuilder;
     private readonly ILogger<DefaultSignedRequestHandler> _logger;

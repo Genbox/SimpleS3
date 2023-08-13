@@ -10,14 +10,14 @@ namespace Genbox.SimpleS3.Core.Internals.Operations;
 internal class ObjectOperations : IObjectOperations
 {
     private readonly IRequestHandler _requestHandler;
-    private readonly List<IRequestWrapper> _requestWrappers;
-    private readonly List<IResponseWrapper> _responseWrappers;
+    private readonly IRequestWrapper[] _requestWrappers;
+    private readonly IResponseWrapper[] _responseWrappers;
 
     public ObjectOperations(IRequestHandler requestHandler, IEnumerable<IRequestWrapper> requestWrappers, IEnumerable<IResponseWrapper> responseWrappers)
     {
         _requestHandler = requestHandler;
-        _requestWrappers = requestWrappers.ToList();
-        _responseWrappers = responseWrappers.ToList();
+        _requestWrappers = requestWrappers.ToArray();
+        _responseWrappers = responseWrappers.ToArray();
     }
 
     public Task<DeleteObjectResponse> DeleteObjectAsync(DeleteObjectRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<DeleteObjectRequest, DeleteObjectResponse>(request, token);

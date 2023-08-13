@@ -32,7 +32,7 @@ internal class PooledMultipartClient : IMultipartClient
     {
         void Setup(UploadPartRequest req)
         {
-            req.Initialize(bucketName, objectKey, partNumber, uploadId, content);
+            req.Initialize(bucketName, objectKey, uploadId, partNumber, content);
             config?.Invoke(req);
         }
 

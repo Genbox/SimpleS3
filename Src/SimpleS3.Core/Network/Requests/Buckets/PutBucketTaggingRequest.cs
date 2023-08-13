@@ -26,8 +26,7 @@ public class PutBucketTaggingRequest : BaseRequest, IHasBucketName, IContentMd5C
 
     public byte[]? ContentMd5 { get; set; }
     public Func<bool> ForceContentMd5 => () => true;
-
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
     public TagBuilder Tags { get; }
 
     internal void Initialize(string bucketName, IDictionary<string, string> tags)

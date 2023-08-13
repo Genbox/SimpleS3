@@ -22,7 +22,7 @@ public sealed class PutBucketLockConfigurationRequest : BaseRequest, IHasBucketN
     Func<Type, bool> IAutoMapConfig.AutoMapDisabledFor => x => x == typeof(IHasLock);
     public byte[]? ContentMd5 { get; set; }
     Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
     public LockMode LockMode { get; set; }
     public DateTimeOffset? LockRetainUntil { get; set; }
     public Payer RequestPayer { get; set; }

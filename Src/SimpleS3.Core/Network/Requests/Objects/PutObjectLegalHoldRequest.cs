@@ -20,9 +20,9 @@ public sealed class PutObjectLegalHoldRequest : BaseRequest, IHasBucketName, IHa
 
     Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
     public bool? LockLegalHold { get; set; }
-    public string ObjectKey { get; set; }
+    public string ObjectKey { get; set; } = null!;
     public Payer RequestPayer { get; set; }
     public string? VersionId { get; set; }
 

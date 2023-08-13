@@ -165,16 +165,13 @@ public class GoogleCloudStorageInputValidator : InputValidatorBase
                 return false;
             }
 
-            if (mode == ObjectKeyValidationMode.DefaultStrict)
+            //Spec: Avoid the "#" character: gsutil interprets object names ending with #<numeric string> as version identifiers, so including "#" in object names can make it difficult or impossible to perform operations on such versioned objects using gsutil.
+            //Spec: Avoid the "[", "]", "*", or "?" characters: gsutil interprets these characters as wildcards, so including them in object names can make it difficult or impossible to perform wildcard operations using gsutil.
+            if (mode == ObjectKeyValidationMode.DefaultStrict && CharHelper.OneOf(c, '#', '[', ']', '*', '?'))
             {
-                //Spec: Avoid the "#" character: gsutil interprets object names ending with #<numeric string> as version identifiers, so including "#" in object names can make it difficult or impossible to perform operations on such versioned objects using gsutil.
-                //Spec: Avoid the "[", "]", "*", or "?" characters: gsutil interprets these characters as wildcards, so including them in object names can make it difficult or impossible to perform wildcard operations using gsutil.
-                if (CharHelper.OneOf(c, '#', '[', ']', '*', '?'))
-                {
-                    status = ValidationStatus.WrongFormat;
-                    message = c.ToString();
-                    return false;
-                }
+                status = ValidationStatus.WrongFormat;
+                message = c.ToString();
+                return false;
             }
         }
 

@@ -44,7 +44,7 @@ public class ListObjectVersionsRequest : BaseRequest, IHasBucketName
     /// <summary>Specifies the object version you want to start listing from.</summary>
     public string? VersionIdMarker { get; set; }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)
     {

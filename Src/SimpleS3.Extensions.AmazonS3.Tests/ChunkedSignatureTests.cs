@@ -88,7 +88,7 @@ public class ChunkedSignatureTests
         IDictionary<string, string> query = new Dictionary<string, string>();
 
         //Override the header signing filter and just sign everything
-        HeaderWhitelist.ShouldSignHeader += s => true;
+        HeaderWhitelist.ShouldSignHeader += _ => true;
 
         string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethodType.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(query), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
         Assert.Equal(expectedSeedCr, actualSeedCr);
@@ -116,7 +116,7 @@ public class ChunkedSignatureTests
 
         byte[] first = chunks[0].ToArray();
         Assert.Equal(65536, first.Length);
-        Assert.Equal(first[0], (byte)'a');
+        Assert.Equal((byte)'a', first[0]);
 
         string firstExpectedSts = "AWS4-HMAC-SHA256-PAYLOAD\n" +
                                   "20130524T000000Z\n" +

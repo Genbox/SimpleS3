@@ -129,6 +129,9 @@ internal class FastXmlWriter
                             continue;
                         case XmlCharMode.ThrowException:
                             throw new XmlException($"Discouraged XML character: 0x{Convert.ToString(c, 16)} at offset {i}");
+                        case XmlCharMode.Unknown:
+                        default:
+                            throw new ArgumentOutOfRangeException("Unsupported value " + _discouragedCharMode);
                     }
                 }
 
@@ -142,6 +145,10 @@ internal class FastXmlWriter
                         continue;
                     case XmlCharMode.ThrowException:
                         throw new XmlException($"Invalid XML character: 0x{Convert.ToString(c, 16)} at offset {i}");
+                    case XmlCharMode.Unknown:
+                    case XmlCharMode.EntityEncode:
+                    default:
+                        throw new ArgumentOutOfRangeException("Unsupported value " + _invalidCharMode);
                 }
             }
         }

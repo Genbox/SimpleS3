@@ -16,8 +16,8 @@ public class GetObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, I
         Initialize(bucketName, objectKey);
     }
 
-    public string BucketName { get; set; }
-    public string ObjectKey { get; set; }
+    public string BucketName { get; set; } = null!;
+    public string ObjectKey { get; set; } = null!;
     public Payer RequestPayer { get; set; }
     public string? VersionId { get; set; }
 

@@ -20,10 +20,10 @@ public class DeleteObjectRequest : BaseRequest, IHasVersionId, IHasRequestPayer,
         Initialize(bucketName, objectKey);
     }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
     public bool? BypassGovernanceRetention { get; set; }
     public MfaAuthenticationBuilder Mfa { get; internal set; }
-    public string ObjectKey { get; set; }
+    public string ObjectKey { get; set; } = null!;
     public Payer RequestPayer { get; set; }
     public string? VersionId { get; set; }
 

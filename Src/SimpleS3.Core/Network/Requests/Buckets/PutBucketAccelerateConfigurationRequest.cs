@@ -18,7 +18,7 @@ public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketNa
 
     public bool AccelerationEnabled { get; set; }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName, bool enabled)
     {

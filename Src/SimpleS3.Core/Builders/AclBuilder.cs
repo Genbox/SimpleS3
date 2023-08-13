@@ -159,6 +159,6 @@ public class AclBuilder : IHttpHeaderBuilder
 
         Validator.RequireNotNull(groupStr, "Bug: PredefinedGroup is missing EnumValue");
 
-        return AddGroup(groupStr!);
+        return AddGroup(groupStr);
     }
 }

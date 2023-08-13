@@ -9,7 +9,6 @@ public class PropertyHelperTests
     {
         //User creates a config and sets OtherValue. We should not have an issue with the fact that it contains the value
         Config a = new Config();
-        a.OtherValue = "some value";
 
         //We check that the state of configs is as taken from BaseConfig
         Assert.Null(a.NullDefaultValue);
@@ -60,7 +59,5 @@ public class PropertyHelperTests
         {
             StringCtorValue = "new value";
         }
-
-        public string OtherValue { get; set; }
     }
 }

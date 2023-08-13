@@ -33,6 +33,6 @@ public abstract class BaseRequest : IRequest, IPooledObject
 
     public void SetHeader(string key, string value)
     {
-        _headers[key.ToLowerInvariant()] = value!;
+        _headers[key.ToLowerInvariant()] = value;
     }
 }

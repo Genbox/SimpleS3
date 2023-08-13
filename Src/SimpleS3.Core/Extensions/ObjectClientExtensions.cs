@@ -43,6 +43,7 @@ public static class ObjectClientExtensions
     /// <param name="client"></param>
     /// <param name="bucketName">The bucket the object resides in</param>
     /// <param name="objectKeys">A list of keys you want to delete</param>
+    /// <param name="config">Used this to configure the request before it is sent</param>
     /// <param name="token">A cancellation token to cancel the request</param>
     public static Task<DeleteObjectsResponse> DeleteObjectsAsync(this IObjectClient client, string bucketName, IEnumerable<string> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default)
     {
@@ -235,7 +236,7 @@ public static class ObjectClientExtensions
     /// <summary>List all objects within a bucket</summary>
     /// <param name="client">The ObjectClient</param>
     /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
-    /// <param name="config">A delegate to configure the ListObjectsRequest before sending it</param>
+    /// <param name="configure">A delegate to configure the ListObjectsRequest before sending it</param>
     /// <param name="token">A cancellation token</param>
     /// <returns>A list of objects within the bucket</returns>
     /// <exception cref="S3RequestException">If any of the requests fails this exception will be thrown</exception>
@@ -278,9 +279,9 @@ public static class ObjectClientExtensions
     /// <summary>List all object versions in a bucket</summary>
     /// <param name="client">The ObjectClient</param>
     /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
-    /// <param name="config">Delegate to configure the ListObjectVersionsRequest before sending it</param>
+    /// <param name="prefix">A prefix to use</param>
     /// <param name="token">A cancellation token</param>
-    public static IAsyncEnumerable<S3Version> ListAllObjectVersionsAsync(this IObjectClient client, string bucketName, string prefix, [EnumeratorCancellation]CancellationToken token = default)
+    public static IAsyncEnumerable<S3Version> ListAllObjectVersionsAsync(this IObjectClient client, string bucketName, string prefix, CancellationToken token = default)
     {
         return ListAllObjectVersionsAsync(client, bucketName, req => req.Prefix = prefix, token);
     }
@@ -288,7 +289,7 @@ public static class ObjectClientExtensions
     /// <summary>List all object versions in a bucket</summary>
     /// <param name="client">The ObjectClient</param>
     /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
-    /// <param name="config">Delegate to configure the ListObjectVersionsRequest before sending it</param>
+    /// <param name="configure">Delegate to configure the <see cref="ListObjectVersionsRequest"/> before sending it</param>
     /// <param name="token">A cancellation token</param>
     public static async IAsyncEnumerable<S3Version> ListAllObjectVersionsAsync(this IObjectClient client, string bucketName, Action<ListObjectVersionsRequest>? configure = null, [EnumeratorCancellation]CancellationToken token = default)
     {

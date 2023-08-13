@@ -8,7 +8,6 @@ public static class UrlHelper
 {
     //Valid URL characters according to RFC3986: https://tools.ietf.org/html/rfc3986#section-2.3
     private const string _validUrlCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-
     private static readonly HashSet<byte> _validUrlLookup = new HashSet<byte>(BuildLookup(_validUrlCharacters));
 
     private static IEnumerable<byte> BuildLookup(string charList)

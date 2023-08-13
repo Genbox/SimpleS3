@@ -14,7 +14,7 @@ public class DeleteBucketTaggingRequest : BaseRequest, IHasBucketName
         Initialize(bucketName);
     }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)
     {

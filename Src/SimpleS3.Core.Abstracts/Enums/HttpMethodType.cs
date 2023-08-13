@@ -1,4 +1,5 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿// ReSharper disable InconsistentNaming
+namespace Genbox.SimpleS3.Core.Abstracts.Enums;
 
 public enum HttpMethodType
 {

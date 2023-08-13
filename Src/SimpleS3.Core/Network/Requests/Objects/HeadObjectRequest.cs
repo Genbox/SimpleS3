@@ -41,12 +41,12 @@ public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCusto
         Initialize(bucketName, objectKey);
     }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
     public DateTimeOffset? IfModifiedSince { get; set; }
     public DateTimeOffset? IfUnmodifiedSince { get; set; }
     public ETagBuilder IfETagMatch { get; internal set; }
     public ETagBuilder IfETagNotMatch { get; internal set; }
-    public string ObjectKey { get; set; }
+    public string ObjectKey { get; set; } = null!;
     public int? PartNumber { get; set; }
     public RangeBuilder Range { get; internal set; }
     public DateTimeOffset? ResponseExpires { get; set; }

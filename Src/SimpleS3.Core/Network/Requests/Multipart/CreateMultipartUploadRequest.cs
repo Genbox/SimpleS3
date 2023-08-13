@@ -38,7 +38,7 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
         Initialize(bucketName, objectKey);
     }
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
     public CacheControlBuilder CacheControl { get; internal set; }
     public ContentDispositionBuilder ContentDisposition { get; internal set; }
     public ContentEncodingBuilder ContentEncoding { get; internal set; }
@@ -53,7 +53,7 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
     public AclBuilder AclGrantReadAcp { get; internal set; }
     public AclBuilder AclGrantWriteAcp { get; internal set; }
     public AclBuilder AclGrantFullControl { get; internal set; }
-    public string ObjectKey { get; set; }
+    public string ObjectKey { get; set; } = null!;
     public Payer RequestPayer { get; set; }
     public SseAlgorithm SseAlgorithm { get; set; }
     public string? SseKmsKeyId { get; set; }

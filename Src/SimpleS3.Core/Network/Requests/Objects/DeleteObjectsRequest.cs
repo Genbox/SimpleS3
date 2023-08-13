@@ -34,7 +34,7 @@ public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBy
     public byte[]? ContentMd5 { get; set; }
     Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
 
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
     public bool? BypassGovernanceRetention { get; set; }
     public MfaAuthenticationBuilder Mfa { get; }
     public Payer RequestPayer { get; set; }

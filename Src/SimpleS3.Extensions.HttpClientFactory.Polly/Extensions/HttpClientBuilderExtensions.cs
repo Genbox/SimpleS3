@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Internal;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Options;
@@ -12,6 +13,7 @@ using Polly.Timeout;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 
+[PublicAPI]
 public static class HttpClientBuilderExtensions
 {
     private static readonly Func<HttpResponseMessage, bool> _statusCodes = resp => (int)resp.StatusCode >= (int)HttpStatusCode.InternalServerError || resp.StatusCode == HttpStatusCode.RequestTimeout;
@@ -61,7 +63,7 @@ public static class HttpClientBuilderExtensions
                 AsyncTimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(config.Timeout);
 
                 IAsyncPolicy<HttpResponseMessage>? finalPolicy = retryPolicy.WrapAsync(timeoutPolicy);
-                x.HttpMessageHandlerBuilderActions.Add(b => b.AdditionalHandlers.Add(new PollyHttpMessageHandler(finalPolicy)));
+                x.HttpMessageHandlerBuilderActions.Add(h => h.AdditionalHandlers.Add(new PollyHttpMessageHandler(finalPolicy)));
             });
         }
 
