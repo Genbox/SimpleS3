@@ -28,19 +28,18 @@ public abstract class ClientBase : IDisposable
 
         IHttpClientBuilder httpBuilder = builder.UseHttpClientFactory();
 
-        if (networkConfig != null)
-        {
-            if (networkConfig.Proxy != null)
-                httpBuilder.UseProxy(networkConfig.Proxy);
+        networkConfig ??= new NetworkConfig();
 
-            httpBuilder.UseRetryAndTimeout(x =>
-            {
-                x.Retries = networkConfig.Retries;
-                x.RetryMode = networkConfig.RetryMode;
-                x.Timeout = networkConfig.Timeout;
-                x.MaxRandomDelay = networkConfig.MaxRandomDelay;
-            });
-        }
+        if (networkConfig.Proxy != null)
+            httpBuilder.UseProxy(networkConfig.Proxy);
+
+        httpBuilder.UseRetryAndTimeout(x =>
+        {
+            x.Retries = networkConfig.Retries;
+            x.RetryMode = networkConfig.RetryMode;
+            x.Timeout = networkConfig.Timeout;
+            x.MaxRandomDelay = networkConfig.MaxRandomDelay;
+        });
 
         Client = Build(services);
     }
