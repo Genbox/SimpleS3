@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+    <Using Include="BenchmarkDotNet.Attributes" />
     <PackageReference Include="BenchmarkDotNet" />
   </ItemGroup>
 

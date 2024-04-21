@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(IncludeAnalyzers)' == 'True'">
-    <PackageReference Include="Roslynator.Testing.CSharp.Xunit" PrivateAssets="all" />
     <PackageReference Include="xunit.analyzers" PrivateAssets="all" />
   </ItemGroup>
 
