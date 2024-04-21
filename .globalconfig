@@ -193,3 +193,20 @@ dotnet_diagnostic.ss019.severity = none # Switch is missing a default label. Inc
 dotnet_diagnostic.xunit1026.severity = none # Theory methods should use all of their parameters
 dotnet_diagnostic.ca1032.severity = none # Implement constructors for exception
 
+dotnet_diagnostic.HLQ013.severity = none # Consider using foreach loop
+dotnet_diagnostic.CA1019.severity = none # Define accessors for attribute arguments
+dotnet_diagnostic.CA1055.severity = none # URI return values should not be strings
+dotnet_diagnostic.CA5394.severity = none # Do not use insecure randomness
+dotnet_diagnostic.CA1700.severity = none # Do not name enum values 'Reserved'
+dotnet_diagnostic.SCS0005.severity = none # Weak Random Number Generator
+dotnet_diagnostic.S3267.severity = none # Loops should be simplified with "LINQ" expressions
+dotnet_diagnostic.CA5351.severity = none # Do Not Use Broken Cryptographic Algorithms
+dotnet_diagnostic.SCS0006.severity = none # Weak hashing function
+dotnet_diagnostic.CA1711.severity = none # Identifiers should not have incorrect suffix
+dotnet_diagnostic.S2997.severity = error # "IDisposables" created in a "using" statement should not be returned
+dotnet_diagnostic.S125.severity = none # Sections of code should not be commented out
+
+# Broken
+dotnet_diagnostic.S2589.severity = none # Boolean expressions should not be gratuitous
+dotnet_diagnostic.S2583.severity = none # Conditionally executed code should be reachable
+

@@ -57,7 +57,7 @@ internal class EndpointBuilder : IEndpointBuilder
                 else if (value == "region")
                     str = _config.RegionCode;
                 else
-                    return null;
+                    return null!;
 
                 string pre = match.Groups["pre"].Value;
                 string post = match.Groups["post"].Value;
