@@ -14,7 +14,7 @@ public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5
 
     internal UploadPartRequest() : base(HttpMethodType.PUT) {}
 
-    public UploadPartRequest(string bucketName, string objectKey, int partNumber, string uploadId, Stream content) : this()
+    public UploadPartRequest(string bucketName, string objectKey, string uploadId, int partNumber, Stream? content) : this()
     {
         Initialize(bucketName, objectKey, uploadId, partNumber, content);
     }
@@ -46,7 +46,7 @@ public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5
 
     public string UploadId { get; set; } = null!;
 
-    internal void Initialize(string bucketName, string objectKey, string uploadId, int partNumber, Stream content)
+    internal void Initialize(string bucketName, string objectKey, string uploadId, int partNumber, Stream? content)
     {
         if (partNumber is <= 0 or > 10_000)
             throw new ArgumentException("Part number must be between 1 and 10.000 inclusive", nameof(partNumber));

@@ -24,7 +24,7 @@ internal class MultipartClient : IMultipartClient
 
     public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default)
     {
-        UploadPartRequest req = new UploadPartRequest(bucketName, objectKey, partNumber, uploadId, content);
+        UploadPartRequest req = new UploadPartRequest(bucketName, objectKey, uploadId, partNumber, content);
         config?.Invoke(req);
 
         return _multipartOperations.UploadPartAsync(req, token);

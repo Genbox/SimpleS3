@@ -178,7 +178,7 @@ public class ChunkedSignatureTests
 
         using MemoryStream memoryStream = new MemoryStream(originalData);
 
-        UploadPartRequest req = new UploadPartRequest("examplebucket", "myresource", 1, "someid", memoryStream);
+        UploadPartRequest req = new UploadPartRequest("examplebucket", "myresource", "someid", 1, memoryStream);
         req.Timestamp = new DateTimeOffset(2019, 1, 1, 12, 0, 0, TimeSpan.Zero);
         req.SetHeader(AmzHeaders.XAmzContentSha256, "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
 

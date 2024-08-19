@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
@@ -107,7 +107,7 @@ public class SimpleClient : ISimpleClient
 
     public IDownload CreateDownload(string bucket, string objectKey) => _transfer.CreateDownload(bucket, objectKey);
 
-    public string SignPutObject(string bucketName, string objectKey, Stream? content, TimeSpan expires, Action<PutObjectRequest>? config = null) => _signedObjectClient.SignPutObject(bucketName, objectKey, content, expires, config);
+    public string SignPutObject(string bucketName, string objectKey, TimeSpan expires, Action<PutObjectRequest>? config = null) => _signedObjectClient.SignPutObject(bucketName, objectKey, expires, config);
 
     public Task<PutObjectResponse> PutObjectAsync(string url, Stream? content, Action<SignedPutObjectRequest>? config = null, CancellationToken token = default) => _signedObjectClient.PutObjectAsync(url, content, config, token);
 

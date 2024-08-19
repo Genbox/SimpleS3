@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -122,7 +122,7 @@ public sealed class GoogleCloudStorageClient : ClientBase, ISimpleClient
 
     public IDownload CreateDownload(string bucket, string objectKey) => Client.CreateDownload(bucket, objectKey);
 
-    public string SignPutObject(string bucketName, string objectKey, Stream? content, TimeSpan expires, Action<PutObjectRequest>? config = null) => Client.SignPutObject(bucketName, objectKey, content, expires, config);
+    public string SignPutObject(string bucketName, string objectKey, TimeSpan expires, Action<PutObjectRequest>? config = null) => Client.SignPutObject(bucketName, objectKey, expires, config);
 
     public Task<PutObjectResponse> PutObjectAsync(string url, Stream? content, Action<SignedPutObjectRequest>? config = null, CancellationToken token = default) => Client.PutObjectAsync(url, content, config, token);
 

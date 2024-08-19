@@ -50,8 +50,6 @@ internal class DefaultSignedRequestHandler : ISignedRequestHandler
 
         _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
-        using Stream? stream = _marshaller.MarshalRequest(_config, request);
-
         IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
         request.SetHeader(HttpHeaders.Host, endpointData.Host);
 

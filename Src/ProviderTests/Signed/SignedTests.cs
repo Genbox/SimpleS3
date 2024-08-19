@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -14,7 +14,7 @@ public class SignedTests : TestBase
     {
         int expireIn = 100;
 
-        string url = client.SignPutObject(bucket, "test.zip", null, TimeSpan.FromSeconds(expireIn));
+        string url = client.SignPutObject(bucket, "test.zip", TimeSpan.FromSeconds(expireIn));
 
         await using (MemoryStream ms = new MemoryStream(Encoding.ASCII.GetBytes("hello world")))
         {

@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.Signed;
@@ -15,9 +15,9 @@ internal class SignedObjectClient : ISignedObjectClient
         _operations = operations;
     }
 
-    public string SignPutObject(string bucketName, string objectKey, Stream? content, TimeSpan expires, Action<PutObjectRequest>? config = null)
+    public string SignPutObject(string bucketName, string objectKey, TimeSpan expires, Action<PutObjectRequest>? config = null)
     {
-        PutObjectRequest request = new PutObjectRequest(bucketName, objectKey, content);
+        PutObjectRequest request = new PutObjectRequest(bucketName, objectKey, null);
         config?.Invoke(request);
 
         return _operations.SignPutObject(request, expires);
