@@ -17,7 +17,7 @@ public class StaticCreatorTests
 
         using GoogleCloudStorageClient client = new GoogleCloudStorageClient(config, driver);
 
-        await client.GetObjectAsync("testbucket", "GetObjectAsync").ConfigureAwait(false);
+        await client.GetObjectAsync("testbucket", "GetObjectAsync");
         Assert.Equal("https://testbucket.storage.googleapis.com/GetObjectAsync", driver.LastUrl);
     }
 }

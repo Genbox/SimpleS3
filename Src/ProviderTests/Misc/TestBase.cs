@@ -13,12 +13,12 @@ public abstract class TestBase
     {
         string tempBucket = GetTemporaryBucket();
 
-        CreateBucketResponse createResponse = await client.CreateBucketAsync(tempBucket, config).ConfigureAwait(false);
+        CreateBucketResponse createResponse = await client.CreateBucketAsync(tempBucket, config);
         Assert.Equal(200, createResponse.StatusCode);
 
         try
         {
-            await action(tempBucket).ConfigureAwait(false);
+            await action(tempBucket);
         }
         finally
         {
@@ -26,7 +26,7 @@ public abstract class TestBase
 
             if (errors == 0)
             {
-                DeleteBucketResponse delBucketResp = await client.DeleteBucketAsync(tempBucket).ConfigureAwait(false);
+                DeleteBucketResponse delBucketResp = await client.DeleteBucketAsync(tempBucket);
                 Assert.True(delBucketResp.IsSuccess);
             }
 

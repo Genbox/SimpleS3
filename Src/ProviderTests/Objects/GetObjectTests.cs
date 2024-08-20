@@ -20,10 +20,10 @@ public class GetObjectTests : TestBase
         byte[] binaryData = new byte[10];
         RandomNumberGenerator.Fill(binaryData);
 
-        PutObjectResponse putResp = await client.PutObjectDataAsync(bucket, nameof(GetObjectData), binaryData).ConfigureAwait(false);
+        PutObjectResponse putResp = await client.PutObjectDataAsync(bucket, nameof(GetObjectData), binaryData);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectData)).ConfigureAwait(false);
+        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectData));
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal(binaryData, await getResp.Content.AsDataAsync());
     }
@@ -38,10 +38,10 @@ public class GetObjectTests : TestBase
 
         string stringData = "Hello 你好 ਸਤ ਸ੍ਰੀ ਅਕਾਲ Привет";
 
-        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, nameof(GetObjectString), stringData).ConfigureAwait(false);
+        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, nameof(GetObjectString), stringData);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectString)).ConfigureAwait(false);
+        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectString));
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal(stringData, await getResp.Content.AsStringAsync());
     }
@@ -50,27 +50,27 @@ public class GetObjectTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task GetObjectContentRange(S3Provider _, string bucket, ISimpleClient client)
     {
-        await client.PutObjectStringAsync(bucket, nameof(GetObjectContentRange), "test").ConfigureAwait(false);
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectContentRange), r => r.Range.Add(0, 2)).ConfigureAwait(false);
+        await client.PutObjectStringAsync(bucket, nameof(GetObjectContentRange), "test");
+        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectContentRange), r => r.Range.Add(0, 2));
 
         Assert.Equal(206, getResp.StatusCode);
         Assert.Equal(3, getResp.ContentLength);
         Assert.Equal("bytes", getResp.AcceptRanges);
         Assert.Equal("bytes 0-2/4", getResp.ContentRange);
-        Assert.Equal("tes", await getResp.Content.AsStringAsync().ConfigureAwait(false));
+        Assert.Equal("tes", await getResp.Content.AsStringAsync());
     }
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task GetObjectLifecycle(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(GetObjectLifecycle), null).ConfigureAwait(false);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(GetObjectLifecycle), null);
 
         //Test lifecycle expiration (yes, we add 2 days. I don't know why Amazon works like this)
         Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
         Assert.Equal("ExpireAll", putResp.LifeCycleRuleId);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectLifecycle)).ConfigureAwait(false);
+        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectLifecycle));
         Assert.Equal(200, getResp.StatusCode);
 
         //Test lifecycle expiration

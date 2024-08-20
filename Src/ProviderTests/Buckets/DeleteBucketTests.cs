@@ -15,17 +15,17 @@ public class DeleteBucketTests : TestBase
     {
         string tempBucketName = GetTemporaryBucket();
 
-        DeleteBucketResponse deleteResp1 = await client.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
+        DeleteBucketResponse deleteResp1 = await client.DeleteBucketAsync(tempBucketName);
         Assert.False(deleteResp1.IsSuccess);
         Assert.Equal(ErrorCode.NoSuchBucket, deleteResp1.Error?.Code);
 
-        await client.CreateBucketAsync(tempBucketName).ConfigureAwait(false);
+        await client.CreateBucketAsync(tempBucketName);
 
-        DeleteBucketResponse deleteResp2 = await client.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
+        DeleteBucketResponse deleteResp2 = await client.DeleteBucketAsync(tempBucketName);
         Assert.True(deleteResp2.IsSuccess);
         Assert.Equal(204, deleteResp2.StatusCode);
 
-        ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucketName).ConfigureAwait(false);
+        ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucketName);
         Assert.False(listResp.IsSuccess);
         Assert.Equal(404, listResp.StatusCode);
     }

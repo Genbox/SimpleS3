@@ -28,10 +28,10 @@ public class BucketLifecycleConfigurationTests : TestBase
             rule3.Expiration = new S3Expiration(DateTimeOffset.UtcNow.AddDays(1));
             rule3.Filter = new S3Filter { Tag = new KeyValuePair<string, string>("type", "temp") };
 
-            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, new[] { rule1, rule2, rule3 }).ConfigureAwait(false);
+            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, new[] { rule1, rule2, rule3 });
             Assert.True(putResp.IsSuccess);
 
-            GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket).ConfigureAwait(false);
+            GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket);
             Assert.True(getResp.IsSuccess);
 
             S3Rule rule1A = getResp.Rules[0];
@@ -54,7 +54,7 @@ public class BucketLifecycleConfigurationTests : TestBase
             Assert.Equal(rule3.Enabled, rule3A.Enabled);
             Assert.Equal(rule3.Filter.Tag, rule3A.Filter?.Tag);
             Assert.Equal(rule3.Expiration.ExpireOnDate?.Date, rule3A.Expiration?.ExpireOnDate?.Date); //Amazon round the date to the day instead
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -67,7 +67,7 @@ public class BucketLifecycleConfigurationTests : TestBase
             rule.Expiration = new S3Expiration(DateTimeOffset.UtcNow.AddDays(10));
             rule.Filter = new S3Filter(); //Empty filter means the whole bucket is affected
 
-            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, new[] { rule }).ConfigureAwait(false);
+            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, new[] { rule });
             Assert.True(putResp.IsSuccess);
 
             GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket);
@@ -78,7 +78,7 @@ public class BucketLifecycleConfigurationTests : TestBase
             Assert.Equal(rule.Enabled, rule1A.Enabled);
             Assert.Equal(rule.Filter.Prefix, rule1A.Filter?.Prefix);
             Assert.Equal(rule.Expiration.ExpireAfterDays, rule1A.Expiration?.ExpireAfterDays);
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -99,10 +99,10 @@ public class BucketLifecycleConfigurationTests : TestBase
             rule.Filter = filter;
             rule.Expiration = new S3Expiration(DateTimeOffset.UtcNow.AddDays(1));
 
-            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, new[] { rule }).ConfigureAwait(false);
+            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, new[] { rule });
             Assert.True(putResp.IsSuccess);
 
-            GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket).ConfigureAwait(false);
+            GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket);
             Assert.True(getResp.IsSuccess);
 
             S3Rule rule1 = Assert.Single(getResp.Rules);
@@ -111,6 +111,6 @@ public class BucketLifecycleConfigurationTests : TestBase
             Assert.NotNull(conditions1);
             Assert.Equal(conditions.Prefix, conditions1.Prefix);
             Assert.Equal(conditions.Tags, conditions1.Tags);
-        }).ConfigureAwait(false);
+        });
     }
 }

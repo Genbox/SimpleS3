@@ -13,16 +13,16 @@ public class BucketAccelerateConfigurationTests : TestBase
     {
         await CreateTempBucketAsync(provider, client, async x =>
         {
-            GetBucketAccelerateConfigurationResponse getResp = await client.GetBucketAccelerateConfigurationAsync(x).ConfigureAwait(false);
+            GetBucketAccelerateConfigurationResponse getResp = await client.GetBucketAccelerateConfigurationAsync(x);
             Assert.True(getResp.IsSuccess);
             Assert.False(getResp.AccelerateEnabled);
 
-            PutBucketAccelerateConfigurationResponse putResp = await client.PutBucketAccelerateConfigurationAsync(x, true).ConfigureAwait(false);
+            PutBucketAccelerateConfigurationResponse putResp = await client.PutBucketAccelerateConfigurationAsync(x, true);
             Assert.True(putResp.IsSuccess);
 
-            getResp = await client.GetBucketAccelerateConfigurationAsync(x).ConfigureAwait(false);
+            getResp = await client.GetBucketAccelerateConfigurationAsync(x);
             Assert.True(getResp.IsSuccess);
             Assert.True(getResp.AccelerateEnabled);
-        }).ConfigureAwait(false);
+        });
     }
 }

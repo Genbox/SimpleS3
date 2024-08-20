@@ -13,11 +13,11 @@ public class CreateBucketTests : TestBase
     {
         string tempBucketName = GetTemporaryBucket();
 
-        CreateBucketResponse resp = await client.CreateBucketAsync(tempBucketName).ConfigureAwait(false);
+        CreateBucketResponse resp = await client.CreateBucketAsync(tempBucketName);
         Assert.True(resp.IsSuccess);
 
         //Delete again to cleanup
-        await client.DeleteBucketAsync(tempBucketName).ConfigureAwait(false);
+        await client.DeleteBucketAsync(tempBucketName);
     }
 
     //[Theory]

@@ -20,9 +20,9 @@ public class ListPartsTests : TestBase
             //We add the special characters at the end to test EncodingType support.
             string objName = nameof(ListParts) + "%";
 
-            CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(tempBucket, objName).ConfigureAwait(false);
+            CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(tempBucket, objName);
 
-            ListPartsResponse listResp1 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId).ConfigureAwait(false);
+            ListPartsResponse listResp1 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId);
 
             Assert.Equal(tempBucket, listResp1.BucketName);
             Assert.Equal(objName, listResp1.ObjectKey);
@@ -43,9 +43,9 @@ public class ListPartsTests : TestBase
             byte[] file = new byte[5 * 1024];
 
             await using (MemoryStream ms = new MemoryStream(file))
-                uploadResp = await client.UploadPartAsync(tempBucket, objName, 1, createResp.UploadId, ms).ConfigureAwait(false);
+                uploadResp = await client.UploadPartAsync(tempBucket, objName, 1, createResp.UploadId, ms);
 
-            ListPartsResponse listResp2 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId, r => r.EncodingType = EncodingType.Url).ConfigureAwait(false);
+            ListPartsResponse listResp2 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId, r => r.EncodingType = EncodingType.Url);
 
             Assert.Equal(tempBucket, listResp2.BucketName);
 
@@ -76,11 +76,11 @@ public class ListPartsTests : TestBase
             Assert.Equal("\"32ca18808933aa12e979375d07048a11\"", part.ETag);
             Assert.Equal(file.Length, part.Size);
 
-            CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(tempBucket, objName, createResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)]).ConfigureAwait(false);
+            CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(tempBucket, objName, createResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)]);
             Assert.Equal(200, completeResp.StatusCode);
 
-            ListPartsResponse listResp3 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId).ConfigureAwait(false);
+            ListPartsResponse listResp3 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId);
             Assert.Equal(404, listResp3.StatusCode);
-        }).ConfigureAwait(false);
+        });
     }
 }

@@ -20,7 +20,7 @@ public class MultipartTests : TestBase
     {
         string objectKey = nameof(MultipartWithEncryption);
 
-        CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey, req => req.SseAlgorithm = algorithm).ConfigureAwait(false);
+        CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey, req => req.SseAlgorithm = algorithm);
         Assert.Equal(200, createResp.StatusCode);
 
         if (provider == S3Provider.AmazonS3)
@@ -31,7 +31,7 @@ public class MultipartTests : TestBase
 
         await using MemoryStream ms = new MemoryStream(new byte[1024 * 1024 * 5]);
 
-        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, createResp.UploadId, ms).ConfigureAwait(false);
+        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, createResp.UploadId, ms);
         Assert.Equal(200, uploadResp.StatusCode);
 
         if (provider == S3Provider.AmazonS3)
@@ -40,7 +40,7 @@ public class MultipartTests : TestBase
         if (algorithm == SseAlgorithm.AwsKms)
             Assert.NotNull(uploadResp.SseKmsKeyId);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)]).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)]);
         Assert.Equal(200, completeResp.StatusCode);
 
         if (provider == S3Provider.AmazonS3)
@@ -64,7 +64,7 @@ public class MultipartTests : TestBase
             r.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
             r.SseCustomerKey = key;
             r.SseCustomerKeyMd5 = keyMd5;
-        }).ConfigureAwait(false);
+        });
         Assert.Equal(200, initResp.StatusCode);
 
         await using MemoryStream ms = new MemoryStream(new byte[1024 * 1024 * 5]);
@@ -74,12 +74,12 @@ public class MultipartTests : TestBase
             r.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
             r.SseCustomerKey = key;
             r.SseCustomerKeyMd5 = keyMd5;
-        }).ConfigureAwait(false);
+        });
         Assert.Equal(200, uploadResp1.StatusCode);
         Assert.Equal(SseCustomerAlgorithm.Aes256, uploadResp1.SseCustomerAlgorithm);
         Assert.Equal(keyMd5, uploadResp1.SseCustomerKeyMd5);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1) }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1) });
         Assert.Equal(200, completeResp.StatusCode);
         Assert.Equal(SseCustomerAlgorithm.Aes256, completeResp.SseCustomerAlgorithm);
     }
@@ -94,16 +94,16 @@ public class MultipartTests : TestBase
         {
             r.LockMode = LockMode.Governance;
             r.LockRetainUntil = DateTimeOffset.UtcNow.AddMinutes(5);
-        }).ConfigureAwait(false);
+        });
         Assert.Equal(200, initResp.StatusCode);
 
         byte[] file = new byte[1024 * 1024 * 5];
         await using MemoryStream ms = new MemoryStream(file);
 
-        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms, r => r.ContentMd5 = CryptoHelper.Md5Hash(file)).ConfigureAwait(false);
+        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms, r => r.ContentMd5 = CryptoHelper.Md5Hash(file));
         Assert.Equal(200, uploadResp.StatusCode);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp.ETag, 1) }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp.ETag, 1) });
         Assert.Equal(200, completeResp.StatusCode);
     }
 
@@ -113,7 +113,7 @@ public class MultipartTests : TestBase
     {
         string objectKey = nameof(MultipartSinglePart);
 
-        CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey).ConfigureAwait(false);
+        CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey);
         Assert.Equal(200, createResp.StatusCode);
         Assert.Equal(bucket, createResp.BucketName);
         Assert.Equal(objectKey, createResp.ObjectKey);
@@ -131,11 +131,11 @@ public class MultipartTests : TestBase
 
         await using MemoryStream ms = new MemoryStream(file);
 
-        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, createResp.UploadId, ms).ConfigureAwait(false);
+        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, createResp.UploadId, ms);
         Assert.Equal(200, uploadResp.StatusCode);
         Assert.Equal("\"10f74ef02085310ccd1f87150b83e537\"", uploadResp.ETag);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, new[] { new S3PartInfo(uploadResp.ETag, 1) }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, new[] { new S3PartInfo(uploadResp.ETag, 1) });
         Assert.Equal(200, completeResp.StatusCode);
         Assert.Equal("\"bd74e21dfa8678d127240f76e518e9c2-1\"", completeResp.ETag);
 
@@ -153,7 +153,7 @@ public class MultipartTests : TestBase
     {
         string objectKey = nameof(MultipartTooSmall);
 
-        CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey).ConfigureAwait(false);
+        CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey);
         Assert.Equal(200, initResp.StatusCode);
         Assert.Equal(bucket, initResp.BucketName);
         Assert.Equal(objectKey, initResp.ObjectKey);
@@ -165,14 +165,14 @@ public class MultipartTests : TestBase
         byte[][] parts = file.Chunk(file.Length / 2).Select(x => x.ToArray()).ToArray();
 
         await using MemoryStream ms1 = new MemoryStream(parts[0]);
-        UploadPartResponse uploadResp1 = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms1).ConfigureAwait(false);
+        UploadPartResponse uploadResp1 = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms1);
         Assert.Equal(200, uploadResp1.StatusCode);
 
         await using MemoryStream ms2 = new MemoryStream(parts[0]);
-        UploadPartResponse uploadResp2 = await client.UploadPartAsync(bucket, objectKey, 2, initResp.UploadId, ms2).ConfigureAwait(false);
+        UploadPartResponse uploadResp2 = await client.UploadPartAsync(bucket, objectKey, 2, initResp.UploadId, ms2);
         Assert.Equal(200, uploadResp2.StatusCode);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2) }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2) });
         Assert.Equal(400, completeResp.StatusCode);
     }
 
@@ -182,7 +182,7 @@ public class MultipartTests : TestBase
     {
         string objectKey = nameof(MultipartUpload);
 
-        CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey).ConfigureAwait(false);
+        CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey);
         Assert.Equal(200, initResp.StatusCode);
         Assert.Equal(bucket, initResp.BucketName);
         Assert.Equal(objectKey, initResp.ObjectKey);
@@ -195,30 +195,30 @@ public class MultipartTests : TestBase
         byte[][] parts = file.Chunk(file.Length / 2).Select(x => x.ToArray()).ToArray();
 
         await using MemoryStream ms1 = new MemoryStream(parts[0]);
-        UploadPartResponse uploadResp1 = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms1).ConfigureAwait(false);
+        UploadPartResponse uploadResp1 = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms1);
         Assert.Equal(200, uploadResp1.StatusCode);
         Assert.NotNull(uploadResp1.ETag);
 
         await using MemoryStream ms2 = new MemoryStream(parts[0]);
-        UploadPartResponse uploadResp2 = await client.UploadPartAsync(bucket, objectKey, 2, initResp.UploadId, ms2).ConfigureAwait(false);
+        UploadPartResponse uploadResp2 = await client.UploadPartAsync(bucket, objectKey, 2, initResp.UploadId, ms2);
         Assert.Equal(200, uploadResp2.StatusCode);
         Assert.NotNull(uploadResp2.ETag);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2) }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2) });
         Assert.Equal(200, completeResp.StatusCode);
         Assert.NotNull(uploadResp2.ETag);
 
         if (provider == S3Provider.AmazonS3)
         {
             //Provoke an 'InvalidArgument' error. Parts start from index 1
-            GetObjectResponse getResp1 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 0).ConfigureAwait(false);
+            GetObjectResponse getResp1 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 0);
             Assert.Equal(400, getResp1.StatusCode);
             Assert.IsType<InvalidArgumentError>(getResp1.Error);
 
-            GetObjectResponse getResp2 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 1).ConfigureAwait(false);
+            GetObjectResponse getResp2 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 1);
             Assert.Equal(206, getResp2.StatusCode);
 
-            byte[] contentData = await getResp2.Content.AsDataAsync().ConfigureAwait(false);
+            byte[] contentData = await getResp2.Content.AsDataAsync();
             Assert.Equal(parts[0].Length, contentData.Length);
             Assert.Equal(parts[0], contentData);
         }
@@ -235,16 +235,16 @@ public class MultipartTests : TestBase
 
         await using (MemoryStream ms = new MemoryStream(data))
         {
-            CompleteMultipartUploadResponse resp = await client.MultipartUploadAsync(bucket, nameof(MultipartViaClient), ms, 5 * 1024 * 1024).ConfigureAwait(false);
+            CompleteMultipartUploadResponse resp = await client.MultipartUploadAsync(bucket, nameof(MultipartViaClient), ms, 5 * 1024 * 1024);
             Assert.Equal(200, resp.StatusCode);
         }
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(MultipartViaClient)).ConfigureAwait(false);
+        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(MultipartViaClient));
         Assert.Equal(200, getResp.StatusCode);
 
         await using (MemoryStream ms = new MemoryStream())
         {
-            await getResp.Content.CopyToAsync(ms).ConfigureAwait(false);
+            await getResp.Content.CopyToAsync(ms);
             Assert.Equal(data, ms.ToArray());
         }
 
@@ -262,7 +262,7 @@ public class MultipartTests : TestBase
                 Assert.Equal(data, ms.ToArray());
             }
 
-            HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(MultipartViaClient), req => req.PartNumber = 1).ConfigureAwait(false);
+            HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(MultipartViaClient), req => req.PartNumber = 1);
             Assert.Equal(206, headResp.StatusCode);
             Assert.Equal(4, headResp.NumberOfParts);
         }

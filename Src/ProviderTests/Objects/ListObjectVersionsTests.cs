@@ -26,12 +26,12 @@ public class ListObjectVersionsTests : TestBase
             GetBucketVersioningResponse getVerResp = await client.GetBucketVersioningAsync(tempBucket);
             Assert.True(getVerResp.Status);
 
-            PutObjectResponse putResp1 = await client.PutObjectStringAsync(tempBucket, "1", "a").ConfigureAwait(false);
-            PutObjectResponse putResp2 = await client.PutObjectStringAsync(tempBucket, "2", "aa").ConfigureAwait(false);
-            PutObjectResponse putResp3 = await client.PutObjectStringAsync(tempBucket, "3", "aaa").ConfigureAwait(false);
+            PutObjectResponse putResp1 = await client.PutObjectStringAsync(tempBucket, "1", "a");
+            PutObjectResponse putResp2 = await client.PutObjectStringAsync(tempBucket, "2", "aa");
+            PutObjectResponse putResp3 = await client.PutObjectStringAsync(tempBucket, "3", "aaa");
 
             DeleteObjectResponse putResp4 = await client.DeleteObjectAsync(tempBucket, "2"); //Delete object 2
-            PutObjectResponse putResp5 = await client.PutObjectStringAsync(tempBucket, "3", "aaaa").ConfigureAwait(false); //Overwrite object 3
+            PutObjectResponse putResp5 = await client.PutObjectStringAsync(tempBucket, "3", "aaaa"); //Overwrite object 3
 
             ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(tempBucket);
             Assert.True(listResp.IsSuccess);
@@ -128,7 +128,7 @@ public class ListObjectVersionsTests : TestBase
                 Assert.Equal(TestConstants.TestUserId, delMarker.Owner.Id);
                 Assert.Equal(TestConstants.TestUsername, delMarker.Owner.Name);
             }
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -142,19 +142,19 @@ public class ListObjectVersionsTests : TestBase
 
             await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), (val, token) => client.PutObjectAsync(tempBucket, val.ToString(NumberFormatInfo.InvariantInfo), null, null, token), concurrent);
 
-            ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(tempBucket, r => r.MaxKeys = count - 1).ConfigureAwait(false);
+            ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(tempBucket, r => r.MaxKeys = count - 1);
             Assert.True(listResp.IsSuccess);
             Assert.True(listResp.IsTruncated);
             Assert.Equal(10, listResp.MaxKeys);
             Assert.Equal(10, listResp.Versions.Count);
 
-            ListObjectVersionsResponse listResp2 = await client.ListObjectVersionsAsync(tempBucket, r => r.KeyMarker = listResp.NextKeyMarker).ConfigureAwait(false);
+            ListObjectVersionsResponse listResp2 = await client.ListObjectVersionsAsync(tempBucket, r => r.KeyMarker = listResp.NextKeyMarker);
             Assert.True(listResp2.IsSuccess);
             Assert.False(listResp2.IsTruncated);
 
             if (provider != S3Provider.GoogleCloudStorage)
                 Assert.Single(listResp2.Versions);
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -166,17 +166,17 @@ public class ListObjectVersionsTests : TestBase
             string tempObjName = "object-" + Guid.NewGuid();
             string tempObjName2 = "something-" + Guid.NewGuid();
 
-            await client.PutObjectAsync(tempBucket, tempObjName, null).ConfigureAwait(false);
-            await client.PutObjectAsync(tempBucket, tempObjName2, null).ConfigureAwait(false);
+            await client.PutObjectAsync(tempBucket, tempObjName, null);
+            await client.PutObjectAsync(tempBucket, tempObjName2, null);
 
-            ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.Delimiter = "-").ConfigureAwait(false);
+            ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.Delimiter = "-");
             Assert.True(resp.IsSuccess);
 
             Assert.Equal("-", resp.Delimiter);
             Assert.Equal(2, resp.CommonPrefixes.Count);
             Assert.Equal("object-", resp.CommonPrefixes[0]);
             Assert.Equal("something-", resp.CommonPrefixes[1]);
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -187,9 +187,9 @@ public class ListObjectVersionsTests : TestBase
         {
             string tempObjName = "!#/()";
 
-            await client.PutObjectAsync(tempBucket, tempObjName, null).ConfigureAwait(false);
+            await client.PutObjectAsync(tempBucket, tempObjName, null);
 
-            ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.EncodingType = EncodingType.Url).ConfigureAwait(false);
+            ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.EncodingType = EncodingType.Url);
             Assert.True(resp.IsSuccess);
 
             Assert.Equal(EncodingType.Url, resp.EncodingType);
@@ -197,7 +197,7 @@ public class ListObjectVersionsTests : TestBase
             S3Version obj = Assert.Single(resp.Versions);
 
             Assert.Equal("%21%23/%28%29", obj.ObjectKey);
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -209,10 +209,10 @@ public class ListObjectVersionsTests : TestBase
             string tempObjName = "object-" + Guid.NewGuid();
             string tempObjName2 = "something-" + Guid.NewGuid();
 
-            await client.PutObjectAsync(tempBucket, tempObjName, null).ConfigureAwait(false);
-            await client.PutObjectAsync(tempBucket, tempObjName2, null).ConfigureAwait(false);
+            await client.PutObjectAsync(tempBucket, tempObjName, null);
+            await client.PutObjectAsync(tempBucket, tempObjName2, null);
 
-            ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.Prefix = "object").ConfigureAwait(false);
+            ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.Prefix = "object");
             Assert.True(resp.IsSuccess);
 
             Assert.Equal("object", resp.Prefix);
@@ -220,6 +220,6 @@ public class ListObjectVersionsTests : TestBase
             S3Version obj = Assert.Single(resp.Versions);
 
             Assert.Equal(tempObjName, obj.ObjectKey);
-        }).ConfigureAwait(false);
+        });
     }
 }

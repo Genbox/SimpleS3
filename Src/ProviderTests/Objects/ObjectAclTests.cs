@@ -16,11 +16,11 @@ public class ObjectAclTests : TestBase
         string objectKey = nameof(PutGetObjectAcl);
 
         //Create an object
-        PutObjectResponse putResp1 = await client.PutObjectAsync(bucket, objectKey, null).ConfigureAwait(false);
+        PutObjectResponse putResp1 = await client.PutObjectAsync(bucket, objectKey, null);
         Assert.Equal(200, putResp1.StatusCode);
 
         //Get the ACL, which should be the default one (owner has ACL)
-        GetObjectAclResponse getResp = await client.GetObjectAclAsync(bucket, objectKey).ConfigureAwait(false);
+        GetObjectAclResponse getResp = await client.GetObjectAclAsync(bucket, objectKey);
         Assert.Equal(200, getResp.StatusCode);
 
         S3Grant grant = Assert.Single(getResp.Grants);
@@ -34,10 +34,10 @@ public class ObjectAclTests : TestBase
         }
 
         //Update the object to have another ACL using Canned ACLs
-        PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucket, objectKey, r => r.Acl = ObjectCannedAcl.PublicRead).ConfigureAwait(false);
+        PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucket, objectKey, r => r.Acl = ObjectCannedAcl.PublicRead);
         Assert.Equal(200, putResp2.StatusCode);
 
-        GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucket, objectKey).ConfigureAwait(false);
+        GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucket, objectKey);
         Assert.Equal(200, getResp2.StatusCode);
         Assert.Equal(2, getResp2.Grants.Count);
 

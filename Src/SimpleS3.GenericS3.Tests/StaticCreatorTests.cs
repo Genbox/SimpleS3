@@ -18,7 +18,7 @@ public class StaticCreatorTests
 
         using GenericS3Client client = new GenericS3Client(config, driver);
 
-        await client.GetObjectAsync("testbucket", "GetObjectAsync").ConfigureAwait(false);
+        await client.GetObjectAsync("testbucket", "GetObjectAsync");
         Assert.Equal("https://myendpoint.com/GetObjectAsync", driver.LastUrl);
     }
 }

@@ -38,6 +38,6 @@ public class BucketVersioningTests : TestBase
             GetBucketVersioningResponse getResp3 = await client.GetBucketVersioningAsync(tempBucket);
             Assert.Equal(200, putResp2.StatusCode);
             Assert.False(getResp3.Status);
-        }).ConfigureAwait(false);
+        });
     }
 }

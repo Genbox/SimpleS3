@@ -17,7 +17,7 @@ public class StaticCreatorTests
 
         using AmazonS3Client client = new AmazonS3Client(config, driver);
 
-        await client.GetObjectAsync("testbucket", "GetObjectAsync").ConfigureAwait(false);
+        await client.GetObjectAsync("testbucket", "GetObjectAsync");
         Assert.Equal("https://testbucket.s3.us-east-1.amazonaws.com/GetObjectAsync", driver.LastUrl);
     }
 }

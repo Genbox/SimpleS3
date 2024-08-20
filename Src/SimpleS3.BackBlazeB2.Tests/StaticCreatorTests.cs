@@ -17,7 +17,7 @@ public class StaticCreatorTests
 
         using BackBlazeB2Client client = new BackBlazeB2Client(config, driver);
 
-        await client.GetObjectAsync("testbucket", "GetObjectAsync").ConfigureAwait(false);
+        await client.GetObjectAsync("testbucket", "GetObjectAsync");
         Assert.Equal("https://testbucket.s3.us-west-001.backblazeb2.com/GetObjectAsync", driver.LastUrl);
     }
 }

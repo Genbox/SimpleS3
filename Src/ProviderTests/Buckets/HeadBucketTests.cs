@@ -11,10 +11,10 @@ public class HeadBucketTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task HeadBucket(S3Provider _, string bucket, ISimpleClient client)
     {
-        HeadBucketResponse headResp = await client.HeadBucketAsync(bucket).ConfigureAwait(false);
+        HeadBucketResponse headResp = await client.HeadBucketAsync(bucket);
         Assert.Equal(200, headResp.StatusCode);
 
-        headResp = await client.HeadBucketAsync(GetTemporaryBucket()).ConfigureAwait(false);
+        headResp = await client.HeadBucketAsync(GetTemporaryBucket());
         Assert.False(headResp.IsSuccess);
     }
 }

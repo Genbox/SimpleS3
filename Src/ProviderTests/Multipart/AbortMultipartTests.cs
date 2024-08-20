@@ -13,13 +13,13 @@ public class AbortMultipartTests : TestBase
     {
         string objectKey = nameof(AbortIncompleteUpload);
 
-        CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey).ConfigureAwait(false);
+        CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey);
         Assert.Equal(200, createResp.StatusCode);
         Assert.Equal(bucket, createResp.BucketName);
         Assert.Equal(objectKey, createResp.ObjectKey);
         Assert.NotNull(createResp.UploadId);
 
-        AbortMultipartUploadResponse abortResp = await client.AbortMultipartUploadAsync(bucket, objectKey, createResp.UploadId).ConfigureAwait(false);
+        AbortMultipartUploadResponse abortResp = await client.AbortMultipartUploadAsync(bucket, objectKey, createResp.UploadId);
         Assert.Equal(204, abortResp.StatusCode);
     }
 }

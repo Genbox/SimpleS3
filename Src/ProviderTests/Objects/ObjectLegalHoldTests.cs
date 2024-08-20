@@ -14,19 +14,19 @@ public class ObjectLegalHoldTests : TestBase
         string objectKey = nameof(PutGetObjectLegalHold);
 
         //Create an object
-        await client.PutObjectAsync(bucket, objectKey, null).ConfigureAwait(false);
+        await client.PutObjectAsync(bucket, objectKey, null);
 
         //Check that there is no lock
-        GetObjectLegalHoldResponse getLegalResp = await client.GetObjectLegalHoldAsync(bucket, objectKey).ConfigureAwait(false);
+        GetObjectLegalHoldResponse getLegalResp = await client.GetObjectLegalHoldAsync(bucket, objectKey);
         Assert.Equal(404, getLegalResp.StatusCode);
         Assert.False(getLegalResp.LegalHold);
 
         //Set a lock
-        PutObjectLegalHoldResponse putLegalResp = await client.PutObjectLegalHoldAsync(bucket, objectKey, true).ConfigureAwait(false);
+        PutObjectLegalHoldResponse putLegalResp = await client.PutObjectLegalHoldAsync(bucket, objectKey, true);
         Assert.Equal(200, putLegalResp.StatusCode);
 
         //There should be a lock now
-        GetObjectLegalHoldResponse getLegalResp2 = await client.GetObjectLegalHoldAsync(bucket, objectKey).ConfigureAwait(false);
+        GetObjectLegalHoldResponse getLegalResp2 = await client.GetObjectLegalHoldAsync(bucket, objectKey);
         Assert.Equal(200, getLegalResp2.StatusCode);
         Assert.True(getLegalResp2.LegalHold);
     }

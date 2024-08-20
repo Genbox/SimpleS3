@@ -15,10 +15,10 @@ public class RestoreObjectTests : TestBase
     public async Task Restore(S3Provider _, string bucket, ISimpleClient client)
     {
         //Upload an object to glacier
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(Restore), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(Restore), null, r => r.StorageClass = StorageClass.Glacier);
         Assert.Equal(StorageClass.Glacier, putResp.StorageClass);
 
-        RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(Restore), r => r.Days = 2).ConfigureAwait(false);
+        RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(Restore), r => r.Days = 2);
 
         Assert.Equal(202, restoreResp.StatusCode);
     }
@@ -34,7 +34,7 @@ public class RestoreObjectTests : TestBase
             await sw.WriteLineAsync("\"donald trump\",7,present");
             await sw.WriteLineAsync("fantastic fox,31,missing");
 
-            await client.PutObjectStringAsync(bucket, nameof(RestoreWithSelect), sw.ToString(), null, r => r.StorageClass = StorageClass.Glacier).ConfigureAwait(false);
+            await client.PutObjectStringAsync(bucket, nameof(RestoreWithSelect), sw.ToString(), null, r => r.StorageClass = StorageClass.Glacier);
         }
 
         RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(RestoreWithSelect), r =>
@@ -51,7 +51,7 @@ public class RestoreObjectTests : TestBase
 
             r.OutputLocation = new S3OutputLocation(bucket, "outputJob");
             r.OutputLocation.StorageClass = StorageClass.Standard;
-        }).ConfigureAwait(false);
+        });
 
         Assert.Equal(202, restoreResp.StatusCode);
 

@@ -17,7 +17,7 @@ public class StaticCreatorTests
 
         using WasabiClient client = new WasabiClient(config, driver);
 
-        await client.GetObjectAsync("testbucket", "GetObjectAsync").ConfigureAwait(false);
+        await client.GetObjectAsync("testbucket", "GetObjectAsync");
         Assert.Equal("https://testbucket.s3.eu-central-1.wasabisys.com/GetObjectAsync", driver.LastUrl);
     }
 }

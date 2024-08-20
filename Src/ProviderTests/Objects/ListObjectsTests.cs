@@ -19,10 +19,10 @@ public class ListObjectsTests : TestBase
         await CreateTempBucketAsync(provider, client, async tempBucket =>
         {
             string tempObjName = "object-" + Guid.NewGuid();
-            PutObjectResponse putResp = await client.PutObjectStringAsync(tempBucket, tempObjName, "hello").ConfigureAwait(false);
+            PutObjectResponse putResp = await client.PutObjectStringAsync(tempBucket, tempObjName, "hello");
             Assert.Equal(200, putResp.StatusCode);
 
-            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket).ConfigureAwait(false);
+            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket);
             Assert.Equal(200, listResp.StatusCode);
 
             Assert.Equal(tempBucket, listResp.BucketName);
@@ -41,7 +41,7 @@ public class ListObjectsTests : TestBase
 
             if (provider == S3Provider.AmazonS3)
                 Assert.Equal(StorageClass.Standard, obj.StorageClass);
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -58,7 +58,7 @@ public class ListObjectsTests : TestBase
             foreach (PutObjectResponse putResp in responses)
                 Assert.Equal(200, putResp.StatusCode);
 
-            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, r => r.MaxKeys = count - 1).ConfigureAwait(false);
+            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, r => r.MaxKeys = count - 1);
             Assert.Equal(200, listResp.StatusCode);
 
             Assert.Equal(count - 1, listResp.KeyCount);
@@ -68,7 +68,7 @@ public class ListObjectsTests : TestBase
             if (provider == S3Provider.AmazonS3)
                 Assert.NotEmpty(listResp.NextContinuationToken);
 
-            ListObjectsResponse listResp2 = await client.ListObjectsAsync(tempBucket, r => r.ContinuationToken = listResp.NextContinuationToken).ConfigureAwait(false);
+            ListObjectsResponse listResp2 = await client.ListObjectsAsync(tempBucket, r => r.ContinuationToken = listResp.NextContinuationToken);
             Assert.Equal(200, listResp2.StatusCode);
 
             Assert.Equal(1, listResp2.KeyCount);
@@ -76,7 +76,7 @@ public class ListObjectsTests : TestBase
             Assert.Equal(listResp.NextContinuationToken, listResp2.ContinuationToken);
             Assert.Null(listResp2.NextContinuationToken);
             Assert.False(listResp2.IsTruncated);
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -88,10 +88,10 @@ public class ListObjectsTests : TestBase
             string tempObjName = "object-" + Guid.NewGuid();
             string tempObjName2 = "something-" + Guid.NewGuid();
 
-            await client.PutObjectAsync(tempBucket, tempObjName, null).ConfigureAwait(false);
-            await client.PutObjectAsync(tempBucket, tempObjName2, null).ConfigureAwait(false);
+            await client.PutObjectAsync(tempBucket, tempObjName, null);
+            await client.PutObjectAsync(tempBucket, tempObjName2, null);
 
-            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, r => r.Delimiter = "-").ConfigureAwait(false);
+            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, r => r.Delimiter = "-");
             Assert.Equal(200, listResp.StatusCode);
 
             Assert.Equal("-", listResp.Delimiter);
@@ -102,7 +102,7 @@ public class ListObjectsTests : TestBase
             Assert.Equal(2, listResp.CommonPrefixes.Count);
             Assert.Equal("object-", listResp.CommonPrefixes[0]);
             Assert.Equal("something-", listResp.CommonPrefixes[1]);
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -113,10 +113,10 @@ public class ListObjectsTests : TestBase
         {
             string tempObjName = "!#/()";
 
-            PutObjectResponse putResp = await client.PutObjectAsync(tempBucket, tempObjName, null).ConfigureAwait(false);
+            PutObjectResponse putResp = await client.PutObjectAsync(tempBucket, tempObjName, null);
             Assert.Equal(200, putResp.StatusCode);
 
-            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, r => r.EncodingType = EncodingType.Url).ConfigureAwait(false);
+            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, r => r.EncodingType = EncodingType.Url);
             Assert.Equal(200, listResp.StatusCode);
 
             Assert.Equal(EncodingType.Url, listResp.EncodingType);
@@ -124,7 +124,7 @@ public class ListObjectsTests : TestBase
             S3Object obj = Assert.Single(listResp.Objects);
 
             Assert.Equal("%21%23/%28%29", obj.ObjectKey);
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -134,10 +134,10 @@ public class ListObjectsTests : TestBase
         await CreateTempBucketAsync(provider, client, async tempBucket =>
         {
             string tempObjName = "object-" + Guid.NewGuid();
-            PutObjectResponse putResp = await client.PutObjectAsync(tempBucket, tempObjName, null, r => r.AclGrantFullControl.AddEmail(TestConstants.TestEmail)).ConfigureAwait(false);
+            PutObjectResponse putResp = await client.PutObjectAsync(tempBucket, tempObjName, null, r => r.AclGrantFullControl.AddEmail(TestConstants.TestEmail));
             Assert.Equal(200, putResp.StatusCode);
 
-            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, req => req.FetchOwner = true).ConfigureAwait(false);
+            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, req => req.FetchOwner = true);
             Assert.Equal(200, listResp.StatusCode);
 
             S3Object obj = listResp.Objects.First();
@@ -149,7 +149,7 @@ public class ListObjectsTests : TestBase
             }
             else
                 Assert.NotNull(obj.Owner);
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -161,13 +161,13 @@ public class ListObjectsTests : TestBase
             string tempObjName = "object-" + Guid.NewGuid();
             string tempObjName2 = "something-" + Guid.NewGuid();
 
-            PutObjectResponse putResp1 = await client.PutObjectAsync(tempBucket, tempObjName, null).ConfigureAwait(false);
+            PutObjectResponse putResp1 = await client.PutObjectAsync(tempBucket, tempObjName, null);
             Assert.Equal(200, putResp1.StatusCode);
 
-            PutObjectResponse putResp2 = await client.PutObjectAsync(tempBucket, tempObjName2, null).ConfigureAwait(false);
+            PutObjectResponse putResp2 = await client.PutObjectAsync(tempBucket, tempObjName2, null);
             Assert.Equal(200, putResp2.StatusCode);
 
-            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, req => req.Prefix = "object").ConfigureAwait(false);
+            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, req => req.Prefix = "object");
             Assert.Equal(200, listResp.StatusCode);
 
             Assert.Equal(1, listResp.KeyCount);
@@ -176,6 +176,6 @@ public class ListObjectsTests : TestBase
             S3Object obj = Assert.Single(listResp.Objects);
 
             Assert.Equal(tempObjName, obj.ObjectKey);
-        }).ConfigureAwait(false);
+        });
     }
 }

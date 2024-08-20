@@ -16,9 +16,9 @@ public class CopyObjectTests : TestBase
         string sourceKey = nameof(CopyObject);
         string destinationKey = sourceKey + "2";
 
-        await client.PutObjectStringAsync(bucket, sourceKey, "test").ConfigureAwait(false);
+        await client.PutObjectStringAsync(bucket, sourceKey, "test");
 
-        CopyObjectResponse copyResp = await client.CopyObjectAsync(bucket, sourceKey, bucket, destinationKey).ConfigureAwait(false);
+        CopyObjectResponse copyResp = await client.CopyObjectAsync(bucket, sourceKey, bucket, destinationKey);
         Assert.Equal(200, copyResp.StatusCode);
 
         GetObjectResponse getResp = await client.GetObjectAsync(bucket, destinationKey);

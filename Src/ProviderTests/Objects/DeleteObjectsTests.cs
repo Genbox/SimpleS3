@@ -18,13 +18,13 @@ public class DeleteObjectsTests : TestBase
         resources[0] = new S3DeleteInfo(nameof(DeleteObjects) + "1");
         resources[1] = new S3DeleteInfo(nameof(DeleteObjects) + "2", "versionnotfound");
 
-        PutObjectResponse putResp1 = await client.PutObjectAsync(bucket, resources[0].ObjectKey, null).ConfigureAwait(false);
+        PutObjectResponse putResp1 = await client.PutObjectAsync(bucket, resources[0].ObjectKey, null);
         Assert.Equal(200, putResp1.StatusCode);
 
-        PutObjectResponse putResp2 = await client.PutObjectAsync(bucket, resources[1].ObjectKey, null).ConfigureAwait(false);
+        PutObjectResponse putResp2 = await client.PutObjectAsync(bucket, resources[1].ObjectKey, null);
         Assert.Equal(200, putResp2.StatusCode);
 
-        DeleteObjectsResponse delResp = await client.DeleteObjectsAsync(bucket, resources, r => r.Quiet = false).ConfigureAwait(false);
+        DeleteObjectsResponse delResp = await client.DeleteObjectsAsync(bucket, resources, r => r.Quiet = false);
         Assert.Equal(200, delResp.StatusCode);
 
         S3DeletedObject delObj = Assert.Single(delResp.Deleted);

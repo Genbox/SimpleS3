@@ -19,15 +19,15 @@ public class ListMultipartUploadsTests : TestBase
             //The percentage sign at the end is to test if encoding works correctly
             string objName = nameof(ListMultipartUploads) + "%";
 
-            CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(tempBucket, objName).ConfigureAwait(false);
+            CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(tempBucket, objName);
             Assert.Equal(200, createResp.StatusCode);
 
             byte[] file = new byte[5 * 1024];
 
             await using (MemoryStream ms = new MemoryStream(file))
-                await client.UploadPartAsync(tempBucket, objName, 1, createResp.UploadId, ms).ConfigureAwait(false);
+                await client.UploadPartAsync(tempBucket, objName, 1, createResp.UploadId, ms);
 
-            ListMultipartUploadsResponse listResp = await client.ListMultipartUploadsAsync(tempBucket, r => r.EncodingType = EncodingType.Url).ConfigureAwait(false);
+            ListMultipartUploadsResponse listResp = await client.ListMultipartUploadsAsync(tempBucket, r => r.EncodingType = EncodingType.Url);
             Assert.Equal(200, listResp.StatusCode);
             Assert.Equal(tempBucket, listResp.Bucket);
 
@@ -48,6 +48,6 @@ public class ListMultipartUploadsTests : TestBase
 
             Assert.Equal(StorageClass.Standard, upload.StorageClass);
             Assert.Equal(DateTime.UtcNow, upload.Initiated.DateTime, TimeSpan.FromSeconds(5));
-        }).ConfigureAwait(false);
+        });
     }
 }

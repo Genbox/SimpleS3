@@ -17,17 +17,17 @@ public class BucketTaggingTests : TestBase
             tags.Add("MyKey", "MyValue");
             tags.Add("MyKey2", "MyValue2");
 
-            PutBucketTaggingResponse putResp = await client.PutBucketTaggingAsync(tempBucket, tags).ConfigureAwait(false);
+            PutBucketTaggingResponse putResp = await client.PutBucketTaggingAsync(tempBucket, tags);
             Assert.True(putResp.IsSuccess);
 
-            GetBucketTaggingResponse getResp = await client.GetBucketTaggingAsync(tempBucket).ConfigureAwait(false);
+            GetBucketTaggingResponse getResp = await client.GetBucketTaggingAsync(tempBucket);
             Assert.True(getResp.IsSuccess);
 
             Assert.Equal(tags, getResp.Tags);
 
-            DeleteBucketTaggingResponse deleteResp = await client.DeleteBucketTaggingAsync(tempBucket).ConfigureAwait(false);
+            DeleteBucketTaggingResponse deleteResp = await client.DeleteBucketTaggingAsync(tempBucket);
             Assert.True(deleteResp.IsSuccess);
-        }).ConfigureAwait(false);
+        });
     }
 
     [Theory]
@@ -36,8 +36,8 @@ public class BucketTaggingTests : TestBase
     {
         await CreateTempBucketAsync(provider, client, async tempBucket =>
         {
-            GetBucketTaggingResponse getResp = await client.GetBucketTaggingAsync(tempBucket).ConfigureAwait(false);
+            GetBucketTaggingResponse getResp = await client.GetBucketTaggingAsync(tempBucket);
             Assert.Equal(404, getResp.StatusCode);
-        }).ConfigureAwait(false);
+        });
     }
 }
