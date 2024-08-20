@@ -3,7 +3,7 @@
   <!--Default project info-->
   <PropertyGroup>
     <Authors>Ian Qvist</Authors>
-    <Copyright>Copyright 2023, by Ian Qvist. All rights reserved.</Copyright>
+    <Copyright>Copyright 2024, by Ian Qvist. All rights reserved.</Copyright>
   </PropertyGroup>
 
   <!--Default project settings-->
@@ -58,6 +58,11 @@
     <EmbedUntrackedSources>false</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!--Nuget auditing-->
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

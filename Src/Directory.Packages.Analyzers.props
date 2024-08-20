@@ -6,23 +6,21 @@
     <PackageVersion Include="AspNetCoreAnalyzers" Version="0.3.0" />
     <PackageVersion Include="Blowin.Required" Version="1.0.4" />
     <PackageVersion Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0.1" />
-    <PackageVersion Include="IDisposableAnalyzers" Version="4.0.7" />
+    <PackageVersion Include="IDisposableAnalyzers" Version="4.0.8" />
     <PackageVersion Include="Lindhart.Analyser.MissingAwaitWarning" Version="2.0.0" />
-    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.149" />
+    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.163" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
-    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.9.28" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.11.20" />
     <PackageVersion Include="NetFabric.Hyperlinq.Analyzer" Version="2.3.0" />
-    <PackageVersion Include="Puma.Security.Rules.2022" Version="2.4.23" />
     <PackageVersion Include="ReflectionAnalyzers" Version="0.3.1" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.12.1" />
-    <PackageVersion Include="SecurityCodeScan.VS2019" Version="5.6.7" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.12.4" />
     <PackageVersion Include="SharpSource" Version="1.24.0" />
     <PackageVersion Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" />
     <PackageVersion Include="SmartanAlyzers.ExceptionAnalyzer" Version="1.0.10" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="9.23.2.88755" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="9.32.0.97167" />
     <PackageVersion Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" />
 
     <!--test analyzers-->
-    <PackageVersion Include="xunit.analyzers" Version="1.12.0" />
+    <PackageVersion Include="xunit.analyzers" Version="1.15.0" />
   </ItemGroup>
 </Project>
