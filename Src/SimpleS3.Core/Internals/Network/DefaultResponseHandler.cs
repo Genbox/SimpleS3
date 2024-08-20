@@ -78,17 +78,6 @@ public class DefaultResponseHandler : IResponseHandler
 
         Stream? responseStream = httpResp.Content;
 
-        MemoryStream ms1 = new MemoryStream();
-        if (responseStream != null)
-        {
-            responseStream.CopyTo(ms1);
-            responseStream = ms1;
-        }
-
-        string bla = Encoding.UTF8.GetString(ms1.ToArray());
-
-        ms1.Position = 0;
-
         //Only marshal successful responses
         if (response.IsSuccess)
             _marshaller.MarshalResponse(_config, response, headers, responseStream ?? Stream.Null);
