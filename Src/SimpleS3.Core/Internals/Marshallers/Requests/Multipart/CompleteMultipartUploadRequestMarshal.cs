@@ -18,9 +18,7 @@ internal class CompleteMultipartUploadRequestMarshal : IRequestMarshal<CompleteM
         foreach (S3PartInfo partInfo in request.UploadParts)
         {
             xml.WriteStartElement("Part");
-
-            if (partInfo.ETag != null)
-                xml.WriteElement("ETag", partInfo.ETag.Trim('"'));
+            xml.WriteElement("ETag", partInfo.ETag.Trim('"'));
 
             xml.WriteElement("PartNumber", partInfo.PartNumber.ToString(NumberFormatInfo.InvariantInfo));
             xml.WriteEndElement("Part");
