@@ -4,12 +4,7 @@ namespace Genbox.SimpleS3.Extensions.GenericS3.Tests;
 
 public class GenericS3InputValidatorTests
 {
-    private readonly GenericS3InputValidator _validator;
-
-    public GenericS3InputValidatorTests()
-    {
-        _validator = new GenericS3InputValidator();
-    }
+    private readonly GenericS3InputValidator _validator = new GenericS3InputValidator();
 
     [Fact]
     public void TryValidateKeyIdTest()
@@ -21,7 +16,7 @@ public class GenericS3InputValidatorTests
     [Fact]
     public void TryValidateAccessKeyTest()
     {
-        _validator.TryValidateAccessKey(new byte[] { 1, 2, 3 }, out ValidationStatus status, out _);
+        _validator.TryValidateAccessKey([1, 2, 3], out ValidationStatus status, out _);
         Assert.Equal(ValidationStatus.Ok, status);
     }
 

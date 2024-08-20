@@ -6,14 +6,9 @@ using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMe
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 
-internal class HttpHandler : IHttpHeadersHandler, IHttpRequestLineHandler
+internal sealed class HttpHandler : IHttpHeadersHandler, IHttpRequestLineHandler
 {
-    public HttpHandler()
-    {
-        Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-    }
-
-    public IDictionary<string, string> Headers { get; }
+    public IDictionary<string, string> Headers { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     public IDictionary<string, string> QueryParameters { get; private set; } = null!;
     public HttpMethodType Method { get; private set; } = HttpMethodType.Unknown;
     public string Target { get; private set; } = null!;

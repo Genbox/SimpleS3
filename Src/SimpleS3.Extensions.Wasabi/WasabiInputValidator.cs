@@ -53,7 +53,7 @@ public class WasabiInputValidator : InputValidatorBase
         //Source: https://wasabi.com/wp-content/themes/wasabi/docs/User_Guide/topics/Creating_a_Bucket.htm
 
         //Spec: A bucket name can consist of 3 to 63 characters
-        if (bucketName.Length < 3 || bucketName.Length > 63)
+        if (bucketName.Length is < 3 or > 63)
         {
             status = ValidationStatus.WrongLength;
             message = "3-63";

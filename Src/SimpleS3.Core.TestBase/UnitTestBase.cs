@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.TestBase;
 
 public abstract class UnitTestBase : IDisposable
 {
-    protected UnitTestBase(ITestOutputHelper outputHelper, string bucketName)
+    protected UnitTestBase(ITestOutputHelper helper, string bucketName)
     {
         BucketName = bucketName;
         IConfigurationRoot configRoot = new ConfigurationBuilder()
@@ -30,7 +30,7 @@ public abstract class UnitTestBase : IDisposable
         collection.AddLogging(x =>
         {
             x.AddConfiguration(configRoot.GetSection("Logging"));
-            x.AddXUnit(outputHelper);
+            x.AddXUnit(helper);
         });
 
         //A small hack to remove all validators, as we test them separately
@@ -46,16 +46,16 @@ public abstract class UnitTestBase : IDisposable
     protected IObjectOperations ObjectOperations => Services.GetRequiredService<IObjectOperations>();
     protected IObjectClient ObjectClient => Services.GetRequiredService<IObjectClient>();
 
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-            Services.Dispose();
-    }
-
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+            Services.Dispose();
     }
 
     protected virtual void ConfigureServices(IServiceCollection services) {}

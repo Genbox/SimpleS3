@@ -9,10 +9,11 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 
-/// <summary>The HEAD operation retrieves metadata from an object without returning the object itself. This operation is
-/// useful if you are interested only in an object's metadata. To use HEAD, you must have READ access to the object. A HEAD
-/// request has the same options as a GET operation on an object. The response is identical to the GET response except that
-/// there is no response body.</summary>
+/// <summary>
+/// The HEAD operation retrieves metadata from an object without returning the object itself. This operation is useful if you are interested only in an object's metadata. To
+/// use HEAD, you must have READ access to the object. A HEAD request has the same options as a GET operation on an object. The response is identical to the GET response except that
+/// there is no response body.
+/// </summary>
 public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId, IHasBucketName, IHasObjectKey, IHasPartNumber
 {
     private byte[]? _sseCustomerKey;

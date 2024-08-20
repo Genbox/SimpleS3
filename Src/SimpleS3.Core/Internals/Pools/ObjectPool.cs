@@ -4,17 +4,10 @@ using System.Reflection;
 
 namespace Genbox.SimpleS3.Core.Internals.Pools;
 
-internal class ObjectPool<T> where T : IPooledObject
+internal class ObjectPool<T>(int maxCapacity = 32) where T : IPooledObject
 {
     public static readonly ObjectPool<T> Shared = new ObjectPool<T>();
-    private readonly int _maxCapacity;
-    private readonly ConcurrentBag<T> _pool;
-
-    public ObjectPool(int maxCapacity = 32)
-    {
-        _maxCapacity = maxCapacity;
-        _pool = new ConcurrentBag<T>();
-    }
+    private readonly ConcurrentBag<T> _pool = new ConcurrentBag<T>();
 
     public int Count => _pool.Count;
 
@@ -45,7 +38,7 @@ internal class ObjectPool<T> where T : IPooledObject
 
     public void Return(T obj)
     {
-        if (_pool.Count > _maxCapacity)
+        if (_pool.Count > maxCapacity)
             return;
 
         //We reset here instead of in Rent() because it frees memory for strings and objects by releasing references.
@@ -55,7 +48,7 @@ internal class ObjectPool<T> where T : IPooledObject
 
     public void Return(IEnumerable<T> objs)
     {
-        if (_pool.Count > _maxCapacity)
+        if (_pool.Count > maxCapacity)
             return;
 
         //We reset here instead of in Rent() because it frees memory for strings and objects by releasing references.

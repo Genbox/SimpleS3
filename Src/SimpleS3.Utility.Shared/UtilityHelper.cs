@@ -45,7 +45,7 @@ public static class UtilityHelper
             string? input = Console.ReadLine();
             Validator.RequireNotNull(input);
 
-            string[] userChoices = input!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            string[] userChoices = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             for (i = 0; i < userChoices.Length; i++)
             {
@@ -226,7 +226,7 @@ public static class UtilityHelper
         } while (response.IsTruncated);
     }
 
-    private class ErrorComparer : IEqualityComparer<S3DeleteError>
+    private sealed class ErrorComparer : IEqualityComparer<S3DeleteError>
     {
         public static readonly ErrorComparer Instance = new ErrorComparer();
         private ErrorComparer() {}

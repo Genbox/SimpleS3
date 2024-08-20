@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs;
 
-internal class ConfigValidator : ConfigValidatorBase<SimpleS3Config>
+internal sealed class ConfigValidator : ConfigValidatorBase<SimpleS3Config>
 {
     public ConfigValidator(IValidator<IAccessKey> validator)
     {

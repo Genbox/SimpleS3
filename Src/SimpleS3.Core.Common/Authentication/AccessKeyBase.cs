@@ -3,14 +3,8 @@
 namespace Genbox.SimpleS3.Core.Common.Authentication;
 
 /// <summary>Provides a common base for access keys</summary>
-public abstract class AccessKeyBase : IAccessKey
+public abstract class AccessKeyBase(string keyId, byte[] secretKey) : IAccessKey
 {
-    protected AccessKeyBase(string keyId, byte[] secretKey)
-    {
-        KeyId = keyId;
-        SecretKey = secretKey;
-    }
-
-    public string KeyId { get; }
-    public byte[] SecretKey { get; }
+    public string KeyId { get; } = keyId;
+    public byte[] SecretKey { get; } = secretKey;
 }

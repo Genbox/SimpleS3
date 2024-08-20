@@ -7,203 +7,199 @@ using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Clients;
 
-internal class PooledBucketClient : IBucketClient
+internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
 {
-    public PooledBucketClient(IBucketOperations bucketOperations)
-    {
-        BucketOperations = bucketOperations;
-    }
-
-    public IBucketOperations BucketOperations { get; }
+    public IBucketOperations BucketOperations { get; } = operations;
 
     public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<CreateBucketRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(CreateBucketRequest req)
         {
             req.Initialize(bucketName);
             config?.Invoke(req);
         }
 
-        Task<CreateBucketResponse> Action(CreateBucketRequest request) => BucketOperations.CreateBucketAsync(request, token);
-
-        return ObjectPool<CreateBucketRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<CreateBucketResponse> ActionAsync(CreateBucketRequest request) => BucketOperations.CreateBucketAsync(request, token);
     }
 
     public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<DeleteBucketRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(DeleteBucketRequest req)
         {
             req.Initialize(bucketName);
             config?.Invoke(req);
         }
 
-        Task<DeleteBucketResponse> Action(DeleteBucketRequest request) => BucketOperations.DeleteBucketAsync(request, token);
-
-        return ObjectPool<DeleteBucketRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<DeleteBucketResponse> ActionAsync(DeleteBucketRequest request) => BucketOperations.DeleteBucketAsync(request, token);
     }
 
     public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<ListBucketsRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(ListBucketsRequest req) => config?.Invoke(req);
 
-        Task<ListBucketsResponse> Action(ListBucketsRequest request) => BucketOperations.ListBucketsAsync(request, token);
-
-        return ObjectPool<ListBucketsRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<ListBucketsResponse> ActionAsync(ListBucketsRequest request) => BucketOperations.ListBucketsAsync(request, token);
     }
 
     public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<HeadBucketRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(HeadBucketRequest req)
         {
             req.Initialize(bucketName);
             config?.Invoke(req);
         }
 
-        Task<HeadBucketResponse> Action(HeadBucketRequest request) => BucketOperations.HeadBucketAsync(request, token);
-
-        return ObjectPool<HeadBucketRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<HeadBucketResponse> ActionAsync(HeadBucketRequest request) => BucketOperations.HeadBucketAsync(request, token);
     }
 
     public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<PutBucketLockConfigurationRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(PutBucketLockConfigurationRequest req)
         {
             req.Initialize(bucketName, enabled);
             config?.Invoke(req);
         }
 
-        Task<PutBucketLockConfigurationResponse> Action(PutBucketLockConfigurationRequest request) => BucketOperations.PutBucketLockConfigurationAsync(request, token);
-
-        return ObjectPool<PutBucketLockConfigurationRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<PutBucketLockConfigurationResponse> ActionAsync(PutBucketLockConfigurationRequest request) => BucketOperations.PutBucketLockConfigurationAsync(request, token);
     }
 
     public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<GetBucketLockConfigurationRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(GetBucketLockConfigurationRequest req)
         {
             req.Initialize(bucketName);
             config?.Invoke(req);
         }
 
-        Task<GetBucketLockConfigurationResponse> Action(GetBucketLockConfigurationRequest request) => BucketOperations.GetBucketLockConfigurationAsync(request, token);
-
-        return ObjectPool<GetBucketLockConfigurationRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<GetBucketLockConfigurationResponse> ActionAsync(GetBucketLockConfigurationRequest request) => BucketOperations.GetBucketLockConfigurationAsync(request, token);
     }
 
     public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<GetBucketTaggingRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(GetBucketTaggingRequest req)
         {
             req.Initialize(bucketName);
             config?.Invoke(req);
         }
 
-        Task<GetBucketTaggingResponse> Action(GetBucketTaggingRequest request) => BucketOperations.GetBucketTaggingAsync(request, token);
-
-        return ObjectPool<GetBucketTaggingRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<GetBucketTaggingResponse> ActionAsync(GetBucketTaggingRequest request) => BucketOperations.GetBucketTaggingAsync(request, token);
     }
 
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<PutBucketTaggingRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(PutBucketTaggingRequest req)
         {
             req.Initialize(bucketName, tags);
             config?.Invoke(req);
         }
 
-        Task<PutBucketTaggingResponse> Action(PutBucketTaggingRequest request) => BucketOperations.PutBucketTaggingAsync(request, token);
-
-        return ObjectPool<PutBucketTaggingRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<PutBucketTaggingResponse> ActionAsync(PutBucketTaggingRequest request) => BucketOperations.PutBucketTaggingAsync(request, token);
     }
 
     public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<DeleteBucketTaggingRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(DeleteBucketTaggingRequest req)
         {
             req.Initialize(bucketName);
             config?.Invoke(req);
         }
 
-        Task<DeleteBucketTaggingResponse> Action(DeleteBucketTaggingRequest request) => BucketOperations.DeleteBucketTaggingAsync(request, token);
-
-        return ObjectPool<DeleteBucketTaggingRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<DeleteBucketTaggingResponse> ActionAsync(DeleteBucketTaggingRequest request) => BucketOperations.DeleteBucketTaggingAsync(request, token);
     }
 
     public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<PutBucketAccelerateConfigurationRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(PutBucketAccelerateConfigurationRequest req)
         {
             req.Initialize(bucketName, enabled);
             config?.Invoke(req);
         }
 
-        Task<PutBucketAccelerateConfigurationResponse> Action(PutBucketAccelerateConfigurationRequest request) => BucketOperations.PutBucketAccelerateConfigurationAsync(request, token);
-
-        return ObjectPool<PutBucketAccelerateConfigurationRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<PutBucketAccelerateConfigurationResponse> ActionAsync(PutBucketAccelerateConfigurationRequest request) => BucketOperations.PutBucketAccelerateConfigurationAsync(request, token);
     }
 
     public Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<GetBucketAccelerateConfigurationRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(GetBucketAccelerateConfigurationRequest req)
         {
             req.Initialize(bucketName);
             config?.Invoke(req);
         }
 
-        Task<GetBucketAccelerateConfigurationResponse> Action(GetBucketAccelerateConfigurationRequest request) => BucketOperations.GetBucketAccelerateConfigurationAsync(request, token);
-
-        return ObjectPool<GetBucketAccelerateConfigurationRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<GetBucketAccelerateConfigurationResponse> ActionAsync(GetBucketAccelerateConfigurationRequest request) => BucketOperations.GetBucketAccelerateConfigurationAsync(request, token);
     }
 
     public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<PutBucketLifecycleConfigurationRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(PutBucketLifecycleConfigurationRequest req)
         {
+            // ReSharper disable once PossibleMultipleEnumeration
             req.Initialize(bucketName, rules);
             config?.Invoke(req);
         }
 
-        Task<PutBucketLifecycleConfigurationResponse> Action(PutBucketLifecycleConfigurationRequest request) => BucketOperations.PutBucketLifecycleConfigurationAsync(request, token);
-
-        return ObjectPool<PutBucketLifecycleConfigurationRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<PutBucketLifecycleConfigurationResponse> ActionAsync(PutBucketLifecycleConfigurationRequest request) => BucketOperations.PutBucketLifecycleConfigurationAsync(request, token);
     }
 
     public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<PutBucketVersioningRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(PutBucketVersioningRequest req)
         {
             req.Initialize(bucketName, enabled);
             config?.Invoke(req);
         }
 
-        Task<PutBucketVersioningResponse> Action(PutBucketVersioningRequest request) => BucketOperations.PutBucketVersioningAsync(request, token);
-
-        return ObjectPool<PutBucketVersioningRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<PutBucketVersioningResponse> ActionAsync(PutBucketVersioningRequest request) => BucketOperations.PutBucketVersioningAsync(request, token);
     }
 
     public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<GetBucketVersioningRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(GetBucketVersioningRequest req)
         {
             req.Initialize(bucketName);
             config?.Invoke(req);
         }
 
-        Task<GetBucketVersioningResponse> Action(GetBucketVersioningRequest request) => BucketOperations.GetBucketVersioningAsync(request, token);
-
-        return ObjectPool<GetBucketVersioningRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<GetBucketVersioningResponse> ActionAsync(GetBucketVersioningRequest request) => BucketOperations.GetBucketVersioningAsync(request, token);
     }
 
     public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
     {
+        return ObjectPool<GetBucketLifecycleConfigurationRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
         void Setup(GetBucketLifecycleConfigurationRequest req)
         {
             req.Initialize(bucketName);
             config?.Invoke(req);
         }
 
-        Task<GetBucketLifecycleConfigurationResponse> Action(GetBucketLifecycleConfigurationRequest request) => BucketOperations.GetBucketLifecycleConfigurationAsync(request, token);
-
-        return ObjectPool<GetBucketLifecycleConfigurationRequest>.Shared.RentAndUseAsync(Setup, Action);
+        Task<GetBucketLifecycleConfigurationResponse> ActionAsync(GetBucketLifecycleConfigurationRequest request) => BucketOperations.GetBucketLifecycleConfigurationAsync(request, token);
     }
 }

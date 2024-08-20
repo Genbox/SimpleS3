@@ -6,12 +6,12 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
-internal class CreateBucketRequestMarshal : IRequestMarshal<CreateBucketRequest>
+internal sealed class CreateBucketRequestMarshal : IRequestMarshal<CreateBucketRequest>
 {
     public Stream? MarshalRequest(CreateBucketRequest request, SimpleS3Config config)
     {
         //We only enable object locking on creation. We can't disable it, so there is no "false" option
-        if (request.EnableObjectLocking.HasValue && request.EnableObjectLocking.Value)
+        if (request.EnableObjectLocking == true)
             request.SetHeader(AmzHeaders.XAmzBucketObjectLockEnabled, "TRUE");
 
         //Hard-code the LocationConstraint to the region from the config

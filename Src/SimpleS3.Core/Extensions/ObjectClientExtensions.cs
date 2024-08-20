@@ -213,8 +213,8 @@ public static class ObjectClientExtensions
         if (!File.Exists(file))
             throw new FileNotFoundException("The file does not exist.", file);
 
-        using (FileStream fs = File.OpenRead(file))
-            return await client.PutObjectAsync(bucketName, objectKey, fs, config, token).ConfigureAwait(false);
+        using FileStream fs = File.OpenRead(file);
+        return await client.PutObjectAsync(bucketName, objectKey, fs, config, token).ConfigureAwait(false);
     }
 
     /// <summary>List all objects within a bucket</summary>
@@ -289,7 +289,7 @@ public static class ObjectClientExtensions
     /// <summary>List all object versions in a bucket</summary>
     /// <param name="client">The ObjectClient</param>
     /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
-    /// <param name="configure">Delegate to configure the <see cref="ListObjectVersionsRequest"/> before sending it</param>
+    /// <param name="configure">Delegate to configure the <see cref="ListObjectVersionsRequest" /> before sending it</param>
     /// <param name="token">A cancellation token</param>
     public static async IAsyncEnumerable<S3Version> ListAllObjectVersionsAsync(this IObjectClient client, string bucketName, Action<ListObjectVersionsRequest>? configure = null, [EnumeratorCancellation]CancellationToken token = default)
     {

@@ -9,27 +9,25 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 
-internal class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObjectsResponse>
+internal sealed class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObjectsResponse>
 {
     public void MarshalResponse(SimpleS3Config config, DeleteObjectsResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
-        {
-            xmlReader.ReadToDescendant("DeleteResult");
+        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        xmlReader.ReadToDescendant("DeleteResult");
 
-            foreach (string name in XmlHelper.ReadElements(xmlReader))
+        foreach (string name in XmlHelper.ReadElements(xmlReader))
+        {
+            switch (name)
             {
-                switch (name)
-                {
-                    case "Deleted":
-                        ParseDeleted(response, xmlReader);
-                        break;
-                    case "Error":
-                        ParseError(response, xmlReader);
-                        break;
-                }
+                case "Deleted":
+                    ParseDeleted(response, xmlReader);
+                    break;
+                case "Error":
+                    ParseError(response, xmlReader);
+                    break;
             }
         }
     }

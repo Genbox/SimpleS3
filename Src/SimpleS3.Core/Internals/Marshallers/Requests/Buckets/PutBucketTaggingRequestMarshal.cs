@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
-internal class PutBucketTaggingRequestMarshal : IRequestMarshal<PutBucketTaggingRequest>
+internal sealed class PutBucketTaggingRequestMarshal : IRequestMarshal<PutBucketTaggingRequest>
 {
     public Stream? MarshalRequest(PutBucketTaggingRequest request, SimpleS3Config config)
     {

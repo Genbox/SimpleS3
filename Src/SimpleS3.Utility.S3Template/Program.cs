@@ -4,7 +4,7 @@ namespace Genbox.SimpleS3.Utility.S3Template;
 
 internal static class Program
 {
-    private static readonly IDictionary<DataType, (string, string)> Data = new Dictionary<DataType, (string, string)>
+    private static readonly IDictionary<DataType, (string, string)> _data = new Dictionary<DataType, (string, string)>
     {
         { DataType.Request, ("Network/Requests/%Type%s/", "Request.cs") },
         { DataType.RequestMarshal, ("Internals/Marshallers/Requests/%Type%s/", "RequestMarshal.cs") },
@@ -12,10 +12,10 @@ internal static class Program
         { DataType.ResponseMarshal, ("Internals/Marshallers/Responses/%Type%s/", "ResponseMarshal.cs") }
     };
 
-    private static readonly string RequestTemplate = File.ReadAllText("Templates/RequestTemplate.txt");
-    private static readonly string RequestMarshalTemplate = File.ReadAllText("Templates/RequestMarshalTemplate.txt");
-    private static readonly string ResponseTemplate = File.ReadAllText("Templates/ResponseTemplate.txt");
-    private static readonly string ResponseMarshalTemplate = File.ReadAllText("Templates/ResponseMarshalTemplate.txt");
+    private static readonly string _requestTemplate = File.ReadAllText("Templates/RequestTemplate.txt");
+    private static readonly string _requestMarshalTemplate = File.ReadAllText("Templates/RequestMarshalTemplate.txt");
+    private static readonly string _responseTemplate = File.ReadAllText("Templates/ResponseTemplate.txt");
+    private static readonly string _responseMarshalTemplate = File.ReadAllText("Templates/ResponseMarshalTemplate.txt");
 
     private static void Main(string[] args)
     {
@@ -65,7 +65,7 @@ internal static class Program
 
     private static void WriteOutFile(DataType dataType, ApiType apiType, string apiName, string template, string output)
     {
-        (string path, string append) = Data[dataType];
+        (string path, string append) = _data[dataType];
         string outPath = Path.Combine(output, path.Replace("%Type%", apiType.ToString(), StringComparison.Ordinal));
 
         if (!Directory.Exists(outPath))
@@ -78,10 +78,10 @@ internal static class Program
     {
         string template = dataType switch
         {
-            DataType.Request => RequestTemplate,
-            DataType.RequestMarshal => RequestMarshalTemplate,
-            DataType.Response => ResponseTemplate,
-            DataType.ResponseMarshal => ResponseMarshalTemplate,
+            DataType.Request => _requestTemplate,
+            DataType.RequestMarshal => _requestMarshalTemplate,
+            DataType.Response => _responseTemplate,
+            DataType.ResponseMarshal => _responseMarshalTemplate,
             _ => throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null)
         };
 

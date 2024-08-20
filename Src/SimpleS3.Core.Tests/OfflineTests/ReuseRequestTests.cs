@@ -6,10 +6,8 @@ using Genbox.SimpleS3.Core.TestBase;
 
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
 
-public class ReuseRequestTests : OfflineTestBase
+public class ReuseRequestTests(ITestOutputHelper helper) : OfflineTestBase(helper)
 {
-    public ReuseRequestTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
-
     [Fact]
     public async Task ReuseRequestSameData()
     {
@@ -21,7 +19,7 @@ public class ReuseRequestTests : OfflineTestBase
 
         for (int i = 0; i < 2; i++)
         {
-            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);
+            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req);
             Assert.True(resp.IsSuccess);
 
             //None of the essential properties must change
@@ -32,7 +30,7 @@ public class ReuseRequestTests : OfflineTestBase
             Assert.Equal(5, req.PartNumber);
             Assert.Equal("versionid", req.VersionId);
 
-            await Task.Delay(2000).ConfigureAwait(false);
+            await Task.Delay(2000);
 
             //The resolution on signatures is pr. second, so because we wait 2 seconds, it changes, and therefore the signature changes too
             string currentHeader = req.Headers[HttpHeaders.Authorization];
@@ -58,7 +56,7 @@ public class ReuseRequestTests : OfflineTestBase
             string key = i.ToString(NumberFormatInfo.InvariantInfo);
             req.ObjectKey = key;
 
-            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req).ConfigureAwait(false);
+            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req);
             Assert.True(resp.IsSuccess);
 
             //The key must not change after the request is sent

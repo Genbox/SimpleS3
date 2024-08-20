@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Utility.TestSetup;
 
 internal static class Program
 {
-    private static async Task Main(string[] args)
+    private static async Task Main()
     {
         Console.WriteLine("You are about to set up the test environment for the provider tests");
 
@@ -20,7 +20,7 @@ internal static class Program
 
             string profileName = UtilityHelper.GetProfileName(s3Provider);
 
-            using ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
+            await using ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
 
             IProfile profile = UtilityHelper.GetOrSetupProfile(provider, s3Provider, profileName);
 
@@ -91,8 +91,8 @@ internal static class Program
     {
         Console.Write("- Lifecycle configuration: ");
 
-        List<S3Rule> rules = new List<S3Rule>
-        {
+        List<S3Rule> rules =
+        [
             new S3Rule("ExpireAll", true)
             {
                 AbortIncompleteMultipartUploadDays = 1,
@@ -100,7 +100,7 @@ internal static class Program
                 Expiration = new S3Expiration(1),
                 Filter = new S3Filter { Prefix = "" }
             }
-        };
+        ];
 
         PutBucketLifecycleConfigurationResponse resp = await bucketClient.PutBucketLifecycleConfigurationAsync(bucketName, rules).ConfigureAwait(false);
         Console.WriteLine(resp.IsSuccess ? "[x]" : "[ ]");

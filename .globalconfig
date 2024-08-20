@@ -206,6 +206,12 @@ dotnet_diagnostic.CA1711.severity = none # Identifiers should not have incorrect
 dotnet_diagnostic.S2997.severity = error # "IDisposables" created in a "using" statement should not be returned
 dotnet_diagnostic.S125.severity = none # Sections of code should not be commented out
 
+dotnet_diagnostic.RCS1003.severity = none # Add braces to if-else (when expression spans over multiple lines)
+dotnet_diagnostic.MA0003.severity = none # Add parameter name to improve readability
+dotnet_diagnostic.RCS1063.severity = none # Avoid usage of do statement to create an infinite loop
+
+
+
 # Broken
 dotnet_diagnostic.S2589.severity = none # Boolean expressions should not be gratuitous
 dotnet_diagnostic.S2583.severity = none # Conditionally executed code should be reachable

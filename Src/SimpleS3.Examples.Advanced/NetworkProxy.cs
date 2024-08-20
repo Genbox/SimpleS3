@@ -13,9 +13,7 @@ namespace Genbox.SimpleS3.Examples.Advanced;
 
 public static class NetworkProxy
 {
-    /// <summary>
-    /// Example on how to setup a S3 client with proxy using dependency injection
-    /// </summary>
+    /// <summary>Example on how to setup a S3 client with proxy using dependency injection</summary>
     private static void ExampleWithDependencyInjection()
     {
         ServiceCollection services = new ServiceCollection();
@@ -33,9 +31,7 @@ public static class NetworkProxy
         ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
     }
 
-    /// <summary>
-    /// Example on how to setup a S3 client with proxy
-    /// </summary>
+    /// <summary>Example on how to setup a S3 client with proxy</summary>
     private static void ExampleWithClient()
     {
         NetworkConfig netConf = new NetworkConfig();

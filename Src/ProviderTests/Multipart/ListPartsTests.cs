@@ -18,7 +18,7 @@ public class ListPartsTests : TestBase
         await CreateTempBucketAsync(provider, client, async tempBucket =>
         {
             //We add the special characters at the end to test EncodingType support.
-            string objName = nameof(ListParts) + "%";
+            const string objName = nameof(ListParts) + "%";
 
             CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(tempBucket, objName);
 

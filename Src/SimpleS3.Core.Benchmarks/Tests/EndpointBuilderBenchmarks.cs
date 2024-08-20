@@ -1,5 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Internals.Network;
@@ -9,11 +8,10 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 
 [MemoryDiagnoser]
-[InProcess]
 public class EndpointBuilderBenchmarks
 {
-    private IEndpointBuilder _builder;
-    private IEndpointBuilder _builder2;
+    private EndpointBuilder _builder;
+    private EndpointBuilder _builder2;
     private IRequest _request;
 
     [GlobalSetup]

@@ -8,7 +8,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart;
 
-internal class UploadPartResponseMarshal : IResponseMarshal<UploadPartResponse>
+internal sealed class UploadPartResponseMarshal : IResponseMarshal<UploadPartResponse>
 {
     public void MarshalResponse(SimpleS3Config config, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)
     {

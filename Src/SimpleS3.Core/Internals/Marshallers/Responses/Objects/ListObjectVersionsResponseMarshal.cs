@@ -10,7 +10,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 
-internal class ListObjectVersionsResponseMarshal : IResponseMarshal<ListObjectVersionsResponse>
+internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListObjectVersionsResponse>
 {
     public void MarshalResponse(SimpleS3Config config, ListObjectVersionsResponse response, IDictionary<string, string> headers, Stream responseStream)
     {

@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
-internal class GetBucketVersioningRequestMarshal : IRequestMarshal<GetBucketVersioningRequest>
+internal sealed class GetBucketVersioningRequestMarshal : IRequestMarshal<GetBucketVersioningRequest>
 {
     public Stream? MarshalRequest(GetBucketVersioningRequest request, SimpleS3Config config)
     {

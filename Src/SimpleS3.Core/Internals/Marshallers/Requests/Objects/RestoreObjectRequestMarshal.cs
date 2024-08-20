@@ -9,7 +9,7 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects;
 
-internal class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjectRequest>
+internal sealed class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjectRequest>
 {
     public Stream MarshalRequest(RestoreObjectRequest request, SimpleS3Config config)
     {
@@ -90,7 +90,7 @@ internal class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjectReques
 
                         break;
                     }
-                    case S3ParquetInputFormat _:
+                    case S3ParquetInputFormat:
                         xml.WriteElement("Parquet", string.Empty);
                         break;
                 }
@@ -192,7 +192,7 @@ internal class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjectReques
                 xml.WriteEndElement("Tagging");
             }
 
-            KeyValuePair<string,string>[] metadata = request.OutputLocation.Metadata.ToArray();
+            KeyValuePair<string, string>[] metadata = request.OutputLocation.Metadata.ToArray();
 
             if (metadata.Length > 0)
             {

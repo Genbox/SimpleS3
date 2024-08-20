@@ -1,6 +1,6 @@
 ﻿namespace Genbox.SimpleS3.Core.Common.Tests.Code;
 
-public enum TestRegion
+internal enum TestRegion
 {
     RegionOne,
     RegionTwo

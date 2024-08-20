@@ -11,7 +11,7 @@ public class ObjectLegalHoldTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
     public async Task PutGetObjectLegalHold(S3Provider _, string bucket, ISimpleClient client)
     {
-        string objectKey = nameof(PutGetObjectLegalHold);
+        const string objectKey = nameof(PutGetObjectLegalHold);
 
         //Create an object
         await client.PutObjectAsync(bucket, objectKey, null);

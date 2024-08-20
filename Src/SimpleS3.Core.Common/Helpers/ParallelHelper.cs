@@ -37,7 +37,7 @@ public static class ParallelHelper
 
             Task<TReturn>? b = action(t, token);
             tasks.Add(b);
-            tasks2.Add(b.ContinueWith(x => throttler.Release(), token, TaskContinuationOptions.None, TaskScheduler.Current));
+            tasks2.Add(b.ContinueWith(_ => throttler.Release(), token, TaskContinuationOptions.None, TaskScheduler.Current));
         }
 
         await Task.WhenAll(tasks2).ConfigureAwait(false);

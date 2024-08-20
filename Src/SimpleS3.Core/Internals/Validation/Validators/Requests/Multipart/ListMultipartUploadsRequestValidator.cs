@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests.Multipart;
 
-internal class ListMultipartUploadsRequestValidator : RequestValidatorBase<ListMultipartUploadsRequest>
+internal sealed class ListMultipartUploadsRequestValidator : RequestValidatorBase<ListMultipartUploadsRequest>
 {
     public ListMultipartUploadsRequestValidator(IInputValidator validator, IOptions<SimpleS3Config> config) : base(validator, config)
     {

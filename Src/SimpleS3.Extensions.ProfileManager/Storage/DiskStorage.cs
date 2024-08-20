@@ -4,14 +4,9 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Storage;
 
-public class DiskStorage : IStorage
+public class DiskStorage(IOptions<DiskStorageOptions> options) : IStorage
 {
-    private readonly DiskStorageOptions _options;
-
-    public DiskStorage(IOptions<DiskStorageOptions> options)
-    {
-        _options = options.Value;
-    }
+    private readonly DiskStorageOptions _options = options.Value;
 
     public byte[]? Get(string name)
     {

@@ -9,12 +9,12 @@ using Genbox.SimpleS3.Core.Internals.Extensions;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
-internal class ChunkedStream : Stream
+internal sealed class ChunkedStream : Stream
 {
     private const string _newlineStr = "\r\n";
 
     private const string _chunkSignature = ";chunk-signature=";
-    private static readonly byte[] _newline = { 13, 10 };
+    private static readonly byte[] _newline = [13, 10];
     private readonly byte[] _buffer;
     private readonly IChunkedSignatureBuilder _chunkedSigBuilder;
     private readonly int _chunkSize;
@@ -215,8 +215,7 @@ internal class ChunkedStream : Stream
         + signatureLength
         + _newline.Length;
 
-    /// <summary>Computes the total size of the data payload, including the chunk metadata. Called externally so as to be able
-    /// to set the correct Content-Length header value.</summary>
+    /// <summary>Computes the total size of the data payload, including the chunk metadata. Called externally so as to be able to set the correct Content-Length header value.</summary>
     private long ComputeChunkedContentLength(long originalLength)
     {
         if (originalLength < 0)

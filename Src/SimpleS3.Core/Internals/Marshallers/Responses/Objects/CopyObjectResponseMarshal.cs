@@ -10,7 +10,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 
-internal class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectResponse>
+internal sealed class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectResponse>
 {
     public void MarshalResponse(SimpleS3Config config, CopyObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
@@ -33,21 +33,19 @@ internal class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectResponse>
 
         response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
 
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
-        {
-            xmlReader.ReadToDescendant("CopyObjectResult");
+        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        xmlReader.ReadToDescendant("CopyObjectResult");
 
-            foreach (string name in XmlHelper.ReadElements(xmlReader))
+        foreach (string name in XmlHelper.ReadElements(xmlReader))
+        {
+            switch (name)
             {
-                switch (name)
-                {
-                    case "ETag":
-                        response.ETag = xmlReader.ReadString();
-                        break;
-                    case "LastModified":
-                        response.LastModified = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
-                        break;
-                }
+                case "ETag":
+                    response.ETag = xmlReader.ReadString();
+                    break;
+                case "LastModified":
+                    response.LastModified = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                    break;
             }
         }
     }

@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects;
 
-internal class PutObjectLegalHoldRequestMarshal : IRequestMarshal<PutObjectLegalHoldRequest>
+internal sealed class PutObjectLegalHoldRequestMarshal : IRequestMarshal<PutObjectLegalHoldRequest>
 {
     public Stream MarshalRequest(PutObjectLegalHoldRequest request, SimpleS3Config config)
     {

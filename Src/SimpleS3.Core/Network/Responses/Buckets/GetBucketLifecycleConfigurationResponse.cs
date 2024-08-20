@@ -4,10 +4,5 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 public class GetBucketLifecycleConfigurationResponse : BaseResponse
 {
-    public GetBucketLifecycleConfigurationResponse()
-    {
-        Rules = new List<S3Rule>();
-    }
-
-    public IList<S3Rule> Rules { get; }
+    public IList<S3Rule> Rules { get; } = new List<S3Rule>();
 }

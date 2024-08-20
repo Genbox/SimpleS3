@@ -1,12 +1,7 @@
 ﻿namespace Genbox.SimpleS3.Core.Common;
 
 [AttributeUsage(AttributeTargets.Field)]
-public sealed class EnumValueAttribute : Attribute
+public sealed class EnumValueAttribute(string value) : Attribute
 {
-    public EnumValueAttribute(string value)
-    {
-        Value = value;
-    }
-
-    public string Value { get; }
+    public string Value { get; } = value;
 }

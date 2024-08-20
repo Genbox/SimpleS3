@@ -2,20 +2,12 @@
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
-public class S3Part : IHasETag
+public class S3Part(int partNumber, DateTimeOffset lastModified, long size, string? eTag) : IHasETag
 {
-    public S3Part(int partNumber, DateTimeOffset lastModified, long size, string? eTag)
-    {
-        PartNumber = partNumber;
-        LastModified = lastModified;
-        Size = size;
-        ETag = eTag;
-    }
-
-    public int PartNumber { get; }
-    public DateTimeOffset LastModified { get; }
-    public long Size { get; }
-    public string? ETag { get; }
+    public int PartNumber { get; } = partNumber;
+    public DateTimeOffset LastModified { get; } = lastModified;
+    public long Size { get; } = size;
+    public string? ETag { get; } = eTag;
 
     public override string ToString() => $"Part: {PartNumber}";
 }

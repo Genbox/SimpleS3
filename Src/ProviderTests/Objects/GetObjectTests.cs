@@ -36,7 +36,7 @@ public class GetObjectTests : TestBase
         // - Preserve casing
         // - Preserve encoding
 
-        string stringData = "Hello 你好 ਸਤ ਸ੍ਰੀ ਅਕਾਲ Привет";
+        const string stringData = "Hello 你好 ਸਤ ਸ੍ਰੀ ਅਕਾਲ Привет";
 
         PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, nameof(GetObjectString), stringData);
         Assert.Equal(200, putResp.StatusCode);

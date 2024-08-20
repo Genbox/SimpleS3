@@ -4,15 +4,10 @@ using Genbox.SimpleS3.Core.Internals.Pools;
 
 namespace Genbox.SimpleS3.Core.Network.Requests;
 
-public abstract class BaseRequest : IRequest, IPooledObject
+public abstract class BaseRequest(HttpMethodType method) : IRequest, IPooledObject
 {
     private readonly Dictionary<string, string> _headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-    protected BaseRequest(HttpMethodType method)
-    {
-        Method = method;
-    }
 
     public virtual void Reset()
     {
@@ -22,7 +17,7 @@ public abstract class BaseRequest : IRequest, IPooledObject
 
     public Guid RequestId { get; set; }
     public DateTimeOffset Timestamp { get; set; }
-    public HttpMethodType Method { get; internal set; }
+    public HttpMethodType Method { get; internal set; } = method;
     public IReadOnlyDictionary<string, string> Headers => _headers;
     public IReadOnlyDictionary<string, string> QueryParameters => _queryParameters;
 

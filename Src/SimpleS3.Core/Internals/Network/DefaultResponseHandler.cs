@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -17,11 +16,11 @@ namespace Genbox.SimpleS3.Core.Internals.Network;
 
 public class DefaultResponseHandler : IResponseHandler
 {
-    private readonly INetworkDriver _networkDriver;
-    private readonly IPostMapperFactory _postMapper;
+    private readonly SimpleS3Config _config;
     private readonly ILogger<DefaultResponseHandler> _logger;
     private readonly IMarshalFactory _marshaller;
-    private readonly SimpleS3Config _config;
+    private readonly INetworkDriver _networkDriver;
+    private readonly IPostMapperFactory _postMapper;
 
     public DefaultResponseHandler(IOptions<SimpleS3Config> options, IRequestValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, ILogger<DefaultResponseHandler> logger)
     {

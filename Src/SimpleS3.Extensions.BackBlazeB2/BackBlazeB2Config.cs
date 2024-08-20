@@ -4,17 +4,18 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Extensions;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Extensions.BackBlazeB2;
 
+[PublicAPI]
 public class BackBlazeB2Config : SimpleS3Config
 {
     private readonly IRegionConverter _converter = new RegionConverter(BackblazeB2RegionData.Instance);
     private BackBlazeB2Region _region;
 
-    public BackBlazeB2Config()
+    public BackBlazeB2Config() : base("BackBlazeB2")
     {
-        ProviderName = "BackBlazeB2";
         EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}backblazeb2.com";
     }
 

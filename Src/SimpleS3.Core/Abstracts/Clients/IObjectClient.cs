@@ -66,16 +66,14 @@ public interface IObjectClient
     /// <param name="token">A cancellation token</param>
     Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest>? config = null, CancellationToken token = default);
 
-    /// <summary>Set the access control list (ACL) permissions for an object that already exists in a bucket. You must have
-    /// WRITE_ACP permission to set the ACL of an object.</summary>
+    /// <summary>Set the access control list (ACL) permissions for an object that already exists in a bucket. You must have WRITE_ACP permission to set the ACL of an object.</summary>
     /// <param name="bucketName">Name of the bucket</param>
     /// <param name="objectKey">The key of the object</param>
     /// <param name="config">A delegate to configure the request</param>
     /// <param name="token">A cancellation token</param>
     Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest>? config = null, CancellationToken token = default);
 
-    /// <summary>Returns the access control list (ACL) of an object. To use this operation, you must have READ_ACP access to
-    /// the object.</summary>
+    /// <summary>Returns the access control list (ACL) of an object. To use this operation, you must have READ_ACP access to the object.</summary>
     /// <param name="bucketName">Name of the bucket</param>
     /// <param name="objectKey">The key of the object</param>
     /// <param name="config">A delegate to configure the request</param>

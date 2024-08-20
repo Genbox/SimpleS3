@@ -3,12 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal;
 
-internal class ProfileManagerBuilder : IProfileManagerBuilder
+internal class ProfileManagerBuilder(IServiceCollection services) : IProfileManagerBuilder
 {
-    public ProfileManagerBuilder(IServiceCollection services)
-    {
-        Services = services;
-    }
-
-    public IServiceCollection Services { get; }
+    public IServiceCollection Services { get; } = services;
 }

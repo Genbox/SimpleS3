@@ -4,7 +4,7 @@ namespace Genbox.SimpleS3.Core.Common.Helpers;
 
 public static class PropertyHelper
 {
-    public static void MapObjects<T, T2>(T source, T2 destination) where T : T2 where T2 : new()
+    public static void MapObjects<T, T2>(T? source, T2? destination) where T : class, T2 where T2 : class, new()
     {
         if (source == null || destination == null)
             return;

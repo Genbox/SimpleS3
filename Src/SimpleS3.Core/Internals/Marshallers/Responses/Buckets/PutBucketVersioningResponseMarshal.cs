@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
 
-internal class PutBucketVersioningResponseMarshal : IResponseMarshal<PutBucketVersioningResponse>
+internal sealed class PutBucketVersioningResponseMarshal : IResponseMarshal<PutBucketVersioningResponse>
 {
     public void MarshalResponse(SimpleS3Config config, PutBucketVersioningResponse response, IDictionary<string, string> headers, Stream responseStream)
     {

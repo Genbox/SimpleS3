@@ -2,9 +2,8 @@
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 
-/// <summary>Stream that will buffer / record data as it's read, and be able to seek in it afterwards Used for retrying
-/// forward-only streams</summary>
-internal class RetryableBufferingStream : Stream
+/// <summary>Stream that will buffer / record data as it's read, and be able to seek in it afterwards Used for retrying forward-only streams</summary>
+internal sealed class RetryableBufferingStream : Stream
 {
     private readonly MemoryStream _bufferStream;
     private readonly Stream _underlyingStream;

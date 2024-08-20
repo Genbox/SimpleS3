@@ -8,25 +8,23 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
 
-internal class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsResponse>
+internal sealed class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsResponse>
 {
     public void MarshalResponse(SimpleS3Config config, ListBucketsResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
-        {
-            xmlReader.ReadToDescendant("ListAllMyBucketsResult");
+        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        xmlReader.ReadToDescendant("ListAllMyBucketsResult");
 
-            foreach (string name in XmlHelper.ReadElements(xmlReader))
+        foreach (string name in XmlHelper.ReadElements(xmlReader))
+        {
+            switch (name)
             {
-                switch (name)
-                {
-                    case "Owner":
-                        response.Owner = ParserHelper.ParseOwner(xmlReader);
-                        break;
-                    case "Buckets":
-                        ReadBuckets(response, xmlReader);
-                        break;
-                }
+                case "Owner":
+                    response.Owner = ParserHelper.ParseOwner(xmlReader);
+                    break;
+                case "Buckets":
+                    ReadBuckets(response, xmlReader);
+                    break;
             }
         }
     }

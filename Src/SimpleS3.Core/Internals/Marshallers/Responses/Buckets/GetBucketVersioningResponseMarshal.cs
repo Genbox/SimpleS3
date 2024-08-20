@@ -6,23 +6,21 @@ using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
 
-internal class GetBucketVersioningResponseMarshal : IResponseMarshal<GetBucketVersioningResponse>
+internal sealed class GetBucketVersioningResponseMarshal : IResponseMarshal<GetBucketVersioningResponse>
 {
     public void MarshalResponse(SimpleS3Config config, GetBucketVersioningResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
+        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        foreach (string name in XmlHelper.ReadElements(xmlReader))
         {
-            foreach (string name in XmlHelper.ReadElements(xmlReader))
+            switch (name)
             {
-                switch (name)
-                {
-                    case "Status":
-                        response.Status = xmlReader.ReadString() == "Enabled";
-                        break;
-                    case "MfaDelete":
-                        response.MfaDelete = xmlReader.ReadString() == "Enabled";
-                        break;
-                }
+                case "Status":
+                    response.Status = xmlReader.ReadString() == "Enabled";
+                    break;
+                case "MfaDelete":
+                    response.MfaDelete = xmlReader.ReadString() == "Enabled";
+                    break;
             }
         }
     }

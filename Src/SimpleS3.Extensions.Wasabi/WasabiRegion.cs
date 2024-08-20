@@ -1,8 +1,6 @@
 ﻿namespace Genbox.SimpleS3.Extensions.Wasabi;
 
-/// <summary>The AWS regions. See
-/// https://wasabi-support.zendesk.com/hc/en-us/articles/360015106031-What-are-the-service-URLs-for-Wasabi-s-different-regions-
-/// for more info</summary>
+/// <summary>The AWS regions. See https://wasabi-support.zendesk.com/hc/en-us/articles/360015106031-What-are-the-service-URLs-for-Wasabi-s-different-regions- for more info</summary>
 public enum WasabiRegion
 {
     /// <summary>Do not use this value</summary>

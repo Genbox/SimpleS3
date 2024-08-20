@@ -8,7 +8,7 @@ using Genbox.SimpleS3.Core.Common.Pools;
 namespace Genbox.SimpleS3.Core.Internals.Xml;
 
 /// <summary>A fast optimized XML 1.1 standard compliant writer that does not allocate more memory than absolutely needed.</summary>
-internal class FastXmlWriter
+internal sealed class FastXmlWriter
 {
     private readonly XmlCharMode _discouragedCharMode;
     private readonly XmlCharMode _invalidCharMode;
@@ -128,7 +128,7 @@ internal class FastXmlWriter
                         case XmlCharMode.Omit:
                             continue;
                         case XmlCharMode.ThrowException:
-                            throw new XmlException($"Discouraged XML character: 0x{Convert.ToString(c, 16)} at offset {i}");
+                            throw new XmlException($"Discouraged XML character: 0x{Convert.ToString(c, 16)} at offset {i.ToString(NumberFormatInfo.InvariantInfo)}");
                         case XmlCharMode.Unknown:
                         default:
                             throw new ArgumentOutOfRangeException("Unsupported value " + _discouragedCharMode);
@@ -144,7 +144,7 @@ internal class FastXmlWriter
                     case XmlCharMode.Omit:
                         continue;
                     case XmlCharMode.ThrowException:
-                        throw new XmlException($"Invalid XML character: 0x{Convert.ToString(c, 16)} at offset {i}");
+                        throw new XmlException($"Invalid XML character: 0x{Convert.ToString(c, 16)} at offset {i.ToString(NumberFormatInfo.InvariantInfo)}");
                     case XmlCharMode.Unknown:
                     case XmlCharMode.EntityEncode:
                     default:

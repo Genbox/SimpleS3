@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Genbox.SimpleS3.Core.Internals.Misc;
 
-/// <summary>Represents an ordered collection of keys and values with the same performance as
-/// <see cref="Dictionary{TKey,TValue}" /> with O(1) lookups and adds but with O(n) inserts and removes.</summary>
+/// <summary>
+/// Represents an ordered collection of keys and values with the same performance as <see cref="Dictionary{TKey,TValue}" /> with O(1) lookups and adds but with O(n) inserts
+/// and removes.
+/// </summary>
 /// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
 /// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
-internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValue>
+internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValue> where TKey : class
 {
     private const int _hashPrime = 101;
     private const int _maxPrimeArrayLength = 0x7FEFFFFD;
@@ -21,13 +24,13 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
     private readonly EqualityComparer<TKey> _comparer = EqualityComparer<TKey>.Default;
 
     private readonly int[] _primes =
-    {
+    [
         3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761, 919,
         1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419, 10103, 12143, 14591,
         17519, 21023, 25229, 30293, 36353, 43627, 52361, 62851, 75431, 90523, 108631, 130363, 156437,
         187751, 225307, 270371, 324449, 389357, 467237, 560689, 672827, 807403, 968897, 1162687, 1395263,
         1674319, 2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369
-    };
+    ];
 
     // 1-based index into _entries; 0 means empty
     private int[] _buckets = new int[1];
@@ -47,11 +50,12 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
 
     /// <summary>Gets or sets the value associated with the specified key as an O(1) operation.</summary>
     /// <param name="key">The key of the value to get or set.</param>
-    /// <returns>The value associated with the specified key. If the specified key is not found, a get operation throws a
-    /// <see cref="KeyNotFoundException" /> , and a set operation creates a new element with the specified key.</returns>
+    /// <returns>
+    /// The value associated with the specified key. If the specified key is not found, a get operation throws a <see cref="KeyNotFoundException" /> , and a set operation creates
+    /// a new element with the specified key.
+    /// </returns>
     /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
-    /// <exception cref="KeyNotFoundException">The property is retrieved and <paramref name="key" /> does not exist in the
-    /// collection.</exception>
+    /// <exception cref="KeyNotFoundException">The property is retrieved and <paramref name="key" /> does not exist in the collection.</exception>
     public TValue this[TKey key]
     {
         get
@@ -67,11 +71,9 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
     public IEnumerable<TKey> Keys => throw new NotSupportedException("Keys is not available on this type.");
     public IEnumerable<TValue> Values => throw new NotSupportedException("Values is not available on this type.");
 
-    /// <summary>Determines whether the <see cref="OrderedDictionary{TKey, TValue}" /> contains the specified key as an O(1)
-    /// operation.</summary>
+    /// <summary>Determines whether the <see cref="OrderedDictionary{TKey, TValue}" /> contains the specified key as an O(1) operation.</summary>
     /// <param name="key">The key to locate in the <see cref="OrderedDictionary{TKey, TValue}" />.</param>
-    /// <returns>true if the <see cref="OrderedDictionary{TKey, TValue}" /> contains an element with the specified key;
-    /// otherwise, false.</returns>
+    /// <returns>true if the <see cref="OrderedDictionary{TKey, TValue}" /> contains an element with the specified key; otherwise, false.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
     public bool ContainsKey(TKey key) => IndexOf(key) >= 0;
 
@@ -85,17 +87,16 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
     }
 
     /// <summary>Returns an enumerator that iterates through the <see cref="OrderedDictionary{TKey, TValue}" />.</summary>
-    /// <returns>An <see cref="OrderedDictionary{TKey, TValue}.Enumerator" /> structure for the
-    /// <see cref="OrderedDictionary{TKey, TValue}" />.</returns>
+    /// <returns>An <see cref="OrderedDictionary{TKey, TValue}.Enumerator" /> structure for the <see cref="OrderedDictionary{TKey, TValue}" />.</returns>
     public IEnumerator GetEnumerator() => new Enumerator(this);
 
     /// <summary>Gets the value associated with the specified key as an O(1) operation.</summary>
     /// <param name="key">The key of the value to get.</param>
-    /// <param name="value">When this method returns, contains the value associated with the specified key, if the key is
-    /// found; otherwise, the default value for the type of the <paramref name="value" /> parameter. This parameter is passed
-    /// uninitialized.</param>
-    /// <returns>true if the <see cref="OrderedDictionary{TKey, TValue}" /> contains an element with the specified key;
-    /// otherwise, false.</returns>
+    /// <param name="value">
+    /// When this method returns, contains the value associated with the specified key, if the key is found; otherwise, the default value for the type of the
+    /// <paramref name="value" /> parameter. This parameter is passed uninitialized.
+    /// </param>
+    /// <returns>true if the <see cref="OrderedDictionary{TKey, TValue}" /> contains an element with the specified key; otherwise, false.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
     public bool TryGetValue(TKey key, out TValue value)
     {
@@ -154,18 +155,15 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
     /// <param name="key">The key of the element to add.</param>
     /// <param name="value">The value of the element to add. The value can be null for reference types.</param>
     /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
-    /// <exception cref="ArgumentException">An element with the same key already exists in the
-    /// <see cref="OrderedDictionary{TKey, TValue}" />.</exception>
+    /// <exception cref="ArgumentException">An element with the same key already exists in the <see cref="OrderedDictionary{TKey, TValue}" />.</exception>
     public void Add(TKey key, TValue value)
     {
         TryInsert(null, key, value, InsertionBehavior.ThrowOnExisting);
     }
 
-    /// <summary>Returns the zero-based index of the element with the specified key within the
-    /// <see cref="OrderedDictionary{TKey, TValue}" /> as an O(1) operation.</summary>
+    /// <summary>Returns the zero-based index of the element with the specified key within the <see cref="OrderedDictionary{TKey, TValue}" /> as an O(1) operation.</summary>
     /// <param name="key">The key of the element to locate.</param>
-    /// <returns>The zero-based index of the element with the specified key within the
-    /// <see cref="OrderedDictionary{TKey, TValue}" />, if found; otherwise, -1.</returns>
+    /// <returns>The zero-based index of the element with the specified key within the <see cref="OrderedDictionary{TKey, TValue}" />, if found; otherwise, -1.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
     public int IndexOf(TKey key) => IndexOf(key, out _);
 
@@ -331,6 +329,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
         ThrowOnExisting
     }
 
+    [StructLayout(LayoutKind.Auto)]
     private struct Entry
     {
         public uint HashCode;
@@ -349,7 +348,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
         /// <returns>The element in the <see cref="OrderedDictionary{TKey, TValue}" /> at the current position of the enumerator.</returns>
         public KeyValuePair<TKey, TValue> Current { get; private set; }
 
-        object IEnumerator.Current => Current;
+        readonly object IEnumerator.Current => Current;
 
         internal Enumerator(OrderedDictionary<TKey, TValue> orderedDictionary)
         {
@@ -362,8 +361,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
         public void Dispose() {}
 
         /// <summary>Advances the enumerator to the next element of the <see cref="OrderedDictionary{TKey, TValue}" />.</summary>
-        /// <returns>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the
-        /// end of the collection.</returns>
+        /// <returns>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.</returns>
         /// <exception cref="InvalidOperationException">The collection was modified after the enumerator was created.</exception>
         public bool MoveNext()
         {

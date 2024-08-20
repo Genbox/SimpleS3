@@ -1,5 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Genbox.SimpleS3.Core.Abstracts.Response;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithInheritors | ImplicitUseTargetFlags.WithMembers)]
 public interface IResponse
 {
     /// <summary>The length in bytes of the body in the response.</summary>

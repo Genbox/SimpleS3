@@ -5,15 +5,8 @@ using Genbox.SimpleS3.Core.Abstracts.Response;
 
 namespace Genbox.SimpleS3.Core.Internals.Operations;
 
-internal class SignedOperations : ISignedOperations
+internal class SignedOperations(ISignedRequestHandler handler) : ISignedOperations
 {
-    private readonly ISignedRequestHandler _signedHandler;
-
-    public SignedOperations(ISignedRequestHandler signedHandler)
-    {
-        _signedHandler = signedHandler;
-    }
-
-    public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest => _signedHandler.SignRequest(request, expiresIn);
-    public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new() => _signedHandler.SendRequestAsync<TResp>(url, httpMethod, content, token);
+    public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest => handler.SignRequest(request, expiresIn);
+    public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new() => handler.SendRequestAsync<TResp>(url, httpMethod, content, token);
 }

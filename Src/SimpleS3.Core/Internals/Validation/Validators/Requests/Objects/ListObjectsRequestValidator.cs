@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests.Objects;
 
-internal class ListObjectsRequestValidator : RequestValidatorBase<ListObjectsRequest>
+internal sealed class ListObjectsRequestValidator : RequestValidatorBase<ListObjectsRequest>
 {
     public ListObjectsRequestValidator(IInputValidator validator, IOptions<SimpleS3Config> config) : base(validator, config)
     {

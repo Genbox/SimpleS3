@@ -70,7 +70,7 @@ public class CanonicalRequestFileTests
             string expectedCr = ResourceHelper.GetResource(assembly, Path.ChangeExtension(name, "creq"));
             string expectedSts = ResourceHelper.GetResource(assembly, Path.ChangeExtension(name, "sts"));
 
-            yield return new object[] { content, expectedCr, expectedSts };
+            yield return [content, expectedCr, expectedSts];
         }
     }
 }

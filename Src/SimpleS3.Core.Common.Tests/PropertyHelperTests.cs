@@ -53,7 +53,7 @@ public class PropertyHelperTests
         public int IntCtorValue { get; set; } = 42;
     }
 
-    private class Config : BaseConfig
+    private sealed class Config : BaseConfig
     {
         public Config()
         {

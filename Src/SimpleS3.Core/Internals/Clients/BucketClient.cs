@@ -6,21 +6,14 @@ using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Clients;
 
-internal class BucketClient : IBucketClient
+internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
 {
-    private readonly IBucketOperations _bucketOperations;
-
-    public BucketClient(IBucketOperations bucketOperations)
-    {
-        _bucketOperations = bucketOperations;
-    }
-
     public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default)
     {
         CreateBucketRequest request = new CreateBucketRequest(bucketName);
         config?.Invoke(request);
 
-        return _bucketOperations.CreateBucketAsync(request, token);
+        return operations.CreateBucketAsync(request, token);
     }
 
     public Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest>? config = null, CancellationToken token = default)
@@ -28,7 +21,7 @@ internal class BucketClient : IBucketClient
         DeleteBucketRequest request = new DeleteBucketRequest(bucketName);
         config?.Invoke(request);
 
-        return _bucketOperations.DeleteBucketAsync(request, token);
+        return operations.DeleteBucketAsync(request, token);
     }
 
     public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest>? config = null, CancellationToken token = default)
@@ -36,7 +29,7 @@ internal class BucketClient : IBucketClient
         ListBucketsRequest request = new ListBucketsRequest();
         config?.Invoke(request);
 
-        return _bucketOperations.ListBucketsAsync(request, token);
+        return operations.ListBucketsAsync(request, token);
     }
 
     public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest>? config = null, CancellationToken token = default)
@@ -44,7 +37,7 @@ internal class BucketClient : IBucketClient
         HeadBucketRequest request = new HeadBucketRequest(bucketName);
         config?.Invoke(request);
 
-        return _bucketOperations.HeadBucketAsync(request, token);
+        return operations.HeadBucketAsync(request, token);
     }
 
     public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
@@ -52,7 +45,7 @@ internal class BucketClient : IBucketClient
         PutBucketLockConfigurationRequest request = new PutBucketLockConfigurationRequest(bucketName, enabled);
         config?.Invoke(request);
 
-        return _bucketOperations.PutBucketLockConfigurationAsync(request, token);
+        return operations.PutBucketLockConfigurationAsync(request, token);
     }
 
     public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
@@ -60,7 +53,7 @@ internal class BucketClient : IBucketClient
         GetBucketLockConfigurationRequest request = new GetBucketLockConfigurationRequest(bucketName);
         config?.Invoke(request);
 
-        return _bucketOperations.GetBucketLockConfigurationAsync(request, token);
+        return operations.GetBucketLockConfigurationAsync(request, token);
     }
 
     public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default)
@@ -68,7 +61,7 @@ internal class BucketClient : IBucketClient
         GetBucketTaggingRequest request = new GetBucketTaggingRequest(bucketName);
         config?.Invoke(request);
 
-        return _bucketOperations.GetBucketTaggingAsync(request, token);
+        return operations.GetBucketTaggingAsync(request, token);
     }
 
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
@@ -76,7 +69,7 @@ internal class BucketClient : IBucketClient
         PutBucketTaggingRequest request = new PutBucketTaggingRequest(bucketName, tags);
         config?.Invoke(request);
 
-        return _bucketOperations.PutBucketTaggingAsync(request, token);
+        return operations.PutBucketTaggingAsync(request, token);
     }
 
     public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default)
@@ -84,7 +77,7 @@ internal class BucketClient : IBucketClient
         DeleteBucketTaggingRequest request = new DeleteBucketTaggingRequest(bucketName);
         config?.Invoke(request);
 
-        return _bucketOperations.DeleteBucketTaggingAsync(request, token);
+        return operations.DeleteBucketTaggingAsync(request, token);
     }
 
     public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
@@ -92,7 +85,7 @@ internal class BucketClient : IBucketClient
         PutBucketAccelerateConfigurationRequest request = new PutBucketAccelerateConfigurationRequest(bucketName, enabled);
         config?.Invoke(request);
 
-        return _bucketOperations.PutBucketAccelerateConfigurationAsync(request, token);
+        return operations.PutBucketAccelerateConfigurationAsync(request, token);
     }
 
     public Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default)
@@ -100,7 +93,7 @@ internal class BucketClient : IBucketClient
         GetBucketAccelerateConfigurationRequest request = new GetBucketAccelerateConfigurationRequest(bucketName);
         config?.Invoke(request);
 
-        return _bucketOperations.GetBucketAccelerateConfigurationAsync(request, token);
+        return operations.GetBucketAccelerateConfigurationAsync(request, token);
     }
 
     public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
@@ -108,7 +101,7 @@ internal class BucketClient : IBucketClient
         PutBucketLifecycleConfigurationRequest request = new PutBucketLifecycleConfigurationRequest(bucketName, rules);
         config?.Invoke(request);
 
-        return _bucketOperations.PutBucketLifecycleConfigurationAsync(request, token);
+        return operations.PutBucketLifecycleConfigurationAsync(request, token);
     }
 
     public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
@@ -116,7 +109,7 @@ internal class BucketClient : IBucketClient
         PutBucketVersioningRequest request = new PutBucketVersioningRequest(bucketName, enabled);
         config?.Invoke(request);
 
-        return _bucketOperations.PutBucketVersioningAsync(request, token);
+        return operations.PutBucketVersioningAsync(request, token);
     }
 
     public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default)
@@ -124,7 +117,7 @@ internal class BucketClient : IBucketClient
         GetBucketVersioningRequest request = new GetBucketVersioningRequest(bucketName);
         config?.Invoke(request);
 
-        return _bucketOperations.GetBucketVersioningAsync(request, token);
+        return operations.GetBucketVersioningAsync(request, token);
     }
 
     public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default)
@@ -132,6 +125,6 @@ internal class BucketClient : IBucketClient
         GetBucketLifecycleConfigurationRequest request = new GetBucketLifecycleConfigurationRequest(bucketName);
         config?.Invoke(request);
 
-        return _bucketOperations.GetBucketLifecycleConfigurationAsync(request, token);
+        return operations.GetBucketLifecycleConfigurationAsync(request, token);
     }
 }

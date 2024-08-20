@@ -32,9 +32,10 @@ namespace Genbox.SimpleS3.Core.Extensions;
 [PublicAPI]
 public static class SimpleS3CoreServices
 {
-    /// <summary>Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile
-    /// manager or anything else - this method is strictly if you are an advanced user. Use AddSimpleS3() if you need something
-    /// simple that works.</summary>
+    /// <summary>
+    /// Add the SimpleS3 core services to a service collection. Note that it does not add a network driver, profile manager or anything else - this method is strictly if you are
+    /// an advanced user. Use AddSimpleS3() if you need something simple that works.
+    /// </summary>
     /// <param name="collection">The service collection</param>
     /// <param name="configure">Use this to configure the configuration used by SimpleS3</param>
     public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection, Action<SimpleS3Config>? configure = null)
@@ -112,8 +113,7 @@ public static class SimpleS3CoreServices
             yield return ServiceDescriptor.Singleton(abstractType, type);
     }
 
-    /// <summary>Register a service that inherits from an open generic (e.g. Service&lt;&gt;) as the actual implementation
-    /// (e.g. Service&lt;T&gt;)</summary>
+    /// <summary>Register a service that inherits from an open generic (e.g. Service&lt;&gt;) as the actual implementation (e.g. Service&lt;T&gt;)</summary>
     private static IEnumerable<ServiceDescriptor> RegisterAsActual(Type abstractType, Assembly assembly)
     {
         foreach (Type type in TypeHelper.GetInstanceTypesInheritedFrom(abstractType, assembly))

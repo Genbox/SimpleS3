@@ -41,6 +41,8 @@ internal static class RequestExtensions
             case DateTimeFormat.Rfc1123:
                 request.SetHeader(key, date.Value.ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo));
                 break;
+            case DateTimeFormat.Unknown:
+            case DateTimeFormat.Iso8601Date:
             default:
                 throw new ArgumentOutOfRangeException(nameof(format), format, null);
         }
@@ -59,6 +61,7 @@ internal static class RequestExtensions
             case BinaryEncoding.Hex:
                 request.SetHeader(key, data.HexEncode());
                 break;
+            case BinaryEncoding.Unknown:
             default:
                 throw new ArgumentOutOfRangeException(nameof(encoding), encoding, null);
         }
@@ -111,6 +114,9 @@ internal static class RequestExtensions
             case DateTimeFormat.Rfc1123:
                 request.SetQueryParameter(key, date.Value.ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo));
                 break;
+            case DateTimeFormat.Unknown:
+            case DateTimeFormat.Iso8601Date:
+            case DateTimeFormat.Iso8601DateTimeExt:
             default:
                 throw new ArgumentOutOfRangeException(nameof(format), format, null);
         }

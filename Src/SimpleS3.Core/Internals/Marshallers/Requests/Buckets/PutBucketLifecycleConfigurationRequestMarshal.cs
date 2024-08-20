@@ -10,7 +10,7 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
-internal class PutBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<PutBucketLifecycleConfigurationRequest>
+internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<PutBucketLifecycleConfigurationRequest>
 {
     public Stream MarshalRequest(PutBucketLifecycleConfigurationRequest request, SimpleS3Config config)
     {
@@ -35,7 +35,7 @@ internal class PutBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<P
                 writer.WriteStartElement("Expiration");
 
                 if (rule.Expiration.ExpireOnDate.HasValue)
-                    writer.WriteElement("Date", ValueHelper.DateToString(rule.Expiration.ExpireOnDate.Value.UtcDateTime.Date, DateTimeFormat.Iso8601DateTimeExt));
+                    writer.WriteElement("Date", ValueHelper.DateToString(rule.Expiration.ExpireOnDate.Value, DateTimeFormat.Iso8601DateTimeExt));
 
                 if (rule.Expiration.ExpireAfterDays.HasValue)
                     writer.WriteElement("Days", rule.Expiration.ExpireAfterDays.Value);

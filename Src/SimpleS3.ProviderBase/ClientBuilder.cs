@@ -4,14 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.ProviderBase;
 
-public class ClientBuilder : ServiceBuilderBase, IClientBuilder
+public class ClientBuilder(IServiceCollection services, IHttpClientBuilder httpBuilder, ICoreBuilder coreBuilder, string? name = null) : ServiceBuilderBase(services, name), IClientBuilder
 {
-    public ClientBuilder(IServiceCollection services, IHttpClientBuilder httpBuilder, ICoreBuilder coreBuilder, string? name = null) : base(services, name)
-    {
-        HttpBuilder = httpBuilder;
-        CoreBuilder = coreBuilder;
-    }
-
-    public IHttpClientBuilder HttpBuilder { get; }
-    public ICoreBuilder CoreBuilder { get; }
+    public IHttpClientBuilder HttpBuilder { get; } = httpBuilder;
+    public ICoreBuilder CoreBuilder { get; } = coreBuilder;
 }

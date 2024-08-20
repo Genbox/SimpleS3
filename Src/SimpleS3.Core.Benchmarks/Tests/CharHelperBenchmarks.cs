@@ -1,16 +1,17 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Common.Helpers;
 
 namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 
 [InProcess]
+[SuppressMessage("ReSharper", "ConvertToConstant.Local")]
 public class CharHelperBenchmarks
 {
     [Benchmark]
     public bool CharRangeWithOr()
     {
         char c = 'f';
-        return c >= 'a' || c <= '<';
+        return c is >= 'a' or <= '<';
     }
 
     [Benchmark]

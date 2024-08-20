@@ -1,6 +1,6 @@
 ﻿namespace Genbox.ProviderTests.Misc;
 
-public static class TestConstants
+internal static class TestConstants
 {
     public const string TestUsername = "qvistian";
     public const string TestEmail = "qvistian@gmail.com";

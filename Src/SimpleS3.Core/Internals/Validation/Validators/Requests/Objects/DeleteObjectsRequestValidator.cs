@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Requests.Objects;
 
-internal class DeleteObjectsRequestValidator : RequestValidatorBase<DeleteObjectsRequest>
+internal sealed class DeleteObjectsRequestValidator : RequestValidatorBase<DeleteObjectsRequest>
 {
     public DeleteObjectsRequestValidator(IInputValidator validator, IOptions<SimpleS3Config> config) : base(validator, config)
     {

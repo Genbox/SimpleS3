@@ -4,18 +4,9 @@ using Genbox.SimpleS3.Core.Abstracts.Transfer;
 
 namespace Genbox.SimpleS3.Core.Internals.Fluent;
 
-internal class Transfer : ITransfer
+internal sealed class Transfer(IObjectOperations operations, IMultipartTransfer transfer) : ITransfer
 {
-    private readonly IMultipartTransfer _multipartTransfer;
-    private readonly IObjectOperations _objectOperations;
+    public IUpload CreateUpload(string bucket, string objectKey) => new Upload(operations, transfer, bucket, objectKey);
 
-    public Transfer(IObjectOperations objectOperations, IMultipartTransfer multipartTransfer)
-    {
-        _objectOperations = objectOperations;
-        _multipartTransfer = multipartTransfer;
-    }
-
-    public IUpload CreateUpload(string bucket, string objectKey) => new Upload(_objectOperations, _multipartTransfer, bucket, objectKey);
-
-    public IDownload CreateDownload(string bucket, string objectKey) => new Download(_objectOperations, _multipartTransfer, bucket, objectKey);
+    public IDownload CreateDownload(string bucket, string objectKey) => new Download(operations, transfer, bucket, objectKey);
 }

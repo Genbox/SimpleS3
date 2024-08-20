@@ -28,7 +28,7 @@ public class BucketLifecycleConfigurationTests : TestBase
             rule3.Expiration = new S3Expiration(DateTimeOffset.UtcNow.AddDays(1));
             rule3.Filter = new S3Filter { Tag = new KeyValuePair<string, string>("type", "temp") };
 
-            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, new[] { rule1, rule2, rule3 });
+            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, [rule1, rule2, rule3]);
             Assert.True(putResp.IsSuccess);
 
             GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket);
@@ -67,7 +67,7 @@ public class BucketLifecycleConfigurationTests : TestBase
             rule.Expiration = new S3Expiration(DateTimeOffset.UtcNow.AddDays(10));
             rule.Filter = new S3Filter(); //Empty filter means the whole bucket is affected
 
-            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, new[] { rule });
+            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, [rule]);
             Assert.True(putResp.IsSuccess);
 
             GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket);
@@ -99,7 +99,7 @@ public class BucketLifecycleConfigurationTests : TestBase
             rule.Filter = filter;
             rule.Expiration = new S3Expiration(DateTimeOffset.UtcNow.AddDays(1));
 
-            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, new[] { rule });
+            PutBucketLifecycleConfigurationResponse putResp = await client.PutBucketLifecycleConfigurationAsync(tempBucket, [rule]);
             Assert.True(putResp.IsSuccess);
 
             GetBucketLifecycleConfigurationResponse getResp = await client.GetBucketLifecycleConfigurationAsync(tempBucket);

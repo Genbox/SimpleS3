@@ -12,7 +12,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart;
 
-internal class ListPartsResponseMarshal : IResponseMarshal<ListPartsResponse>
+internal sealed class ListPartsResponseMarshal : IResponseMarshal<ListPartsResponse>
 {
     public void MarshalResponse(SimpleS3Config config, ListPartsResponse response, IDictionary<string, string> headers, Stream responseStream)
     {

@@ -13,8 +13,8 @@ public class CopyObjectTests : TestBase
     public async Task CopyObject(S3Provider _, string bucket, ISimpleClient client)
     {
         //Upload an object to copy
-        string sourceKey = nameof(CopyObject);
-        string destinationKey = sourceKey + "2";
+        const string sourceKey = nameof(CopyObject);
+        const string destinationKey = sourceKey + "2";
 
         await client.PutObjectStringAsync(bucket, sourceKey, "test");
 

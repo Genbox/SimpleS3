@@ -18,7 +18,7 @@ public class MultipartTests : TestBase
     [MultipleProviders(S3Provider.GoogleCloudStorage, SseAlgorithm.Aes256)]
     public async Task MultipartWithEncryption(S3Provider provider, string bucket, ISimpleClient client, SseAlgorithm algorithm)
     {
-        string objectKey = nameof(MultipartWithEncryption);
+        const string objectKey = nameof(MultipartWithEncryption);
 
         CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey, req => req.SseAlgorithm = algorithm);
         Assert.Equal(200, createResp.StatusCode);
@@ -54,9 +54,9 @@ public class MultipartTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task MultipartCustomerEncryption(S3Provider _, string bucket, ISimpleClient client)
     {
-        string objectKey = nameof(MultipartCustomerEncryption);
+        const string objectKey = nameof(MultipartCustomerEncryption);
 
-        byte[] key = { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 };
+        byte[] key = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8];
         byte[] keyMd5 = CryptoHelper.Md5Hash(key);
 
         CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey, r =>
@@ -79,7 +79,7 @@ public class MultipartTests : TestBase
         Assert.Equal(SseCustomerAlgorithm.Aes256, uploadResp1.SseCustomerAlgorithm);
         Assert.Equal(keyMd5, uploadResp1.SseCustomerKeyMd5);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1) });
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp1.ETag, 1)]);
         Assert.Equal(200, completeResp.StatusCode);
         Assert.Equal(SseCustomerAlgorithm.Aes256, completeResp.SseCustomerAlgorithm);
     }
@@ -88,7 +88,7 @@ public class MultipartTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
     public async Task MultipartLockMode(S3Provider _, string bucket, ISimpleClient client)
     {
-        string objectKey = nameof(MultipartLockMode);
+        const string objectKey = nameof(MultipartLockMode);
 
         CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey, r =>
         {
@@ -103,7 +103,7 @@ public class MultipartTests : TestBase
         UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms, r => r.ContentMd5 = CryptoHelper.Md5Hash(file));
         Assert.Equal(200, uploadResp.StatusCode);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp.ETag, 1) });
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)]);
         Assert.Equal(200, completeResp.StatusCode);
     }
 
@@ -111,7 +111,7 @@ public class MultipartTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
     public async Task MultipartSinglePart(S3Provider provider, string bucket, ISimpleClient client)
     {
-        string objectKey = nameof(MultipartSinglePart);
+        const string objectKey = nameof(MultipartSinglePart);
 
         CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey);
         Assert.Equal(200, createResp.StatusCode);
@@ -135,7 +135,7 @@ public class MultipartTests : TestBase
         Assert.Equal(200, uploadResp.StatusCode);
         Assert.Equal("\"10f74ef02085310ccd1f87150b83e537\"", uploadResp.ETag);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, new[] { new S3PartInfo(uploadResp.ETag, 1) });
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)]);
         Assert.Equal(200, completeResp.StatusCode);
         Assert.Equal("\"bd74e21dfa8678d127240f76e518e9c2-1\"", completeResp.ETag);
 
@@ -151,7 +151,7 @@ public class MultipartTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task MultipartTooSmall(S3Provider provider, string bucket, ISimpleClient client)
     {
-        string objectKey = nameof(MultipartTooSmall);
+        const string objectKey = nameof(MultipartTooSmall);
 
         CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey);
         Assert.Equal(200, initResp.StatusCode);
@@ -172,7 +172,7 @@ public class MultipartTests : TestBase
         UploadPartResponse uploadResp2 = await client.UploadPartAsync(bucket, objectKey, 2, initResp.UploadId, ms2);
         Assert.Equal(200, uploadResp2.StatusCode);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2) });
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2)]);
         Assert.Equal(400, completeResp.StatusCode);
     }
 
@@ -180,7 +180,7 @@ public class MultipartTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
     public async Task MultipartUpload(S3Provider provider, string bucket, ISimpleClient client)
     {
-        string objectKey = nameof(MultipartUpload);
+        const string objectKey = nameof(MultipartUpload);
 
         CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey);
         Assert.Equal(200, initResp.StatusCode);
@@ -204,7 +204,7 @@ public class MultipartTests : TestBase
         Assert.Equal(200, uploadResp2.StatusCode);
         Assert.NotNull(uploadResp2.ETag);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2) });
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2)]);
         Assert.Equal(200, completeResp.StatusCode);
         Assert.NotNull(uploadResp2.ETag);
 

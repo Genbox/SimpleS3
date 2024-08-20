@@ -2,5 +2,5 @@
 
 public static class ErrorMessages
 {
-    public static readonly string ProviderNotSupported = "The provider does not support this function";
+    public const string ProviderNotSupported = "The provider does not support this function";
 }

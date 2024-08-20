@@ -8,21 +8,12 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient;
 
-public sealed class HttpClientNetworkDriver : INetworkDriver
+public sealed class HttpClientNetworkDriver(IOptions<HttpClientConfig> options, ILogger<HttpClientNetworkDriver> logger, System.Net.Http.HttpClient client) : INetworkDriver
 {
-    private readonly System.Net.Http.HttpClient _client;
-    private readonly HttpClientConfig _config;
+    private readonly HttpClientConfig _config = options.Value;
     private readonly Version _httpVersion1 = new Version("1.1");
     private readonly Version _httpVersion2 = new Version("2.0");
     private readonly Version _httpVersion3 = new Version("3.0");
-    private readonly ILogger<HttpClientNetworkDriver> _logger;
-
-    public HttpClientNetworkDriver(IOptions<HttpClientConfig> options, ILogger<HttpClientNetworkDriver> logger, System.Net.Http.HttpClient client)
-    {
-        _config = options.Value;
-        _logger = logger;
-        _client = client;
-    }
 
     public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
@@ -49,13 +40,13 @@ public sealed class HttpClientNetworkDriver : INetworkDriver
             foreach (KeyValuePair<string, string> pair in request.Headers)
                 httpRequest.AddHeader(pair.Key, pair.Value);
 
-            _logger.LogTrace("Sending HTTP request");
+            logger.LogTrace("Sending HTTP request");
 
  #pragma warning disable IDISP001 - We cannot dispose the response as the stream it delivers is reused by our response object
-            httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
  #pragma warning restore IDISP001
         }
-        _logger.LogDebug("Got an {Status} response with {StatusCode}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
+        logger.LogDebug("Got an {Status} response with {StatusCode}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
 
         Dictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -69,7 +60,9 @@ public sealed class HttpClientNetworkDriver : INetworkDriver
             foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
                 responseHeaders.Add(header.Key, header.Value.First());
 
+ #pragma warning disable IDISP001 - We cannot dispose as we need the response stream
             contentStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+ #pragma warning restore IDISP001
         }
 
         return new HttpResponse(contentStream, responseHeaders, (int)httpResponse.StatusCode);

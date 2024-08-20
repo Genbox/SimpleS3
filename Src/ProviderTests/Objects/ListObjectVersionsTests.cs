@@ -185,7 +185,7 @@ public class ListObjectVersionsTests : TestBase
     {
         await CreateTempBucketAsync(provider, client, async tempBucket =>
         {
-            string tempObjName = "!#/()";
+            const string tempObjName = "!#/()";
 
             await client.PutObjectAsync(tempBucket, tempObjName, null);
 

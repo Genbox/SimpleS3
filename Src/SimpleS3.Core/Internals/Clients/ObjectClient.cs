@@ -6,21 +6,14 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Clients;
 
-internal class ObjectClient : IObjectClient
+internal sealed class ObjectClient(IObjectOperations operations) : IObjectClient
 {
-    private readonly IObjectOperations _objectOperations;
-
-    public ObjectClient(IObjectOperations operations)
-    {
-        _objectOperations = operations;
-    }
-
     public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default)
     {
         DeleteObjectRequest req = new DeleteObjectRequest(bucketName, objectKey);
         config?.Invoke(req);
 
-        return _objectOperations.DeleteObjectAsync(req, token);
+        return operations.DeleteObjectAsync(req, token);
     }
 
     public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default)
@@ -28,7 +21,7 @@ internal class ObjectClient : IObjectClient
         DeleteObjectsRequest req = new DeleteObjectsRequest(bucketName, objectKeys);
         config?.Invoke(req);
 
-        return _objectOperations.DeleteObjectsAsync(req, token);
+        return operations.DeleteObjectsAsync(req, token);
     }
 
     public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest>? config = null, CancellationToken token = default)
@@ -36,7 +29,7 @@ internal class ObjectClient : IObjectClient
         HeadObjectRequest req = new HeadObjectRequest(bucketName, objectKey);
         config?.Invoke(req);
 
-        return _objectOperations.HeadObjectAsync(req, token);
+        return operations.HeadObjectAsync(req, token);
     }
 
     public Task<GetObjectResponse> GetObjectAsync(string bucketName, string objectKey, Action<GetObjectRequest>? config = null, CancellationToken token = default)
@@ -44,7 +37,7 @@ internal class ObjectClient : IObjectClient
         GetObjectRequest req = new GetObjectRequest(bucketName, objectKey);
         config?.Invoke(req);
 
-        return _objectOperations.GetObjectAsync(req, token);
+        return operations.GetObjectAsync(req, token);
     }
 
     public Task<PutObjectResponse> PutObjectAsync(string bucketName, string objectKey, Stream? data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
@@ -52,7 +45,7 @@ internal class ObjectClient : IObjectClient
         PutObjectRequest req = new PutObjectRequest(bucketName, objectKey, data);
         config?.Invoke(req);
 
-        return _objectOperations.PutObjectAsync(req, token);
+        return operations.PutObjectAsync(req, token);
     }
 
     public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
@@ -60,7 +53,7 @@ internal class ObjectClient : IObjectClient
         ListObjectsRequest req = new ListObjectsRequest(bucketName);
         config?.Invoke(req);
 
-        return _objectOperations.ListObjectsAsync(req, token);
+        return operations.ListObjectsAsync(req, token);
     }
 
     public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default)
@@ -68,7 +61,7 @@ internal class ObjectClient : IObjectClient
         ListObjectVersionsRequest req = new ListObjectVersionsRequest(bucketName);
         config?.Invoke(req);
 
-        return _objectOperations.ListObjectVersionsAsync(req, token);
+        return operations.ListObjectVersionsAsync(req, token);
     }
 
     public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default)
@@ -76,7 +69,7 @@ internal class ObjectClient : IObjectClient
         RestoreObjectRequest req = new RestoreObjectRequest(bucketName, objectKey);
         config?.Invoke(req);
 
-        return _objectOperations.RestoreObjectsAsync(req, token);
+        return operations.RestoreObjectsAsync(req, token);
     }
 
     public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest>? config = null, CancellationToken token = default)
@@ -84,7 +77,7 @@ internal class ObjectClient : IObjectClient
         CopyObjectRequest req = new CopyObjectRequest(sourceBucketName, sourceObjectKey, destinationBucket, destinationObjectKey);
         config?.Invoke(req);
 
-        return _objectOperations.CopyObjectsAsync(req, token);
+        return operations.CopyObjectsAsync(req, token);
     }
 
     public Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest>? config = null, CancellationToken token = default)
@@ -92,7 +85,7 @@ internal class ObjectClient : IObjectClient
         PutObjectAclRequest req = new PutObjectAclRequest(bucketName, objectKey);
         config?.Invoke(req);
 
-        return _objectOperations.PutObjectAclAsync(req, token);
+        return operations.PutObjectAclAsync(req, token);
     }
 
     public Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest>? config = null, CancellationToken token = default)
@@ -100,7 +93,7 @@ internal class ObjectClient : IObjectClient
         GetObjectAclRequest req = new GetObjectAclRequest(bucketName, objectKey);
         config?.Invoke(req);
 
-        return _objectOperations.GetObjectAclAsync(req, token);
+        return operations.GetObjectAclAsync(req, token);
     }
 
     public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default)
@@ -108,7 +101,7 @@ internal class ObjectClient : IObjectClient
         GetObjectLegalHoldRequest req = new GetObjectLegalHoldRequest(bucketName, objectKey);
         config?.Invoke(req);
 
-        return _objectOperations.GetObjectLegalHoldAsync(req, token);
+        return operations.GetObjectLegalHoldAsync(req, token);
     }
 
     public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default)
@@ -116,6 +109,6 @@ internal class ObjectClient : IObjectClient
         PutObjectLegalHoldRequest req = new PutObjectLegalHoldRequest(bucketName, objectKey, lockStatus);
         config?.Invoke(req);
 
-        return _objectOperations.PutObjectLegalHoldAsync(req, token);
+        return operations.PutObjectLegalHoldAsync(req, token);
     }
 }

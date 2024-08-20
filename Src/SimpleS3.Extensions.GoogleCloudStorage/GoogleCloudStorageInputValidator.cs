@@ -69,7 +69,7 @@ public class GoogleCloudStorageInputValidator : InputValidatorBase
         //https://cloud.google.com/storage/docs/naming-buckets
 
         //Spec: Bucket names must contain 3-63 characters. Names containing dots can contain up to 222 characters, but each dot-separated component can be no longer than 63 characters.
-        if (bucketName.Length < 3 || bucketName.Length > 63)
+        if (bucketName.Length is < 3 or > 63)
         {
             status = ValidationStatus.WrongLength;
             message = "3-63";

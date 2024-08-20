@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
-internal class PutBucketVersioningRequestMarshal : IRequestMarshal<PutBucketVersioningRequest>
+internal sealed class PutBucketVersioningRequestMarshal : IRequestMarshal<PutBucketVersioningRequest>
 {
     public Stream MarshalRequest(PutBucketVersioningRequest request, SimpleS3Config config)
     {

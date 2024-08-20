@@ -5,12 +5,7 @@ namespace Genbox.SimpleS3.Core.Common.Tests;
 
 public class RegionConverterTests
 {
-    private readonly RegionConverter _converter;
-
-    public RegionConverterTests()
-    {
-        _converter = new RegionConverter(new TestRegionData());
-    }
+    private readonly RegionConverter _converter = new RegionConverter(new TestRegionData());
 
     [Fact]
     public void EnumToString()

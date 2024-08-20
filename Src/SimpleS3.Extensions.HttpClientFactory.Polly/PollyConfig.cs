@@ -1,5 +1,8 @@
-﻿namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly;
+﻿using JetBrains.Annotations;
 
+namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly;
+
+[PublicAPI]
 public class PollyConfig
 {
     //Default policy:

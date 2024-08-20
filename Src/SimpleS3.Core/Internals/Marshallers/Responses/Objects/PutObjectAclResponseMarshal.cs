@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 
-internal class PutObjectAclResponseMarshal : IResponseMarshal<PutObjectAclResponse>
+internal sealed class PutObjectAclResponseMarshal : IResponseMarshal<PutObjectAclResponse>
 {
     public void MarshalResponse(SimpleS3Config config, PutObjectAclResponse response, IDictionary<string, string> headers, Stream responseStream)
     {

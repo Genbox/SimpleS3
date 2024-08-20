@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects;
 
-internal class PutObjectAclRequestMarshal : IRequestMarshal<PutObjectAclRequest>
+internal sealed class PutObjectAclRequestMarshal : IRequestMarshal<PutObjectAclRequest>
 {
     public Stream? MarshalRequest(PutObjectAclRequest request, SimpleS3Config config)
     {

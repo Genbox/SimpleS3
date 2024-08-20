@@ -6,6 +6,8 @@ using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Extensions.AmazonS3;
 
+// ReSharper disable All
+
 namespace Genbox.SimpleS3.Examples.Advanced;
 
 public static class UsingCustomerKey
@@ -22,9 +24,7 @@ public static class UsingCustomerKey
         await UsingPutObject(client, data, encryptionKey);
     }
 
-    /// <summary>
-    /// Shows how to use Server Side Encryption with Customer Keys
-    /// </summary>
+    /// <summary>Shows how to use Server Side Encryption with Customer Keys</summary>
     private static async Task UsingUpload(AmazonS3Client client, byte[] data, byte[] encryptionKey)
     {
         IUpload upload = client.CreateUpload("bucket-name", "object-name")
@@ -39,9 +39,7 @@ public static class UsingCustomerKey
         byte[] responseData = await response.Content.AsDataAsync();
     }
 
-    /// <summary>
-    /// Shows how to use Server Side Encryption with Customer Keys
-    /// </summary>
+    /// <summary>Shows how to use Server Side Encryption with Customer Keys</summary>
     private static async Task UsingPutObject(AmazonS3Client client, byte[] data, byte[] encryptionKey)
     {
         using MemoryStream ms = new MemoryStream(data);
@@ -51,7 +49,7 @@ public static class UsingCustomerKey
         {
             request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
             request.SseCustomerKey = encryptionKey;
-            request.SseCustomerKeyMd5 = MD5.Create().ComputeHash(encryptionKey);
+            request.SseCustomerKeyMd5 = MD5.HashData(encryptionKey);
         });
 
         //Download using multiple concurrent connections and use server-side encryption with our own key.
@@ -59,7 +57,7 @@ public static class UsingCustomerKey
         {
             request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
             request.SseCustomerKey = encryptionKey;
-            request.SseCustomerKeyMd5 = MD5.Create().ComputeHash(encryptionKey);
+            request.SseCustomerKeyMd5 = MD5.HashData(encryptionKey);
         });
 
         byte[] responseData = await response.Content.AsDataAsync();

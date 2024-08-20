@@ -9,7 +9,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Fluent;
 
-internal class Download : IDownload
+internal sealed class Download : IDownload
 {
     private readonly IMultipartTransfer _multipartTransfer;
     private readonly IObjectOperations _operations;

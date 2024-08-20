@@ -8,16 +8,16 @@ using Genbox.SimpleS3.ProviderBase;
 using Genbox.SimpleS3.ProviderBase.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
 
+// ReSharper disable All
+
 namespace Genbox.SimpleS3.Examples.Advanced;
 
 public static class NetworkRetryAndTimeout
 {
-    /// <summary>
-    /// Example on how to setup a S3 client with retry and timeout using dependency injection
-    /// </summary>
+    /// <summary>Example on how to setup a S3 client with retry and timeout using dependency injection</summary>
     private static void ExampleWithDependencyInjection()
     {
-        int retries = 3;
+        const int retries = 3;
         TimeSpan timeout = TimeSpan.FromMinutes(5);
 
         ServiceCollection services = new ServiceCollection();
@@ -35,9 +35,7 @@ public static class NetworkRetryAndTimeout
         ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
     }
 
-    /// <summary>
-    /// Example on how to setup a S3 client with retry and timeout
-    /// </summary>
+    /// <summary>Example on how to setup a S3 client with retry and timeout</summary>
     private static void ExampleWithClient()
     {
         NetworkConfig netConf = new NetworkConfig();

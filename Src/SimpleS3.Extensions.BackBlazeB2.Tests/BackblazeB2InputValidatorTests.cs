@@ -4,12 +4,7 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Tests;
 
 public class BackblazeB2InputValidatorTests
 {
-    private readonly BackblazeB2InputValidator _validator;
-
-    public BackblazeB2InputValidatorTests()
-    {
-        _validator = new BackblazeB2InputValidator();
-    }
+    private readonly BackblazeB2InputValidator _validator = new BackblazeB2InputValidator();
 
     [Theory]
     [InlineData(null, ValidationStatus.NullInput)]
@@ -18,7 +13,7 @@ public class BackblazeB2InputValidatorTests
     [InlineData("ghighighighi", ValidationStatus.WrongFormat)] //only a-f and 0-9 allowed
     [InlineData("1234567890AB", ValidationStatus.WrongFormat)] //uppercase not allowed
     [InlineData("61a951f6ab", ValidationStatus.WrongLength)] //too short
-    public void TryValidateKeyIdTest(string keyId, ValidationStatus expectedStatus)
+    public void TryValidateKeyIdTest(string? keyId, ValidationStatus expectedStatus)
     {
         _validator.TryValidateKeyId(keyId, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
@@ -28,7 +23,7 @@ public class BackblazeB2InputValidatorTests
     [InlineData(null, ValidationStatus.NullInput)]
     [InlineData(new byte[] { 0, 0 }, ValidationStatus.WrongLength)]
     [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, ValidationStatus.Ok)]
-    public void TryValidateAccessKeyTest(byte[] key, ValidationStatus expectedStatus)
+    public void TryValidateAccessKeyTest(byte[]? key, ValidationStatus expectedStatus)
     {
         _validator.TryValidateAccessKey(key, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
@@ -43,7 +38,7 @@ public class BackblazeB2InputValidatorTests
     [InlineData("a", ValidationStatus.WrongLength)]
     [InlineData("!ABCDEF!", ValidationStatus.WrongFormat)]
     [InlineData("contains space", ValidationStatus.WrongFormat)]
-    public void TryValidateBucketNameTest(string name, ValidationStatus expectedStatus)
+    public void TryValidateBucketNameTest(string? name, ValidationStatus expectedStatus)
     {
         _validator.TryValidateBucketName(name, BucketNameValidationMode.Default, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
@@ -56,7 +51,7 @@ public class BackblazeB2InputValidatorTests
     [InlineData("", ValidationStatus.WrongLength)]
     [InlineData("\0", ValidationStatus.WrongFormat)]
     [InlineData("大三.txt", ValidationStatus.Ok)] //Test we can use UTF8 chars
-    public void TryValidateObjectKeyTest(string name, ValidationStatus expectedStatus)
+    public void TryValidateObjectKeyTest(string? name, ValidationStatus expectedStatus)
     {
         _validator.TryValidateObjectKey(name, ObjectKeyValidationMode.Default, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);

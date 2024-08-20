@@ -5,9 +5,7 @@ namespace Genbox.SimpleS3.Core.Common.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Same as Microsoft.DependencyInjection's TryAddEnumerable, but also returns if it was able to add it or not
-    /// </summary>
+    /// <summary>Same as Microsoft.DependencyInjection's TryAddEnumerable, but also returns if it was able to add it or not</summary>
     public static bool TryAddEnumerableRet(this IServiceCollection services, ServiceDescriptor descriptor)
     {
         Type? implType = descriptor.ImplementationType;

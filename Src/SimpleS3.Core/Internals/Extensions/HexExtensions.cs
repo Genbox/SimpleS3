@@ -21,7 +21,7 @@ internal static class HexExtensions
     public static byte[] HexDecode(this string hex)
     {
         if (hex.Length == 0)
-            return Array.Empty<byte>();
+            return [];
 
         byte[] bytes = new byte[hex.Length / 2];
         for (int i = 0; i < bytes.Length; i++)

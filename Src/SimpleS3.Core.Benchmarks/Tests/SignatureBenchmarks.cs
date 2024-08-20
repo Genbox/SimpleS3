@@ -1,6 +1,4 @@
-﻿using System.Text;
-using BenchmarkDotNet.Attributes;
-using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Authentication;
@@ -16,14 +14,13 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 
 [MemoryDiagnoser]
-[InProcess]
 public class SignatureBenchmarks
 {
     private readonly ChunkedSignatureBuilder _chunkSigBuilder;
     private readonly DateTimeOffset _date;
     private readonly BaseRequest _req;
     private readonly SignatureBuilder _signatureBuilder;
-    private readonly ISigningKeyBuilder _signingKeyBuilder;
+    private readonly SigningKeyBuilder _signingKeyBuilder;
 
     public SignatureBenchmarks()
     {
@@ -38,7 +35,7 @@ public class SignatureBenchmarks
         _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, options, NullLogger<SignatureBuilder>.Instance);
         _chunkSigBuilder = new ChunkedSignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);
 
-        byte[] data = Encoding.UTF8.GetBytes("Hello world");
+        byte[] data = "Hello world"u8.ToArray();
 
         _req = new PutObjectRequest("examplebucket", "benchmark", new MemoryStream(data));
         _req.SetHeader(AmzHeaders.XAmzContentSha256, CryptoHelper.Sha256Hash(data).HexEncode());

@@ -14,35 +14,24 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Builders;
 
-internal class HeaderAuthorizationBuilder : IAuthorizationBuilder
+internal sealed class HeaderAuthorizationBuilder(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<HeaderAuthorizationBuilder> logger) : IAuthorizationBuilder
 {
-    private readonly SimpleS3Config _config;
-    private readonly ILogger<HeaderAuthorizationBuilder> _logger;
-    private readonly IScopeBuilder _scopeBuilder;
-    private readonly ISignatureBuilder _signatureBuilder;
-
-    public HeaderAuthorizationBuilder(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<HeaderAuthorizationBuilder> logger)
-    {
-        _config = options.Value;
-        _scopeBuilder = scopeBuilder;
-        _signatureBuilder = signatureBuilder;
-        _logger = logger;
-    }
+    private readonly SimpleS3Config _config = options.Value;
 
     public void BuildAuthorization(IRequest request)
     {
         Validator.RequireNotNull(request);
 
-        string auth = BuildInternal(request.Timestamp, request.Headers, _signatureBuilder.CreateSignature(request));
+        string auth = BuildInternal(request.Timestamp, request.Headers, signatureBuilder.CreateSignature(request));
 
         request.SetHeader(HttpHeaders.Authorization, auth);
     }
 
     internal string BuildInternal(DateTimeOffset date, IReadOnlyDictionary<string, string> headers, byte[] signature)
     {
-        _logger.LogTrace("Building header based authorization");
+        logger.LogTrace("Building header based authorization");
 
-        string scope = _scopeBuilder.CreateScope("s3", date);
+        string scope = scopeBuilder.CreateScope("s3", date);
 
         StringBuilder header = StringBuilderPool.Shared.Rent(250);
         header.Append(SigningConstants.AlgorithmTag);
@@ -51,7 +40,7 @@ internal class HeaderAuthorizationBuilder : IAuthorizationBuilder
         header.AppendFormat(CultureInfo.InvariantCulture, "Signature={0}", signature.HexEncode());
 
         string authHeader = StringBuilderPool.Shared.ReturnString(header);
-        _logger.LogDebug("AuthHeader: {AuthHeader}", authHeader);
+        logger.LogDebug("AuthHeader: {AuthHeader}", authHeader);
         return authHeader;
     }
 }

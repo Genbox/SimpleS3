@@ -3,7 +3,4 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient.Internal;
 
-internal class CustomHttpClientBuilder : ServiceBuilderBase, IHttpClientBuilder
-{
-    public CustomHttpClientBuilder(IServiceCollection services, string? name = null) : base(services, name) {}
-}
+internal sealed class CustomHttpClientBuilder(IServiceCollection services, string? name = null) : ServiceBuilderBase(services, name), IHttpClientBuilder;

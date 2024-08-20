@@ -16,20 +16,19 @@ using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Builders;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Misc;
-using Genbox.SimpleS3.Core.Network.Requests;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Network;
 
-internal class DefaultSignedRequestHandler : ISignedRequestHandler
+internal sealed class DefaultSignedRequestHandler : ISignedRequestHandler
 {
-    private readonly IMarshalFactory _marshaller;
     private readonly QueryParameterAuthorizationBuilder _authBuilder;
     private readonly SimpleS3Config _config;
     private readonly IEndpointBuilder _endpointBuilder;
-    private readonly IResponseHandler _responseHandler;
     private readonly ILogger<DefaultSignedRequestHandler> _logger;
+    private readonly IMarshalFactory _marshaller;
+    private readonly IResponseHandler _responseHandler;
     private readonly IScopeBuilder _scopeBuilder;
 
     public DefaultSignedRequestHandler(IOptions<SimpleS3Config> options, IMarshalFactory marshaller, IScopeBuilder scopeBuilder, QueryParameterAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, IResponseHandler responseHandler, ILogger<DefaultSignedRequestHandler> logger)

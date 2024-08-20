@@ -1,5 +1,8 @@
-﻿namespace Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
+﻿using JetBrains.Annotations;
 
+namespace Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
+
+[PublicAPI]
 public interface IProfile
 {
     string Name { get; set; }

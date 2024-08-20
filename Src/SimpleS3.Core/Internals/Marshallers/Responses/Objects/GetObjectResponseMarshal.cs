@@ -9,7 +9,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 
-internal class GetObjectResponseMarshal : IResponseMarshal<GetObjectResponse>
+internal sealed class GetObjectResponseMarshal : IResponseMarshal<GetObjectResponse>
 {
     public void MarshalResponse(SimpleS3Config config, GetObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
     {

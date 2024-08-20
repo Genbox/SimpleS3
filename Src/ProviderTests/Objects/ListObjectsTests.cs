@@ -111,7 +111,7 @@ public class ListObjectsTests : TestBase
     {
         await CreateTempBucketAsync(provider, client, async tempBucket =>
         {
-            string tempObjName = "!#/()";
+            const string tempObjName = "!#/()";
 
             PutObjectResponse putResp = await client.PutObjectAsync(tempBucket, tempObjName, null);
             Assert.Equal(200, putResp.StatusCode);

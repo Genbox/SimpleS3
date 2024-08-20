@@ -6,10 +6,8 @@ using Genbox.SimpleS3.Core.Tests.Code.Streams;
 
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
 
-public class NonSeekableStreamTests : OfflineTestBase
+public class NonSeekableStreamTests(ITestOutputHelper helper) : OfflineTestBase(helper)
 {
-    public NonSeekableStreamTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
-
     protected override void ConfigureConfig(SimpleS3Config config)
     {
         //We force streaming signatures as it is the only one that supports non-seekable streams
@@ -26,7 +24,7 @@ public class NonSeekableStreamTests : OfflineTestBase
         Array.Fill(data, (byte)'A');
 
         //We test if it is possible send a non-seekable stream. This should succeed as we use ChunkedStream
-        PutObjectResponse resp = await ObjectClient.PutObjectAsync(BucketName, nameof(SendNonSeekableStream), new NonSeekableStream(data)).ConfigureAwait(false);
+        PutObjectResponse resp = await ObjectClient.PutObjectAsync(BucketName, nameof(SendNonSeekableStream), new NonSeekableStream(data));
         Assert.True(resp.IsSuccess);
     }
 }

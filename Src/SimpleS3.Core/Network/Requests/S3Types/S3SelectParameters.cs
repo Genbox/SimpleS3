@@ -2,19 +2,12 @@
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
-public class S3SelectParameters
+public class S3SelectParameters(string expression, S3InputFormat? inputFormat, S3OutputFormat outputFormat)
 {
-    public S3SelectParameters(string expression, S3InputFormat? inputFormat, S3OutputFormat outputFormat)
-    {
-        Expression = expression;
-        InputFormat = inputFormat;
-        OutputFormat = outputFormat;
-    }
-
-    public string Expression { get; }
+    public string Expression { get; } = expression;
     public ExpressionType ExpressionType { get; set; }
-    public S3InputFormat? InputFormat { get; }
-    public S3OutputFormat OutputFormat { get; }
+    public S3InputFormat? InputFormat { get; } = inputFormat;
+    public S3OutputFormat OutputFormat { get; } = outputFormat;
 
     internal void Reset()
     {

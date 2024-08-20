@@ -16,7 +16,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Fluent;
 
-internal class Upload : IUpload
+internal sealed class Upload : IUpload
 {
     private readonly IMultipartTransfer _multipartTransfer;
     private readonly IObjectOperations _objectOperations;

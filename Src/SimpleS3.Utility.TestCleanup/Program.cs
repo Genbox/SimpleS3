@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Utility.TestCleanup;
 
 internal static class Program
 {
-    private static async Task Main(string[] args)
+    private static async Task Main()
     {
         S3Provider[] providers = UtilityHelper.SelectProviders().ToArray();
 

@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 
-internal class DeleteObjectResponseMarshal : IResponseMarshal<DeleteObjectResponse>
+internal sealed class DeleteObjectResponseMarshal : IResponseMarshal<DeleteObjectResponse>
 {
     public void MarshalResponse(SimpleS3Config config, DeleteObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
     {

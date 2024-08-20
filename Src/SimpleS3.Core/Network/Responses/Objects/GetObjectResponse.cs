@@ -4,12 +4,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 public class GetObjectResponse : HeadObjectResponse, IHasContent, IHasRequestCharged
 {
-    public GetObjectResponse()
-    {
-        Content = Stream.Null;
-    }
-
-    public Stream Content { get; internal set; }
+    public Stream Content { get; internal set; } = Stream.Null;
 
     public void Dispose()
     {

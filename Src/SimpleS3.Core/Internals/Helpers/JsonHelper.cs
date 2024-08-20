@@ -32,7 +32,7 @@ internal static class JsonHelper
         //See http://json.org/
         foreach (char c in input)
         {
-            if (c == '"' || c == '\\' || c == '/' || c == '\b' || c == '\f' || c == '\n' || c == '\r' || c == '\t')
+            if (c is '"' or '\\' or '/' or '\b' or '\f' or '\n' or '\r' or '\t')
                 sb.Append('\\');
 
             sb.Append(c);

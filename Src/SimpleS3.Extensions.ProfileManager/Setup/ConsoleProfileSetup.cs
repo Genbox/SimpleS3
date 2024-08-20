@@ -8,24 +8,11 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 
-public class ConsoleProfileSetup : IProfileSetup
+public class ConsoleProfileSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionConverter regionConverter, IRegionData regionData) : IProfileSetup
 {
-    private readonly IInputValidator _inputValidator;
-    private readonly IProfileManager _profileManager;
-    private readonly IRegionConverter _regionConverter;
-    private readonly IRegionData _regionData;
-
-    public ConsoleProfileSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionConverter regionConverter, IRegionData regionData)
-    {
-        _profileManager = profileManager;
-        _inputValidator = inputValidator;
-        _regionConverter = regionConverter;
-        _regionData = regionData;
-    }
-
     public IProfile SetupProfile(string profileName, bool persist = true)
     {
-        IProfile? existingProfile = _profileManager.GetProfile(profileName);
+        IProfile? existingProfile = profileManager.GetProfile(profileName);
 
         if (existingProfile != null)
             return existingProfile;
@@ -55,7 +42,7 @@ public class ConsoleProfileSetup : IProfileSetup
             } while (key != ConsoleKey.Y && key != ConsoleKey.N);
         } while (key == ConsoleKey.N);
 
-        IProfile profile = _profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region.Code, persist);
+        IProfile profile = profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region.Code, persist);
 
         if (persist)
         {
@@ -82,7 +69,7 @@ public class ConsoleProfileSetup : IProfileSetup
         {
             enteredKeyId = Console.ReadLine();
 
-            if (_inputValidator.TryValidateKeyId(enteredKeyId, out _, out _))
+            if (inputValidator.TryValidateKeyId(enteredKeyId, out _, out _))
                 break;
 
             Console.Error.WriteLine("Invalid key id. Try again.");
@@ -138,7 +125,7 @@ public class ConsoleProfileSetup : IProfileSetup
 
             utf8AccessKey = Encoding.UTF8.GetBytes(enteredAccessKey);
 
-            if (_inputValidator.TryValidateAccessKey(utf8AccessKey, out _, out _))
+            if (inputValidator.TryValidateAccessKey(utf8AccessKey, out _, out _))
                 break;
 
             Console.Error.WriteLine("Invalid access key. Try again.");
@@ -161,7 +148,7 @@ public class ConsoleProfileSetup : IProfileSetup
         int counter = 0; //used for validation further down
 
         Console.WriteLine("{0,-8}{1,-20}{2}", "Index", "Region Code", "Region Name");
-        foreach (IRegionInfo regionInfo in _regionData.GetRegions())
+        foreach (IRegionInfo regionInfo in regionData.GetRegions())
         {
             validRegionId.Add(regionInfo.Code);
             Console.WriteLine("{0,-8}{1,-20}{2}", Convert.ChangeType(regionInfo.EnumValue, typeof(int), NumberFormatInfo.InvariantInfo), regionInfo.Code, regionInfo.Name);
@@ -176,10 +163,10 @@ public class ConsoleProfileSetup : IProfileSetup
             if (enteredRegion != null)
             {
                 if (int.TryParse(enteredRegion, out int index) && index >= 0 && index <= counter)
-                    return _regionConverter.GetRegion(index);
+                    return regionConverter.GetRegion(index);
 
                 if (validRegionId.Contains(enteredRegion))
-                    return _regionConverter.GetRegion(enteredRegion);
+                    return regionConverter.GetRegion(enteredRegion);
             }
 
             Console.Error.WriteLine("Invalid region. Try again.");

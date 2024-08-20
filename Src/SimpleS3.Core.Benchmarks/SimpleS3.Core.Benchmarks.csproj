@@ -3,6 +3,7 @@
   <ItemGroup>
     <PackageReference Include="AwsSignatureVersion4" />
     <PackageReference Include="Enums.NET" />
+    <PackageReference Include="JetBrains.Annotations" />
   </ItemGroup>
 
 </Project>

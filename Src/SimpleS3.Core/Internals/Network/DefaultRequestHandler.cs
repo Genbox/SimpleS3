@@ -14,14 +14,13 @@ using Genbox.SimpleS3.Core.Internals.Builders;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
-using Genbox.SimpleS3.Core.Network.Requests;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Network;
 
 /// <summary>Handles common request and response logic before sending to transport drivers.</summary>
-internal class DefaultRequestHandler : IRequestHandler
+internal sealed class DefaultRequestHandler : IRequestHandler
 {
     private readonly HeaderAuthorizationBuilder _authBuilder;
     private readonly SimpleS3Config _config;

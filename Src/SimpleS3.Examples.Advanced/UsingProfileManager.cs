@@ -17,9 +17,7 @@ namespace Genbox.SimpleS3.Examples.Advanced;
 
 public static class UsingProfileManager
 {
-    /// <summary>
-    /// ProfileManager can handle credentials securely. This example shows how to use it via DI.
-    /// </summary>
+    /// <summary>ProfileManager can handle credentials securely. This example shows how to use it via DI.</summary>
     public static void ExampleWithDependencyInjection()
     {
         ServiceCollection collection = new ServiceCollection();
@@ -45,9 +43,7 @@ public static class UsingProfileManager
         ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
     }
 
-    /// <summary>
-    /// ProfileManager can handle credentials securely. This example shows how to use it via a normal client.
-    /// </summary>
+    /// <summary>ProfileManager can handle credentials securely. This example shows how to use it via a normal client.</summary>
     public static void ExampleWithClient()
     {
         AmazonS3InputValidator validator = new AmazonS3InputValidator();

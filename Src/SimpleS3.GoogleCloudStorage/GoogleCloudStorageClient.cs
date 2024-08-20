@@ -18,8 +18,7 @@ using Genbox.SimpleS3.ProviderBase;
 
 namespace Genbox.SimpleS3.GoogleCloudStorage;
 
-/// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and
-/// objects at the same time.</summary>
+/// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
 public sealed class GoogleCloudStorageClient : ClientBase, ISimpleClient
 {
     /// <summary>Creates a new instance of <see cref="GoogleCloudStorageClient" /></summary>

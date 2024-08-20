@@ -1,7 +1,9 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Request;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithInheritors | ImplicitUseTargetFlags.WithMembers)]
 public interface IRequest
 {
     Guid RequestId { get; set; }

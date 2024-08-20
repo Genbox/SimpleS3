@@ -5,18 +5,18 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Extensions;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage;
 
+[PublicAPI]
 public class GoogleCloudStorageConfig : SimpleS3Config
 {
     private readonly IRegionConverter _converter = new RegionConverter(GoogleCloudStorageRegionData.Instance);
     private GoogleCloudStorageRegion _region;
 
-    public GoogleCloudStorageConfig()
+    public GoogleCloudStorageConfig() : base("GoogleCloudStorage")
     {
-        ProviderName = "GoogleCloudStorage";
-
         //Google does not support chunked streaming uploads
         PayloadSignatureMode = SignatureMode.FullSignature;
         EndpointTemplate = "{Scheme}://{Bucket:.}storage.googleapis.com";

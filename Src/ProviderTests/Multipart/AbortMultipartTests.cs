@@ -11,7 +11,7 @@ public class AbortMultipartTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task AbortIncompleteUpload(S3Provider _, string bucket, ISimpleClient client)
     {
-        string objectKey = nameof(AbortIncompleteUpload);
+        const string objectKey = nameof(AbortIncompleteUpload);
 
         CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey);
         Assert.Equal(200, createResp.StatusCode);

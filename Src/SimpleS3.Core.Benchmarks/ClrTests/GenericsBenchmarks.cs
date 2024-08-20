@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using BenchmarkDotNet.Attributes;
 
 namespace Genbox.SimpleS3.Core.Benchmarks.ClrTests;
 

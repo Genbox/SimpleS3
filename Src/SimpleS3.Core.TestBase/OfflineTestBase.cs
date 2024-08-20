@@ -7,10 +7,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Genbox.SimpleS3.Core.TestBase;
 
-public abstract class OfflineTestBase : UnitTestBase
+public abstract class OfflineTestBase(ITestOutputHelper helper) : UnitTestBase(helper, "main-test-bucket")
 {
-    protected OfflineTestBase(ITestOutputHelper outputHelper) : base(outputHelper, "main-test-bucket") {}
-
     protected override void ConfigureConfig(SimpleS3Config config)
     {
         config.RegionCode = "eu-west-1";

@@ -2,17 +2,11 @@
 
 namespace Genbox.SimpleS3.Core.Abstracts;
 
-public abstract class ServiceBuilderBase
+public abstract class ServiceBuilderBase(IServiceCollection services, string? name = null)
 {
-    protected ServiceBuilderBase(IServiceCollection services, string? name = null)
-    {
-        Name = name ?? DefaultName;
-        Services = services;
-    }
-
     public static string DefaultName => string.Empty;
 
-    public IServiceCollection Services { get; }
+    public IServiceCollection Services { get; } = services;
 
-    public string Name { get; }
+    public string Name { get; } = name ?? DefaultName;
 }

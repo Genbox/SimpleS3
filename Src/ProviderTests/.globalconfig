@@ -1,0 +1,3 @@
+﻿dotnet_diagnostic.CA1515.severity = none # Consider making public types internal
+dotnet_diagnostic.CS8618.severity = none # Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+dotnet_diagnostic.CA1822.severity = none # Mark members as static

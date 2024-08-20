@@ -13,7 +13,7 @@ public class ObjectAclTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
     public async Task PutGetObjectAcl(S3Provider provider, string bucket, ISimpleClient client)
     {
-        string objectKey = nameof(PutGetObjectAcl);
+        const string objectKey = nameof(PutGetObjectAcl);
 
         //Create an object
         PutObjectResponse putResp1 = await client.PutObjectAsync(bucket, objectKey, null);

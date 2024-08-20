@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
 
-internal class PutBucketLockConfigurationResponseMarshal : IResponseMarshal<PutBucketLockConfigurationResponse>
+internal sealed class PutBucketLockConfigurationResponseMarshal : IResponseMarshal<PutBucketLockConfigurationResponse>
 {
     public void MarshalResponse(SimpleS3Config config, PutBucketLockConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
     {

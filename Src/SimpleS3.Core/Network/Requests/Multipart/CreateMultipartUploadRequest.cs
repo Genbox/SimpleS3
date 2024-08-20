@@ -8,10 +8,11 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart;
 
-/// <summary>This operation initiates a multipart upload and returns an upload ID. This upload ID is used to associate all
-/// of the parts in the specific multipart upload. You specify this upload ID in each of your subsequent upload part
-/// requests (see Upload Part). You also include this upload ID in the final request to either complete or abort the
-/// multipart upload request.</summary>
+/// <summary>
+/// This operation initiates a multipart upload and returns an upload ID. This upload ID is used to associate all of the parts in the specific multipart upload. You specify
+/// this upload ID in each of your subsequent upload part requests (see Upload Part). You also include this upload ID in the final request to either complete or abort the multipart
+/// upload request.
+/// </summary>
 public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsiteRedirect, IHasMetadata, IHasTags, IHasLegalHold
 {
     private byte[]? _sseCustomerKey;

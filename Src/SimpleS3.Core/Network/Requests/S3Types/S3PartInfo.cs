@@ -3,14 +3,8 @@
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 [PublicAPI]
-public class S3PartInfo
+public class S3PartInfo(string eTag, int partNumber)
 {
-    public S3PartInfo(string eTag, int partNumber)
-    {
-        ETag = eTag;
-        PartNumber = partNumber;
-    }
-
-    public string ETag { get; }
-    public int PartNumber { get; }
+    public string ETag { get; } = eTag;
+    public int PartNumber { get; } = partNumber;
 }

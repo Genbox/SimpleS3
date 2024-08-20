@@ -12,11 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
 
 /// <summary>Tests when the requests time out</summary>
-public class TimeoutTests : OfflineTestBase
+public class TimeoutTests(ITestOutputHelper helper) : OfflineTestBase(helper)
 {
     private readonly BaseFailingHttpHandler _handler = new SlowHttpHandler(2, TimeSpan.FromSeconds(5));
-
-    public TimeoutTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
     protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
     {
@@ -37,7 +35,7 @@ public class TimeoutTests : OfflineTestBase
         tcs.CancelAfter(500);
 
         Stopwatch sw = Stopwatch.StartNew();
-        await Assert.ThrowsAsync<TaskCanceledException>(async () => await task.ConfigureAwait(false)).ConfigureAwait(false);
+        await Assert.ThrowsAsync<TaskCanceledException>(async () => await task.ConfigureAwait(false));
         sw.Stop();
 
         // We should have canceled within 750ms
@@ -49,7 +47,7 @@ public class TimeoutTests : OfflineTestBase
     {
         using MemoryStream ms = new MemoryStream(new byte[4096]);
 
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError), ms).ConfigureAwait(false);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError), ms);
 
         // Request should succeed after N tries
         Assert.True(response.IsSuccess);
@@ -59,9 +57,9 @@ public class TimeoutTests : OfflineTestBase
     [Fact]
     public async Task TestTimeoutError_NonSeekableStream()
     {
-        using NonSeekableStream ms = new NonSeekableStream(new byte[4096]);
+        await using NonSeekableStream ms = new NonSeekableStream(new byte[4096]);
 
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError_NonSeekableStream), ms).ConfigureAwait(false);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError_NonSeekableStream), ms);
 
         // Request should succeed after N tries
         Assert.True(response.IsSuccess);

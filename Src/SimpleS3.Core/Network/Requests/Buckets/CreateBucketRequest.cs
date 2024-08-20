@@ -6,9 +6,10 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
-/// <summary>Create a bucket. By creating the bucket, you become the bucket owner. By default, the bucket is created in the
-/// US East (N. Virginia) region. You can optionally specify a region in the request body. You might choose a region to
-/// optimize latency, minimize costs, or address regulatory requirements.</summary>
+/// <summary>
+/// Create a bucket. By creating the bucket, you become the bucket owner. By default, the bucket is created in the US East (N. Virginia) region. You can optionally specify a
+/// region in the request body. You might choose a region to optimize latency, minimize costs, or address regulatory requirements.
+/// </summary>
 public class CreateBucketRequest : BaseRequest, IHasBucketAcl, IHasBucketName
 {
     internal CreateBucketRequest() : base(HttpMethodType.PUT)

@@ -9,27 +9,25 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 
-internal class GetObjectAclResponseMarshal : IResponseMarshal<GetObjectAclResponse>
+internal sealed class GetObjectAclResponseMarshal : IResponseMarshal<GetObjectAclResponse>
 {
     public void MarshalResponse(SimpleS3Config config, GetObjectAclResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
-        {
-            xmlReader.ReadToDescendant("AccessControlPolicy");
+        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        xmlReader.ReadToDescendant("AccessControlPolicy");
 
-            foreach (string name in XmlHelper.ReadElements(xmlReader, "AccessControlPolicy"))
+        foreach (string name in XmlHelper.ReadElements(xmlReader, "AccessControlPolicy"))
+        {
+            switch (name)
             {
-                switch (name)
-                {
-                    case "Owner":
-                        response.Owner = ParserHelper.ParseOwner(xmlReader);
-                        break;
-                    case "AccessControlList":
-                        ParseAcl(response, xmlReader);
-                        break;
-                }
+                case "Owner":
+                    response.Owner = ParserHelper.ParseOwner(xmlReader);
+                    break;
+                case "AccessControlList":
+                    ParseAcl(response, xmlReader);
+                    break;
             }
         }
     }

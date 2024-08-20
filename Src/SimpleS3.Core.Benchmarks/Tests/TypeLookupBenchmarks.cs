@@ -1,6 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-
-namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
+﻿namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 
 [InProcess]
 public class TypeLookupBenchmarks

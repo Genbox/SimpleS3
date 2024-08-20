@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 namespace Genbox.SimpleS3.Core.Internals.Operations;
 
-internal class MultipartOperations : IMultipartOperations
+internal sealed class MultipartOperations : IMultipartOperations
 {
     private readonly IRequestHandler _requestHandler;
 

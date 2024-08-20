@@ -12,7 +12,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Internals.Network;
 
-internal class MarshalFactory : IMarshalFactory
+internal sealed class MarshalFactory : IMarshalFactory
 {
     private readonly Dictionary<Type, IRequestMarshal> _requestMarshals;
     private readonly Dictionary<Type, IResponseMarshal> _responseMarshals;

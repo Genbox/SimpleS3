@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs;
 
-internal class AccessKeyValidator : ValidatorBase<IAccessKey>
+internal sealed class AccessKeyValidator : ValidatorBase<IAccessKey>
 {
     private readonly IInputValidator _inputValidator;
 

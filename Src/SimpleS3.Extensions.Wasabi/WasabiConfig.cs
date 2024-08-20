@@ -12,9 +12,8 @@ public class WasabiConfig : SimpleS3Config
     private readonly IRegionConverter _converter = new RegionConverter(WasabiRegionData.Instance);
     private WasabiRegion _region;
 
-    public WasabiConfig()
+    public WasabiConfig() : base("Wasabi")
     {
-        ProviderName = "Wasabi";
         EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}wasabisys.com";
     }
 

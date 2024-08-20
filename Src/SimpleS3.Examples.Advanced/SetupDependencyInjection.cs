@@ -6,9 +6,7 @@ namespace Genbox.SimpleS3.Examples.Advanced;
 
 public static class SetupDependencyInjection
 {
-    /// <summary>
-    /// Shows how to use dependency injection to setup a client to AmazonS3
-    /// </summary>
+    /// <summary>Shows how to use dependency injection to setup a client to AmazonS3</summary>
     public static void Example()
     {
         //Create the dependency injection container

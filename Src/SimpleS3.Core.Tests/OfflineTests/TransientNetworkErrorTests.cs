@@ -11,11 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
 
-public class TransientNetworkErrorTests : OfflineTestBase
+public class TransientNetworkErrorTests(ITestOutputHelper helper) : OfflineTestBase(helper)
 {
     private readonly BaseFailingHttpHandler _handler = new TransientFailingHttpHandler();
-
-    public TransientNetworkErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
     protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
     {
@@ -35,7 +33,7 @@ public class TransientNetworkErrorTests : OfflineTestBase
     {
         using MemoryStream ms = new MemoryStream(new byte[4096]);
 
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTransientNetworkError), ms).ConfigureAwait(false);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTransientNetworkError), ms);
 
         Assert.True(response.IsSuccess);
         Assert.True(_handler.RequestCounter >= 2);
@@ -44,9 +42,9 @@ public class TransientNetworkErrorTests : OfflineTestBase
     [Fact]
     public async Task TestTransientNetworkError_NonSeekable()
     {
-        using NonSeekableStream ms = new NonSeekableStream(new byte[4096]);
+        await using NonSeekableStream ms = new NonSeekableStream(new byte[4096]);
 
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTransientNetworkError_NonSeekable), ms).ConfigureAwait(false);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTransientNetworkError_NonSeekable), ms);
 
         Assert.True(response.IsSuccess);
         Assert.True(_handler.RequestCounter >= 2);

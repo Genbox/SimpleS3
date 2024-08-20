@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Internals.Validation;
 
 [PublicAPI]
-internal class ValidatorFactory : IRequestValidatorFactory
+internal sealed class ValidatorFactory : IRequestValidatorFactory
 {
     private readonly Dictionary<Type, IValidator> _validators;
 

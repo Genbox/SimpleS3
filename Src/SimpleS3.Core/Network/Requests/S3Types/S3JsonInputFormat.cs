@@ -2,14 +2,9 @@
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
-public class S3JsonInputFormat : S3InputFormat
+public class S3JsonInputFormat(JsonType jsonType) : S3InputFormat
 {
-    public S3JsonInputFormat(JsonType jsonType)
-    {
-        JsonType = jsonType;
-    }
-
-    public JsonType JsonType { get; set; }
+    public JsonType JsonType { get; set; } = jsonType;
 
     internal override void Reset()
     {

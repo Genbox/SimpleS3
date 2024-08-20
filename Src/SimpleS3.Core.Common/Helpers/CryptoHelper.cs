@@ -49,7 +49,7 @@ public static class CryptoHelper
 
     public static byte[] HmacSign(byte[] data, byte[] key)
     {
-        using (KeyedHashAlgorithm algorithm = new HMACSHA256(key))
-            return algorithm.ComputeHash(data);
+        using KeyedHashAlgorithm algorithm = new HMACSHA256(key);
+        return algorithm.ComputeHash(data);
     }
 }

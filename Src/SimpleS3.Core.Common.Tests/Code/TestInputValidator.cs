@@ -3,7 +3,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Core.Common.Tests.Code;
 
-internal class TestInputValidator : InputValidatorBase
+internal sealed class TestInputValidator : InputValidatorBase
 {
     protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)
     {

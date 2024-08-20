@@ -3,7 +3,4 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Core.Internals;
 
-internal class CoreBuilder : ServiceBuilderBase, ICoreBuilder
-{
-    public CoreBuilder(IServiceCollection services, string? name = null) : base(services, name) {}
-}
+internal sealed class CoreBuilder(IServiceCollection services, string? name = null) : ServiceBuilderBase(services, name), ICoreBuilder;

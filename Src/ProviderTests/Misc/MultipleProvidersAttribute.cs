@@ -6,17 +6,9 @@ using Xunit.Sdk;
 
 namespace Genbox.ProviderTests.Misc;
 
-public sealed class MultipleProvidersAttribute : DataAttribute
+internal sealed class MultipleProvidersAttribute(S3Provider providers, params object[] otherData) : DataAttribute
 {
-    private readonly object[] _otherData;
-    private readonly S3Provider _providers;
     private bool _shouldSkip;
-
-    public MultipleProvidersAttribute(S3Provider providers, params object[] otherData)
-    {
-        _providers = providers;
-        _otherData = otherData;
-    }
 
     public override string? Skip => _shouldSkip ? "Not supported" : null;
 
@@ -24,16 +16,16 @@ public sealed class MultipleProvidersAttribute : DataAttribute
     {
         foreach ((S3Provider provider, IProfile profile, ISimpleClient client) in ProviderSetup.Instance.Clients)
         {
-            _shouldSkip = !_providers.HasFlag(provider);
+            _shouldSkip = !providers.HasFlag(provider);
             string bucket = UtilityHelper.GetTestBucket(profile);
 
-            if (_otherData.Length > 0)
+            if (otherData.Length > 0)
             {
-                foreach (object o in _otherData)
-                    yield return new[] { provider, bucket, client, o };
+                foreach (object o in otherData)
+                    yield return [provider, bucket, client, o];
             }
             else
-                yield return new object?[] { provider, bucket, client };
+                yield return [provider, bucket, client];
         }
     }
 }

@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects;
 
-internal class CopyObjectRequestMarshal : IRequestMarshal<CopyObjectRequest>
+internal sealed class CopyObjectRequestMarshal : IRequestMarshal<CopyObjectRequest>
 {
     public Stream? MarshalRequest(CopyObjectRequest request, SimpleS3Config config)
     {

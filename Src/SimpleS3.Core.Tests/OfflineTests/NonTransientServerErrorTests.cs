@@ -11,11 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
 
 /// <summary>Tests when the network works, but the API is responding with server errors</summary>
-public class NonTransientServerErrorTests : OfflineTestBase
+public class NonTransientServerErrorTests(ITestOutputHelper helper) : OfflineTestBase(helper)
 {
     private readonly BaseFailingHttpHandler _handler = new NonTransientFailingHttpHandler(1);
-
-    public NonTransientServerErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
     protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
     {
@@ -36,13 +34,13 @@ public class NonTransientServerErrorTests : OfflineTestBase
         using MemoryStream ms = new MemoryStream(new byte[4096]);
 
         // One request should succeed
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientServerError) + "-0", ms).ConfigureAwait(false);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientServerError) + "-0", ms);
 
         Assert.True(response.IsSuccess);
         Assert.Equal(1, _handler.RequestCounter);
 
         // Second request should fail
-        response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientServerError) + "-1", ms).ConfigureAwait(false);
+        response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientServerError) + "-1", ms);
 
         Assert.False(response.IsSuccess);
         Assert.Equal(2, _handler.RequestCounter);

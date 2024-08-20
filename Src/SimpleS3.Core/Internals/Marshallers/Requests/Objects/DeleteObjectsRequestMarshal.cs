@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects;
 
-internal class DeleteObjectsRequestMarshal : IRequestMarshal<DeleteObjectsRequest>
+internal sealed class DeleteObjectsRequestMarshal : IRequestMarshal<DeleteObjectsRequest>
 {
     public Stream MarshalRequest(DeleteObjectsRequest request, SimpleS3Config config)
     {

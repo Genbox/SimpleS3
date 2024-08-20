@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.ProviderTests.Misc;
 
-public class ProviderSetup
+internal class ProviderSetup
 {
     private ProviderSetup()
     {

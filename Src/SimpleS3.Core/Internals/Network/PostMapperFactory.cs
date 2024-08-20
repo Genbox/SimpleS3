@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Abstracts.Response;
 
 namespace Genbox.SimpleS3.Core.Internals.Network;
 
-internal class PostMapperFactory : IPostMapperFactory
+internal sealed class PostMapperFactory : IPostMapperFactory
 {
     private readonly Dictionary<string, IPostMapper> _postMappers;
 
@@ -24,6 +24,6 @@ internal class PostMapperFactory : IPostMapperFactory
     public void PostMap<TRequest, TResponse>(SimpleS3Config config, TRequest request, TResponse response) where TRequest : IRequest where TResponse : IResponse
     {
         if (_postMappers.TryGetValue($"{typeof(TRequest).Name}-{typeof(TResponse).Name}", out IPostMapper? marshaller))
-            ((IPostMapper<TRequest, TResponse>)marshaller).PostMap(config, request, response);
+            ((IPostMapper<TRequest, TResponse>)marshaller).PostMap(request, response);
     }
 }

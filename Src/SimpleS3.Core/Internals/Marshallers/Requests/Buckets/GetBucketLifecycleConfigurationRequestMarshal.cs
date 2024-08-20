@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
-internal class GetBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<GetBucketLifecycleConfigurationRequest>
+internal sealed class GetBucketLifecycleConfigurationRequestMarshal : IRequestMarshal<GetBucketLifecycleConfigurationRequest>
 {
     public Stream? MarshalRequest(GetBucketLifecycleConfigurationRequest request, SimpleS3Config config)
     {

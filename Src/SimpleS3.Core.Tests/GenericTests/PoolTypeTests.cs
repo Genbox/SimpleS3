@@ -35,8 +35,7 @@ public class PoolTypeTests
         Assert.Empty(failed);
     }
 
-    /// <summary>Tests if each type has an initialize method, which is needed to correctly initialize a new state when using
-    /// pools</summary>
+    /// <summary>Tests if each type has an initialize method, which is needed to correctly initialize a new state when using pools</summary>
     [Fact]
     public void EnsureInitializeMethod()
     {

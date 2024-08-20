@@ -1,13 +1,8 @@
 ﻿namespace Genbox.SimpleS3.Core.Tests.Code.Streams;
 
-internal class NonSeekableStream : Stream
+internal class NonSeekableStream(byte[] data) : Stream
 {
-    private readonly MemoryStream _backingStream;
-
-    public NonSeekableStream(byte[] data)
-    {
-        _backingStream = new MemoryStream(data);
-    }
+    private readonly MemoryStream _backingStream = new MemoryStream(data);
 
     public override bool CanRead => true;
     public override bool CanSeek => false;

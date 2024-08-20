@@ -9,24 +9,10 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager;
 
-public class ProfileManager : IProfileManager
+public class ProfileManager(IInputValidator validator, IProfileSerializer serializer, IStorage storage, IOptions<ProfileManagerOptions> options, IAccessKeyProtector? protector = null) : IProfileManager
 {
     public const string DefaultProfile = "DefaultProfile";
-    private readonly ProfileManagerOptions _config;
-    private readonly IAccessKeyProtector? _protector;
-    private readonly IProfileSerializer _serializer;
-    private readonly IStorage _storage;
-
-    private readonly IInputValidator _validator;
-
-    public ProfileManager(IInputValidator validator, IProfileSerializer serializer, IStorage storage, IOptions<ProfileManagerOptions> options, IAccessKeyProtector? protector = null)
-    {
-        _validator = validator;
-        _serializer = serializer;
-        _storage = storage;
-        _config = options.Value;
-        _protector = protector;
-    }
+    private readonly ProfileManagerOptions _config = options.Value;
 
     public IProfile? GetProfile(string name)
     {
@@ -34,7 +20,7 @@ public class ProfileManager : IProfileManager
 
         try
         {
-            data = _storage.Get(name);
+            data = storage.Get(name);
         }
         catch
         {
@@ -44,32 +30,32 @@ public class ProfileManager : IProfileManager
         if (data == null)
             return null;
 
-        Profile profile = _serializer.Deserialize<Profile>(data);
+        Profile profile = serializer.Deserialize<Profile>(data);
 
         //Check if the we have the right protector
-        string? protector = profile.GetTag("Protector");
+        string? protector1 = profile.GetTag("Protector");
 
-        string profileProtector = protector ?? string.Empty;
-        string userProtector = _protector != null ? _protector.GetType().Name : string.Empty;
+        string profileProtector = protector1 ?? string.Empty;
+        string userProtector = protector != null ? protector.GetType().Name : string.Empty;
 
         if (!string.Equals(profileProtector, userProtector, StringComparison.OrdinalIgnoreCase))
-            throw new S3Exception($"The access key is protected with '{protector}' but it was not available");
+            throw new S3Exception($"The access key is protected with '{protector1}' but it was not available");
 
         return profile;
     }
 
     public IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, bool persist = true)
     {
-        _validator.ValidateKeyIdAndThrow(keyId);
-        _validator.ValidateAccessKeyAndThrow(accessKey);
+        validator.ValidateKeyIdAndThrow(keyId);
+        validator.ValidateAccessKeyAndThrow(accessKey);
 
         Profile profile = new Profile();
         profile.Name = name;
         profile.KeyId = keyId;
-        profile.AccessKey = KeyHelper.ProtectKey(accessKey, _protector, _config.ClearInputKey);
+        profile.AccessKey = KeyHelper.ProtectKey(accessKey, protector, _config.ClearInputKey);
 
-        if (_protector != null)
-            profile.AddTag("Protector", _protector.GetType().Name);
+        if (protector != null)
+            profile.AddTag("Protector", protector.GetType().Name);
 
         profile.CreatedOn = DateTimeOffset.UtcNow;
         profile.RegionCode = region;
@@ -82,7 +68,7 @@ public class ProfileManager : IProfileManager
 
     public IEnumerable<IProfile> List()
     {
-        foreach (string name in _storage.List())
+        foreach (string name in storage.List())
         {
             IProfile? profile = GetProfile(name);
 
@@ -95,7 +81,7 @@ public class ProfileManager : IProfileManager
 
     public string SaveProfile(IProfile profile)
     {
-        byte[] data = _serializer.Serialize(profile);
-        return _storage.Put(profile.Name, data);
+        byte[] data = serializer.Serialize(profile);
+        return storage.Put(profile.Name, data);
     }
 }

@@ -17,7 +17,7 @@ public class ListMultipartUploadsTests : TestBase
         await CreateTempBucketAsync(provider, client, async tempBucket =>
         {
             //The percentage sign at the end is to test if encoding works correctly
-            string objName = nameof(ListMultipartUploads) + "%";
+            const string objName = nameof(ListMultipartUploads) + "%";
 
             CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(tempBucket, objName);
             Assert.Equal(200, createResp.StatusCode);

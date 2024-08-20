@@ -4,17 +4,18 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Extensions;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3;
 
+[PublicAPI]
 public class AmazonS3Config : SimpleS3Config
 {
     private readonly IRegionConverter _converter = new RegionConverter(AmazonS3RegionData.Instance);
     private AmazonS3Region _region;
 
-    public AmazonS3Config()
+    public AmazonS3Config() : base("AmazonS3")
     {
-        ProviderName = "AmazonS3";
         EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
     }
 

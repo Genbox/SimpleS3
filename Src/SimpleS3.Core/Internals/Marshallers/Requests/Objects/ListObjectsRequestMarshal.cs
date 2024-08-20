@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects;
 
-internal class ListObjectsRequestMarshal : IRequestMarshal<ListObjectsRequest>
+internal sealed class ListObjectsRequestMarshal : IRequestMarshal<ListObjectsRequest>
 {
     public Stream? MarshalRequest(ListObjectsRequest request, SimpleS3Config config)
     {

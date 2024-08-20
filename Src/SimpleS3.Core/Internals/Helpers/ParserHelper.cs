@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers;
 
 internal static class ParserHelper
 {
-    private static readonly Regex _expirationRegex = new Regex("expiry-date=\"(.+?)\", rule-id=\"(.+?)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+    private static readonly Regex _expirationRegex = new Regex("expiry-date=\"(?<date>.+?)\", rule-id=\"(?<id>.+?)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
     public static IDictionary<string, string> ParseMetadata(IDictionary<string, string> headers)
     {
@@ -39,7 +39,7 @@ internal static class ParserHelper
         if (!match.Success)
             return false;
 
-        data = (DateTimeOffset.ParseExact(match.Groups[1].Value, DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo), match.Groups[2].Value);
+        data = (DateTimeOffset.ParseExact(match.Groups["date"].Value, DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo), match.Groups["id"].Value);
         return true;
     }
 

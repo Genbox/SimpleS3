@@ -6,14 +6,9 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
-internal class ScopeBuilder : IScopeBuilder
+internal sealed class ScopeBuilder(IOptions<SimpleS3Config> options) : IScopeBuilder
 {
-    private readonly SimpleS3Config _options;
-
-    public ScopeBuilder(IOptions<SimpleS3Config> options)
-    {
-        _options = options.Value;
-    }
+    private readonly SimpleS3Config _options = options.Value;
 
     public string CreateScope(string service, DateTimeOffset date) => $"{ValueHelper.DateToString(date, DateTimeFormat.Iso8601Date)}/{_options.RegionCode}/{service}/aws4_request";
 }

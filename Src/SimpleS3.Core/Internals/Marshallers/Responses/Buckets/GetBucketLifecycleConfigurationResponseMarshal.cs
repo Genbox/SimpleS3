@@ -9,22 +9,20 @@ using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
 
-internal class GetBucketLifecycleConfigurationResponseMarshal : IResponseMarshal<GetBucketLifecycleConfigurationResponse>
+internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponseMarshal<GetBucketLifecycleConfigurationResponse>
 {
     public void MarshalResponse(SimpleS3Config config, GetBucketLifecycleConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
-        {
-            xmlReader.ReadToDescendant("LifecycleConfiguration");
+        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        xmlReader.ReadToDescendant("LifecycleConfiguration");
 
-            foreach (string name in XmlHelper.ReadElements(xmlReader))
+        foreach (string name in XmlHelper.ReadElements(xmlReader))
+        {
+            switch (name)
             {
-                switch (name)
-                {
-                    case "Rule":
-                        ReadRule(response, xmlReader);
-                        break;
-                }
+                case "Rule":
+                    ReadRule(response, xmlReader);
+                    break;
             }
         }
     }

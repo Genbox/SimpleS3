@@ -53,7 +53,7 @@ public class AmazonS3InputValidator : InputValidatorBase
         //Source: https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
 
         //Spec: Bucket names must be between 3 and 63 characters long.
-        if (bucketName.Length < 3 || bucketName.Length > 63)
+        if (bucketName.Length is < 3 or > 63)
         {
             status = ValidationStatus.WrongLength;
             message = "3-63";

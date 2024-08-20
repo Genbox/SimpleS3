@@ -18,5 +18,5 @@ public class TooManyBucketsError : GenericError
     public int CurrentNumberOfBuckets { get; }
     public int AllowedNumberOfBuckets { get; }
 
-    public override string GetErrorDetails() => $"CurrentNumberOfBuckets: {CurrentNumberOfBuckets} - AllowedNumberOfBuckets: {AllowedNumberOfBuckets}";
+    public override string GetErrorDetails() => $"CurrentNumberOfBuckets: {CurrentNumberOfBuckets.ToString(NumberFormatInfo.InvariantInfo)} - AllowedNumberOfBuckets: {AllowedNumberOfBuckets.ToString(NumberFormatInfo.InvariantInfo)}";
 }

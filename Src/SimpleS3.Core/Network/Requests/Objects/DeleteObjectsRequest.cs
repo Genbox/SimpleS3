@@ -8,9 +8,10 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 
-/// <summary>The Multi-Object Delete operation enables you to delete multiple objects from a bucket using a single HTTP
-/// request. If you know the object keys that you want to delete, then this operation provides a suitable alternative to
-/// sending individual delete requests (see DELETE Object), reducing per-request overhead.</summary>
+/// <summary>
+/// The Multi-Object Delete operation enables you to delete multiple objects from a bucket using a single HTTP request. If you know the object keys that you want to delete,
+/// then this operation provides a suitable alternative to sending individual delete requests (see DELETE Object), reducing per-request overhead.
+/// </summary>
 public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBypassGovernanceRetention, IHasBucketName, IHasMfa, IContentMd5Config
 {
     internal DeleteObjectsRequest() : base(HttpMethodType.POST)

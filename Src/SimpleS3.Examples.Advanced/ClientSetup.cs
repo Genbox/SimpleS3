@@ -5,9 +5,7 @@ namespace Genbox.SimpleS3.Examples.Advanced;
 
 public static class ClientSetup
 {
-    /// <summary>
-    /// Shows how to use a simple client to work with S3
-    /// </summary>
+    /// <summary>Shows how to use a simple client to work with S3</summary>
     public static void Example()
     {
         //Not much to it. Give it credentials, a region and you are ready to use S3.

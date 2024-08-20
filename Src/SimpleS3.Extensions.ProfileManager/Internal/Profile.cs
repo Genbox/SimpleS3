@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal;
 
-internal class Profile : IProfile
+internal sealed class Profile : IProfile
 {
     [UsedImplicitly]
     public Profile() {}

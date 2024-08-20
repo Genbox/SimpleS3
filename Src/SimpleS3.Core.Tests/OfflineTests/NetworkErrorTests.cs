@@ -11,11 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
 
 /// <summary>Tests when the network does not work</summary>
-public class NetworkErrorTests : OfflineTestBase
+public sealed class NetworkErrorTests(ITestOutputHelper helper) : OfflineTestBase(helper)
 {
     private readonly BaseFailingHttpHandler _handler = new NetworkFailingHttpHandler(1);
-
-    public NetworkErrorTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
     protected override void ConfigureCoreBuilder(ICoreBuilder coreBuilder, IConfigurationRoot configuration)
     {
@@ -36,13 +34,13 @@ public class NetworkErrorTests : OfflineTestBase
         using MemoryStream ms = new MemoryStream(new byte[4096]);
 
         // One request should succeed
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-0", ms).ConfigureAwait(false);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-0", ms);
 
         Assert.True(response.IsSuccess);
         Assert.Equal(1, _handler.RequestCounter);
 
         // Second request should fail with a network error
-        await Assert.ThrowsAsync<IOException>(async () => await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-1", ms).ConfigureAwait(false)).ConfigureAwait(false);
+        await Assert.ThrowsAsync<IOException>(async () => await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-1", ms).ConfigureAwait(false));
 
         // Because network errors are transient, they should be retried
         Assert.Equal(5, _handler.RequestCounter);

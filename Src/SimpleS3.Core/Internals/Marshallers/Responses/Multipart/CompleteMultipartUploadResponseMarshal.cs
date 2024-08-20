@@ -9,7 +9,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart;
 
-internal class CompleteMultipartUploadResponseMarshal : IResponseMarshal<CompleteMultipartUploadResponse>
+internal sealed class CompleteMultipartUploadResponseMarshal : IResponseMarshal<CompleteMultipartUploadResponse>
 {
     public void MarshalResponse(SimpleS3Config config, CompleteMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
@@ -25,27 +25,25 @@ internal class CompleteMultipartUploadResponseMarshal : IResponseMarshal<Complet
             response.LifeCycleRuleId = data.ruleId;
         }
 
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
-        {
-            xmlReader.ReadToDescendant("CompleteMultipartUploadResult");
+        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        xmlReader.ReadToDescendant("CompleteMultipartUploadResult");
 
-            foreach (string name in XmlHelper.ReadElements(xmlReader))
+        foreach (string name in XmlHelper.ReadElements(xmlReader))
+        {
+            switch (name)
             {
-                switch (name)
-                {
-                    case "Location":
-                        response.Location = xmlReader.ReadString();
-                        break;
-                    case "Bucket":
-                        response.BucketName = xmlReader.ReadString();
-                        break;
-                    case "Key":
-                        response.ObjectKey = xmlReader.ReadString();
-                        break;
-                    case "ETag":
-                        response.ETag = xmlReader.ReadString();
-                        break;
-                }
+                case "Location":
+                    response.Location = xmlReader.ReadString();
+                    break;
+                case "Bucket":
+                    response.BucketName = xmlReader.ReadString();
+                    break;
+                case "Key":
+                    response.ObjectKey = xmlReader.ReadString();
+                    break;
+                case "ETag":
+                    response.ETag = xmlReader.ReadString();
+                    break;
             }
         }
     }

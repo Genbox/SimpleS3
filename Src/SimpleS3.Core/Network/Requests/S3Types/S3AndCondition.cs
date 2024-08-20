@@ -2,12 +2,6 @@
 
 public class S3AndCondition
 {
-    public S3AndCondition()
-    {
-        Tags = new List<KeyValuePair<string, string>>();
-    }
-
     public string? Prefix { get; set; }
-
-    public IList<KeyValuePair<string, string>> Tags { get; internal set; }
+    public IList<KeyValuePair<string, string>> Tags { get; internal set; } = new List<KeyValuePair<string, string>>();
 }

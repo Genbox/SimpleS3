@@ -17,7 +17,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
-internal class SignatureBuilder : ISignatureBuilder
+internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<SignatureBuilder> logger) : ISignatureBuilder
 {
     //https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-authenticating-requests.html
 
@@ -39,24 +39,13 @@ internal class SignatureBuilder : ISignatureBuilder
     //Signature
     // The 256-bit signature expressed as 64 lowercase hexadecimal characters.
 
-    private readonly ISigningKeyBuilder _keyBuilder;
-    private readonly ILogger<SignatureBuilder> _logger;
-    private readonly SimpleS3Config _options;
-    private readonly IScopeBuilder _scopeBuilder;
-
-    public SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<SignatureBuilder> logger)
-    {
-        _keyBuilder = keyBuilder;
-        _scopeBuilder = scopeBuilder;
-        _options = options.Value;
-        _logger = logger;
-    }
+    private readonly SimpleS3Config _options = options.Value;
 
     public byte[] CreateSignature(IRequest request, bool enablePayloadSignature = true)
     {
         Validator.RequireNotNull(request);
 
-        _logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
+        logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
         RequestHelper.AppendPath(sb, _options, request);
@@ -64,20 +53,19 @@ internal class SignatureBuilder : ISignatureBuilder
 
         string payloadSignature = enablePayloadSignature ? request.Headers[AmzHeaders.XAmzContentSha256] : "UNSIGNED-PAYLOAD";
         string canonicalRequest = CreateCanonicalRequest(request.RequestId, url, request.Method, request.Headers, request.QueryParameters, payloadSignature);
-        string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), canonicalRequest);
+        string stringToSign = CreateStringToSign(request.Timestamp, scopeBuilder.CreateScope("s3", request.Timestamp), canonicalRequest);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
-        _logger.LogDebug("Signature: {Signature}", signature);
+        logger.LogDebug("Signature: {Signature}", signature);
         return signature;
     }
 
-    /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of:
-    /// Hmac-Sha256(SigningKey, StringToSign)</summary>
-    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign) => CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date));
+    /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of: Hmac-Sha256(SigningKey, StringToSign)</summary>
+    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign) => CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), keyBuilder.CreateSigningKey(date));
 
     internal string CreateCanonicalRequest(Guid requestId, string url, HttpMethodType method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
     {
-        _logger.LogTrace("Creating canonical request for {RequestId}", requestId);
+        logger.LogTrace("Creating canonical request for {RequestId}", requestId);
 
         //Consists of:
         // HTTP Verb + \n
@@ -101,13 +89,13 @@ internal class SignatureBuilder : ISignatureBuilder
 
         string canonicalRequest = StringBuilderPool.Shared.ReturnString(sb);
 
-        _logger.LogDebug("CanonicalRequest: {CanonicalRequest}", canonicalRequest);
+        logger.LogDebug("CanonicalRequest: {CanonicalRequest}", canonicalRequest);
         return canonicalRequest;
     }
 
     internal string CreateStringToSign(DateTimeOffset dateTime, string scope, string canonicalRequest)
     {
-        _logger.LogTrace("Creating StringToSign");
+        logger.LogTrace("Creating StringToSign");
 
         //Consists of:
         // "AWS4-HMAC-SHA256" + \n
@@ -123,7 +111,7 @@ internal class SignatureBuilder : ISignatureBuilder
 
         string sts = StringBuilderPool.Shared.ReturnString(sb);
 
-        _logger.LogDebug("StringToSign: {StringToSign}", sts);
+        logger.LogDebug("StringToSign: {StringToSign}", sts);
         return sts;
     }
 
@@ -142,7 +130,7 @@ internal class SignatureBuilder : ISignatureBuilder
         return UrlHelper.CreateQueryString(parameters.OrderBy(kvp => kvp.Key, StringComparer.Ordinal), outputEqualOnEmpty: true);
     }
 
-    private static string CanonicalizeHeaders(IReadOnlyDictionary<string, string> headers)
+    private static string CanonicalizeHeaders(OrderedDictionary<string, string> headers)
     {
         if (headers.Count == 0)
             return string.Empty;
@@ -165,7 +153,7 @@ internal class SignatureBuilder : ISignatureBuilder
         return StringBuilderPool.Shared.ReturnString(sb);
     }
 
-    private static string CanonicalizeHeaderNames(IReadOnlyDictionary<string, string> headers)
+    private static string CanonicalizeHeaderNames(OrderedDictionary<string, string> headers)
     {
         if (headers.Count == 0)
             return string.Empty;

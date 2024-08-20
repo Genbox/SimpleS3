@@ -50,7 +50,7 @@ public class BackblazeB2InputValidator : InputValidatorBase
     {
         //https://www.backblaze.com/b2/docs/buckets.html
         //Spec: A bucket name must be at least 6 characters long, and can be at most 50 characters
-        if (bucketName.Length < 6 || bucketName.Length > 50)
+        if (bucketName.Length is < 6 or > 50)
         {
             status = ValidationStatus.WrongLength;
             message = "6-50";

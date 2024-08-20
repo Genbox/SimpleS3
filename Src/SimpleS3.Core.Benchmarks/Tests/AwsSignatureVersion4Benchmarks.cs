@@ -1,7 +1,6 @@
 ﻿using Amazon.Runtime;
 using Amazon.Util;
 using AwsSignatureVersion4.Private;
-using BenchmarkDotNet.Attributes;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Benchmarks.Misc;
@@ -17,13 +16,14 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 //This benchmark tests against https://github.com/FantasticFiasco/aws-signature-version-4
 
 [MemoryDiagnoser]
-[InProcess]
 public sealed class AwsSignatureVersion4Benchmarks : IDisposable
 {
     private HeaderAuthorizationBuilder _builder = null!;
     private ImmutableCredentials _credentials = null!;
     private DummyRequest _request = null!;
     private HttpRequestMessage _request2 = null!;
+
+    public void Dispose() => _request2.Dispose();
 
     [GlobalSetup]
     public void Setup()
@@ -88,6 +88,4 @@ public sealed class AwsSignatureVersion4Benchmarks : IDisposable
 
         return authorizationHeader;
     }
-
-    public void Dispose() => _request2.Dispose();
 }

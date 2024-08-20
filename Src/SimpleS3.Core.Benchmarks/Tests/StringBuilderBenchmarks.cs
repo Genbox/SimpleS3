@@ -1,5 +1,5 @@
-﻿using System.Text;
-using BenchmarkDotNet.Attributes;
+﻿using System.Globalization;
+using System.Text;
 using Genbox.SimpleS3.Core.Common.Pools;
 
 namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
@@ -7,9 +7,9 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 [InProcess]
 public class StringBuilderBenchmarks
 {
+    private const string _equalSign = "=";
     private readonly StringBuilder _append = new StringBuilder();
     private readonly StringBuilder _appendFormat = new StringBuilder();
-    public string EqualSign = "=";
 
     [Benchmark]
     public string Append()
@@ -22,14 +22,14 @@ public class StringBuilderBenchmarks
     public string AppendFormat()
     {
         _appendFormat.Clear();
-        return _appendFormat.AppendFormat("{0}={1}", "MyKey", "MyValue").ToString();
+        return _appendFormat.AppendFormat(CultureInfo.InvariantCulture, "{0}={1}", "MyKey", "MyValue").ToString();
     }
 
     [Benchmark]
-    public string NormalAdd() => "MyKey" + EqualSign + "MyValue"; //We use a field here to avoid a smart compiler from creating a constant
+    public string NormalAdd() => "MyKey" + _equalSign + "MyValue"; //We use a field here to avoid a smart compiler from creating a constant
 
     [Benchmark]
-    public string Interpolation() => $"MyKey{EqualSign}MyValue"; //We use a field here to avoid a smart compiler from creating a constant
+    public string Interpolation() => $"MyKey{_equalSign}MyValue"; //We use a field here to avoid a smart compiler from creating a constant
 
     [Benchmark]
     public string FromPool()
@@ -37,7 +37,7 @@ public class StringBuilderBenchmarks
         StringBuilder sb = StringBuilderPool.Shared.Rent();
 
         //We use a field here to avoid a smart compiler from creating a constant
-        sb.Append("MyKey").Append(EqualSign).Append("MyValue");
+        sb.Append("MyKey").Append(_equalSign).Append("MyValue");
 
         return StringBuilderPool.Shared.ReturnString(sb);
     }

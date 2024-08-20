@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
-internal class SigningKeyBuilder : ISigningKeyBuilder
+internal sealed class SigningKeyBuilder : ISigningKeyBuilder
 {
     private readonly SimpleS3Config _config;
     private readonly byte[] _dateBytes;
@@ -27,9 +27,9 @@ internal class SigningKeyBuilder : ISigningKeyBuilder
         _protector = protector;
 
         //Cache ac couple of things to make signing faster
-        _serviceBytes = Encoding.UTF8.GetBytes("s3");
+        _serviceBytes = "s3"u8.ToArray();
         _regionBytes = Encoding.UTF8.GetBytes(_config.RegionCode);
-        _requestBytes = Encoding.UTF8.GetBytes("aws4_request");
+        _requestBytes = "aws4_request"u8.ToArray();
         _schemeBytes = Encoding.UTF8.GetBytes(SigningConstants.Scheme);
         _dateBytes = new byte[8];
     }

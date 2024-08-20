@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 
-internal class RetryableBufferingStreamWrapper : IRequestStreamWrapper
+internal sealed class RetryableBufferingStreamWrapper : IRequestStreamWrapper
 {
     public bool IsSupported(IRequest request) => true;
 

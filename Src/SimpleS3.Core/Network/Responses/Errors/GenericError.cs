@@ -20,7 +20,7 @@ public class GenericError : IError
 
         foreach (KeyValuePair<string, string> pair in lookup)
         {
-            if (pair.Key == "Message" || pair.Key == "Code")
+            if (pair.Key is "Message" or "Code")
                 continue;
 
             Data.Add(pair);

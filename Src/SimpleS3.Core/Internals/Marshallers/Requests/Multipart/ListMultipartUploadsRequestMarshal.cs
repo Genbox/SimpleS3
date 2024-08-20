@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart;
 
-internal class ListMultipartUploadsRequestMarshal : IRequestMarshal<ListMultipartUploadsRequest>
+internal sealed class ListMultipartUploadsRequestMarshal : IRequestMarshal<ListMultipartUploadsRequest>
 {
     public Stream? MarshalRequest(ListMultipartUploadsRequest request, SimpleS3Config config)
     {

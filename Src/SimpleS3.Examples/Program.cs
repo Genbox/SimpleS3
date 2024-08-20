@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Genbox.HttpBuilders.Enums;
+﻿using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.AmazonS3;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
@@ -17,21 +16,20 @@ internal static class Program
         // Go here and login with your account to create an access key: https://console.aws.amazon.com/iam/home?#/security_credentials
         //
 
-        using (AmazonS3Client client = new AmazonS3Client("MyKeyId", "MyAccessKey", AmazonS3Region.UsEast1))
-        {
-            //We add a unique identifier to the bucket name, as they have to be unique across ALL of AWS S3.
-            string bucketName = "simple-s3-test-" + Guid.NewGuid();
-            const string objectName = "some-object";
+        using AmazonS3Client client = new AmazonS3Client("MyKeyId", "MyAccessKey", AmazonS3Region.UsEast1);
 
-            //First we create the a bucket.
-            await client.CreateBucketAsync(bucketName);
+        //We add a unique identifier to the bucket name, as they have to be unique across ALL of AWS S3.
+        string bucketName = "simple-s3-test-" + Guid.NewGuid();
+        const string objectName = "some-object";
 
-            //Upload then download an object using the normal API.
-            await UploadDownloadStandard(client, bucketName, objectName);
+        //First we create the a bucket.
+        await client.CreateBucketAsync(bucketName);
 
-            //Upload then download an object using the Transfer API.
-            await UploadDownloadTransfer(client, bucketName, objectName);
-        }
+        //Upload then download an object using the normal API.
+        await UploadDownloadStandard(client, bucketName, objectName);
+
+        //Upload then download an object using the Transfer API.
+        await UploadDownloadTransfer(client, bucketName, objectName);
     }
 
     private static async Task UploadDownloadStandard(AmazonS3Client client, string bucketName, string objectName)
@@ -40,7 +38,7 @@ internal static class Program
         Console.WriteLine("Using the standard API");
 
         //We upload and object to the bucket with "Hello World" inside it.
-        await using MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("Hello World"));
+        await using MemoryStream memoryStream = new MemoryStream("Hello World"u8.ToArray());
         PutObjectResponse putResp = await client.PutObjectAsync(bucketName, objectName, memoryStream);
 
         if (putResp.IsSuccess)

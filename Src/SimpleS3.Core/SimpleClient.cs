@@ -14,8 +14,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 namespace Genbox.SimpleS3.Core;
 
-/// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and
-/// objects at the same time.</summary>
+/// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
 public class SimpleClient : ISimpleClient
 {
     private readonly IBucketClient _bucketClient;

@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart;
 
-internal class CompleteMultipartUploadRequestMarshal : IRequestMarshal<CompleteMultipartUploadRequest>
+internal sealed class CompleteMultipartUploadRequestMarshal : IRequestMarshal<CompleteMultipartUploadRequest>
 {
     public Stream MarshalRequest(CompleteMultipartUploadRequest request, SimpleS3Config config)
     {

@@ -12,16 +12,15 @@ internal abstract class BaseFailingHttpHandler : HttpMessageHandler
 
     protected async Task ConsumeRequestAsync(HttpRequestMessage request)
     {
-        using (MemoryStream ms = new MemoryStream())
-        {
-            // Mimick regular HTTP handler, and use CopyToAsync() to let the HttpContent _write_ to our network stream
-            // Using ReadAsStreamAsync() is entirely different, and will always buffer/reuse the retrieved stream (meant for _reading_ from the network)
-            if (request.Content != null)
-                await request.Content.CopyToAsync(ms).ConfigureAwait(false);
+        using MemoryStream ms = new MemoryStream();
 
-            // Ensure we could read data
-            Assert.True(ms.Length > 0);
-        }
+        // Mimick regular HTTP handler, and use CopyToAsync() to let the HttpContent _write_ to our network stream
+        // Using ReadAsStreamAsync() is entirely different, and will always buffer/reuse the retrieved stream (meant for _reading_ from the network)
+        if (request.Content != null)
+            await request.Content.CopyToAsync(ms).ConfigureAwait(false);
+
+        // Ensure we could read data
+        Assert.True(ms.Length > 0);
     }
 
     protected HttpResponseMessage CreateResponse(HttpRequestMessage request, HttpStatusCode statusCode) =>

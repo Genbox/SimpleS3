@@ -55,8 +55,7 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
         Validator.RequireNotNull(key);
         Validator.RequireNotNull(value);
 
-        if (_tags == null)
-            _tags = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        _tags ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         if (_tags.Count == 50)
             throw new InvalidOperationException("Only 50 tags allowed per. object");

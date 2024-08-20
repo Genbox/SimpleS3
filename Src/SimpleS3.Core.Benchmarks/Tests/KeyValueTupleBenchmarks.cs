@@ -1,10 +1,8 @@
 using System.Globalization;
-using BenchmarkDotNet.Attributes;
 
 namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 
 [MemoryDiagnoser]
-[InProcess]
 public class KeyValueTupleBenchmarks
 {
     private readonly Dictionary<string, string> _dict = new Dictionary<string, string>();

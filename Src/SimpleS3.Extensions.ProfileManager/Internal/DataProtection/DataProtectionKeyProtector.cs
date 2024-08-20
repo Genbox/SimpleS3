@@ -3,14 +3,9 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal.DataProtection;
 
-internal class DataProtectionKeyProtector : IAccessKeyProtector
+internal class DataProtectionKeyProtector(IDataProtectionProvider provider) : IAccessKeyProtector
 {
-    private readonly IDataProtector _protector;
-
-    public DataProtectionKeyProtector(IDataProtectionProvider provider)
-    {
-        _protector = provider.CreateProtector(nameof(DataProtectionKeyProtector));
-    }
+    private readonly IDataProtector _protector = provider.CreateProtector(nameof(DataProtectionKeyProtector));
 
     public byte[] ProtectKey(byte[] key) => _protector.Protect(key);
 

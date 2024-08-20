@@ -13,13 +13,13 @@ public enum ObjectKeyValidationMode
     ///<summary>Only the 8-bit ASCII code table is allowed</summary>
     ExtendedAsciiMode,
 
-    /// <summary>Provider specific validation will be performed in strict mode when using a provider. Strict mode checks that
-    /// only safe and backwards compatible characters are used. When not using a provider, it will default to
-    /// <see cref="Unrestricted" /></summary>
+    /// <summary>
+    /// Provider specific validation will be performed in strict mode when using a provider. Strict mode checks that only safe and backwards compatible characters are used. When
+    /// not using a provider, it will default to <see cref="Unrestricted" />
+    /// </summary>
     DefaultStrict,
 
-    /// <summary>Provider specific validation will be performed when using a provider. When not using a provider, it will
-    /// default to <see cref="Unrestricted" /></summary>
+    /// <summary>Provider specific validation will be performed when using a provider. When not using a provider, it will default to <see cref="Unrestricted" /></summary>
     Default,
 
     ///<summary>In this mode validation is still performed and only blacklisted characters are rejected</summary>

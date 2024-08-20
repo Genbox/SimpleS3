@@ -11,35 +11,24 @@ using Microsoft.Extensions.Logging;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
-internal class ChunkedSignatureBuilder : IChunkedSignatureBuilder
+internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, ILogger<ChunkedSignatureBuilder> logger) : IChunkedSignatureBuilder
 {
-    private readonly ISigningKeyBuilder _keyBuilder;
-    private readonly ILogger<ChunkedSignatureBuilder> _logger;
-    private readonly IScopeBuilder _scopeBuilder;
-
-    public ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, ILogger<ChunkedSignatureBuilder> logger)
-    {
-        _keyBuilder = keyBuilder;
-        _scopeBuilder = scopeBuilder;
-        _logger = logger;
-    }
-
     public byte[] CreateChunkSignature(IRequest request, byte[] previousSignature, byte[] content, int offset, int length)
     {
         Validator.RequireNotNull(request);
 
-        _logger.LogTrace("Creating chunk signature for {RequestId}", request.RequestId);
+        logger.LogTrace("Creating chunk signature for {RequestId}", request.RequestId);
 
-        string stringToSign = CreateStringToSign(request.Timestamp, _scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, content, offset, length);
+        string stringToSign = CreateStringToSign(request.Timestamp, scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, content, offset, length);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
-        _logger.LogDebug("Chunk signature: {Signature}", signature);
+        logger.LogDebug("Chunk signature: {Signature}", signature);
         return signature;
     }
 
     internal string CreateStringToSign(DateTimeOffset dateTime, string scope, byte[] previousSignature, byte[] content, int offset, int length)
     {
-        _logger.LogTrace("Creating chunked StringToSign");
+        logger.LogTrace("Creating chunked StringToSign");
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(300);
 
@@ -51,11 +40,10 @@ internal class ChunkedSignatureBuilder : IChunkedSignatureBuilder
         sb.Append(CryptoHelper.Sha256Hash(content, offset, length).HexEncode());
 
         string sts = StringBuilderPool.Shared.ReturnString(sb);
-        _logger.LogDebug("Chunked StringToSign: {StringToSign}", sts);
+        logger.LogDebug("Chunked StringToSign: {StringToSign}", sts);
         return sts;
     }
 
-    /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of:
-    /// Hmac-Sha256(SigningKey, StringToSign)</summary>
-    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign) => CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), _keyBuilder.CreateSigningKey(date));
+    /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of: Hmac-Sha256(SigningKey, StringToSign)</summary>
+    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign) => CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), keyBuilder.CreateSigningKey(date));
 }

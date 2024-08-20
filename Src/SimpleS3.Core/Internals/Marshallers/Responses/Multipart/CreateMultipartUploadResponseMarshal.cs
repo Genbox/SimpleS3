@@ -10,7 +10,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart;
 
-internal class CreateMultipartUploadResponseMarshal : IResponseMarshal<CreateMultipartUploadResponse>
+internal sealed class CreateMultipartUploadResponseMarshal : IResponseMarshal<CreateMultipartUploadResponse>
 {
     public void MarshalResponse(SimpleS3Config config, CreateMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
@@ -23,24 +23,22 @@ internal class CreateMultipartUploadResponseMarshal : IResponseMarshal<CreateMul
         response.SseContext = headers.GetOptionalValue(AmzHeaders.XAmzSseContext);
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
-        {
-            xmlReader.ReadToDescendant("InitiateMultipartUploadResult");
+        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        xmlReader.ReadToDescendant("InitiateMultipartUploadResult");
 
-            foreach (string name in XmlHelper.ReadElements(xmlReader))
+        foreach (string name in XmlHelper.ReadElements(xmlReader))
+        {
+            switch (name)
             {
-                switch (name)
-                {
-                    case "Bucket":
-                        response.BucketName = xmlReader.ReadString();
-                        break;
-                    case "Key":
-                        response.ObjectKey = xmlReader.ReadString();
-                        break;
-                    case "UploadId":
-                        response.UploadId = xmlReader.ReadString();
-                        break;
-                }
+                case "Bucket":
+                    response.BucketName = xmlReader.ReadString();
+                    break;
+                case "Key":
+                    response.ObjectKey = xmlReader.ReadString();
+                    break;
+                case "UploadId":
+                    response.UploadId = xmlReader.ReadString();
+                    break;
             }
         }
     }

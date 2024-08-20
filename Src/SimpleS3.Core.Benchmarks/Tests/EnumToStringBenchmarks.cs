@@ -1,11 +1,9 @@
-﻿using BenchmarkDotNet.Attributes;
-using EnumsNET;
+﻿using EnumsNET;
 using Genbox.SimpleS3.Core.Benchmarks.Misc;
 using Genbox.SimpleS3.Core.Common.Helpers;
 
 namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
 
-[InProcess]
 public class EnumToStringBenchmarks
 {
     [Benchmark]

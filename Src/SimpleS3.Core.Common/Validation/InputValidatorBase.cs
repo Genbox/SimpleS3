@@ -32,8 +32,7 @@ public abstract class InputValidatorBase : IInputValidator
         return TryValidateAccessKeyInternal(accessKey, out status, out message);
     }
 
-    /// <summary>Validate a bucket name. See
-    /// https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html#bucketnamingrules for more info</summary>
+    /// <summary>Validate a bucket name. See https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html#bucketnamingrules for more info</summary>
     /// <returns>True if the bucket name passed validation</returns>
     public bool TryValidateBucketName(string? bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {
@@ -53,18 +52,13 @@ public abstract class InputValidatorBase : IInputValidator
             return false;
         }
 
-        switch (mode)
+        return mode switch
         {
-            case BucketNameValidationMode.DnsLabel:
-                return TryValidateBucketDns(bucketName, out status, out message);
-            case BucketNameValidationMode.Unrestricted:
-                return TryValidateBlacklisted(bucketName, out status, out message);
-            case BucketNameValidationMode.Default:
-            case BucketNameValidationMode.DefaultStrict:
-                return TryValidateBlacklisted(bucketName, out status, out message) && TryValidateBucketNameInternal(bucketName, mode, out status, out message);
-            default:
-                throw new InvalidOperationException("Unsupported validation mode: " + mode);
-        }
+            BucketNameValidationMode.DnsLabel => TryValidateBucketDns(bucketName, out status, out message),
+            BucketNameValidationMode.Unrestricted => TryValidateBlacklisted(bucketName, out status, out message),
+            BucketNameValidationMode.Default or BucketNameValidationMode.DefaultStrict => TryValidateBlacklisted(bucketName, out status, out message) && TryValidateBucketNameInternal(bucketName, mode, out status, out message),
+            _ => throw new InvalidOperationException("Unsupported validation mode: " + mode)
+        };
     }
 
     public bool TryValidateObjectKey(string? objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
@@ -85,22 +79,15 @@ public abstract class InputValidatorBase : IInputValidator
             return false;
         }
 
-        switch (mode)
+        return mode switch
         {
-            case ObjectKeyValidationMode.SafeMode:
-                return TryValidateObjectSafeOnly(objectKey, out status, out message);
-            case ObjectKeyValidationMode.AsciiMode:
-                return TryValidateObjectAsciiOnly(objectKey, out status, out message);
-            case ObjectKeyValidationMode.ExtendedAsciiMode:
-                return TryValidateObjectExtAsciiOnly(objectKey, out status, out message);
-            case ObjectKeyValidationMode.Unrestricted:
-                return TryValidateBlacklisted(objectKey, out status, out message);
-            case ObjectKeyValidationMode.Default:
-            case ObjectKeyValidationMode.DefaultStrict:
-                return TryValidateBlacklisted(objectKey, out status, out message) && TryValidateObjectKeyInternal(objectKey, mode, out status, out message);
-            default:
-                throw new InvalidOperationException("Unsupported validation mode: " + mode);
-        }
+            ObjectKeyValidationMode.SafeMode => TryValidateObjectSafeOnly(objectKey, out status, out message),
+            ObjectKeyValidationMode.AsciiMode => TryValidateObjectAsciiOnly(objectKey, out status, out message),
+            ObjectKeyValidationMode.ExtendedAsciiMode => TryValidateObjectExtAsciiOnly(objectKey, out status, out message),
+            ObjectKeyValidationMode.Unrestricted => TryValidateBlacklisted(objectKey, out status, out message),
+            ObjectKeyValidationMode.Default or ObjectKeyValidationMode.DefaultStrict => TryValidateBlacklisted(objectKey, out status, out message) && TryValidateObjectKeyInternal(objectKey, mode, out status, out message),
+            _ => throw new InvalidOperationException("Unsupported validation mode: " + mode)
+        };
     }
 
     protected abstract bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message);

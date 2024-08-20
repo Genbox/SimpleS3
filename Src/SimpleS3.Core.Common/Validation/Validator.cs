@@ -42,7 +42,7 @@ public static class Validator
     public static void RequireNotNullOrEmpty([NotNull]ICollection? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
     {
         RequireNotNull(value, message, callerArgument, callerMember, lineNumber);
-        RequireThat(value!.Count > 0, message, callerArgument, callerMember, lineNumber);
+        RequireThat(value.Count > 0, message, callerArgument, callerMember, lineNumber);
     }
 
     public static void RequireNotNullOrEmpty([NotNull]string? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
@@ -53,7 +53,7 @@ public static class Validator
     public static void RequireValueAndItemsNotNull([NotNull]ICollection? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
     {
         RequireNotNull(value, message, callerArgument, callerMember, lineNumber);
-        RequireThat(!AnyItemNull(value!), message, callerArgument, callerMember, lineNumber);
+        RequireThat(!AnyItemNull(value), message, callerArgument, callerMember, lineNumber);
     }
 
     public static void RequireNotNullOrWhiteSpace([NotNull]string? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)

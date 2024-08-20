@@ -3,20 +3,11 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
-public class S3DeleteMarker : IHasObjectKey, IHasVersionId
+public class S3DeleteMarker(bool isLatest, string objectKey, DateTimeOffset lastModified, S3Identity owner, string versionId) : IHasObjectKey, IHasVersionId
 {
-    public S3DeleteMarker(bool isLatest, string objectKey, DateTimeOffset lastModified, S3Identity owner, string versionId)
-    {
-        IsLatest = isLatest;
-        ObjectKey = objectKey;
-        LastModified = lastModified;
-        Owner = owner;
-        VersionId = versionId;
-    }
-
-    public bool IsLatest { get; }
-    public DateTimeOffset LastModified { get; }
-    public S3Identity Owner { get; }
-    public string ObjectKey { get; internal set; }
-    public string VersionId { get; }
+    public bool IsLatest { get; } = isLatest;
+    public DateTimeOffset LastModified { get; } = lastModified;
+    public S3Identity Owner { get; } = owner;
+    public string ObjectKey { get; internal set; } = objectKey;
+    public string VersionId { get; } = versionId;
 }

@@ -2,7 +2,7 @@
 
 namespace Genbox.SimpleS3.Core.Common.Tests.Code;
 
-public class TestRegionData : IRegionData
+internal sealed class TestRegionData : IRegionData
 {
     public IEnumerable<IRegionInfo> GetRegions()
     {

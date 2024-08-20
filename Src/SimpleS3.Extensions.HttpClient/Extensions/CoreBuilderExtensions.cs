@@ -61,7 +61,9 @@ public static class CoreBuilderExtensions
             foreach (Action<IServiceProvider, HttpClientHandler>? action in actions.HttpHandlerActions)
                 action(provider, handler);
 
+ #pragma warning disable IDISP001 - Disposed by the HttpClientN
             System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(handler);
+ #pragma warning restore IDISP001
 
             foreach (Action<IServiceProvider, System.Net.Http.HttpClient> action in actions.HttpClientActions)
                 action(provider, client);
