@@ -1,4 +1,5 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -62,7 +63,11 @@ internal static class Program
             return true;
         }
 
-        CreateBucketResponse resp = await bucketClient.CreateBucketAsync(bucketName, r => r.EnableObjectLocking = true).ConfigureAwait(false);
+        CreateBucketResponse resp = await bucketClient.CreateBucketAsync(bucketName, r =>
+        {
+            r.ObjectOwnership = ObjectOwnership.BucketOwnerPreferred;
+            r.EnableObjectLocking = true;
+        }).ConfigureAwait(false);
 
         if (resp.IsSuccess)
         {

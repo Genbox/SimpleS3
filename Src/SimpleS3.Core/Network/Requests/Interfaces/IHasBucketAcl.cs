@@ -22,4 +22,7 @@ public interface IHasBucketAcl
 
     /// <summary>Allows grantee the READ, WRITE, READ_ACP, and WRITE_ACP permissions on the bucket.</summary>
     AclBuilder AclGrantFullControl { get; }
+
+    /// <summary>The container element for object ownership for a bucket's ownership controls.</summary>
+    ObjectOwnership ObjectOwnership { get; set; }
 }

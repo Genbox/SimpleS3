@@ -26,6 +26,7 @@ internal static class GenericRequestMapper
             req.SetHeader(AmzHeaders.XAmzGrantWrite, hasBucketAcl.AclGrantWrite);
             req.SetHeader(AmzHeaders.XAmzGrantWriteAcp, hasBucketAcl.AclGrantWriteAcp);
             req.SetHeader(AmzHeaders.XAmzGrantFullControl, hasBucketAcl.AclGrantFullControl);
+            req.SetHeader(AmzHeaders.XAmzObjectOwnership, hasBucketAcl.ObjectOwnership);
         }
 
         if (req is IHasBypassGovernanceRetention hasBypassGovernanceRetention && !disabledFor(typeof(IHasBypassGovernanceRetention)))

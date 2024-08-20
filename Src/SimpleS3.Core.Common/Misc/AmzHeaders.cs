@@ -74,6 +74,7 @@ public static class AmzHeaders
     public const string XAmzGrantWrite = "x-amz-grant-write";
     public const string XAmzGrantWriteAcp = "x-amz-grant-write-acp";
     public const string XAmzGrantFullControl = "x-amz-grant-full-control";
+    public const string XAmzObjectOwnership = "x-amz-object-ownership";
 
     #endregion
 
