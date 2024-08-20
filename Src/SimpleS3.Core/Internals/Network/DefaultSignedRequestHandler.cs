@@ -2,10 +2,12 @@ using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Common.Pools;
@@ -14,6 +16,7 @@ using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Builders;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Misc;
+using Genbox.SimpleS3.Core.Network.Requests;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -21,24 +24,25 @@ namespace Genbox.SimpleS3.Core.Internals.Network;
 
 internal class DefaultSignedRequestHandler : ISignedRequestHandler
 {
+    private readonly IMarshalFactory _marshaller;
     private readonly QueryParameterAuthorizationBuilder _authBuilder;
     private readonly SimpleS3Config _config;
     private readonly IEndpointBuilder _endpointBuilder;
+    private readonly IResponseHandler _responseHandler;
     private readonly ILogger<DefaultSignedRequestHandler> _logger;
-    private readonly IMarshalFactory _marshaller;
     private readonly IScopeBuilder _scopeBuilder;
 
-    public DefaultSignedRequestHandler(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, IMarshalFactory marshaller, QueryParameterAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, ILogger<DefaultSignedRequestHandler> logger)
+    public DefaultSignedRequestHandler(IOptions<SimpleS3Config> options, IMarshalFactory marshaller, IScopeBuilder scopeBuilder, QueryParameterAuthorizationBuilder authBuilder, IEndpointBuilder endpointBuilder, IResponseHandler responseHandler, ILogger<DefaultSignedRequestHandler> logger)
     {
         Validator.RequireNotNull(options);
-        Validator.RequireNotNull(marshaller);
         Validator.RequireNotNull(authBuilder);
         Validator.RequireNotNull(logger);
 
         _config = options.Value;
+        _marshaller = marshaller;
         _authBuilder = authBuilder;
         _endpointBuilder = endpointBuilder;
-        _marshaller = marshaller;
+        _responseHandler = responseHandler;
         _logger = logger;
         _scopeBuilder = scopeBuilder;
     }
@@ -47,6 +51,8 @@ internal class DefaultSignedRequestHandler : ISignedRequestHandler
     {
         request.Timestamp = DateTimeOffset.UtcNow;
         request.RequestId = Guid.NewGuid();
+
+        _marshaller.MarshalRequest(_config, request); //We don't use the return stream
 
         _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 
@@ -80,5 +86,11 @@ internal class DefaultSignedRequestHandler : ISignedRequestHandler
         RequestHelper.AppendPath(sb, _config, request);
         RequestHelper.AppendQueryParameters(sb, request);
         return StringBuilderPool.Shared.ReturnString(sb);
+    }
+
+    public async Task<TResp> SendRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new()
+    {
+        SignedRequest req = new SignedRequest(httpMethod);
+        return await _responseHandler.HandleResponseAsync<SignedRequest, TResp>(req, url, content, token).ConfigureAwait(false);
     }
 }

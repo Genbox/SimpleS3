@@ -13,7 +13,6 @@ public static class CoreBuilderExtensions
         builder.Services.Replace(ServiceDescriptor.Singleton<IBucketClient, PooledBucketClient>());
         builder.Services.Replace(ServiceDescriptor.Singleton<IObjectClient, PooledObjectClient>());
         builder.Services.Replace(ServiceDescriptor.Singleton<IMultipartClient, PooledMultipartClient>());
-        builder.Services.Replace(ServiceDescriptor.Singleton<ISignedObjectClient, PooledSignedObjectClient>());
         return builder;
     }
 }

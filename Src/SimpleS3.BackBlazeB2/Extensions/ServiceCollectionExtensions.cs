@@ -43,7 +43,7 @@ public static class ServiceCollectionExtensions
             IMultipartClient multipartClient = x.GetRequiredService<IMultipartClient>();
             IMultipartTransfer multipartTransfer = x.GetRequiredService<IMultipartTransfer>();
             ITransfer transfer = x.GetRequiredService<ITransfer>();
-            ISignedObjectClient signedObjectClient = x.GetRequiredService<ISignedObjectClient>();
+            ISignedClient signedObjectClient = x.GetRequiredService<ISignedClient>();
             return new BackBlazeB2Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
         });
 

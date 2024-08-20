@@ -25,27 +25,25 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
         UploadParts = new List<S3PartInfo>();
     }
 
-    public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, params UploadPartResponse[] parts) : this(bucketName, objectKey, uploadId, (IEnumerable<UploadPartResponse>)parts) {}
+    public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, params S3PartInfo[] parts) : this(bucketName, objectKey, uploadId, (IEnumerable<S3PartInfo>)parts) {}
 
-    public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts) : this()
+    public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts) : this()
     {
         Initialize(bucketName, objectKey, uploadId, parts);
     }
 
-    public IList<S3PartInfo> UploadParts { get; }
+    public IList<S3PartInfo> UploadParts { get; private set; }
     public string BucketName { get; set; } = null!;
     public string ObjectKey { get; set; } = null!;
     public Payer RequestPayer { get; set; }
     public string UploadId { get; set; } = null!;
 
-    internal void Initialize(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts)
+    internal void Initialize(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts)
     {
         BucketName = bucketName;
         ObjectKey = objectKey;
         UploadId = uploadId;
-
-        foreach (UploadPartResponse part in parts)
-            UploadParts.Add(new S3PartInfo(part.ETag, part.PartNumber));
+        UploadParts = parts.ToArray();
     }
 
     public override void Reset()

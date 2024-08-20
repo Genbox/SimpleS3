@@ -2,6 +2,7 @@
 using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Utility.Shared;
@@ -75,7 +76,7 @@ public class ListPartsTests : TestBase
             Assert.Equal("\"32ca18808933aa12e979375d07048a11\"", part.ETag);
             Assert.Equal(file.Length, part.Size);
 
-            CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(tempBucket, objName, createResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
+            CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(tempBucket, objName, createResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)]).ConfigureAwait(false);
             Assert.Equal(200, completeResp.StatusCode);
 
             ListPartsResponse listResp3 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId).ConfigureAwait(false);

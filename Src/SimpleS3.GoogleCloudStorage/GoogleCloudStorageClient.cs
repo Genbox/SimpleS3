@@ -1,14 +1,15 @@
-using Genbox.SimpleS3.Core.Abstracts;
+﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
-using Genbox.SimpleS3.Core.Network.Requests.Signed;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -48,7 +49,7 @@ public sealed class GoogleCloudStorageClient : ClientBase, ISimpleClient
 
     public GoogleCloudStorageClient(GoogleCloudStorageConfig config, INetworkDriver networkDriver) : base(new GoogleCloudStorageInputValidator(), config, networkDriver) {}
 
-    internal GoogleCloudStorageClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) {}
+    internal GoogleCloudStorageClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) {}
 
     public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default) => Client.CreateBucketAsync(bucketName, config, token);
 
@@ -112,7 +113,7 @@ public sealed class GoogleCloudStorageClient : ClientBase, ISimpleClient
 
     public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default) => Client.ListPartsAsync(bucketName, objectKey, uploadId, config, token);
 
-    public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default) => Client.CompleteMultipartUploadAsync(bucketName, objectKey, uploadId, parts, config, token);
+    public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default) => Client.CompleteMultipartUploadAsync(bucketName, objectKey, uploadId, parts, config, token);
 
     public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default) => Client.AbortMultipartUploadAsync(bucketName, objectKey, uploadId, config, token);
 
@@ -122,25 +123,13 @@ public sealed class GoogleCloudStorageClient : ClientBase, ISimpleClient
 
     public IDownload CreateDownload(string bucket, string objectKey) => Client.CreateDownload(bucket, objectKey);
 
-    public string SignPutObject(string bucketName, string objectKey, TimeSpan expires, Action<PutObjectRequest>? config = null) => Client.SignPutObject(bucketName, objectKey, expires, config);
-
-    public Task<PutObjectResponse> PutObjectAsync(string url, Stream? content, Action<SignedPutObjectRequest>? config = null, CancellationToken token = default) => Client.PutObjectAsync(url, content, config, token);
-
-    public string SignGetObject(string bucketName, string objectKey, TimeSpan expires, Action<GetObjectRequest>? config = null) => Client.SignGetObject(bucketName, objectKey, expires, config);
-
-    public Task<GetObjectResponse> GetObjectAsync(string url, Action<SignedGetObjectRequest>? config = null, CancellationToken token = default) => Client.GetObjectAsync(url, config, token);
-
-    public string SignDeleteObject(string bucketName, string objectKey, TimeSpan expires, Action<DeleteObjectRequest>? config = null) => Client.SignDeleteObject(bucketName, objectKey, expires, config);
-
-    public Task<DeleteObjectResponse> DeleteObjectAsync(string url, Action<SignedDeleteObjectRequest>? config = null, CancellationToken token = default) => Client.DeleteObjectAsync(url, config, token);
-
-    public string SignHeadObject(string bucketName, string objectKey, TimeSpan expires, Action<HeadObjectRequest>? config = null) => Client.SignHeadObject(bucketName, objectKey, expires, config);
-
-    public Task<HeadObjectResponse> HeadObjectAsync(string url, Action<SignedHeadObjectRequest>? config = null, CancellationToken token = default) => Client.HeadObjectAsync(url, config, token);
-
     public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default) => Client.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
 
     public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default) => Client.MultipartUploadAsync(bucketName, objectKey, data, partSize, numParallelParts, config, onPartResponse, token);
 
     public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default) => Client.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
+
+    public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest => Client.SignRequest(request, expiresIn);
+
+    public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new() => Client.SendSignedRequestAsync<TResp>(url, httpMethod, content, token);
 }

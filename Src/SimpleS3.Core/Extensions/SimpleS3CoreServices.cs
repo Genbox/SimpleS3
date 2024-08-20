@@ -59,24 +59,25 @@ public static class SimpleS3CoreServices
         collection.AddSingleton<ISignatureBuilder, SignatureBuilder>();
         collection.AddSingleton<IChunkedSignatureBuilder, ChunkedSignatureBuilder>();
         collection.AddSingleton<HeaderAuthorizationBuilder>();
-        collection.AddSingleton<ISignedRequestHandler, DefaultSignedRequestHandler>();
         collection.AddSingleton<QueryParameterAuthorizationBuilder>();
 
         //Operations
         collection.AddSingleton<IObjectOperations, ObjectOperations>();
         collection.AddSingleton<IBucketOperations, BucketOperations>();
         collection.AddSingleton<IMultipartOperations, MultipartOperations>();
-        collection.AddSingleton<ISignedObjectOperations, SignedObjectOperations>();
+        collection.AddSingleton<ISignedOperations, SignedOperations>();
 
         //Clients
         collection.AddSingleton<IObjectClient, ObjectClient>();
         collection.AddSingleton<IBucketClient, BucketClient>();
         collection.AddSingleton<IMultipartClient, MultipartClient>();
-        collection.AddSingleton<ISignedObjectClient, SignedObjectClient>();
+        collection.AddSingleton<ISignedClient, SignedClient>();
         collection.AddSingleton<ISimpleClient, SimpleClient>();
 
         //Misc
+        collection.AddSingleton<IResponseHandler, DefaultResponseHandler>();
         collection.AddSingleton<IRequestHandler, DefaultRequestHandler>();
+        collection.AddSingleton<ISignedRequestHandler, DefaultSignedRequestHandler>();
         collection.AddSingleton<IRequestValidatorFactory, ValidatorFactory>();
         collection.AddSingleton<IMarshalFactory, MarshalFactory>();
         collection.AddSingleton<IPostMapperFactory, PostMapperFactory>();

@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Errors;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -39,7 +40,7 @@ public class MultipartTests : TestBase
         if (algorithm == SseAlgorithm.AwsKms)
             Assert.NotNull(uploadResp.SseKmsKeyId);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)]).ConfigureAwait(false);
         Assert.Equal(200, completeResp.StatusCode);
 
         if (provider == S3Provider.AmazonS3)
@@ -78,7 +79,7 @@ public class MultipartTests : TestBase
         Assert.Equal(SseCustomerAlgorithm.Aes256, uploadResp1.SseCustomerAlgorithm);
         Assert.Equal(keyMd5, uploadResp1.SseCustomerKeyMd5);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { uploadResp1 }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1) }).ConfigureAwait(false);
         Assert.Equal(200, completeResp.StatusCode);
         Assert.Equal(SseCustomerAlgorithm.Aes256, completeResp.SseCustomerAlgorithm);
     }
@@ -102,7 +103,7 @@ public class MultipartTests : TestBase
         UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms, r => r.ContentMd5 = CryptoHelper.Md5Hash(file)).ConfigureAwait(false);
         Assert.Equal(200, uploadResp.StatusCode);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp.ETag, 1) }).ConfigureAwait(false);
         Assert.Equal(200, completeResp.StatusCode);
     }
 
@@ -134,7 +135,7 @@ public class MultipartTests : TestBase
         Assert.Equal(200, uploadResp.StatusCode);
         Assert.Equal("\"10f74ef02085310ccd1f87150b83e537\"", uploadResp.ETag);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, new[] { uploadResp }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, new[] { new S3PartInfo(uploadResp.ETag, 1) }).ConfigureAwait(false);
         Assert.Equal(200, completeResp.StatusCode);
         Assert.Equal("\"bd74e21dfa8678d127240f76e518e9c2-1\"", completeResp.ETag);
 
@@ -171,7 +172,7 @@ public class MultipartTests : TestBase
         UploadPartResponse uploadResp2 = await client.UploadPartAsync(bucket, objectKey, 2, initResp.UploadId, ms2).ConfigureAwait(false);
         Assert.Equal(200, uploadResp2.StatusCode);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { uploadResp1, uploadResp2 }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2) }).ConfigureAwait(false);
         Assert.Equal(400, completeResp.StatusCode);
     }
 
@@ -203,7 +204,7 @@ public class MultipartTests : TestBase
         Assert.Equal(200, uploadResp2.StatusCode);
         Assert.NotNull(uploadResp2.ETag);
 
-        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { uploadResp1, uploadResp2 }).ConfigureAwait(false);
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, new[] { new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2) }).ConfigureAwait(false);
         Assert.Equal(200, completeResp.StatusCode);
         Assert.NotNull(uploadResp2.ETag);
 

@@ -1,6 +1,11 @@
-using System.Text;
-using Genbox.ProviderTests.Misc;
+﻿using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Network.Requests.Multipart;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
+using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Utility.Shared;
 
@@ -12,29 +17,61 @@ public class SignedTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task FullPreSignTest(S3Provider _, string bucket, ISimpleClient client)
     {
-        int expireIn = 100;
+        TimeSpan expire = TimeSpan.FromSeconds(100);
+        const string objectKey = "test.zip";
 
-        string url = client.SignPutObject(bucket, "test.zip", TimeSpan.FromSeconds(expireIn));
+        PutObjectRequest putReq = new PutObjectRequest(bucket, objectKey, null);
 
-        await using (MemoryStream ms = new MemoryStream(Encoding.ASCII.GetBytes("hello world")))
+        string url = client.SignRequest(putReq, expire);
+
+        await using (MemoryStream ms = new MemoryStream("hello world"u8.ToArray()))
         {
-            PutObjectResponse putResp = await client.PutObjectAsync(url, ms).ConfigureAwait(false);
+            PutObjectResponse putResp = await client.SendSignedRequestAsync<PutObjectResponse>(url, HttpMethodType.PUT, ms);
             Assert.Equal(200, putResp.StatusCode);
         }
 
-        url = client.SignGetObject(bucket, "test.zip", TimeSpan.FromSeconds(expireIn));
+        GetObjectRequest getReq = new GetObjectRequest(bucket, objectKey);
+        url = client.SignRequest(getReq, expire);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(url).ConfigureAwait(false);
+        GetObjectResponse getResp = await client.SendSignedRequestAsync<GetObjectResponse>(url, HttpMethodType.GET);
         Assert.Equal(200, getResp.StatusCode);
 
-        url = client.SignDeleteObject(bucket, "test.zip", TimeSpan.FromSeconds(expireIn));
+        DeleteObjectRequest deleteReq = new DeleteObjectRequest(bucket, objectKey);
+        url = client.SignRequest(deleteReq, expire);
 
-        DeleteObjectResponse deleteResp = await client.DeleteObjectAsync(url).ConfigureAwait(false);
+        DeleteObjectResponse deleteResp = await client.SendSignedRequestAsync<DeleteObjectResponse>(url, HttpMethodType.DELETE);
         Assert.Equal(204, deleteResp.StatusCode);
 
-        url = client.SignHeadObject(bucket, "test.zip", TimeSpan.FromSeconds(expireIn));
+        HeadObjectRequest headReq = new HeadObjectRequest(bucket, objectKey);
+        url = client.SignRequest(headReq, expire);
 
-        HeadObjectResponse headResp = await client.HeadObjectAsync(url).ConfigureAwait(false);
+        HeadObjectResponse headResp = await client.SendSignedRequestAsync<HeadObjectResponse>(url, HttpMethodType.HEAD);
         Assert.Equal(404, headResp.StatusCode);
+    }
+
+    [Theory]
+    [MultipleProviders(S3Provider.All)]
+    public async Task PreSignedMultipartUpload(S3Provider _, string bucket, ISimpleClient client)
+    {
+        const string key = "data.txt";
+
+        CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, key);
+        Assert.Equal(200, createResp.StatusCode);
+
+        UploadPartRequest req = new UploadPartRequest(bucket, key, createResp.UploadId, 1, null);
+        string url = client.SignRequest(req, TimeSpan.FromSeconds(100));
+
+        List<S3PartInfo> infos = new List<S3PartInfo>();
+
+        await using (MemoryStream ms = new MemoryStream("hello world"u8.ToArray()))
+        {
+            UploadPartResponse partResp = await client.SendSignedRequestAsync<UploadPartResponse>(url, HttpMethodType.PUT, ms);
+            Assert.Equal(200, partResp.StatusCode);
+
+            infos.Add(new S3PartInfo(partResp.ETag, 1));
+        }
+
+        CompleteMultipartUploadResponse compResp = await client.CompleteMultipartUploadAsync(bucket, key, createResp.UploadId, infos);
+        Assert.Equal(200, compResp.StatusCode);
     }
 }

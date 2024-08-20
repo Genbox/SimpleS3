@@ -1,4 +1,5 @@
 ﻿using Genbox.SimpleS3.Core.Network.Requests.Multipart;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using JetBrains.Annotations;
 
@@ -41,7 +42,7 @@ public interface IMultipartClient
     /// <param name="parts">All the parts that should be included in the multipart transfer</param>
     /// <param name="config">A delegate to configure the request</param>
     /// <param name="token">A cancellation token</param>
-    Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default);
+    Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default);
 
     /// <summary>Abort a multipart upload. You have to call this if you want to abort, otherwise you will pay for the
     /// unfinished multipart</summary>

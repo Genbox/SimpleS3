@@ -2,6 +2,7 @@
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 namespace Genbox.SimpleS3.Core.Internals.Clients;
@@ -54,7 +55,7 @@ internal class PooledMultipartClient : IMultipartClient
         return ObjectPool<ListPartsRequest>.Shared.RentAndUseAsync(Setup, Action);
     }
 
-    public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default)
+    public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default)
     {
         void Setup(CompleteMultipartUploadRequest req)
         {

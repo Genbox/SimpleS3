@@ -9,6 +9,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
@@ -138,7 +139,7 @@ internal class MultipartTransfer : IMultipartTransfer
                 }
             }, numParallelParts, token).ConfigureAwait(false);
 
-            CompleteMultipartUploadResponse completeResp = await _multipartClient.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, responses.OrderBy(x => x.PartNumber), null, token).ConfigureAwait(false);
+            CompleteMultipartUploadResponse completeResp = await _multipartClient.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, responses.Select(x => new S3PartInfo(x.ETag, x.PartNumber)).OrderBy(x => x.PartNumber), null, token).ConfigureAwait(false);
 
             return completeResp;
         }

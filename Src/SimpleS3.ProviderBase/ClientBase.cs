@@ -58,7 +58,7 @@ public abstract class ClientBase : IDisposable
         Client = Build(services);
     }
 
-    protected ClientBase(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObjectClient)
+    protected ClientBase(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedClient signedObjectClient)
     {
         Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
     }
@@ -84,7 +84,7 @@ public abstract class ClientBase : IDisposable
         IMultipartClient multipartClient = _serviceProvider.GetRequiredService<IMultipartClient>();
         IMultipartTransfer multipartTransfer = _serviceProvider.GetRequiredService<IMultipartTransfer>();
         ITransfer transfer = _serviceProvider.GetRequiredService<ITransfer>();
-        ISignedObjectClient signedObjectClient = _serviceProvider.GetRequiredService<ISignedObjectClient>();
+        ISignedClient signedObjectClient = _serviceProvider.GetRequiredService<ISignedClient>();
 
         return new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
     }

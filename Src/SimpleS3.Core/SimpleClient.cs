@@ -1,11 +1,13 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
-using Genbox.SimpleS3.Core.Network.Requests.Signed;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -20,17 +22,17 @@ public class SimpleClient : ISimpleClient
     private readonly IMultipartClient _multipartClient;
     private readonly IMultipartTransfer _multipartTransfer;
     private readonly IObjectClient _objectClient;
-    private readonly ISignedObjectClient _signedObjectClient;
+    private readonly ISignedClient _signedClient;
     private readonly ITransfer _transfer;
 
-    public SimpleClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedObjectClient signedObject)
+    public SimpleClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedClient signedObject)
     {
         _objectClient = objectClient;
         _bucketClient = bucketClient;
         _multipartClient = multipartClient;
         _multipartTransfer = multipartTransfer;
         _transfer = transfer;
-        _signedObjectClient = signedObject;
+        _signedClient = signedObject;
     }
 
     protected SimpleClient() {}
@@ -95,7 +97,7 @@ public class SimpleClient : ISimpleClient
 
     public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default) => _multipartClient.ListPartsAsync(bucketName, objectKey, uploadId, config, token);
 
-    public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<UploadPartResponse> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default) => _multipartClient.CompleteMultipartUploadAsync(bucketName, objectKey, uploadId, parts, config, token);
+    public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default) => _multipartClient.CompleteMultipartUploadAsync(bucketName, objectKey, uploadId, parts, config, token);
 
     public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default) => _multipartClient.AbortMultipartUploadAsync(bucketName, objectKey, uploadId, config, token);
 
@@ -107,25 +109,13 @@ public class SimpleClient : ISimpleClient
 
     public IDownload CreateDownload(string bucket, string objectKey) => _transfer.CreateDownload(bucket, objectKey);
 
-    public string SignPutObject(string bucketName, string objectKey, TimeSpan expires, Action<PutObjectRequest>? config = null) => _signedObjectClient.SignPutObject(bucketName, objectKey, expires, config);
-
-    public Task<PutObjectResponse> PutObjectAsync(string url, Stream? content, Action<SignedPutObjectRequest>? config = null, CancellationToken token = default) => _signedObjectClient.PutObjectAsync(url, content, config, token);
-
-    public string SignGetObject(string bucketName, string objectKey, TimeSpan expires, Action<GetObjectRequest>? config = null) => _signedObjectClient.SignGetObject(bucketName, objectKey, expires, config);
-
-    public Task<GetObjectResponse> GetObjectAsync(string url, Action<SignedGetObjectRequest>? config = null, CancellationToken token = default) => _signedObjectClient.GetObjectAsync(url, config, token);
-
-    public string SignDeleteObject(string bucketName, string objectKey, TimeSpan expires, Action<DeleteObjectRequest>? config = null) => _signedObjectClient.SignDeleteObject(bucketName, objectKey, expires, config);
-
-    public Task<DeleteObjectResponse> DeleteObjectAsync(string url, Action<SignedDeleteObjectRequest>? config = null, CancellationToken token = default) => _signedObjectClient.DeleteObjectAsync(url, config, token);
-
-    public string SignHeadObject(string bucketName, string objectKey, TimeSpan expires, Action<HeadObjectRequest>? config = null) => _signedObjectClient.SignHeadObject(bucketName, objectKey, expires, config);
-
-    public Task<HeadObjectResponse> HeadObjectAsync(string url, Action<SignedHeadObjectRequest>? config = null, CancellationToken token = default) => _signedObjectClient.HeadObjectAsync(url, config, token);
-
     public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default) => _multipartTransfer.MultipartDownloadAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
 
     public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default) => _multipartTransfer.MultipartUploadAsync(bucketName, objectKey, data, partSize, numParallelParts, config, onPartResponse, token);
 
     public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(CreateMultipartUploadRequest req, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default) => _multipartTransfer.MultipartUploadAsync(req, data, partSize, numParallelParts, onPartResponse, token);
+
+    public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest => _signedClient.SignRequest(request, expiresIn);
+
+    public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new() => _signedClient.SendSignedRequestAsync<TResp>(url, httpMethod, content, token);
 }
