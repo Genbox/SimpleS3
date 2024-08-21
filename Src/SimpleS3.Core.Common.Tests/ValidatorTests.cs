@@ -16,7 +16,7 @@ public class ValidatorTests
         {
             Assert.Equal("1 == 2", e.CallerArgument);
             Assert.Equal(nameof(RequireThatContainsUsefulDataTest), e.CallerMember);
-            Assert.Equal(14, e.LineNumber);
+            Assert.Equal(13, e.LineNumber);
             Assert.Equal("this is a message", e.Message);
         }
     }
@@ -32,7 +32,7 @@ public class ValidatorTests
         {
             Assert.Equal("(string?)null", e.CallerArgument);
             Assert.Equal(nameof(RequireNotNullContainsUsefulDataTest), e.CallerMember);
-            Assert.Equal(30, e.LineNumber);
+            Assert.Equal(29, e.LineNumber);
             Assert.Equal("this is a message", e.Message);
         }
     }
