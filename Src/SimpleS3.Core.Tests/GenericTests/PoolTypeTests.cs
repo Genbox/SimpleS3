@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.Internals.Network;
 using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
@@ -16,6 +17,10 @@ public class PoolTypeTests
         foreach (Type requestType in GetRequestTypes())
         {
             bool hasCorrect = false;
+
+            //This is a special request that is only used internally
+            if (requestType == typeof(SignedRequest))
+                continue;
 
             ConstructorInfo[] constructorInfos = requestType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
@@ -43,6 +48,10 @@ public class PoolTypeTests
 
         foreach (Type requestType in GetRequestTypes())
         {
+            //This is a special request that is only used internally
+            if (requestType == typeof(SignedRequest))
+                continue;
+
             MethodInfo[] methodInfos = requestType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).Where(x => x.Name == "Initialize").ToArray();
 
             if (methodInfos.Length == 0)
