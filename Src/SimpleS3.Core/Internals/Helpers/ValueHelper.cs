@@ -61,6 +61,18 @@ internal static class ValueHelper
 
     public static string LongToString(long value) => value.ToString(NumberFormatInfo.InvariantInfo);
 
+    public static string DateToString(DateTime date, DateTimeFormat format)
+    {
+        return format switch
+        {
+            DateTimeFormat.Iso8601Date => date.ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo),
+            DateTimeFormat.Iso8601DateTime => date.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo),
+            DateTimeFormat.Iso8601DateTimeExt => date.ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo),
+            DateTimeFormat.Rfc1123 => date.ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo),
+            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+        };
+    }
+
     public static string DateToString(DateTimeOffset date, DateTimeFormat format)
     {
         return format switch
