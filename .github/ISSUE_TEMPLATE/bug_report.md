@@ -7,14 +7,11 @@ assignees: ''
 
 ---
 
-<!-- Set an X in the square brackets below if you are a sponsor. Sponsorship is required to submit bug reports. See https://github.com/sponsors/Genbox  -->
-* [ ] I hereby verify that I am a sponsor.
-
-**Description of the bug**
-<Your text here>
+**Describe the bug**
+What is the bug about?
 
 **How to reproduce?**
-<Your text here>
+Describe steps to reproduce the bug. Please include code to reproduce if possible.
 
 **Expected behavior**
-<Your text here>
+Describe what you expected to happen.
