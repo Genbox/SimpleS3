@@ -166,9 +166,9 @@ public class ChunkedSignatureTests
 
     [Theory]
     [InlineData(0, "9bd7be022acc19c03c9d92444bf41f22dee2b55936b8e62d30ae8ebaa62dc2f6")]
-    [InlineData(2 * 1024 * 1024 - 1, "776a15e31144b3afa01f30363d9f12c2ef6534bed015e717f44bbd4133a0295a", "12f1544daedf1d08455147e747a2229433fa185246d9a52b3b6fa7b7386aa80e")]
-    [InlineData(2 * 1024 * 1024, "c298ca9cba464386868042538031b658d2d38f546fb54606aa62b24c5f04f468", "442ad8d84ea709ac4ff0f6816b33de4a3c082697b4ec4f0e382414353c56236d")] // Default chunk size
-    [InlineData(2 * 1024 * 1024 + 1, "c298ca9cba464386868042538031b658d2d38f546fb54606aa62b24c5f04f468", "c0b2226be4478d602bf80cb978db6fa0b9bb5e6889bda464b9b21134851e58de", "d8e3996880128b6de2d6d7044617a4e0f015d216544c92dc31fec936cf43b524")]
+    [InlineData(80 * 1024 - 1, "09e7b448c6d02db9448eabd564e9e7c01673581930c3a3bbced7b20adee96dec", "4839de3be25a94022f830ae1ae28987e026aa7ccc5467a76aa5e3272b2ff3028")]
+    [InlineData(80 * 1024, "ffa0af214af9c70d10e78ac1bc15cc619bbaae6cf480608a0d15d3163228761a", "79a011a78294a3f8242b5e912f0240d1c38e8319061e5c0de5aad638d0fd8e2b")] // Default chunk size
+    [InlineData(80 * 1024 + 1, "ffa0af214af9c70d10e78ac1bc15cc619bbaae6cf480608a0d15d3163228761a", "b3e03375420ec2f31f86567bdc715efb466c21a41ae217154cceaec265cd89ef", "c399aad5e87548b0798944ef24f4c4b3ee504193c04ff57d8a202a3ca3184778")]
     public void StreamTest(int dataSize, params string[] expectedSignatures)
     {
         byte[] originalData = new byte[dataSize];
