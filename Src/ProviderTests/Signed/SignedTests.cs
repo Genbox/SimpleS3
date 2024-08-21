@@ -53,23 +53,28 @@ public class SignedTests : TestBase
     public async Task PreSignedMultipartUpload(S3Provider _, string bucket, ISimpleClient client)
     {
         const string key = "data.txt";
+        TimeSpan expire = TimeSpan.FromSeconds(100);
 
-        CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, key);
+        //Create (pre-signed)
+        CreateMultipartUploadRequest createReq = new CreateMultipartUploadRequest(bucket, key);
+        string url = client.SignRequest(createReq, expire);
+        CreateMultipartUploadResponse createResp = await client.SendSignedRequestAsync<CreateMultipartUploadResponse>(url, HttpMethodType.POST);
         Assert.Equal(200, createResp.StatusCode);
-
-        UploadPartRequest req = new UploadPartRequest(bucket, key, createResp.UploadId, 1, null);
-        string url = client.SignRequest(req, TimeSpan.FromSeconds(100));
 
         List<S3PartInfo> infos = new List<S3PartInfo>();
 
         await using (MemoryStream ms = new MemoryStream("hello world"u8.ToArray()))
         {
+            //Upload (pre-signed)
+            UploadPartRequest req = new UploadPartRequest(bucket, key, createResp.UploadId, 1, null);
+            url = client.SignRequest(req, expire);
             UploadPartResponse partResp = await client.SendSignedRequestAsync<UploadPartResponse>(url, HttpMethodType.PUT, ms);
             Assert.Equal(200, partResp.StatusCode);
 
             infos.Add(new S3PartInfo(partResp.ETag, 1));
         }
 
+        //Complete (not pre-signed due to using XML)
         CompleteMultipartUploadResponse compResp = await client.CompleteMultipartUploadAsync(bucket, key, createResp.UploadId, infos);
         Assert.Equal(200, compResp.StatusCode);
     }
