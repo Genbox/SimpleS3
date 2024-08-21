@@ -202,4 +202,17 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
 
         Task<GetBucketLifecycleConfigurationResponse> ActionAsync(GetBucketLifecycleConfigurationRequest request) => BucketOperations.GetBucketLifecycleConfigurationAsync(request, token);
     }
+
+    public Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(string bucketName, Action<PutPublicAccessBlockRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<PutPublicAccessBlockRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
+        void Setup(PutPublicAccessBlockRequest req)
+        {
+            req.Initialize(bucketName);
+            config?.Invoke(req);
+        }
+
+        Task<PutPublicAccessBlockResponse> ActionAsync(PutPublicAccessBlockRequest request) => BucketOperations.PutPublicAccessBlockAsync(request, token);
+    }
 }

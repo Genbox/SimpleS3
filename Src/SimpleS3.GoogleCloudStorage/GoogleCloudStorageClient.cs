@@ -80,6 +80,8 @@ public sealed class GoogleCloudStorageClient : ClientBase, ISimpleClient
 
     public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default) => Client.GetBucketLifecycleConfigurationAsync(bucketName, config, token);
 
+    public Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(string bucketName, Action<PutPublicAccessBlockRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
+
     public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
 
     public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);

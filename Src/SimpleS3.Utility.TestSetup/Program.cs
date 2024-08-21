@@ -1,5 +1,6 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
@@ -48,6 +49,7 @@ internal static class Program
     {
         await SetLockConfigAsync(bucketClient, bucketName);
         await SetExpireAllAsync(bucketClient, bucketName);
+        await SetPublicAccessBlockAsync(bucketClient, bucketName);
     }
 
     private static async Task<bool> TryCreateBucketAsync(IBucketClient bucketClient, string bucketName)
@@ -103,6 +105,14 @@ internal static class Program
         ];
 
         PutBucketLifecycleConfigurationResponse resp = await bucketClient.PutBucketLifecycleConfigurationAsync(bucketName, rules).ConfigureAwait(false);
+        Console.WriteLine(resp.IsSuccess ? "[x]" : "[ ]");
+    }
+
+    private static async Task SetPublicAccessBlockAsync(IBucketClient bucketClient, string bucketName)
+    {
+        Console.Write("- Public access block: ");
+
+        PutPublicAccessBlockResponse resp = await bucketClient.PutPublicAccessBlockAsync(bucketName).ConfigureAwait(false);
         Console.WriteLine(resp.IsSuccess ? "[x]" : "[ ]");
     }
 }

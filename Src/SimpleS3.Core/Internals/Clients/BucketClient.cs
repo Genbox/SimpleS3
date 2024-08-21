@@ -127,4 +127,12 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
 
         return operations.GetBucketLifecycleConfigurationAsync(request, token);
     }
+
+    public Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(string bucketName, Action<PutPublicAccessBlockRequest>? config = null, CancellationToken token = default)
+    {
+        PutPublicAccessBlockRequest request = new PutPublicAccessBlockRequest(bucketName);
+        config?.Invoke(request);
+
+        return operations.PutPublicAccessBlockAsync(request, token);
+    }
 }

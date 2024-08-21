@@ -83,6 +83,8 @@ public sealed class GenericS3Client : ClientBase, ISimpleClient
 
     public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default) => Client.GetBucketLifecycleConfigurationAsync(bucketName, config, token);
 
+    public Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(string bucketName, Action<PutPublicAccessBlockRequest>? config = null, CancellationToken token = default) => Client.PutPublicAccessBlockAsync(bucketName, config, token);
+
     public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default) => Client.DeleteObjectAsync(bucketName, objectKey, config, token);
 
     public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default) => Client.DeleteObjectsAsync(bucketName, objectKeys, config, token);

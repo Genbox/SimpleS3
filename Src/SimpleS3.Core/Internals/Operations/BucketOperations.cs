@@ -36,4 +36,6 @@ internal sealed class BucketOperations(IRequestHandler handler) : IBucketOperati
     public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(GetBucketVersioningRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketVersioningRequest, GetBucketVersioningResponse>(request, token);
 
     public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(GetBucketLifecycleConfigurationRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketLifecycleConfigurationRequest, GetBucketLifecycleConfigurationResponse>(request, token);
+
+    public Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(PutPublicAccessBlockRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutPublicAccessBlockRequest, PutPublicAccessBlockResponse>(request, token);
 }

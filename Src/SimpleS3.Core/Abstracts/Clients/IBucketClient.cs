@@ -111,4 +111,6 @@ public interface IBucketClient
     /// <param name="config">A delegate to configure the request</param>
     /// <param name="token">A cancellation token </param>
     Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default);
+
+    Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(string bucketName, Action<PutPublicAccessBlockRequest>? config = null, CancellationToken token = default);
 }
