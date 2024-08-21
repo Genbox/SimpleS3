@@ -12,6 +12,6 @@ public class NullNetworkDriver : INetworkDriver
     public Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         LastUrl = url;
-        return Task.FromResult(new HttpResponse());
+        return Task.FromResult(new HttpResponse(null, new Dictionary<string, string>(), 200));
     }
 }
