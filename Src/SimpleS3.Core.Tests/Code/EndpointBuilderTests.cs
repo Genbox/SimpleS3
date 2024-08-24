@@ -23,7 +23,7 @@ public class EndpointBuilderTests
     public void ParseEndpointTest(string template, string? bucketName, string result)
     {
         SimpleS3Config config = new SimpleS3Config(null!, "eu-west-1");
-        config.EndpointTemplate = template;
+        config.Endpoint = template;
         config.NamingMode = NamingMode.VirtualHost;
 
         EndpointBuilder builder = new EndpointBuilder(Options.Create(config));

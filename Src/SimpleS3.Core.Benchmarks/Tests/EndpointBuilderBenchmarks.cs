@@ -18,10 +18,10 @@ public class EndpointBuilderBenchmarks
     public void Setup()
     {
         SimpleS3Config config = new SimpleS3Config(null!, "eu-west-1");
-        config.EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
+        config.Endpoint = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
 
         SimpleS3Config config2 = new SimpleS3Config(null!, "eu-west-1");
-        config2.Endpoint = new Uri("http://bucket.s3.eu-west-1.amazonaws.com");
+        config2.Endpoint = "http://bucket.s3.eu-west-1.amazonaws.com";
 
         _builder = new EndpointBuilder(Options.Create(config));
         _builder2 = new EndpointBuilder(Options.Create(config2));

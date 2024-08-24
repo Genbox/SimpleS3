@@ -19,7 +19,7 @@ public class GoogleCloudStorageConfig : SimpleS3Config
     {
         //Google does not support chunked streaming uploads
         PayloadSignatureMode = SignatureMode.FullSignature;
-        EndpointTemplate = "{Scheme}://{Bucket:.}storage.googleapis.com";
+        Endpoint = "{Scheme}://{Bucket:.}storage.googleapis.com";
     }
 
     public GoogleCloudStorageConfig(string keyId, string secretKey, GoogleCloudStorageRegion region) : this(new StringAccessKey(keyId, secretKey), region) {}

@@ -44,17 +44,16 @@ public class SimpleS3Config
     public bool UseTls { get; set; } = true;
 
     /// <summary>
-    /// Use this to set a custom endpoint. Note that <see cref="UseTls" />, <see cref="RegionCode" />, and <see cref="EndpointTemplate" /> will be ignored if you set an Endpoint
-    /// manually
+    ///     <para>
+    ///     Use this to set a custom endpoint. It can either be a URL like https://myserver.com:9101 or a template. When setting a endpoint to a URL <see cref="UseTls" />,
+    ///     <see cref="NamingMode" /> and <see cref="RegionCode" /> will be ignored.
+    ///     </para>
+    ///     <para>
+    ///     However, you can also set the endpoint to a template in the form of {Scheme}{Region:.}myserver.com:9101/{Bucket} and SimpleS3 will build an URL for you using
+    ///     <see cref="UseTls" />, <see cref="NamingMode" /> and <see cref="RegionCode" />
+    ///     </para>
     /// </summary>
-    public Uri? Endpoint { get; set; }
-
-    /// <summary>
-    /// You can either set an Endpoint manually or use the EndpointTemplate to have it calculated for you. If you set the Endpoint manually, you must hardcode the region to use
-    /// (if using NamingMode.VirtualHost) or use NamingMode.PathStyle, where the bucket is inserted as part of the URL path. However, with EndpointTemplate, you can use
-    /// NamingMode.VirtualHost and SimpleS3 will insert the bucket name (from each request) and region code (from config) into an URL before sending requests.
-    /// </summary>
-    public string? EndpointTemplate { get; set; }
+    public string Endpoint { get; set; }
 
     /// <summary>Controls the level of validation performed on bucket names. You should only create buckets that are valid DNS names.</summary>
     public BucketNameValidationMode BucketNameValidationMode { get; set; } = BucketNameValidationMode.Default;

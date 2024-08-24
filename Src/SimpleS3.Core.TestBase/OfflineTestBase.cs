@@ -13,7 +13,7 @@ public abstract class OfflineTestBase(ITestOutputHelper helper) : UnitTestBase(h
     {
         config.RegionCode = "eu-west-1";
         config.Credentials = new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
-        config.EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
+        config.Endpoint = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
 
         base.ConfigureConfig(config);
     }

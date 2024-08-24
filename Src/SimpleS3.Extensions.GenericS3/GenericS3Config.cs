@@ -13,7 +13,7 @@ public class GenericS3Config() : SimpleS3Config("GenericS3")
     public GenericS3Config(IAccessKey credentials, string endpoint, string regionCode) : this()
     {
         Credentials = credentials;
-        Endpoint = new Uri(endpoint);
+        Endpoint = endpoint;
         RegionCode = regionCode;
     }
 }

@@ -13,7 +13,7 @@ public class StaticCreatorTests
 
         GenericS3Config config = new GenericS3Config();
         config.Credentials = new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
-        config.Endpoint = new Uri("https://myendpoint.com");
+        config.Endpoint = "https://myendpoint.com";
         config.RegionCode = "us-east-1";
 
         using GenericS3Client client = new GenericS3Client(config, driver);

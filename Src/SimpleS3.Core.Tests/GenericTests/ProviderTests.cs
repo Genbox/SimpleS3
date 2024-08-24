@@ -38,7 +38,7 @@ public class ProviderTests
     {
         string? url = await TestProvider(config =>
         {
-            config.Endpoint = new Uri("http://doesnotexist.local");
+            config.Endpoint = "http://doesnotexist.local";
             config.NamingMode = NamingMode.PathStyle;
         });
 
@@ -50,7 +50,7 @@ public class ProviderTests
     {
         string? url = await TestProvider(config =>
         {
-            config.EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
+            config.Endpoint = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
             config.NamingMode = NamingMode.VirtualHost;
         });
 
@@ -62,7 +62,7 @@ public class ProviderTests
     {
         string? url = await TestProvider(config =>
         {
-            config.EndpointTemplate = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
+            config.Endpoint = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
             config.NamingMode = NamingMode.PathStyle;
         });
 

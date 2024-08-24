@@ -32,13 +32,11 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
 
     private EndpointData GetEndpointData(string? bucket, string regionCode)
     {
-        string? endpoint = _config.Endpoint?.ToString();
+        string endpoint = _config.Endpoint;
 
-        if (endpoint == null)
+        if (endpoint.IndexOf('{') >= 0)
         {
-            Validator.RequireNotNull(_config.EndpointTemplate, "Unable to determine endpoint because both Endpoint and EndpointTemplate was null");
-
-            endpoint = _regex.Replace(_config.EndpointTemplate, match =>
+            endpoint = _regex.Replace(_config.Endpoint, match =>
             {
                 string? str;
 
@@ -61,7 +59,7 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
         }
 
         if (!Uri.TryCreate(endpoint, UriKind.Absolute, out Uri? parsed))
-            throw new InvalidOperationException(nameof(SimpleS3Config.EndpointTemplate) + " was resolved to an invalid url: " + endpoint);
+            throw new InvalidOperationException(nameof(SimpleS3Config.Endpoint) + " is an invalid url: " + endpoint);
 
         return new EndpointData(parsed.Host, bucket, regionCode, parsed.AbsoluteUri.TrimEnd('/'));
     }
