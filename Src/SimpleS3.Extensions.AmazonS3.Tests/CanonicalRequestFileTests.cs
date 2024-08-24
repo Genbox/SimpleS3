@@ -27,6 +27,7 @@ public class CanonicalRequestFileTests
         {
             x.Credentials = new StringAccessKey("KeyIdExampleExampleE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
             x.RegionCode = "us-east-1";
+            x.Endpoint = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
         });
 
         ServiceProvider provider = services.BuildServiceProvider();

@@ -9,7 +9,8 @@ internal sealed class ConfigValidator : ConfigValidatorBase<SimpleS3Config>
 {
     public ConfigValidator(IValidator<IAccessKey> validator)
     {
-        RuleFor(x => x.RegionCode).NotNull().WithMessage("You must provide a region");
+        RuleFor(x => x.Endpoint).NotEmpty().WithMessage("You must provide an endpoint.");
+        RuleFor(x => x.RegionCode).NotEmpty().WithMessage("You must provide a region");
         RuleFor(x => x.PayloadSignatureMode).IsInEnum().Must(x => x != SignatureMode.Unknown).WithMessage("You must provide a valid payload signature mode");
         RuleFor(x => x.NamingMode).IsInEnum().Must(x => x != NamingMode.Unknown).WithMessage("You must provide a valid naming mode");
         RuleFor(x => x.NamingMode).IsInEnum().Must(x => x == NamingMode.PathStyle).When(x => !x.Endpoint.Contains('{')).WithMessage("You can only use NamingMode.VirtualHost when you specify an endpoint template.");
