@@ -47,7 +47,7 @@ public static class AmzHeaders
 
     public const string XAmzSseCustomerAlgorithm = "x-amz-server-side-encryption-customer-algorithm";
     public const string XAmzSseCustomerKey = "x-amz-server-side-encryption-customer-key";
-    public const string XAmzSseCustomerKeyMd5 = "x-amz-server-side-encryption-customer-key-MD5";
+    public const string XAmzSseCustomerKeyMd5 = "x-amz-server-side-encryption-customer-key-md5";
 
     #endregion
 

@@ -1,4 +1,5 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using System.Diagnostics;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Internals.Pools;
 
@@ -6,8 +7,8 @@ namespace Genbox.SimpleS3.Core.Network.Requests;
 
 public abstract class BaseRequest(HttpMethodType method) : IRequest, IPooledObject
 {
-    private readonly Dictionary<string, string> _headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string> _headers = new Dictionary<string, string>(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>(StringComparer.Ordinal);
 
     public virtual void Reset()
     {
@@ -23,11 +24,13 @@ public abstract class BaseRequest(HttpMethodType method) : IRequest, IPooledObje
 
     public void SetQueryParameter(string key, string value)
     {
+        //Query parameters can contain different casing. 'partNumber' and 'uploadId' are two of them. They MUST be cased as such.
         _queryParameters[key] = value;
     }
 
     public void SetHeader(string key, string value)
     {
-        _headers[key.ToLowerInvariant()] = value;
+        Debug.Assert(!key.Any(char.IsUpper), "There was an uppercase character in the header: " + key);
+        _headers[key] = value;
     }
 }
