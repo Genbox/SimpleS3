@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
@@ -61,6 +62,12 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
         if (!Uri.TryCreate(endpoint, UriKind.Absolute, out Uri? parsed))
             throw new InvalidOperationException(nameof(SimpleS3Config.Endpoint) + " is an invalid url: " + endpoint);
 
-        return new EndpointData(parsed.Host, bucket, regionCode, parsed.AbsoluteUri.TrimEnd('/'));
+        //We need to add port for services hosted on non-standard ports. See #61
+        string host = parsed.Host;
+
+        if (!parsed.IsDefaultPort)
+            host += ':' + parsed.Port.ToString(NumberFormatInfo.InvariantInfo);
+
+        return new EndpointData(host, bucket, regionCode, parsed.AbsoluteUri.TrimEnd('/'));
     }
 }
