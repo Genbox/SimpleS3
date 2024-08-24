@@ -13,7 +13,7 @@ public class GenericError : IError
     {
         Validator.RequireNotNull(lookup);
 
-        Code = ValueHelper.ParseEnum<ErrorCode>(lookup["Code"]);
+        Code = Abstracts.Enums.Enums.ErrorCode.Parse(lookup["Code"]);
         Message = lookup["Message"];
 
         Data = new Dictionary<string, string>(lookup.Count, StringComparer.OrdinalIgnoreCase);

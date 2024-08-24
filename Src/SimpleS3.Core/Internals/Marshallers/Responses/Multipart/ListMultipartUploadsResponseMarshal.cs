@@ -41,7 +41,7 @@ internal sealed class ListMultipartUploadsResponseMarshal : IResponseMarshal<Lis
                         response.MaxUploads = ValueHelper.ParseInt(xmlReader.ReadString());
                         break;
                     case "EncodingType":
-                        response.EncodingType = ValueHelper.ParseEnum<EncodingType>(xmlReader.ReadString());
+                        response.EncodingType = Core.Enums.Enums.EncodingType.Parse(xmlReader.ReadString(), EncodingTypeFormat.DisplayName);
                         break;
                     case "IsTruncated":
                         response.IsTruncated = ValueHelper.ParseBool(xmlReader.ReadString());
@@ -91,7 +91,7 @@ internal sealed class ListMultipartUploadsResponseMarshal : IResponseMarshal<Lis
                     owner = ParserHelper.ParseOwner(xmlReader);
                     break;
                 case "StorageClass":
-                    storageClass = ValueHelper.ParseEnum<StorageClass>(xmlReader.ReadString());
+                    storageClass = Core.Enums.Enums.StorageClass.Parse(xmlReader.ReadString(), StorageClassFormat.DisplayName);
                     break;
                 case "Initiated":
                     initiated = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);

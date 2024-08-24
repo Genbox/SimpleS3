@@ -6,6 +6,7 @@
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="Genbox.HttpBuilders" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+    <PackageReference Include="Genbox.FastEnum" PrivateAssets="all" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <ItemGroup>

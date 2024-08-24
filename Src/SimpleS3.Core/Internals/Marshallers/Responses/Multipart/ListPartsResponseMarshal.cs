@@ -38,10 +38,10 @@ internal sealed class ListPartsResponseMarshal : IResponseMarshal<ListPartsRespo
                         response.UploadId = xmlReader.ReadString();
                         break;
                     case "EncodingType":
-                        response.EncodingType = ValueHelper.ParseEnum<EncodingType>(xmlReader.ReadString());
+                        response.EncodingType = Core.Enums.Enums.EncodingType.Parse(xmlReader.ReadString(), EncodingTypeFormat.DisplayName);
                         break;
                     case "StorageClass":
-                        response.StorageClass = ValueHelper.ParseEnum<StorageClass>(xmlReader.ReadString());
+                        response.StorageClass = Core.Enums.Enums.StorageClass.Parse(xmlReader.ReadString(), StorageClassFormat.DisplayName);
                         break;
                     case "PartNumberMarker":
                         response.PartNumberMarker = ValueHelper.ParseInt(xmlReader.ReadString());

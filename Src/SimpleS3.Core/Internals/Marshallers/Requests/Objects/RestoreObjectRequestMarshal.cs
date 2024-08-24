@@ -22,15 +22,15 @@ internal sealed class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjec
             xml.WriteElement("Days", request.Days);
 
         if (request.RequestType != RestoreRequestType.Unknown)
-            xml.WriteElement("Type", ValueHelper.EnumToString(request.RequestType));
+            xml.WriteElement("Type", request.RequestType.GetDisplayName());
 
         if (request.RequestTier != RetrievalTier.Unknown)
-            xml.WriteElement("Tier", ValueHelper.EnumToString(request.RequestTier));
+            xml.WriteElement("Tier", request.RequestTier.GetString());
 
         if (request.GlacierTier != RetrievalTier.Unknown)
         {
             xml.WriteStartElement("GlacierJobParameters");
-            xml.WriteElement("Tier", ValueHelper.EnumToString(request.GlacierTier));
+            xml.WriteElement("Tier", request.GlacierTier.GetString());
             xml.WriteEndElement("GlacierJobParameters");
         }
 
@@ -46,7 +46,7 @@ internal sealed class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjec
                 xml.WriteStartElement("InputSerialization");
 
                 if (request.SelectParameters.InputFormat.CompressionType != CompressionType.Unknown)
-                    xml.WriteElement("CompressionType", ValueHelper.EnumToString(request.SelectParameters.InputFormat.CompressionType));
+                    xml.WriteElement("CompressionType", request.SelectParameters.InputFormat.CompressionType.GetDisplayName());
 
                 switch (request.SelectParameters.InputFormat)
                 {
@@ -55,7 +55,7 @@ internal sealed class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjec
                         xml.WriteStartElement("CSV");
 
                         if (csvInput.HeaderUsage != HeaderUsage.Unknown)
-                            xml.WriteElement("FileHeaderInfo", ValueHelper.EnumToString(csvInput.HeaderUsage));
+                            xml.WriteElement("FileHeaderInfo", csvInput.HeaderUsage.GetDisplayName());
 
                         if (csvInput.CommentCharacter != null)
                             xml.WriteElement("Comments", ConvertChar(csvInput.CommentCharacter));
@@ -84,7 +84,7 @@ internal sealed class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjec
                         xml.WriteStartElement("JSON");
 
                         if (jsonInput.JsonType != JsonType.Unknown)
-                            xml.WriteElement("Type", ValueHelper.EnumToString(jsonInput.JsonType));
+                            xml.WriteElement("Type", jsonInput.JsonType.GetDisplayName());
 
                         xml.WriteEndElement("JSON");
 
@@ -99,7 +99,7 @@ internal sealed class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjec
             }
 
             if (request.SelectParameters.ExpressionType != ExpressionType.Unknown)
-                xml.WriteElement("ExpressionType", ValueHelper.EnumToString(request.SelectParameters.ExpressionType));
+                xml.WriteElement("ExpressionType", request.SelectParameters.ExpressionType.GetDisplayName());
 
             xml.WriteElement("Expression", request.SelectParameters.Expression);
 
@@ -120,7 +120,7 @@ internal sealed class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjec
                         xml.WriteElement("QuoteEscapeCharacter", ConvertChar(csvOutput.QuoteEscapeCharacter));
 
                     if (csvOutput.QuoteFields != QuoteField.Unknown)
-                        xml.WriteElement("QuoteFields", ValueHelper.EnumToString(csvOutput.QuoteFields));
+                        xml.WriteElement("QuoteFields", csvOutput.QuoteFields.GetDisplayName());
 
                     if (csvOutput.RecordDelimiter != null)
                         xml.WriteElement("RecordDelimiter", ConvertChar(csvOutput.RecordDelimiter));
@@ -151,17 +151,17 @@ internal sealed class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjec
                 xml.WriteElement("Prefix", request.OutputLocation.Prefix);
 
             if (request.OutputLocation.StorageClass != StorageClass.Unknown)
-                xml.WriteElement("StorageClass", ValueHelper.EnumToString(request.OutputLocation.StorageClass));
+                xml.WriteElement("StorageClass", request.OutputLocation.StorageClass.GetDisplayName());
 
             if (request.OutputLocation.Acl != ObjectCannedAcl.Unknown)
-                xml.WriteElement("CannedACL", ValueHelper.EnumToString(request.OutputLocation.Acl));
+                xml.WriteElement("CannedACL", request.OutputLocation.Acl.GetDisplayName());
 
             //TODO: AccessControlList support
 
             if (request.OutputLocation.SseAlgorithm != SseAlgorithm.Unknown)
             {
                 xml.WriteStartElement("Encryption");
-                xml.WriteElement("EncryptionType", ValueHelper.EnumToString(request.OutputLocation.SseAlgorithm));
+                xml.WriteElement("EncryptionType", request.OutputLocation.SseAlgorithm.GetDisplayName());
 
                 string? context = request.OutputLocation.SseContext.Build();
                 if (context != null)

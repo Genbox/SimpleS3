@@ -1,10 +1,11 @@
-﻿using Genbox.SimpleS3.Core.Common;
+﻿using System.ComponentModel.DataAnnotations;
+using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 
+[FastEnum]
 public enum SseCustomerAlgorithm
 {
     Unknown = 0,
-
-    [EnumValue("AES256")]Aes256
+    [Display(Name = "AES256")]Aes256
 }

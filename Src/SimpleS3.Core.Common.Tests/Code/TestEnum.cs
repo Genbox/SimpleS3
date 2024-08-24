@@ -1,4 +1,6 @@
-﻿namespace Genbox.SimpleS3.Core.Common.Tests.Code;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Genbox.SimpleS3.Core.Common.Tests.Code;
 
 internal enum TestEnum
 {
@@ -6,5 +8,6 @@ internal enum TestEnum
     Value1 = 1,
     Value2 = 2,
 
-    [EnumValue("Value3-FromAttribute")]Value3 = 3
+    [Display(Name = "Value3-FromAttribute")]
+    Value3 = 3
 }

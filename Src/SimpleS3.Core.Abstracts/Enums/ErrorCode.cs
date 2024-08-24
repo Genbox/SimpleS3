@@ -1,6 +1,9 @@
 ﻿// ReSharper disable InconsistentNaming
+using Genbox.FastEnum;
+
 namespace Genbox.SimpleS3.Core.Abstracts.Enums;
 
+[FastEnum]
 public enum ErrorCode
 {
     Unknown = 0,

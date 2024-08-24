@@ -97,7 +97,7 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
             {
                 writer.WriteStartElement("NoncurrentVersionTransition");
                 writer.WriteElement("NoncurrentDays", transition.NonCurrentDays);
-                writer.WriteElement("StorageClass", ValueHelper.EnumToString(transition.StorageClass));
+                writer.WriteElement("StorageClass", transition.StorageClass.GetDisplayName());
                 writer.WriteEndElement("NoncurrentVersionTransition");
             }
 
@@ -114,7 +114,7 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
                     writer.WriteElement("Days", transition.TransitionAfterDays.Value);
 
                 if (transition.StorageClass != StorageClass.Unknown)
-                    writer.WriteElement("StorageClass", ValueHelper.EnumToString(transition.StorageClass));
+                    writer.WriteElement("StorageClass", transition.StorageClass.GetDisplayName());
 
                 writer.WriteEndElement("Transition");
             }

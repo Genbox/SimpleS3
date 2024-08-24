@@ -50,11 +50,4 @@ public class ValidatorTests
         object? obj = null;
         Assert.Throws<RequireException>(() => Validator.RequireNotNull(obj));
     }
-
-    [Fact]
-    public void RequireValidEnumTest()
-    {
-        Assert.Throws<RequireException>(() => Validator.RequireValidEnum((TestEnum)0)); //Default value not allowed
-        Assert.Throws<RequireException>(() => Validator.RequireValidEnum((TestEnum)4)); //Value is outside valid enum values
-    }
 }

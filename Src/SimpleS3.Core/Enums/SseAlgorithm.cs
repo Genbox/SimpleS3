@@ -1,7 +1,9 @@
-﻿using Genbox.SimpleS3.Core.Common;
+﻿using System.ComponentModel.DataAnnotations;
+using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 
+[FastEnum]
 public enum SseAlgorithm
 {
     Unknown = 0,
@@ -12,10 +14,10 @@ public enum SseAlgorithm
     /// with an audit trail of when your key was used and by whom. Additionally, you have the option to create and manage encryption keys yourself, or use a default key that is unique to
     /// you, the service you're using, and the Region you're working in.
     /// </summary>
-    [EnumValue("aws:kms")]
+    [Display(Name = "aws:kms")]
     AwsKms,
 
     /// <summary>Each object is encrypted with a unique key. As an additional safeguard, it encrypts the key itself with a master key that it regularly rotates.</summary>
-    [EnumValue("AES256")]
+    [Display(Name = "AES256")]
     Aes256
 }

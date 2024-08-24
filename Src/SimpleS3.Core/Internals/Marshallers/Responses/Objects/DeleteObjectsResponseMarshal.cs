@@ -82,7 +82,7 @@ internal sealed class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObje
                     versionId = xmlReader.ReadString();
                     break;
                 case "Code":
-                    code = ValueHelper.ParseEnum<ErrorCode>(xmlReader.ReadString());
+                    code = Abstracts.Enums.Enums.ErrorCode.Parse(xmlReader.ReadString());
                     break;
                 case "Message":
                     message = xmlReader.ReadString();

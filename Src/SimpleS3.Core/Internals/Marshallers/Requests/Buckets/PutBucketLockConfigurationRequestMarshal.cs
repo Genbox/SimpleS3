@@ -22,7 +22,7 @@ internal sealed class PutBucketLockConfigurationRequestMarshal : IRequestMarshal
         {
             writer.WriteStartElement("Rule");
             writer.WriteStartElement("DefaultRetention");
-            writer.WriteElement("Mode", ValueHelper.EnumToString(request.LockMode));
+            writer.WriteElement("Mode", request.LockMode.GetDisplayName());
 
             if (request.LockRetainUntil.HasValue)
                 writer.WriteElement("Days", (request.LockRetainUntil.Value - DateTimeOffset.UtcNow).Days);

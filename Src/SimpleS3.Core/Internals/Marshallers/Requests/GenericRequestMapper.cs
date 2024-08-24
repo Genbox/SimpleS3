@@ -20,13 +20,17 @@ internal static class GenericRequestMapper
 
         if (req is IHasBucketAcl hasBucketAcl && !disabledFor(typeof(IHasBucketAcl)))
         {
-            req.SetHeader(AmzHeaders.XAmzAcl, hasBucketAcl.Acl);
+            if (hasBucketAcl.Acl != BucketCannedAcl.Unknown)
+                req.SetHeader(AmzHeaders.XAmzAcl, hasBucketAcl.Acl.GetDisplayName());
+
             req.SetHeader(AmzHeaders.XAmzGrantRead, hasBucketAcl.AclGrantRead);
             req.SetHeader(AmzHeaders.XAmzGrantReadAcp, hasBucketAcl.AclGrantReadAcp);
             req.SetHeader(AmzHeaders.XAmzGrantWrite, hasBucketAcl.AclGrantWrite);
             req.SetHeader(AmzHeaders.XAmzGrantWriteAcp, hasBucketAcl.AclGrantWriteAcp);
             req.SetHeader(AmzHeaders.XAmzGrantFullControl, hasBucketAcl.AclGrantFullControl);
-            req.SetHeader(AmzHeaders.XAmzObjectOwnership, hasBucketAcl.ObjectOwnership);
+
+            if (hasBucketAcl.ObjectOwnership != ObjectOwnership.Unknown)
+                req.SetHeader(AmzHeaders.XAmzObjectOwnership, hasBucketAcl.ObjectOwnership.GetString());
         }
 
         if (req is IHasBypassGovernanceRetention hasBypassGovernanceRetention && !disabledFor(typeof(IHasBypassGovernanceRetention)))
@@ -53,9 +57,9 @@ internal static class GenericRequestMapper
         if (req is IHasExpiresOn hasExpiresOn && !disabledFor(typeof(IHasExpiresOn)))
             req.SetHeader(HttpHeaders.Expires, hasExpiresOn.ExpiresOn, DateTimeFormat.Rfc1123);
 
-        if (req is IHasLock hasLock && !disabledFor(typeof(IHasLock)))
+        if (req is IHasLock hasLock && !disabledFor(typeof(IHasLock)) && hasLock.LockMode != LockMode.Unknown)
         {
-            req.SetHeader(AmzHeaders.XAmzObjectLockMode, hasLock.LockMode);
+            req.SetHeader(AmzHeaders.XAmzObjectLockMode, hasLock.LockMode.GetDisplayName());
             req.SetHeader(AmzHeaders.XAmzObjectLockRetainUntilDate, hasLock.LockRetainUntil, DateTimeFormat.Iso8601DateTimeExt);
         }
 
@@ -73,7 +77,9 @@ internal static class GenericRequestMapper
 
         if (req is IHasObjectAcl hasAcl && !disabledFor(typeof(IHasObjectAcl)))
         {
-            req.SetHeader(AmzHeaders.XAmzAcl, hasAcl.Acl);
+            if (hasAcl.Acl != ObjectCannedAcl.Unknown)
+                req.SetHeader(AmzHeaders.XAmzAcl, hasAcl.Acl.GetDisplayName());
+
             req.SetHeader(AmzHeaders.XAmzGrantRead, hasAcl.AclGrantRead);
             req.SetHeader(AmzHeaders.XAmzGrantReadAcp, hasAcl.AclGrantReadAcp);
             req.SetHeader(AmzHeaders.XAmzGrantWriteAcp, hasAcl.AclGrantWriteAcp);
@@ -101,7 +107,9 @@ internal static class GenericRequestMapper
 
         if (req is IHasSse hasSse && !disabledFor(typeof(IHasSse)))
         {
-            req.SetHeader(AmzHeaders.XAmzSse, hasSse.SseAlgorithm);
+            if (hasSse.SseAlgorithm != SseAlgorithm.Unknown)
+                req.SetHeader(AmzHeaders.XAmzSse, hasSse.SseAlgorithm.GetDisplayName());
+
             req.SetOptionalHeader(AmzHeaders.XAmzSseAwsKmsKeyId, hasSse.SseKmsKeyId);
 
             string? sseContext = hasSse.SseContext.Build();
@@ -112,13 +120,15 @@ internal static class GenericRequestMapper
 
         if (req is IHasSseCustomerKey hasSseCustomerKey && !disabledFor(typeof(IHasSseCustomerKey)))
         {
-            req.SetHeader(AmzHeaders.XAmzSseCustomerAlgorithm, hasSseCustomerKey.SseCustomerAlgorithm);
+            if (hasSseCustomerKey.SseCustomerAlgorithm != SseCustomerAlgorithm.Unknown)
+                req.SetHeader(AmzHeaders.XAmzSseCustomerAlgorithm, hasSseCustomerKey.SseCustomerAlgorithm.GetDisplayName());
+
             req.SetHeader(AmzHeaders.XAmzSseCustomerKey, hasSseCustomerKey.SseCustomerKey, BinaryEncoding.Base64);
             req.SetHeader(AmzHeaders.XAmzSseCustomerKeyMd5, hasSseCustomerKey.SseCustomerKeyMd5, BinaryEncoding.Base64);
         }
 
-        if (req is IHasStorageClass hasStorageClass && !disabledFor(typeof(IHasStorageClass)))
-            req.SetHeader(AmzHeaders.XAmzStorageClass, hasStorageClass.StorageClass);
+        if (req is IHasStorageClass hasStorageClass && !disabledFor(typeof(IHasStorageClass)) && hasStorageClass.StorageClass != StorageClass.Unknown)
+            req.SetHeader(AmzHeaders.XAmzStorageClass, hasStorageClass.StorageClass.GetDisplayName());
 
         if (req is IHasTags hasTags && !disabledFor(typeof(IHasTags)))
             req.SetHeader(AmzHeaders.XAmzTagging, hasTags.Tags);

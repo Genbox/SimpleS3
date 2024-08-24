@@ -1,7 +1,9 @@
-﻿using Genbox.SimpleS3.Core.Common;
+﻿using System.ComponentModel.DataAnnotations;
+using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 
+[FastEnum]
 public enum LockMode
 {
     Unknown = 0,
@@ -13,7 +15,7 @@ public enum LockMode
     /// the s3:BypassGovernanceRetention permission and must explicitly include x-amz-bypass-governance-retention:true as a request header with any request that requires overriding
     /// governance mode.
     /// </summary>
-    [EnumValue("GOVERNANCE")]
+    [Display(Name = "GOVERNANCE")]
     Governance,
 
     /// <summary>
@@ -21,6 +23,6 @@ public enum LockMode
     /// compliance mode, its retention mode can't be changed, and its retention period can't be shortened. Compliance mode ensures that an object version can't be overwritten or deleted
     /// for the duration of the retention period.
     /// </summary>
-    [EnumValue("COMPLIANCE")]
+    [Display(Name = "COMPLIANCE")]
     Compliance
 }

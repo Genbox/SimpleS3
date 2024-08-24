@@ -1,5 +1,8 @@
-﻿namespace Genbox.SimpleS3.Core.Enums;
+﻿using Genbox.FastEnum;
 
+namespace Genbox.SimpleS3.Core.Enums;
+
+[FastEnum]
 public enum RetrievalTier
 {
     Unknown = 0,

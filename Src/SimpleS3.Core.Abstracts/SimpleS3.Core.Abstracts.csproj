@@ -3,6 +3,7 @@
   <Import Project="..\..\Imports\Library.props" />
 
   <ItemGroup>
+    <PackageReference Include="Genbox.FastEnum" PrivateAssets="all" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
 

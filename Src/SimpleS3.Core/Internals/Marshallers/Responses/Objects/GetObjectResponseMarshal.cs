@@ -24,16 +24,25 @@ internal sealed class GetObjectResponseMarshal : IResponseMarshal<GetObjectRespo
         response.ContentRange = headers.GetOptionalValue(HttpHeaders.ContentRange);
         response.AcceptRanges = headers.GetOptionalValue(HttpHeaders.AcceptRanges);
         response.ExpiresOn = headers.GetHeaderDate(HttpHeaders.Expires, DateTimeFormat.Rfc1123);
-        response.ReplicationStatus = headers.GetHeaderEnum<ReplicationStatus>(AmzHeaders.XAmzReplicationStatus);
-        response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
+
+        if (headers.TryGetHeader(AmzHeaders.XAmzReplicationStatus, out string? status))
+            response.ReplicationStatus = Core.Enums.Enums.ReplicationStatus.Parse(status, ReplicationStatusFormat.DisplayName);
+
+        if (headers.TryGetHeader(AmzHeaders.XAmzSse, out string? sseHeader))
+            response.SseAlgorithm = Core.Enums.Enums.SseAlgorithm.Parse(sseHeader, SseAlgorithmFormat.DisplayName);
+
         response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
-        response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSseCustomerAlgorithm);
+
+        if (headers.TryGetHeader(AmzHeaders.XAmzSseCustomerAlgorithm, out string? sseAlgorithm))
+            response.SseCustomerAlgorithm = Core.Enums.Enums.SseCustomerAlgorithm.Parse(sseAlgorithm, SseCustomerAlgorithmFormat.DisplayName);
+
         response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
         response.IsDeleteMarker = headers.GetHeaderBool(AmzHeaders.XAmzDeleteMarker);
         response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-        response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
+        if (headers.TryGetHeader(AmzHeaders.XAmzStorageClass, out string? storageClass))
+            response.StorageClass = Core.Enums.Enums.StorageClass.Parse(storageClass, StorageClassFormat.DisplayName);
 
         //It should default to standard
         if (response.StorageClass == StorageClass.Unknown)
@@ -42,7 +51,10 @@ internal sealed class GetObjectResponseMarshal : IResponseMarshal<GetObjectRespo
         response.Restore = headers.GetOptionalValue(AmzHeaders.XAmzRestore);
         response.TagCount = headers.GetHeaderInt(AmzHeaders.XAmzTaggingCount);
         response.WebsiteRedirectLocation = headers.GetOptionalValue(AmzHeaders.XAmzWebsiteRedirectLocation);
-        response.LockMode = headers.GetHeaderEnum<LockMode>(AmzHeaders.XAmzObjectLockMode);
+
+        if (headers.TryGetHeader(AmzHeaders.XAmzObjectLockMode, out string? lockMode))
+            response.LockMode = Core.Enums.Enums.LockMode.Parse(lockMode, LockModeFormat.DisplayName);
+
         response.LockRetainUntil = headers.GetHeaderDate(AmzHeaders.XAmzObjectLockRetainUntilDate, DateTimeFormat.Iso8601DateTimeExt);
         response.LockLegalHold = headers.GetOptionalValue(AmzHeaders.XAmzObjectLockLegalHold) == "ON";
         response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzPartsCount);

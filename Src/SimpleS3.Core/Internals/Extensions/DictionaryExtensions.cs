@@ -1,4 +1,5 @@
-﻿using Genbox.SimpleS3.Core.Common.Exceptions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 
@@ -16,15 +17,10 @@ internal static class DictionaryExtensions
         throw new S3Exception($"Failed to get required header '{key}'");
     }
 
-    public static bool TryGetHeader(this IDictionary<string, string> response, string key, out string? value)
+    public static bool TryGetHeader(this IDictionary<string, string> response, string key, [NotNullWhen(true)]out string? value)
     {
-        if (response.TryGetValue(key, out value))
-            return true;
-
-        return false;
+        return response.TryGetValue(key, out value);
     }
-
-    public static T GetHeaderEnum<T>(this IDictionary<string, string> response, string key) where T : struct, Enum => TryGetHeader(response, key, out string? value) ? ValueHelper.ParseEnum<T>(value) : default;
 
     public static int GetHeaderInt(this IDictionary<string, string> response, string key) => TryGetHeader(response, key, out string? value) ? ValueHelper.ParseInt(value) : default;
 

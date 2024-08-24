@@ -13,10 +13,17 @@ internal sealed class UploadPartResponseMarshal : IResponseMarshal<UploadPartRes
     public void MarshalResponse(SimpleS3Config config, UploadPartResponse response, IDictionary<string, string> headers, Stream responseStream)
     {
         response.ETag = headers.GetRequiredValue(HttpHeaders.ETag);
-        response.StorageClass = headers.GetHeaderEnum<StorageClass>(AmzHeaders.XAmzStorageClass);
-        response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
+        if (headers.TryGetHeader(AmzHeaders.XAmzStorageClass, out string? storageClass))
+            response.StorageClass = Core.Enums.Enums.StorageClass.Parse(storageClass, StorageClassFormat.DisplayName);
+
+        if (headers.TryGetHeader(AmzHeaders.XAmzSse, out string? sseHeader))
+            response.SseAlgorithm = Core.Enums.Enums.SseAlgorithm.Parse(sseHeader, SseAlgorithmFormat.DisplayName);
+
         response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
-        response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSseCustomerAlgorithm);
+
+        if (headers.TryGetHeader(AmzHeaders.XAmzSseCustomerAlgorithm, out string? sseAlgorithm))
+            response.SseCustomerAlgorithm = Core.Enums.Enums.SseCustomerAlgorithm.Parse(sseAlgorithm, SseCustomerAlgorithmFormat.DisplayName);
+
         response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
     }

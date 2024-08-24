@@ -1,5 +1,8 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Enums;
+﻿using Genbox.FastEnum;
 
+namespace Genbox.SimpleS3.Core.Abstracts.Enums;
+
+[FastEnum]
 public enum ObjectKeyValidationMode
 {
     Unknown = 0,

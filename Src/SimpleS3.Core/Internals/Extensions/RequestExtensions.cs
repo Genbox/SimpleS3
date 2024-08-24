@@ -67,14 +67,6 @@ internal static class RequestExtensions
         }
     }
 
-    public static void SetHeader<T>(this IRequest request, string key, T value) where T : struct, Enum
-    {
-        if (value.Equals(default(T)))
-            return;
-
-        request.SetHeader(key, ValueHelper.EnumToString(value));
-    }
-
     public static void SetHeader(this IRequest request, string key, long? value)
     {
         if (value == null)
@@ -128,14 +120,6 @@ internal static class RequestExtensions
             return;
 
         request.SetQueryParameter(key, ValueHelper.IntToString(value.Value));
-    }
-
-    public static void SetQueryParameter<T>(this IRequest request, string key, T value) where T : struct, Enum
-    {
-        if (value.Equals(default(T)))
-            return;
-
-        request.SetQueryParameter(key, ValueHelper.EnumToString(value));
     }
 
     public static void SetQueryParameter(this IRequest request, string key, bool? value)

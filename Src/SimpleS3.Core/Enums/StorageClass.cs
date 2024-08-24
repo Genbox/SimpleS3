@@ -1,8 +1,10 @@
-﻿using Genbox.SimpleS3.Core.Common;
+﻿using System.ComponentModel.DataAnnotations;
+using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 
 /// <summary>Storage classes used by Amazon. See https://aws.amazon.com/s3/storage-classes/ for more information about each class.</summary>
+[FastEnum]
 public enum StorageClass
 {
     Unknown = 0,
@@ -31,10 +33,10 @@ public enum StorageClass
     ///     </item>
     /// </list>
     /// </summary>
-    [EnumValue("STANDARD")]
+    [Display(Name = "STANDARD")]
     Standard,
 
-    [EnumValue("REDUCED_REDUNDANCY")]ReducedRedundancy,
+    [Display(Name = "REDUCED_REDUNDANCY")]ReducedRedundancy,
 
     /// <summary>
     /// S3 Glacier is a secure, durable, and low-cost storage class for data archiving. You can reliably store any amount of data at costs that are competitive with or cheaper than
@@ -60,7 +62,7 @@ public enum StorageClass
     ///     </item>
     /// </list>
     /// </summary>
-    [EnumValue("GLACIER")]
+    [Display(Name = "GLACIER")]
     Glacier,
 
     /// <summary>
@@ -94,7 +96,7 @@ public enum StorageClass
     ///     </item>
     /// </list>
     /// </summary>
-    [EnumValue("STANDARD_IA")]
+    [Display(Name = "STANDARD_IA")]
     StandardIa,
 
     /// <summary>
@@ -123,7 +125,7 @@ public enum StorageClass
     ///     </item>
     /// </list>
     /// </summary>
-    [EnumValue("ONEZONE_IA")]
+    [Display(Name = "ONEZONE_IA")]
     OneZoneIa,
 
     /// <summary>
@@ -163,7 +165,7 @@ public enum StorageClass
     ///     </item>
     /// </list>
     /// </summary>
-    [EnumValue("INTELLIGENT_TIERING")]
+    [Display(Name = "INTELLIGENT_TIERING")]
     IntelligentTiering,
 
     /// <summary>
@@ -191,6 +193,6 @@ public enum StorageClass
     ///     </item>
     /// </list>
     /// </summary>
-    [EnumValue("DEEP_ARCHIVE")]
+    [Display(Name = "DEEP_ARCHIVE")]
     DeepArchive
 }

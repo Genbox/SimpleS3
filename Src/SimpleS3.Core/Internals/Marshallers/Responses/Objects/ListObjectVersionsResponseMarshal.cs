@@ -27,7 +27,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
                         response.IsTruncated = ValueHelper.ParseBool(xmlReader.ReadString());
                         break;
                     case "EncodingType":
-                        response.EncodingType = ValueHelper.ParseEnum<EncodingType>(xmlReader.ReadString());
+                        response.EncodingType = Core.Enums.Enums.EncodingType.Parse(xmlReader.ReadString(), EncodingTypeFormat.DisplayName);
                         break;
                     case "KeyMarker":
                         response.KeyMarker = xmlReader.ReadString();
@@ -126,7 +126,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
                     size = ValueHelper.ParseInt(xmlReader.ReadString());
                     break;
                 case "StorageClass":
-                    storageClass = ValueHelper.ParseEnum<StorageClass>(xmlReader.ReadString());
+                    storageClass = Core.Enums.Enums.StorageClass.Parse(xmlReader.ReadString(), StorageClassFormat.DisplayName);
                     break;
                 case "Owner":
                     owner = ParserHelper.ParseOwner(xmlReader);

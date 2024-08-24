@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using Genbox.SimpleS3.Core.Common.Exceptions;
-using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
@@ -10,8 +9,6 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers;
 
 internal static class ValueHelper
 {
-    public static T ParseEnum<T>(string? value) where T : struct, Enum => EnumHelper.TryParse(value, out T parsedValue) ? parsedValue : default;
-
     public static int ParseInt(string? value) => int.TryParse(value, NumberStyles.None, NumberFormatInfo.InvariantInfo, out int result) ? result : 0;
 
     public static long ParseLong(string? value) => long.TryParse(value, NumberStyles.None, NumberFormatInfo.InvariantInfo, out long result) ? result : 0;
@@ -43,16 +40,6 @@ internal static class ValueHelper
             BinaryEncoding.Base64 => Convert.FromBase64String(value),
             _ => throw new ArgumentOutOfRangeException(nameof(encoding), encoding, null)
         };
-    }
-
-    public static string EnumToString<T>(T value) where T : struct, Enum
-    {
-        string? str = EnumHelper.AsString(value);
-
-        if (str == null)
-            throw new S3Exception("Unable to parse enum");
-
-        return str;
     }
 
     public static string BoolToString(bool value) => value.ToString(CultureInfo.InvariantCulture).ToLowerInvariant();

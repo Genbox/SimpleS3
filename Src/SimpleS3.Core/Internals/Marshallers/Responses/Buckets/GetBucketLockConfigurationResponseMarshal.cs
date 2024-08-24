@@ -19,7 +19,7 @@ internal sealed class GetBucketLockConfigurationResponseMarshal : IResponseMarsh
             switch (name)
             {
                 case "Mode":
-                    response.LockMode = ValueHelper.ParseEnum<LockMode>(xmlReader.ReadString());
+                    response.LockMode = Core.Enums.Enums.LockMode.Parse(xmlReader.ReadString(), LockModeFormat.DisplayName);
                     break;
                 case "Days":
                     response.LockRetainUntil = DateTimeOffset.UtcNow.AddDays(xmlReader.ReadElementContentAsInt());

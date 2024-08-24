@@ -8,27 +8,6 @@ namespace Genbox.SimpleS3.Core.Common.Validation;
 // ReSharper disable ExplicitCallerInfoArgument
 public static class Validator
 {
-    public static void RequireValidEnum<T>(T enumVal, string? message = null, bool defaultValueAllowed = false, [CallerArgumentExpression("enumVal")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null) where T : struct, Enum
-    {
-#if NETSTANDARD2_0
-        RequireThat(Enum.IsDefined(typeof(T), enumVal), message, callerArgument, callerMember, lineNumber);
-#else
-        RequireThat(Enum.IsDefined(enumVal), message, callerArgument, callerMember, lineNumber);
-#endif
-
-        if (!defaultValueAllowed)
-            RequireThat(!enumVal.Equals(default(T)), message, callerArgument, callerMember, lineNumber);
-    }
-
-    public static void RequireValidEnum<T>([NotNull]string? value, out T enumVal, string? message = null, bool defaultValueAllowed = false, [CallerArgumentExpression("enumVal")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null) where T : struct, Enum
-    {
-        RequireNotNull(value, message, callerArgument, callerMember, lineNumber);
-        RequireThat(Enum.TryParse(value, true, out enumVal), message, callerArgument, callerMember, lineNumber);
-
-        if (!defaultValueAllowed)
-            RequireThat(!enumVal.Equals(default(T)), message, callerArgument, callerMember, lineNumber);
-    }
-
     public static void RequireNotNull<T>([NotNull]T? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null) where T : class
     {
         RequireThat(value != null, message, callerArgument, callerMember, lineNumber);

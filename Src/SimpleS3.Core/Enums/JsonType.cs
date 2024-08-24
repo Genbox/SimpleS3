@@ -1,12 +1,12 @@
-﻿using Genbox.SimpleS3.Core.Common;
+﻿using System.ComponentModel.DataAnnotations;
+using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 
+[FastEnum]
 public enum JsonType
 {
     Unknown = 0,
-
-    [EnumValue("DOCUMENT")]Document,
-
-    [EnumValue("LINES")]Lines
+    [Display(Name = "DOCUMENT")]Document,
+    [Display(Name = "LINES")]Lines
 }

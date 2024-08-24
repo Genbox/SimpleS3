@@ -16,9 +16,15 @@ internal sealed class CreateMultipartUploadResponseMarshal : IResponseMarshal<Cr
     {
         response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Rfc1123);
         response.AbortRuleId = headers.GetOptionalValue(AmzHeaders.XAmzAbortRuleId);
-        response.SseAlgorithm = headers.GetHeaderEnum<SseAlgorithm>(AmzHeaders.XAmzSse);
+
+        if (headers.TryGetHeader(AmzHeaders.XAmzSse, out string? sseHeader))
+            response.SseAlgorithm = Core.Enums.Enums.SseAlgorithm.Parse(sseHeader, SseAlgorithmFormat.DisplayName);
+
         response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
-        response.SseCustomerAlgorithm = headers.GetHeaderEnum<SseCustomerAlgorithm>(AmzHeaders.XAmzSseCustomerAlgorithm);
+
+        if (headers.TryGetHeader(AmzHeaders.XAmzSseCustomerAlgorithm, out string? sseAlgorithm))
+            response.SseCustomerAlgorithm = Core.Enums.Enums.SseCustomerAlgorithm.Parse(sseAlgorithm, SseCustomerAlgorithmFormat.DisplayName);
+
         response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
         response.SseContext = headers.GetOptionalValue(AmzHeaders.XAmzSseContext);
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);

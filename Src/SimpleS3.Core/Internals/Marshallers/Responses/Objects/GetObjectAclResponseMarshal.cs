@@ -54,7 +54,7 @@ internal sealed class GetObjectAclResponseMarshal : IResponseMarshal<GetObjectAc
                     grantee = ParseGrantee(xmlReader);
                     break;
                 case "Permission":
-                    permission = ValueHelper.ParseEnum<S3Permission>(xmlReader.ReadString());
+                    permission = Core.Enums.Enums.S3Permission.Parse(xmlReader.ReadString(), S3PermissionFormat.DisplayName);
                     break;
             }
         }
@@ -92,6 +92,6 @@ internal sealed class GetObjectAclResponseMarshal : IResponseMarshal<GetObjectAc
             }
         }
 
-        return new S3Grantee(ValueHelper.ParseEnum<GrantType>(grantType), id, displayName, uri);
+        return new S3Grantee(Core.Enums.Enums.GrantType.Parse(grantType), id, displayName, uri);
     }
 }

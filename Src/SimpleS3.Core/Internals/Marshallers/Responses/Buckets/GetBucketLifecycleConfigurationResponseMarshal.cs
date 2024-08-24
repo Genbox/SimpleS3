@@ -221,7 +221,7 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
                     nonCurrentDays = ValueHelper.ParseInt(xmlReader.ReadString());
                     break;
                 case "StorageClass":
-                    storageClass = ValueHelper.ParseEnum<StorageClass>(xmlReader.ReadString());
+                    storageClass = Core.Enums.Enums.StorageClass.Parse(xmlReader.ReadString(), StorageClassFormat.DisplayName);
                     break;
             }
         }
@@ -249,7 +249,7 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
                     days = ValueHelper.ParseInt(xmlReader.ReadString());
                     break;
                 case "StorageClass":
-                    storageClass = ValueHelper.ParseEnum<StorageClass>(xmlReader.ReadString());
+                    storageClass = Core.Enums.Enums.StorageClass.Parse(xmlReader.ReadString(), StorageClassFormat.DisplayName);
                     break;
             }
         }

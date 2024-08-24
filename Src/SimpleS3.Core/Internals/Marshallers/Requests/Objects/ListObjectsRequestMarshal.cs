@@ -1,6 +1,7 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Misc;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 
@@ -11,7 +12,10 @@ internal sealed class ListObjectsRequestMarshal : IRequestMarshal<ListObjectsReq
     public Stream? MarshalRequest(ListObjectsRequest request, SimpleS3Config config)
     {
         request.SetOptionalQueryParameter(AmzParameters.Delimiter, request.Delimiter);
-        request.SetQueryParameter(AmzParameters.EncodingType, request.EncodingType);
+
+        if (request.EncodingType != EncodingType.Unknown)
+            request.SetQueryParameter(AmzParameters.EncodingType, request.EncodingType.GetDisplayName());
+
         request.SetQueryParameter(AmzParameters.MaxKeys, request.MaxKeys);
         request.SetOptionalQueryParameter(AmzParameters.Prefix, request.Prefix);
         request.SetOptionalQueryParameter(AmzParameters.ContinuationToken, request.ContinuationToken);
