@@ -11,7 +11,7 @@ using Genbox.SimpleS3.Core.Internals.Builders;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
+namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
 //This benchmark tests against https://github.com/FantasticFiasco/aws-signature-version-4
 
@@ -30,7 +30,7 @@ public sealed class AwsSignatureVersion4Benchmarks : IDisposable
     {
         {
             IAccessKey credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
-            SimpleS3Config config = new SimpleS3Config(credentials, "eu1-region");
+            SimpleS3Config config = new SimpleS3Config(credentials, "http://domain/", "eu1-region");
 
             IOptions<SimpleS3Config> options = Options.Create(config);
 

@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Common.Helpers;
 
-namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
+namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
-[InProcess]
 [SuppressMessage("ReSharper", "ConvertToConstant.Local")]
 public class CharHelperBenchmarks
 {

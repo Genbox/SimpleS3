@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Internals.Network;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
+namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
 [MemoryDiagnoser]
 public class EndpointBuilderBenchmarks
@@ -17,11 +17,8 @@ public class EndpointBuilderBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        SimpleS3Config config = new SimpleS3Config(null!, "eu-west-1");
-        config.Endpoint = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
-
-        SimpleS3Config config2 = new SimpleS3Config(null!, "eu-west-1");
-        config2.Endpoint = "http://bucket.s3.eu-west-1.amazonaws.com";
+        SimpleS3Config config = new SimpleS3Config(null!, "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com", "eu-west-1");
+        SimpleS3Config config2 = new SimpleS3Config(null!, "http://bucket.s3.eu-west-1.amazonaws.com", "eu-west-1");
 
         _builder = new EndpointBuilder(Options.Create(config));
         _builder2 = new EndpointBuilder(Options.Create(config2));

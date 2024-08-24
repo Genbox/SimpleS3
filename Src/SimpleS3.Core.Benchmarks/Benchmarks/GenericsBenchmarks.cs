@@ -1,8 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Genbox.SimpleS3.Core.Benchmarks.ClrTests;
+namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
-[InProcess]
 public class GenericsBenchmarks
 {
     private static readonly IRequest _request = new TestRequest();

@@ -11,7 +11,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
+namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
 [MemoryDiagnoser]
 public class SignatureBenchmarks
@@ -25,7 +25,7 @@ public class SignatureBenchmarks
     public SignatureBenchmarks()
     {
         IAccessKey creds = new StringAccessKey("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
-        SimpleS3Config config = new SimpleS3Config(creds, "eu1-region");
+        SimpleS3Config config = new SimpleS3Config(creds,"", "eu1-region");
         config.PayloadSignatureMode = SignatureMode.FullSignature;
 
         IOptions<SimpleS3Config> options = Options.Create(config);

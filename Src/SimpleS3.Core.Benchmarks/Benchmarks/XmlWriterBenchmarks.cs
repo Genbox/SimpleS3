@@ -3,9 +3,8 @@ using System.Text;
 using System.Xml;
 using Genbox.SimpleS3.Core.Internals.Xml;
 
-namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
+namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
-[InProcess]
 [MemoryDiagnoser]
 public class XmlWriterBenchmarks
 {

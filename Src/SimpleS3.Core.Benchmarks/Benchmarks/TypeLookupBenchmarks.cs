@@ -1,6 +1,5 @@
-﻿namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
+﻿namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
-[InProcess]
 public class TypeLookupBenchmarks
 {
     private readonly HashSet<string> _stringDict = new HashSet<string>();

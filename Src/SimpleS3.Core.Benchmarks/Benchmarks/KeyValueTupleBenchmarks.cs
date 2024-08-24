@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
+namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
 [MemoryDiagnoser]
 public class KeyValueTupleBenchmarks

@@ -2,9 +2,8 @@
 using System.Text;
 using Genbox.SimpleS3.Core.Common.Pools;
 
-namespace Genbox.SimpleS3.Core.Benchmarks.Tests;
+namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
-[InProcess]
 public class StringBuilderBenchmarks
 {
     private const string _equalSign = "=";
