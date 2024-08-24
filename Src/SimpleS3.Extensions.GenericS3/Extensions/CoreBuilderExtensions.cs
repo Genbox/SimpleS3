@@ -18,10 +18,10 @@ public static class CoreBuilderExtensions
     {
         clientBuilder.Services.Configure(config);
 
-        return UseAmazonS3(clientBuilder);
+        return UseGenericS3(clientBuilder);
     }
 
-    public static ICoreBuilder UseAmazonS3(this ICoreBuilder clientBuilder)
+    public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder)
     {
         clientBuilder.Services.AddSingleton<IInputValidator, GenericS3InputValidator>();
 

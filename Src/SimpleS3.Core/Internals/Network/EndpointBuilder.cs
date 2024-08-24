@@ -23,7 +23,8 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
         if (request is IHasBucketName bucketRequest)
             bucket = bucketRequest.BucketName;
 
-        //Bucket is set
+        //We want to avoid all the string manipulation GetEndpointData does, so we cache the result here. However, if anything changed, we need to recalculate it.
+        //We don't check on endpoint as it can be a template and therefore will never match.
         if (_lastCache != null && _lastCache.Bucket == bucket && _lastCache.RegionCode == _config.RegionCode)
             return _lastCache;
 

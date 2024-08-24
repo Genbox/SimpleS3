@@ -38,7 +38,7 @@ public static class ServiceCollectionExtensions
     public static IClientBuilder AddGenericS3(this IServiceCollection collection)
     {
         ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(collection);
-        coreBuilder.UseAmazonS3();
+        coreBuilder.UseGenericS3();
 
         IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
         httpBuilder.UseRetryAndTimeout();
