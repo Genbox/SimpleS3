@@ -11,11 +11,7 @@ public class StaticCreatorTests
     {
         NullNetworkDriver driver = new NullNetworkDriver();
 
-        GenericS3Config config = new GenericS3Config();
-        config.Credentials = new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
-        config.Endpoint = "https://myendpoint.com";
-        config.RegionCode = "us-east-1";
-
+        GenericS3Config config = new GenericS3Config(new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"), "https://myendpoint.com", "us-east-1");
         using GenericS3Client client = new GenericS3Client(config, driver);
 
         await client.GetObjectAsync("testbucket", "GetObjectAsync");

@@ -7,18 +7,18 @@ namespace Genbox.SimpleS3.Core.Abstracts;
 [PublicAPI]
 public class SimpleS3Config
 {
-    public SimpleS3Config() {} //Needed for property mapper
+    public SimpleS3Config() {} //Needed for config binding
 
-    public SimpleS3Config(string providerName)
+    public SimpleS3Config(string providerName, string endpoint)
     {
         ProviderName = providerName;
+        Endpoint = endpoint;
     }
 
-    public SimpleS3Config(IAccessKey credentials, string region)
+    public SimpleS3Config(IAccessKey credentials, string endpoint, string regionCode) : this(string.Empty, endpoint) //Used internally
     {
         Credentials = credentials;
-        RegionCode = region;
-        ProviderName = string.Empty;
+        RegionCode = regionCode;
     }
 
     /// <summary>The credentials to use when communicating with S3.</summary>

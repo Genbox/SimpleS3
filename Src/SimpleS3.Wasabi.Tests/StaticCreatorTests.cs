@@ -1,4 +1,3 @@
-using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.Wasabi;
 
@@ -11,10 +10,7 @@ public class StaticCreatorTests
     {
         NullNetworkDriver driver = new NullNetworkDriver();
 
-        WasabiConfig config = new WasabiConfig();
-        config.Credentials = new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
-        config.Region = WasabiRegion.EuCentral1;
-
+        WasabiConfig config = new WasabiConfig("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", WasabiRegion.EuCentral1);
         using WasabiClient client = new WasabiClient(config, driver);
 
         await client.GetObjectAsync("testbucket", "GetObjectAsync");

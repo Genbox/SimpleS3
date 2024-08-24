@@ -12,23 +12,24 @@ namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage;
 [PublicAPI]
 public class GoogleCloudStorageConfig : SimpleS3Config
 {
-    private readonly IRegionConverter _converter = new RegionConverter(GoogleCloudStorageRegionData.Instance);
+    private static readonly IRegionConverter _converter = new RegionConverter(GoogleCloudStorageRegionData.Instance);
     private GoogleCloudStorageRegion _region;
 
-    public GoogleCloudStorageConfig() : base("GoogleCloudStorage")
+    public GoogleCloudStorageConfig() : base("GoogleCloudStorage", "{Scheme}://{Bucket:.}storage.googleapis.com")
     {
         //Google does not support chunked streaming uploads
         PayloadSignatureMode = SignatureMode.FullSignature;
-        Endpoint = "{Scheme}://{Bucket:.}storage.googleapis.com";
+    }
+
+    public GoogleCloudStorageConfig(IAccessKey credentials, string regionCode) : this()
+    {
+        Credentials = credentials;
+        RegionCode = regionCode;
     }
 
     public GoogleCloudStorageConfig(string keyId, string secretKey, GoogleCloudStorageRegion region) : this(new StringAccessKey(keyId, secretKey), region) {}
 
-    public GoogleCloudStorageConfig(IAccessKey credentials, GoogleCloudStorageRegion region) : this()
-    {
-        Credentials = credentials;
-        Region = region;
-    }
+    public GoogleCloudStorageConfig(IAccessKey credentials, GoogleCloudStorageRegion region) : this(credentials, _converter.GetRegion(region).Code) {}
 
     public GoogleCloudStorageRegion Region
     {
