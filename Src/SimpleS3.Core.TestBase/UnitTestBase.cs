@@ -38,7 +38,7 @@ public abstract class UnitTestBase : IDisposable
 
         ConfigureServices(collection);
 
-        Services = collection.BuildServiceProvider();
+        Services = collection.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
     }
 
     protected ServiceProvider Services { get; }

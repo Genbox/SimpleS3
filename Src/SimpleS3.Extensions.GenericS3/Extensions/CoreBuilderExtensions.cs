@@ -1,5 +1,6 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
+using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ public static class CoreBuilderExtensions
 
     public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder)
     {
+        clientBuilder.Services.AddSingleton<IRegionData, GenericS3RegionData>();
         clientBuilder.Services.AddSingleton<IInputValidator, GenericS3InputValidator>();
 
         clientBuilder.Services.PostConfigure<SimpleS3Config>((x, y) =>
