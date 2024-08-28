@@ -1,4 +1,5 @@
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -43,19 +44,22 @@ public static class CoreBuilderExtensions
                 client.DefaultRequestHeaders.TransferEncodingChunked = false;
             });
 
-            x.HttpHandlerActions.Add((provider, handler) =>
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Create("BROWSER")))
             {
-                IOptions<HttpClientFactoryConfig> opt = provider.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
-                HttpClientFactoryConfig config = opt.Value;
+                x.HttpHandlerActions.Add((provider, handler) =>
+                {
+                    IOptions<HttpClientFactoryConfig> opt = provider.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
+                    HttpClientFactoryConfig config = opt.Value;
 
-                handler.UseCookies = false;
-                handler.MaxAutomaticRedirections = 3;
-                handler.SslProtocols = SslProtocols.None; //Let the OS handle the protocol to use
-                handler.UseProxy = config.UseProxy;
+                    handler.UseCookies = false;
+                    handler.MaxAutomaticRedirections = 3;
+                    handler.SslProtocols = SslProtocols.None; //Let the OS handle the protocol to use
+                    handler.UseProxy = config.UseProxy;
 
-                if (config.Proxy != null)
-                    handler.Proxy = new WebProxy(config.Proxy);
-            });
+                    if (config.Proxy != null)
+                        handler.Proxy = new WebProxy(config.Proxy);
+                });
+            }
         });
 
         builder.Services.Configure<HttpClientFactoryOptions>(builder.Name, (options, services) =>
