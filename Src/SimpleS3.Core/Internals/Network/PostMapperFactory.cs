@@ -2,6 +2,8 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
+using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 
 namespace Genbox.SimpleS3.Core.Internals.Network;
 
@@ -14,9 +16,7 @@ internal sealed class PostMapperFactory : IPostMapperFactory
         _postMappers = postMappers.ToDictionary(x =>
         {
             Type type = x.GetType();
-            Type iType = type.GetInterfaces()[0];
-            Type[] args = iType.GetGenericArguments();
-
+            Type[] args = type.GetTypeArguments();
             return $"{args[0].Name}-{args[1].Name}";
         }, x => x, StringComparer.Ordinal);
     }

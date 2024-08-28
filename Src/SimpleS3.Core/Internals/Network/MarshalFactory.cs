@@ -22,18 +22,14 @@ internal sealed class MarshalFactory : IMarshalFactory
         _requestMarshals = requestMarshals.ToDictionary(x =>
         {
             Type type = x.GetType();
-            Type iType = type.GetInterfaces()[0];
-            Type[] args = iType.GetGenericArguments();
-
+            Type[] args = type.GetTypeArguments();
             return args[0];
         }, x => x);
 
         _responseMarshals = responseMarshals.ToDictionary(x =>
         {
             Type type = x.GetType();
-            Type iType = type.GetInterfaces()[0];
-            Type[] args = iType.GetGenericArguments();
-
+            Type[] args = type.GetTypeArguments();
             return args[0];
         }, x => x);
     }
