@@ -20,6 +20,12 @@ public enum GoogleCloudStorageRegion
     /// <summary>North America (Northern Virginia)</summary>
     UsEast4,
 
+    /// <summary>North America (Columbus)</summary>
+    UsEast5,
+
+    /// <summary>North America (Dallas)</summary>
+    UsSouth1,
+
     /// <summary>North America (Oregon)</summary>
     UsWest1,
 
@@ -41,6 +47,9 @@ public enum GoogleCloudStorageRegion
     /// <summary>Europe (Finland)</summary>
     EuropeNorth1,
 
+    /// <summary>Europe (Madrid)</summary>
+    EuropeSouthWest1,
+
     /// <summary>Europe (Belgium)</summary>
     EuropeWest1,
 
@@ -55,6 +64,18 @@ public enum GoogleCloudStorageRegion
 
     /// <summary>Europe (Zürich)</summary>
     EuropeWest6,
+
+    /// <summary>Europe (Milan)</summary>
+    EuropeWest8,
+
+    /// <summary>Europe (Paris)</summary>
+    EuropeWest9,
+
+    /// <summary>Europe (Berlin)</summary>
+    EuropeWest10,
+
+    /// <summary>Europe (Turin)</summary>
+    EuropeWest12,
 
     /// <summary>Asia (Taiwan)</summary>
     AsiaEast1,
@@ -87,5 +108,17 @@ public enum GoogleCloudStorageRegion
     AustraliaSouthEast1,
 
     /// <summary>Australia (Melbourne)</summary>
-    AustraliaSouthEast2
+    AustraliaSouthEast2,
+
+    /// <summary>Middle East (Doha)</summary>
+    MiddleEastCentral1,
+
+    /// <summary>Middle East (Dammam, Saudi Arabia)</summary>
+    MiddleEastCentral2,
+
+    /// <summary>Middle East (Tel Aviv)</summary>
+    MiddleEastWest1,
+
+    /// <summary>Africa (Johannesburg)</summary>
+    AfricaSouth1
 }
