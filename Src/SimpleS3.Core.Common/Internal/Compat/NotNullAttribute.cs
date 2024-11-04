@@ -4,8 +4,8 @@
 namespace System.Diagnostics.CodeAnalysis;
 
 [AttributeUsage(AttributeTargets.Parameter)]
-public sealed class DoesNotReturnIfAttribute : Attribute
+internal sealed class NotNullAttribute : Attribute
 {
-    public DoesNotReturnIfAttribute(bool notUsed) {}
+    public NotNullAttribute() {}
 }
 #endif
