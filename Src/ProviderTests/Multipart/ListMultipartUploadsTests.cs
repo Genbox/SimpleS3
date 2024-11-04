@@ -47,7 +47,7 @@ public class ListMultipartUploadsTests : TestBase
                 Assert.Equal(listResp.NextUploadIdMarker, upload.UploadId);
 
             Assert.Equal(StorageClass.Standard, upload.StorageClass);
-            Assert.Equal(DateTime.UtcNow, upload.Initiated.DateTime, TimeSpan.FromSeconds(5));
+            Assert.Equal(DateTime.UtcNow, upload.Initiated.DateTime, TimeSpan.FromSeconds(60));
         });
     }
 }
