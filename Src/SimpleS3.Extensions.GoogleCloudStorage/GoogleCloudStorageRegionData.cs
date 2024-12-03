@@ -23,7 +23,7 @@ public class GoogleCloudStorageRegionData : IRegionData
 
         //South America
         yield return new RegionInfo(GoogleCloudStorageRegion.SouthAmericaEast1, "SOUTHAMERICA-EAST1", "South America (São Paulo)");
-        yield return new RegionInfo(GoogleCloudStorageRegion.SouthAmericaEast1, "SOUTHAMERICA-WEST1", "South America (Santiago)");
+        yield return new RegionInfo(GoogleCloudStorageRegion.SouthAmericaWest1, "SOUTHAMERICA-WEST1", "South America (Santiago)");
 
         //Europe
         yield return new RegionInfo(GoogleCloudStorageRegion.EuropeCentral2, "EUROPE-CENTRAL2", "Europe (Warsaw)");

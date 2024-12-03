@@ -41,6 +41,9 @@ public enum GoogleCloudStorageRegion
     /// <summary>South America (São Paulo)</summary>
     SouthAmericaEast1,
 
+    /// <summary>South America (Santiago)</summary>
+    SouthAmericaWest1,
+
     /// <summary>Europe (Warsaw)</summary>
     EuropeCentral2,
 
