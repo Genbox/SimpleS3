@@ -82,9 +82,9 @@ public sealed class GoogleCloudStorageClient : ClientBase, ISimpleClient
 
     public Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(string bucketName, Action<PutPublicAccessBlockRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
 
-    public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
+    public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default) => Client.DeleteObjectAsync(bucketName, objectKey, config, token);
 
-    public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
+    public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default) => Client.DeleteObjectsAsync(bucketName, objectKeys, config, token);
 
     public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest>? config = null, CancellationToken token = default) => Client.HeadObjectAsync(bucketName, objectKey, config, token);
 
