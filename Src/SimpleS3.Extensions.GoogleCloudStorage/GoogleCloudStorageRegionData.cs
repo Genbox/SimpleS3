@@ -14,7 +14,7 @@ public class GoogleCloudStorageRegionData : IRegionData
         yield return new RegionInfo(GoogleCloudStorageRegion.UsCentral1, "US-CENTRAL1", "North America (Iowa)");
         yield return new RegionInfo(GoogleCloudStorageRegion.UsEast1, "US-EAST1", "North America (South Carolina)");
         yield return new RegionInfo(GoogleCloudStorageRegion.UsEast4, "US-EAST4", "North America (Northern Virginia)");
-        yield return new RegionInfo(GoogleCloudStorageRegion.UsEast5, "US-WEST1", "North America (Columbus)");
+        yield return new RegionInfo(GoogleCloudStorageRegion.UsEast5, "US-EAST5", "North America (Columbus)");
         yield return new RegionInfo(GoogleCloudStorageRegion.UsSouth1, "US-SOUTH1", "North America (Dallas)");
         yield return new RegionInfo(GoogleCloudStorageRegion.UsWest1, "US-WEST1", "North America (Oregon)");
         yield return new RegionInfo(GoogleCloudStorageRegion.UsWest2, "US-WEST2", "North America (Los Angeles)");
