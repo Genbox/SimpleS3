@@ -29,6 +29,15 @@ public class BucketPolicyTests : TestBase
                               }
                               """;
 
+            PutPublicAccessBlockResponse resp1 = await client.PutPublicAccessBlockAsync(tempBucket, request =>
+            {
+                request.BlockPublicAcls = false;
+                request.BlockPublicPolicy = false;
+                request.IgnorePublicAcls = false;
+                request.RestrictPublicBuckets = false;
+            });
+            Assert.True(resp1.IsSuccess);
+
             PutBucketPolicyResponse getResp = await client.PutBucketPolicyAsync(tempBucket, policy);
             Assert.Equal(204, getResp.StatusCode);
 
