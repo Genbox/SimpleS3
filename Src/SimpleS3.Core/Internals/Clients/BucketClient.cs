@@ -135,4 +135,28 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
 
         return operations.PutPublicAccessBlockAsync(request, token);
     }
+
+    public Task<GetBucketPolicyResponse> GetBucketPolicyAsync(string bucketName, Action<GetBucketPolicyRequest>? config = null, CancellationToken token = default)
+    {
+        GetBucketPolicyRequest request = new GetBucketPolicyRequest(bucketName);
+        config?.Invoke(request);
+
+        return operations.GetBucketPolicyAsync(request, token);
+    }
+
+    public Task<DeleteBucketPolicyResponse> DeleteBucketPolicyAsync(string bucketName, Action<DeleteBucketPolicyRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketPolicyRequest request = new DeleteBucketPolicyRequest(bucketName);
+        config?.Invoke(request);
+
+        return operations.DeleteBucketPolicyAsync(request, token);
+    }
+
+    public Task<PutBucketPolicyResponse> PutBucketPolicyAsync(string bucketName, string policy, Action<PutBucketPolicyRequest>? config = null, CancellationToken token = default)
+    {
+        PutBucketPolicyRequest request = new PutBucketPolicyRequest(bucketName, policy);
+        config?.Invoke(request);
+
+        return operations.PutBucketPolicyAsync(request, token);
+    }
 }

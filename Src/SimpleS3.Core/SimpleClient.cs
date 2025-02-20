@@ -86,6 +86,12 @@ public class SimpleClient : ISimpleClient
 
     public Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(string bucketName, Action<PutPublicAccessBlockRequest>? config = null, CancellationToken token = default) => _bucketClient.PutPublicAccessBlockAsync(bucketName, config, token);
 
+    public Task<GetBucketPolicyResponse> GetBucketPolicyAsync(string bucketName, Action<GetBucketPolicyRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketPolicyAsync(bucketName, config, token);
+
+    public Task<DeleteBucketPolicyResponse> DeleteBucketPolicyAsync(string bucketName, Action<DeleteBucketPolicyRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketPolicyAsync(bucketName, config, token);
+
+    public Task<PutBucketPolicyResponse> PutBucketPolicyAsync(string bucketName, string policy, Action<PutBucketPolicyRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketPolicyAsync(bucketName, policy, config, token);
+
     public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default) => _objectClient.DeleteObjectAsync(bucketName, objectKey, config, token);
 
     public Task<DeleteObjectsResponse> DeleteObjectsAsync(string bucketName, IEnumerable<S3DeleteInfo> objectKeys, Action<DeleteObjectsRequest>? config = null, CancellationToken token = default) => _objectClient.DeleteObjectsAsync(bucketName, objectKeys, config, token);

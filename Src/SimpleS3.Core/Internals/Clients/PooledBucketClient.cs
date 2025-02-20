@@ -215,4 +215,43 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
 
         Task<PutPublicAccessBlockResponse> ActionAsync(PutPublicAccessBlockRequest request) => BucketOperations.PutPublicAccessBlockAsync(request, token);
     }
+
+    public Task<GetBucketPolicyResponse> GetBucketPolicyAsync(string bucketName, Action<GetBucketPolicyRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<GetBucketPolicyRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
+        void Setup(GetBucketPolicyRequest req)
+        {
+            req.Initialize(bucketName);
+            config?.Invoke(req);
+        }
+
+        Task<GetBucketPolicyResponse> ActionAsync(GetBucketPolicyRequest request) => BucketOperations.GetBucketPolicyAsync(request, token);
+    }
+
+    public Task<DeleteBucketPolicyResponse> DeleteBucketPolicyAsync(string bucketName, Action<DeleteBucketPolicyRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<DeleteBucketPolicyRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
+        void Setup(DeleteBucketPolicyRequest req)
+        {
+            req.Initialize(bucketName);
+            config?.Invoke(req);
+        }
+
+        Task<DeleteBucketPolicyResponse> ActionAsync(DeleteBucketPolicyRequest request) => BucketOperations.DeleteBucketPolicyAsync(request, token);
+    }
+
+    public Task<PutBucketPolicyResponse> PutBucketPolicyAsync(string bucketName, string policy, Action<PutBucketPolicyRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<PutBucketPolicyRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
+        void Setup(PutBucketPolicyRequest req)
+        {
+            req.Initialize(bucketName, policy);
+            config?.Invoke(req);
+        }
+
+        Task<PutBucketPolicyResponse> ActionAsync(PutBucketPolicyRequest request) => BucketOperations.PutBucketPolicyAsync(request, token);
+    }
 }

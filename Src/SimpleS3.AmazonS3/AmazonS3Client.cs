@@ -39,7 +39,7 @@ public sealed class AmazonS3Client : ClientBase, ISimpleClient
     /// <param name="credentials">The credentials to use</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="networkConfig">Network configuration</param>
-    public AmazonS3Client(IAccessKey credentials, AmazonS3Region region, NetworkConfig? networkConfig = null) : this(new AmazonS3Config(credentials, region), networkConfig) {}
+    public AmazonS3Client(IAccessKey? credentials, AmazonS3Region region, NetworkConfig? networkConfig = null) : this(new AmazonS3Config(credentials, region), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="AmazonS3Client" /></summary>
     /// <param name="config">The configuration you want to use</param>
@@ -132,4 +132,10 @@ public sealed class AmazonS3Client : ClientBase, ISimpleClient
     public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest => Client.SignRequest(request, expiresIn);
 
     public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new() => Client.SendSignedRequestAsync<TResp>(url, httpMethod, content, token);
+
+    public Task<GetBucketPolicyResponse> GetBucketPolicyAsync(string bucketName, Action<GetBucketPolicyRequest>? config = null, CancellationToken token = default) => Client.GetBucketPolicyAsync(bucketName, config, token);
+
+    public Task<DeleteBucketPolicyResponse> DeleteBucketPolicyAsync(string bucketName, Action<DeleteBucketPolicyRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketPolicyAsync(bucketName, config, token);
+
+    public Task<PutBucketPolicyResponse> PutBucketPolicyAsync(string bucketName, string policy, Action<PutBucketPolicyRequest>? config = null, CancellationToken token = default) => Client.PutBucketPolicyAsync(bucketName, policy, config, token);
 }

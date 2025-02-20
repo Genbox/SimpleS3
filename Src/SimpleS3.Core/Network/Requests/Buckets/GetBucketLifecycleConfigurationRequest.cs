@@ -13,19 +13,10 @@ public class GetBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
         Initialize(bucketName);
     }
 
-    /// <summary>The account id of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP 403 (Access Denied) error.</summary>
-    public string? ExpectedBucketOwner { get; set; }
-
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)
     {
         BucketName = bucketName;
-    }
-
-    public override void Reset()
-    {
-        ExpectedBucketOwner = null;
-        base.Reset();
     }
 }

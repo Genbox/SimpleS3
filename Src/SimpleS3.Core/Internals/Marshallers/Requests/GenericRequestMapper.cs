@@ -141,5 +141,8 @@ internal static class GenericRequestMapper
 
         if (req is IHasWebsiteRedirect hasWebsiteRedirect && !disabledFor(typeof(IHasWebsiteRedirect)))
             req.SetOptionalHeader(AmzHeaders.XAmzWebsiteRedirectLocation, hasWebsiteRedirect.WebsiteRedirectLocation);
+
+        if (req is IHasExpectedBucketOwner expectedBucketOwner && expectedBucketOwner.ExpectedBucketOwner != null)
+            req.SetHeader(AmzHeaders.XAmzExpectedBucketOwner, expectedBucketOwner.ExpectedBucketOwner);
     }
 }

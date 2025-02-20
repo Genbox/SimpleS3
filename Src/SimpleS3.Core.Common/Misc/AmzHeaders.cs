@@ -93,4 +93,12 @@ public static class AmzHeaders
     public const string XAmzCopySourceVersionId = "x-amz-copy-source-version-id";
 
     #endregion
+
+    #region Buckets
+
+    public const string XAmzSdkCheckumAlgorithm = "x-amz-sdk-checksum-algorithm";
+    public const string XAmzConfirmRemoveSelfBucketAccess = "x-amz-confirm-remove-self-bucket-access";
+    public const string XAmzExpectedBucketOwner = "x-amz-expected-bucket-owner";
+
+    #endregion
 }

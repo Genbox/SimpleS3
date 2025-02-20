@@ -2,10 +2,11 @@
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Internals.Pools;
+using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests;
 
-public abstract class BaseRequest(HttpMethodType method) : IRequest, IPooledObject
+public abstract class BaseRequest(HttpMethodType method) : IRequest, IPooledObject, IHasExpectedBucketOwner
 {
     private readonly Dictionary<string, string> _headers = new Dictionary<string, string>(StringComparer.Ordinal);
     private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -14,6 +15,7 @@ public abstract class BaseRequest(HttpMethodType method) : IRequest, IPooledObje
     {
         _headers.Clear();
         _queryParameters.Clear();
+        ExpectedBucketOwner = null;
     }
 
     public Guid RequestId { get; set; }
@@ -33,4 +35,6 @@ public abstract class BaseRequest(HttpMethodType method) : IRequest, IPooledObje
         Debug.Assert(!key.Any(char.IsUpper), "There was an uppercase character in the header: " + key);
         _headers[key] = value;
     }
+
+    public string? ExpectedBucketOwner { get; set; }
 }

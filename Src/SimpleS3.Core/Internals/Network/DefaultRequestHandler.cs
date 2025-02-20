@@ -90,7 +90,8 @@ internal sealed class DefaultRequestHandler : IRequestHandler
         _logger.LogDebug("ContentSha256 is {ContentSha256}", contentHash);
 
         //We add the authorization header here because we need ALL other headers to be present when we do
-        _authBuilder.BuildAuthorization(request);
+        if (_config.Credentials != null)
+            _authBuilder.BuildAuthorization(request);
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
         sb.Append(endpointData.Endpoint);

@@ -136,4 +136,10 @@ public sealed class GenericS3Client : ClientBase, ISimpleClient
     public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest => Client.SignRequest(request, expiresIn);
 
     public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new() => Client.SendSignedRequestAsync<TResp>(url, httpMethod, content, token);
+
+    public Task<GetBucketPolicyResponse> GetBucketPolicyAsync(string bucketName, Action<GetBucketPolicyRequest>? config = null, CancellationToken token = default) => Client.GetBucketPolicyAsync(bucketName, config, token);
+
+    public Task<DeleteBucketPolicyResponse> DeleteBucketPolicyAsync(string bucketName, Action<DeleteBucketPolicyRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketPolicyAsync(bucketName, config, token);
+
+    public Task<PutBucketPolicyResponse> PutBucketPolicyAsync(string bucketName, string policy, Action<PutBucketPolicyRequest>? config = null, CancellationToken token = default) => Client.PutBucketPolicyAsync(bucketName, policy, config, token);
 }
