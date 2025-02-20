@@ -39,7 +39,7 @@ public sealed class BackBlazeB2Client : ClientBase, ISimpleClient
     /// <param name="credentials">The credentials to use</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="networkConfig">Network configuration</param>
-    public BackBlazeB2Client(IAccessKey credentials, BackBlazeB2Region region, NetworkConfig? networkConfig = null) : this(new BackBlazeB2Config(credentials, region), networkConfig) {}
+    public BackBlazeB2Client(IAccessKey? credentials, BackBlazeB2Region region, NetworkConfig? networkConfig = null) : this(new BackBlazeB2Config(credentials, region), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="BackBlazeB2Client" /></summary>
     /// <param name="config">The configuration you want to use</param>

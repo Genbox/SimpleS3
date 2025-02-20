@@ -48,6 +48,9 @@ internal sealed class DefaultSignedRequestHandler : ISignedRequestHandler
 
     public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest
     {
+        if (_config.Credentials == null)
+            throw new InvalidOperationException("You cannot pre-sign requests without first providing credentials");
+
         request.Timestamp = DateTimeOffset.UtcNow;
         request.RequestId = Guid.NewGuid();
 

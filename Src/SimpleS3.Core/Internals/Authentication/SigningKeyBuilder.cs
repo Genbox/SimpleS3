@@ -3,6 +3,7 @@ using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Misc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -36,6 +37,7 @@ internal sealed class SigningKeyBuilder : ISigningKeyBuilder
 
     public byte[] CreateSigningKey(DateTimeOffset dateTime)
     {
+        Validator.RequireNotNull(_config.Credentials, "If we get to this point, we expect to have valid credentials");
         _logger.LogTrace("Creating key created on {DateTime}", dateTime);
 
         //https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html

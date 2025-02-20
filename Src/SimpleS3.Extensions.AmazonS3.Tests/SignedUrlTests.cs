@@ -53,7 +53,7 @@ public class SignedUrlTests
         GetObjectRequest request = new GetObjectRequest("examplebucket", "test.txt");
         request.SetHeader("host", "examplebucket.s3.amazonaws.com");
         request.SetQueryParameter(AmzParameters.XAmzAlgorithm, SigningConstants.AlgorithmTag);
-        request.SetQueryParameter(AmzParameters.XAmzCredential, _options.Credentials.KeyId + '/' + scope);
+        request.SetQueryParameter(AmzParameters.XAmzCredential, _options.Credentials!.KeyId + '/' + scope);
         request.SetQueryParameter(AmzParameters.XAmzDate, _testDate.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
         request.SetQueryParameter(AmzParameters.XAmzExpires, "86400");
         request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, "host");

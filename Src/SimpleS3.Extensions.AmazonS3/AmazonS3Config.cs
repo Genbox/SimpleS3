@@ -13,14 +13,14 @@ public class AmazonS3Config() : SimpleS3Config("AmazonS3", "{Scheme}://{Bucket:.
     private static readonly RegionConverter _converter = new RegionConverter(AmazonS3RegionData.Instance);
     private AmazonS3Region _region;
 
-    public AmazonS3Config(IAccessKey credentials, string regionCode) : this()
+    public AmazonS3Config(IAccessKey? credentials, string regionCode) : this()
     {
         Credentials = credentials;
         RegionCode = regionCode;
     }
 
     public AmazonS3Config(string keyId, string secretKey, AmazonS3Region region) : this(new StringAccessKey(keyId, secretKey), region) {}
-    public AmazonS3Config(IAccessKey credentials, AmazonS3Region region) : this(credentials, _converter.GetRegion(region).Code) {}
+    public AmazonS3Config(IAccessKey? credentials, AmazonS3Region region) : this(credentials, _converter.GetRegion(region).Code) {}
 
     public AmazonS3Region Region
     {

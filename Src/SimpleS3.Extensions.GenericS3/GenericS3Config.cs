@@ -13,7 +13,7 @@ public class GenericS3Config() : SimpleS3Config("GenericS3", string.Empty) //Nee
         Endpoint = endpoint;
     }
 
-    public GenericS3Config(IAccessKey credentials, string endpoint, string regionCode) : this(endpoint)
+    public GenericS3Config(IAccessKey? credentials, string endpoint, string regionCode) : this(endpoint)
     {
         Credentials = credentials;
         RegionCode = regionCode;

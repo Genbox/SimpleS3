@@ -21,7 +21,7 @@ public class GoogleCloudStorageConfig : SimpleS3Config
         PayloadSignatureMode = SignatureMode.FullSignature;
     }
 
-    public GoogleCloudStorageConfig(IAccessKey credentials, string regionCode) : this()
+    public GoogleCloudStorageConfig(IAccessKey? credentials, string regionCode) : this()
     {
         Credentials = credentials;
         RegionCode = regionCode;
@@ -29,7 +29,7 @@ public class GoogleCloudStorageConfig : SimpleS3Config
 
     public GoogleCloudStorageConfig(string keyId, string secretKey, GoogleCloudStorageRegion region) : this(new StringAccessKey(keyId, secretKey), region) {}
 
-    public GoogleCloudStorageConfig(IAccessKey credentials, GoogleCloudStorageRegion region) : this(credentials, _converter.GetRegion(region).Code) {}
+    public GoogleCloudStorageConfig(IAccessKey? credentials, GoogleCloudStorageRegion region) : this(credentials, _converter.GetRegion(region).Code) {}
 
     public GoogleCloudStorageRegion Region
     {

@@ -39,7 +39,7 @@ public sealed class WasabiClient : ClientBase, ISimpleClient
     /// <param name="credentials">The credentials to use</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="networkConfig">Network configuration</param>
-    public WasabiClient(IAccessKey credentials, WasabiRegion region, NetworkConfig? networkConfig = null) : this(new WasabiConfig(credentials, region), networkConfig) {}
+    public WasabiClient(IAccessKey? credentials, WasabiRegion region, NetworkConfig? networkConfig = null) : this(new WasabiConfig(credentials, region), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="WasabiClient" /></summary>
     /// <param name="config">The configuration you want to use</param>

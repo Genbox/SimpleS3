@@ -39,7 +39,7 @@ public sealed class GoogleCloudStorageClient : ClientBase, ISimpleClient
     /// <param name="credentials">The credentials to use</param>
     /// <param name="region">The region you wish to use</param>
     /// <param name="networkConfig">Network configuration</param>
-    public GoogleCloudStorageClient(IAccessKey credentials, GoogleCloudStorageRegion region, NetworkConfig? networkConfig = null) : this(new GoogleCloudStorageConfig(credentials, region), networkConfig) {}
+    public GoogleCloudStorageClient(IAccessKey? credentials, GoogleCloudStorageRegion region, NetworkConfig? networkConfig = null) : this(new GoogleCloudStorageConfig(credentials, region), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="GoogleCloudStorageClient" /></summary>
     /// <param name="config">The configuration you want to use</param>

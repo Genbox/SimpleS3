@@ -14,7 +14,7 @@ public class BackBlazeB2Config() : SimpleS3Config("BackBlazeB2", "{Scheme}://{Bu
     private static readonly IRegionConverter _converter = new RegionConverter(BackblazeB2RegionData.Instance);
     private BackBlazeB2Region _region;
 
-    public BackBlazeB2Config(IAccessKey credentials, string regionCode) : this()
+    public BackBlazeB2Config(IAccessKey? credentials, string regionCode) : this()
     {
         Credentials = credentials;
         RegionCode = regionCode;
@@ -22,7 +22,7 @@ public class BackBlazeB2Config() : SimpleS3Config("BackBlazeB2", "{Scheme}://{Bu
 
     public BackBlazeB2Config(string keyId, string secretKey, BackBlazeB2Region region) : this(new StringAccessKey(keyId, secretKey), region) {}
 
-    public BackBlazeB2Config(IAccessKey credentials, BackBlazeB2Region region) : this(credentials, _converter.GetRegion(region).Code) {}
+    public BackBlazeB2Config(IAccessKey? credentials, BackBlazeB2Region region) : this(credentials, _converter.GetRegion(region).Code) {}
 
     public BackBlazeB2Region Region
     {

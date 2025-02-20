@@ -15,14 +15,14 @@ public class SimpleS3Config
         Endpoint = endpoint;
     }
 
-    public SimpleS3Config(IAccessKey credentials, string endpoint, string regionCode) : this(string.Empty, endpoint) //Used internally
+    public SimpleS3Config(IAccessKey? credentials, string endpoint, string regionCode) : this(string.Empty, endpoint) //Used internally
     {
         Credentials = credentials;
         RegionCode = regionCode;
     }
 
     /// <summary>The credentials to use when communicating with S3.</summary>
-    public IAccessKey Credentials { get; set; }
+    public IAccessKey? Credentials { get; set; }
 
     /// <summary>
     /// There are 3 different signing modes: 1. Unsigned - means the request will be sent without a signature at all. 2. FullSignature - Means the full payload will be hashed

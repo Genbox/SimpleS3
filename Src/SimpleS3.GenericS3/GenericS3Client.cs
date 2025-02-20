@@ -42,7 +42,7 @@ public sealed class GenericS3Client : ClientBase, ISimpleClient
     /// <param name="endpoint">The endpoint you wish to use</param>
     /// <param name="regionCode">The region code to use</param>
     /// <param name="networkConfig">Network configuration</param>
-    public GenericS3Client(IAccessKey credentials, string endpoint, string regionCode, NetworkConfig? networkConfig = null) : this(new GenericS3Config(credentials, endpoint, regionCode), networkConfig) {}
+    public GenericS3Client(IAccessKey? credentials, string endpoint, string regionCode, NetworkConfig? networkConfig = null) : this(new GenericS3Config(credentials, endpoint, regionCode), networkConfig) {}
 
     /// <summary>Creates a new instance of <see cref="GenericS3Client" /></summary>
     /// <param name="config">The configuration you want to use</param>

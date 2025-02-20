@@ -29,6 +29,7 @@ internal sealed class HeaderAuthorizationBuilder(IOptions<SimpleS3Config> option
 
     internal string BuildInternal(DateTimeOffset date, IReadOnlyDictionary<string, string> headers, byte[] signature)
     {
+        Validator.RequireNotNull(_config.Credentials, "If we get to this point, we expect to have valid credentials");
         logger.LogTrace("Building header based authorization");
 
         string scope = scopeBuilder.CreateScope("s3", date);

@@ -12,7 +12,7 @@ public class WasabiConfig() : SimpleS3Config("Wasabi", "{Scheme}://{Bucket:.}s3.
     private static readonly IRegionConverter _converter = new RegionConverter(WasabiRegionData.Instance);
     private WasabiRegion _region;
 
-    public WasabiConfig(IAccessKey credentials, string regionCode) : this()
+    public WasabiConfig(IAccessKey? credentials, string regionCode) : this()
     {
         Credentials = credentials;
         RegionCode = regionCode;
@@ -20,7 +20,7 @@ public class WasabiConfig() : SimpleS3Config("Wasabi", "{Scheme}://{Bucket:.}s3.
 
     public WasabiConfig(string keyId, string secretKey, WasabiRegion region) : this(new StringAccessKey(keyId, secretKey), region) {}
 
-    public WasabiConfig(IAccessKey credentials, WasabiRegion region) : this(credentials, _converter.GetRegion(region).Code) {}
+    public WasabiConfig(IAccessKey? credentials, WasabiRegion region) : this(credentials, _converter.GetRegion(region).Code) {}
 
     public WasabiRegion Region
     {
