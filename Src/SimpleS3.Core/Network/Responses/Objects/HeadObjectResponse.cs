@@ -45,4 +45,8 @@ public class HeadObjectResponse : BaseResponse, IHasMetadata, IHasReplicationSta
     /// another object in the same bucket or an external URL.
     /// </summary>
     public string? WebsiteRedirectLocation { get; internal set; }
+
+    public ChecksumType ChecksumType { get; internal set; }
+    public ChecksumAlgorithm ChecksumAlgorithm { get; internal set; }
+    public byte[]? Checksum { get; internal set; }
 }

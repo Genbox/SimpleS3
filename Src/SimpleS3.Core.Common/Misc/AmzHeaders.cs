@@ -37,6 +37,17 @@ public static class AmzHeaders
     public const string XAmzVersionId = "x-amz-version-id";
     public const string XAmzExpiration = "x-amz-expiration";
 
+    public const string XAmzChecksumType = "x-amz-checksum-type";
+    public const string XAmzChecksumMode = "x-amz-checksum-mode";
+
+    public const string XAmzChecksumAlgorithm = "x-amz-checksum-algorithm";
+    public const string XAmzChecksum = "x-amz-checksum-"; //Needs to be combined with XAmzChecksumAlgorithm
+    public const string XAmzChecksumCrc32 = "x-amz-checksum-crc32";
+    public const string XAmzChecksumCrc32C = "x-amz-checksum-crc32c";
+    public const string XAmzChecksumCrc64Nvme = "x-amz-checksum-crc64nvme";
+    public const string XAmzChecksumSha1 = "x-amz-checksum-sha1";
+    public const string XAmzChecksumSha256 = "x-amz-checksum-sha256";
+
     #endregion
 
     #region ServerSideEncryption

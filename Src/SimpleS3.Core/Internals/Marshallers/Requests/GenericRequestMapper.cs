@@ -144,5 +144,17 @@ internal static class GenericRequestMapper
 
         if (req is IHasExpectedBucketOwner expectedBucketOwner && expectedBucketOwner.ExpectedBucketOwner != null)
             req.SetHeader(AmzHeaders.XAmzExpectedBucketOwner, expectedBucketOwner.ExpectedBucketOwner);
+
+        if (req is IHasChecksum checksum)
+        {
+            if (checksum.ChecksumType != ChecksumType.Unknown)
+                req.SetHeader(AmzHeaders.XAmzChecksumType, checksum.ChecksumType.GetDisplayName());
+
+            if (checksum.ChecksumAlgorithm != ChecksumAlgorithm.Unknown)
+                req.SetHeader(AmzHeaders.XAmzChecksumAlgorithm, checksum.ChecksumAlgorithm.GetDisplayName());
+        }
+
+        if (req is IHasChecksumProperties checksumProps && checksumProps.ChecksumAlgorithm != ChecksumAlgorithm.Unknown && checksumProps.Checksum != null)
+            req.SetHeader(AmzHeaders.XAmzChecksum + checksumProps.ChecksumAlgorithm.ToString().ToLowerInvariant(), Convert.ToBase64String(checksumProps.Checksum));
     }
 }

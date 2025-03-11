@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
-public class S3Version(string objectKey, string? versionId, bool isLatest, DateTimeOffset lastModified, string etag, int size, S3Identity? owner, StorageClass storageClass) : IHasObjectKey, IHasVersionId
+public class S3Version(string objectKey, string? versionId, bool isLatest, DateTimeOffset lastModified, string etag, int size, S3Identity? owner, StorageClass storageClass, ChecksumAlgorithm checksumAlgorithm, ChecksumType checksumType) : IHasObjectKey, IHasVersionId
 {
     public string Etag { get; } = etag;
     public bool IsLatest { get; } = isLatest;
@@ -14,4 +14,7 @@ public class S3Version(string objectKey, string? versionId, bool isLatest, DateT
     public StorageClass StorageClass { get; } = storageClass;
     public string ObjectKey { get; internal set; } = objectKey;
     public string? VersionId { get; } = versionId;
+    public ChecksumAlgorithm ChecksumAlgorithm { get; } = checksumAlgorithm;
+    public ChecksumType ChecksumType { get; } = checksumType;
+    public override string ToString() => ObjectKey;
 }

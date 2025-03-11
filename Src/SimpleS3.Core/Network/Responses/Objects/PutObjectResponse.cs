@@ -17,4 +17,7 @@ public class PutObjectResponse : BaseResponse, IHasExpiresOn, IHasETag, IHasSse,
     public byte[]? SseCustomerKeyMd5 { get; internal set; }
     public StorageClass StorageClass { get; internal set; }
     public string? VersionId { get; internal set; }
+    public ChecksumType ChecksumType { get; internal set; }
+    public ChecksumAlgorithm ChecksumAlgorithm { get; internal set; }
+    public byte[]? Checksum { get; internal set; }
 }

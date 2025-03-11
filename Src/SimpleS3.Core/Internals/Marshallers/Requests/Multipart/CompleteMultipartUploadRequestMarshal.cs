@@ -1,6 +1,7 @@
 using System.Globalization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -18,8 +19,11 @@ internal sealed class CompleteMultipartUploadRequestMarshal : IRequestMarshal<Co
         foreach (S3PartInfo partInfo in request.UploadParts)
         {
             xml.WriteStartElement("Part");
-            xml.WriteElement("ETag", partInfo.ETag.Trim('"'));
 
+            if (partInfo.Checksum != null)
+                xml.WriteElement("Checksum" + partInfo.ChecksumAlgorithm.GetDisplayName(), Convert.ToBase64String(partInfo.Checksum));
+
+            xml.WriteElement("ETag", partInfo.ETag.Trim('"'));
             xml.WriteElement("PartNumber", partInfo.PartNumber.ToString(NumberFormatInfo.InvariantInfo));
             xml.WriteEndElement("Part");
         }

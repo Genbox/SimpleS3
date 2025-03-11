@@ -84,6 +84,8 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
         long? size = null;
         StorageClass storageClass = StorageClass.Unknown;
         S3Identity? owner = null;
+        ChecksumAlgorithm checksumAlgorithm = ChecksumAlgorithm.Unknown;
+        ChecksumType checksumType = ChecksumType.Unknown;
 
         foreach (string name in XmlHelper.ReadElements(xmlReader, "Contents"))
         {
@@ -107,13 +109,19 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
                 case "Owner":
                     owner = ParserHelper.ParseOwner(xmlReader);
                     break;
+                case "ChecksumAlgorithm":
+                    checksumAlgorithm = Core.Enums.Enums.ChecksumAlgorithm.Parse(xmlReader.ReadString(), ChecksumAlgorithmFormat.DisplayName);
+                    break;
+                case "ChecksumType":
+                    checksumType = Core.Enums.Enums.ChecksumType.Parse(xmlReader.ReadString(), ChecksumTypeFormat.DisplayName);
+                    break;
             }
         }
 
         if (key == null || lastModified == null || size == null)
             throw new InvalidOperationException("Missing required values");
 
-        response.Objects.Add(new S3Object(key, lastModified.Value, size.Value, owner, eTag, storageClass));
+        response.Objects.Add(new S3Object(key, lastModified.Value, size.Value, owner, eTag, storageClass, checksumAlgorithm, checksumType));
     }
 
     private static void ReadCommonPrefixes(ListObjectsResponse response, XmlReader xmlReader)

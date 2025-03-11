@@ -102,6 +102,8 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
         int size = -1;
         StorageClass storageClass = StorageClass.Unknown;
         S3Identity? owner = null;
+        ChecksumAlgorithm checksumAlgorithm = ChecksumAlgorithm.Unknown;
+        ChecksumType checksumType = ChecksumType.Unknown;
 
         foreach (string name in XmlHelper.ReadElements(xmlReader, "Version"))
         {
@@ -131,13 +133,19 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
                 case "Owner":
                     owner = ParserHelper.ParseOwner(xmlReader);
                     break;
+                case "ChecksumAlgorithm":
+                    checksumAlgorithm = Core.Enums.Enums.ChecksumAlgorithm.Parse(xmlReader.ReadString(), ChecksumAlgorithmFormat.DisplayName);
+                    break;
+                case "ChecksumType":
+                    checksumType = Core.Enums.Enums.ChecksumType.Parse(xmlReader.ReadString(), ChecksumTypeFormat.DisplayName);
+                    break;
             }
         }
 
         if (objectKey == null || isLatest == null || lastModified == null || etag == null || size == -1)
             throw new InvalidOperationException("Missing required values");
 
-        return new S3Version(objectKey, versionId, isLatest.Value, lastModified.Value, etag, size, owner, storageClass);
+        return new S3Version(objectKey, versionId, isLatest.Value, lastModified.Value, etag, size, owner, storageClass, checksumAlgorithm, checksumType);
     }
 
     private static S3DeleteMarker ParseDeleteMarker(XmlReader xmlReader)

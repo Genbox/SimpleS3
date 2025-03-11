@@ -10,6 +10,7 @@ using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -190,10 +191,30 @@ internal sealed class Upload : IUpload
 
     public Task<CompleteMultipartUploadResponse> UploadMultipartAsync(Stream data, CancellationToken token = default)
     {
-        _request.Method = HttpMethodType.POST;
-        _request.Content = null;
+        //Create a request and copy over all the supported properties
+        CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(_request.BucketName, _request.ObjectKey);
+        req.CacheControl = _request.CacheControl;
+        req.ContentDisposition = _request.ContentDisposition;
+        req.ContentType = _request.ContentType;
+        req.ContentEncoding = _request.ContentEncoding;
+        req.SseAlgorithm = _request.SseAlgorithm;
+        req.SseKmsKeyId = _request.SseKmsKeyId;
+        req.SseCustomerAlgorithm = _request.SseCustomerAlgorithm;
+        req.SseCustomerKey = _request.SseCustomerKey;
+        req.SseCustomerKeyMd5 = _request.SseCustomerKeyMd5;
+        req.Metadata = _request.Metadata;
+        req.StorageClass = _request.StorageClass;
+        req.Tags = _request.Tags;
+        req.Acl = _request.Acl;
+        req.AclGrantRead = _request.AclGrantRead;
+        req.AclGrantReadAcp = _request.AclGrantReadAcp;
+        req.AclGrantWriteAcp = _request.AclGrantWriteAcp;
+        req.AclGrantFullControl = _request.AclGrantFullControl;
+        req.LockMode = _request.LockMode;
+        req.LockRetainUntil = _request.LockRetainUntil;
+        req.LockLegalHold = _request.LockLegalHold;
 
-        return _multipartTransfer.MultipartUploadAsync(_request, data, token: token);
+        return _multipartTransfer.MultipartUploadAsync(req, data, token: token);
     }
 
     public Task<PutObjectResponse> UploadAsync(Stream? data, CancellationToken token = default)

@@ -50,7 +50,40 @@ internal sealed class CompleteMultipartUploadResponseMarshal : IResponseMarshal<
                 case "ETag":
                     response.ETag = xmlReader.ReadString();
                     break;
+                case "ChecksumType":
+                    response.ChecksumType = Core.Enums.Enums.ChecksumType.Parse(xmlReader.ReadString(), ChecksumTypeFormat.DisplayName);
+                    break;
+                case "ChecksumCRC32":
+                    response.ChecksumAlgorithm = ChecksumAlgorithm.Crc32;
+                    response.Checksum = ParseHash(xmlReader.ReadString());
+                    break;
+                case "ChecksumCRC32C":
+                    response.ChecksumAlgorithm = ChecksumAlgorithm.Crc32C;
+                    response.Checksum = ParseHash(xmlReader.ReadString());
+                    break;
+                case "ChecksumCRC64NVME":
+                    response.ChecksumAlgorithm = ChecksumAlgorithm.Crc64Nvme;
+                    response.Checksum = ParseHash(xmlReader.ReadString());
+                    break;
+                case "ChecksumSHA1":
+                    response.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
+                    response.Checksum = ParseHash(xmlReader.ReadString());
+                    break;
+                case "ChecksumSHA256":
+                    response.ChecksumAlgorithm = ChecksumAlgorithm.Sha256;
+                    response.Checksum = ParseHash(xmlReader.ReadString());
+                    break;
             }
         }
+    }
+
+    private static byte[] ParseHash(string input)
+    {
+        int idx = input.IndexOf('-');
+
+        if (idx >= 0)
+            input = input.Substring(0, idx);
+
+        return Convert.FromBase64String(input);
     }
 }

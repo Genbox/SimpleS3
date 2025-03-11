@@ -8,7 +8,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Requests.Multipart;
 
 /// <summary>This operation uploads a part in a multipart upload.</summary>
-public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5, ISupportStreaming, IHasUploadId, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasPartNumber, IHasContent
+public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5, ISupportStreaming, IHasUploadId, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasPartNumber, IHasContent, IHasChecksumProperties
 {
     private byte[]? _sseCustomerKey;
 
@@ -46,6 +46,9 @@ public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5
 
     public string UploadId { get; set; } = null!;
 
+    public ChecksumAlgorithm ChecksumAlgorithm { get; set; }
+    public byte[]? Checksum { get; set; }
+
     internal void Initialize(string bucketName, string objectKey, string uploadId, int partNumber, Stream? content)
     {
         if (partNumber is <= 0 or > 10_000)
@@ -66,6 +69,8 @@ public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5
         RequestPayer = Payer.Unknown;
         SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
         SseCustomerKeyMd5 = null;
+        ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
+        Checksum = null;
 
         base.Reset();
     }

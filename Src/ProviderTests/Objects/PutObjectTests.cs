@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Security.Cryptography;
 using Genbox.HttpBuilders.Enums;
 using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -338,5 +339,29 @@ public class PutObjectTests : TestBase
         GetObjectResponse resp = await client.GetObjectAsync(bucket, nameof(PutObjectWebsiteRedirect));
         Assert.Equal(200, resp.StatusCode);
         Assert.Equal("https://google.com", resp.WebsiteRedirectLocation);
+    }
+
+    [Theory]
+    [MultipleProviders(S3Provider.AmazonS3)]
+    public async Task PutObjectChecksum(S3Provider _, string bucket, ISimpleClient client)
+    {
+        byte[] data = [1, 2, 3, 4];
+        byte[] checksum = SHA1.HashData(data);
+
+        PutObjectResponse putResp = await client.PutObjectDataAsync(bucket, nameof(PutObjectChecksum), data, r =>
+        {
+            r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
+            r.Checksum = checksum;
+        });
+
+        Assert.Equal(200, putResp.StatusCode);
+        Assert.Equal(checksum, putResp.Checksum);
+        Assert.Equal(ChecksumType.FullObject, putResp.ChecksumType);
+
+        GetObjectResponse resp = await client.GetObjectAsync(bucket, nameof(PutObjectChecksum), r => r.EnableChecksum = true);
+        Assert.Equal(200, resp.StatusCode);
+        Assert.Equal(ChecksumType.FullObject, resp.ChecksumType);
+        Assert.Equal(ChecksumAlgorithm.Sha1, resp.ChecksumAlgorithm);
+        Assert.Equal(checksum, resp.Checksum);
     }
 }

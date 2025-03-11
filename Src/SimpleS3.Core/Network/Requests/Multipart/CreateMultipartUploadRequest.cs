@@ -13,13 +13,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart;
 /// this upload ID in each of your subsequent upload part requests (see Upload Part). You also include this upload ID in the final request to either complete or abort the multipart
 /// upload request.
 /// </summary>
-public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsiteRedirect, IHasMetadata, IHasTags, IHasLegalHold
+public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsiteRedirect, IHasMetadata, IHasTags, IHasLegalHold, IHasChecksum
 {
     private byte[]? _sseCustomerKey;
 
-    internal CreateMultipartUploadRequest() : this(HttpMethodType.POST) {}
-
-    internal CreateMultipartUploadRequest(HttpMethodType method) : base(method)
+    internal CreateMultipartUploadRequest() : base(HttpMethodType.POST)
     {
         Tags = new TagBuilder();
         Metadata = new MetadataBuilder();
@@ -81,6 +79,9 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
     public TagBuilder Tags { get; internal set; }
     public string? WebsiteRedirectLocation { get; set; }
 
+    public ChecksumAlgorithm ChecksumAlgorithm { get; set; }
+    public ChecksumType ChecksumType { get; set; }
+
     internal void Initialize(string bucketName, string objectKey)
     {
         BucketName = bucketName;
@@ -114,6 +115,8 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
         SseCustomerKeyMd5 = null;
         WebsiteRedirectLocation = null;
         StorageClass = StorageClass.Unknown;
+        ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
+        ChecksumType = ChecksumType.Unknown;
 
         base.Reset();
     }

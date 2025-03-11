@@ -1,6 +1,8 @@
-﻿using Genbox.HttpBuilders.Enums;
+﻿using System.Security.Cryptography;
+using Genbox.HttpBuilders.Enums;
 using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Utility.Shared;
@@ -94,5 +96,29 @@ public class HeadObjectTests : TestBase
         HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObjectWebsiteRedirect));
         Assert.Equal(200, headResp.StatusCode);
         Assert.Equal("https://google.com", headResp.WebsiteRedirectLocation);
+    }
+
+    [Theory]
+    [MultipleProviders(S3Provider.AmazonS3)]
+    public async Task HeadObjectChecksum(S3Provider _, string bucket, ISimpleClient client)
+    {
+        byte[] data = [1, 2, 3, 4];
+        byte[] checksum = SHA1.HashData(data);
+
+        PutObjectResponse putResp = await client.PutObjectDataAsync(bucket, nameof(HeadObjectChecksum), data, r =>
+        {
+            r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
+            r.Checksum = checksum;
+        });
+
+        Assert.Equal(200, putResp.StatusCode);
+        Assert.Equal(checksum, putResp.Checksum);
+        Assert.Equal(ChecksumType.FullObject, putResp.ChecksumType);
+
+        HeadObjectResponse resp = await client.HeadObjectAsync(bucket, nameof(HeadObjectChecksum), r => r.EnableChecksum = true);
+        Assert.Equal(200, resp.StatusCode);
+        Assert.Equal(ChecksumType.FullObject, resp.ChecksumType);
+        Assert.Equal(ChecksumAlgorithm.Sha1, resp.ChecksumAlgorithm);
+        Assert.Equal(checksum, resp.Checksum);
     }
 }

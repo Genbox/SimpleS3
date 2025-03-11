@@ -22,4 +22,6 @@ public class CreateMultipartUploadResponse : BaseResponse, IHasSse, IHasSseCusto
     public SseCustomerAlgorithm SseCustomerAlgorithm { get; internal set; }
     public byte[]? SseCustomerKeyMd5 { get; internal set; }
     public string UploadId { get; internal set; }
+    public ChecksumType ChecksumType { get; internal set; }
+    public ChecksumAlgorithm ChecksumAlgorithm { get; internal set; }
 }

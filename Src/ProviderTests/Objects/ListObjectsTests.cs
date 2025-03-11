@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -176,6 +178,33 @@ public class ListObjectsTests : TestBase
             S3Object obj = Assert.Single(listResp.Objects);
 
             Assert.Equal(tempObjName, obj.ObjectKey);
+        });
+    }
+
+    [Theory]
+    [MultipleProviders(S3Provider.AmazonS3)]
+    public async Task ListObjectsChecksum(S3Provider provider, string _, ISimpleClient client)
+    {
+        await CreateTempBucketAsync(provider, client, async tempBucket =>
+        {
+            string tempObjName = "object-" + Guid.NewGuid();
+            byte[] data = "hello world"u8.ToArray();
+            byte[] checksum = SHA1.HashData(data);
+
+            PutObjectResponse putResp = await client.PutObjectDataAsync(tempBucket, tempObjName, data, r =>
+            {
+                r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
+                r.Checksum = checksum;
+            });
+
+            Assert.Equal(200, putResp.StatusCode);
+
+            ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket);
+            Assert.Equal(200, listResp.StatusCode);
+            S3Object obj = Assert.Single(listResp.Objects);
+
+            Assert.Equal(ChecksumAlgorithm.Sha1, obj.ChecksumAlgorithm);
+            Assert.Equal(ChecksumType.FullObject, obj.ChecksumType);
         });
     }
 }

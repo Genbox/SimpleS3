@@ -29,6 +29,12 @@ internal sealed class CreateMultipartUploadResponseMarshal : IResponseMarshal<Cr
         response.SseContext = headers.GetOptionalValue(AmzHeaders.XAmzSseContext);
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
+        if (headers.TryGetHeader(AmzHeaders.XAmzChecksumType, out string? checksumType))
+            response.ChecksumType = Core.Enums.Enums.ChecksumType.Parse(checksumType, ChecksumTypeFormat.DisplayName);
+
+        if (headers.TryGetHeader(AmzHeaders.XAmzChecksumAlgorithm, out string? checksumAlgorithm))
+            response.ChecksumAlgorithm = Core.Enums.Enums.ChecksumAlgorithm.Parse(checksumAlgorithm, ChecksumAlgorithmFormat.DisplayName);
+
         using XmlTextReader xmlReader = new XmlTextReader(responseStream);
         xmlReader.ReadToDescendant("InitiateMultipartUploadResult");
 

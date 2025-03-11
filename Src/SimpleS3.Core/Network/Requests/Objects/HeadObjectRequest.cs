@@ -75,6 +75,7 @@ public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCusto
     }
 
     public string? VersionId { get; set; }
+    public bool EnableChecksum { get; set; }
 
     internal void Initialize(string bucketName, string objectKey)
     {
@@ -101,6 +102,7 @@ public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCusto
         SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
         SseCustomerKeyMd5 = null;
         ResponseExpires = null;
+        EnableChecksum = false;
 
         base.Reset();
     }

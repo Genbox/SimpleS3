@@ -15,4 +15,6 @@ public class UploadPartResponse : BaseResponse, IHasStorageClass, IHasSse, IHasS
     public SseCustomerAlgorithm SseCustomerAlgorithm { get; internal set; }
     public byte[]? SseCustomerKeyMd5 { get; internal set; }
     public StorageClass StorageClass { get; internal set; }
+    public ChecksumAlgorithm ChecksumAlgorithm { get; internal set; }
+    public byte[]? Checksum { get; internal set; }
 }

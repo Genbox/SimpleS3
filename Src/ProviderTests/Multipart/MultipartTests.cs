@@ -1,4 +1,6 @@
-﻿using Genbox.ProviderTests.Misc;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Enums;
@@ -206,7 +208,7 @@ public class MultipartTests : TestBase
 
         CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2)]);
         Assert.Equal(200, completeResp.StatusCode);
-        Assert.NotNull(uploadResp2.ETag);
+        Assert.NotNull(completeResp.ETag);
 
         if (provider == S3Provider.AmazonS3)
         {
@@ -291,5 +293,41 @@ public class MultipartTests : TestBase
         }
 
         Assert.Equal(10, count);
+    }
+
+    [Theory]
+    [MultipleProviders(S3Provider.AmazonS3)]
+    public async Task MultipartChecksum(S3Provider provider, string bucket, ISimpleClient client)
+    {
+        const string objectKey = nameof(MultipartChecksum);
+
+        CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey, r =>
+        {
+            r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
+            r.ChecksumType = ChecksumType.Composite;
+        });
+
+        Assert.Equal(200, initResp.StatusCode);
+        Assert.Equal(ChecksumType.Composite, initResp.ChecksumType);
+        Assert.Equal(ChecksumAlgorithm.Sha1, initResp.ChecksumAlgorithm);
+
+        byte[] data = "hello world"u8.ToArray();
+        await using MemoryStream ms = new MemoryStream(data);
+
+        byte[] checksum = SHA1.HashData(data);
+        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms, r =>
+        {
+            r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
+            r.Checksum = checksum;
+        });
+        Assert.Equal(200, uploadResp.StatusCode);
+        Assert.Equal(ChecksumAlgorithm.Sha1, uploadResp.ChecksumAlgorithm);
+        Assert.Equal(checksum, uploadResp.Checksum);
+
+        CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1, checksum, ChecksumAlgorithm.Sha1)]);
+        Assert.Equal(200, completeResp.StatusCode);
+        Assert.Equal(ChecksumType.Composite, completeResp.ChecksumType);
+        Assert.Equal(ChecksumAlgorithm.Sha1, completeResp.ChecksumAlgorithm);
+        Assert.NotNull(completeResp.Checksum);
     }
 }

@@ -25,4 +25,7 @@ public class CompleteMultipartUploadResponse : BaseResponse, IHasRequestCharged,
     public SseAlgorithm SseAlgorithm { get; internal set; }
     public string? SseKmsKeyId { get; internal set; }
     public string? VersionId { get; internal set; }
+    public ChecksumType ChecksumType { get; internal set; }
+    public ChecksumAlgorithm ChecksumAlgorithm { get; internal set; }
+    public byte[]? Checksum { get; internal set; }
 }
