@@ -1,10 +1,12 @@
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Web;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Common.Validation;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -98,10 +100,14 @@ public static class ObjectClientExtensions
 
             if (response.IsTruncated)
             {
-                string localToken = response.NextContinuationToken;
+                string cToken = response.NextContinuationToken;
+
+                if (response.EncodingType == EncodingType.Url)
+                    cToken = HttpUtility.UrlDecode(cToken);
+
                 responseTask = client.ListObjectsAsync(bucketName, req =>
                 {
-                    req.ContinuationToken = localToken;
+                    req.ContinuationToken = cToken;
                     configure?.Invoke(req);
                 }, token);
             }
@@ -163,6 +169,10 @@ public static class ObjectClientExtensions
             if (response.IsTruncated)
             {
                 string keyMarker = response.NextKeyMarker;
+
+                if (response.EncodingType == EncodingType.Url)
+                    keyMarker = HttpUtility.UrlDecode(keyMarker);
+
                 responseTask = client.ListObjectVersionsAsync(bucketName, req =>
                 {
                     req.KeyMarker = keyMarker;
@@ -264,6 +274,10 @@ public static class ObjectClientExtensions
             if (response.IsTruncated)
             {
                 string cToken = response.NextContinuationToken;
+
+                if (response.EncodingType == EncodingType.Url)
+                    cToken = HttpUtility.UrlDecode(cToken);
+
                 responseTask = client.ListObjectsAsync(bucketName, req =>
                 {
                     req.ContinuationToken = cToken;
@@ -315,6 +329,10 @@ public static class ObjectClientExtensions
             if (response.IsTruncated)
             {
                 string keyMarker = response.NextKeyMarker;
+
+                if (response.EncodingType == EncodingType.Url)
+                    keyMarker = HttpUtility.UrlDecode(keyMarker);
+
                 responseTask = client.ListObjectVersionsAsync(bucketName, req =>
                 {
                     req.KeyMarker = keyMarker;
