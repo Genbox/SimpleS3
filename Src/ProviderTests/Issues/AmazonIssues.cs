@@ -15,8 +15,8 @@ public class AmazonIssues : TestBase
     public async Task Issue66(S3Provider provider, string bucket, ISimpleClient client)
     {
         //Issue: When setting EncodingType to Url, it creates an infinite loop
-        //Investigation: TODO
-        //Resolution: TODO
+        //Investigation: Amazon URL encode the NextKeyMarker value, so when returned to AWS as KeyMarker, it gets double encoded.
+        //Resolution: KeyMarker is now URL decoded before sent to AWS
 
         string[] names = ["a%20.txt", "a&1.txt", "a(1).exe", "folder1/a%20.txt"];
 
