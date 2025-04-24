@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genbox.ProviderTests.Misc;
+namespace Genbox.ProviderTests.Code;
 
 internal class ProviderSetup
 {
@@ -27,9 +27,7 @@ internal class ProviderSetup
 
         IProfile? profile = profileManager.GetProfile("TestSetup-" + provider);
 
-        if (profile == null)
-            throw new InvalidOperationException("Unable to find a profile for " + provider + ". Have you run SimpleS3.Utility.TestSetup?");
-
-        Clients.Add((provider, profile, services.GetRequiredService<ISimpleClient>()));
+        if (profile != null)
+            Clients.Add((provider, profile, services.GetRequiredService<ISimpleClient>()));
     }
 }

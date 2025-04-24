@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Xunit.Sdk;
 
-namespace Genbox.ProviderTests.Misc;
+namespace Genbox.ProviderTests.Code;
 
 internal sealed class MultipleProvidersAttribute(S3Provider providers, params object[] otherData) : DataAttribute
 {

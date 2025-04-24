@@ -3,7 +3,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Utility.Shared;
 
-namespace Genbox.ProviderTests.Misc;
+namespace Genbox.ProviderTests.Code;
 
 public abstract class TestBase
 {

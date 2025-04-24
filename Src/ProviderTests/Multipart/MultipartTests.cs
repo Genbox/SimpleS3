@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Genbox.ProviderTests.Code;
 using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
