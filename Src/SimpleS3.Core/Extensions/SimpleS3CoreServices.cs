@@ -38,7 +38,8 @@ public static class SimpleS3CoreServices
     /// </summary>
     /// <param name="collection">The service collection</param>
     /// <param name="configure">Use this to configure the configuration used by SimpleS3</param>
-    public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection, Action<SimpleS3Config>? configure = null)
+    /// <param name="name">The name to use for the builder. Used for named dependency isolation.</param>
+    public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection, Action<SimpleS3Config>? configure = null, string name = "SimpleS3")
     {
         //We don't use the microsoft extension here as we only want a subset of services.
 
@@ -102,8 +103,7 @@ public static class SimpleS3CoreServices
         collection.TryAddEnumerable(RegisterAsActual(typeof(IValidator<>), assembly)); //We register IValidator twice to support IValidator<T> as well
         collection.TryAddEnumerable(RegisterAsActual(typeof(IValidateOptions<>), assembly)); //Make sure that the options system validators are added too
 
-        //NOTE: I have not given the user a chance to set the name (named configs) here yet. It will eventually be used for config isolation between instances.
-        return new CoreBuilder(collection);
+        return new CoreBuilder(collection, name);
     }
 
     /// <summary>Register services as the interface type given</summary>
