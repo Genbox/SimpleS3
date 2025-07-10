@@ -20,19 +20,16 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(IncludeAnalyzers)' == 'True'">
-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
     <PackageReference Include="ConfigureAwaitChecker.Analyzer" PrivateAssets="all" />
     <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
     <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
     <PackageReference Include="ToStringWithoutOverrideAnalyzer" PrivateAssets="all" />
     <PackageReference Include="AspNetCoreAnalyzers" PrivateAssets="all" />
     <PackageReference Include="ReflectionAnalyzers" PrivateAssets="all" />
-    <PackageReference Include="Lindhart.Analyser.MissingAwaitWarning" PrivateAssets="all" />
     <PackageReference Include="SmartanAlyzers.ExceptionAnalyzer" PrivateAssets="all" />
     <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" PrivateAssets="all" />
     <PackageReference Include="SharpSource" PrivateAssets="all" />
-    <PackageReference Include="Blowin.Required" PrivateAssets="all" />
     <PackageReference Include="Meziantou.Analyzer" PrivateAssets="all" />
     <PackageReference Include="NetFabric.Hyperlinq.Analyzer" PrivateAssets="all" />
     <PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="all" />

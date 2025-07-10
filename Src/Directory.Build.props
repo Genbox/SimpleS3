@@ -40,7 +40,7 @@
     <AnalysisMode>all</AnalysisMode>
     <AnalysisLevel>latest</AnalysisLevel>
 
-    <!--Nuget settings-->
+    <!--NuGet settings-->
     <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
@@ -55,11 +55,11 @@
 
     <!--SourceLink-->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>false</EmbedUntrackedSources>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-    <!--Nuget auditing-->
+    <!--NuGet auditing-->
     <NuGetAudit>true</NuGetAudit>
     <NuGetAuditMode>all</NuGetAuditMode>
     <NuGetAuditLevel>low</NuGetAuditLevel>

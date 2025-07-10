@@ -4,7 +4,7 @@
     <PackageVersion Include="Enums.NET" Version="5.0.0" />
     <PackageVersion Include="FluentValidation" Version="11.10.0" />
     <PackageVersion Include="Genbox.HttpBuilders" Version="1.1.0" />
-    <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.4.0" />
+    <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.6.0" />
     <PackageVersion Include="Microsoft.AspNetCore.DataProtection" Version="8.0.10" />
     <PackageVersion Include="Microsoft.AspNetCore.Server.Kestrel.Core" Version="2.2.0" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
@@ -19,7 +19,7 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
-    <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
-    <PackageVersion Include="Genbox.FastEnum" Version="1.0.0-alpha.14" />
+    <PackageVersion Include="System.Linq.Async" Version="6.0.3" />
+    <PackageVersion Include="Genbox.FastEnum" Version="1.0.0" />
   </ItemGroup>
 </Project>
