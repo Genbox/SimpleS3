@@ -31,9 +31,10 @@ public static class CoreBuilderExtensions
 
         builder.Services.Configure<HttpBuilderActions>(clientBuilder.Name, x =>
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Create("BROWSER")))
+            x.HttpHandlerActions.Add((provider, baseHandler) =>
             {
-                x.HttpHandlerActions.Add((provider, handler) =>
+                //When compiled to Blazor, the baseHandler is a BrowserHttpHandler, which does not support setting the settings below
+                if (baseHandler is HttpClientHandler handler)
                 {
                     IOptions<HttpClientConfig> opt = provider.GetRequiredService<IOptions<HttpClientConfig>>();
                     HttpClientConfig options = opt.Value;
@@ -45,8 +46,8 @@ public static class CoreBuilderExtensions
 
                     if (options.Proxy != null)
                         handler.Proxy = new WebProxy(options.Proxy);
-                });
-            }
+                }
+            });
 
             x.HttpClientActions.Add((_, client) =>
             {

@@ -9,10 +9,14 @@ public static class HttpClientBuilderExtensions
     {
         builder.Services.Configure<HttpBuilderActions>(builder.Name, actions =>
         {
-            actions.HttpHandlerActions.Add((provider, handler) =>
+            actions.HttpHandlerActions.Add((provider, baseHandler) =>
             {
-                handler.Proxy = proxyFactory(provider);
-                handler.UseProxy = true;
+                //When compiled to Blazor, the baseHandler is a BrowserHttpHandler, which does not support setting the settings below
+                if (baseHandler is HttpClientHandler handler)
+                {
+                    handler.Proxy = proxyFactory(provider);
+                    handler.UseProxy = true;
+                }
             });
         });
 
