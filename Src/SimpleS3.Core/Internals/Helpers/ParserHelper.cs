@@ -57,6 +57,10 @@ internal static class ParserHelper
                     break;
                 case "DisplayName":
                     displayName = xmlReader.ReadString();
+
+                    // To circumvent providers that return empty. We want to represent missing display names as null.
+                    if (displayName == "")
+                        displayName = null;
                     break;
             }
         }
