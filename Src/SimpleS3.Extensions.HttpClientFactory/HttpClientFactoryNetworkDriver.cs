@@ -56,16 +56,15 @@ public class HttpClientFactoryNetworkDriver(IOptions<HttpClientFactoryConfig> op
         foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Headers)
             responseHeaders.Add(header.Key, header.Value.First());
 
-        Stream? contentStream = null;
+        ContentStream? contentStream = null;
 
         if (httpResponse.Content != null)
         {
             foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
                 responseHeaders.Add(header.Key, header.Value.First());
 
- #pragma warning disable IDISP001 - We cannot dispose as we need the response stream
-            contentStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
- #pragma warning restore IDISP001
+            Stream innerStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            contentStream = new ContentStream(innerStream, httpResponse.Content.Headers.ContentLength);
         }
 
         return new HttpResponse(contentStream, responseHeaders, (int)httpResponse.StatusCode);

@@ -7,19 +7,19 @@ using Xunit.Sdk;
 namespace Genbox.ProviderTests.Code;
 
 /// <summary>
-/// Intended for multiple providers. Providers not enabled will show up as skipped. Used to show providers that don't support a particular action.
+/// Used to perform an action against just one provider
 /// </summary>
-internal sealed class MultipleProvidersAttribute(S3Provider providers, params object[] otherData) : DataAttribute
+internal sealed class SingleProviderAttribute(S3Provider provider, params object[] otherData) : DataAttribute
 {
-    private bool _shouldSkip;
-
-    public override string? Skip => _shouldSkip ? "Not supported" : null;
+    public override string? Skip => null;
 
     public override IEnumerable<object?[]> GetData(MethodInfo testMethod)
     {
-        foreach ((S3Provider provider, IProfile profile, ISimpleClient client) in ProviderSetup.Instance.Clients)
+        foreach ((S3Provider s3Provider, IProfile profile, ISimpleClient client) in ProviderSetup.Instance.Clients)
         {
-            _shouldSkip = !providers.HasFlag(provider);
+            if (provider != s3Provider)
+                continue;
+
             string bucket = UtilityHelper.GetTestBucket(profile);
 
             if (otherData.Length > 0)
