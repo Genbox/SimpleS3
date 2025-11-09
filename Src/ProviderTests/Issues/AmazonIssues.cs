@@ -42,7 +42,7 @@ public class AmazonIssues : TestBase
     {
         List<T> res = new List<T>();
 
-        await foreach (var item in list)
+        await foreach (T item in list)
             res.Add(item);
 
         return res;
