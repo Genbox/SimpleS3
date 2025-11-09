@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
 
 internal sealed class GetBucketPolicyResponseMarshal : IResponseMarshal<GetBucketPolicyResponse>
 {
-    public void MarshalResponse(SimpleS3Config config, GetBucketPolicyResponse response, IDictionary<string, string> headers, Stream responseStream)
+    public void MarshalResponse(SimpleS3Config config, GetBucketPolicyResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using MemoryStream ms = new MemoryStream();
         responseStream.CopyTo(ms);

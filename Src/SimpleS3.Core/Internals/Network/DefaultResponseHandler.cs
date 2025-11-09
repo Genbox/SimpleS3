@@ -75,11 +75,11 @@ public class DefaultResponseHandler : IResponseHandler
                                || statusCode == 409 //Conflict
                                || statusCode == 503); //ServiceUnavailable
 
-        Stream? responseStream = httpResp.Content;
+        ContentStream? responseStream = httpResp.Content;
 
         //Only marshal successful responses
         if (response.IsSuccess)
-            _marshaller.MarshalResponse(_config, response, headers, responseStream ?? Stream.Null);
+            _marshaller.MarshalResponse(_config, response, headers, responseStream ?? ContentStream.Null);
         else if (responseStream != null)
         {
             try

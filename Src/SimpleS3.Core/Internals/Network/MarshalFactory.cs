@@ -63,7 +63,7 @@ internal sealed class MarshalFactory : IMarshalFactory
         return content;
     }
 
-    public void MarshalResponse<TResponse>(SimpleS3Config config, TResponse response, IDictionary<string, string> headers, Stream responseStream) where TResponse : IResponse
+    public void MarshalResponse<TResponse>(SimpleS3Config config, TResponse response, IDictionary<string, string> headers, ContentStream responseStream) where TResponse : IResponse
     {
         if (_responseMarshals.TryGetValue(typeof(TResponse), out IResponseMarshal? marshaller))
             ((IResponseMarshal<TResponse>)marshaller).MarshalResponse(config, response, headers, responseStream);

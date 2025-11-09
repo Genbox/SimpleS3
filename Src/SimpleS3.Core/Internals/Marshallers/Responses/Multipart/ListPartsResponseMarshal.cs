@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart;
 
 internal sealed class ListPartsResponseMarshal : IResponseMarshal<ListPartsResponse>
 {
-    public void MarshalResponse(SimpleS3Config config, ListPartsResponse response, IDictionary<string, string> headers, Stream responseStream)
+    public void MarshalResponse(SimpleS3Config config, ListPartsResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Iso8601DateTimeExt);
         response.AbortRuleId = headers.GetOptionalValue(AmzHeaders.XAmzAbortRuleId);

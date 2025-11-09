@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart;
 
 internal sealed class CompleteMultipartUploadResponseMarshal : IResponseMarshal<CompleteMultipartUploadResponse>
 {
-    public void MarshalResponse(SimpleS3Config config, CompleteMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
+    public void MarshalResponse(SimpleS3Config config, CompleteMultipartUploadResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
 

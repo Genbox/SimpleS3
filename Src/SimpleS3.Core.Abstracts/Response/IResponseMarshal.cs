@@ -7,5 +7,5 @@ public interface IResponseMarshal;
 
 public interface IResponseMarshal<in TResponse> : IResponseMarshal where TResponse : IResponse
 {
-    void MarshalResponse(SimpleS3Config config, TResponse response, IDictionary<string, string> headers, Stream responseStream);
+    void MarshalResponse(SimpleS3Config config, TResponse response, IDictionary<string, string> headers, ContentStream responseStream);
 }

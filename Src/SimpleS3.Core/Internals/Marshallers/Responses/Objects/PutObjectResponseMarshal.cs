@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 
 internal sealed class PutObjectResponseMarshal : IResponseMarshal<PutObjectResponse>
 {
-    public void MarshalResponse(SimpleS3Config config, PutObjectResponse response, IDictionary<string, string> headers, Stream responseStream)
+    public void MarshalResponse(SimpleS3Config config, PutObjectResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         if (headers.TryGetHeader(AmzHeaders.XAmzStorageClass, out string? storageClass))
             response.StorageClass = Core.Enums.Enums.StorageClass.Parse(storageClass, StorageClassFormat.DisplayName);

@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
 
 internal sealed class GetBucketTaggingResponseMarshal : IResponseMarshal<GetBucketTaggingResponse>
 {
-    public void MarshalResponse(SimpleS3Config config, GetBucketTaggingResponse response, IDictionary<string, string> headers, Stream responseStream)
+    public void MarshalResponse(SimpleS3Config config, GetBucketTaggingResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlTextReader xmlReader = new XmlTextReader(responseStream);
         xmlReader.ReadToDescendant("TagSet");

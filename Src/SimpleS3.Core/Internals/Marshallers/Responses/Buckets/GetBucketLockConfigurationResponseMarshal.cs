@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
 
 internal sealed class GetBucketLockConfigurationResponseMarshal : IResponseMarshal<GetBucketLockConfigurationResponse>
 {
-    public void MarshalResponse(SimpleS3Config config, GetBucketLockConfigurationResponse response, IDictionary<string, string> headers, Stream responseStream)
+    public void MarshalResponse(SimpleS3Config config, GetBucketLockConfigurationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlTextReader xmlReader = new XmlTextReader(responseStream);
         xmlReader.ReadToDescendant("DefaultRetention");

@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart;
 
 internal sealed class AbortMultipartUploadResponseMarshal : IResponseMarshal<AbortMultipartUploadResponse>
 {
-    public void MarshalResponse(SimpleS3Config config, AbortMultipartUploadResponse response, IDictionary<string, string> headers, Stream responseStream)
+    public void MarshalResponse(SimpleS3Config config, AbortMultipartUploadResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
     }

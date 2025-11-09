@@ -26,6 +26,7 @@ public class MiscTests : TestBase
         Assert.Equal(200, putResp.StatusCode);
 
         GetObjectResponse getResp = await client.GetObjectAsync(bucket, "testfile");
+        Assert.True(getResp.Content.HasLength);
         Assert.Equal(11, getResp.Content.Length);
     }
 }

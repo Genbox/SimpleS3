@@ -6,5 +6,5 @@ public interface IResponseWrapper
 {
     bool IsSupported(IResponse response);
 
-    Stream Wrap(Stream input, IResponse response);
+    ContentStream Wrap(ContentStream input, IResponse response);
 }
