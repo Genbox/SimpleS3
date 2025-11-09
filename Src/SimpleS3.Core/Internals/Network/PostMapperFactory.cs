@@ -3,7 +3,6 @@ using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Internals.Extensions;
-using Genbox.SimpleS3.Core.Internals.Helpers;
 
 namespace Genbox.SimpleS3.Core.Internals.Network;
 

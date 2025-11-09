@@ -1,5 +1,4 @@
-using Genbox.ProviderTests.Code;
-using Genbox.ProviderTests.Misc;
+﻿using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -33,9 +32,7 @@ public class ObjectAclTests : TestBase
             Assert.Equal(GrantType.CanonicalUser, grant.Grantee.Type);
         }
         else
-        {
             Assert.Equal(GrantType.AmazonCustomerByEmail, grant.Grantee.Type);
-        }
 
         Assert.Null(grant.Grantee.DisplayName);
 

@@ -1,6 +1,5 @@
 ﻿using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
@@ -25,7 +24,7 @@ public class AuthenticationTests
         ICoreBuilder builder = SimpleS3CoreServices.AddSimpleS3Core(collection);
         builder.UseHttpClientFactory();
 
-        using var provider = collection.BuildServiceProvider();
+        using ServiceProvider provider = collection.BuildServiceProvider();
         ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
 
         Assert.Throws<InvalidOperationException>(() => client.SignRequest(new GetObjectRequest("test", "name"), TimeSpan.FromHours(1)));

@@ -4,7 +4,8 @@ using Genbox.SimpleS3.Core.Common.Marshal;
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 /// <summary>
-/// Creates or modifies the PublicAccessBlock configuration for an Amazon S3 bucket. To use this operation, you must have the s3:PutBucketPublicAccessBlock permission. For more information about Amazon S3 permissions, see Specifying Permissions in a Policy.
+/// Creates or modifies the PublicAccessBlock configuration for an Amazon S3 bucket. To use this operation, you must have the s3:PutBucketPublicAccessBlock permission. For more
+/// information about Amazon S3 permissions, see Specifying Permissions in a Policy.
 /// </summary>
 public class PutPublicAccessBlockRequest : BaseRequest, IHasBucketName
 {

@@ -257,7 +257,12 @@ public enum ErrorCode
     /// <summary>The bucket POST must contain the specified field name. If it is specified, check the order of the fields.</summary>
     UserKeyMustBeSpecified,
 
-    /// <summary>If you want to apply the Bucket owner enforced setting to disable ACLs, your bucket ACL must give full control only to the bucket owner. Your bucket ACL cannot give access to an external AWS account or any other group. For example, if your CreateBucket request sets Bucket owner enforced and specifies a bucket ACL that provides access to an external AWS account, your request fails with a 400 error and returns the InvalidBucketAclWithObjectOwnership error code. Similarly, if your PutBucketOwnershipControls request sets Bucket owner enforced on a bucket that has a bucket ACL that grants permissions to others, the request fails.</summary>
+    /// <summary>
+    /// If you want to apply the Bucket owner enforced setting to disable ACLs, your bucket ACL must give full control only to the bucket owner. Your bucket ACL cannot give
+    /// access to an external AWS account or any other group. For example, if your CreateBucket request sets Bucket owner enforced and specifies a bucket ACL that provides access to an
+    /// external AWS account, your request fails with a 400 error and returns the InvalidBucketAclWithObjectOwnership error code. Similarly, if your PutBucketOwnershipControls request
+    /// sets Bucket owner enforced on a bucket that has a bucket ACL that grants permissions to others, the request fails.
+    /// </summary>
     InvalidBucketAclWithObjectOwnership,
 
     InvalidBucketAclWithBlockPublicAccessError,

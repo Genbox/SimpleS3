@@ -17,10 +17,7 @@ internal static class DictionaryExtensions
         throw new S3Exception($"Failed to get required header '{key}'");
     }
 
-    public static bool TryGetHeader(this IDictionary<string, string> response, string key, [NotNullWhen(true)]out string? value)
-    {
-        return response.TryGetValue(key, out value);
-    }
+    public static bool TryGetHeader(this IDictionary<string, string> response, string key, [NotNullWhen(true)]out string? value) => response.TryGetValue(key, out value);
 
     public static int GetHeaderInt(this IDictionary<string, string> response, string key) => TryGetHeader(response, key, out string? value) ? ValueHelper.ParseInt(value) : default;
 
