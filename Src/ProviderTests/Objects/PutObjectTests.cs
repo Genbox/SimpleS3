@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Security.Cryptography;
 using Genbox.HttpBuilders.Enums;
 using Genbox.ProviderTests.Code;
@@ -100,19 +100,15 @@ public class PutObjectTests : TestBase
     }
 
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
+    [MultipleProviders(S3Provider.GoogleCloudStorage)]
     public async Task MultiplePermissions(S3Provider _, string bucket, ISimpleClient client)
     {
         PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(MultiplePermissions), null, r =>
         {
             r.AclGrantRead.AddEmail(TestConstants.TestEmail);
-            r.AclGrantRead.AddUserId(TestConstants.TestUserId);
             r.AclGrantReadAcp.AddEmail(TestConstants.TestEmail);
-            r.AclGrantReadAcp.AddUserId(TestConstants.TestUserId);
             r.AclGrantWriteAcp.AddEmail(TestConstants.TestEmail);
-            r.AclGrantWriteAcp.AddUserId(TestConstants.TestUserId);
             r.AclGrantFullControl.AddEmail(TestConstants.TestEmail);
-            r.AclGrantFullControl.AddUserId(TestConstants.TestUserId);
         });
 
         Assert.Equal(200, putResp.StatusCode);

@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Genbox.ProviderTests.Code;
 using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -34,8 +34,11 @@ public class ListPartsTests : TestBase
             Assert.Equal(1000, listResp1.MaxParts);
             Assert.False(listResp1.IsTruncated);
 
-            if (provider == S3Provider.AmazonS3)
-                Assert.Equal(TestConstants.TestUsername, listResp1.Owner.Name);
+            // Wasabi still returns display names, others don't.
+            if (provider == S3Provider.Wasabi)
+                Assert.Equal(TestConstants.TestUsername, listResp1.Owner?.Name);
+            else
+                Assert.Null(listResp1.Owner?.Name);
 
             Assert.Empty(listResp1.Parts);
 
@@ -67,8 +70,10 @@ public class ListPartsTests : TestBase
             Assert.Equal(1000, listResp2.MaxParts);
             Assert.False(listResp2.IsTruncated);
 
-            if (provider == S3Provider.AmazonS3)
-                Assert.Equal(TestConstants.TestUsername, listResp2.Owner.Name);
+            if (provider == S3Provider.Wasabi)
+                Assert.Equal(TestConstants.TestUsername, listResp2.Owner?.Name);
+            else
+                Assert.Null(listResp2.Owner?.Name);
 
             S3Part part = Assert.Single(listResp2.Parts);
 

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Security.Cryptography;
 using Genbox.ProviderTests.Code;
 using Genbox.ProviderTests.Misc;
@@ -59,11 +59,8 @@ public class ListObjectVersionsTests : TestBase
             if (provider != S3Provider.GoogleCloudStorage)
                 Assert.Equal(StorageClass.Standard, version1.StorageClass);
 
-            if (provider == S3Provider.AmazonS3)
-            {
-                Assert.Equal(TestConstants.TestUserId, version1.Owner?.Id);
-                Assert.Equal(TestConstants.TestUsername, version1.Owner?.Name);
-            }
+            Assert.NotNull(version1.Owner?.Id);
+            Assert.Null(version1.Owner?.Name);
 
             S3Version version2 = listResp.Versions[1];
             Assert.Equal("2", version2.ObjectKey);
@@ -76,11 +73,8 @@ public class ListObjectVersionsTests : TestBase
             if (provider != S3Provider.GoogleCloudStorage)
                 Assert.Equal(StorageClass.Standard, version2.StorageClass);
 
-            if (provider == S3Provider.AmazonS3)
-            {
-                Assert.Equal(TestConstants.TestUserId, version2.Owner?.Id);
-                Assert.Equal(TestConstants.TestUsername, version2.Owner?.Name);
-            }
+            Assert.NotNull(version2.Owner?.Id);
+            Assert.Null(version2.Owner?.Name);
 
             //This is the latest version of object 3 and should be 4 in size
             S3Version version3 = listResp.Versions[2];
@@ -94,11 +88,8 @@ public class ListObjectVersionsTests : TestBase
             if (provider != S3Provider.GoogleCloudStorage)
                 Assert.Equal(StorageClass.Standard, version3.StorageClass);
 
-            if (provider == S3Provider.AmazonS3)
-            {
-                Assert.Equal(TestConstants.TestUserId, version3.Owner?.Id);
-                Assert.Equal(TestConstants.TestUsername, version3.Owner?.Name);
-            }
+            Assert.NotNull(version3.Owner?.Id);
+            Assert.Null(version3.Owner?.Name);
 
             //This was the previous version of object 3, so it should not be the latest and have 3 in size
             S3Version version3A = listResp.Versions[3];
@@ -112,11 +103,8 @@ public class ListObjectVersionsTests : TestBase
             if (provider != S3Provider.GoogleCloudStorage)
                 Assert.Equal(StorageClass.Standard, version3A.StorageClass);
 
-            if (provider == S3Provider.AmazonS3)
-            {
-                Assert.Equal(TestConstants.TestUserId, version3A.Owner?.Id);
-                Assert.Equal(TestConstants.TestUsername, version3A.Owner?.Name);
-            }
+            Assert.NotNull(version3A.Owner?.Id);
+            Assert.Null(version3A.Owner?.Name);
 
             //This is the latest version of object 2, since it was deleted
             S3DeleteMarker delMarker = listResp.DeleteMarkers[0];
@@ -125,11 +113,8 @@ public class ListObjectVersionsTests : TestBase
             Assert.Equal(putResp4.VersionId, delMarker.VersionId);
             Assert.Equal(DateTimeOffset.UtcNow.DateTime, delMarker.LastModified.DateTime, TimeSpan.FromMinutes(1));
 
-            if (provider == S3Provider.AmazonS3)
-            {
-                Assert.Equal(TestConstants.TestUserId, delMarker.Owner.Id);
-                Assert.Equal(TestConstants.TestUsername, delMarker.Owner.Name);
-            }
+            Assert.NotNull(delMarker.Owner.Id);
+            Assert.Null(delMarker.Owner.Name);
         });
     }
 

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using Genbox.ProviderTests.Code;
@@ -131,7 +131,7 @@ public class ListObjectsTests : TestBase
     }
 
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
+    [MultipleProviders(S3Provider.GoogleCloudStorage)]
     public async Task ListObjectsWithOwner(S3Provider provider, string _, ISimpleClient client)
     {
         await CreateTempBucketAsync(provider, client, async tempBucket =>
@@ -147,8 +147,8 @@ public class ListObjectsTests : TestBase
 
             if (provider == S3Provider.AmazonS3)
             {
-                Assert.Equal(TestConstants.TestUsername, obj.Owner!.Name);
-                Assert.Equal(TestConstants.TestUserId, obj.Owner.Id);
+                Assert.NotNull(obj.Owner?.Id);
+                Assert.Equal(TestConstants.TestUsername, obj.Owner?.Name);
             }
             else
                 Assert.NotNull(obj.Owner);

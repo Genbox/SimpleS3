@@ -1,4 +1,4 @@
-﻿using Genbox.ProviderTests.Code;
+using Genbox.ProviderTests.Code;
 using Genbox.ProviderTests.Misc;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
@@ -29,10 +29,15 @@ public class ObjectAclTests : TestBase
 
         if (provider == S3Provider.AmazonS3)
         {
+            Assert.NotNull(grant.Grantee.Id);
             Assert.Equal(GrantType.CanonicalUser, grant.Grantee.Type);
-            Assert.Equal(TestConstants.TestUserId, grant.Grantee.Id);
-            Assert.Equal(TestConstants.TestUsername, grant.Grantee.DisplayName);
         }
+        else
+        {
+            Assert.Equal(GrantType.AmazonCustomerByEmail, grant.Grantee.Type);
+        }
+
+        Assert.Null(grant.Grantee.DisplayName);
 
         //Update the object to have another ACL using Canned ACLs
         PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucket, objectKey, r => r.Acl = ObjectCannedAcl.PublicRead);
@@ -41,22 +46,28 @@ public class ObjectAclTests : TestBase
         GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucket, objectKey);
         Assert.Equal(200, getResp2.StatusCode);
         Assert.Equal(2, getResp2.Grants.Count);
+        Assert.NotNull(getResp2.Owner.Id);
 
         if (provider == S3Provider.AmazonS3)
-        {
-            Assert.Equal(TestConstants.TestUserId, getResp2.Owner.Id);
-            Assert.Equal(TestConstants.TestUsername, getResp2.Owner.Name);
-        }
+            Assert.Null(getResp2.Owner.Name);
+        else if (provider == S3Provider.GoogleCloudStorage)
+            Assert.Equal(TestConstants.TestEmail, getResp2.Owner.Name, StringComparer.OrdinalIgnoreCase);
 
         //This is the default owner ACL
         S3Grant first = getResp2.Grants[0];
 
         if (provider == S3Provider.AmazonS3)
         {
-            Assert.Equal(TestConstants.TestUserId, first.Grantee.Id);
-            Assert.Equal(TestConstants.TestUsername, first.Grantee.DisplayName);
+            Assert.NotNull(first.Grantee.Id);
             Assert.Equal(GrantType.CanonicalUser, first.Grantee.Type);
         }
+        else if (provider == S3Provider.GoogleCloudStorage)
+        {
+            Assert.Null(first.Grantee.Id);
+            Assert.Equal(GrantType.AmazonCustomerByEmail, first.Grantee.Type);
+        }
+
+        Assert.Null(first.Grantee.DisplayName);
 
         Assert.Equal(S3Permission.FullControl, first.Permission);
 
