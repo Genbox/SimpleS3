@@ -11,7 +11,7 @@ public class AmazonIssues : TestBase
 {
     /// <summary>https://github.com/Genbox/SimpleS3/issues/66</summary>
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3)]
+    [SingleProvider(S3Provider.AmazonS3)]
     public async Task Issue66(S3Provider provider, string bucket, ISimpleClient client)
     {
         //Issue: When setting EncodingType to Url, it creates an infinite loop

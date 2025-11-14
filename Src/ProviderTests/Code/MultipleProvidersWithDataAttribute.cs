@@ -7,24 +7,25 @@ using Xunit.v3;
 
 namespace Genbox.ProviderTests.Code;
 
-/// <summary>
-/// Intended for multiple providers. Providers not enabled will show up as skipped. Used to show providers that don't support a particular action.
-/// </summary>
-internal sealed class MultipleProvidersAttribute(S3Provider providers) : DataAttribute
+internal sealed class MultipleProvidersWithDataAttribute(S3Provider providers, params object[] otherData) : DataAttribute
 {
     public override ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
     {
-        TheoryData<S3Provider, string, ISimpleClient> data = new TheoryData<S3Provider, string, ISimpleClient>();
+        TheoryData<S3Provider, string, ISimpleClient, object> data = new TheoryData<S3Provider, string, ISimpleClient, object>();
 
         foreach ((S3Provider provider, IProfile profile, ISimpleClient client) in ProviderSetup.Instance.Clients)
         {
             string bucket = UtilityHelper.GetTestBucket(profile);
-            TheoryDataRow<S3Provider, string, ISimpleClient> row = new TheoryDataRow<S3Provider, string, ISimpleClient>(provider, bucket, client);
 
-            if (!providers.HasFlag(provider))
-                row.Skip = "Not supported";
+            foreach (object o in otherData)
+            {
+                TheoryDataRow<S3Provider, string, ISimpleClient, object> row = new TheoryDataRow<S3Provider, string, ISimpleClient, object>(provider, bucket, client, o);
 
-            data.Add(row);
+                if (!providers.HasFlag(provider))
+                    row.Skip = "Not supported";
+
+                data.Add(row);
+            }
         }
 
         return ValueTask.FromResult<IReadOnlyCollection<ITheoryDataRow>>(data);

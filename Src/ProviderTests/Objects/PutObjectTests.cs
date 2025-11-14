@@ -14,9 +14,9 @@ namespace Genbox.ProviderTests.Objects;
 public class PutObjectTests : TestBase
 {
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3, ObjectCannedAcl.AuthenticatedRead, ObjectCannedAcl.AwsExecRead, ObjectCannedAcl.BucketOwnerFullControl, ObjectCannedAcl.BucketOwnerRead, ObjectCannedAcl.Private, ObjectCannedAcl.PublicRead, ObjectCannedAcl.PublicReadWrite)]
-    [MultipleProviders(S3Provider.BackBlazeB2, ObjectCannedAcl.Private)]
-    [MultipleProviders(S3Provider.GoogleCloudStorage, ObjectCannedAcl.AuthenticatedRead, ObjectCannedAcl.BucketOwnerFullControl, ObjectCannedAcl.BucketOwnerRead, ObjectCannedAcl.Private, ObjectCannedAcl.PublicRead)]
+    [MultipleProvidersWithData(S3Provider.AmazonS3, ObjectCannedAcl.AuthenticatedRead, ObjectCannedAcl.AwsExecRead, ObjectCannedAcl.BucketOwnerFullControl, ObjectCannedAcl.BucketOwnerRead, ObjectCannedAcl.Private, ObjectCannedAcl.PublicRead, ObjectCannedAcl.PublicReadWrite)]
+    [MultipleProvidersWithData(S3Provider.BackBlazeB2, ObjectCannedAcl.Private)]
+    [MultipleProvidersWithData(S3Provider.GoogleCloudStorage, ObjectCannedAcl.AuthenticatedRead, ObjectCannedAcl.BucketOwnerFullControl, ObjectCannedAcl.BucketOwnerRead, ObjectCannedAcl.Private, ObjectCannedAcl.PublicRead)]
     public async Task PutObjectCannedAcl(S3Provider _, string bucket, ISimpleClient client, ObjectCannedAcl acl)
     {
         PutObjectResponse resp = await client.PutObjectAsync(bucket, $"{nameof(PutObjectCannedAcl)}-{acl}", null, r => r.Acl = acl);
@@ -24,7 +24,7 @@ public class PutObjectTests : TestBase
     }
 
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3, LockMode.Compliance, LockMode.Governance)]
+    [MultipleProvidersWithData(S3Provider.AmazonS3, LockMode.Compliance, LockMode.Governance)]
     public async Task PutObjectLockMode(S3Provider _, string bucket, ISimpleClient client, LockMode lockMode)
     {
         DateTimeOffset lockRetainUntil = DateTimeOffset.UtcNow.AddMinutes(1);
@@ -46,7 +46,7 @@ public class PutObjectTests : TestBase
     }
 
     [Theory]
-    [MultipleProviders(S3Provider.All, "NormalFile", "This/Should/Look/Like/Directories/File.txt", "_\\_", "~", "/", " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~/")]
+    [MultipleProvidersWithData(S3Provider.All, "NormalFile", "This/Should/Look/Like/Directories/File.txt", "_\\_", "~", "/", " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~/")]
     public async Task PutObjectValidCharacters(S3Provider _, string bucket, ISimpleClient client, string name)
     {
         PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, name, "test");
@@ -57,8 +57,8 @@ public class PutObjectTests : TestBase
     }
 
     [Theory]
-    [MultipleProviders(S3Provider.All & ~S3Provider.Wasabi, ".", "\0")]
-    [MultipleProviders(S3Provider.Wasabi, ".")] //Wasabi seems to allow null bytes
+    [MultipleProvidersWithData(S3Provider.All & ~S3Provider.Wasabi, ".", "\0")]
+    [MultipleProvidersWithData(S3Provider.Wasabi, ".")] //Wasabi seems to allow null bytes
     public async Task PutObjectInvalidCharacters(S3Provider _, string bucket, ISimpleClient client, string name)
     {
         //These 2 test cases came after an exhaustive search in the whole UTF-16 character space.
@@ -69,8 +69,8 @@ public class PutObjectTests : TestBase
     }
 
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3, SseAlgorithm.Aes256, SseAlgorithm.AwsKms)]
-    [MultipleProviders(S3Provider.BackBlazeB2, SseAlgorithm.Aes256)]
+    [MultipleProvidersWithData(S3Provider.AmazonS3, SseAlgorithm.Aes256, SseAlgorithm.AwsKms)]
+    [MultipleProvidersWithData(S3Provider.BackBlazeB2, SseAlgorithm.Aes256)]
     public async Task PutObjectServerSideEncryption(S3Provider _, string bucket, ISimpleClient client, SseAlgorithm algorithm)
     {
         PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectServerSideEncryption), null, r => r.SseAlgorithm = algorithm);
@@ -82,8 +82,8 @@ public class PutObjectTests : TestBase
     }
 
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3, StorageClass.Standard, StorageClass.DeepArchive, StorageClass.Glacier, StorageClass.IntelligentTiering, StorageClass.OneZoneIa, StorageClass.ReducedRedundancy, StorageClass.StandardIa)]
-    [MultipleProviders(S3Provider.BackBlazeB2 | S3Provider.GoogleCloudStorage, StorageClass.Standard)]
+    [MultipleProvidersWithData(S3Provider.AmazonS3, StorageClass.Standard, StorageClass.DeepArchive, StorageClass.Glacier, StorageClass.IntelligentTiering, StorageClass.OneZoneIa, StorageClass.ReducedRedundancy, StorageClass.StandardIa)]
+    [MultipleProvidersWithData(S3Provider.BackBlazeB2 | S3Provider.GoogleCloudStorage, StorageClass.Standard)]
     public async Task PutObjectStorageClass(S3Provider _, string bucket, ISimpleClient client, StorageClass storageClass)
     {
         PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectStorageClass) + "-" + storageClass, null, r => r.StorageClass = storageClass);
@@ -162,8 +162,8 @@ public class PutObjectTests : TestBase
     }
 
     [Theory]
-    [MultipleProviders(S3Provider.All & ~S3Provider.Wasabi, 2047)]
-    [MultipleProviders(S3Provider.Wasabi, 2036)] //Wasabi seems to be off by 10
+    [MultipleProvidersWithData(S3Provider.All & ~S3Provider.Wasabi, 2047)]
+    [MultipleProvidersWithData(S3Provider.Wasabi, 2036)] //Wasabi seems to be off by 10
     public async Task PutObjectLargeMetadata(S3Provider _, string bucket, ISimpleClient client, int limit)
     {
         string value = new string('b', limit);

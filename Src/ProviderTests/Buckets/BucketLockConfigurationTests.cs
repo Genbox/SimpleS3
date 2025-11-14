@@ -9,7 +9,7 @@ namespace Genbox.ProviderTests.Buckets;
 public class BucketLockConfigurationTests : TestBase
 {
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3, LockMode.Compliance, LockMode.Governance)]
+    [MultipleProvidersWithData(S3Provider.AmazonS3, LockMode.Compliance, LockMode.Governance)]
     public async Task GetPutBucketLockConfiguration(S3Provider provider, string _, ISimpleClient client, LockMode mode)
     {
         await CreateTempBucketAsync(provider, client, async tempBucket =>

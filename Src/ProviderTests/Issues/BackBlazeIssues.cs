@@ -10,7 +10,7 @@ public class BackBlazeIssues : TestBase
 {
     /// <summary>https://github.com/Genbox/SimpleS3/issues/55</summary>
     [Theory]
-    [MultipleProviders(S3Provider.BackBlazeB2)]
+    [SingleProvider(S3Provider.BackBlazeB2)]
     public async Task Issue55(S3Provider _, string bucket, ISimpleClient client)
     {
         //Issue: When uploading 460+ KB to BackBlaze, it gives an exception with "error occured while sending the request".

@@ -3,7 +3,7 @@
   <!--Default project info-->
   <PropertyGroup>
     <Authors>Ian Qvist</Authors>
-    <Copyright>Copyright 2024, by Ian Qvist. All rights reserved.</Copyright>
+    <Copyright>Copyright 2025, by Ian Qvist. All rights reserved.</Copyright>
   </PropertyGroup>
 
   <!--Default project settings-->
@@ -48,6 +48,7 @@
     <CopyRetryCount>2</CopyRetryCount>
     <CopyRetryDelayMilliseconds>500</CopyRetryDelayMilliseconds>
     <ErrorReport>none</ErrorReport>
+    <SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
 
     <!--Force reproducible builds-->
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>

@@ -15,8 +15,8 @@ namespace Genbox.ProviderTests.Multipart;
 public class MultipartTests : TestBase
 {
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3, SseAlgorithm.Aes256, SseAlgorithm.AwsKms)]
-    [MultipleProviders(S3Provider.GoogleCloudStorage, SseAlgorithm.Aes256)]
+    [MultipleProvidersWithData(S3Provider.AmazonS3, SseAlgorithm.Aes256, SseAlgorithm.AwsKms)]
+    [MultipleProvidersWithData(S3Provider.GoogleCloudStorage, SseAlgorithm.Aes256)]
     public async Task MultipartWithEncryption(S3Provider provider, string bucket, ISimpleClient client, SseAlgorithm algorithm)
     {
         const string objectKey = nameof(MultipartWithEncryption);

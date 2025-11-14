@@ -6,18 +6,15 @@
     <PackageVersion Include="AspNetCoreAnalyzers" Version="0.3.0" />
     <PackageVersion Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0.1" />
     <PackageVersion Include="IDisposableAnalyzers" Version="4.0.8" />
-    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.205" />
+    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.253" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15" />
     <PackageVersion Include="NetFabric.Hyperlinq.Analyzer" Version="2.3.0" />
     <PackageVersion Include="ReflectionAnalyzers" Version="0.3.1" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.13.1" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.14.1" />
     <PackageVersion Include="SharpSource" Version="1.27.1" />
     <PackageVersion Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" />
     <PackageVersion Include="SmartanAlyzers.ExceptionAnalyzer" Version="1.0.10" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.12.0.118525" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.15.0.120848" />
     <PackageVersion Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" />
-
-    <!--test analyzers-->
-    <PackageVersion Include="xunit.analyzers" Version="1.22.0" />
   </ItemGroup>
 </Project>
