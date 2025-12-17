@@ -15,7 +15,7 @@ public class AmazonS3InputValidator : InputValidatorBase
         if (keyId.Length != 20)
         {
             status = ValidationStatus.WrongLength;
-            message = null;
+            message = "20";
             return false;
         }
 
