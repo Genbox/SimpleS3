@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common;
@@ -8,6 +8,7 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Internal.DataProtection;
 using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 
@@ -16,7 +17,7 @@ public static class ProfileManagerBuilderExtensions
     public static IDataProtectionBuilder UseDataProtection(this IProfileManagerBuilder builder)
     {
         IDataProtectionBuilder dataProtectionBuilder = builder.Services.AddDataProtection(options => options.ApplicationDiscriminator = "SimpleS3");
-        builder.Services.AddSingleton<IAccessKeyProtector, DataProtectionKeyProtector>();
+        builder.Services.TryAddSingleton<IAccessKeyProtector, DataProtectionKeyProtector>();
         return dataProtectionBuilder;
     }
 

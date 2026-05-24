@@ -1,9 +1,11 @@
-﻿# SimpleS3.Extensions.ProfileManager
+# SimpleS3.Extensions.ProfileManager
 
 This extension adds persistent and secure profile handling to SimpleS3. It has a few important components:
 
 * ProfileManager - Used to add and remove profiles
 * ConsoleProfileSetup - A console based setup wizard that helps you create a profile
+
+Persisted profile access keys are protected with ASP.NET Core Data Protection by default.
 
 ### Using Microsoft.Extensions.DependencyInjection
 
