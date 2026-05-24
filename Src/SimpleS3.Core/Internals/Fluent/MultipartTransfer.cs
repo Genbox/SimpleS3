@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
@@ -40,6 +40,15 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         else
         {
             int parts = headResp.NumberOfParts.Value;
+            long[] partOffsets = new long[parts];
+            long nextOffset = headResp.ContentLength;
+
+            for (int i = 2; i <= parts; i++)
+            {
+                partOffsets[i - 1] = nextOffset;
+                HeadObjectResponse partHeadResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req => req.PartNumber = i, token).ConfigureAwait(false);
+                nextOffset += partHeadResp.ContentLength;
+            }
 
             using SemaphoreSlim semaphore = new SemaphoreSlim(numParallelParts);
             using Mutex mutex = new Mutex();
@@ -50,7 +59,7 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
                 if (token.IsCancellationRequested)
                     yield break;
 
-                queue.Enqueue(DownloadPartAsync(bucketName, objectKey, output, headResp.ContentLength, i, bufferSize, semaphore, mutex, config, token));
+                queue.Enqueue(DownloadPartAsync(bucketName, objectKey, output, partOffsets[i - 1], i, bufferSize, semaphore, mutex, config, token));
             }
 
             while (queue.TryDequeue(out Task<GetObjectResponse>? task))
@@ -86,6 +95,8 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         string objectKey = req.ObjectKey;
 
         byte[]? encryptionKey = null;
+        string? uploadId = null;
+        bool completed = false;
 
         try
         {
@@ -97,11 +108,11 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
 
             CreateMultipartUploadResponse initResp = await multipartOperations.CreateMultipartUploadAsync(req, token).ConfigureAwait(false);
 
-            if (token.IsCancellationRequested)
-                return new CompleteMultipartUploadResponse { BucketName = bucket, ObjectKey = objectKey };
-
             if (!initResp.IsSuccess)
                 throw new S3RequestException(initResp, "CreateMultipartUploadRequest was unsuccessful");
+
+            uploadId = initResp.UploadId;
+            token.ThrowIfCancellationRequested();
 
             IEnumerable<ArraySegment<byte>> chunks = ReadChunks(data, partSize);
 
@@ -123,17 +134,30 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             }, numParallelParts, token).ConfigureAwait(false);
 
             CompleteMultipartUploadResponse completeResp = await multipartClient.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, responses.Select(x => new S3PartInfo(x.ETag, x.PartNumber)).OrderBy(x => x.PartNumber), null, token).ConfigureAwait(false);
+            completed = completeResp.IsSuccess;
 
             return completeResp;
         }
         finally
         {
+            if (!completed && uploadId != null)
+            {
+                try
+                {
+                    await multipartClient.AbortMultipartUploadAsync(bucket, objectKey, uploadId, null, CancellationToken.None).ConfigureAwait(false);
+                }
+                catch
+                {
+                    // Preserve the original upload failure.
+                }
+            }
+
             if (encryptionKey != null)
                 Array.Clear(encryptionKey, 0, encryptionKey.Length);
         }
     }
 
-    private async Task<GetObjectResponse> DownloadPartAsync(string bucketName, string objectKey, Stream output, long partSize, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, Action<GetObjectRequest>? config, CancellationToken token)
+    private async Task<GetObjectResponse> DownloadPartAsync(string bucketName, string objectKey, Stream output, long offset, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, Action<GetObjectRequest>? config, CancellationToken token)
     {
         try
         {
@@ -143,7 +167,6 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
                 config?.Invoke(req);
             }, token).ConfigureAwait(false);
 
-            long offset = (partNumber - 1) * partSize;
             byte[] buffer = new byte[bufferSize];
 
             while (true)

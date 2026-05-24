@@ -91,7 +91,17 @@ internal sealed class Download : IDownload
     private void CopyProperties(GetObjectRequest req)
     {
         int? partNum = req.PartNumber;
-        req = _request;
+
+        req.Range = _request.Range;
+        req.IfETagMatch = _request.IfETagMatch;
+        req.IfETagNotMatch = _request.IfETagNotMatch;
+        req.IfModifiedSince = _request.IfModifiedSince;
+        req.IfUnmodifiedSince = _request.IfUnmodifiedSince;
+        req.RequestPayer = _request.RequestPayer;
+        req.SseCustomerAlgorithm = _request.SseCustomerAlgorithm;
+        req.SseCustomerKey = _request.SseCustomerKey;
+        req.SseCustomerKeyMd5 = _request.SseCustomerKeyMd5;
+        req.VersionId = _request.VersionId;
         req.PartNumber = partNum;
     }
 }
