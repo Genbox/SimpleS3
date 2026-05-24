@@ -13,21 +13,29 @@ public class ObjectLegalHoldTests : TestBase
     {
         const string objectKey = nameof(PutGetObjectLegalHold);
 
-        //Create an object
-        await client.PutObjectAsync(bucket, objectKey, null);
+        try
+        {
+            //Create an object
+            await client.PutObjectAsync(bucket, objectKey, null);
 
-        //Check that there is no lock
-        GetObjectLegalHoldResponse getLegalResp = await client.GetObjectLegalHoldAsync(bucket, objectKey);
-        Assert.Equal(404, getLegalResp.StatusCode);
-        Assert.False(getLegalResp.LegalHold);
+            //Check that there is no lock
+            GetObjectLegalHoldResponse getLegalResp = await client.GetObjectLegalHoldAsync(bucket, objectKey);
+            Assert.Equal(404, getLegalResp.StatusCode);
+            Assert.False(getLegalResp.LegalHold);
 
-        //Set a lock
-        PutObjectLegalHoldResponse putLegalResp = await client.PutObjectLegalHoldAsync(bucket, objectKey, true);
-        Assert.Equal(200, putLegalResp.StatusCode);
+            //Set a lock
+            PutObjectLegalHoldResponse putLegalResp = await client.PutObjectLegalHoldAsync(bucket, objectKey, true);
+            Assert.Equal(200, putLegalResp.StatusCode);
 
-        //There should be a lock now
-        GetObjectLegalHoldResponse getLegalResp2 = await client.GetObjectLegalHoldAsync(bucket, objectKey);
-        Assert.Equal(200, getLegalResp2.StatusCode);
-        Assert.True(getLegalResp2.LegalHold);
+            //There should be a lock now
+            GetObjectLegalHoldResponse getLegalResp2 = await client.GetObjectLegalHoldAsync(bucket, objectKey);
+            Assert.Equal(200, getLegalResp2.StatusCode);
+            Assert.True(getLegalResp2.LegalHold);
+        }
+        finally
+        {
+            await client.PutObjectLegalHoldAsync(bucket, objectKey, false, token: TestContext.Current.CancellationToken);
+            await client.DeleteObjectAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
+        }
     }
 }
