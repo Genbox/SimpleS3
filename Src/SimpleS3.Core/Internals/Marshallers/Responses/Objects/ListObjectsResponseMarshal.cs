@@ -73,6 +73,9 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
 
             foreach (S3Object obj in response.Objects)
                 obj.ObjectKey = WebUtility.UrlDecode(obj.ObjectKey);
+
+            for (int i = 0; i < response.CommonPrefixes.Count; i++)
+                response.CommonPrefixes[i] = WebUtility.UrlDecode(response.CommonPrefixes[i]);
         }
     }
 

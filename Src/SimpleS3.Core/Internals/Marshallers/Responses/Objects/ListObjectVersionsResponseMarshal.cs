@@ -78,6 +78,9 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
 
             foreach (S3DeleteMarker marker in response.DeleteMarkers)
                 marker.ObjectKey = WebUtility.UrlDecode(marker.ObjectKey);
+
+            for (int i = 0; i < response.CommonPrefixes.Count; i++)
+                response.CommonPrefixes[i] = WebUtility.UrlDecode(response.CommonPrefixes[i]);
         }
     }
 
