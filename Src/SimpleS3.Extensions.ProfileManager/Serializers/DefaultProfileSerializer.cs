@@ -13,7 +13,6 @@ public class DefaultProfileSerializer : IProfileSerializer
         {
             sw.WriteLine(nameof(profile.Name) + '=' + profile.Name);
             sw.WriteLine(nameof(profile.CreatedOn) + '=' + profile.CreatedOn.UtcDateTime.ToString("O"));
-            sw.WriteLine(nameof(profile.Location) + '=' + profile.Location);
             sw.WriteLine(nameof(profile.KeyId) + '=' + profile.KeyId);
             sw.WriteLine(nameof(profile.AccessKey) + '=' + Convert.ToBase64String(profile.AccessKey));
             sw.WriteLine(nameof(profile.RegionCode) + '=' + profile.RegionCode);
@@ -54,9 +53,6 @@ public class DefaultProfileSerializer : IProfileSerializer
                     break;
                 case nameof(IProfile.CreatedOn):
                     p.CreatedOn = DateTimeOffset.ParseExact(val.ToString(), "O", DateTimeFormatInfo.InvariantInfo);
-                    break;
-                case nameof(IProfile.Location):
-                    p.Location = val.ToString();
                     break;
                 case nameof(IProfile.KeyId):
                     p.KeyId = val.ToString();

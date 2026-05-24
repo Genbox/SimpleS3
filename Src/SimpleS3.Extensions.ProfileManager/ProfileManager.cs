@@ -44,7 +44,7 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
         return profile;
     }
 
-    public IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, bool persist = true)
+    public IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, out string? location, bool persist = true)
     {
         validator.ValidateKeyIdAndThrow(keyId);
         validator.ValidateAccessKeyAndThrow(accessKey);
@@ -61,7 +61,12 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
         profile.RegionCode = region;
 
         if (persist)
-            profile.Location = SaveProfile(profile);
+        {
+            byte[] data = serializer.Serialize(profile);
+            location = storage.Put(profile.Name, data);
+        }
+        else
+            location = null;
 
         return profile;
     }

@@ -4,6 +4,6 @@ public interface IProfileManager
 {
     IProfile? GetProfile(string name);
     string SaveProfile(IProfile profile);
-    IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, bool persist = true);
+    IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, out string? location, bool persist = true);
     IEnumerable<IProfile> List();
 }

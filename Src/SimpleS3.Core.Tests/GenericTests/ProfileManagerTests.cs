@@ -23,9 +23,10 @@ public sealed class ProfileManagerTests : IDisposable
         IProfileManager profileManager = provider.GetRequiredService<IProfileManager>();
 
         byte[] originalSecret = "plain-secret-key"u8.ToArray();
-        IProfile profile = profileManager.CreateProfile("profile", "key-id", originalSecret, "region");
+        profileManager.CreateProfile("profile", "key-id", originalSecret, "region", out string? location);
+        Assert.NotNull(location);
 
-        string persistedProfile = Encoding.UTF8.GetString(File.ReadAllBytes(profile.Location));
+        string persistedProfile = Encoding.UTF8.GetString(File.ReadAllBytes(location));
         Assert.DoesNotContain(Convert.ToBase64String(originalSecret), persistedProfile, StringComparison.Ordinal);
         Assert.DoesNotContain("plain-secret-key", persistedProfile, StringComparison.Ordinal);
     }

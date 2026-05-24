@@ -42,12 +42,12 @@ public class ConsoleProfileSetup(IProfileManager profileManager, IInputValidator
             } while (key != ConsoleKey.Y && key != ConsoleKey.N);
         } while (key == ConsoleKey.N);
 
-        IProfile profile = profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region.Code, persist);
+        IProfile profile = profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region.Code, out string? location, persist);
 
         if (persist)
         {
-            if (!string.IsNullOrEmpty(profile.Location))
-                Console.WriteLine("Successfully saved the profile to " + profile.Location);
+            if (!string.IsNullOrEmpty(location))
+                Console.WriteLine("Successfully saved the profile to " + location);
             else
                 Console.WriteLine("Successfully saved profile");
         }

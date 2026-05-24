@@ -14,7 +14,6 @@ internal sealed class Profile : IProfile
     public string KeyId { get; set; } = null!;
     public byte[] AccessKey { get; set; } = null!;
     public string RegionCode { get; set; } = null!;
-    public string Location { get; set; } = null!;
     public DateTimeOffset CreatedOn { get; set; }
 
     public string? GetTag(string key)
