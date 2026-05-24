@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
@@ -40,7 +40,10 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
         BucketName = bucketName;
         ObjectKey = objectKey;
         UploadId = uploadId;
-        UploadParts = parts.ToArray();
+        UploadParts.Clear();
+
+        foreach (S3PartInfo part in parts)
+            UploadParts.Add(part);
     }
 
     public override void Reset()
