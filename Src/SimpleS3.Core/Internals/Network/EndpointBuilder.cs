@@ -14,6 +14,7 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
     private readonly SimpleS3Config _config = config.Value;
     private readonly Regex _regex = new Regex("{(?:(?<pre>[^:}]*?):)?(?<val>Region|Bucket|Scheme)(?::(?<post>[^}]*?))?}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
     private EndpointData? _lastCache;
+    private readonly object _lock = new object();
 
     public IEndpointData GetEndpoint(IRequest request)
     {
@@ -22,13 +23,16 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
         if (request is IHasBucketName bucketRequest)
             bucket = bucketRequest.BucketName;
 
-        //We want to avoid all the string manipulation GetEndpointData does, so we cache the result here. However, if anything changed, we need to recalculate it.
-        //We don't check on endpoint as it can be a template and therefore will never match.
-        if (_lastCache != null && _lastCache.Bucket == bucket && _lastCache.RegionCode == _config.RegionCode)
-            return _lastCache;
+        lock (_lock)
+        {
+            //We want to avoid all the string manipulation GetEndpointData does, so we cache the result here. However, if anything changed, we need to recalculate it.
+            //We don't check on endpoint as it can be a template and therefore will never match.
+            if (_lastCache != null && _lastCache.Bucket == bucket && _lastCache.RegionCode == _config.RegionCode)
+                return _lastCache;
 
-        _lastCache = GetEndpointData(bucket, _config.RegionCode);
-        return _lastCache;
+            _lastCache = GetEndpointData(bucket, _config.RegionCode);
+            return _lastCache;
+        }
     }
 
     private EndpointData GetEndpointData(string? bucket, string regionCode)

@@ -37,4 +37,30 @@ public class EndpointBuilderTests
         IEndpointData data = builder.GetEndpoint(req);
         Assert.Equal(result, data.Endpoint);
     }
+
+    [Fact]
+    public async Task ConcurrentVirtualHostRequestsUseTheirOwnBucket()
+    {
+        SimpleS3Config config = new SimpleS3Config(null!, "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com", "eu-west-1");
+        config.NamingMode = NamingMode.VirtualHost;
+        EndpointBuilder builder = new EndpointBuilder(Options.Create(config));
+
+        async Task AssertEndpointAsync(string bucket)
+        {
+            await Task.Yield();
+
+            for (int i = 0; i < 10_000; i++)
+            {
+                IEndpointData data = builder.GetEndpoint(new GetObjectRequest(bucket, "object"));
+                Assert.Equal($"https://{bucket}.s3.eu-west-1.amazonaws.com", data.Endpoint);
+                Assert.Equal($"{bucket}.s3.eu-west-1.amazonaws.com", data.Host);
+            }
+        }
+
+        await Task.WhenAll(
+            AssertEndpointAsync("bucket-a"),
+            AssertEndpointAsync("bucket-b"),
+            AssertEndpointAsync("bucket-c"),
+            AssertEndpointAsync("bucket-d"));
+    }
 }
