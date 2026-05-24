@@ -88,24 +88,26 @@ public class DefaultResponseHandler : IResponseHandler
             _marshaller.MarshalResponse(_config, response, headers, responseStream ?? ContentStream.Null);
         else if (responseStream != null)
         {
-            try
+            using (responseStream)
             {
-                using MemoryStream ms = new MemoryStream();
-                await responseStream.CopyToAsync(ms, 81920, token).ConfigureAwait(false);
-
-                if (ms.Length > 0)
+                try
                 {
-                    ms.Seek(0, SeekOrigin.Begin);
+                    using MemoryStream ms = new MemoryStream();
+                    await responseStream.CopyToAsync(ms, 81920, token).ConfigureAwait(false);
 
-                    using (responseStream)
+                    if (ms.Length > 0)
+                    {
+                        ms.Seek(0, SeekOrigin.Begin);
+
                         response.Error = ErrorHandler.Create(ms);
 
-                    _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
+                        _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogDebug(ex, "Failed to map error");
+                catch (Exception ex)
+                {
+                    _logger.LogDebug(ex, "Failed to map error");
+                }
             }
         }
 
