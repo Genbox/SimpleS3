@@ -17,6 +17,12 @@ public class DefaultProfileSerializer : IProfileSerializer
             sw.WriteLine(nameof(profile.KeyId) + '=' + profile.KeyId);
             sw.WriteLine(nameof(profile.AccessKey) + '=' + Convert.ToBase64String(profile.AccessKey));
             sw.WriteLine(nameof(profile.RegionCode) + '=' + profile.RegionCode);
+
+            if (profile.Tags != null)
+            {
+                foreach (KeyValuePair<string, string> tag in profile.Tags)
+                    sw.WriteLine("Tag." + Convert.ToBase64String(Encoding.UTF8.GetBytes(tag.Key)) + '=' + Convert.ToBase64String(Encoding.UTF8.GetBytes(tag.Value)));
+            }
         }
         return ms.ToArray();
     }
@@ -38,7 +44,7 @@ public class DefaultProfileSerializer : IProfileSerializer
             ReadOnlySpan<char> span = str.AsSpan();
 
             int idx = span.IndexOf('=');
-            ReadOnlySpan<char> key = span.Slice(0, idx);
+            string key = span.Slice(0, idx).ToString();
             ReadOnlySpan<char> val = span.Slice(idx + 1);
 
             switch (key)
@@ -62,7 +68,14 @@ public class DefaultProfileSerializer : IProfileSerializer
                     p.RegionCode = val.ToString();
                     break;
                 default:
-                    throw new InvalidOperationException("Invalid key: " + key.ToString());
+                    if (key.StartsWith("Tag.", StringComparison.Ordinal))
+                    {
+                        p.Tags ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                        p.Tags.Add(Encoding.UTF8.GetString(Convert.FromBase64String(key.Substring(4))), Encoding.UTF8.GetString(Convert.FromBase64String(val.ToString())));
+                        break;
+                    }
+
+                    throw new InvalidOperationException("Invalid key: " + key);
             }
         }
 
