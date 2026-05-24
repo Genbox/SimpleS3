@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Reflection;
 
@@ -23,17 +23,29 @@ internal class ObjectPool<T>(int maxCapacity = 32) where T : IPooledObject
     public TReturn RentAndUse<TReturn>(Action<T> setup, Func<T, TReturn> action)
     {
         T obj = Rent(setup);
-        TReturn returnVal = action(obj);
-        Return(obj);
-        return returnVal;
+
+        try
+        {
+            return action(obj);
+        }
+        finally
+        {
+            Return(obj);
+        }
     }
 
     public async Task<TReturn> RentAndUseAsync<TReturn>(Action<T> setup, Func<T, Task<TReturn>> action)
     {
         T obj = Rent(setup);
-        TReturn returnVal = await action(obj).ConfigureAwait(false);
-        Return(obj);
-        return returnVal;
+
+        try
+        {
+            return await action(obj).ConfigureAwait(false);
+        }
+        finally
+        {
+            Return(obj);
+        }
     }
 
     public void Return(T obj)
