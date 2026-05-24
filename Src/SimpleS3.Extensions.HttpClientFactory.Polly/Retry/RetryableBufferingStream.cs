@@ -1,20 +1,24 @@
-﻿using Genbox.SimpleS3.Core.Common.Validation;
+using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 
 /// <summary>Stream that will buffer / record data as it's read, and be able to seek in it afterwards Used for retrying forward-only streams</summary>
 internal sealed class RetryableBufferingStream : Stream
 {
-    private readonly MemoryStream _bufferStream;
+    private readonly int _maxMemoryBufferSize;
     private readonly Stream _underlyingStream;
+    private Stream _bufferStream;
     private bool _buffered;
     private bool _disposed;
+    private string? _tempFilePath;
 
-    public RetryableBufferingStream(Stream underlyingStream)
+    public RetryableBufferingStream(Stream underlyingStream, int maxMemoryBufferSize)
     {
         Validator.RequireThat(!underlyingStream.CanSeek, $"The {nameof(RetryableBufferingStream)} should not be used on seekable streams");
+        Validator.RequireThat(maxMemoryBufferSize >= 0, $"The {nameof(maxMemoryBufferSize)} must be zero or greater");
 
         _underlyingStream = underlyingStream;
+        _maxMemoryBufferSize = maxMemoryBufferSize;
         _bufferStream = new MemoryStream();
     }
 
@@ -37,23 +41,57 @@ internal sealed class RetryableBufferingStream : Stream
         _disposed = true;
 
         if (disposing)
+        {
             _bufferStream.Dispose();
+
+            if (_tempFilePath != null)
+                File.Delete(_tempFilePath);
+        }
 
         base.Dispose(disposing);
     }
 
     private async Task ReadSourceAsync()
     {
-        await _underlyingStream.CopyToAsync(_bufferStream).ConfigureAwait(false);
+        byte[] buffer = new byte[81920];
+        int read;
+
+        while ((read = await _underlyingStream.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false)) > 0)
+        {
+            EnsureCapacity(read);
+            await _bufferStream.WriteAsync(buffer, 0, read).ConfigureAwait(false);
+        }
+
         _bufferStream.Seek(0, SeekOrigin.Begin);
         _buffered = true;
     }
 
     private void ReadSource()
     {
-        _underlyingStream.CopyTo(_bufferStream);
+        byte[] buffer = new byte[81920];
+        int read;
+
+        while ((read = _underlyingStream.Read(buffer, 0, buffer.Length)) > 0)
+        {
+            EnsureCapacity(read);
+            _bufferStream.Write(buffer, 0, read);
+        }
+
         _bufferStream.Seek(0, SeekOrigin.Begin);
         _buffered = true;
+    }
+
+    private void EnsureCapacity(int additionalBytes)
+    {
+        if (_bufferStream is not MemoryStream memoryStream || memoryStream.Length + additionalBytes <= _maxMemoryBufferSize)
+            return;
+
+        _tempFilePath = Path.GetTempFileName();
+        FileStream fileStream = new FileStream(_tempFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+        memoryStream.Seek(0, SeekOrigin.Begin);
+        memoryStream.CopyTo(fileStream);
+        memoryStream.Dispose();
+        _bufferStream = fileStream;
     }
 
     public override int Read(byte[] buffer, int offset, int count)
