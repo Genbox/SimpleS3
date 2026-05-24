@@ -58,7 +58,7 @@ public static class HttpClientBuilderExtensions
 
                 AsyncRetryPolicy<HttpResponseMessage> retryPolicy = b.WaitAndRetryAsync(config.Retries, retryAttempt =>
                     TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) +
-                    TimeSpan.FromMilliseconds(_rng.Next(0, (int)config.MaxRandomDelay.TotalMilliseconds)));
+                    TimeSpan.FromMilliseconds(GetRandomDelay(config.MaxRandomDelay)));
 
                 AsyncTimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(config.Timeout);
 
@@ -68,5 +68,11 @@ public static class HttpClientBuilderExtensions
         }
 
         return builder;
+    }
+
+    private static int GetRandomDelay(TimeSpan maxDelay)
+    {
+        lock (_rng)
+            return _rng.Next(0, (int)maxDelay.TotalMilliseconds);
     }
 }
