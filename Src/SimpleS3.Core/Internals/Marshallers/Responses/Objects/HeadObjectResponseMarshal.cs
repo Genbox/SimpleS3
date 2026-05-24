@@ -52,7 +52,7 @@ internal sealed class HeadObjectResponseMarshal : IResponseMarshal<HeadObjectRes
         response.WebsiteRedirectLocation = headers.GetOptionalValue(AmzHeaders.XAmzWebsiteRedirectLocation);
 
         if (headers.TryGetHeader(AmzHeaders.XAmzObjectLockMode, out string? lockMode))
-            response.LockMode = Core.Enums.Enums.LockMode.Parse(lockMode);
+            response.LockMode = Core.Enums.Enums.LockMode.Parse(lockMode, LockModeFormat.DisplayName);
 
         response.LockRetainUntil = headers.GetHeaderDate(AmzHeaders.XAmzObjectLockRetainUntilDate, DateTimeFormat.Iso8601DateTimeExt);
         response.LockLegalHold = headers.GetOptionalValue(AmzHeaders.XAmzObjectLockLegalHold) == "ON";
