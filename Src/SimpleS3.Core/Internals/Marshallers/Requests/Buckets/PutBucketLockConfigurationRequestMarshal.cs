@@ -24,7 +24,7 @@ internal sealed class PutBucketLockConfigurationRequestMarshal : IRequestMarshal
             writer.WriteElement("Mode", request.LockMode.GetDisplayName());
 
             if (request.LockRetainUntil.HasValue)
-                writer.WriteElement("Days", (request.LockRetainUntil.Value - DateTimeOffset.UtcNow).Days);
+                writer.WriteElement("Days", GetRetainForDays(request.LockRetainUntil.Value));
 
             writer.WriteEndElement("DefaultRetention");
             writer.WriteEndElement("Rule");
@@ -33,5 +33,11 @@ internal sealed class PutBucketLockConfigurationRequestMarshal : IRequestMarshal
         writer.WriteEndElement("ObjectLockConfiguration");
 
         return new MemoryStream(writer.GetBytes());
+    }
+
+    private static int GetRetainForDays(DateTimeOffset lockRetainUntil)
+    {
+        int days = checked((int)Math.Ceiling((lockRetainUntil - DateTimeOffset.UtcNow).TotalDays));
+        return days <= 0 ? throw new ArgumentOutOfRangeException(nameof(lockRetainUntil), "Bucket lock retention must be in the future.") : days;
     }
 }
