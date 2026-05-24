@@ -168,6 +168,7 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             IEnumerable<ArraySegment<byte>> chunks = ReadChunks(data, partSize);
 
             int partNumber = 0;
+            object onPartResponseLock = new object();
 
             IEnumerable<UploadPartResponse> responses = await ParallelHelper.ExecuteAsync(chunks, async (bytes, innerToken) =>
             {
@@ -187,7 +188,12 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
                 if (string.IsNullOrEmpty(resp.ETag))
                     throw new S3RequestException(resp, "UploadPartResponse did not include an ETag");
 
-                onPartResponse?.Invoke(resp);
+                if (onPartResponse != null)
+                {
+                    lock (onPartResponseLock)
+                        onPartResponse(resp);
+                }
+
                 return resp;
             }, numParallelParts, token).ConfigureAwait(false);
 
