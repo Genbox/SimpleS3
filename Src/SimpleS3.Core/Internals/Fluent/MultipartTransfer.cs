@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
@@ -20,11 +20,14 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
     public async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
     {
         Validator.RequireNotNull(output);
+        if (bufferSize <= 0)
+            throw new ArgumentOutOfRangeException(nameof(bufferSize), "Buffer size must be greater than zero.");
+
+        if (numParallelParts <= 0)
+            throw new ArgumentOutOfRangeException(nameof(numParallelParts), "Number of parallel parts must be greater than zero.");
 
         //Use a HEAD request on the object key to determine if the file was originally uploaded with multipart
         HeadObjectResponse headResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req => req.PartNumber = 1, token).ConfigureAwait(false);
-
-        Queue<Task<GetObjectResponse>> queue = new Queue<Task<GetObjectResponse>>();
 
         if (headResp.NumberOfParts == null)
         {
@@ -50,24 +53,37 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
                 nextOffset += partHeadResp.ContentLength;
             }
 
+            using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
             using SemaphoreSlim semaphore = new SemaphoreSlim(numParallelParts);
-            using Mutex mutex = new Mutex();
-            for (int i = 1; i <= parts; i++)
+            using SemaphoreSlim writeLock = new SemaphoreSlim(1, 1);
+            List<Task<GetObjectResponse>> tasks = new List<Task<GetObjectResponse>>(parts);
+
+            try
             {
-                await semaphore.WaitAsync(token).ConfigureAwait(false);
+                for (int i = 1; i <= parts; i++)
+                {
+                    await semaphore.WaitAsync(cancellation.Token).ConfigureAwait(false);
+                    tasks.Add(DownloadPartAsync(bucketName, objectKey, output, partOffsets[i - 1], i, bufferSize, semaphore, writeLock, config, cancellation.Token));
+                }
 
-                if (token.IsCancellationRequested)
-                    yield break;
-
-                queue.Enqueue(DownloadPartAsync(bucketName, objectKey, output, partOffsets[i - 1], i, bufferSize, semaphore, mutex, config, token));
+                foreach (Task<GetObjectResponse> task in tasks)
+                    yield return await task.ConfigureAwait(false);
             }
-
-            while (queue.TryDequeue(out Task<GetObjectResponse>? task))
+            finally
             {
-                if (token.IsCancellationRequested)
-                    yield break;
+                cancellation.Cancel();
 
-                yield return await task!.ConfigureAwait(false);
+                foreach (Task<GetObjectResponse> task in tasks)
+                {
+                    try
+                    {
+                        await task.ConfigureAwait(false);
+                    }
+                    catch
+                    {
+                        // Preserve the original cancellation or download failure.
+                    }
+                }
             }
         }
     }
@@ -84,6 +100,14 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
     {
         Validator.RequireNotNull(req);
         Validator.RequireNotNull(data);
+        if (partSize <= 0)
+            throw new ArgumentOutOfRangeException(nameof(partSize), "Part size must be greater than zero.");
+
+        if (numParallelParts <= 0)
+            throw new ArgumentOutOfRangeException(nameof(numParallelParts), "Number of parallel parts must be greater than zero.");
+
+        if (data.CanSeek && data.Length - data.Position > partSize && partSize < 5 * 1024 * 1024)
+            throw new ArgumentOutOfRangeException(nameof(partSize), "S3 multipart upload parts must be at least 5 MiB except for the final part.");
 
         foreach (IRequestWrapper wrapper in requestWrappers)
         {
@@ -164,7 +188,7 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         }
     }
 
-    private async Task<GetObjectResponse> DownloadPartAsync(string bucketName, string objectKey, Stream output, long offset, int partNumber, int bufferSize, SemaphoreSlim semaphore, Mutex mutex, Action<GetObjectRequest>? config, CancellationToken token)
+    private async Task<GetObjectResponse> DownloadPartAsync(string bucketName, string objectKey, Stream output, long offset, int partNumber, int bufferSize, SemaphoreSlim semaphore, SemaphoreSlim writeLock, Action<GetObjectRequest>? config, CancellationToken token)
     {
         try
         {
@@ -174,29 +198,32 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
                 config?.Invoke(req);
             }, token).ConfigureAwait(false);
 
-            byte[] buffer = new byte[bufferSize];
-
-            while (true)
+            using (getResp.Content)
             {
-                int read = await getResp.Content.ReadUpToAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
+                byte[] buffer = new byte[bufferSize];
 
-                if (read > 0)
+                while (true)
                 {
-                    mutex.WaitOne();
+                    int read = await getResp.Content.ReadUpToAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
 
-                    try
+                    if (read > 0)
                     {
-                        output.Seek(offset, SeekOrigin.Begin);
-                        await output.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
-                        offset += read;
+                        await writeLock.WaitAsync(token).ConfigureAwait(false);
+
+                        try
+                        {
+                            output.Seek(offset, SeekOrigin.Begin);
+                            await output.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
+                            offset += read;
+                        }
+                        finally
+                        {
+                            writeLock.Release();
+                        }
                     }
-                    finally
-                    {
-                        mutex.ReleaseMutex();
-                    }
+                    else
+                        break;
                 }
-                else
-                    break;
             }
 
             return getResp;
