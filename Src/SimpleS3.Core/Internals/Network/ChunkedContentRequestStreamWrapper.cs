@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
@@ -35,8 +35,19 @@ internal sealed class ChunkedContentRequestStreamWrapper : IRequestStreamWrapper
     public Stream Wrap(Stream input, IRequest request)
     {
         //See https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
+        long decodedContentLength;
+
+        try
+        {
+            decodedContentLength = input.Length;
+        }
+        catch (NotSupportedException ex)
+        {
+            throw new NotSupportedException("Streaming signature uploads require a stream that exposes Length.", ex);
+        }
+
         request.SetHeader(HttpHeaders.ContentEncoding, "aws-chunked");
-        request.SetHeader(AmzHeaders.XAmzDecodedContentLength, input.Length);
+        request.SetHeader(AmzHeaders.XAmzDecodedContentLength, decodedContentLength);
         request.SetHeader(AmzHeaders.XAmzContentSha256, "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
 
         byte[] seedSignature = _signatureBuilder.CreateSignature(request);

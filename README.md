@@ -22,7 +22,7 @@ Features provided by SimpleS3:
 * Use the ProfileManager to manage credentials securely with in-memory encryption.
 * Full async and cancellation support.
 * Client-side validation of requests makes it easier to know what is wrong before sending a request.
-* Support uploading non-seekable streams or streams with no length.
+* Support uploading non-seekable streams when the stream exposes its length.
 * Supports automatic URL decoding of XML responses to support special non-XML compliant characters.
 * Extensive unit tests ensure correctness and stability.
 * Few allocations due to extensive use of object pools.
