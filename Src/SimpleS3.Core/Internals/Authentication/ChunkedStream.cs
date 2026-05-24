@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
@@ -77,9 +77,9 @@ internal sealed class ChunkedStream : Stream
             int totalRead = 0;
             if (!_inputStreamConsumed)
             {
-                while (_headerSize + totalRead < _chunkSize && !_inputStreamConsumed)
+                while (totalRead < _chunkSize && !_inputStreamConsumed)
                 {
-                    int remaining = Math.Min(_chunkSize, _buffer.Length - totalRead - _headerSize);
+                    int remaining = _chunkSize - totalRead;
                     int read = await _originalStream.ReadAsync(_buffer, _headerSize + totalRead, remaining, cancellationToken).ConfigureAwait(false);
 
                     if (read == 0)
@@ -130,9 +130,9 @@ internal sealed class ChunkedStream : Stream
             int totalRead = 0;
             if (!_inputStreamConsumed)
             {
-                while (_headerSize + totalRead < _chunkSize && !_inputStreamConsumed)
+                while (totalRead < _chunkSize && !_inputStreamConsumed)
                 {
-                    int remaining = Math.Min(_chunkSize, _buffer.Length - totalRead - _headerSize);
+                    int remaining = _chunkSize - totalRead;
                     int read = _originalStream.Read(_buffer, _headerSize + totalRead, remaining);
 
                     if (read == 0)
