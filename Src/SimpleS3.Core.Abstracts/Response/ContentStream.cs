@@ -1,7 +1,11 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Response;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Genbox.SimpleS3.Core.Abstracts.Response;
 
 public class ContentStream(Stream stream, long? length) : Stream
 {
+    private bool _disposed;
+
     public new static ContentStream Null { get; } = new ContentStream(Stream.Null, null);
 
     public override bool CanRead => stream.CanRead;
@@ -27,4 +31,18 @@ public class ContentStream(Stream stream, long? length) : Stream
     public override void SetLength(long value) => throw new AbandonedMutexException("This is a read-only stream");
     public override void Write(byte[] buffer, int offset, int count) => stream.Write(buffer, offset, count);
     public override void Flush() => stream.Flush();
+
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP007:Don\'t dispose injected", Justification = "ContentStream is a wrapper. It has to manage disposal.")]
+    protected override void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        _disposed = true;
+
+        if (disposing)
+            stream.Dispose();
+
+        base.Dispose(disposing);
+    }
 }
