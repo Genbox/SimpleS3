@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Common.Misc;
+using Genbox.SimpleS3.Core.Common.Misc;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient.Internal;
 
@@ -23,7 +23,10 @@ internal static class HttpRequestMessageExtensions
         string keyLowered = key.ToLowerInvariant();
 
         if (_contentHeaders.Contains(keyLowered))
-            request.Content?.Headers.TryAddWithoutValidation(keyLowered, value);
+        {
+            request.Content ??= new ByteArrayContent(Array.Empty<byte>());
+            request.Content.Headers.TryAddWithoutValidation(keyLowered, value);
+        }
         else
             request.Headers.TryAddWithoutValidation(keyLowered, value);
     }
