@@ -10,7 +10,7 @@ public class DiskStorage(IOptions<DiskStorageOptions> options) : IStorage
 
     public byte[]? Get(string name)
     {
-        string path = Path.Combine(_options.ProfileLocation, name);
+        string path = GetProfilePath(name);
 
         if (!File.Exists(path))
             return null;
@@ -20,7 +20,7 @@ public class DiskStorage(IOptions<DiskStorageOptions> options) : IStorage
 
     public string Put(string name, byte[] data)
     {
-        string path = Path.Combine(_options.ProfileLocation, name);
+        string path = GetProfilePath(name);
 
         if (!Directory.Exists(_options.ProfileLocation))
             Directory.CreateDirectory(_options.ProfileLocation);
@@ -43,6 +43,24 @@ public class DiskStorage(IOptions<DiskStorageOptions> options) : IStorage
         if (!Directory.Exists(_options.ProfileLocation))
             return Array.Empty<string>();
 
-        return Directory.EnumerateFiles(_options.ProfileLocation);
+        return Directory.EnumerateFiles(_options.ProfileLocation).Select(x => Path.GetFileName(x)!);
+    }
+
+    private string GetProfilePath(string name)
+    {
+        if (Path.IsPathRooted(name) || name.IndexOf(Path.DirectorySeparatorChar) >= 0 || name.IndexOf(Path.AltDirectorySeparatorChar) >= 0 || name is "." or ".." || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            throw new S3Exception("Profile name must be a safe file name");
+
+        string root = Path.GetFullPath(_options.ProfileLocation);
+
+        if (!root.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+            root += Path.DirectorySeparatorChar;
+
+        string path = Path.GetFullPath(Path.Combine(root, name));
+
+        if (!path.StartsWith(root, StringComparison.OrdinalIgnoreCase))
+            throw new S3Exception("Profile name resolves outside the profile directory");
+
+        return path;
     }
 }
