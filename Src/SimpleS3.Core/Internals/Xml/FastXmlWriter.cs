@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using System.Xml;
 using Genbox.SimpleS3.Core.Common.Exceptions;

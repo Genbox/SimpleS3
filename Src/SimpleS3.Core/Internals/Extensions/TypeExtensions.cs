@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Internals.Extensions;
+namespace Genbox.SimpleS3.Core.Internals.Extensions;
 
 internal static class TypeExtensions
 {

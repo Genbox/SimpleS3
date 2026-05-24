@@ -1,4 +1,4 @@
-﻿using Genbox.HttpBuilders.Abstracts;
+using Genbox.HttpBuilders.Abstracts;
 
 namespace Genbox.SimpleS3.Core.Builders;
 

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Security.Cryptography;
 using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;

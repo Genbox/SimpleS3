@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Common.Validation;
+using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 

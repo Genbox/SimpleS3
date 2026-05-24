@@ -1,4 +1,4 @@
-﻿# SimpleS3.Extensions.HttpClientFactory
+# SimpleS3.Extensions.HttpClientFactory
 
 This extension provides more advanced HTTP capabilities than the SimpleS3.Extensions.HttpClient network driver. It is based on
 the [HttpClientFactory](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests)

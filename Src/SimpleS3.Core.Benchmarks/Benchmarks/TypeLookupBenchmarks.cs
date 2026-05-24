@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
+namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
 public class TypeLookupBenchmarks
 {

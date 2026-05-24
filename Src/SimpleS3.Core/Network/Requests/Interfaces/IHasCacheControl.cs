@@ -1,4 +1,4 @@
-﻿using Genbox.HttpBuilders;
+using Genbox.HttpBuilders;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;

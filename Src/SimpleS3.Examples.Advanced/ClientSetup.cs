@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.AmazonS3;
+using Genbox.SimpleS3.AmazonS3;
 using Genbox.SimpleS3.Extensions.AmazonS3;
 
 namespace Genbox.SimpleS3.Examples.Advanced;

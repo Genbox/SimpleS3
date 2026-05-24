@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Genbox.SimpleS3.Core.Common.Pools;
 
 namespace Genbox.SimpleS3.Core.Internals.Helpers;

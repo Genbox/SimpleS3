@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 

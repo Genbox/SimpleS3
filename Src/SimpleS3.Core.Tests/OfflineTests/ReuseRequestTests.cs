@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;

@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Genbox.HttpBuilders;
 using Genbox.HttpBuilders.Enums;
 using Genbox.SimpleS3.Core.Abstracts;

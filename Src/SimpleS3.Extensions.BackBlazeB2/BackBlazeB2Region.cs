@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Extensions.BackBlazeB2;
+namespace Genbox.SimpleS3.Extensions.BackBlazeB2;
 
 public enum BackBlazeB2Region
 {

@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 

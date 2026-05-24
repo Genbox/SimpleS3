@@ -1,4 +1,4 @@
-﻿using Genbox.FastEnum;
+using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 

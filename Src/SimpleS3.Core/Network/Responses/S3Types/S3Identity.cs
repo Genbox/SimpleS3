@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
+namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 public class S3Identity(string id, string? name)
 {

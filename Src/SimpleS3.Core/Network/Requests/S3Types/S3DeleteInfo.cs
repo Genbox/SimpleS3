@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Common.Marshal;
+using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using JetBrains.Annotations;

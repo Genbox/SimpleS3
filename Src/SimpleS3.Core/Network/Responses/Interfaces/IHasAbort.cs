@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
+namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 public interface IHasAbort
 {

@@ -1,4 +1,4 @@
-﻿# SimpleS3.Extensions.HttpClient
+# SimpleS3.Extensions.HttpClient
 
 This extension is a network driver that provides basic HTTP communication through the .NET System.Net.Http.HttpClient class. A single HttpClient instance is used for all
 connections. It supports web proxies.

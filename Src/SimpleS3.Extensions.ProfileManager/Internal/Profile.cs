@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
+using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Internal;

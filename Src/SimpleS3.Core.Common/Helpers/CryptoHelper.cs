@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 

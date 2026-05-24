@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Abstracts.Region;
+namespace Genbox.SimpleS3.Core.Abstracts.Region;
 
 public class RegionInfo(Enum enumValue, string code, string name) : IRegionInfo
 {

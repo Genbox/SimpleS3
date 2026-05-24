@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Tests.Code.Streams;
+namespace Genbox.SimpleS3.Core.Tests.Code.Streams;
 
 internal class NonSeekableStream(byte[] data) : Stream
 {

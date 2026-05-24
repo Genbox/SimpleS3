@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts.Response;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 

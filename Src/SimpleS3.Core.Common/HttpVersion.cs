@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Common;
+namespace Genbox.SimpleS3.Core.Common;
 
 public enum HttpVersion
 {

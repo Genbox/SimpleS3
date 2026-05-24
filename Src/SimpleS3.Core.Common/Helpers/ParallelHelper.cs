@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Common.Helpers;
+namespace Genbox.SimpleS3.Core.Common.Helpers;
 
 public static class ParallelHelper
 {

@@ -1,4 +1,4 @@
-﻿# SimpleS3.Extensions.BackBlazeB2
+# SimpleS3.Extensions.BackBlazeB2
 
 This extension adds support for [BackBlaze's B2 serivce](https://www.backblaze.com/b2/cloud-storage.html).
 

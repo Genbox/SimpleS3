@@ -1,4 +1,4 @@
-﻿# SimpleS3.Extensions.GoogleCloudStorage
+# SimpleS3.Extensions.GoogleCloudStorage
 
 This extension adds support for [Google's Cloud Storage (S3 compatible) serivce](https://cloud.google.com/storage/docs/migrating).
 

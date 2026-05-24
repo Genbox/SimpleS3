@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Extensions.AmazonS3;
+namespace Genbox.SimpleS3.Extensions.AmazonS3;
 
 /// <summary>The AWS regions. See https://docs.aws.amazon.com/en_pv/general/latest/gr/rande.html#s3_region for more info</summary>
 public enum AmazonS3Region

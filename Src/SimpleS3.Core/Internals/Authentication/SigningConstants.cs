@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Internals.Authentication;
+namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
 internal static class SigningConstants
 {

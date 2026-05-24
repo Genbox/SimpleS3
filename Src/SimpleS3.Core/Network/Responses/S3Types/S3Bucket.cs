@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Common.Marshal;
+using Genbox.SimpleS3.Core.Common.Marshal;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;

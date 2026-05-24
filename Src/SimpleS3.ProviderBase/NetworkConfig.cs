@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly;
 
 namespace Genbox.SimpleS3.ProviderBase;

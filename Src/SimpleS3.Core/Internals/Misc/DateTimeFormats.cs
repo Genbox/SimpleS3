@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Internals.Misc;
+namespace Genbox.SimpleS3.Core.Internals.Misc;
 
 internal static class DateTimeFormats
 {

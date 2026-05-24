@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;

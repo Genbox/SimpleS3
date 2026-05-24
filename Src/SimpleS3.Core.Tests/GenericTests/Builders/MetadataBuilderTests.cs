@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Genbox.SimpleS3.Core.Builders;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests.Builders;

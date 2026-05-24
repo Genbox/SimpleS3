@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Internal;

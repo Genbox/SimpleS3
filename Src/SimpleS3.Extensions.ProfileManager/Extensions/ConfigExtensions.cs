@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 

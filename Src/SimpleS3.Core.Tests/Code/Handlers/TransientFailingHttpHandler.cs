@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Core.Tests.Code.Handlers;

@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Internals.Network;
 using Genbox.SimpleS3.Core.Network.Requests;

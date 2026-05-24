@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.AmazonS3;
+using Genbox.SimpleS3.AmazonS3;
 using Genbox.SimpleS3.AmazonS3.Extensions;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Authentication;

@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation.Validators;

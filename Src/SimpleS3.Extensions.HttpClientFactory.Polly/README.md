@@ -1,4 +1,4 @@
-﻿# SimpleS3.Extensions.HttpClientFactory.Polly
+# SimpleS3.Extensions.HttpClientFactory.Polly
 
 This extension adds retry, timeout and error handling to
 the [Genbox.SimpleS3.Extensions.HttpClientFactory](https://www.nuget.org/packages/Genbox.SimpleS3.Extensions.HttpClientFactory) extension using Polly.

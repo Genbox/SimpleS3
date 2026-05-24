@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace Genbox.SimpleS3.Core.Internals.Extensions;
 

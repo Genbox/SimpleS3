@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;

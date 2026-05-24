@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Security.Cryptography;
 using Genbox.HttpBuilders.Enums;
 using Genbox.ProviderTests.Code;

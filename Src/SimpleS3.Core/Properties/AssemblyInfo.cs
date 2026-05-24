@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Genbox.ProviderTests")]
 [assembly: InternalsVisibleTo("Genbox.SimpleS3.Core.Tests")]

@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Builders;
+using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using JetBrains.Annotations;
 

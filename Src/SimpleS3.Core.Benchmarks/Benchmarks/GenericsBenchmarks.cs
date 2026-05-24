@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 

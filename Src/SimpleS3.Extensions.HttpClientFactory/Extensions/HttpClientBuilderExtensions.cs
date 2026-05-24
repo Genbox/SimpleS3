@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;

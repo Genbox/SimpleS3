@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage;
+namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage;
 //https://cloud.google.com/storage/docs/locations
 
 public enum GoogleCloudStorageRegion

@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Genbox.SimpleS3.Core.Internals.Xml;

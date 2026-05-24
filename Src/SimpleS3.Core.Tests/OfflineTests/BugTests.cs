@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.GenericS3.Extensions;
+using Genbox.SimpleS3.GenericS3.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests;

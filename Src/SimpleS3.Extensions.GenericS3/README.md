@@ -1,4 +1,4 @@
-﻿# SimpleS3.Extensions.GenericS3
+# SimpleS3.Extensions.GenericS3
 
 This extension supports any generic S3 endpoint. It does not provide any input validation as it is unknown what the generic endpoint would support.
 If the endpoint you want to use is a close match to AmazonS3, then use SimpleS3.AmazonS3 instead.

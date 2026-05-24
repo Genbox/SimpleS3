@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 

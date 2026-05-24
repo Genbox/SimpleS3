@@ -1,4 +1,4 @@
-﻿using Genbox.HttpBuilders.Abstracts;
+using Genbox.HttpBuilders.Abstracts;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 

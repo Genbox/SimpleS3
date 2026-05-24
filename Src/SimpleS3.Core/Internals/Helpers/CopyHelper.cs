@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Internals.Helpers;
+namespace Genbox.SimpleS3.Core.Internals.Helpers;
 
 internal static class CopyHelper
 {

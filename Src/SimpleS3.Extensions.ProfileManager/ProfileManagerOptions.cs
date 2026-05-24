@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Extensions.ProfileManager;
+namespace Genbox.SimpleS3.Extensions.ProfileManager;
 
 public class ProfileManagerOptions
 {

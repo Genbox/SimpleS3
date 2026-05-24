@@ -1,4 +1,4 @@
-﻿# SimpleS3.Extensions.Wasabi
+# SimpleS3.Extensions.Wasabi
 
 This extension adds support for [Wasabi's S3 serivce](https://wasabi.com/s3-compatible-cloud-storage/).
 

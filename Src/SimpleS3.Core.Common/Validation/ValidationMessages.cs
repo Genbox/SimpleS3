@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Common.Validation;

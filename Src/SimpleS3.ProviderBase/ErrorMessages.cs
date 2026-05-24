@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.ProviderBase;
+namespace Genbox.SimpleS3.ProviderBase;
 
 public static class ErrorMessages
 {

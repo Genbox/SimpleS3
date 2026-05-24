@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Utility.S3Template.Enums;
+using Genbox.SimpleS3.Utility.S3Template.Enums;
 
 namespace Genbox.SimpleS3.Utility.S3Template;
 

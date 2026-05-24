@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Common.Extensions;
+using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Tests.Code;
 
 namespace Genbox.SimpleS3.Core.Common.Tests;

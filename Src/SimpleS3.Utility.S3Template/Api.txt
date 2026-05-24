@@ -1,2 +1,2 @@
-﻿GetBucketAccelerateConfiguration,bucket
+GetBucketAccelerateConfiguration,bucket
 GetObject,object

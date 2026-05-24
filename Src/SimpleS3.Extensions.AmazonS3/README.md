@@ -1,4 +1,4 @@
-﻿# SimpleS3.Extensions.AmazonS3
+# SimpleS3.Extensions.AmazonS3
 
 This extension adds support for [Amazon's S3 serivce](https://aws.amazon.com/s3/).
 

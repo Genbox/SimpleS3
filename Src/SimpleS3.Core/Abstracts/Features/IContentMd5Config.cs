@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Features;
 

@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory;

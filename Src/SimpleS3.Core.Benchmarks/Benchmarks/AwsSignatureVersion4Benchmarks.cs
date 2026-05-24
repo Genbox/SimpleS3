@@ -1,4 +1,4 @@
-﻿using Amazon.Runtime;
+using Amazon.Runtime;
 using Amazon.Util;
 using AwsSignatureVersion4.Private;
 using Genbox.SimpleS3.Core.Abstracts;

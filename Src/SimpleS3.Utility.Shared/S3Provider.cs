@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Utility.Shared;
+namespace Genbox.SimpleS3.Utility.Shared;
 
 [Flags]
 public enum S3Provider

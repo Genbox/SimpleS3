@@ -1,4 +1,4 @@
-﻿namespace Genbox.SimpleS3.Core.Internals.Enums;
+namespace Genbox.SimpleS3.Core.Internals.Enums;
 
 internal enum BinaryEncoding
 {
