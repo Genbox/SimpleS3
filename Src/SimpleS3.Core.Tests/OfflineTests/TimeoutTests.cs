@@ -65,4 +65,12 @@ public class TimeoutTests(ITestOutputHelper helper) : OfflineTestBase(helper)
         Assert.True(response.IsSuccess);
         Assert.Equal(2, _handler.RequestCounter);
     }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+            _handler.Dispose();
+
+        base.Dispose(disposing);
+    }
 }

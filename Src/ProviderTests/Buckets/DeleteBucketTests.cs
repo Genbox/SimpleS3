@@ -13,6 +13,8 @@ public class DeleteBucketTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task DeleteBucket(S3Provider provider, string _, ISimpleClient client)
     {
+        Assert.NotEqual(S3Provider.None, provider);
+
         string tempBucketName = GetTemporaryBucket();
 
         DeleteBucketResponse deleteResp1 = await client.DeleteBucketAsync(tempBucketName);

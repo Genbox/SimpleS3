@@ -60,7 +60,6 @@ dotnet_diagnostic.CA1815.severity = none # Duplicate of MA0065 - MA reports only
 dotnet_diagnostic.CA1815.severity = none # Duplicate of MA0066 - MA reports only when the struct is used with HashSet types
 dotnet_diagnostic.CA1819.severity = none # Duplicate of MA0016 - CA only applies to arrays
 dotnet_diagnostic.CA1822.severity = none # Duplicate of MA0038 - CA supports more cases and can be configured to only run against specific API surfaces
-dotnet_diagnostic.CA1822.severity = none # Duplicate of MA0041 - CA supports more cases and can be configured to only run against specific API surfaces
 dotnet_diagnostic.CA1826.severity = none # Duplicate of MA0020 - MA reports more cases such as List<T>.Find instead of FirstOrDefault
 dotnet_diagnostic.CA1827.severity = none # Duplicate of MA0031 - MA reports more Count() optimizations
 dotnet_diagnostic.CA1852.severity = none # Duplicate of MA0053 - CA only applies to internal types in assemblies that do not expose internal types and members and - by default - report types that inherit from [Exception] (https://learn.microsoft.com/en-us/dotnet/api/system.exception?WT.mc_id=DT-MVP-5003978), but cannot be configured to report types that define virtual members

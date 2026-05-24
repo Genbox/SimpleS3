@@ -21,7 +21,8 @@ public class ListResponseMarshalTests
                            """;
         ListObjectsResponse response = new ListObjectsResponse();
 
-        new ListObjectsResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(), CreateContent(xml));
+        using ContentStream content = CreateContent(xml);
+        new ListObjectsResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(), content);
 
         Assert.Equal("foo bar/", Assert.Single(response.CommonPrefixes));
     }
@@ -37,7 +38,8 @@ public class ListResponseMarshalTests
                            """;
         ListObjectVersionsResponse response = new ListObjectVersionsResponse();
 
-        new ListObjectVersionsResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(), CreateContent(xml));
+        using ContentStream content = CreateContent(xml);
+        new ListObjectVersionsResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(), content);
 
         Assert.Equal("foo bar/", Assert.Single(response.CommonPrefixes));
     }

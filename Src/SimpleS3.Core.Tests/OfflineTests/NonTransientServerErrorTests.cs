@@ -45,4 +45,12 @@ public class NonTransientServerErrorTests(ITestOutputHelper helper) : OfflineTes
         Assert.False(response.IsSuccess);
         Assert.Equal(2, _handler.RequestCounter);
     }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+            _handler.Dispose();
+
+        base.Dispose(disposing);
+    }
 }

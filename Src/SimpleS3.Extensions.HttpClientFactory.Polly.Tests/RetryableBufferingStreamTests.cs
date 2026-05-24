@@ -12,7 +12,7 @@ public class RetryableBufferingStreamTests
         using CancellationTokenSource cts = new CancellationTokenSource();
         byte[] buffer = new byte[1];
 
-        await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token);
+        await stream.ReadAsync(buffer.AsMemory(0, buffer.Length), cts.Token);
 
         Assert.Equal(cts.Token, source.CapturedToken);
     }
@@ -50,6 +50,12 @@ public class RetryableBufferingStreamTests
         {
             CapturedToken = cancellationToken;
             return Task.FromResult(0);
+        }
+
+        public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            CapturedToken = cancellationToken;
+            return ValueTask.FromResult(0);
         }
 
         public override int Read(byte[] buffer, int offset, int count) => 0;

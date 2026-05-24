@@ -152,6 +152,8 @@ public class MultipartTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task MultipartTooSmall(S3Provider provider, string bucket, ISimpleClient client)
     {
+        Assert.NotEqual(S3Provider.None, provider);
+
         const string objectKey = nameof(MultipartTooSmall);
 
         CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey);
@@ -298,6 +300,8 @@ public class MultipartTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task MultipartChecksum(S3Provider provider, string bucket, ISimpleClient client)
     {
+        Assert.Equal(S3Provider.AmazonS3, provider);
+
         const string objectKey = nameof(MultipartChecksum);
 
         CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey, r =>

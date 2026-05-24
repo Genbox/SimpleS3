@@ -21,7 +21,9 @@ internal class ProviderSetup
 
     private void BuildProvider(S3Provider provider)
     {
+#pragma warning disable CA2000 // Provider test clients are kept alive by the singleton test data provider.
         ServiceProvider services = UtilityHelper.CreateSimpleS3(provider, "TestSetup-" + provider, false, c => c.ObjectKeyValidationMode = ObjectKeyValidationMode.Disabled);
+#pragma warning restore CA2000
 
         IProfileManager profileManager = services.GetRequiredService<IProfileManager>();
 

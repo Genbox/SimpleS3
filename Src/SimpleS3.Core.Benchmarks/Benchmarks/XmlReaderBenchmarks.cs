@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
 [MemoryDiagnoser]
+[SuppressMessage("Design", "CA1034:Nested types should not be visible")]
 public class XmlReaderBenchmarks
 {
     private readonly byte[] _data = Encoding.UTF8.GetBytes("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

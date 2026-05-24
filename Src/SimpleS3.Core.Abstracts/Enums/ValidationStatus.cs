@@ -7,5 +7,7 @@ public enum ValidationStatus
     NullInput,
     WrongLength,
     WrongFormat,
+#pragma warning disable CA1700 // Public API name describes provider-reserved bucket names.
     ReservedName
+#pragma warning restore CA1700
 }

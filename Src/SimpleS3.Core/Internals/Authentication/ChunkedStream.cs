@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
@@ -20,6 +21,7 @@ internal sealed class ChunkedStream : Stream
     private readonly int _chunkSize;
 
     private readonly int _headerSize;
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "The request stream is caller-owned and can be reused after ChunkedStream is disposed.")]
     private readonly Stream _originalStream;
     private readonly IRequest _request;
     private readonly byte[] _seedSignature;
@@ -229,7 +231,7 @@ internal sealed class ChunkedStream : Stream
         long lastChunkSize = CalculateChunkHeaderLength(remainingBytes, 64) + remainingBytes + _newline.Length;
         int headerSize = CalculateChunkHeaderLength(0, 64) + _newline.Length;
 
-        return maxSizeChunks * chunkSize + (remainingBytes > 0 ? lastChunkSize : 0) + headerSize;
+        return (maxSizeChunks * chunkSize) + (remainingBytes > 0 ? lastChunkSize : 0) + headerSize;
     }
 
     private static int CreateChunkHeader(byte[] chunkSignature, int contentLength, byte[] buffer)

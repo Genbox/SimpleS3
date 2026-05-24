@@ -31,7 +31,7 @@ internal static class HexExtensions
                 int hi = hex[i * 2] - 65;
                 hi = hi + 10 + ((hi >> 31) & 7);
 
-                int lo = hex[i * 2 + 1] - 65;
+                int lo = hex[(i * 2) + 1] - 65;
                 lo = (lo + 10 + ((lo >> 31) & 7)) & 0x0f;
 
                 bytes[i] = (byte)(lo | (hi << 4));
@@ -55,7 +55,7 @@ internal static class HexExtensions
                 result[2 * i] = (char)val;
             }
 
-            result[2 * i + 1] = (char)(val >> 16);
+            result[(2 * i) + 1] = (char)(val >> 16);
         }
 
         return new string(result);

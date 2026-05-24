@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Response;
 
-public class ContentStream(Stream stream, long? length) : Stream
+public class ContentStream(Stream stream, long? length, IDisposable? owner = null) : Stream
 {
     private bool _disposed;
 
@@ -41,7 +41,10 @@ public class ContentStream(Stream stream, long? length) : Stream
         _disposed = true;
 
         if (disposing)
+        {
             stream.Dispose();
+            owner?.Dispose();
+        }
 
         base.Dispose(disposing);
     }

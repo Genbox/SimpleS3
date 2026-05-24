@@ -64,8 +64,12 @@ public class HttpClientFactoryNetworkDriver(IOptions<HttpClientFactoryConfig> op
                 responseHeaders.Add(header.Key, header.Value.First());
 
             Stream innerStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            contentStream = new ContentStream(innerStream, httpResponse.Content.Headers.ContentLength);
+#pragma warning disable CA2000 // Ownership is transferred to HttpResponse.Content and disposed with the response stream.
+            contentStream = new ContentStream(innerStream, httpResponse.Content.Headers.ContentLength, httpResponse);
+#pragma warning restore CA2000
         }
+        else
+            httpResponse.Dispose();
 
         return new HttpResponse(contentStream, responseHeaders, (int)httpResponse.StatusCode);
     }

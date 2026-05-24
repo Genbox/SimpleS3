@@ -68,6 +68,7 @@ internal sealed class DefaultRequestHandler : IRequestHandler
         request.SetHeader(HttpHeaders.Host, endpointData.Host);
         request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
 
+#pragma warning disable IDISP003 // Wrappers transfer stream ownership to the returned wrapper.
         if (requestStream != null && _requestStreamWrappers != null)
         {
             foreach (IRequestStreamWrapper wrapper in _requestStreamWrappers)
@@ -76,6 +77,7 @@ internal sealed class DefaultRequestHandler : IRequestHandler
                     requestStream = wrapper.Wrap(requestStream, request);
             }
         }
+#pragma warning restore IDISP003
 
         if (!request.Headers.TryGetValue(AmzHeaders.XAmzContentSha256, out string? contentHash))
         {

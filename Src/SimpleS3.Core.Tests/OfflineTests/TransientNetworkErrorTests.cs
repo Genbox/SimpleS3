@@ -51,4 +51,12 @@ public class TransientNetworkErrorTests(ITestOutputHelper helper) : OfflineTestB
         Assert.All(_handler.ContentLengths, length => Assert.True(length > 0));
         Assert.All(_handler.RequestBodies, body => Assert.Equal(_handler.RequestBodies[0], body));
     }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+            _handler.Dispose();
+
+        base.Dispose(disposing);
+    }
 }

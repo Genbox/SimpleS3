@@ -109,11 +109,13 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         if (data.CanSeek && data.Length - data.Position > partSize && partSize < 5 * 1024 * 1024)
             throw new ArgumentOutOfRangeException(nameof(partSize), "S3 multipart upload parts must be at least 5 MiB except for the final part.");
 
+#pragma warning disable IDISP003 // Wrappers transfer stream ownership to the returned wrapper.
         foreach (IRequestWrapper wrapper in requestWrappers)
         {
             if (wrapper.IsSupported(req))
                 data = wrapper.Wrap(data, req);
         }
+#pragma warning restore IDISP003
 
         string bucket = req.BucketName;
         string objectKey = req.ObjectKey;

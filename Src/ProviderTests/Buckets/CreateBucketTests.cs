@@ -9,8 +9,11 @@ public class CreateBucketTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task CreateBucket(S3Provider _, string __, ISimpleClient client)
+    public async Task CreateBucket(S3Provider provider, string bucket, ISimpleClient client)
     {
+        Assert.NotEqual(S3Provider.None, provider);
+        Assert.NotEmpty(bucket);
+
         string tempBucketName = GetTemporaryBucket();
 
         CreateBucketResponse resp = await client.CreateBucketAsync(tempBucketName);

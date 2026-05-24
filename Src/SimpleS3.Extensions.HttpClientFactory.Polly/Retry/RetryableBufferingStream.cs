@@ -55,6 +55,7 @@ internal sealed class RetryableBufferingStream : Stream
         if (disposing)
         {
             _bufferStream.Dispose();
+            _underlyingStream.Dispose();
 
             if (_tempFilePath != null)
                 File.Delete(_tempFilePath);
@@ -105,7 +106,7 @@ internal sealed class RetryableBufferingStream : Stream
         {
             memoryStream.Seek(0, SeekOrigin.Begin);
             memoryStream.CopyTo(fileStream);
-            memoryStream.Dispose();
+            _bufferStream.Dispose();
             _bufferStream = fileStream;
         }
         catch

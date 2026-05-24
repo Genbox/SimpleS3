@@ -24,6 +24,8 @@ internal class NonSeekableStream(byte[] data) : Stream
 
     public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => _backingStream.ReadAsync(buffer, offset, count, cancellationToken);
 
+    public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default) => _backingStream.ReadAsync(buffer, cancellationToken);
+
     public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
 
     public override void SetLength(long value)
