@@ -33,4 +33,35 @@ public class ParallelHelperTests
             return Task.FromResult(value);
         }, 1, TestContext.Current.CancellationToken));
     }
+
+    [Fact]
+    public async Task ExecuteAsyncWithReturnDoesNotEnumeratePastAvailableSlots()
+    {
+        int yielded = 0;
+        TaskCompletionSource entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        Task<IEnumerable<int>> task = ParallelHelper.ExecuteAsync(Source(), async (value, token) =>
+        {
+            entered.TrySetResult();
+            await release.Task.WaitAsync(token).ConfigureAwait(false);
+            return value;
+        }, 1, TestContext.Current.CancellationToken);
+
+        await entered.Task.WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+
+        Assert.Equal(1, Volatile.Read(ref yielded));
+
+        release.SetResult();
+        Assert.Equal([0, 1, 2], await task.ConfigureAwait(false));
+
+        IEnumerable<int> Source()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Interlocked.Increment(ref yielded);
+                yield return i;
+            }
+        }
+    }
 }

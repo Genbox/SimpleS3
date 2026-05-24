@@ -5,25 +5,41 @@ public static class ParallelHelper
     public static async Task ExecuteAsync<T>(IEnumerable<T> source, Func<T, CancellationToken, Task> action, int concurrentThreads, CancellationToken token = default)
     {
         using SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
-        IEnumerable<Task> tasks = source.Select(ExecuteElementAsync);
+        using IEnumerator<T> enumerator = source.GetEnumerator();
+        List<Task> tasks = new List<Task>();
+
+        try
+        {
+            while (true)
+            {
+                await throttler.WaitAsync(token).ConfigureAwait(false);
+
+                if (!enumerator.MoveNext())
+                {
+                    throttler.Release();
+                    break;
+                }
+
+                tasks.Add(ExecuteElementAsync(enumerator.Current));
+            }
+        }
+        catch
+        {
+            await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
+            throw;
+        }
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
 
         async Task ExecuteElementAsync(T element)
         {
-            bool acquired = false;
-
             try
             {
-                token.ThrowIfCancellationRequested();
-                await throttler.WaitAsync(token).ConfigureAwait(false);
-                acquired = true;
                 await action(element, token).ConfigureAwait(false);
             }
             finally
             {
-                if (acquired)
-                    throttler.Release();
+                throttler.Release();
             }
         }
     }
@@ -33,27 +49,53 @@ public static class ParallelHelper
         List<Task<TReturn>> tasks = new List<Task<TReturn>>();
 
         using SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
+        using IEnumerator<T> enumerator = source.GetEnumerator();
 
-        foreach (T t in source)
-            tasks.Add(ExecuteElementAsync(t));
+        try
+        {
+            while (true)
+            {
+                await throttler.WaitAsync(token).ConfigureAwait(false);
+
+                if (!enumerator.MoveNext())
+                {
+                    throttler.Release();
+                    break;
+                }
+
+                tasks.Add(ExecuteElementAsync(enumerator.Current));
+            }
+        }
+        catch
+        {
+            await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
+            throw;
+        }
 
         return await Task.WhenAll(tasks).ConfigureAwait(false);
 
         async Task<TReturn> ExecuteElementAsync(T element)
         {
-            bool acquired = false;
-
             try
             {
-                await throttler.WaitAsync(token).ConfigureAwait(false);
-                acquired = true;
                 return await action(element, token).ConfigureAwait(false);
             }
             finally
             {
-                if (acquired)
-                    throttler.Release();
+                throttler.Release();
             }
+        }
+    }
+
+    private static async Task WaitForRunningTasksAsync(IEnumerable<Task> tasks)
+    {
+        try
+        {
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+        }
+        catch
+        {
+            // Preserve the original producer/cancellation failure.
         }
     }
 }
