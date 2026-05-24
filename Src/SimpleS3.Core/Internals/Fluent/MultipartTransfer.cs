@@ -120,10 +120,10 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
 
             IEnumerable<UploadPartResponse> responses = await ParallelHelper.ExecuteAsync(chunks, async (bytes, innerToken) =>
             {
-                Interlocked.Increment(ref partNumber);
+                int currentPartNumber = Interlocked.Increment(ref partNumber);
 
                 using MemoryStream ms = new MemoryStream(bytes.Array!, 0, bytes.Count);
-                UploadPartResponse resp = await multipartClient.UploadPartAsync(bucket, objectKey, partNumber, initResp.UploadId, ms, uploadPart =>
+                UploadPartResponse resp = await multipartClient.UploadPartAsync(bucket, objectKey, currentPartNumber, initResp.UploadId, ms, uploadPart =>
                 {
                     uploadPart.SseCustomerAlgorithm = req.SseCustomerAlgorithm;
                     uploadPart.SseCustomerKey = encryptionKey;
