@@ -51,43 +51,48 @@ internal sealed class DefaultSignedRequestHandler : ISignedRequestHandler
         if (_config.Credentials == null)
             throw new InvalidOperationException("You cannot pre-sign requests without first providing credentials");
 
-        request.Timestamp = DateTimeOffset.UtcNow;
-        request.RequestId = Guid.NewGuid();
-
-        _marshaller.MarshalRequest(_config, request); //We don't use the return stream
-
-        _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
-
-        IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
-        request.SetHeader(HttpHeaders.Host, endpointData.Host);
-
-        string scope = _scopeBuilder.CreateScope("s3", request.Timestamp);
-        request.SetQueryParameter(AmzParameters.XAmzAlgorithm, SigningConstants.AlgorithmTag);
-        request.SetQueryParameter(AmzParameters.XAmzCredential, _config.Credentials.KeyId + '/' + scope);
-        request.SetQueryParameter(AmzParameters.XAmzDate, request.Timestamp.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
-        request.SetQueryParameter(AmzParameters.XAmzExpires, expiresIn.TotalSeconds.ToString(NumberFormatInfo.InvariantInfo));
-        request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, string.Join(";", HeaderWhitelist.FilterHeaders(request.Headers).Select(x => x.Key)));
-
-        //Copy all headers to query parameters
-        foreach (KeyValuePair<string, string> header in request.Headers)
+        try
         {
-            if (header.Key == HttpHeaders.Host)
-                continue;
+            request.Timestamp = DateTimeOffset.UtcNow;
+            request.RequestId = Guid.NewGuid();
 
-            request.SetQueryParameter(header.Key, header.Value);
+            _marshaller.MarshalRequest(_config, request); //We don't use the return stream
+
+            _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
+
+            IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
+            request.SetHeader(HttpHeaders.Host, endpointData.Host);
+
+            string scope = _scopeBuilder.CreateScope("s3", request.Timestamp);
+            request.SetQueryParameter(AmzParameters.XAmzAlgorithm, SigningConstants.AlgorithmTag);
+            request.SetQueryParameter(AmzParameters.XAmzCredential, _config.Credentials.KeyId + '/' + scope);
+            request.SetQueryParameter(AmzParameters.XAmzDate, request.Timestamp.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
+            request.SetQueryParameter(AmzParameters.XAmzExpires, expiresIn.TotalSeconds.ToString(NumberFormatInfo.InvariantInfo));
+            request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, string.Join(";", HeaderWhitelist.FilterHeaders(request.Headers).Select(x => x.Key)));
+
+            //Copy all headers to query parameters
+            foreach (KeyValuePair<string, string> header in request.Headers)
+            {
+                if (header.Key == HttpHeaders.Host)
+                    continue;
+
+                request.SetQueryParameter(header.Key, header.Value);
+            }
+
+            _authBuilder.BuildAuthorization(request);
+
+            StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+            sb.Append(endpointData.Endpoint);
+            RequestHelper.AppendPath(sb, _config, request);
+            RequestHelper.AppendQueryParameters(sb, request);
+            return StringBuilderPool.Shared.ReturnString(sb);
         }
-
-        _authBuilder.BuildAuthorization(request);
-
-        //Clear sensitive material from the request
-        if (request is IContainSensitiveMaterial sensitive)
-            sensitive.ClearSensitiveMaterial();
-
-        StringBuilder sb = StringBuilderPool.Shared.Rent(200);
-        sb.Append(endpointData.Endpoint);
-        RequestHelper.AppendPath(sb, _config, request);
-        RequestHelper.AppendQueryParameters(sb, request);
-        return StringBuilderPool.Shared.ReturnString(sb);
+        finally
+        {
+            //Clear sensitive material from the request
+            if (request is IContainSensitiveMaterial sensitive)
+                sensitive.ClearSensitiveMaterial();
+        }
     }
 
     public async Task<TResp> SendRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new()

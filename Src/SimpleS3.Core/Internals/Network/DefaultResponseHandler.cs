@@ -41,11 +41,17 @@ public class DefaultResponseHandler : IResponseHandler
     {
         _logger.LogDebug("Sending request to {Url}", url);
 
-        HttpResponse httpResp = await _networkDriver.SendRequestAsync<TResp>(request, url, requestStream, token).ConfigureAwait(false);
-
-        //Clear sensitive material from the request
-        if (request is IContainSensitiveMaterial sensitive)
-            sensitive.ClearSensitiveMaterial();
+        HttpResponse httpResp;
+        try
+        {
+            httpResp = await _networkDriver.SendRequestAsync<TResp>(request, url, requestStream, token).ConfigureAwait(false);
+        }
+        finally
+        {
+            //Clear sensitive material from the request
+            if (request is IContainSensitiveMaterial sensitive)
+                sensitive.ClearSensitiveMaterial();
+        }
 
         IDictionary<string, string> headers = httpResp.Headers;
         int statusCode = httpResp.StatusCode;
