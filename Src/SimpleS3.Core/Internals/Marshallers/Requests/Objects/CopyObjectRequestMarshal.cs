@@ -1,5 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
@@ -12,7 +13,7 @@ internal sealed class CopyObjectRequestMarshal : IRequestMarshal<CopyObjectReque
 {
     public Stream? MarshalRequest(CopyObjectRequest request, SimpleS3Config config)
     {
-        request.SetHeader(AmzHeaders.XAmzCopySource, '/' + request.SourceBucketName + '/' + request.SourceObjectKey);
+        request.SetHeader(AmzHeaders.XAmzCopySource, '/' + UrlHelper.UrlEncode(request.SourceBucketName) + '/' + UrlHelper.UrlPathEncode(request.SourceObjectKey));
         request.SetHeader(AmzHeaders.XAmzCopySourceIfMatch, request.IfETagMatch);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfNoneMatch, request.IfETagNotMatch);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfModifiedSince, request.IfModifiedSince, DateTimeFormat.Rfc1123);
