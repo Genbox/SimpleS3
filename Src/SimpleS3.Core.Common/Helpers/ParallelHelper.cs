@@ -29,6 +29,7 @@ public static class ParallelHelper
         }
         catch
         {
+            cancellation.Cancel();
             await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
             ThrowFirstTaskFailure(tasks);
             throw;
@@ -80,6 +81,59 @@ public static class ParallelHelper
         }
         catch
         {
+            cancellation.Cancel();
+            await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
+            ThrowFirstTaskFailure(tasks);
+            throw;
+        }
+
+        return await Task.WhenAll(tasks).ConfigureAwait(false);
+
+        async Task<TReturn> ExecuteElementAsync(T element)
+        {
+            try
+            {
+                return await action(element, innerToken).ConfigureAwait(false);
+            }
+            catch
+            {
+                cancellation.Cancel();
+                throw;
+            }
+            finally
+            {
+                throttler.Release();
+            }
+        }
+    }
+
+    public static async Task<IEnumerable<TReturn>> ExecuteAsync<T, TReturn>(IAsyncEnumerable<T> source, Func<T, CancellationToken, Task<TReturn>> action, int concurrentThreads, CancellationToken token = default)
+    {
+        using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        List<Task<TReturn>> tasks = new List<Task<TReturn>>();
+
+        using SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
+        await using IAsyncEnumerator<T> enumerator = source.GetAsyncEnumerator(cancellation.Token);
+        CancellationToken innerToken = cancellation.Token;
+
+        try
+        {
+            while (true)
+            {
+                await throttler.WaitAsync(innerToken).ConfigureAwait(false);
+
+                if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                {
+                    throttler.Release();
+                    break;
+                }
+
+                tasks.Add(ExecuteElementAsync(enumerator.Current));
+            }
+        }
+        catch
+        {
+            cancellation.Cancel();
             await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
             ThrowFirstTaskFailure(tasks);
             throw;

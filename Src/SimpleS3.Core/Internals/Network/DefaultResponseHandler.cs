@@ -106,6 +106,10 @@ public class DefaultResponseHandler : IResponseHandler
                         _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
                 catch (Exception ex)
                 {
                     _logger.LogDebug(ex, "Failed to map error");

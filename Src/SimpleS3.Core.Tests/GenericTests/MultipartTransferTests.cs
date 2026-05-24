@@ -51,6 +51,23 @@ public class MultipartTransferTests
         Assert.Equal(1, Volatile.Read(ref maxActiveCallbacks));
     }
 
+    [Fact]
+    public async Task MultipartUploadAsyncPassesCancellationTokenToChunkReads()
+    {
+        FakeMultipartApi multipartApi = new FakeMultipartApi();
+        MultipartTransfer transfer = new MultipartTransfer(null!, multipartApi, multipartApi, []);
+        await using BlockingReadStream data = new BlockingReadStream();
+        using CancellationTokenSource cts = new CancellationTokenSource();
+
+        Task<CompleteMultipartUploadResponse> uploadTask = transfer.MultipartUploadAsync("bucket", "object", data, partSize: 1, numParallelParts: 1, token: cts.Token);
+
+        await data.ReadStarted.Task.WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+        await cts.CancelAsync().ConfigureAwait(false);
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => uploadTask);
+        Assert.True(data.CapturedToken.IsCancellationRequested);
+    }
+
     private static void SetMax(ref int target, int value)
     {
         while (true)
@@ -152,7 +169,15 @@ public class MultipartTransferTests
         public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(AbortMultipartUploadRequest request, CancellationToken token = default) => throw new NotSupportedException();
         public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(ListMultipartUploadsRequest request, CancellationToken token = default) => throw new NotSupportedException();
         public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
-        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+
+        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default)
+        {
+            return Task.FromResult(new AbortMultipartUploadResponse
+            {
+                IsSuccess = true
+            });
+        }
+
         public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
     }
 
@@ -172,6 +197,46 @@ public class MultipartTransferTests
         }
 
         public override int Read(byte[] buffer, int offset, int count) => _inner.Read(buffer, offset, count);
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+        public override void SetLength(long value) => throw new NotSupportedException();
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        public override void Flush() {}
+    }
+
+    private sealed class BlockingReadStream : Stream
+    {
+        public TaskCompletionSource ReadStarted { get; } = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        public CancellationToken CapturedToken { get; private set; }
+
+        public override bool CanRead => true;
+        public override bool CanSeek => false;
+        public override bool CanWrite => false;
+        public override long Length => throw new NotSupportedException();
+
+        public override long Position
+        {
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
+        }
+
+        public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+
+        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            CapturedToken = cancellationToken;
+            ReadStarted.TrySetResult();
+            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
+            return 0;
+        }
+
+        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            CapturedToken = cancellationToken;
+            ReadStarted.TrySetResult();
+            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
+            return 0;
+        }
+
         public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
         public override void SetLength(long value) => throw new NotSupportedException();
         public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();

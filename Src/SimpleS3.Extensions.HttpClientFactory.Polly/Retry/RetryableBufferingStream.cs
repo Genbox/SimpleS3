@@ -9,6 +9,7 @@ internal sealed class RetryableBufferingStream : Stream
     private readonly Stream _underlyingStream;
     private Stream _bufferStream;
     private bool _buffered;
+    private Exception? _bufferingFailure;
     private bool _disposed;
     private string? _tempFilePath;
 
@@ -32,6 +33,8 @@ internal sealed class RetryableBufferingStream : Stream
     {
         get
         {
+            ThrowIfBufferingFailed();
+
             if (!_buffered)
                 ReadSource();
 
@@ -66,32 +69,54 @@ internal sealed class RetryableBufferingStream : Stream
 
     private async Task ReadSourceAsync(CancellationToken cancellationToken)
     {
-        byte[] buffer = new byte[81920];
-        int read;
-
-        while ((read = await _underlyingStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+        try
         {
-            EnsureCapacity(read);
-            await _bufferStream.WriteAsync(buffer, 0, read, cancellationToken).ConfigureAwait(false);
-        }
+            byte[] buffer = new byte[81920];
+            int read;
 
-        _bufferStream.Seek(0, SeekOrigin.Begin);
-        _buffered = true;
+            while ((read = await _underlyingStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+            {
+                EnsureCapacity(read);
+                await _bufferStream.WriteAsync(buffer, 0, read, cancellationToken).ConfigureAwait(false);
+            }
+
+            _bufferStream.Seek(0, SeekOrigin.Begin);
+            _buffered = true;
+        }
+        catch (Exception ex)
+        {
+            _bufferingFailure = ex;
+            throw;
+        }
     }
 
     private void ReadSource()
     {
-        byte[] buffer = new byte[81920];
-        int read;
-
-        while ((read = _underlyingStream.Read(buffer, 0, buffer.Length)) > 0)
+        try
         {
-            EnsureCapacity(read);
-            _bufferStream.Write(buffer, 0, read);
-        }
+            byte[] buffer = new byte[81920];
+            int read;
 
-        _bufferStream.Seek(0, SeekOrigin.Begin);
-        _buffered = true;
+            while ((read = _underlyingStream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                EnsureCapacity(read);
+                _bufferStream.Write(buffer, 0, read);
+            }
+
+            _bufferStream.Seek(0, SeekOrigin.Begin);
+            _buffered = true;
+        }
+        catch (Exception ex)
+        {
+            _bufferingFailure = ex;
+            throw;
+        }
+    }
+
+    private void ThrowIfBufferingFailed()
+    {
+        if (_bufferingFailure != null)
+            throw new InvalidOperationException("The source stream failed while it was being buffered and cannot be retried safely.", _bufferingFailure);
     }
 
     private void EnsureCapacity(int additionalBytes)
@@ -118,6 +143,8 @@ internal sealed class RetryableBufferingStream : Stream
 
     public override int Read(byte[] buffer, int offset, int count)
     {
+        ThrowIfBufferingFailed();
+
         if (!_buffered)
             ReadSource();
 
@@ -126,6 +153,8 @@ internal sealed class RetryableBufferingStream : Stream
 
     public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
     {
+        ThrowIfBufferingFailed();
+
         if (!_buffered)
             await ReadSourceAsync(cancellationToken).ConfigureAwait(false);
 

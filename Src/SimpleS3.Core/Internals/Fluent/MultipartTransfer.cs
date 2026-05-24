@@ -173,7 +173,7 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             uploadId = initResp.UploadId;
             token.ThrowIfCancellationRequested();
 
-            IEnumerable<ArraySegment<byte>> chunks = ReadChunks(data, partSize);
+            IAsyncEnumerable<ArraySegment<byte>> chunks = ReadChunksAsync(data, partSize, token);
 
             int partNumber = 0;
             object onPartResponseLock = new object();
@@ -285,12 +285,12 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         }
     }
 
-    private static IEnumerable<ArraySegment<byte>> ReadChunks(Stream data, int chunkSize)
+    private static async IAsyncEnumerable<ArraySegment<byte>> ReadChunksAsync(Stream data, int chunkSize, [EnumeratorCancellation]CancellationToken token = default)
     {
         while (true)
         {
             byte[] chunkData = new byte[chunkSize];
-            int read = data.ReadUpTo(chunkData, 0, chunkData.Length);
+            int read = await data.ReadUpToAsync(chunkData, 0, chunkData.Length, token).ConfigureAwait(false);
 
             if (read == 0)
                 break;
