@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Text.RegularExpressions;
 using Genbox.HttpBuilders.Abstracts;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Core.Builders;
@@ -25,7 +26,7 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
         if (!HasData())
             return null;
 
-        return string.Join("&", _tags!.Select(x => x.Key + '=' + x.Value));
+        return string.Join("&", _tags!.Select(x => UrlHelper.UrlEncode(x.Key) + '=' + UrlHelper.UrlEncode(x.Value)));
     }
 
     public void Reset()
