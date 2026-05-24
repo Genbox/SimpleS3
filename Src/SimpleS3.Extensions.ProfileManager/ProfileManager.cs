@@ -12,6 +12,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager;
 public class ProfileManager(IInputValidator validator, IProfileSerializer serializer, IStorage storage, IOptions<ProfileManagerOptions> options, IAccessKeyProtector? protector = null) : IProfileManager
 {
     public const string DefaultProfile = "DefaultProfile";
+    private const int _currentProfileVersion = 2;
     private readonly ProfileManagerOptions _config = options.Value;
 
     public IProfile? GetProfile(string name)
@@ -31,6 +32,9 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
             return null;
 
         Profile profile = serializer.Deserialize<Profile>(data);
+
+        if (profile.ProfileVersion < _currentProfileVersion)
+            MigrateFromVersion1(name, profile);
 
         //Check if the we have the right protector
         string? protector1 = profile.GetTag("Protector");
@@ -53,6 +57,7 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
         profile.Name = name;
         profile.KeyId = keyId;
         profile.AccessKey = KeyHelper.ProtectKey(accessKey, protector, _config.ClearInputKey);
+        profile.ProfileVersion = _currentProfileVersion;
 
         if (protector != null)
             profile.AddTag("Protector", protector.GetType().Name);
@@ -88,5 +93,20 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
     {
         byte[] data = serializer.Serialize(profile);
         return storage.Put(profile.Name, data);
+    }
+
+    private void MigrateFromVersion1(string name, Profile profile)
+    {
+        string? profileProtector = profile.GetTag("Protector");
+
+        if (profileProtector == null && protector != null)
+        {
+            profile.AccessKey = KeyHelper.ProtectKey(profile.AccessKey, protector, _config.ClearInputKey);
+            profile.AddTag("Protector", protector.GetType().Name);
+        }
+
+        profile.ProfileVersion = _currentProfileVersion;
+        byte[] data = serializer.Serialize(profile);
+        storage.Put(name, data, true);
     }
 }

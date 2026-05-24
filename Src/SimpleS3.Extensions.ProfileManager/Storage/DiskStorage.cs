@@ -18,7 +18,7 @@ public class DiskStorage(IOptions<DiskStorageOptions> options) : IStorage
         return File.ReadAllBytes(path);
     }
 
-    public string Put(string name, byte[] data)
+    public string Put(string name, byte[] data, bool forceOverwrite = false)
     {
         string path = GetProfilePath(name);
 
@@ -27,7 +27,7 @@ public class DiskStorage(IOptions<DiskStorageOptions> options) : IStorage
 
         if (File.Exists(path))
         {
-            if (_options.OverwriteExisting)
+            if (_options.OverwriteExisting || forceOverwrite)
                 File.WriteAllBytes(path, data);
             else
                 throw new S3Exception($"Cannot overwrite existing profile {name} because {nameof(DiskStorageOptions.OverwriteExisting)} is {_options.OverwriteExisting}");

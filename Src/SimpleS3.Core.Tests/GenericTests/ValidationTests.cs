@@ -1,4 +1,5 @@
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -33,8 +34,30 @@ public class ValidationTests
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        OptionsValidationException ex = Assert.Throws<OptionsValidationException>(() => serviceProvider.GetRequiredService<ISimpleClient>());
+        OptionsValidationException ex = Assert.Throws<OptionsValidationException>(serviceProvider.GetRequiredService<ISimpleClient>);
         Assert.Equal("Invalid key id: The input was not the correct length. Length should be '20'", ex.Message);
+    }
+
+    [Fact]
+    public void PlainAccessKeyIsValidWhenProtectorIsRegistered()
+    {
+        ServiceCollection services = new ServiceCollection();
+        services.AddSingleton<INetworkDriver, NullNetworkDriver>();
+        services.AddSingleton<IInputValidator, LocalValidator>();
+        services.AddSingleton<IAccessKeyProtector, ThrowingProtector>();
+
+        ICoreBuilder builder = SimpleS3CoreServices.AddSimpleS3Core(services);
+
+        builder.UseGenericS3(config =>
+        {
+            config.Endpoint = "https://localhost";
+            config.RegionCode = "us-west-2";
+            config.NamingMode = NamingMode.PathStyle;
+            config.Credentials = new StringAccessKey("12345678901234567890", "secret");
+        });
+
+        using ServiceProvider serviceProvider = services.BuildServiceProvider();
+        serviceProvider.GetRequiredService<ISimpleClient>();
     }
 
     private sealed class LocalValidator : InputValidatorBase
@@ -73,5 +96,11 @@ public class ValidationTests
             message = null;
             return true;
         }
+    }
+
+    private sealed class ThrowingProtector : IAccessKeyProtector
+    {
+        public byte[] ProtectKey(byte[] key) => key;
+        public byte[] UnprotectKey(byte[] key) => throw new InvalidOperationException("Plain keys should not be unprotected");
     }
 }

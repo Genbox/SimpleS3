@@ -16,11 +16,12 @@ public class DefaultProfileSerializer : IProfileSerializer
             sw.WriteLine(nameof(profile.KeyId) + '=' + profile.KeyId);
             sw.WriteLine(nameof(profile.AccessKey) + '=' + Convert.ToBase64String(profile.AccessKey));
             sw.WriteLine(nameof(profile.RegionCode) + '=' + profile.RegionCode);
+            sw.WriteLine(nameof(profile.ProfileVersion) + '=' + profile.ProfileVersion.ToString(NumberFormatInfo.InvariantInfo));
 
             if (profile.Tags != null)
             {
                 foreach (KeyValuePair<string, string> tag in profile.Tags)
-                    sw.WriteLine("Tag." + Convert.ToBase64String(Encoding.UTF8.GetBytes(tag.Key)) + '=' + Convert.ToBase64String(Encoding.UTF8.GetBytes(tag.Value)));
+                    sw.WriteLine($"Tag.{tag.Key}={tag.Value}");
             }
         }
         return ms.ToArray();
@@ -37,8 +38,8 @@ public class DefaultProfileSerializer : IProfileSerializer
         {
             string? str = sr.ReadLine();
 
-            if (str == null)
-                break;
+            if (string.IsNullOrWhiteSpace(str))
+                continue;
 
             ReadOnlySpan<char> span = str.AsSpan();
 
@@ -54,6 +55,8 @@ public class DefaultProfileSerializer : IProfileSerializer
                 case nameof(IProfile.CreatedOn):
                     p.CreatedOn = DateTimeOffset.ParseExact(val.ToString(), "O", DateTimeFormatInfo.InvariantInfo);
                     break;
+                case "Location": // Legacy field
+                    break;
                 case nameof(IProfile.KeyId):
                     p.KeyId = val.ToString();
                     break;
@@ -63,11 +66,14 @@ public class DefaultProfileSerializer : IProfileSerializer
                 case nameof(IProfile.RegionCode):
                     p.RegionCode = val.ToString();
                     break;
+                case nameof(IProfile.ProfileVersion):
+                    p.ProfileVersion = int.Parse(val.ToString(), NumberStyles.Integer, NumberFormatInfo.InvariantInfo);
+                    break;
                 default:
                     if (key.StartsWith("Tag.", StringComparison.Ordinal))
                     {
                         p.Tags ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                        p.Tags.Add(Encoding.UTF8.GetString(Convert.FromBase64String(key.Substring(4))), Encoding.UTF8.GetString(Convert.FromBase64String(val.ToString())));
+                        p.Tags.Add(key.Substring(4), val.ToString());
                         break;
                     }
 

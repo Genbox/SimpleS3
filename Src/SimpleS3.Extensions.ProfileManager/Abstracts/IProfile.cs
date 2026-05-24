@@ -10,6 +10,7 @@ public interface IProfile
     byte[] AccessKey { get; set; }
     string RegionCode { get; set; }
     DateTimeOffset CreatedOn { get; set; }
+    int ProfileVersion { get; set; }
     IDictionary<string, string>? Tags { get; set; }
     string? GetTag(string key);
 }
