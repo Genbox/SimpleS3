@@ -185,45 +185,73 @@ public static class UtilityHelper
 
     private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersions(S3Provider provider, ISimpleClient client, string bucket)
     {
-        ListObjectVersionsResponse response;
-        Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucket);
+        Task<ListObjectVersionsResponse>? responseTask = null;
+        CancellationTokenSource prefetchCancellation = new CancellationTokenSource();
 
-        do
+        try
         {
-            response = await responseTask;
+            responseTask = client.ListObjectVersionsAsync(bucket, token: prefetchCancellation.Token);
 
-            if (!response.IsSuccess)
-                yield break;
-
-            if (response.Versions.Count + response.DeleteMarkers.Count == 0)
-                break;
-
-            if (response.IsTruncated)
+            ListObjectVersionsResponse response;
+            do
             {
-                string keyMarker = response.NextKeyMarker;
-                responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = keyMarker);
-            }
+                response = await responseTask.ConfigureAwait(false);
+                responseTask = null;
 
-            IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
-                                                       .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
-
-            //Google does not support DeleteObjects
-            if (provider == S3Provider.GoogleCloudStorage)
-            {
-                foreach (S3DeleteInfo info in delete)
-                    await client.DeleteObjectAsync(bucket, info.ObjectKey, info.VersionId);
-            }
-            else
-            {
-                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucket, delete, req => req.Quiet = false).ConfigureAwait(false);
-
-                if (!multiDelResponse.IsSuccess)
+                if (!response.IsSuccess)
                     yield break;
 
-                foreach (S3DeleteError error in multiDelResponse.Errors)
-                    yield return error;
-            }
-        } while (response.IsTruncated);
+                if (response.Versions.Count + response.DeleteMarkers.Count == 0)
+                    break;
+
+                if (response.IsTruncated)
+                {
+                    string keyMarker = response.NextKeyMarker;
+                    responseTask = client.ListObjectVersionsAsync(bucket, req => req.KeyMarker = keyMarker, prefetchCancellation.Token);
+                }
+
+                IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
+                                                           .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
+
+                //Google does not support DeleteObjects
+                if (provider == S3Provider.GoogleCloudStorage)
+                {
+                    foreach (S3DeleteInfo info in delete)
+                        await client.DeleteObjectAsync(bucket, info.ObjectKey, info.VersionId, token: prefetchCancellation.Token);
+                }
+                else
+                {
+                    DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucket, delete, req => req.Quiet = false, prefetchCancellation.Token).ConfigureAwait(false);
+
+                    if (!multiDelResponse.IsSuccess)
+                        yield break;
+
+                    foreach (S3DeleteError error in multiDelResponse.Errors)
+                        yield return error;
+                }
+            } while (response.IsTruncated);
+        }
+        finally
+        {
+            await prefetchCancellation.CancelAsync();
+            await ObservePrefetchTaskAsync(responseTask).ConfigureAwait(false);
+            prefetchCancellation.Dispose();
+        }
+    }
+
+    private static async Task ObservePrefetchTaskAsync(Task? task)
+    {
+        if (task == null)
+            return;
+
+        try
+        {
+            await task.ConfigureAwait(false);
+        }
+        catch
+        {
+            // The abandoned prefetch is canceled and observed so it cannot surface later as an unobserved exception.
+        }
     }
 
     private sealed class ErrorComparer : IEqualityComparer<S3DeleteError>

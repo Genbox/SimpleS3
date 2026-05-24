@@ -14,17 +14,25 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 public class ObjectClientExtensionsTests
 {
     [Fact]
-    public async Task ListAllObjectsAsyncDoesNotStartNextRequestWhenEnumerationStops()
+    public async Task ListAllObjectsAsyncCancelsPrefetchedNextPageWhenEnumerationStops()
     {
-        PagingObjectClient client = new PagingObjectClient();
+        PagingObjectClient client = new PagingObjectClient(objectsPerPage: 2, blockSecondRequest: true);
+        IAsyncEnumerator<S3Object> enumerator = client.ListAllObjectsAsync("bucket", token: TestContext.Current.CancellationToken).GetAsyncEnumerator();
 
-        await foreach (S3Object obj in client.ListAllObjectsAsync("bucket", token: TestContext.Current.CancellationToken))
+        try
         {
-            Assert.Equal("first", obj.ObjectKey);
-            break;
+            Assert.True(await enumerator.MoveNextAsync().AsTask().WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false));
+            Assert.Equal("first", enumerator.Current.ObjectKey);
+
+            await client.PrefetchStarted.WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+            Assert.Equal(2, client.ListObjectsCalls);
+        }
+        finally
+        {
+            await enumerator.DisposeAsync().AsTask().WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         }
 
-        Assert.Equal(1, client.ListObjectsCalls);
+        await client.PrefetchCanceled.WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
     }
 
     [Fact]
@@ -87,15 +95,34 @@ public class ObjectClientExtensionsTests
         }
     }
 
-    private sealed class PagingObjectClient(int objectsPerPage = 1) : IObjectClient
+    private sealed class PagingObjectClient(int objectsPerPage = 1, bool blockSecondRequest = false) : IObjectClient
     {
+        private readonly TaskCompletionSource _prefetchStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource _prefetchCanceled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         private int _listObjectsCalls;
 
         public int ListObjectsCalls => Volatile.Read(ref _listObjectsCalls);
+        public Task PrefetchStarted => _prefetchStarted.Task;
+        public Task PrefetchCanceled => _prefetchCanceled.Task;
 
-        public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
+        public async Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
         {
-            Interlocked.Increment(ref _listObjectsCalls);
+            int call = Interlocked.Increment(ref _listObjectsCalls);
+
+            if (blockSecondRequest && call == 2)
+            {
+                _prefetchStarted.SetResult();
+
+                try
+                {
+                    await Task.Delay(Timeout.InfiniteTimeSpan, token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (token.IsCancellationRequested)
+                {
+                    _prefetchCanceled.SetResult();
+                    throw;
+                }
+            }
 
             ListObjectsResponse response = new ListObjectsResponse
             {
@@ -109,7 +136,7 @@ public class ObjectClientExtensionsTests
             if (objectsPerPage > 1)
                 response.Objects.Add(new S3Object("second", DateTimeOffset.UnixEpoch, 0, null, null, default, default, default));
 
-            return Task.FromResult(response);
+            return response;
         }
 
         public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();

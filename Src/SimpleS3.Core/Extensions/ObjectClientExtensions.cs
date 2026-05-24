@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
@@ -80,52 +81,65 @@ public static class ObjectClientExtensions
         Validator.RequireNotNull(client);
         Validator.RequireNotNullOrEmpty(bucketName);
 
-        ListObjectsResponse response;
-        Task<ListObjectsResponse> responseTask = client.ListObjectsAsync(bucketName, configure, token);
+        Task<ListObjectsResponse>? responseTask = null;
+        CancellationTokenSource prefetchCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
 
         ObjectPool<S3DeleteInfo> pool = ObjectPool<S3DeleteInfo>.Shared;
 
-        do
+        try
         {
-            token.ThrowIfCancellationRequested();
+            responseTask = client.ListObjectsAsync(bucketName, configure, prefetchCancellation.Token);
 
-            response = await responseTask.ConfigureAwait(false);
-
-            if (!response.IsSuccess)
-                throw new S3RequestException(response, $"Unable to list objects for deletion in bucket '{bucketName}");
-
-            if (response.Objects.Count == 0)
-                yield break;
-
-            if (response.IsTruncated)
-            {
-                string cToken = response.NextContinuationToken;
-
-                if (response.EncodingType == EncodingType.Url)
-                    cToken = HttpUtility.UrlDecode(cToken);
-
-                responseTask = client.ListObjectsAsync(bucketName, req =>
-                {
-                    req.ContinuationToken = cToken;
-                    configure?.Invoke(req);
-                }, token);
-            }
-
-            List<S3DeleteInfo> delete = response.Objects.Select(x => pool.Rent(info => info.Initialize(x.ObjectKey))).ToList();
-
-            DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
-
-            pool.Return(delete);
-
-            if (!multiDelResponse.IsSuccess)
-                throw new S3RequestException(response, $"Unable to delete objects in bucket '{bucketName}");
-
-            foreach (S3DeleteError error in multiDelResponse.Errors)
+            ListObjectsResponse response;
+            do
             {
                 token.ThrowIfCancellationRequested();
-                yield return error;
-            }
-        } while (response.IsTruncated);
+
+                response = await responseTask.ConfigureAwait(false);
+                responseTask = null;
+
+                if (!response.IsSuccess)
+                    throw new S3RequestException(response, $"Unable to list objects for deletion in bucket '{bucketName}");
+
+                if (response.Objects.Count == 0)
+                    yield break;
+
+                if (response.IsTruncated)
+                {
+                    string cToken = response.NextContinuationToken;
+
+                    if (response.EncodingType == EncodingType.Url)
+                        cToken = HttpUtility.UrlDecode(cToken);
+
+                    responseTask = client.ListObjectsAsync(bucketName, req =>
+                    {
+                        req.ContinuationToken = cToken;
+                        configure?.Invoke(req);
+                    }, prefetchCancellation.Token);
+                }
+
+                List<S3DeleteInfo> delete = response.Objects.Select(x => pool.Rent(info => info.Initialize(x.ObjectKey))).ToList();
+
+                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
+
+                pool.Return(delete);
+
+                if (!multiDelResponse.IsSuccess)
+                    throw new S3RequestException(response, $"Unable to delete objects in bucket '{bucketName}");
+
+                foreach (S3DeleteError error in multiDelResponse.Errors)
+                {
+                    token.ThrowIfCancellationRequested();
+                    yield return error;
+                }
+            } while (response.IsTruncated);
+        }
+        finally
+        {
+            prefetchCancellation.Cancel();
+            await ObservePrefetchTaskAsync(responseTask).ConfigureAwait(false);
+            prefetchCancellation.Dispose();
+        }
     }
 
     /// <summary>Delete all object versions within a bucket</summary>
@@ -152,49 +166,62 @@ public static class ObjectClientExtensions
         Validator.RequireNotNull(client);
         Validator.RequireNotNullOrEmpty(bucketName);
 
-        ListObjectVersionsResponse response;
-        Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucketName, configure, token);
+        Task<ListObjectVersionsResponse>? responseTask = null;
+        CancellationTokenSource prefetchCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
 
-        do
+        try
         {
-            token.ThrowIfCancellationRequested();
+            responseTask = client.ListObjectVersionsAsync(bucketName, configure, prefetchCancellation.Token);
 
-            response = await responseTask.ConfigureAwait(false);
-
-            if (!response.IsSuccess)
-                throw new S3RequestException(response, $"Unable to list objects for deletion in bucket '{bucketName}");
-
-            if (response.Versions.Count + response.DeleteMarkers.Count == 0)
-                yield break;
-
-            if (response.IsTruncated)
-            {
-                string keyMarker = response.NextKeyMarker;
-
-                if (response.EncodingType == EncodingType.Url)
-                    keyMarker = HttpUtility.UrlDecode(keyMarker);
-
-                responseTask = client.ListObjectVersionsAsync(bucketName, req =>
-                {
-                    req.KeyMarker = keyMarker;
-                    configure?.Invoke(req);
-                }, token);
-            }
-
-            IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
-                                                       .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
-
-            DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
-
-            if (!multiDelResponse.IsSuccess)
-                throw new S3RequestException(response, $"Unable to delete objects in bucket '{bucketName}");
-
-            foreach (S3DeleteError error in multiDelResponse.Errors)
+            ListObjectVersionsResponse response;
+            do
             {
                 token.ThrowIfCancellationRequested();
-                yield return error;
-            }
-        } while (response.IsTruncated);
+
+                response = await responseTask.ConfigureAwait(false);
+                responseTask = null;
+
+                if (!response.IsSuccess)
+                    throw new S3RequestException(response, $"Unable to list objects for deletion in bucket '{bucketName}");
+
+                if (response.Versions.Count + response.DeleteMarkers.Count == 0)
+                    yield break;
+
+                if (response.IsTruncated)
+                {
+                    string keyMarker = response.NextKeyMarker;
+
+                    if (response.EncodingType == EncodingType.Url)
+                        keyMarker = HttpUtility.UrlDecode(keyMarker);
+
+                    responseTask = client.ListObjectVersionsAsync(bucketName, req =>
+                    {
+                        req.KeyMarker = keyMarker;
+                        configure?.Invoke(req);
+                    }, prefetchCancellation.Token);
+                }
+
+                IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
+                                                           .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
+
+                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
+
+                if (!multiDelResponse.IsSuccess)
+                    throw new S3RequestException(response, $"Unable to delete objects in bucket '{bucketName}");
+
+                foreach (S3DeleteError error in multiDelResponse.Errors)
+                {
+                    token.ThrowIfCancellationRequested();
+                    yield return error;
+                }
+            } while (response.IsTruncated);
+        }
+        finally
+        {
+            prefetchCancellation.Cancel();
+            await ObservePrefetchTaskAsync(responseTask).ConfigureAwait(false);
+            prefetchCancellation.Dispose();
+        }
     }
 
     public static async Task<PutObjectResponse> PutObjectDataAsync(this IObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
@@ -259,41 +286,54 @@ public static class ObjectClientExtensions
         Validator.RequireNotNull(client);
         Validator.RequireNotNullOrEmpty(bucketName);
 
-        ListObjectsResponse response;
-        Task<ListObjectsResponse> responseTask = client.ListObjectsAsync(bucketName, configure, token);
+        Task<ListObjectsResponse>? responseTask = null;
+        CancellationTokenSource prefetchCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
 
-        do
+        try
         {
-            token.ThrowIfCancellationRequested();
+            responseTask = client.ListObjectsAsync(bucketName, configure, prefetchCancellation.Token);
 
-            response = await responseTask.ConfigureAwait(false);
-
-            if (!response.IsSuccess)
-                throw new S3RequestException(response, $"Unable to list objects in bucket '{bucketName}");
-
-            if (response.Objects.Count == 0)
-                yield break;
-
-            if (response.IsTruncated)
-            {
-                string cToken = response.NextContinuationToken;
-
-                if (response.EncodingType == EncodingType.Url)
-                    cToken = HttpUtility.UrlDecode(cToken);
-
-                responseTask = client.ListObjectsAsync(bucketName, req =>
-                {
-                    req.ContinuationToken = cToken;
-                    configure?.Invoke(req);
-                }, token);
-            }
-
-            foreach (S3Object obj in response.Objects)
+            ListObjectsResponse response;
+            do
             {
                 token.ThrowIfCancellationRequested();
-                yield return obj;
-            }
-        } while (response.IsTruncated);
+
+                response = await responseTask.ConfigureAwait(false);
+                responseTask = null;
+
+                if (!response.IsSuccess)
+                    throw new S3RequestException(response, $"Unable to list objects in bucket '{bucketName}");
+
+                if (response.Objects.Count == 0)
+                    yield break;
+
+                if (response.IsTruncated)
+                {
+                    string cToken = response.NextContinuationToken;
+
+                    if (response.EncodingType == EncodingType.Url)
+                        cToken = HttpUtility.UrlDecode(cToken);
+
+                    responseTask = client.ListObjectsAsync(bucketName, req =>
+                    {
+                        req.ContinuationToken = cToken;
+                        configure?.Invoke(req);
+                    }, prefetchCancellation.Token);
+                }
+
+                foreach (S3Object obj in response.Objects)
+                {
+                    token.ThrowIfCancellationRequested();
+                    yield return obj;
+                }
+            } while (response.IsTruncated);
+        }
+        finally
+        {
+            prefetchCancellation.Cancel();
+            await ObservePrefetchTaskAsync(responseTask).ConfigureAwait(false);
+            prefetchCancellation.Dispose();
+        }
     }
 
     /// <summary>List all object versions in a bucket</summary>
@@ -316,40 +356,69 @@ public static class ObjectClientExtensions
         Validator.RequireNotNull(client);
         Validator.RequireNotNullOrEmpty(bucketName);
 
-        ListObjectVersionsResponse response;
-        Task<ListObjectVersionsResponse> responseTask = client.ListObjectVersionsAsync(bucketName, configure, token);
+        Task<ListObjectVersionsResponse>? responseTask = null;
+        CancellationTokenSource prefetchCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
 
-        do
+        try
         {
-            token.ThrowIfCancellationRequested();
+            responseTask = client.ListObjectVersionsAsync(bucketName, configure, prefetchCancellation.Token);
 
-            response = await responseTask.ConfigureAwait(false);
-
-            if (!response.IsSuccess)
-                throw new S3RequestException(response, $"Unable to list object versions in bucket '{bucketName}");
-
-            if (response.Versions.Count + response.DeleteMarkers.Count == 0)
-                yield break;
-
-            if (response.IsTruncated)
-            {
-                string keyMarker = response.NextKeyMarker;
-
-                if (response.EncodingType == EncodingType.Url)
-                    keyMarker = HttpUtility.UrlDecode(keyMarker);
-
-                responseTask = client.ListObjectVersionsAsync(bucketName, req =>
-                {
-                    req.KeyMarker = keyMarker;
-                    configure?.Invoke(req);
-                }, token);
-            }
-
-            foreach (S3Version s3Version in response.Versions)
+            ListObjectVersionsResponse response;
+            do
             {
                 token.ThrowIfCancellationRequested();
-                yield return s3Version;
-            }
-        } while (response.IsTruncated);
+
+                response = await responseTask.ConfigureAwait(false);
+                responseTask = null;
+
+                if (!response.IsSuccess)
+                    throw new S3RequestException(response, $"Unable to list object versions in bucket '{bucketName}");
+
+                if (response.Versions.Count + response.DeleteMarkers.Count == 0)
+                    yield break;
+
+                if (response.IsTruncated)
+                {
+                    string keyMarker = response.NextKeyMarker;
+
+                    if (response.EncodingType == EncodingType.Url)
+                        keyMarker = HttpUtility.UrlDecode(keyMarker);
+
+                    responseTask = client.ListObjectVersionsAsync(bucketName, req =>
+                    {
+                        req.KeyMarker = keyMarker;
+                        configure?.Invoke(req);
+                    }, prefetchCancellation.Token);
+                }
+
+                foreach (S3Version s3Version in response.Versions)
+                {
+                    token.ThrowIfCancellationRequested();
+                    yield return s3Version;
+                }
+            } while (response.IsTruncated);
+        }
+        finally
+        {
+            prefetchCancellation.Cancel();
+            await ObservePrefetchTaskAsync(responseTask).ConfigureAwait(false);
+            prefetchCancellation.Dispose();
+        }
+    }
+
+    [SuppressMessage("Usage", "VSTHRD003:Avoid awaiting foreign Tasks")]
+    private static async Task ObservePrefetchTaskAsync(Task? task)
+    {
+        if (task == null)
+            return;
+
+        try
+        {
+            await task.ConfigureAwait(false);
+        }
+        catch
+        {
+            // The abandoned prefetch is canceled and observed so it cannot surface later as an unobserved exception.
+        }
     }
 }
