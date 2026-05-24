@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
@@ -57,17 +58,41 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             using SemaphoreSlim semaphore = new SemaphoreSlim(numParallelParts);
             using SemaphoreSlim writeLock = new SemaphoreSlim(1, 1);
             List<Task<GetObjectResponse>> tasks = new List<Task<GetObjectResponse>>(parts);
+            ExceptionDispatchInfo? firstFailure = null;
 
             try
             {
                 for (int i = 1; i <= parts; i++)
                 {
-                    await semaphore.WaitAsync(cancellation.Token).ConfigureAwait(false);
-                    tasks.Add(DownloadPartAsync(bucketName, objectKey, output, partOffsets[i - 1], i, bufferSize, semaphore, writeLock, config, cancellation.Token));
+                    try
+                    {
+                        await semaphore.WaitAsync(cancellation.Token).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException) when (firstFailure != null)
+                    {
+                        firstFailure.Throw();
+                        throw;
+                    }
+
+                    tasks.Add(DownloadPartAsync(bucketName, objectKey, output, partOffsets[i - 1], i, bufferSize, semaphore, writeLock, config, cancellation, ex => Interlocked.CompareExchange(ref firstFailure, ExceptionDispatchInfo.Capture(ex), null)));
                 }
 
                 foreach (Task<GetObjectResponse> task in tasks)
-                    yield return await task.ConfigureAwait(false);
+                {
+                    GetObjectResponse response;
+
+                    try
+                    {
+                        response = await task.ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException) when (firstFailure != null)
+                    {
+                        firstFailure.Throw();
+                        throw;
+                    }
+
+                    yield return response;
+                }
             }
             finally
             {
@@ -190,8 +215,10 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         }
     }
 
-    private async Task<GetObjectResponse> DownloadPartAsync(string bucketName, string objectKey, Stream output, long offset, int partNumber, int bufferSize, SemaphoreSlim semaphore, SemaphoreSlim writeLock, Action<GetObjectRequest>? config, CancellationToken token)
+    private async Task<GetObjectResponse> DownloadPartAsync(string bucketName, string objectKey, Stream output, long offset, int partNumber, int bufferSize, SemaphoreSlim semaphore, SemaphoreSlim writeLock, Action<GetObjectRequest>? config, CancellationTokenSource cancellation, Action<Exception> onFailure)
     {
+        CancellationToken token = cancellation.Token;
+
         try
         {
             GetObjectResponse getResp = await objectClient.GetObjectAsync(bucketName, objectKey, req =>
@@ -229,6 +256,14 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             }
 
             return getResp;
+        }
+        catch (Exception ex)
+        {
+            if (!token.IsCancellationRequested || ex is not OperationCanceledException)
+                onFailure(ex);
+
+            cancellation.Cancel();
+            throw;
         }
         finally
         {

@@ -64,4 +64,23 @@ public class ParallelHelperTests
             }
         }
     }
+
+    [Fact]
+    public async Task ExecuteAsyncWithReturnCancelsSiblingsWhenActionThrows()
+    {
+        int started = 0;
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => ParallelHelper.ExecuteAsync(Enumerable.Range(0, 10), async (value, token) =>
+        {
+            Interlocked.Increment(ref started);
+
+            if (value == 0)
+                throw new InvalidOperationException();
+
+            await Task.Delay(Timeout.InfiniteTimeSpan, token).ConfigureAwait(false);
+            return value;
+        }, 2, TestContext.Current.CancellationToken));
+
+        Assert.True(Volatile.Read(ref started) < 10);
+    }
 }
