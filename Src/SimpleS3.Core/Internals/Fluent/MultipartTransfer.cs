@@ -37,7 +37,15 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             if (!getResp.IsSuccess)
                 throw new S3RequestException(getResp);
 
-            await getResp.Content.CopyToAsync(output, 81920, token).ConfigureAwait(false);
+            try
+            {
+                await getResp.Content.CopyToAsync(output, 81920, token).ConfigureAwait(false);
+            }
+            catch
+            {
+                getResp.Content.Dispose();
+                throw;
+            }
 
             yield return getResp;
         }
