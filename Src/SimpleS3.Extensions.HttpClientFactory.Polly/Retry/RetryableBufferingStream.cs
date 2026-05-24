@@ -1,4 +1,4 @@
-using Genbox.SimpleS3.Core.Common.Validation;
+﻿using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 
@@ -25,6 +25,7 @@ internal sealed class RetryableBufferingStream : Stream
     public override bool CanRead => true;
     public override bool CanSeek => true;
     public override bool CanWrite => false;
+
     public override long Length
     {
         get
@@ -60,15 +61,15 @@ internal sealed class RetryableBufferingStream : Stream
         base.Dispose(disposing);
     }
 
-    private async Task ReadSourceAsync()
+    private async Task ReadSourceAsync(CancellationToken cancellationToken)
     {
         byte[] buffer = new byte[81920];
         int read;
 
-        while ((read = await _underlyingStream.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false)) > 0)
+        while ((read = await _underlyingStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
         {
             EnsureCapacity(read);
-            await _bufferStream.WriteAsync(buffer, 0, read).ConfigureAwait(false);
+            await _bufferStream.WriteAsync(buffer, 0, read, cancellationToken).ConfigureAwait(false);
         }
 
         _bufferStream.Seek(0, SeekOrigin.Begin);
@@ -114,7 +115,7 @@ internal sealed class RetryableBufferingStream : Stream
     public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
     {
         if (!_buffered)
-            await ReadSourceAsync().ConfigureAwait(false);
+            await ReadSourceAsync(cancellationToken).ConfigureAwait(false);
 
         return await _bufferStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
     }
