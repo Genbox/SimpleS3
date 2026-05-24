@@ -27,10 +27,14 @@ public class ContentStream(Stream stream, long? length, IDisposable? owner = nul
     }
 
     public override int Read(byte[] buffer, int offset, int count) => stream.Read(buffer, offset, count);
+    public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => stream.ReadAsync(buffer, offset, count, cancellationToken);
     public override long Seek(long offset, SeekOrigin origin) => stream.Seek(offset, origin);
     public override void SetLength(long value) => throw new AbandonedMutexException("This is a read-only stream");
     public override void Write(byte[] buffer, int offset, int count) => stream.Write(buffer, offset, count);
+    public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => stream.WriteAsync(buffer, offset, count, cancellationToken);
     public override void Flush() => stream.Flush();
+    public override Task FlushAsync(CancellationToken cancellationToken) => stream.FlushAsync(cancellationToken);
+    public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken) => stream.CopyToAsync(destination, bufferSize, cancellationToken);
 
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP007:Don\'t dispose injected", Justification = "ContentStream is a wrapper. It has to manage disposal.")]
     protected override void Dispose(bool disposing)
