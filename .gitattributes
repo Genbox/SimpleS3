@@ -1,36 +1,46 @@
-# Linux scripts
+# Repo meta
+.gitattributes	text eol=lf
+.gitignore		text eol=lf
+
+# Configs
+*.conf		text eol=lf
+*.jsonc		text eol=lf
+*.yml		text eol=lf
+*.yaml		text eol=lf
+.editorconfig	text eol=lf
+.globalconfig	text eol=lf
+
+# Scripts
 *.sh		text eol=lf
 *.py		text diff=python eol=lf
-
-# Linux configs
-*.conf		text eol=lf
-*.yml		text eol=lf
-
-# Windows scripts
-*.ps1		text eol=crlf
+*.ps1		text eol=lf
+*.psd1		text eol=lf
+*.psm1		text eol=lf
 *.cmd		text eol=crlf
 *.bat		text eol=crlf
 
 # Source code files
-*.cs		text diff=csharp
-*.cshtml	text
-*.json		text
-*.xml		text
-*.html		text diff=html
-*.css		text diff=css
-*.scss		text diff=css
-*.js		text
-*.csproj	text
-*.targets	text ident
-*.sln		text
+*.cs		text diff=csharp eol=lf
+*.cshtml	text eol=lf
+*.json		text eol=lf
+*.xml		text eol=lf
+*.html		text diff=html eol=lf
+*.css		text diff=css eol=lf
+*.scss		text diff=css eol=lf
+*.js		text eol=lf
+*.csproj	text eol=lf
+*.targets	text eol=lf
+*.props		text eol=lf
+*.sln		text eol=lf
+*.slnx		text eol=lf
 
-# Images
-*.svg		text
+# Images (text)
+*.svg		text eol=lf
 
 # Text files
-*.txt		text
-*.md		text
-*.markdowm	text
+*.txt		text eol=lf
+*.md		text eol=lf
+*.markdown	text eol=lf
 
 ###############################
 # Git Large File System (LFS) #
@@ -43,12 +53,12 @@
 *.gz		filter=lfs diff=lfs merge=lfs -text
 *.tar		filter=lfs diff=lfs merge=lfs -text
 *.zip		filter=lfs diff=lfs merge=lfs -text
+*.zst		filter=lfs diff=lfs merge=lfs -text
 
 # Documents
 *.pdf		filter=lfs diff=lfs merge=lfs -text
-*.doc		filter=lfs diff=lfs merge=lfs -text
 *.docx		filter=lfs diff=lfs merge=lfs -text
- 
+
 # Images
 *.gif		filter=lfs diff=lfs merge=lfs -text
 *.ico		filter=lfs diff=lfs merge=lfs -text
@@ -60,6 +70,30 @@
 
 # Fonts
 *.woff2		filter=lfs diff=lfs merge=lfs -text
- 
-# Other
-*.exe		filter=lfs diff=lfs merge=lfs -text 
+
+# Executables
+*.exe		filter=lfs diff=lfs merge=lfs -text
+*.dll		filter=lfs diff=lfs merge=lfs -text
+*.dylib		filter=lfs diff=lfs merge=lfs -text
+*.so		filter=lfs diff=lfs merge=lfs -text
+
+# Packages and symbols
+*.nupkg		filter=lfs diff=lfs merge=lfs -text
+*.snupkg	filter=lfs diff=lfs merge=lfs -text
+*.pdb		filter=lfs diff=lfs merge=lfs -text
+
+# Keyfiles
+*.pfx		binary
+*.p12		binary
+*.snk		binary
+*.cer		binary
+
+# Others
+*.bin		filter=lfs diff=lfs merge=lfs -text
+*.dat		filter=lfs diff=lfs merge=lfs -text
+
+# Verify
+*.verified.txt text eol=lf working-tree-encoding=UTF-8
+*.verified.xml text eol=lf working-tree-encoding=UTF-8
+*.verified.json text eol=lf working-tree-encoding=UTF-8
+*.verified.bin binary

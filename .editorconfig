@@ -4,7 +4,7 @@ root = true
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = false
-max_line_length = 180
+max_line_length = 2000
 
 # XML based formats
 [*.{appxmanifest,axml,build,config,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
@@ -38,7 +38,6 @@ roslynator_enum_has_flag_style = method
 roslynator_object_creation_type_style = explicit
 roslynator_use_var_instead_of_implicit_object_creation = false
 csharp_style_namespace_declarations = file_scoped:error
-dotnet_public_api_analyzer.require_api_files = true # Disable the requirement for projects to have a PublicAPI.Shipped.txt file
 
 # Csharp styles
 csharp_new_line_before_members_in_object_initializers = false
@@ -47,8 +46,6 @@ csharp_preserve_single_line_blocks = true
 csharp_space_after_cast = false
 csharp_style_var_elsewhere = false:none
 csharp_style_var_when_type_is_apparent = false:none
-
-# Dotnet styles
 
 # ReSharper properties
 resharper_align_multiline_calls_chain = true
@@ -78,14 +75,8 @@ resharper_indent_preprocessor_other = do_not_change
 resharper_instance_members_qualify_declared_in = this_class
 resharper_keep_existing_attribute_arrangement = true
 resharper_keep_existing_enum_arrangement = false
-
 resharper_local_function_body = expression_body
 resharper_method_or_operator_body = expression_body
-
-#resharper_method_or_operator_body = expression_body
-#resharper_keep_existing_declaration_block_arrangement = true
-#resharper_keep_existing_embedded_block_arrangement = true
-
 resharper_nested_ternary_style = compact
 resharper_object_creation_when_type_evident = explicitly_typed
 resharper_place_accessorholder_attribute_on_same_line = false
@@ -105,6 +96,20 @@ resharper_space_within_single_line_array_initializer_braces = true
 resharper_wrap_object_and_collection_initializer_style = chop_always
 resharper_space_before_trailing_comment = true
 resharper_xmldoc_indent_text = ZeroIndent
+resharper_xmldoc_max_line_length = 300
+resharper_xmldoc_attribute_indent = align_by_first_attribute
+resharper_xmldoc_keep_user_linebreaks = true
+resharper_parentheses_non_obvious_operations = none, multiplicative, additive, arithmetic, shift, bitwise_and, bitwise_exclusive_or, bitwise_inclusive_or, bitwise
 
 # Microsoft .NET properties
 csharp_style_var_for_built_in_types = false:suggestion
+
+# Verify settings
+[*.{received,verified}.{json,txt,xml}]
+charset = utf-8-bom
+end_of_line = lf
+indent_size = unset
+indent_style = unset
+insert_final_newline = false
+tab_width = unset
+trim_trailing_whitespace = false

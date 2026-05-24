@@ -19,6 +19,13 @@
 # Visual Studio cache folder
 .vs/
 
-# Jetbrains Rider cache folder
+# Rider cache folder
 .idea/
 *.sln.DotSettings.user
+
+# Benchmark.Net artifact folder
+*BenchmarkDotNet.Artifacts/
+
+# Verify
+*.received.*
+*.received/

@@ -3,7 +3,7 @@
   <!--Default project info-->
   <PropertyGroup>
     <Authors>Ian Qvist</Authors>
-    <Copyright>Copyright 2025, by Ian Qvist. All rights reserved.</Copyright>
+    <Copyright>Copyright 2026, by Ian Qvist. All rights reserved.</Copyright>
   </PropertyGroup>
 
   <!--Default project settings-->
@@ -15,17 +15,19 @@
 
     <!--Assembly settings-->
     <RootNamespace>Genbox.$(MSBuildProjectName)</RootNamespace>
-    <AssemblyName>Genbox.$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName Condition="'$(PackAssemblyName)' == 'true'">Genbox.$(MSBuildProjectName)</AssemblyName>
 
     <!--C# settings-->
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <Features>strict</Features>
+    <ImplicitUsings>true</ImplicitUsings>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <WarningLevel>0</WarningLevel>
+    <NoWarn>$(NoWarn);CA1014;CS1573;CS1591</NoWarn>
 
     <!--.NET settings-->
-    <ImplicitUsings>true</ImplicitUsings>
+    <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
 
     <!--Package settings-->
     <RepositoryType>Git</RepositoryType>
@@ -41,7 +43,7 @@
     <AnalysisLevel>latest</AnalysisLevel>
 
     <!--NuGet settings-->
-    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
     <!--Other settings-->
@@ -81,6 +83,11 @@
     <BaseProject Condition="$(_LastDot) &gt; 0">$(MSBuildProjectName.Substring(0, $(_LastDot)))</BaseProject>
     <ProjectType Condition="$(_LastDot) &gt; 0">$(MSBuildProjectName.Substring($([MSBuild]::Add($(_LastDot), 1))))</ProjectType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!--Analyzers-->
+    <AdditionalFiles Include="../../Imports/BannedSymbols.txt" Condition="Exists('../../Imports/BannedSymbols.txt')" />
+  </ItemGroup>
 
   <Import Project="../Locals/Directory.Build.props" Condition="Exists('../Locals/Directory.Build.props')" />
   <Import Project="../Imports/$(ProjectType).props" Condition="Exists('../Imports/$(ProjectType).props')" />

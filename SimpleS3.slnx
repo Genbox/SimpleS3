@@ -1,0 +1,101 @@
+<Solution>
+  <Folder Name="/Clients/">
+    <Project Path="Src/SimpleS3.AmazonS3.Tests/SimpleS3.AmazonS3.Tests.csproj" />
+    <Project Path="Src/SimpleS3.AmazonS3/SimpleS3.AmazonS3.csproj" />
+    <Project Path="Src/SimpleS3.BackBlazeB2.Tests/SimpleS3.BackBlazeB2.Tests.csproj" />
+    <Project Path="Src/SimpleS3.BackBlazeB2/SimpleS3.BackBlazeB2.csproj" />
+    <Project Path="Src/SimpleS3.GenericS3.Tests/SimpleS3.GenericS3.Tests.csproj" />
+    <Project Path="Src/SimpleS3.GenericS3/SimpleS3.GenericS3.csproj" />
+    <Project Path="Src/SimpleS3.GoogleCloudStorage.Tests/SimpleS3.GoogleCloudStorage.Tests.csproj" />
+    <Project Path="Src/SimpleS3.GoogleCloudStorage/SimpleS3.GoogleCloudStorage.csproj" />
+    <Project Path="Src/SimpleS3.Wasabi.Tests/SimpleS3.Wasabi.Tests.csproj" />
+    <Project Path="Src/SimpleS3.Wasabi/SimpleS3.Wasabi.csproj" />
+  </Folder>
+  <Folder Name="/Examples/">
+    <Project Path="Src/SimpleS3.Examples.Advanced/SimpleS3.Examples.Advanced.csproj" />
+    <Project Path="Src/SimpleS3.Examples/SimpleS3.Examples.csproj" />
+  </Folder>
+  <Folder Name="/Extensions/">
+    <Project Path="Src/SimpleS3.Extensions.AmazonS3.Tests/SimpleS3.Extensions.AmazonS3.Tests.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.AmazonS3/SimpleS3.Extensions.AmazonS3.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.BackBlazeB2.Tests/SimpleS3.Extensions.BackBlazeB2.Tests.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.BackBlazeB2/SimpleS3.Extensions.BackBlazeB2.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.GenericS3.Tests/SimpleS3.Extensions.GenericS3.Tests.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.GenericS3/SimpleS3.Extensions.GenericS3.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.GoogleCloudStorage.Tests/SimpleS3.Extensions.GoogleCloudStorage.Tests.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.GoogleCloudStorage/SimpleS3.Extensions.GoogleCloudStorage.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.HttpClient/SimpleS3.Extensions.HttpClient.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.HttpClientFactory.Polly.Tests/SimpleS3.Extensions.HttpClientFactory.Polly.Tests.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.HttpClientFactory.Polly/SimpleS3.Extensions.HttpClientFactory.Polly.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.HttpClientFactory/SimpleS3.Extensions.HttpClientFactory.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.ProfileManager.Tests/SimpleS3.Extensions.ProfileManager.Tests.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.ProfileManager/SimpleS3.Extensions.ProfileManager.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.Wasabi.Tests/SimpleS3.Extensions.Wasabi.Tests.csproj" />
+    <Project Path="Src/SimpleS3.Extensions.Wasabi/SimpleS3.Extensions.Wasabi.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/">
+    <Project Path="Src/SimpleS3.Utility.S3Template/SimpleS3.Utility.S3Template.csproj" />
+    <Project Path="Src/SimpleS3.Utility.Shared/SimpleS3.Utility.Shared.csproj" />
+    <Project Path="Src/SimpleS3.Utility.TestCleanup/SimpleS3.Utility.TestCleanup.csproj" />
+    <Project Path="Src/SimpleS3.Utility.TestSetup/SimpleS3.Utility.TestSetup.csproj" />
+  </Folder>
+  <Folder Name="/_Github/">
+    <File Path=".github/FUNDING.yml" />
+  </Folder>
+  <Folder Name="/_Github/IssueTemplates/">
+    <File Path=".github/ISSUE_TEMPLATE/bug_report.md" />
+    <File Path=".github/ISSUE_TEMPLATE/feature_request.md" />
+  </Folder>
+  <Folder Name="/_Github/Workflows/">
+    <File Path=".github/workflows/generic-build.yml" />
+    <File Path=".github/workflows/nuget-release.yml" />
+  </Folder>
+  <Folder Name="/_Imports/" />
+  <Folder Name="/_Imports/Local/">
+    <File Path="Locals/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/_Imports/Local/Packages/">
+    <File Path="Locals/Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/_Imports/Local/Project/">
+    <File Path="Locals/Benchmarks.props" />
+    <File Path="Locals/Console.props" />
+    <File Path="Locals/Examples.props" />
+    <File Path="Locals/Library.props" />
+    <File Path="Locals/Tests.props" />
+  </Folder>
+  <Folder Name="/_Imports/Managed/">
+    <File Path="src/Directory.Build.props" />
+    <File Path="src/Directory.Build.targets" />
+  </Folder>
+  <Folder Name="/_Imports/Managed/Packages/">
+    <File Path="src/Directory.Packages.Analyzers.props" />
+    <File Path="src/Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/_Imports/Managed/Project/">
+    <File Path="Imports/Benchmarks.props" />
+    <File Path="Imports/Console.props" />
+    <File Path="Imports/Examples.props" />
+    <File Path="Imports/Library.props" />
+    <File Path="Imports/Tests.props" />
+  </Folder>
+  <Folder Name="/_Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path=".globalconfig" />
+    <File Path="Config.json" />
+    <File Path="LICENSE.txt" />
+    <File Path="README.md" />
+    <File Path="SECURITY.md" />
+  </Folder>
+  <Project Path="Src/ProviderTests/ProviderTests.csproj" />
+  <Project Path="Src/SimpleS3.Core.Abstracts/SimpleS3.Core.Abstracts.csproj" />
+  <Project Path="Src/SimpleS3.Core.Benchmarks/SimpleS3.Core.Benchmarks.csproj" />
+  <Project Path="Src/SimpleS3.Core.Common.Tests/SimpleS3.Core.Common.Tests.csproj" />
+  <Project Path="Src/SimpleS3.Core.Common/SimpleS3.Core.Common.csproj" />
+  <Project Path="Src/SimpleS3.Core.TestBase/SimpleS3.Core.TestBase.csproj" />
+  <Project Path="Src/SimpleS3.Core.Tests/SimpleS3.Core.Tests.csproj" />
+  <Project Path="Src/SimpleS3.Core/SimpleS3.Core.csproj" />
+  <Project Path="Src/SimpleS3.ProviderBase/SimpleS3.ProviderBase.csproj" />
+</Solution>

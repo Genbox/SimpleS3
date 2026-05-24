@@ -1,17 +1,17 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="../Locals/Directory.Packages.props" Condition="Exists('../Locals/Directory.Packages.props')" />
   <Import Project="Directory.Packages.Analyzers.props" />
 
   <ItemGroup>
     <!--test packages-->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
+    <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />
     <!--dev packages-->
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-    <PackageVersion Include="MinVer" Version="6.0.0" />
-    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.300" />
+    <PackageVersion Include="MinVer" Version="7.0.0" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
     <!--benchmark packages-->
-    <PackageVersion Include="BenchmarkDotNet" Version="0.15.6" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
   </ItemGroup>
 </Project>
