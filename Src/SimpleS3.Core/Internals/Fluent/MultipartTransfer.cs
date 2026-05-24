@@ -129,6 +129,13 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
                     uploadPart.SseCustomerKey = encryptionKey;
                     uploadPart.SseCustomerKeyMd5 = req.SseCustomerKeyMd5;
                 }, innerToken).ConfigureAwait(false);
+
+                if (!resp.IsSuccess)
+                    throw new S3RequestException(resp, "UploadPartRequest was unsuccessful");
+
+                if (string.IsNullOrEmpty(resp.ETag))
+                    throw new S3RequestException(resp, "UploadPartResponse did not include an ETag");
+
                 onPartResponse?.Invoke(resp);
                 return resp;
             }, numParallelParts, token).ConfigureAwait(false);
