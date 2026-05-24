@@ -276,8 +276,10 @@ public class PutObjectTests : TestBase
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task PutObjectServerSideEncryptionCustomerKey(S3Provider _, string bucket, ISimpleClient client)
+    public async Task PutObjectServerSideEncryptionCustomerKey(S3Provider provider, string bucket, ISimpleClient client)
     {
+        await AllowSseCustomerKeysAsync(provider, client, bucket);
+
         byte[] key = new byte[32];
         Random.Shared.NextBytes(key);
 

@@ -37,6 +37,7 @@ public static class AmzParameters
     public const string Tagging = "tagging";
     public const string Accelerate = "accelerate";
     public const string Lifecycle = "lifecycle";
+    public const string Encryption = "encryption";
     public const string VersionIdMarker = "version-id-marker";
     public const string Policy = "policy";
 

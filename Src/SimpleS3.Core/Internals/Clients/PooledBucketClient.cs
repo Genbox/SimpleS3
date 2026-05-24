@@ -164,6 +164,20 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
         Task<PutBucketLifecycleConfigurationResponse> ActionAsync(PutBucketLifecycleConfigurationRequest request) => BucketOperations.PutBucketLifecycleConfigurationAsync(request, token);
     }
 
+    public Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(string bucketName, IEnumerable<S3ServerSideEncryptionRule> rules, Action<PutBucketEncryptionRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<PutBucketEncryptionRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
+        void Setup(PutBucketEncryptionRequest req)
+        {
+            // ReSharper disable once PossibleMultipleEnumeration
+            req.Initialize(bucketName, rules);
+            config?.Invoke(req);
+        }
+
+        Task<PutBucketEncryptionResponse> ActionAsync(PutBucketEncryptionRequest request) => BucketOperations.PutBucketEncryptionAsync(request, token);
+    }
+
     public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
     {
         return ObjectPool<PutBucketVersioningRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);

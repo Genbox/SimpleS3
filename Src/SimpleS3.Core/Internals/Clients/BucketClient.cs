@@ -104,6 +104,14 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         return operations.PutBucketLifecycleConfigurationAsync(request, token);
     }
 
+    public Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(string bucketName, IEnumerable<S3ServerSideEncryptionRule> rules, Action<PutBucketEncryptionRequest>? config = null, CancellationToken token = default)
+    {
+        PutBucketEncryptionRequest request = new PutBucketEncryptionRequest(bucketName, rules);
+        config?.Invoke(request);
+
+        return operations.PutBucketEncryptionAsync(request, token);
+    }
+
     public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
     {
         PutBucketVersioningRequest request = new PutBucketVersioningRequest(bucketName, enabled);

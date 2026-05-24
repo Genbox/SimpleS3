@@ -93,6 +93,13 @@ public interface IBucketClient
     /// <param name="token">A cancellation token </param>
     Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Configures default encryption and blocked encryption types for an existing bucket.</summary>
+    /// <param name="bucketName">The bucket name</param>
+    /// <param name="rules">A list of encryption rules you wish to use</param>
+    /// <param name="config">A delegate to configure the request</param>
+    /// <param name="token">A cancellation token </param>
+    Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(string bucketName, IEnumerable<S3ServerSideEncryptionRule> rules, Action<PutBucketEncryptionRequest>? config = null, CancellationToken token = default);
+
     /// <summary>Enable or disable versioning on an existing bucket.</summary>
     /// <param name="bucketName">The bucket name</param>
     /// <param name="enabled">Set to true if you want to enable versioning. Set it to false to disable versioning.</param>

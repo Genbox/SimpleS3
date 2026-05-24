@@ -59,6 +59,12 @@ public interface IBucketOperations
     Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(PutBucketLifecycleConfigurationRequest request, CancellationToken token = default);
 
     /// <summary>
+    /// Configures default encryption and blocked encryption types for an existing bucket. See
+    /// https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketEncryption.html for details.
+    /// </summary>
+    Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(PutBucketEncryptionRequest request, CancellationToken token = default);
+
+    /// <summary>
     /// Sets the versioning state of an existing bucket. To set the versioning state, you must be the bucket owner. See
     /// https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketVersioning.html for details.
     /// </summary>

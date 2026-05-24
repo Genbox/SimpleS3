@@ -19,5 +19,9 @@ public enum SseAlgorithm
 
     /// <summary>Each object is encrypted with a unique key. As an additional safeguard, it encrypts the key itself with a master key that it regularly rotates.</summary>
     [Display(Name = "AES256")]
-    Aes256
+    Aes256,
+
+    /// <summary>Dual-layer server-side encryption with AWS KMS keys.</summary>
+    [Display(Name = "aws:kms:dsse")]
+    AwsKmsDsse
 }

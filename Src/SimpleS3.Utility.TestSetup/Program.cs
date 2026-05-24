@@ -47,6 +47,7 @@ internal static class Program
     private static async Task PostConfigureAmazonS3(IBucketClient bucketClient, string bucketName)
     {
         await SetLockConfigAsync(bucketClient, bucketName);
+        await SetEncryptionConfigAsync(bucketClient, bucketName);
         await SetExpireAllAsync(bucketClient, bucketName);
         await SetPublicAccessBlockAsync(bucketClient, bucketName);
     }
@@ -85,6 +86,17 @@ internal static class Program
         Console.Write("- Lock configuration: ");
 
         PutBucketLockConfigurationResponse resp = await bucketClient.PutBucketLockConfigurationAsync(bucketName, true).ConfigureAwait(false);
+        Console.WriteLine(resp.IsSuccess ? "[x]" : "[ ]");
+    }
+
+    private static async Task SetEncryptionConfigAsync(IBucketClient bucketClient, string bucketName)
+    {
+        Console.Write("- Encryption configuration: ");
+
+        S3ServerSideEncryptionRule rule = new S3ServerSideEncryptionRule(SseAlgorithm.Aes256);
+        rule.BlockedEncryptionTypes.Add(BlockedEncryptionType.None);
+
+        PutBucketEncryptionResponse resp = await bucketClient.PutBucketEncryptionAsync(bucketName, [rule]).ConfigureAwait(false);
         Console.WriteLine(resp.IsSuccess ? "[x]" : "[ ]");
     }
 

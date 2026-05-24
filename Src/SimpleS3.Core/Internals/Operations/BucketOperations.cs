@@ -31,6 +31,8 @@ internal sealed class BucketOperations(IRequestHandler handler) : IBucketOperati
 
     public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(PutBucketLifecycleConfigurationRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketLifecycleConfigurationRequest, PutBucketLifecycleConfigurationResponse>(request, token);
 
+    public Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(PutBucketEncryptionRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketEncryptionRequest, PutBucketEncryptionResponse>(request, token);
+
     public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(PutBucketVersioningRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketVersioningRequest, PutBucketVersioningResponse>(request, token);
 
     public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(GetBucketVersioningRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketVersioningRequest, GetBucketVersioningResponse>(request, token);

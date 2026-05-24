@@ -78,6 +78,8 @@ public class SimpleClient : ISimpleClient
 
     public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketLifecycleConfigurationAsync(bucketName, rules, config, token);
 
+    public Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(string bucketName, IEnumerable<S3ServerSideEncryptionRule> rules, Action<PutBucketEncryptionRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketEncryptionAsync(bucketName, rules, config, token);
+
     public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketVersioningAsync(bucketName, enabled, config, token);
 
     public Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketVersioningAsync(bucketName, config, token);

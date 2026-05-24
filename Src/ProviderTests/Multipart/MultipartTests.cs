@@ -53,9 +53,11 @@ public class MultipartTests : TestBase
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task MultipartCustomerEncryption(S3Provider _, string bucket, ISimpleClient client)
+    public async Task MultipartCustomerEncryption(S3Provider provider, string bucket, ISimpleClient client)
     {
         const string objectKey = nameof(MultipartCustomerEncryption);
+
+        await AllowSseCustomerKeysAsync(provider, client, bucket);
 
         byte[] key = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8];
         byte[] keyMd5 = CryptoHelper.Md5Hash(key);
