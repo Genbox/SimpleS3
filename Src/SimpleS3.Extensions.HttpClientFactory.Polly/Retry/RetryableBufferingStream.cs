@@ -12,6 +12,8 @@ internal sealed class RetryableBufferingStream : Stream
     private bool _disposed;
     private string? _tempFilePath;
 
+    internal string? TempFilePath => _tempFilePath;
+
     public RetryableBufferingStream(Stream underlyingStream, int maxMemoryBufferSize)
     {
         Validator.RequireThat(!underlyingStream.CanSeek, $"The {nameof(RetryableBufferingStream)} should not be used on seekable streams");
@@ -96,12 +98,21 @@ internal sealed class RetryableBufferingStream : Stream
         if (_bufferStream is not MemoryStream memoryStream || memoryStream.Length + additionalBytes <= _maxMemoryBufferSize)
             return;
 
-        _tempFilePath = Path.GetTempFileName();
-        FileStream fileStream = new FileStream(_tempFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-        memoryStream.Seek(0, SeekOrigin.Begin);
-        memoryStream.CopyTo(fileStream);
-        memoryStream.Dispose();
-        _bufferStream = fileStream;
+        _tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        FileStream fileStream = new FileStream(_tempFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.DeleteOnClose);
+
+        try
+        {
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            memoryStream.CopyTo(fileStream);
+            memoryStream.Dispose();
+            _bufferStream = fileStream;
+        }
+        catch
+        {
+            fileStream.Dispose();
+            throw;
+        }
     }
 
     public override int Read(byte[] buffer, int offset, int count)
