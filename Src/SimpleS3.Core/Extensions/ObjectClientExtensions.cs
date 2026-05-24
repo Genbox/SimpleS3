@@ -87,8 +87,7 @@ public static class ObjectClientExtensions
 
         do
         {
-            if (token.IsCancellationRequested)
-                yield break;
+            token.ThrowIfCancellationRequested();
 
             response = await responseTask.ConfigureAwait(false);
 
@@ -122,7 +121,10 @@ public static class ObjectClientExtensions
                 throw new S3RequestException(response, $"Unable to delete objects in bucket '{bucketName}");
 
             foreach (S3DeleteError error in multiDelResponse.Errors)
+            {
+                token.ThrowIfCancellationRequested();
                 yield return error;
+            }
         } while (response.IsTruncated);
     }
 
@@ -155,8 +157,7 @@ public static class ObjectClientExtensions
 
         do
         {
-            if (token.IsCancellationRequested)
-                break;
+            token.ThrowIfCancellationRequested();
 
             response = await responseTask.ConfigureAwait(false);
 
@@ -189,7 +190,10 @@ public static class ObjectClientExtensions
                 throw new S3RequestException(response, $"Unable to delete objects in bucket '{bucketName}");
 
             foreach (S3DeleteError error in multiDelResponse.Errors)
+            {
+                token.ThrowIfCancellationRequested();
                 yield return error;
+            }
         } while (response.IsTruncated);
     }
 
@@ -260,8 +264,7 @@ public static class ObjectClientExtensions
 
         do
         {
-            if (token.IsCancellationRequested)
-                break;
+            token.ThrowIfCancellationRequested();
 
             response = await responseTask.ConfigureAwait(false);
 
@@ -286,7 +289,10 @@ public static class ObjectClientExtensions
             }
 
             foreach (S3Object obj in response.Objects)
+            {
+                token.ThrowIfCancellationRequested();
                 yield return obj;
+            }
         } while (response.IsTruncated);
     }
 
@@ -315,8 +321,7 @@ public static class ObjectClientExtensions
 
         do
         {
-            if (token.IsCancellationRequested)
-                break;
+            token.ThrowIfCancellationRequested();
 
             response = await responseTask.ConfigureAwait(false);
 
@@ -341,7 +346,10 @@ public static class ObjectClientExtensions
             }
 
             foreach (S3Version s3Version in response.Versions)
+            {
+                token.ThrowIfCancellationRequested();
                 yield return s3Version;
+            }
         } while (response.IsTruncated);
     }
 }

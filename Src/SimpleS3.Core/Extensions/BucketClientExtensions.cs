@@ -17,13 +17,11 @@ public static class BucketClientExtensions
         if (!response.IsSuccess)
             throw new S3RequestException(response, "Request failed");
 
-        if (token.IsCancellationRequested)
-            yield break;
+        token.ThrowIfCancellationRequested();
 
         foreach (S3Bucket bucket in response.Buckets)
         {
-            if (token.IsCancellationRequested)
-                yield break;
+            token.ThrowIfCancellationRequested();
 
             yield return bucket;
         }

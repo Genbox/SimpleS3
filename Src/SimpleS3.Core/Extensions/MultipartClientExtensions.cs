@@ -19,14 +19,16 @@ public static class MultipartClientExtensions
 
         do
         {
-            if (token.IsCancellationRequested)
-                break;
+            token.ThrowIfCancellationRequested();
 
             string? marker = uploadIdMarker;
             response = await client.ListMultipartUploadsAsync(bucketName, req => req.UploadIdMarker = marker, token).ConfigureAwait(false);
 
             foreach (S3Upload responseObject in response.Uploads)
+            {
+                token.ThrowIfCancellationRequested();
                 yield return responseObject;
+            }
 
             uploadIdMarker = response.NextUploadIdMarker;
         } while (response.IsTruncated);
