@@ -25,7 +25,16 @@ internal sealed class RetryableBufferingStream : Stream
     public override bool CanRead => true;
     public override bool CanSeek => true;
     public override bool CanWrite => false;
-    public override long Length => _bufferStream.Length;
+    public override long Length
+    {
+        get
+        {
+            if (!_buffered)
+                ReadSource();
+
+            return _bufferStream.Length;
+        }
+    }
 
     public override long Position
     {

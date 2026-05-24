@@ -1,4 +1,4 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase;
 using Genbox.SimpleS3.Core.Tests.Code.Handlers;
@@ -48,5 +48,7 @@ public class TransientNetworkErrorTests(ITestOutputHelper helper) : OfflineTestB
 
         Assert.True(response.IsSuccess);
         Assert.True(_handler.RequestCounter >= 2);
+        Assert.All(_handler.ContentLengths, length => Assert.True(length > 0));
+        Assert.All(_handler.RequestBodies, body => Assert.Equal(_handler.RequestBodies[0], body));
     }
 }
