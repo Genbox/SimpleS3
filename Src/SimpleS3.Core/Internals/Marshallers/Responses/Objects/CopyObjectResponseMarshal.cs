@@ -37,7 +37,7 @@ internal sealed class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectRes
 
         response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
 
-        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
         xmlReader.ReadToDescendant("CopyObjectResult");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))

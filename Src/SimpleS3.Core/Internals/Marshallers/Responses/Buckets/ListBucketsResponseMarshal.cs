@@ -12,7 +12,7 @@ internal sealed class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsR
 {
     public void MarshalResponse(SimpleS3Config config, ListBucketsResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
         xmlReader.ReadToDescendant("ListAllMyBucketsResult");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))

@@ -11,7 +11,7 @@ internal sealed class GetBucketLockConfigurationResponseMarshal : IResponseMarsh
 {
     public void MarshalResponse(SimpleS3Config config, GetBucketLockConfigurationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
         xmlReader.ReadToDescendant("DefaultRetention");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))

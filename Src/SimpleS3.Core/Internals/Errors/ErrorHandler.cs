@@ -1,4 +1,4 @@
-﻿using System.Xml;
+using System.Xml;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Errors;
 
@@ -6,17 +6,14 @@ namespace Genbox.SimpleS3.Core.Internals.Errors;
 
 internal static class ErrorHandler
 {
-    internal static GenericError Create(Stream response)
+    internal static GenericError Create(XmlReader xmlReader)
     {
         Dictionary<string, string> lookup = new Dictionary<string, string>(StringComparer.Ordinal);
 
-        using (XmlReader xmlReader = new XmlTextReader(response))
-        {
-            xmlReader.ReadToDescendant("Error");
+        xmlReader.ReadToDescendant("Error");
 
-            foreach (string name in XmlHelper.ReadElements(xmlReader))
-                lookup.Add(name, xmlReader.ReadString());
-        }
+        foreach (string name in XmlHelper.ReadElements(xmlReader))
+            lookup.Add(name, xmlReader.ReadString());
 
         string code = lookup["Code"];
 

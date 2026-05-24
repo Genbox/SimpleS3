@@ -13,7 +13,7 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
 {
     public void MarshalResponse(SimpleS3Config config, GetBucketLifecycleConfigurationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
         xmlReader.ReadToDescendant("LifecycleConfiguration");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))

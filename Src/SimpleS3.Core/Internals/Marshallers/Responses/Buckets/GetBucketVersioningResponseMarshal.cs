@@ -10,7 +10,7 @@ internal sealed class GetBucketVersioningResponseMarshal : IResponseMarshal<GetB
 {
     public void MarshalResponse(SimpleS3Config config, GetBucketVersioningResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
         foreach (string name in XmlHelper.ReadElements(xmlReader))
         {
             switch (name)

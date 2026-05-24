@@ -1,4 +1,5 @@
-﻿using Genbox.SimpleS3.Core.Abstracts;
+﻿using System.Xml;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -99,7 +100,8 @@ public class DefaultResponseHandler : IResponseHandler
                     {
                         ms.Seek(0, SeekOrigin.Begin);
 
-                        response.Error = ErrorHandler.Create(ms);
+                        using (XmlReader reader = XmlReader.Create(ms))
+                            response.Error = ErrorHandler.Create(reader);
 
                         _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
                     }

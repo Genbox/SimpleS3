@@ -15,7 +15,7 @@ internal sealed class GetObjectAclResponseMarshal : IResponseMarshal<GetObjectAc
     {
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
         xmlReader.ReadToDescendant("AccessControlPolicy");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader, "AccessControlPolicy"))

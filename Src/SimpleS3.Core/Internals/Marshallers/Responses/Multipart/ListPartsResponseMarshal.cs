@@ -20,7 +20,7 @@ internal sealed class ListPartsResponseMarshal : IResponseMarshal<ListPartsRespo
         response.AbortRuleId = headers.GetOptionalValue(AmzHeaders.XAmzAbortRuleId);
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
+        using (XmlReader xmlReader = XmlHelper.CreateReader(responseStream))
         {
             xmlReader.ReadToDescendant("ListPartsResult");
 

@@ -14,7 +14,7 @@ internal sealed class ListMultipartUploadsResponseMarshal : IResponseMarshal<Lis
 {
     public void MarshalResponse(SimpleS3Config config, ListMultipartUploadsResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
+        using (XmlReader xmlReader = XmlHelper.CreateReader(responseStream))
         {
             xmlReader.ReadToDescendant("ListMultipartUploadsResult");
 

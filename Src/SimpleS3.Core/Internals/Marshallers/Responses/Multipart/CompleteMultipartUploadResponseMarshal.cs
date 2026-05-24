@@ -31,7 +31,7 @@ internal sealed class CompleteMultipartUploadResponseMarshal : IResponseMarshal<
             response.LifeCycleRuleId = data.ruleId;
         }
 
-        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
         xmlReader.ReadToDescendant("CompleteMultipartUploadResult");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))

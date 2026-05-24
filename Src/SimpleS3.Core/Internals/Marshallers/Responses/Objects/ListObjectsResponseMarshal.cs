@@ -17,7 +17,7 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
     {
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
+        using (XmlReader xmlReader = XmlHelper.CreateReader(responseStream))
         {
             xmlReader.ReadToDescendant("ListBucketResult");
 

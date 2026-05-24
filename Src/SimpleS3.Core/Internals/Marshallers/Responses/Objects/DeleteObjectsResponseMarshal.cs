@@ -15,7 +15,7 @@ internal sealed class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObje
     {
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-        using XmlTextReader xmlReader = new XmlTextReader(responseStream);
+        using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
         xmlReader.ReadToDescendant("DeleteResult");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))

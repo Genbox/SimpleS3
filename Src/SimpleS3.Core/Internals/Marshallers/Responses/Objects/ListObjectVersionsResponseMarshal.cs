@@ -14,7 +14,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
 {
     public void MarshalResponse(SimpleS3Config config, ListObjectVersionsResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        using (XmlTextReader xmlReader = new XmlTextReader(responseStream))
+        using (XmlReader xmlReader = XmlHelper.CreateReader(responseStream))
         {
             //To support Google's lack of versions which is identical to S3 ListObjectVersions, but not quite
             //xmlReader.ReadToDescendant("ListVersionsResult");
