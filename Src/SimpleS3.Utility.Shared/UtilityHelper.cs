@@ -166,7 +166,7 @@ public static class UtilityHelper
         //If we have any errors at this point, it might be because of legal hold. Force delete them too.
         if (errors.Count > 0)
         {
-            foreach (S3DeleteError error in errors)
+            foreach (S3DeleteError error in errors.ToArray()) // ToArray ensures stability since we mutate the set
             {
                 PutObjectLegalHoldResponse legalResp = await client.PutObjectLegalHoldAsync(bucket, error.ObjectKey, false, r => r.VersionId = error.VersionId);
 
