@@ -5,9 +5,9 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 
-internal sealed class RetryableBufferingStreamWrapper(IOptions<PollyConfig> options) : IRequestStreamWrapper
+internal sealed class RetryableBufferingStreamWrapper(IOptionsMonitor<PollyConfig> options, string optionsName) : IRequestStreamWrapper
 {
-    private readonly PollyConfig _config = options.Value;
+    private readonly PollyConfig _config = options.Get(optionsName);
 
     public bool IsSupported(IRequest request) => true;
 

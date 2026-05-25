@@ -16,13 +16,13 @@ public static class CoreBuilderExtensions
 {
     public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig, IServiceProvider> config)
     {
-        clientBuilder.Services.Configure(config);
+        clientBuilder.Services.Configure(clientBuilder.Name, config);
         return UseHttpClientFactory(clientBuilder);
     }
 
     public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig> config)
     {
-        clientBuilder.Services.Configure(config);
+        clientBuilder.Services.Configure(clientBuilder.Name, config);
         return UseHttpClientFactory(clientBuilder);
     }
 
@@ -48,8 +48,8 @@ public static class CoreBuilderExtensions
             {
                 x.HttpHandlerActions.Add((provider, handler) =>
                 {
-                    IOptions<HttpClientFactoryConfig> opt = provider.GetRequiredService<IOptions<HttpClientFactoryConfig>>();
-                    HttpClientFactoryConfig config = opt.Value;
+                    IOptionsMonitor<HttpClientFactoryConfig> opt = provider.GetRequiredService<IOptionsMonitor<HttpClientFactoryConfig>>();
+                    HttpClientFactoryConfig config = opt.Get(builder.Name);
 
                     handler.UseCookies = false;
                     handler.MaxAutomaticRedirections = 3;
@@ -64,8 +64,8 @@ public static class CoreBuilderExtensions
 
         builder.Services.Configure<HttpClientFactoryOptions>(builder.Name, (options, services) =>
         {
-            IOptions<HttpBuilderActions> opt = services.GetRequiredService<IOptions<HttpBuilderActions>>();
-            HttpBuilderActions actions = opt.Value;
+            IOptionsMonitor<HttpBuilderActions> opt = services.GetRequiredService<IOptionsMonitor<HttpBuilderActions>>();
+            HttpBuilderActions actions = opt.Get(builder.Name);
 
             foreach (Action<IServiceProvider, HttpClient> httpClientAction in actions.HttpClientActions)
                 options.HttpClientActions.Add(client => httpClientAction(services, client));

@@ -38,7 +38,7 @@ public static class SimpleS3CoreServices
     /// </summary>
     /// <param name="collection">The service collection</param>
     /// <param name="configure">Use this to configure the configuration used by SimpleS3</param>
-    /// <param name="name">The name to use for the builder. Used for named dependency isolation.</param>
+    /// <param name="name">The HTTP client name to use for named network-driver configuration.</param>
     public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection, Action<SimpleS3Config>? configure = null, string name = "SimpleS3")
     {
         //We don't use the microsoft extension here as we only want a subset of services.

@@ -25,7 +25,7 @@ public static class CoreBuilderExtensions
 
     public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder)
     {
-        clientBuilder.Services.TryAddSingleton<IRegionData, GenericS3RegionData>();
+        clientBuilder.Services.AddSingleton<IRegionData, GenericS3RegionData>();
         clientBuilder.Services.TryAddSingleton<IInputValidator, GenericS3InputValidator>();
 
         clientBuilder.Services.PostConfigure<SimpleS3Config>((x, y) =>

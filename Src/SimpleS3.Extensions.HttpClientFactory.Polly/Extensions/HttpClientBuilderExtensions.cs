@@ -21,7 +21,7 @@ public static class HttpClientBuilderExtensions
 
     public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder, int retries, TimeSpan timeout)
     {
-        builder.Services.Configure<PollyConfig>(x =>
+        builder.Services.Configure<PollyConfig>(builder.Name, x =>
         {
             x.Timeout = timeout;
             x.Retries = retries;
@@ -32,19 +32,21 @@ public static class HttpClientBuilderExtensions
 
     public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder, Action<PollyConfig> configure)
     {
-        builder.Services.Configure(configure);
+        builder.Services.Configure(builder.Name, configure);
         return UseRetryAndTimeout(builder);
     }
 
     public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder)
     {
         //Add IRequestStreamWrapper if it does not already exist. We need to add it such that it is combined with other IRequestStreamWrapper
-        if (builder.Services.TryAddEnumerableRet(ServiceDescriptor.Singleton<IRequestStreamWrapper, RetryableBufferingStreamWrapper>()))
+        builder.Services.AddSingleton<IRequestStreamWrapper>(provider => ActivatorUtilities.CreateInstance<RetryableBufferingStreamWrapper>(provider, builder.Name));
+
+        if (TryAddPolicyRegistration(builder.Services, builder.Name))
         {
             builder.Services.Configure<HttpClientFactoryOptions>(builder.Name, (x, provider) =>
             {
-                IOptions<PollyConfig> options = provider.GetRequiredService<IOptions<PollyConfig>>();
-                PollyConfig config = options.Value;
+                IOptionsMonitor<PollyConfig> options = provider.GetRequiredService<IOptionsMonitor<PollyConfig>>();
+                PollyConfig config = options.Get(builder.Name);
 
                 // Add a policy that will handle transient HTTP & Networking errors
                 PolicyBuilder<HttpResponseMessage> b = Policy<HttpResponseMessage>
@@ -74,5 +76,43 @@ public static class HttpClientBuilderExtensions
     {
         lock (_rng)
             return _rng.Next(0, (int)maxDelay.TotalMilliseconds);
+    }
+
+    private static bool TryAddPolicyRegistration(IServiceCollection services, string name)
+    {
+        foreach (ServiceDescriptor descriptor in services)
+        {
+            if (descriptor.ServiceType == typeof(PollyPolicyRegistration) && descriptor.ImplementationInstance is PollyPolicyRegistration registration && registration.Name == name)
+                return false;
+        }
+
+        services.AddSingleton(new PollyPolicyRegistration(name));
+        return true;
+    }
+
+    private static TimeSpan GetDelay(PollyConfig config, int retryAttempt)
+    {
+        return config.RetryMode switch
+        {
+            RetryMode.NoDelay => TimeSpan.Zero,
+            RetryMode.LinearDelay => TimeSpan.FromSeconds(retryAttempt),
+            RetryMode.LinearDelayJitter => TimeSpan.FromSeconds(retryAttempt) + GetJitter(config),
+            RetryMode.ExponentialBackoff => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+            RetryMode.ExponentialBackoffJitter => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + GetJitter(config),
+            _ => throw new InvalidOperationException($"Unsupported retry mode: {config.RetryMode}")
+        };
+    }
+
+    private static TimeSpan GetJitter(PollyConfig config)
+    {
+        int maxDelay = (int)config.MaxRandomDelay.TotalMilliseconds;
+
+        lock (_rng)
+            return TimeSpan.FromMilliseconds(_rng.Next(0, maxDelay));
+    }
+
+    private sealed class PollyPolicyRegistration(string name)
+    {
+        public string Name { get; } = name;
     }
 }

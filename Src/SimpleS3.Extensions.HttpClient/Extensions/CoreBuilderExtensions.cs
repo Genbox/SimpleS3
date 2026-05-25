@@ -14,13 +14,13 @@ public static class CoreBuilderExtensions
 {
     public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder, Action<HttpClientConfig, IServiceProvider> config)
     {
-        clientBuilder.Services.Configure(config);
+        clientBuilder.Services.Configure(clientBuilder.Name, config);
         return UseHttpClient(clientBuilder);
     }
 
     public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder, Action<HttpClientConfig> config)
     {
-        clientBuilder.Services.Configure(config);
+        clientBuilder.Services.Configure(clientBuilder.Name, config);
         return UseHttpClient(clientBuilder);
     }
 
@@ -35,8 +35,8 @@ public static class CoreBuilderExtensions
                 //When compiled to Blazor, the baseHandler is a BrowserHttpHandler, which does not support setting the settings below
                 if (baseHandler is HttpClientHandler handler)
                 {
-                    IOptions<HttpClientConfig> opt = provider.GetRequiredService<IOptions<HttpClientConfig>>();
-                    HttpClientConfig options = opt.Value;
+                    IOptionsMonitor<HttpClientConfig> opt = provider.GetRequiredService<IOptionsMonitor<HttpClientConfig>>();
+                    HttpClientConfig options = opt.Get(builder.Name);
 
                     handler.UseCookies = false;
                     handler.MaxAutomaticRedirections = 3;
@@ -57,8 +57,8 @@ public static class CoreBuilderExtensions
 
         builder.Services.AddSingleton<INetworkDriver, HttpClientNetworkDriver>(provider =>
         {
-            IOptions<HttpBuilderActions> opt = provider.GetRequiredService<IOptions<HttpBuilderActions>>();
-            HttpBuilderActions actions = opt.Value;
+            IOptionsMonitor<HttpBuilderActions> opt = provider.GetRequiredService<IOptionsMonitor<HttpBuilderActions>>();
+            HttpBuilderActions actions = opt.Get(builder.Name);
 
             HttpClientHandler handler = new HttpClientHandler();
 
@@ -72,7 +72,7 @@ public static class CoreBuilderExtensions
             foreach (Action<IServiceProvider, System.Net.Http.HttpClient> action in actions.HttpClientActions)
                 action(provider, client);
 
-            return ActivatorUtilities.CreateInstance<HttpClientNetworkDriver>(provider, client);
+            return ActivatorUtilities.CreateInstance<HttpClientNetworkDriver>(provider, client, builder.Name);
         });
 
         return builder;

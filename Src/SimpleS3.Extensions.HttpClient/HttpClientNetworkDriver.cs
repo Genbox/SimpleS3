@@ -8,9 +8,9 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient;
 
-public sealed class HttpClientNetworkDriver(IOptions<HttpClientConfig> options, ILogger<HttpClientNetworkDriver> logger, System.Net.Http.HttpClient client) : INetworkDriver
+public sealed class HttpClientNetworkDriver(IOptionsMonitor<HttpClientConfig> options, ILogger<HttpClientNetworkDriver> logger, System.Net.Http.HttpClient client, string optionsName) : INetworkDriver
 {
-    private readonly HttpClientConfig _config = options.Value;
+    private readonly HttpClientConfig _config = options.Get(optionsName);
     private readonly Version _httpVersion1 = new Version("1.1");
     private readonly Version _httpVersion2 = new Version("2.0");
     private readonly Version _httpVersion3 = new Version("3.0");

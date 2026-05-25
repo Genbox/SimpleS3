@@ -1,6 +1,8 @@
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Microsoft.AspNetCore.DataProtection;
@@ -11,6 +13,35 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 public sealed class ProfileManagerTests : IDisposable
 {
     private readonly string _profileLocation = Path.Combine(Path.GetTempPath(), "SimpleS3-" + Guid.NewGuid());
+
+    [Fact]
+    public void UseProfileManagerBuildsWithValidationWithoutConsoleSetup()
+    {
+        ServiceCollection services = new ServiceCollection();
+        services.AddSingleton<INetworkDriver, NullNetworkDriver>();
+        SimpleS3CoreServices.AddSimpleS3Core(services)
+                            .UseProfileManager(options => options.ProfileLocation = _profileLocation);
+
+        using ServiceProvider provider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
+
+        Assert.NotNull(provider.GetRequiredService<IProfileManager>());
+    }
+
+    [Fact]
+    public void UseProfileManagerPreservesCustomStorageAndSerializer()
+    {
+        ServiceCollection services = new ServiceCollection();
+        services.AddSingleton<IStorage, CustomStorage>();
+        services.AddSingleton<IProfileSerializer, CustomProfileSerializer>();
+
+        SimpleS3CoreServices.AddSimpleS3Core(services)
+                            .UseProfileManager(options => options.ProfileLocation = _profileLocation);
+
+        using ServiceProvider provider = services.BuildServiceProvider();
+
+        Assert.IsType<CustomStorage>(provider.GetRequiredService<IStorage>());
+        Assert.IsType<CustomProfileSerializer>(provider.GetRequiredService<IProfileSerializer>());
+    }
 
     [Fact]
     public void UseProfileManagerProtectsPersistedAccessKeyByDefault()
@@ -110,5 +141,18 @@ public sealed class ProfileManagerTests : IDisposable
         }
 
         throw new InvalidOperationException("Missing profile key: " + key);
+    }
+
+    private sealed class CustomStorage : IStorage
+    {
+        public byte[]? Get(string name) => throw new NotSupportedException();
+        public string Put(string name, byte[] data, bool forceOverwrite = false) => throw new NotSupportedException();
+        public IEnumerable<string> List() => throw new NotSupportedException();
+    }
+
+    private sealed class CustomProfileSerializer : IProfileSerializer
+    {
+        public byte[] Serialize<T>(T profile) where T : IProfile => throw new NotSupportedException();
+        public T Deserialize<T>(byte[] data) where T : IProfile => throw new NotSupportedException();
     }
 }

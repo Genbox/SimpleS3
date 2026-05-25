@@ -8,9 +8,9 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory;
 
-public class HttpClientFactoryNetworkDriver(IOptions<HttpClientFactoryConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory, string optionsName) : INetworkDriver
+public class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFactoryConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory, string optionsName) : INetworkDriver
 {
-    private readonly HttpClientFactoryConfig _config = options.Value;
+    private readonly HttpClientFactoryConfig _config = options.Get(optionsName);
     private readonly Version _httpVersion1 = new Version("1.1");
     private readonly Version _httpVersion2 = new Version("2.0");
     private readonly Version _httpVersion3 = new Version("3.0");
