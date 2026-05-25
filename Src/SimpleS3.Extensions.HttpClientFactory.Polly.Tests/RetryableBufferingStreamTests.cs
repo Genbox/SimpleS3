@@ -32,6 +32,19 @@ public class RetryableBufferingStreamTests
     }
 
     [Fact]
+    public void DisposeLeavesUnderlyingStreamOpen()
+    {
+        NonSeekableDataStream source = new NonSeekableDataStream("hello"u8.ToArray());
+        RetryableBufferingStream stream = new RetryableBufferingStream(source, 1);
+
+        stream.Dispose();
+
+        Assert.False(source.Disposed);
+
+        source.Dispose();
+    }
+
+    [Fact]
     public async Task ReadAsyncRejectsRetryAfterInterruptedBuffering()
     {
         await using RetryableBufferingStream stream = new RetryableBufferingStream(new CancelAfterConsumingStream("abcdef"u8.ToArray(), 3), 1024);
@@ -81,6 +94,8 @@ public class RetryableBufferingStreamTests
     {
         private readonly MemoryStream _inner = new MemoryStream(data);
 
+        public bool Disposed { get; private set; }
+
         public override bool CanRead => true;
         public override bool CanSeek => false;
         public override bool CanWrite => false;
@@ -97,6 +112,13 @@ public class RetryableBufferingStreamTests
         public override void SetLength(long value) => throw new NotSupportedException();
         public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
         public override void Flush() {}
+
+        protected override void Dispose(bool disposing)
+        {
+            Disposed = true;
+            _inner.Dispose();
+            base.Dispose(disposing);
+        }
     }
 
     private sealed class CancelAfterConsumingStream(byte[] data, int bytesToConsume) : Stream

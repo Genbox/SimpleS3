@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
@@ -6,6 +7,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 internal sealed class RetryableBufferingStream : Stream
 {
     private readonly int _maxMemoryBufferSize;
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Injected from the outside")]
     private readonly Stream _underlyingStream;
     private Stream _bufferStream;
     private bool _buffered;
@@ -58,7 +60,6 @@ internal sealed class RetryableBufferingStream : Stream
         if (disposing)
         {
             _bufferStream.Dispose();
-            _underlyingStream.Dispose();
 
             if (_tempFilePath != null)
                 File.Delete(_tempFilePath);
