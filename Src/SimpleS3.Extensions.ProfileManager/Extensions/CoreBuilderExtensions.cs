@@ -4,9 +4,7 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Internal;
 using Genbox.SimpleS3.Extensions.ProfileManager.Internal.DataProtection;
 using Genbox.SimpleS3.Extensions.ProfileManager.Serializers;
-using Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 using Genbox.SimpleS3.Extensions.ProfileManager.Storage;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -19,10 +17,9 @@ public static class CoreBuilderExtensions
     {
         builder.Services.AddDataProtection(options => options.ApplicationDiscriminator = "SimpleS3");
         builder.Services.TryAddSingleton<IAccessKeyProtector, DataProtectionKeyProtector>();
-        builder.Services.AddSingleton<IProfileSetup, ConsoleProfileSetup>();
-        builder.Services.AddSingleton<IProfileManager, ProfileManager>();
-        builder.Services.AddSingleton<IStorage, DiskStorage>();
-        builder.Services.AddSingleton<IProfileSerializer, DefaultProfileSerializer>();
+        builder.Services.TryAddSingleton<IProfileManager, ProfileManager>();
+        builder.Services.TryAddSingleton<IStorage, DiskStorage>();
+        builder.Services.TryAddSingleton<IProfileSerializer, DefaultProfileSerializer>();
 
         if (config != null)
             builder.Services.Configure(config);

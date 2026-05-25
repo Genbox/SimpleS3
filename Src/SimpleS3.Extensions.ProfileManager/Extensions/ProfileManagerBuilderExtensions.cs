@@ -35,7 +35,7 @@ public static class ProfileManagerBuilderExtensions
 
     public static IProfileManagerBuilder UseConsoleSetup(this IProfileManagerBuilder builder)
     {
-        builder.Services.AddSingleton<ConsoleProfileSetup>();
+        builder.Services.AddSingleton<IProfileSetup, ConsoleProfileSetup>();
         builder.Services.AddSingleton<IRegionConverter, RegionConverter>();
         return builder;
     }
