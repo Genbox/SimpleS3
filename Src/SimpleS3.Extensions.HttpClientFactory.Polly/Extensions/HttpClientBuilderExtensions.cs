@@ -58,9 +58,7 @@ public static class HttpClientBuilderExtensions
                 //When we use Polly, we don't want to use HttpClient's weird timeout
                 x.HttpClientActions.Add(client => client.Timeout = TimeSpan.FromHours(100));
 
-                AsyncRetryPolicy<HttpResponseMessage> retryPolicy = b.WaitAndRetryAsync(config.Retries, retryAttempt =>
-                    TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) +
-                    TimeSpan.FromMilliseconds(GetRandomDelay(config.MaxRandomDelay)));
+                AsyncRetryPolicy<HttpResponseMessage> retryPolicy = b.WaitAndRetryAsync(config.Retries, retryAttempt => GetDelay(config, retryAttempt));
 
                 AsyncTimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(config.Timeout);
 
@@ -70,12 +68,6 @@ public static class HttpClientBuilderExtensions
         }
 
         return builder;
-    }
-
-    private static int GetRandomDelay(TimeSpan maxDelay)
-    {
-        lock (_rng)
-            return _rng.Next(0, (int)maxDelay.TotalMilliseconds);
     }
 
     private static bool TryAddPolicyRegistration(IServiceCollection services, string name)
@@ -90,18 +82,15 @@ public static class HttpClientBuilderExtensions
         return true;
     }
 
-    private static TimeSpan GetDelay(PollyConfig config, int retryAttempt)
+    private static TimeSpan GetDelay(PollyConfig config, int retryAttempt) => config.RetryMode switch
     {
-        return config.RetryMode switch
-        {
-            RetryMode.NoDelay => TimeSpan.Zero,
-            RetryMode.LinearDelay => TimeSpan.FromSeconds(retryAttempt),
-            RetryMode.LinearDelayJitter => TimeSpan.FromSeconds(retryAttempt) + GetJitter(config),
-            RetryMode.ExponentialBackoff => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-            RetryMode.ExponentialBackoffJitter => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + GetJitter(config),
-            _ => throw new InvalidOperationException($"Unsupported retry mode: {config.RetryMode}")
-        };
-    }
+        RetryMode.NoDelay => TimeSpan.Zero,
+        RetryMode.LinearDelay => TimeSpan.FromSeconds(retryAttempt),
+        RetryMode.LinearDelayJitter => TimeSpan.FromSeconds(retryAttempt) + GetJitter(config),
+        RetryMode.ExponentialBackoff => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+        RetryMode.ExponentialBackoffJitter => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + GetJitter(config),
+        _ => throw new InvalidOperationException($"Unsupported retry mode: {config.RetryMode}")
+    };
 
     private static TimeSpan GetJitter(PollyConfig config)
     {
