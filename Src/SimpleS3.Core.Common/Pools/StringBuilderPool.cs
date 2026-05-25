@@ -132,9 +132,17 @@ public sealed class StringBuilderPool
             ReturnViaScan(builder);
     }
 
-    public string ReturnString(StringBuilder builder)
+    public string ReturnString(StringBuilder builder, bool clearContents = false)
     {
         string value = builder.ToString();
+
+        if (clearContents)
+        {
+            // StringBuilder.Clear() just sets length of it's content to 1. Not actually clearing anything.
+            for (int i = 0; i < builder.Length; i++)
+                builder[i] = '\0';
+        }
+
         Return(builder);
         return value;
     }
