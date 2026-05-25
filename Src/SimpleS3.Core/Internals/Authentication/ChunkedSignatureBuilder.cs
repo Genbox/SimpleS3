@@ -45,5 +45,24 @@ internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, ISc
     }
 
     /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of: Hmac-Sha256(SigningKey, StringToSign)</summary>
-    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign) => CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(stringToSign), keyBuilder.CreateSigningKey(date));
+    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign)
+    {
+        byte[]? stringToSignBytes = null;
+        byte[]? signingKey = null;
+
+        try
+        {
+            stringToSignBytes = Encoding.UTF8.GetBytes(stringToSign);
+            signingKey = keyBuilder.CreateSigningKey(date);
+            return CryptoHelper.HmacSign(stringToSignBytes, signingKey);
+        }
+        finally
+        {
+            if (stringToSignBytes != null)
+                Array.Clear(stringToSignBytes, 0, stringToSignBytes.Length);
+
+            if (signingKey != null)
+                Array.Clear(signingKey, 0, signingKey.Length);
+        }
+    }
 }

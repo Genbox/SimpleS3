@@ -22,9 +22,19 @@ internal sealed class HeaderAuthorizationBuilder(IOptions<SimpleS3Config> option
     {
         Validator.RequireNotNull(request);
 
-        string auth = BuildInternal(request.Timestamp, request.Headers, signatureBuilder.CreateSignature(request));
+        byte[]? signature = null;
 
-        request.SetHeader(HttpHeaders.Authorization, auth);
+        try
+        {
+            signature = signatureBuilder.CreateSignature(request);
+            string auth = BuildInternal(request.Timestamp, request.Headers, signature);
+            request.SetHeader(HttpHeaders.Authorization, auth);
+        }
+        finally
+        {
+            if (signature != null)
+                Array.Clear(signature, 0, signature.Length);
+        }
     }
 
     internal string BuildInternal(DateTimeOffset date, IReadOnlyDictionary<string, string> headers, byte[] signature)

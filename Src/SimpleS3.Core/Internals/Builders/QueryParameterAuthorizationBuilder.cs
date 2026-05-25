@@ -14,6 +14,18 @@ internal sealed class QueryParameterAuthorizationBuilder(ISignatureBuilder build
         Validator.RequireNotNull(request);
 
         logger.LogTrace("Building parameter based authorization");
-        request.SetQueryParameter(AmzParameters.XAmzSignature, builder.CreateSignature(request, false).HexEncode());
+
+        byte[]? signature = null;
+
+        try
+        {
+            signature = builder.CreateSignature(request, false);
+            request.SetQueryParameter(AmzParameters.XAmzSignature, signature.HexEncode());
+        }
+        finally
+        {
+            if (signature != null)
+                Array.Clear(signature, 0, signature.Length);
+        }
     }
 }

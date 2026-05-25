@@ -115,7 +115,18 @@ internal static class GenericRequestMapper
             string? sseContext = hasSse.SseContext.Build();
 
             if (sseContext != null)
-                req.SetHeader(AmzHeaders.XAmzSseContext, Encoding.UTF8.GetBytes(sseContext), BinaryEncoding.Base64);
+            {
+                byte[] contextBytes = Encoding.UTF8.GetBytes(sseContext);
+
+                try
+                {
+                    req.SetHeader(AmzHeaders.XAmzSseContext, contextBytes, BinaryEncoding.Base64);
+                }
+                finally
+                {
+                    Array.Clear(contextBytes, 0, contextBytes.Length);
+                }
+            }
         }
 
         if (req is IHasSseCustomerKey hasSseCustomerKey && !disabledFor(typeof(IHasSseCustomerKey)))
