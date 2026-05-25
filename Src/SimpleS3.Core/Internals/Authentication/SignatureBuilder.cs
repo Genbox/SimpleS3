@@ -150,7 +150,7 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
               .Append(SigningConstants.Newline);
         }
 
-        return StringBuilderPool.Shared.ReturnString(sb);
+        return StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
     }
 
     private static string CanonicalizeHeaderNames(OrderedDictionary<string, string> headers)

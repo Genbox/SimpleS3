@@ -85,7 +85,7 @@ internal sealed class DefaultSignedRequestHandler : ISignedRequestHandler
             sb.Append(endpointData.Endpoint);
             RequestHelper.AppendPath(sb, _config, request);
             RequestHelper.AppendQueryParameters(sb, request);
-            return StringBuilderPool.Shared.ReturnString(sb);
+            return StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
         }
         finally
         {

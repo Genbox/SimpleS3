@@ -244,7 +244,7 @@ internal sealed class ChunkedStream : Stream
             .Append(chunkSignature.HexEncode())
             .Append(_newlineStr);
 
-        string value = StringBuilderPool.Shared.ReturnString(chunkHeader);
+        string value = StringBuilderPool.Shared.ReturnString(chunkHeader, clearContents: true);
 
         return Encoding.UTF8.GetBytes(value, 0, value.Length, buffer, 0);
     }
