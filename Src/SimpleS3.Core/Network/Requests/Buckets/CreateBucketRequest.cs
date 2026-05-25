@@ -45,12 +45,14 @@ public class CreateBucketRequest : BaseRequest, IHasBucketAcl, IHasBucketName
 
     public override void Reset()
     {
+        EnableObjectLocking = null;
         Acl = BucketCannedAcl.Unknown;
         AclGrantRead.Reset();
         AclGrantWrite.Reset();
         AclGrantReadAcp.Reset();
         AclGrantWriteAcp.Reset();
         AclGrantFullControl.Reset();
+        ObjectOwnership = ObjectOwnership.Unknown;
 
         base.Reset();
     }

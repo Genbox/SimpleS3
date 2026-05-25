@@ -24,4 +24,12 @@ public class PutBucketPolicyRequest : BaseRequest, IHasBucketName, IHasContentMd
         BucketName = bucketName;
         Policy = policy;
     }
+
+    public override void Reset()
+    {
+        ConfirmRemoveSelfBucketAccess = false;
+        ContentMd5 = null;
+
+        base.Reset();
+    }
 }

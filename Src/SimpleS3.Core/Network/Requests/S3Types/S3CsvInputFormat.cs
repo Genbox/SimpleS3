@@ -37,5 +37,7 @@ public class S3CsvInputFormat : S3InputFormat
         FieldDelimiter = null;
         QuoteCharacter = null;
         AllowQuotedRecordDelimiter = null;
+
+        base.Reset();
     }
 }

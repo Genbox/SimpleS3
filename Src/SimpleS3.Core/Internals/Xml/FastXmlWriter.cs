@@ -3,7 +3,6 @@ using System.Text;
 using System.Xml;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Helpers;
-using Genbox.SimpleS3.Core.Common.Pools;
 
 namespace Genbox.SimpleS3.Core.Internals.Xml;
 
@@ -12,7 +11,7 @@ internal sealed class FastXmlWriter
 {
     private readonly XmlCharMode _discouragedCharMode;
     private readonly XmlCharMode _invalidCharMode;
-    private readonly StringBuilder _xml;
+    private readonly StringBuilder _sb;
     private readonly XmlStandard _xmlStandard;
     private bool _used;
 
@@ -30,7 +29,7 @@ internal sealed class FastXmlWriter
         _invalidCharMode = invalidChars;
         _discouragedCharMode = discouragedChars;
 
-        _xml = StringBuilderPool.Shared.Rent(capacity);
+        _sb = new StringBuilder(capacity); // Don't use StringBuilderPool as it will require FastXmlWriter to be disposable in order to return the rented StringBuilder.
     }
 
     /// <summary>Write a new element with the specified value</summary>
@@ -75,22 +74,22 @@ internal sealed class FastXmlWriter
     /// <param name="xmlns">Namespace to include in the element (if any)</param>
     public void WriteStartElement(string name, string? xmlns = null)
     {
-        _xml.Append('<');
-        _xml.Append(name);
+        _sb.Append('<');
+        _sb.Append(name);
 
         if (xmlns != null)
-            _xml.Append(" xmlns=\"").Append(xmlns).Append('"');
+            _sb.Append(" xmlns=\"").Append(xmlns).Append('"');
 
-        _xml.Append('>');
+        _sb.Append('>');
     }
 
     /// <summary>Write the end of an element</summary>
     /// <param name="name">Name of the element</param>
     public void WriteEndElement(string name)
     {
-        _xml.Append("</");
-        _xml.Append(name);
-        _xml.Append('>');
+        _sb.Append("</");
+        _sb.Append(name);
+        _sb.Append('>');
     }
 
     private void WriteValue(string data)
@@ -103,15 +102,15 @@ internal sealed class FastXmlWriter
             char c = data[i];
 
             if (c == '&')
-                _xml.Append("&amp;");
+                _sb.Append("&amp;");
             else if (c == '<')
-                _xml.Append("&lt;");
+                _sb.Append("&lt;");
             else if (c == '>')
-                _xml.Append("&gt;");
+                _sb.Append("&gt;");
             else if (char.IsHighSurrogate(c) && i + 1 < data.Length && char.IsLowSurrogate(data[i + 1]))
             {
-                _xml.Append(c);
-                _xml.Append(data[++i]);
+                _sb.Append(c);
+                _sb.Append(data[++i]);
             }
             else if (IsValidChar(c))
             {
@@ -121,9 +120,9 @@ internal sealed class FastXmlWriter
                     {
                         case XmlCharMode.EntityEncode:
                             //Note: Entity encoding might only be valid for discouraged characters in XML 1.1
-                            _xml.Append("&#x");
-                            _xml.Append(Convert.ToString(c, 16));
-                            _xml.Append(';');
+                            _sb.Append("&#x");
+                            _sb.Append(Convert.ToString(c, 16));
+                            _sb.Append(';');
                             continue;
                         case XmlCharMode.Omit:
                             continue;
@@ -135,7 +134,7 @@ internal sealed class FastXmlWriter
                     }
                 }
 
-                _xml.Append(c);
+                _sb.Append(c);
             }
             else
             {
@@ -206,7 +205,7 @@ internal sealed class FastXmlWriter
             throw new InvalidOperationException("Do not reuse FastXmlWriter instances");
 
         _used = true;
-        return StringBuilderPool.Shared.ReturnString(_xml);
+        return _sb.ToString();
     }
 
     /// <summary>Return a set of UTF8 encoded bytes</summary>
@@ -216,6 +215,6 @@ internal sealed class FastXmlWriter
             throw new InvalidOperationException("Do not reuse FastXmlWriter instances");
 
         _used = true;
-        return Encoding.UTF8.GetBytes(StringBuilderPool.Shared.ReturnString(_xml));
+        return Encoding.UTF8.GetBytes(_sb.ToString());
     }
 }

@@ -120,9 +120,16 @@ public static class ObjectClientExtensions
 
                 List<S3DeleteInfo> delete = response.Objects.Select(x => pool.Rent(info => info.Initialize(x.ObjectKey))).ToList();
 
-                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
+                DeleteObjectsResponse multiDelResponse;
 
-                pool.Return(delete);
+                try
+                {
+                    multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
+                }
+                finally
+                {
+                    pool.Return(delete); // Return even after exception
+                }
 
                 if (!multiDelResponse.IsSuccess)
                     throw new S3RequestException(response, $"Unable to delete objects in bucket '{bucketName}");

@@ -9,5 +9,6 @@ public class S3JsonInputFormat(JsonType jsonType) : S3InputFormat
     internal override void Reset()
     {
         JsonType = JsonType.Unknown;
+        base.Reset();
     }
 }

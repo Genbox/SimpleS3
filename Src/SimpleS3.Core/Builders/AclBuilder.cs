@@ -1,5 +1,6 @@
 using System.Text;
 using Genbox.HttpBuilders.Abstracts;
+using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
 
@@ -10,7 +11,6 @@ public class AclBuilder : IHttpHeaderBuilder
 {
     private HashSet<string>? _emails;
     private HashSet<string>? _ids;
-    private StringBuilder? _sb;
     private HashSet<string>? _uris;
 
     public string? HeaderName => null;
@@ -31,19 +31,16 @@ public class AclBuilder : IHttpHeaderBuilder
         if (_uris != null)
             count += _uris.Count;
 
-        if (_sb == null)
-            _sb = new StringBuilder(100);
-        else
-            _sb.Clear();
+        StringBuilder sb = StringBuilderPool.Shared.Rent(100);
 
         if (_emails != null && _emails.Count > 0)
         {
             foreach (string email in _emails)
             {
-                _sb.Append("emailAddress=\"").Append(email).Append('"');
+                sb.Append("emailAddress=\"").Append(email).Append('"');
 
                 if (--count != 0)
-                    _sb.Append(',');
+                    sb.Append(',');
             }
         }
 
@@ -51,10 +48,10 @@ public class AclBuilder : IHttpHeaderBuilder
         {
             foreach (string id in _ids)
             {
-                _sb.Append("id=\"").Append(id).Append('"');
+                sb.Append("id=\"").Append(id).Append('"');
 
                 if (--count != 0)
-                    _sb.Append(',');
+                    sb.Append(',');
             }
         }
 
@@ -62,14 +59,14 @@ public class AclBuilder : IHttpHeaderBuilder
         {
             foreach (string uri in _uris)
             {
-                _sb.Append("uri=\"").Append(uri).Append('"');
+                sb.Append("uri=\"").Append(uri).Append('"');
 
                 if (--count != 0)
-                    _sb.Append(',');
+                    sb.Append(',');
             }
         }
 
-        return _sb.ToString();
+        return StringBuilderPool.Shared.ReturnString(sb);
     }
 
     public void Reset()

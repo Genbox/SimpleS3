@@ -121,7 +121,10 @@ public sealed class StringBuilderPool
     public void Return(StringBuilder builder)
     {
         if (builder.Capacity > _maxBuilderCapacity)
+        {
+            builder.Clear(); // We clear it for safety anyway
             return;
+        }
 
         if (_firstBuilder == null)
         {

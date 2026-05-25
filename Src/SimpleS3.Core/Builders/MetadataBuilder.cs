@@ -27,6 +27,7 @@ public class MetadataBuilder : IEnumerable<KeyValuePair<string, string>>, IPoole
     public void Reset()
     {
         _metadata?.Clear();
+        _totalSize = 0;
     }
 
     public MetadataBuilder Add(string key, string value)

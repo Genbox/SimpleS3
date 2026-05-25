@@ -8,5 +8,8 @@ public abstract class S3InputFormat
 {
     public CompressionType CompressionType { get; set; }
 
-    internal abstract void Reset();
+    internal virtual void Reset()
+    {
+        CompressionType = CompressionType.Unknown;
+    }
 }

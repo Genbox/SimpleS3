@@ -15,6 +15,8 @@ public abstract class BaseRequest(HttpMethodType method) : IRequest, IPooledObje
     {
         _headers.Clear();
         _queryParameters.Clear();
+        RequestId = Guid.Empty;
+        Timestamp = default;
         ExpectedBucketOwner = null;
     }
 
