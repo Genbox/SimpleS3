@@ -29,7 +29,7 @@ public class SigningMaterialCleanupTests
     public void ChunkedSignatureBuilderClearsSigningKey()
     {
         TrackingSigningKeyBuilder keyBuilder = new TrackingSigningKeyBuilder();
-        ChunkedSignatureBuilder builder = new ChunkedSignatureBuilder(keyBuilder, new TestScopeBuilder(), NullLogger<ChunkedSignatureBuilder>.Instance);
+        ChunkedSignatureBuilder builder = new ChunkedSignatureBuilder(keyBuilder, new TestScopeBuilder(), Options.Create(CreateConfig()), NullLogger<ChunkedSignatureBuilder>.Instance);
 
         byte[] signature = builder.CreateSignature(DateTimeOffset.UtcNow, "string-to-sign");
 

@@ -64,7 +64,10 @@ internal sealed class SigningKeyBuilder : ISigningKeyBuilder
         byte[] hashService = CryptoHelper.HmacSign(_serviceBytes, hashRegion);
         byte[] signingKey = CryptoHelper.HmacSign(_requestBytes, hashService);
 
-        _logger.LogDebug("Signing key created: {SigningKey}", signingKey);
+        if (_config.LogSensitiveMaterial)
+            _logger.LogDebug("Signing key created: {SigningKey}", signingKey);
+        else
+            _logger.LogDebug("Signing key created");
 
         return signingKey;
     }

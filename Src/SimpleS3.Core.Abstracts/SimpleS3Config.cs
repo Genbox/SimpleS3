@@ -73,6 +73,9 @@ public class SimpleS3Config
     /// <summary>Set this to true to make SimpleS3 throw exceptions when it receives an error response from the S3 API.</summary>
     public bool ThrowExceptionOnError { get; set; }
 
+    /// <summary>Set this to true to include sensitive signing material and signed request query strings in logs.</summary>
+    public bool LogSensitiveMaterial { get; set; }
+
     public string RegionCode { get; set; }
 
     public string ProviderName { get; set; }

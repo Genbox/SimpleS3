@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -8,11 +9,14 @@ using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Misc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
-internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, ILogger<ChunkedSignatureBuilder> logger) : IChunkedSignatureBuilder
+internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<ChunkedSignatureBuilder> logger) : IChunkedSignatureBuilder
 {
+    private readonly SimpleS3Config _config = options.Value;
+
     public byte[] CreateChunkSignature(IRequest request, byte[] previousSignature, byte[] content, int offset, int length)
     {
         Validator.RequireNotNull(request);
@@ -22,7 +26,11 @@ internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, ISc
         string stringToSign = CreateStringToSign(request.Timestamp, scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, content, offset, length);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
-        logger.LogDebug("Chunk signature: {Signature}", signature);
+        if (_config.LogSensitiveMaterial)
+            logger.LogDebug("Chunk signature: {Signature}", signature);
+        else
+            logger.LogDebug("Chunk signature created");
+
         return signature;
     }
 
@@ -40,7 +48,9 @@ internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, ISc
         sb.Append(CryptoHelper.Sha256Hash(content, offset, length).HexEncode());
 
         string sts = StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
-        logger.LogDebug("Chunked StringToSign: {StringToSign}", sts);
+        if (_config.LogSensitiveMaterial)
+            logger.LogDebug("Chunked StringToSign: {StringToSign}", sts);
+
         return sts;
     }
 

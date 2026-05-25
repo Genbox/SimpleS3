@@ -33,7 +33,7 @@ public class SignatureBenchmarks
         _signingKeyBuilder = new SigningKeyBuilder(options, NullLogger<SigningKeyBuilder>.Instance);
         IScopeBuilder scopeBuilder = new ScopeBuilder(options);
         _signatureBuilder = new SignatureBuilder(_signingKeyBuilder, scopeBuilder, options, NullLogger<SignatureBuilder>.Instance);
-        _chunkSigBuilder = new ChunkedSignatureBuilder(_signingKeyBuilder, scopeBuilder, NullLogger<ChunkedSignatureBuilder>.Instance);
+        _chunkSigBuilder = new ChunkedSignatureBuilder(_signingKeyBuilder, scopeBuilder, options, NullLogger<ChunkedSignatureBuilder>.Instance);
 
         byte[] data = "Hello world"u8.ToArray();
 

@@ -56,7 +56,11 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
         string stringToSign = CreateStringToSign(request.Timestamp, scopeBuilder.CreateScope("s3", request.Timestamp), canonicalRequest);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
-        logger.LogDebug("Signature: {Signature}", signature);
+        if (_options.LogSensitiveMaterial)
+            logger.LogDebug("Signature: {Signature}", signature);
+        else
+            logger.LogDebug("Signature created");
+
         return signature;
     }
 
@@ -108,7 +112,9 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
 
         string canonicalRequest = StringBuilderPool.Shared.ReturnString(sb);
 
-        logger.LogDebug("CanonicalRequest: {CanonicalRequest}", canonicalRequest);
+        if (_options.LogSensitiveMaterial)
+            logger.LogDebug("CanonicalRequest: {CanonicalRequest}", canonicalRequest);
+
         return canonicalRequest;
     }
 
@@ -130,7 +136,9 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
 
         string sts = StringBuilderPool.Shared.ReturnString(sb);
 
-        logger.LogDebug("StringToSign: {StringToSign}", sts);
+        if (_options.LogSensitiveMaterial)
+            logger.LogDebug("StringToSign: {StringToSign}", sts);
+
         return sts;
     }
 

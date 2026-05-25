@@ -51,7 +51,11 @@ internal sealed class HeaderAuthorizationBuilder(IOptions<SimpleS3Config> option
         header.AppendFormat(CultureInfo.InvariantCulture, "Signature={0}", signature.HexEncode());
 
         string authHeader = StringBuilderPool.Shared.ReturnString(header, clearContents: true);
-        logger.LogDebug("AuthHeader: {AuthHeader}", authHeader);
+        if (_config.LogSensitiveMaterial)
+            logger.LogDebug("AuthHeader: {AuthHeader}", authHeader);
+        else
+            logger.LogDebug("Authorization header created");
+
         return authHeader;
     }
 }
