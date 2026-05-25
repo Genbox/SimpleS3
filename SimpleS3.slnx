@@ -89,6 +89,10 @@
     <File Path="README.md" />
     <File Path="SECURITY.md" />
   </Folder>
+  <Folder Name="/_Scripts/">
+    <File Path="Scripts/Build.ps1" />
+    <File Path="Scripts/Publish.ps1" />
+  </Folder>
   <Project Path="Src/ProviderTests/ProviderTests.csproj" />
   <Project Path="Src/SimpleS3.Core.Abstracts/SimpleS3.Core.Abstracts.csproj" />
   <Project Path="Src/SimpleS3.Core.Benchmarks/SimpleS3.Core.Benchmarks.csproj" />
