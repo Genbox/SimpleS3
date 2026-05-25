@@ -50,24 +50,24 @@ internal class ObjectPool<T>(int maxCapacity = 32) where T : IPooledObject
 
     public void Return(T obj)
     {
+        //We reset here instead of in Rent() because it frees memory for strings and objects by releasing references.
+        obj.Reset();
+
         if (_pool.Count > maxCapacity)
             return;
 
-        //We reset here instead of in Rent() because it frees memory for strings and objects by releasing references.
-        obj.Reset();
         _pool.Add(obj);
     }
 
     public void Return(IEnumerable<T> objs)
     {
-        if (_pool.Count > maxCapacity)
-            return;
-
         //We reset here instead of in Rent() because it frees memory for strings and objects by releasing references.
         foreach (T obj in objs)
         {
             obj.Reset();
-            _pool.Add(obj);
+
+            if (_pool.Count <= maxCapacity)
+                _pool.Add(obj);
         }
     }
 }

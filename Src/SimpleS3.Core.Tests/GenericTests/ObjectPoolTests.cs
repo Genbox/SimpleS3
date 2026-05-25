@@ -29,6 +29,19 @@ public class ObjectPoolTests
         Assert.Equal(1, rented.ResetCount);
     }
 
+    [Fact]
+    public void ReturnResetsObjectWhenPoolIsOverCapacity()
+    {
+        ObjectPool<TestPooledObject> pool = new ObjectPool<TestPooledObject>(0);
+        TestPooledObject first = new TestPooledObject();
+        TestPooledObject second = new TestPooledObject();
+
+        pool.Return(first);
+        pool.Return(second);
+
+        Assert.Equal(1, second.ResetCount);
+    }
+
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
     private sealed class TestPooledObject : IPooledObject
     {
