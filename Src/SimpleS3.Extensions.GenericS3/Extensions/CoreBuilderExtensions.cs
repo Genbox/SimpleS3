@@ -18,20 +18,26 @@ public static class CoreBuilderExtensions
 
     public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder, Action<GenericS3Config, IServiceProvider> config)
     {
-        clientBuilder.Services.Configure(config);
+        clientBuilder.Services.Configure(ServiceBuilderBase.GetOptionsName(clientBuilder.Name), config);
 
         return UseGenericS3(clientBuilder);
     }
 
     public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder)
     {
-        clientBuilder.Services.AddSingleton<IRegionData, GenericS3RegionData>();
-        clientBuilder.Services.TryAddSingleton<IInputValidator, GenericS3InputValidator>();
+        clientBuilder.Services.AddKeyedSingleton<IRegionData, GenericS3RegionData>(clientBuilder.Name);
+        clientBuilder.Services.AddKeyedSingleton<IInputValidator, GenericS3InputValidator>(clientBuilder.Name);
 
-        clientBuilder.Services.PostConfigure<SimpleS3Config>((x, y) =>
+        if (clientBuilder.Name == ServiceBuilderBase.DefaultName)
         {
-            IOptions<GenericS3Config> awsCfg = y.GetRequiredService<IOptions<GenericS3Config>>();
-            PropertyHelper.MapObjects(awsCfg.Value, x);
+            clientBuilder.Services.AddSingleton<IRegionData, GenericS3RegionData>();
+            clientBuilder.Services.AddSingleton<IInputValidator, GenericS3InputValidator>();
+        }
+
+        clientBuilder.Services.PostConfigure<SimpleS3Config>(ServiceBuilderBase.GetOptionsName(clientBuilder.Name), (x, y) =>
+        {
+            IOptionsMonitor<GenericS3Config> awsCfg = y.GetRequiredService<IOptionsMonitor<GenericS3Config>>();
+            PropertyHelper.MapObjects(awsCfg.Get(ServiceBuilderBase.GetOptionsName(clientBuilder.Name)), x);
         });
 
         return clientBuilder;

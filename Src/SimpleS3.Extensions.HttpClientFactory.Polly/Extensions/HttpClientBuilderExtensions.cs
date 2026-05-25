@@ -1,4 +1,5 @@
 using System.Net;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Internal;
@@ -39,7 +40,10 @@ public static class HttpClientBuilderExtensions
     public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder)
     {
         //Add IRequestStreamWrapper if it does not already exist. We need to add it such that it is combined with other IRequestStreamWrapper
-        builder.Services.AddSingleton<IRequestStreamWrapper>(provider => ActivatorUtilities.CreateInstance<RetryableBufferingStreamWrapper>(provider, builder.Name));
+        builder.Services.AddKeyedSingleton<IRequestStreamWrapper>(builder.Name, (provider, _) => ActivatorUtilities.CreateInstance<RetryableBufferingStreamWrapper>(provider, builder.Name));
+
+        if (builder.Name == ServiceBuilderBase.DefaultName)
+            builder.Services.AddSingleton<IRequestStreamWrapper>(provider => ActivatorUtilities.CreateInstance<RetryableBufferingStreamWrapper>(provider, builder.Name));
 
         if (TryAddPolicyRegistration(builder.Services, builder.Name))
         {

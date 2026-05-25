@@ -63,6 +63,11 @@ public abstract class ClientBase : IDisposable
         Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
     }
 
+    protected ClientBase(SimpleClient client)
+    {
+        Client = client;
+    }
+
     protected SimpleClient Client { get; }
 
     public void Dispose()

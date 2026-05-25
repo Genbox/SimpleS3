@@ -1,12 +1,16 @@
 using System.Text;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
+using Genbox.SimpleS3.GenericS3.Extensions;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 
@@ -41,6 +45,57 @@ public sealed class ProfileManagerTests : IDisposable
 
         Assert.IsType<CustomStorage>(provider.GetRequiredService<IStorage>());
         Assert.IsType<CustomProfileSerializer>(provider.GetRequiredService<IProfileSerializer>());
+    }
+
+    [Fact]
+    public void UseConsoleSetupResolvesForNamedProvider()
+    {
+        ServiceCollection services = new ServiceCollection();
+
+        services.AddGenericS3(config =>
+        {
+            config.Endpoint = "https://profile.example.com";
+            config.RegionCode = "profile-region";
+            config.NamingMode = NamingMode.PathStyle;
+        }, "custom").CoreBuilder
+        .UseProfileManager(options => options.ProfileLocation = _profileLocation)
+        .UseConsoleSetup();
+
+        using ServiceProvider provider = services.BuildServiceProvider();
+
+        Assert.NotNull(provider.GetRequiredService<IProfileSetup>());
+        Assert.NotNull(provider.GetRequiredKeyedService<IProfileSetup>("custom"));
+    }
+
+    [Fact]
+    public void BindConfigToProfileAppliesNamedCoreConfig()
+    {
+        ServiceCollection services = new ServiceCollection();
+        ICoreBuilder builder = SimpleS3CoreServices.AddSimpleS3Core(services, config =>
+        {
+            config.Endpoint = "https://profile.example.com";
+            config.NamingMode = NamingMode.PathStyle;
+        }, "custom");
+
+        builder.UseProfileManager(options => options.ProfileLocation = _profileLocation)
+               .BindConfigToProfile("profile");
+        services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(_profileLocation, "keys")));
+
+        using ServiceProvider provider = services.BuildServiceProvider();
+        IProfileManager profileManager = provider.GetRequiredService<IProfileManager>();
+        profileManager.CreateProfile("profile", "key-id", "secret-key"u8.ToArray(), "profile-region", out string? location);
+
+        IOptionsMonitor<SimpleS3Config> options = provider.GetRequiredService<IOptionsMonitor<SimpleS3Config>>();
+        SimpleS3Config namedConfig = options.Get("custom");
+        SimpleS3Config config = provider.GetRequiredKeyedService<IOptions<SimpleS3Config>>("custom").Value;
+
+        Assert.NotNull(location);
+        Assert.Equal("profile-region", namedConfig.RegionCode);
+        Assert.NotNull(namedConfig.Credentials);
+        Assert.Equal("key-id", namedConfig.Credentials.KeyId);
+        Assert.Equal("profile-region", config.RegionCode);
+        Assert.NotNull(config.Credentials);
+        Assert.Equal("key-id", config.Credentials.KeyId);
     }
 
     [Fact]
@@ -145,7 +200,7 @@ public sealed class ProfileManagerTests : IDisposable
 
     private sealed class CustomStorage : IStorage
     {
-        public byte[]? Get(string name) => throw new NotSupportedException();
+        public byte[] Get(string name) => throw new NotSupportedException();
         public string Put(string name, byte[] data, bool forceOverwrite = false) => throw new NotSupportedException();
         public IEnumerable<string> List() => throw new NotSupportedException();
     }

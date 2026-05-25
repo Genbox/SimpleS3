@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Security.Authentication;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -55,26 +56,31 @@ public static class CoreBuilderExtensions
             });
         });
 
-        builder.Services.AddSingleton<INetworkDriver, HttpClientNetworkDriver>(provider =>
-        {
-            IOptionsMonitor<HttpBuilderActions> opt = provider.GetRequiredService<IOptionsMonitor<HttpBuilderActions>>();
-            HttpBuilderActions actions = opt.Get(builder.Name);
+        builder.Services.AddKeyedSingleton<INetworkDriver>(builder.Name, (provider, _) => CreateNetworkDriver(provider, builder.Name));
 
-            HttpClientHandler handler = new HttpClientHandler();
-
-            foreach (Action<IServiceProvider, HttpClientHandler>? action in actions.HttpHandlerActions)
-                action(provider, handler);
-
- #pragma warning disable IDISP001 - Disposed by the HttpClientN
-            System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(handler);
- #pragma warning restore IDISP001
-
-            foreach (Action<IServiceProvider, System.Net.Http.HttpClient> action in actions.HttpClientActions)
-                action(provider, client);
-
-            return ActivatorUtilities.CreateInstance<HttpClientNetworkDriver>(provider, client, builder.Name);
-        });
+        if (builder.Name == ServiceBuilderBase.DefaultName)
+            builder.Services.AddSingleton<INetworkDriver, HttpClientNetworkDriver>(provider => CreateNetworkDriver(provider, builder.Name));
 
         return builder;
+    }
+
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by the HttpClientNetworkDriver")]
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "Disposed by the HttpClientNetworkDriver")]
+    private static HttpClientNetworkDriver CreateNetworkDriver(IServiceProvider provider, string name)
+    {
+        IOptionsMonitor<HttpBuilderActions> opt = provider.GetRequiredService<IOptionsMonitor<HttpBuilderActions>>();
+        HttpBuilderActions actions = opt.Get(name);
+
+        HttpClientHandler handler = new HttpClientHandler();
+
+        foreach (Action<IServiceProvider, HttpClientHandler>? action in actions.HttpHandlerActions)
+            action(provider, handler);
+
+        System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(handler);
+
+        foreach (Action<IServiceProvider, System.Net.Http.HttpClient> action in actions.HttpClientActions)
+            action(provider, client);
+
+        return ActivatorUtilities.CreateInstance<HttpClientNetworkDriver>(provider, client, name);
     }
 }

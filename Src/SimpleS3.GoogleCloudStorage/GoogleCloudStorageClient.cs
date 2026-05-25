@@ -1,3 +1,4 @@
+using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -47,6 +48,8 @@ public sealed class GoogleCloudStorageClient : ClientBase, ISimpleClient
     public GoogleCloudStorageClient(GoogleCloudStorageConfig config, NetworkConfig? networkConfig = null) : base(new GoogleCloudStorageInputValidator(), config, networkConfig) {}
 
     public GoogleCloudStorageClient(GoogleCloudStorageConfig config, INetworkDriver networkDriver) : base(new GoogleCloudStorageInputValidator(), config, networkDriver) {}
+
+    internal GoogleCloudStorageClient(SimpleClient client) : base(client) {}
 
     internal GoogleCloudStorageClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) {}
 

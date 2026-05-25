@@ -24,6 +24,6 @@ public static class CoreBuilderExtensions
         if (config != null)
             builder.Services.Configure(config);
 
-        return new ProfileManagerBuilder(builder.Services);
+        return new ProfileManagerBuilder(builder.Services, ServiceBuilderBase.GetOptionsName(builder.Name));
     }
 }

@@ -1,3 +1,4 @@
+using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -47,6 +48,8 @@ public sealed class WasabiClient : ClientBase, ISimpleClient
     public WasabiClient(WasabiConfig config, NetworkConfig? networkConfig = null) : base(new WasabiInputValidator(), config, networkConfig) {}
 
     public WasabiClient(WasabiConfig config, INetworkDriver networkDriver) : base(new WasabiInputValidator(), config, networkDriver) {}
+
+    internal WasabiClient(SimpleClient client) : base(client) {}
 
     internal WasabiClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) {}
 

@@ -17,19 +17,25 @@ public static class CoreBuilderExtensions
 
     public static ICoreBuilder UseBackBlazeB2(this ICoreBuilder clientBuilder, Action<BackBlazeB2Config, IServiceProvider> config)
     {
-        clientBuilder.Services.Configure(config);
+        clientBuilder.Services.Configure(ServiceBuilderBase.GetOptionsName(clientBuilder.Name), config);
         return UseBackBlazeB2(clientBuilder);
     }
 
     public static ICoreBuilder UseBackBlazeB2(this ICoreBuilder clientBuilder)
     {
-        clientBuilder.Services.AddSingleton<IRegionData, BackblazeB2RegionData>();
-        clientBuilder.Services.AddSingleton<IInputValidator, BackblazeB2InputValidator>();
+        clientBuilder.Services.AddKeyedSingleton<IRegionData, BackblazeB2RegionData>(clientBuilder.Name);
+        clientBuilder.Services.AddKeyedSingleton<IInputValidator, BackblazeB2InputValidator>(clientBuilder.Name);
 
-        clientBuilder.Services.PostConfigure<SimpleS3Config>((x, y) =>
+        if (clientBuilder.Name == ServiceBuilderBase.DefaultName)
         {
-            IOptions<BackBlazeB2Config> awsCfg = y.GetRequiredService<IOptions<BackBlazeB2Config>>();
-            PropertyHelper.MapObjects(awsCfg.Value, x);
+            clientBuilder.Services.AddSingleton<IRegionData, BackblazeB2RegionData>();
+            clientBuilder.Services.AddSingleton<IInputValidator, BackblazeB2InputValidator>();
+        }
+
+        clientBuilder.Services.PostConfigure<SimpleS3Config>(ServiceBuilderBase.GetOptionsName(clientBuilder.Name), (x, y) =>
+        {
+            IOptionsMonitor<BackBlazeB2Config> awsCfg = y.GetRequiredService<IOptionsMonitor<BackBlazeB2Config>>();
+            PropertyHelper.MapObjects(awsCfg.Get(ServiceBuilderBase.GetOptionsName(clientBuilder.Name)), x);
         });
 
         return clientBuilder;

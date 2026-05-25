@@ -30,7 +30,7 @@ public class PollyHttpMessageHandlerTests
         builder.UseRetryAndTimeout(config => config.MaxMemoryBufferSize = 123);
 
         using ServiceProvider provider = services.BuildServiceProvider();
-        RetryableBufferingStreamWrapper wrapper = Assert.IsType<RetryableBufferingStreamWrapper>(provider.GetRequiredService<IRequestStreamWrapper>());
+        RetryableBufferingStreamWrapper wrapper = Assert.IsType<RetryableBufferingStreamWrapper>(provider.GetRequiredKeyedService<IRequestStreamWrapper>("custom"));
         FieldInfo configField = typeof(RetryableBufferingStreamWrapper).GetField("_config", BindingFlags.Instance | BindingFlags.NonPublic)!;
         PollyConfig config = Assert.IsType<PollyConfig>(configField.GetValue(wrapper));
 

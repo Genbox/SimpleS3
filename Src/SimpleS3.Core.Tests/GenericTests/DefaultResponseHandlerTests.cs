@@ -19,7 +19,7 @@ public class DefaultResponseHandlerTests
         await cts.CancelAsync().ConfigureAwait(false);
 
         using ILoggerFactory loggerFactory = new LoggerFactory();
-        using ContentStream content = new ContentStream(new CancelingReadStream(cts.Token), null);
+        await using ContentStream content = new ContentStream(new CancelingReadStream(cts.Token), null);
         DefaultResponseHandler handler = new DefaultResponseHandler(
             Options.Create(new SimpleS3Config()),
             new NoopRequestValidatorFactory(),

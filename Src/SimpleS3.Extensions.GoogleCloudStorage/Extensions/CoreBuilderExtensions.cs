@@ -17,19 +17,25 @@ public static class CoreBuilderExtensions
 
     public static ICoreBuilder UseGoogleCloudStorage(this ICoreBuilder clientBuilder, Action<GoogleCloudStorageConfig, IServiceProvider> config)
     {
-        clientBuilder.Services.Configure(config);
+        clientBuilder.Services.Configure(ServiceBuilderBase.GetOptionsName(clientBuilder.Name), config);
         return UseGoogleCloudStorage(clientBuilder);
     }
 
     public static ICoreBuilder UseGoogleCloudStorage(this ICoreBuilder clientBuilder)
     {
-        clientBuilder.Services.AddSingleton<IRegionData, GoogleCloudStorageRegionData>();
-        clientBuilder.Services.AddSingleton<IInputValidator, GoogleCloudStorageInputValidator>();
+        clientBuilder.Services.AddKeyedSingleton<IRegionData, GoogleCloudStorageRegionData>(clientBuilder.Name);
+        clientBuilder.Services.AddKeyedSingleton<IInputValidator, GoogleCloudStorageInputValidator>(clientBuilder.Name);
 
-        clientBuilder.Services.PostConfigure<SimpleS3Config>((x, y) =>
+        if (clientBuilder.Name == ServiceBuilderBase.DefaultName)
         {
-            IOptions<GoogleCloudStorageConfig> awsCfg = y.GetRequiredService<IOptions<GoogleCloudStorageConfig>>();
-            PropertyHelper.MapObjects(awsCfg.Value, x);
+            clientBuilder.Services.AddSingleton<IRegionData, GoogleCloudStorageRegionData>();
+            clientBuilder.Services.AddSingleton<IInputValidator, GoogleCloudStorageInputValidator>();
+        }
+
+        clientBuilder.Services.PostConfigure<SimpleS3Config>(ServiceBuilderBase.GetOptionsName(clientBuilder.Name), (x, y) =>
+        {
+            IOptionsMonitor<GoogleCloudStorageConfig> awsCfg = y.GetRequiredService<IOptionsMonitor<GoogleCloudStorageConfig>>();
+            PropertyHelper.MapObjects(awsCfg.Get(ServiceBuilderBase.GetOptionsName(clientBuilder.Name)), x);
         });
 
         return clientBuilder;

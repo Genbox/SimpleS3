@@ -17,20 +17,26 @@ public static class CoreBuilderExtensions
 
     public static ICoreBuilder UseWasabi(this ICoreBuilder clientBuilder, Action<WasabiConfig, IServiceProvider> config)
     {
-        clientBuilder.Services.Configure(config);
+        clientBuilder.Services.Configure(ServiceBuilderBase.GetOptionsName(clientBuilder.Name), config);
 
         return UseWasabi(clientBuilder);
     }
 
     public static ICoreBuilder UseWasabi(this ICoreBuilder clientBuilder)
     {
-        clientBuilder.Services.AddSingleton<IRegionData, WasabiRegionData>();
-        clientBuilder.Services.AddSingleton<IInputValidator, WasabiInputValidator>();
+        clientBuilder.Services.AddKeyedSingleton<IRegionData, WasabiRegionData>(clientBuilder.Name);
+        clientBuilder.Services.AddKeyedSingleton<IInputValidator, WasabiInputValidator>(clientBuilder.Name);
 
-        clientBuilder.Services.PostConfigure<SimpleS3Config>((x, y) =>
+        if (clientBuilder.Name == ServiceBuilderBase.DefaultName)
         {
-            IOptions<WasabiConfig> awsCfg = y.GetRequiredService<IOptions<WasabiConfig>>();
-            PropertyHelper.MapObjects(awsCfg.Value, x);
+            clientBuilder.Services.AddSingleton<IRegionData, WasabiRegionData>();
+            clientBuilder.Services.AddSingleton<IInputValidator, WasabiInputValidator>();
+        }
+
+        clientBuilder.Services.PostConfigure<SimpleS3Config>(ServiceBuilderBase.GetOptionsName(clientBuilder.Name), (x, y) =>
+        {
+            IOptionsMonitor<WasabiConfig> awsCfg = y.GetRequiredService<IOptionsMonitor<WasabiConfig>>();
+            PropertyHelper.MapObjects(awsCfg.Get(ServiceBuilderBase.GetOptionsName(clientBuilder.Name)), x);
         });
 
         return clientBuilder;

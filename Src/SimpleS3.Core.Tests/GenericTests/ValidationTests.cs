@@ -31,6 +31,7 @@ public class ValidationTests
             config.NamingMode = NamingMode.PathStyle;
             config.Credentials = new StringAccessKey("test", "secret");
         });
+        services.AddSingleton<IInputValidator, LocalValidator>();
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
 
@@ -55,6 +56,7 @@ public class ValidationTests
             config.NamingMode = NamingMode.PathStyle;
             config.Credentials = new StringAccessKey("12345678901234567890", "secret");
         });
+        services.AddSingleton<IInputValidator, LocalValidator>();
 
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
         serviceProvider.GetRequiredService<ISimpleClient>();

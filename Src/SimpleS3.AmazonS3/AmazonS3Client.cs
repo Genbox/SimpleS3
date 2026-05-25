@@ -1,3 +1,4 @@
+using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -47,6 +48,8 @@ public sealed class AmazonS3Client : ClientBase, ISimpleClient
     public AmazonS3Client(AmazonS3Config config, NetworkConfig? networkConfig = null) : base(new AmazonS3InputValidator(), config, networkConfig) {}
 
     public AmazonS3Client(AmazonS3Config config, INetworkDriver networkDriver) : base(new AmazonS3InputValidator(), config, networkDriver) {}
+
+    internal AmazonS3Client(SimpleClient client) : base(client) {}
 
     internal AmazonS3Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) {}
 

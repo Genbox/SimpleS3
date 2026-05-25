@@ -1,3 +1,4 @@
+using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -47,6 +48,8 @@ public sealed class BackBlazeB2Client : ClientBase, ISimpleClient
     public BackBlazeB2Client(BackBlazeB2Config config, NetworkConfig? networkConfig = null) : base(new BackblazeB2InputValidator(), config, networkConfig) {}
 
     public BackBlazeB2Client(BackBlazeB2Config config, INetworkDriver networkDriver) : base(new BackblazeB2InputValidator(), config, networkDriver) {}
+
+    internal BackBlazeB2Client(SimpleClient client) : base(client) {}
 
     internal BackBlazeB2Client(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedClient signedObjectClient) : base(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient) {}
 

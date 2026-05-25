@@ -1,3 +1,4 @@
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Authentication;
@@ -33,7 +34,7 @@ public class GenericS3IssueTests
         });
 
         //Replace the network driver with the null one for testing
-        services.Replace(ServiceDescriptor.Singleton<INetworkDriver, NullNetworkDriver>());
+        services.Replace(ServiceDescriptor.KeyedSingleton<INetworkDriver, NullNetworkDriver>(ServiceBuilderBase.DefaultName));
 
         ServiceProvider provider = services.BuildServiceProvider();
 

@@ -1,9 +1,15 @@
 using FluentValidation;
 using FluentValidation.Results;
+using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Validation;
+using Genbox.SimpleS3.Core.Internals.Validation.Validators;
 using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Validation;
 
@@ -17,17 +23,44 @@ internal sealed class ValidatorFactory : IRequestValidatorFactory
         //The validators that come in here all inherit from AbstractValidator<T>
         //So we take out the generic parameter type and use that for our internal lookup
 
-        _validators = validators.ToDictionary(x =>
+        _validators = validators.Where(x => IsRequestValidator(x.GetType())).ToDictionary(x => GetRequestType(x.GetType()), x => x);
+    }
+
+    internal static ValidatorFactory Create(IServiceProvider provider, IOptions<SimpleS3Config> options, IInputValidator inputValidator)
+    {
+        Type[] validatorTypes = TypeHelper.GetInstanceTypesInheritedFrom(typeof(IValidator), typeof(ValidatorFactory).Assembly)
+            .Where(IsRequestValidator)
+            .ToArray();
+
+        IValidator[] validators = new IValidator[validatorTypes.Length];
+
+        for (int i = 0; i < validatorTypes.Length; i++)
+            validators[i] = (IValidator)ActivatorUtilities.CreateInstance(provider, validatorTypes[i], inputValidator, options);
+
+        return new ValidatorFactory(validators);
+    }
+
+    private static bool IsRequestValidator(Type type)
+    {
+        return GetRequestValidatorBase(type) != null;
+    }
+
+    private static Type GetRequestType(Type type)
+    {
+        Type? requestValidatorBase = GetRequestValidatorBase(type);
+        Validator.RequireNotNull(requestValidatorBase);
+        return requestValidatorBase.GetGenericArguments()[0];
+    }
+
+    private static Type? GetRequestValidatorBase(Type type)
+    {
+        for (Type? baseType = type.BaseType; baseType != null; baseType = baseType.BaseType)
         {
-            Type type = x.GetType();
-            Type? baseType = type.BaseType;
+            if (baseType.IsGenericType && baseType.GetGenericTypeDefinition() == typeof(RequestValidatorBase<>))
+                return baseType;
+        }
 
-            Validator.RequireNotNull(baseType);
-
-            Type[] args = baseType.GetGenericArguments();
-
-            return args[0];
-        }, x => x);
+        return null;
     }
 
     public void ValidateAndThrow<T>(T obj) where T : IRequest

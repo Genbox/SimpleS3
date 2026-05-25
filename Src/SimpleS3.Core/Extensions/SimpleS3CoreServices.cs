@@ -39,13 +39,21 @@ public static class SimpleS3CoreServices
     /// <param name="collection">The service collection</param>
     /// <param name="configure">Use this to configure the configuration used by SimpleS3</param>
     /// <param name="name">The HTTP client name to use for named network-driver configuration.</param>
-    public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection, Action<SimpleS3Config>? configure = null, string name = "SimpleS3")
+    public static ICoreBuilder AddSimpleS3Core(IServiceCollection collection, Action<SimpleS3Config>? configure = null, string name = ServiceBuilderBase.DefaultName)
     {
         //We don't use the microsoft extension here as we only want a subset of services.
+        string optionsName = ServiceBuilderBase.GetOptionsName(name);
 
         //Add options
         collection.TryAdd(ServiceDescriptor.Singleton(typeof(IOptions<>), typeof(OptionsManager<>)));
         collection.TryAdd(ServiceDescriptor.Transient(typeof(IOptionsFactory<>), typeof(OptionsFactory<>)));
+        collection.TryAdd(ServiceDescriptor.Singleton(typeof(IOptionsMonitor<>), typeof(OptionsMonitor<>)));
+        collection.TryAdd(ServiceDescriptor.Singleton(typeof(IOptionsMonitorCache<>), typeof(OptionsCache<>)));
+        collection.AddKeyedSingleton<IOptions<SimpleS3Config>>(name, (provider, _) =>
+        {
+            IOptionsMonitor<SimpleS3Config> options = provider.GetRequiredService<IOptionsMonitor<SimpleS3Config>>();
+            return new OptionsWrapper<SimpleS3Config>(options.Get(optionsName));
+        });
 
         //Add logging
         collection.TryAdd(ServiceDescriptor.Singleton<ILoggerFactory, LoggerFactory>());
@@ -53,7 +61,7 @@ public static class SimpleS3CoreServices
 
         //Config
         if (configure != null)
-            collection.Configure(configure);
+            collection.Configure(optionsName, configure);
 
         //Authentication
         collection.AddSingleton<ISigningKeyBuilder, SigningKeyBuilder>();
@@ -74,7 +82,10 @@ public static class SimpleS3CoreServices
         collection.AddSingleton<IBucketClient, BucketClient>();
         collection.AddSingleton<IMultipartClient, MultipartClient>();
         collection.AddSingleton<ISignedClient, SignedClient>();
-        collection.AddSingleton<ISimpleClient, SimpleClient>();
+        collection.AddKeyedSingleton<ISimpleClient>(name, (provider, _) => CreateClient(provider, name));
+
+        if (name == ServiceBuilderBase.DefaultName)
+            collection.AddSingleton(provider => provider.GetRequiredKeyedService<ISimpleClient>(name));
 
         //Misc
         collection.AddSingleton<IResponseHandler, DefaultResponseHandler>();
@@ -104,6 +115,76 @@ public static class SimpleS3CoreServices
         collection.TryAddEnumerable(RegisterAsActual(typeof(IValidateOptions<>), assembly)); //Make sure that the options system validators are added too
 
         return new CoreBuilder(collection, name);
+    }
+
+    private static SimpleClient CreateClient(IServiceProvider provider, string name)
+    {
+        IOptions<SimpleS3Config> options = GetRequiredNamedService<IOptions<SimpleS3Config>>(provider, name);
+        IInputValidator inputValidator = GetInputValidator(provider, name);
+        INetworkDriver networkDriver = GetRequiredNamedService<INetworkDriver>(provider, name);
+        IAccessKeyProtector? accessKeyProtector = provider.GetService<IAccessKeyProtector>();
+        IMarshalFactory marshalFactory = provider.GetRequiredService<IMarshalFactory>();
+        IPostMapperFactory postMapperFactory = provider.GetRequiredService<IPostMapperFactory>();
+        ILoggerFactory loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+
+        ScopeBuilder scopeBuilder = new ScopeBuilder(options);
+        SigningKeyBuilder signingKeyBuilder = new SigningKeyBuilder(options, loggerFactory.CreateLogger<SigningKeyBuilder>(), accessKeyProtector);
+        SignatureBuilder signatureBuilder = new SignatureBuilder(signingKeyBuilder, scopeBuilder, options, loggerFactory.CreateLogger<SignatureBuilder>());
+        ChunkedSignatureBuilder chunkedSignatureBuilder = new ChunkedSignatureBuilder(signingKeyBuilder, scopeBuilder, options, loggerFactory.CreateLogger<ChunkedSignatureBuilder>());
+        HeaderAuthorizationBuilder headerAuthorizationBuilder = new HeaderAuthorizationBuilder(options, scopeBuilder, signatureBuilder, loggerFactory.CreateLogger<HeaderAuthorizationBuilder>());
+        QueryParameterAuthorizationBuilder queryParameterAuthorizationBuilder = new QueryParameterAuthorizationBuilder(signatureBuilder, loggerFactory.CreateLogger<QueryParameterAuthorizationBuilder>());
+
+        ValidatorFactory validatorFactory = ValidatorFactory.Create(provider, options, inputValidator);
+        DefaultResponseHandler responseHandler = new DefaultResponseHandler(options, validatorFactory, marshalFactory, postMapperFactory, networkDriver, loggerFactory.CreateLogger<DefaultResponseHandler>());
+        EndpointBuilder endpointBuilder = new EndpointBuilder(options);
+
+        IEnumerable<IRequestStreamWrapper> requestStreamWrappers = new IRequestStreamWrapper[] { new ChunkedContentRequestStreamWrapper(options, chunkedSignatureBuilder, signatureBuilder) }
+            .Concat(provider.GetKeyedServices<IRequestStreamWrapper>(name));
+
+        DefaultRequestHandler requestHandler = new DefaultRequestHandler(options, validatorFactory, marshalFactory, responseHandler, headerAuthorizationBuilder, endpointBuilder, loggerFactory.CreateLogger<DefaultRequestHandler>(), requestStreamWrappers);
+        DefaultSignedRequestHandler signedRequestHandler = new DefaultSignedRequestHandler(options, marshalFactory, scopeBuilder, queryParameterAuthorizationBuilder, endpointBuilder, responseHandler, loggerFactory.CreateLogger<DefaultSignedRequestHandler>());
+
+        ObjectOperations objectOperations = new ObjectOperations(requestHandler, provider.GetServices<IRequestWrapper>(), provider.GetServices<IResponseWrapper>());
+        BucketOperations bucketOperations = new BucketOperations(requestHandler);
+        MultipartOperations multipartOperations = new MultipartOperations(requestHandler, provider.GetServices<IRequestWrapper>(), provider.GetServices<IResponseWrapper>());
+        SignedOperations signedOperations = new SignedOperations(signedRequestHandler);
+
+        ObjectClient objectClient = new ObjectClient(objectOperations);
+        BucketClient bucketClient = new BucketClient(bucketOperations);
+        MultipartClient multipartClient = new MultipartClient(multipartOperations);
+        SignedClient signedClient = new SignedClient(signedOperations);
+        MultipartTransfer multipartTransfer = new MultipartTransfer(objectClient, multipartClient, multipartOperations, provider.GetServices<IRequestWrapper>());
+        Transfer transfer = new Transfer(objectOperations, multipartTransfer);
+
+        return new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedClient);
+    }
+
+    private static T GetRequiredNamedService<T>(IServiceProvider provider, string name) where T : class
+    {
+        T? service = GetNamedService<T>(provider, name);
+
+        if (service != null)
+            return service;
+
+        throw new InvalidOperationException($"No service for type '{typeof(T)}' and name '{name}' has been registered.");
+    }
+
+    private static T? GetNamedService<T>(IServiceProvider provider, string name) where T : class
+    {
+        T? service = provider.GetKeyedService<T>(name);
+
+        if (service != null)
+            return service;
+
+        return name == ServiceBuilderBase.DefaultName ? provider.GetService<T>() : null;
+    }
+
+    private static IInputValidator GetInputValidator(IServiceProvider provider, string name)
+    {
+        if (name == ServiceBuilderBase.DefaultName)
+            return provider.GetService<IInputValidator>() ?? provider.GetKeyedService<IInputValidator>(name) ?? new NullInputValidator();
+
+        return provider.GetKeyedService<IInputValidator>(name) ?? new NullInputValidator();
     }
 
     /// <summary>Register services as the interface type given</summary>

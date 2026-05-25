@@ -34,7 +34,10 @@ public static class CoreBuilderExtensions
         builder.Services.AddHttpClient<HttpClientFactoryNetworkDriver>(builder.Name);
 
         //We register the driver this way in order to support named configs in case the user want config isolation
-        builder.Services.AddSingleton<INetworkDriver, HttpClientFactoryNetworkDriver>(x => ActivatorUtilities.CreateInstance<HttpClientFactoryNetworkDriver>(x, builder.Name));
+        builder.Services.AddKeyedSingleton<INetworkDriver>(builder.Name, (x, _) => ActivatorUtilities.CreateInstance<HttpClientFactoryNetworkDriver>(x, builder.Name));
+
+        if (builder.Name == ServiceBuilderBase.DefaultName)
+            builder.Services.AddSingleton<INetworkDriver, HttpClientFactoryNetworkDriver>(x => ActivatorUtilities.CreateInstance<HttpClientFactoryNetworkDriver>(x, builder.Name));
 
         builder.Services.Configure<HttpBuilderActions>(builder.Name, x =>
         {

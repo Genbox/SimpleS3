@@ -1,6 +1,7 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
+using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.AmazonS3;
@@ -18,46 +19,41 @@ public static class ServiceCollectionExtensions
     /// <summary>Add SimpleS3 services to a service collection.</summary>
     /// <param name="collection">The service collection</param>
     /// <param name="config">The configuration delegate</param>
-    public static IClientBuilder AddAmazonS3(this IServiceCollection collection, Action<AmazonS3Config, IServiceProvider> config)
+    public static IClientBuilder AddAmazonS3(this IServiceCollection collection, Action<AmazonS3Config, IServiceProvider> config, string name = ServiceBuilderBase.DefaultName)
     {
-        collection.Configure(config);
-        return AddAmazonS3(collection);
+        collection.Configure(ServiceBuilderBase.GetOptionsName(name), config);
+        return AddAmazonS3(collection, name);
     }
 
     /// <summary>Add SimpleS3 services to a service collection.</summary>
     /// <param name="collection">The service collection</param>
     /// <param name="config">The configuration delegate</param>
-    public static IClientBuilder AddAmazonS3(this IServiceCollection collection, Action<AmazonS3Config> config)
+    public static IClientBuilder AddAmazonS3(this IServiceCollection collection, Action<AmazonS3Config> config, string name = ServiceBuilderBase.DefaultName)
     {
-        collection.Configure(config);
-        return AddAmazonS3(collection);
+        collection.Configure(ServiceBuilderBase.GetOptionsName(name), config);
+        return AddAmazonS3(collection, name);
     }
 
     /// <summary>Add SimpleS3 services to a service collection.</summary>
     /// <param name="collection">The service collection</param>
-    public static IClientBuilder AddAmazonS3(this IServiceCollection collection)
+    public static IClientBuilder AddAmazonS3(this IServiceCollection collection, string name = ServiceBuilderBase.DefaultName)
     {
-        ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(collection);
+        ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(collection, name: name);
         coreBuilder.UseAmazonS3();
 
         IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
         httpBuilder.UseRetryAndTimeout();
 
-        coreBuilder.Services.AddSingleton(x =>
+        coreBuilder.Services.AddKeyedSingleton<AmazonS3Client>(coreBuilder.Name, (x, _) => new AmazonS3Client((SimpleClient)x.GetRequiredKeyedService<ISimpleClient>(coreBuilder.Name)));
+
+        if (coreBuilder.Name == ServiceBuilderBase.DefaultName)
         {
-            //We have to call a specific constructor for dependency injection
-            IObjectClient objectClient = x.GetRequiredService<IObjectClient>();
-            IBucketClient bucketClient = x.GetRequiredService<IBucketClient>();
-            IMultipartClient multipartClient = x.GetRequiredService<IMultipartClient>();
-            IMultipartTransfer multipartTransfer = x.GetRequiredService<IMultipartTransfer>();
-            ITransfer transfer = x.GetRequiredService<ITransfer>();
-            ISignedClient signedObjectClient = x.GetRequiredService<ISignedClient>();
-            return new AmazonS3Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
-        });
+            coreBuilder.Services.AddSingleton(x => x.GetRequiredKeyedService<AmazonS3Client>(coreBuilder.Name));
 
-        //Add the client as the interface too
-        coreBuilder.Services.AddSingleton<ISimpleClient>(x => x.GetRequiredService<AmazonS3Client>());
+            //Add the client as the interface too
+            coreBuilder.Services.AddSingleton<ISimpleClient>(x => x.GetRequiredKeyedService<AmazonS3Client>(coreBuilder.Name));
+        }
 
-        return new ClientBuilder(collection, httpBuilder, coreBuilder);
+        return new ClientBuilder(collection, httpBuilder, coreBuilder, coreBuilder.Name);
     }
 }
