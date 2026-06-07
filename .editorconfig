@@ -6,6 +6,9 @@ trim_trailing_whitespace = true
 insert_final_newline = false
 max_line_length = 2000
 
+[**/{bin,obj}/**]
+generated_code = true
+
 # XML based formats
 [*.{appxmanifest,axml,build,config,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_style = space
@@ -19,6 +22,23 @@ ij_xml_keep_blank_lines = 1
 indent_style = space
 indent_size = 2
 tab_width = 2
+
+# YAML based formats
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+# Markdown based formats
+[*.md]
+trim_trailing_whitespace = false
+insert_final_newline = true
+
+# PowerShell scripts
+[*.{ps1,psd1,psm1}]
+indent_style = space
+indent_size = 4
+tab_width = 4
 
 # Web languages
 [*.{css,htm,html,js}]

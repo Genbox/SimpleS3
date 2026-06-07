@@ -18,6 +18,11 @@
     </PropertyGroup>
   </Target>
 
+  <Target Name="ValidatePublishPackageMetadata" BeforeTargets="GenerateNuspec" Condition="'$(ValidatePackageMetadata)' == 'true' AND '$(IsPackable)' == 'true'">
+    <Error Condition="'$(Description)' == ''" Text="Package Description must be set before publishing." />
+    <Error Condition="'$(PackageTags)' == ''" Text="PackageTags must be set before publishing." />
+  </Target>
+
   <!--MinVer versioning-->
   <Target Name="ModifyAssemblyVersion" AfterTargets="MinVer">
     <PropertyGroup>

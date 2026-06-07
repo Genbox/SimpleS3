@@ -60,6 +60,7 @@ dotnet_diagnostic.CA1815.severity = none # Duplicate of MA0065 - MA reports only
 dotnet_diagnostic.CA1815.severity = none # Duplicate of MA0066 - MA reports only when the struct is used with HashSet types
 dotnet_diagnostic.CA1819.severity = none # Duplicate of MA0016 - CA only applies to arrays
 dotnet_diagnostic.CA1822.severity = none # Duplicate of MA0038 - CA supports more cases and can be configured to only run against specific API surfaces
+dotnet_diagnostic.CA1822.severity = none # Duplicate of MA0041 - CA supports more cases and can be configured to only run against specific API surfaces
 dotnet_diagnostic.CA1826.severity = none # Duplicate of MA0020 - MA reports more cases such as List<T>.Find instead of FirstOrDefault
 dotnet_diagnostic.CA1827.severity = none # Duplicate of MA0031 - MA reports more Count() optimizations
 dotnet_diagnostic.CA1852.severity = none # Duplicate of MA0053 - CA only applies to internal types in assemblies that do not expose internal types and members and - by default - report types that inherit from [Exception] (https://learn.microsoft.com/en-us/dotnet/api/system.exception?WT.mc_id=DT-MVP-5003978), but cannot be configured to report types that define virtual members
@@ -160,7 +161,6 @@ dotnet_diagnostic.GU0009.severity = none # Name the boolean argument
 dotnet_diagnostic.GU0052.severity = none # Mark exception with [Serializable]
 dotnet_diagnostic.CA1707.severity = none # Identifiers should not contain underscores
 dotnet_diagnostic.S907.severity = none # Remove this use of 'goto'
-dotnet_diagnostic.CA1062.severity = none # Validate arguments of public methods
 dotnet_diagnostic.RCS1141.severity = none # Add 'param' element to documentation comment
 dotnet_diagnostic.RCS1142.severity = none # Add 'typeparam' element to documentation comment
 dotnet_diagnostic.RCS1003.severity = none # Add braces to if-else (when expression spans over multiple lines)
@@ -179,44 +179,10 @@ dotnet_diagnostic.S1104.severity = none # Make this field 'private' and encapsul
 dotnet_diagnostic.S3011.severity = none # Make sure that this accessibility bypass is safe here
 dotnet_diagnostic.S3459.severity = none # Remove unassigned auto-property 'NullString', or set its value.
 dotnet_diagnostic.SS023.severity = none # An exception is thrown from the getter of property Length
-dotnet_diagnostic.CA2326.severity = none # Deserializing JSON when using a TypeNameHandling value other than None can be insecure.
 dotnet_diagnostic.MA0046.severity = none # The delegate must have 2 parameters
 dotnet_diagnostic.REFL017.severity = none # Don't use name of wrong member. Expected: "Value"
 dotnet_diagnostic.CA1805.severity = none # Member '<member>' is explicitly initialized to its default value
 dotnet_diagnostic.CA1712.severity = none # Do not prefix enum values with the name of the enum type 'Level'
-
-# Rules we don't want to follow in Chronos
-dotnet_diagnostic.MA0016.severity = none # Prefer using collection abstraction instead of implementation
-dotnet_diagnostic.S4136.severity = none # Method overloads should be grouped together
-dotnet_diagnostic.S1199.severity = none # Nested code blocks should not be used
-dotnet_diagnostic.GU0060.severity = none # Enum member value conflict
-dotnet_diagnostic.MA0016.severity = none # Prefer using collection abstraction instead of implementation
-dotnet_diagnostic.CA1040.severity = none # Avoid empty interfaces
-dotnet_diagnostic.CA5394.severity = none # Random is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security.
-dotnet_diagnostic.CA5351.severity = none # HashingStream uses a broken cryptographic algorithm MD5
-dotnet_diagnostic.S1066.severity = none # Merge this if statement with the enclosing one
-dotnet_diagnostic.CA1051.severity = none # Do not declare visible instance fields
-dotnet_diagnostic.CA1303.severity = none # Method '<method>' passes a literal string as parameter '<parameter>' of a call to '<method>'. Retrieve the following string(s) from a resource table instead: "<string>".
-dotnet_diagnostic.S3358.severity = none # Extract this nested ternary operation into an independent statement.
-dotnet_diagnostic.RCS1075.severity = none # Avoid empty catch clause that catches System.Exception
-dotnet_diagnostic.S2699.severity = none # Add at least one assertion to this test case.
-dotnet_diagnostic.CA5350.severity = none # _hasher uses a weak cryptographic algorithm SHA1
-dotnet_diagnostic.S1075.severity = none # Refactor your code not to use hardcoded absolute paths or URIs.
-dotnet_diagnostic.GU0076.severity = none # Merge pattern
-dotnet_diagnostic.RCS1175.severity = none # Unused 'this' parameter 'buildBase'
-dotnet_diagnostic.CA1019.severity = none # Define accessors for attribute arguments
-
-# Needs review
-dotnet_diagnostic.CA2227.severity = none # Collection properties should be read only
-dotnet_diagnostic.MA0004.severity = none # Use Task. ConfigureAwait(false) if the current SynchronizationContext is not needed
-dotnet_diagnostic.CA1401.severity = none # P/ Invoke method 'RtlFillMemory' should not be visible
-dotnet_diagnostic.S4200.severity = none # Make this native method private and provide a wrapper.
-dotnet_diagnostic.AsyncFixer01.severity = none # The method '<method>' does not need to use async/ await.
-dotnet_diagnostic.CA1054.severity = none # URI parameters should not be strings
-dotnet_diagnostic.CA1055.severity = none # URI return values should not be strings
-dotnet_diagnostic.CA1056.severity = none # Change the type of property 'TableAjaxModel. Url' from 'string' to 'System. Uri'
-dotnet_diagnostic.CA2234.severity = none # Modify 'ContentHelper. GetContentAsync(IFileProvider, HttpClient, string, string)' to call 'HttpClient. GetStringAsync(Uri)' instead of 'HttpClient. GetStringAsync(string)'
-dotnet_diagnostic.MA0075.severity = none # Do not use implicit culture-sensitive ToString
 
 # Enforced rules
 dotnet_diagnostic.RS0030.severity = error # Do not use banned APIs

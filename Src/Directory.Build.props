@@ -23,7 +23,6 @@
     <Features>strict</Features>
     <ImplicitUsings>true</ImplicitUsings>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <WarningLevel>0</WarningLevel>
     <NoWarn>$(NoWarn);CA1014;CS1573;CS1591</NoWarn>
 
     <!--.NET settings-->
@@ -37,7 +36,7 @@
 
     <!--Enable analyzers by default, but not during builds-->
     <EnableNETAnalyzers>$(IncludeAnalyzers)</EnableNETAnalyzers>
-    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringBuild>$(IncludeAnalyzers)</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
     <AnalysisMode>all</AnalysisMode>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -71,11 +70,6 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-  </PropertyGroup>
-
-  <!--Only report compiler warnings when compiling in Visual Studio or Rider-->
-  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' == 'true' OR '$(BuildingByReSharper)' == 'true'">
-    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
   <PropertyGroup>
