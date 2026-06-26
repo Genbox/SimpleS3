@@ -70,6 +70,8 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DeterministicSourcePaths>true</DeterministicSourcePaths>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -81,6 +83,13 @@
   <ItemGroup>
     <!--Analyzers-->
     <AdditionalFiles Include="../../Imports/BannedSymbols.txt" Condition="Exists('../../Imports/BannedSymbols.txt')" />
+
+    <!--Don't show the packages.lock file in projects-->
+    <None Remove="packages.lock.json" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Release' AND '$(IsPackable)' == 'true'">
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <Import Project="../Locals/Directory.Build.props" Condition="Exists('../Locals/Directory.Build.props')" />
