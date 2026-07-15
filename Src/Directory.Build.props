@@ -50,6 +50,7 @@
     <CopyRetryDelayMilliseconds>500</CopyRetryDelayMilliseconds>
     <ErrorReport>none</ErrorReport>
     <SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
+    <DefaultItemExcludes>$(DefaultItemExcludes);packages.lock.json</DefaultItemExcludes>
 
     <!--Force reproducible builds-->
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
