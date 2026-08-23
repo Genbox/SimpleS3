@@ -51,7 +51,7 @@ public static class UtilityHelper
             {
                 string c = userChoices[i];
 
-                if (!int.TryParse(c, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out int intVal) || intVal < 0 || intVal > choices.Length)
+                if (!int.TryParse(c, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out int intVal) || intVal <= 0 || intVal > choices.Length)
                 {
                     Console.WriteLine($"Invalid input '{c}'. Try again.");
                     Array.Clear(returnChoices);
