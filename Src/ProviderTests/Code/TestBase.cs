@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using System.Runtime.ExceptionServices;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
@@ -9,6 +11,8 @@ namespace Genbox.ProviderTests.Code;
 
 public abstract class TestBase
 {
+    private static readonly ConcurrentDictionary<S3Provider, SemaphoreSlim> _temporaryBucketLocks = new ConcurrentDictionary<S3Provider, SemaphoreSlim>();
+
     protected static string GetTemporaryBucket() => UtilityHelper.GetTemporaryBucket();
 
     protected static async Task AllowSseCustomerKeysAsync(S3Provider provider, ISimpleClient client, string bucketName)
@@ -25,26 +29,57 @@ public abstract class TestBase
 
     protected static async Task CreateTempBucketAsync(S3Provider provider, ISimpleClient client, Func<string, Task> action, Action<CreateBucketRequest>? config = null)
     {
-        string tempBucket = GetTemporaryBucket();
+        CancellationToken token = TestContext.Current.CancellationToken;
+        SemaphoreSlim bucketLock = _temporaryBucketLocks.GetOrAdd(provider, static _ => new SemaphoreSlim(1, 1));
+        await bucketLock.WaitAsync(token);
 
-        CreateBucketResponse createResponse = await client.CreateBucketAsync(tempBucket, config);
-        Assert.Equal(200, createResponse.StatusCode);
+        string tempBucket = GetTemporaryBucket();
 
         try
         {
-            await action(tempBucket);
+            CreateBucketResponse? createResponse = null;
+
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                createResponse = await client.CreateBucketAsync(tempBucket, config, token);
+
+                if (createResponse.StatusCode != 429)
+                    break;
+
+                await Task.Delay(TimeSpan.FromSeconds(1 << attempt), token);
+            }
+
+            Assert.NotNull(createResponse);
+            Assert.Equal(200, createResponse.StatusCode);
+
+            Exception? testFailure = null;
+
+            try
+            {
+                await action(tempBucket);
+            }
+            catch (Exception ex)
+            {
+                testFailure = ex;
+                throw;
+            }
+            finally
+            {
+                (Exception? cleanupFailure, bool cleanupDeferred) = await UtilityHelper.TryDeleteTemporaryBucketAsync(provider, client, tempBucket);
+
+                if (cleanupFailure != null)
+                {
+                    string cleanupStatus = cleanupDeferred ? "deferred" : "failed";
+                    TestContext.Current.TestOutputHelper?.WriteLine($"Temporary bucket cleanup {cleanupStatus} for '{tempBucket}': {cleanupFailure}");
+
+                    if (testFailure == null && !cleanupDeferred)
+                        ExceptionDispatchInfo.Capture(cleanupFailure).Throw();
+                }
+            }
         }
         finally
         {
-            int errors = await UtilityHelper.ForceEmptyBucketAsync(provider, client, tempBucket);
-
-            if (errors == 0)
-            {
-                DeleteBucketResponse delBucketResp = await client.DeleteBucketAsync(tempBucket);
-                Assert.True(delBucketResp.IsSuccess);
-            }
-
-            Assert.Equal(0, errors);
+            bucketLock.Release();
         }
     }
 }

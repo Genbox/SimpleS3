@@ -89,14 +89,15 @@ public class MultipartTests : TestBase
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
-    public async Task MultipartLockMode(S3Provider _, string bucket, ISimpleClient client)
+    public async Task MultipartLockMode(S3Provider provider, string bucket, ISimpleClient client)
     {
-        const string objectKey = nameof(MultipartLockMode);
+        string objectKey = nameof(MultipartLockMode) + "-" + Guid.NewGuid();
+        DateTimeOffset retainUntil = DateTimeOffset.UtcNow.AddSeconds(5);
 
         CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey, r =>
         {
             r.LockMode = LockMode.Governance;
-            r.LockRetainUntil = DateTimeOffset.UtcNow.AddMinutes(5);
+            r.LockRetainUntil = retainUntil;
         });
         Assert.Equal(200, initResp.StatusCode);
 
@@ -108,6 +109,18 @@ public class MultipartTests : TestBase
 
         CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)]);
         Assert.Equal(200, completeResp.StatusCode);
+
+        TimeSpan retentionRemaining = retainUntil - DateTimeOffset.UtcNow;
+
+        if (retentionRemaining > TimeSpan.Zero)
+            await Task.Delay(retentionRemaining + TimeSpan.FromSeconds(2), TestContext.Current.CancellationToken);
+
+        DeleteObjectResponse deleteResp = await client.DeleteObjectAsync(bucket, objectKey, request =>
+        {
+            request.VersionId = completeResp.VersionId;
+            request.BypassGovernanceRetention = provider == S3Provider.AmazonS3;
+        });
+        Assert.Equal(204, deleteResp.StatusCode);
     }
 
     [Theory]
