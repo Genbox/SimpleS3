@@ -1,5 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
@@ -62,6 +63,76 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         config?.Invoke(request);
 
         return operations.GetBucketTaggingAsync(request, token);
+    }
+
+    public Task<GetBucketCorsResponse> GetBucketCorsAsync(string bucketName, Action<GetBucketCorsRequest>? config = null, CancellationToken token = default)
+    {
+        GetBucketCorsRequest request = new GetBucketCorsRequest(bucketName);
+        config?.Invoke(request);
+        return operations.GetBucketCorsAsync(request, token);
+    }
+
+    public Task<PutBucketCorsResponse> PutBucketCorsAsync(string bucketName, IEnumerable<S3CorsRule> rules, Action<PutBucketCorsRequest>? config = null, CancellationToken token = default)
+    {
+        PutBucketCorsRequest request = new PutBucketCorsRequest(bucketName, rules);
+        config?.Invoke(request);
+        return operations.PutBucketCorsAsync(request, token);
+    }
+
+    public Task<DeleteBucketCorsResponse> DeleteBucketCorsAsync(string bucketName, Action<DeleteBucketCorsRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketCorsRequest request = new DeleteBucketCorsRequest(bucketName);
+        config?.Invoke(request);
+        return operations.DeleteBucketCorsAsync(request, token);
+    }
+
+    public Task<GetBucketOwnershipControlsResponse> GetBucketOwnershipControlsAsync(string bucketName, Action<GetBucketOwnershipControlsRequest>? config = null, CancellationToken token = default)
+    {
+        GetBucketOwnershipControlsRequest request = new GetBucketOwnershipControlsRequest(bucketName);
+        config?.Invoke(request);
+        return operations.GetBucketOwnershipControlsAsync(request, token);
+    }
+
+    public Task<PutBucketOwnershipControlsResponse> PutBucketOwnershipControlsAsync(string bucketName, IEnumerable<S3OwnershipControlsRule> rules, Action<PutBucketOwnershipControlsRequest>? config = null, CancellationToken token = default)
+    {
+        PutBucketOwnershipControlsRequest request = new PutBucketOwnershipControlsRequest(bucketName, rules);
+        config?.Invoke(request);
+        return operations.PutBucketOwnershipControlsAsync(request, token);
+    }
+
+    public Task<DeleteBucketOwnershipControlsResponse> DeleteBucketOwnershipControlsAsync(string bucketName, Action<DeleteBucketOwnershipControlsRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketOwnershipControlsRequest request = new DeleteBucketOwnershipControlsRequest(bucketName);
+        config?.Invoke(request);
+        return operations.DeleteBucketOwnershipControlsAsync(request, token);
+    }
+
+    public Task<GetBucketLocationResponse> GetBucketLocationAsync(string bucketName, Action<GetBucketLocationRequest>? config = null, CancellationToken token = default)
+    {
+        GetBucketLocationRequest request = new GetBucketLocationRequest(bucketName);
+        config?.Invoke(request);
+        return operations.GetBucketLocationAsync(request, token);
+    }
+
+    public Task<GetBucketRequestPaymentResponse> GetBucketRequestPaymentAsync(string bucketName, Action<GetBucketRequestPaymentRequest>? config = null, CancellationToken token = default)
+    {
+        GetBucketRequestPaymentRequest request = new GetBucketRequestPaymentRequest(bucketName);
+        config?.Invoke(request);
+        return operations.GetBucketRequestPaymentAsync(request, token);
+    }
+
+    public Task<PutBucketRequestPaymentResponse> PutBucketRequestPaymentAsync(string bucketName, RequestPaymentPayer payer, Action<PutBucketRequestPaymentRequest>? config = null, CancellationToken token = default)
+    {
+        PutBucketRequestPaymentRequest request = new PutBucketRequestPaymentRequest(bucketName, payer);
+        config?.Invoke(request);
+        return operations.PutBucketRequestPaymentAsync(request, token);
+    }
+
+    public Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(string bucketName, Action<GetBucketPolicyStatusRequest>? config = null, CancellationToken token = default)
+    {
+        GetBucketPolicyStatusRequest request = new GetBucketPolicyStatusRequest(bucketName);
+        config?.Invoke(request);
+        return operations.GetBucketPolicyStatusAsync(request, token);
     }
 
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)

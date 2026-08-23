@@ -35,13 +35,18 @@ public static class AmzParameters
     public const string LegalHold = "legal-hold";
     public const string ObjectLock = "object-lock";
     public const string Tagging = "tagging";
+    public const string Cors = "cors";
     public const string Accelerate = "accelerate";
     public const string Lifecycle = "lifecycle";
     public const string Encryption = "encryption";
+    public const string Location = "location";
+    public const string OwnershipControls = "ownershipControls";
     public const string PublicAccessBlock = "publicAccessBlock";
     public const string Retention = "retention";
+    public const string RequestPayment = "requestPayment";
     public const string VersionIdMarker = "version-id-marker";
     public const string Policy = "policy";
+    public const string PolicyStatus = "policyStatus";
 
     #region Presigning
 

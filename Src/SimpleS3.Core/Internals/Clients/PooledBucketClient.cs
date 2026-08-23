@@ -1,5 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -97,6 +98,26 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
 
         Task<GetBucketTaggingResponse> ActionAsync(GetBucketTaggingRequest request) => BucketOperations.GetBucketTaggingAsync(request, token);
     }
+
+    public Task<GetBucketCorsResponse> GetBucketCorsAsync(string bucketName, Action<GetBucketCorsRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketCorsRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.GetBucketCorsAsync(req, token));
+
+    public Task<PutBucketCorsResponse> PutBucketCorsAsync(string bucketName, IEnumerable<S3CorsRule> rules, Action<PutBucketCorsRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketCorsRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, rules); config?.Invoke(req); }, req => BucketOperations.PutBucketCorsAsync(req, token));
+
+    public Task<DeleteBucketCorsResponse> DeleteBucketCorsAsync(string bucketName, Action<DeleteBucketCorsRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketCorsRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.DeleteBucketCorsAsync(req, token));
+
+    public Task<GetBucketOwnershipControlsResponse> GetBucketOwnershipControlsAsync(string bucketName, Action<GetBucketOwnershipControlsRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketOwnershipControlsRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.GetBucketOwnershipControlsAsync(req, token));
+
+    public Task<PutBucketOwnershipControlsResponse> PutBucketOwnershipControlsAsync(string bucketName, IEnumerable<S3OwnershipControlsRule> rules, Action<PutBucketOwnershipControlsRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketOwnershipControlsRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, rules); config?.Invoke(req); }, req => BucketOperations.PutBucketOwnershipControlsAsync(req, token));
+
+    public Task<DeleteBucketOwnershipControlsResponse> DeleteBucketOwnershipControlsAsync(string bucketName, Action<DeleteBucketOwnershipControlsRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketOwnershipControlsRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.DeleteBucketOwnershipControlsAsync(req, token));
+
+    public Task<GetBucketLocationResponse> GetBucketLocationAsync(string bucketName, Action<GetBucketLocationRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketLocationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.GetBucketLocationAsync(req, token));
+
+    public Task<GetBucketRequestPaymentResponse> GetBucketRequestPaymentAsync(string bucketName, Action<GetBucketRequestPaymentRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketRequestPaymentRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.GetBucketRequestPaymentAsync(req, token));
+
+    public Task<PutBucketRequestPaymentResponse> PutBucketRequestPaymentAsync(string bucketName, RequestPaymentPayer payer, Action<PutBucketRequestPaymentRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketRequestPaymentRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, payer); config?.Invoke(req); }, req => BucketOperations.PutBucketRequestPaymentAsync(req, token));
+
+    public Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(string bucketName, Action<GetBucketPolicyStatusRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketPolicyStatusRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.GetBucketPolicyStatusAsync(req, token));
 
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
     {

@@ -21,6 +21,26 @@ internal sealed class BucketOperations(IRequestHandler handler) : IBucketOperati
 
     public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(GetBucketTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketTaggingRequest, GetBucketTaggingResponse>(request, token);
 
+    public Task<GetBucketCorsResponse> GetBucketCorsAsync(GetBucketCorsRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketCorsRequest, GetBucketCorsResponse>(request, token);
+
+    public Task<PutBucketCorsResponse> PutBucketCorsAsync(PutBucketCorsRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketCorsRequest, PutBucketCorsResponse>(request, token);
+
+    public Task<DeleteBucketCorsResponse> DeleteBucketCorsAsync(DeleteBucketCorsRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketCorsRequest, DeleteBucketCorsResponse>(request, token);
+
+    public Task<GetBucketOwnershipControlsResponse> GetBucketOwnershipControlsAsync(GetBucketOwnershipControlsRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketOwnershipControlsRequest, GetBucketOwnershipControlsResponse>(request, token);
+
+    public Task<PutBucketOwnershipControlsResponse> PutBucketOwnershipControlsAsync(PutBucketOwnershipControlsRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketOwnershipControlsRequest, PutBucketOwnershipControlsResponse>(request, token);
+
+    public Task<DeleteBucketOwnershipControlsResponse> DeleteBucketOwnershipControlsAsync(DeleteBucketOwnershipControlsRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketOwnershipControlsRequest, DeleteBucketOwnershipControlsResponse>(request, token);
+
+    public Task<GetBucketLocationResponse> GetBucketLocationAsync(GetBucketLocationRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketLocationRequest, GetBucketLocationResponse>(request, token);
+
+    public Task<GetBucketRequestPaymentResponse> GetBucketRequestPaymentAsync(GetBucketRequestPaymentRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketRequestPaymentRequest, GetBucketRequestPaymentResponse>(request, token);
+
+    public Task<PutBucketRequestPaymentResponse> PutBucketRequestPaymentAsync(PutBucketRequestPaymentRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketRequestPaymentRequest, PutBucketRequestPaymentResponse>(request, token);
+
+    public Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(GetBucketPolicyStatusRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketPolicyStatusRequest, GetBucketPolicyStatusResponse>(request, token);
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(PutBucketTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketTaggingRequest, PutBucketTaggingResponse>(request, token);
 
     public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(DeleteBucketTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketTaggingRequest, DeleteBucketTaggingResponse>(request, token);

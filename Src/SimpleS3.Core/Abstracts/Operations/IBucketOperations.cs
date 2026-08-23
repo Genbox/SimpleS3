@@ -34,6 +34,26 @@ public interface IBucketOperations
     /// <summary>Returns the tag set associated with the bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketTagging.html for details</summary>
     Task<GetBucketTaggingResponse> GetBucketTaggingAsync(GetBucketTaggingRequest request, CancellationToken token = default);
 
+    Task<GetBucketCorsResponse> GetBucketCorsAsync(GetBucketCorsRequest request, CancellationToken token = default);
+
+    Task<PutBucketCorsResponse> PutBucketCorsAsync(PutBucketCorsRequest request, CancellationToken token = default);
+
+    Task<DeleteBucketCorsResponse> DeleteBucketCorsAsync(DeleteBucketCorsRequest request, CancellationToken token = default);
+
+    Task<GetBucketOwnershipControlsResponse> GetBucketOwnershipControlsAsync(GetBucketOwnershipControlsRequest request, CancellationToken token = default);
+
+    Task<PutBucketOwnershipControlsResponse> PutBucketOwnershipControlsAsync(PutBucketOwnershipControlsRequest request, CancellationToken token = default);
+
+    Task<DeleteBucketOwnershipControlsResponse> DeleteBucketOwnershipControlsAsync(DeleteBucketOwnershipControlsRequest request, CancellationToken token = default);
+
+    Task<GetBucketLocationResponse> GetBucketLocationAsync(GetBucketLocationRequest request, CancellationToken token = default);
+
+    Task<GetBucketRequestPaymentResponse> GetBucketRequestPaymentAsync(GetBucketRequestPaymentRequest request, CancellationToken token = default);
+
+    Task<PutBucketRequestPaymentResponse> PutBucketRequestPaymentAsync(PutBucketRequestPaymentRequest request, CancellationToken token = default);
+
+    Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(GetBucketPolicyStatusRequest request, CancellationToken token = default);
+
     /// <summary>Sets the tags for a bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketTagging.html for details.</summary>
     Task<PutBucketTaggingResponse> PutBucketTaggingAsync(PutBucketTaggingRequest request, CancellationToken token = default);
 
