@@ -1,0 +1,111 @@
+using System.Security.Cryptography;
+using Genbox.SimpleS3.Core.Enums;
+
+namespace Genbox.SimpleS3.Core.Internals.Authentication;
+
+internal static class ChecksumHashAlgorithm
+{
+    public static HashAlgorithm Create(ChecksumAlgorithm algorithm) => algorithm switch
+    {
+        ChecksumAlgorithm.Crc32 => new Crc32Algorithm(0xedb88320),
+        ChecksumAlgorithm.Crc32C => new Crc32Algorithm(0x82f63b78),
+        ChecksumAlgorithm.Crc64Nvme => new Crc64NvmeAlgorithm(),
+        ChecksumAlgorithm.Sha1 => SHA1.Create(),
+        ChecksumAlgorithm.Sha256 => SHA256.Create(),
+        ChecksumAlgorithm.Sha512 => SHA512.Create(),
+        _ => throw new NotSupportedException($"Automatic streaming checksum calculation does not support {algorithm}. Provide a precalculated checksum value instead.")
+    };
+
+    public static int GetBase64Length(ChecksumAlgorithm algorithm) => algorithm switch
+    {
+        ChecksumAlgorithm.Crc32 or ChecksumAlgorithm.Crc32C => 8,
+        ChecksumAlgorithm.Crc64Nvme => 12,
+        ChecksumAlgorithm.Sha1 => 28,
+        ChecksumAlgorithm.Sha256 => 44,
+        ChecksumAlgorithm.Sha512 => 88,
+        _ => throw new NotSupportedException($"Automatic streaming checksum calculation does not support {algorithm}. Provide a precalculated checksum value instead.")
+    };
+
+    private sealed class Crc32Algorithm : HashAlgorithm
+    {
+        private readonly uint _polynomial;
+        private uint _value = uint.MaxValue;
+
+        public Crc32Algorithm(uint polynomial)
+        {
+            _polynomial = polynomial;
+            HashSizeValue = 32;
+        }
+
+        public override void Initialize()
+        {
+            _value = uint.MaxValue;
+        }
+
+        protected override void HashCore(byte[] array, int ibStart, int cbSize)
+        {
+            for (int i = ibStart; i < ibStart + cbSize; i++)
+            {
+                _value ^= array[i];
+
+                for (int bit = 0; bit < 8; bit++)
+                    _value = (_value >> 1) ^ ((_value & 1) == 0 ? 0 : _polynomial);
+            }
+        }
+
+        protected override byte[] HashFinal()
+        {
+            uint value = _value ^ uint.MaxValue;
+            unchecked
+            {
+                return [(byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value];
+            }
+        }
+    }
+
+    private sealed class Crc64NvmeAlgorithm : HashAlgorithm
+    {
+        private const ulong _polynomial = 0x9a6c9329ac4bc9b5;
+        private ulong _value = ulong.MaxValue;
+
+        public Crc64NvmeAlgorithm()
+        {
+            HashSizeValue = 64;
+        }
+
+        public override void Initialize()
+        {
+            _value = ulong.MaxValue;
+        }
+
+        protected override void HashCore(byte[] array, int ibStart, int cbSize)
+        {
+            for (int i = ibStart; i < ibStart + cbSize; i++)
+            {
+                _value ^= array[i];
+
+                for (int bit = 0; bit < 8; bit++)
+                    _value = (_value >> 1) ^ ((_value & 1) == 0 ? 0 : _polynomial);
+            }
+        }
+
+        protected override byte[] HashFinal()
+        {
+            ulong value = _value ^ ulong.MaxValue;
+            unchecked
+            {
+                return
+                [
+                    (byte)(value >> 56),
+                    (byte)(value >> 48),
+                    (byte)(value >> 40),
+                    (byte)(value >> 32),
+                    (byte)(value >> 24),
+                    (byte)(value >> 16),
+                    (byte)(value >> 8),
+                    (byte)value
+                ];
+            }
+        }
+    }
+}

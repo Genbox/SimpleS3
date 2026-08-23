@@ -5,6 +5,7 @@ public static class AmzHeaders
     #region Streaming
 
     public const string XAmzDecodedContentLength = "x-amz-decoded-content-length";
+    public const string XAmzTrailer = "x-amz-trailer";
 
     #endregion
 

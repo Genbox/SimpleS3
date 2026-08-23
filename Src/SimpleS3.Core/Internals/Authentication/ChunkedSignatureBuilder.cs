@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
-internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<ChunkedSignatureBuilder> logger) : IChunkedSignatureBuilder
+internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<ChunkedSignatureBuilder> logger) : IChunkedSignatureBuilder, ITrailerSignatureBuilder
 {
     private readonly SimpleS3Config _config = options.Value;
 
@@ -30,6 +30,25 @@ internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, ISc
             logger.LogDebug("Chunk signature: {Signature}", signature);
         else
             logger.LogDebug("Chunk signature created");
+
+        return signature;
+    }
+
+    public byte[] CreateTrailerSignature(IRequest request, byte[] previousSignature)
+    {
+        Validator.RequireNotNull(request);
+
+        logger.LogTrace("Creating trailer signature for {RequestId}", request.RequestId);
+
+        IReadOnlyDictionary<string, string> trailers = (request as IRequestTrailers)?.Trailers ?? EmptyTrailers;
+        string canonicalTrailingHeaders = CreateCanonicalTrailingHeaders(trailers);
+        string stringToSign = CreateTrailerStringToSign(request.Timestamp, scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, canonicalTrailingHeaders);
+        byte[] signature = CreateSignature(request.Timestamp, stringToSign);
+
+        if (_config.LogSensitiveMaterial)
+            logger.LogDebug("Trailer signature: {Signature}", signature);
+        else
+            logger.LogDebug("Trailer signature created");
 
         return signature;
     }
@@ -53,6 +72,44 @@ internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, ISc
 
         return sts;
     }
+
+    internal string CreateTrailerStringToSign(DateTimeOffset dateTime, string scope, byte[] previousSignature, string canonicalTrailingHeaders)
+    {
+        logger.LogTrace("Creating trailer StringToSign");
+
+        StringBuilder sb = StringBuilderPool.Shared.Rent(300);
+
+        sb.Append(SigningConstants.TrailerAlgorithmTag).Append(SigningConstants.Newline);
+        sb.Append(dateTime.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo)).Append(SigningConstants.Newline);
+        sb.Append(scope).Append(SigningConstants.Newline);
+        sb.Append(previousSignature.HexEncode()).Append(SigningConstants.Newline);
+        sb.Append(CryptoHelper.Sha256Hash(Encoding.UTF8.GetBytes(canonicalTrailingHeaders)).HexEncode());
+
+        string sts = StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
+        if (_config.LogSensitiveMaterial)
+            logger.LogDebug("Trailer StringToSign: {StringToSign}", sts);
+
+        return sts;
+    }
+
+    internal static string CreateCanonicalTrailingHeaders(IReadOnlyDictionary<string, string> trailers)
+    {
+        StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+
+        foreach (KeyValuePair<string, string> item in trailers.OrderBy(x => x.Key.ToLowerInvariant(), StringComparer.Ordinal))
+        {
+            sb.Append(item.Key.ToLowerInvariant())
+              .Append(SigningConstants.Colon)
+              .Append(CanonicalizeHeaderValue(item.Value))
+              .Append(SigningConstants.Newline);
+        }
+
+        return StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
+    }
+
+    private static string CanonicalizeHeaderValue(string value) => string.Join(" ", value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+
+    private static IReadOnlyDictionary<string, string> EmptyTrailers { get; } = new Dictionary<string, string>(0);
 
     /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of: Hmac-Sha256(SigningKey, StringToSign)</summary>
     internal byte[] CreateSignature(DateTimeOffset date, string stringToSign)

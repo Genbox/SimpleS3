@@ -85,83 +85,228 @@ public class ChunkedSignatureTests
 
         IDictionary<string, string> query = new Dictionary<string, string>();
 
-        //Override the header signing filter and just sign everything
-        HeaderWhitelist.ShouldSignHeader += _ => true;
+        Func<string, bool> originalHeaderCheck = HeaderWhitelist.ShouldSignHeader;
 
-        string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethodType.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(query), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
-        Assert.Equal(expectedSeedCr, actualSeedCr);
+        try
+        {
+            //Override the header signing filter and just sign everything
+            HeaderWhitelist.ShouldSignHeader = _ => true;
 
-        string scope = _scopeBuilder.CreateScope("s3", _testDate);
-        string actualSts = _sigBuilder.CreateStringToSign(_testDate, scope, actualSeedCr);
-        Assert.Equal(expectedSeedSts, actualSts);
+            string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethodType.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(query), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
+            Assert.Equal(expectedSeedCr, actualSeedCr);
 
-        const string expectedAuthHeader = "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request,SignedHeaders=content-encoding;content-length;host;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length;x-amz-storage-class,Signature=4f232c4386841ef735655705268965c44a0e4690baa4adea153f7db9fa80a0a9";
+            string scope = _scopeBuilder.CreateScope("s3", _testDate);
+            string actualSts = _sigBuilder.CreateStringToSign(_testDate, scope, actualSeedCr);
+            Assert.Equal(expectedSeedSts, actualSts);
 
-        byte[] seedSignature = _sigBuilder.CreateSignature(_testDate, actualSts);
-        string actualAuthHeader = _authBuilder.BuildInternal(_testDate, headers, seedSignature);
-        Assert.Equal(expectedAuthHeader, actualAuthHeader);
+            const string expectedAuthHeader = "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request,SignedHeaders=content-encoding;content-length;host;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length;x-amz-storage-class,Signature=4f232c4386841ef735655705268965c44a0e4690baa4adea153f7db9fa80a0a9";
 
-        //Now we test the actual chunks
+            byte[] seedSignature = _sigBuilder.CreateSignature(_testDate, actualSts);
+            string actualAuthHeader = _authBuilder.BuildInternal(_testDate, headers, seedSignature);
+            Assert.Equal(expectedAuthHeader, actualAuthHeader);
 
-        byte[] file = new byte[65 * 1024]; //65 KB file
-        file[0] = (byte)'a';
+            //Now we test the actual chunks
 
-        const int chunkSize = 64 * 1024; //64 KB
+            byte[] file = new byte[65 * 1024]; //65 KB file
+            file[0] = (byte)'a';
 
-        List<byte[]> chunks = file.Chunk(chunkSize).ToList();
+            const int chunkSize = 64 * 1024; //64 KB
 
-        Assert.Equal(2, chunks.Count);
+            List<byte[]> chunks = file.Chunk(chunkSize).ToList();
 
-        byte[] first = chunks[0].ToArray();
-        Assert.Equal(65536, first.Length);
-        Assert.Equal((byte)'a', first[0]);
+            Assert.Equal(2, chunks.Count);
 
-        const string firstExpectedSts = "AWS4-HMAC-SHA256-PAYLOAD\n" +
-                                        "20130524T000000Z\n" +
-                                        "20130524/us-east-1/s3/aws4_request\n" +
-                                        "4f232c4386841ef735655705268965c44a0e4690baa4adea153f7db9fa80a0a9\n" +
-                                        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
-                                        "d0fe33322334859574bfb4317205bf24106998f97d06a3a3c0e097d41db4c62f"; //"bf718b6f653bebc184e1479f1935b8da974d701b893afcf49e701f3e2f9f9c5a";
+            byte[] first = chunks[0].ToArray();
+            Assert.Equal(65536, first.Length);
+            Assert.Equal((byte)'a', first[0]);
 
-        string firstActualSts = _chunkedSigBuilder.CreateStringToSign(_testDate, scope, seedSignature, first, 0, first.Length);
-        Assert.Equal(firstExpectedSts, firstActualSts);
+            const string firstExpectedSts = "AWS4-HMAC-SHA256-PAYLOAD\n" +
+                                            "20130524T000000Z\n" +
+                                            "20130524/us-east-1/s3/aws4_request\n" +
+                                            "4f232c4386841ef735655705268965c44a0e4690baa4adea153f7db9fa80a0a9\n" +
+                                            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
+                                            "d0fe33322334859574bfb4317205bf24106998f97d06a3a3c0e097d41db4c62f"; //"bf718b6f653bebc184e1479f1935b8da974d701b893afcf49e701f3e2f9f9c5a";
 
-        const string firstExpectedSig = "fe2879c55c032fbc6821af6fc8aac3c4b44939027344d8dceaa0aff08fe9ec43"; // "ad80c730a21e5b8d04586a2213dd63b9a0e99e0e2307b0ade35a65485a288648";
-        string firstActualSig = _chunkedSigBuilder.CreateSignature(_testDate, firstActualSts).HexEncode();
-        Assert.Equal(firstExpectedSig, firstActualSig);
+            string firstActualSts = _chunkedSigBuilder.CreateStringToSign(_testDate, scope, seedSignature, first, 0, first.Length);
+            Assert.Equal(firstExpectedSts, firstActualSts);
 
-        byte[] second = chunks[1].ToArray();
-        Assert.Equal(1024, second.Length);
+            const string firstExpectedSig = "fe2879c55c032fbc6821af6fc8aac3c4b44939027344d8dceaa0aff08fe9ec43"; // "ad80c730a21e5b8d04586a2213dd63b9a0e99e0e2307b0ade35a65485a288648";
+            string firstActualSig = _chunkedSigBuilder.CreateSignature(_testDate, firstActualSts).HexEncode();
+            Assert.Equal(firstExpectedSig, firstActualSig);
 
-        const string secondExpectedSts = "AWS4-HMAC-SHA256-PAYLOAD\n" +
-                                         "20130524T000000Z\n" +
-                                         "20130524/us-east-1/s3/aws4_request\n" +
-                                         "fe2879c55c032fbc6821af6fc8aac3c4b44939027344d8dceaa0aff08fe9ec43\n" + //"ad80c730a21e5b8d04586a2213dd63b9a0e99e0e2307b0ade35a65485a288648\n" +
-                                         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
-                                         "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"; //"2edc986847e209b4016e141a6dc8716d3207350f416969382d431539bf292e4a";
+            byte[] second = chunks[1].ToArray();
+            Assert.Equal(1024, second.Length);
 
-        string secondActualSts = _chunkedSigBuilder.CreateStringToSign(_testDate, scope, firstActualSig.HexDecode(), second, 0, second.Length);
-        Assert.Equal(secondExpectedSts, secondActualSts);
+            const string secondExpectedSts = "AWS4-HMAC-SHA256-PAYLOAD\n" +
+                                             "20130524T000000Z\n" +
+                                             "20130524/us-east-1/s3/aws4_request\n" +
+                                             "fe2879c55c032fbc6821af6fc8aac3c4b44939027344d8dceaa0aff08fe9ec43\n" + //"ad80c730a21e5b8d04586a2213dd63b9a0e99e0e2307b0ade35a65485a288648\n" +
+                                             "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
+                                             "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"; //"2edc986847e209b4016e141a6dc8716d3207350f416969382d431539bf292e4a";
 
-        const string secondExpectedSig = "970a9d34c5f01ef4f095b4516b9d8f34e8685df90024915ee8fd14278d361b00"; //"0055627c9e194cb4542bae2aa5492e3c1575bbb81b612b7d234b86a503ef5497";
-        string secondActualSig = _chunkedSigBuilder.CreateSignature(_testDate, secondActualSts).HexEncode();
-        Assert.Equal(secondExpectedSig, secondActualSig);
+            string secondActualSts = _chunkedSigBuilder.CreateStringToSign(_testDate, scope, firstActualSig.HexDecode(), second, 0, second.Length);
+            Assert.Equal(secondExpectedSts, secondActualSts);
 
-        byte[] third = [];
+            const string secondExpectedSig = "970a9d34c5f01ef4f095b4516b9d8f34e8685df90024915ee8fd14278d361b00"; //"0055627c9e194cb4542bae2aa5492e3c1575bbb81b612b7d234b86a503ef5497";
+            string secondActualSig = _chunkedSigBuilder.CreateSignature(_testDate, secondActualSts).HexEncode();
+            Assert.Equal(secondExpectedSig, secondActualSig);
 
-        const string thirdExpectedSts = "AWS4-HMAC-SHA256-PAYLOAD\n" +
-                                        "20130524T000000Z\n" +
-                                        "20130524/us-east-1/s3/aws4_request\n" +
-                                        "970a9d34c5f01ef4f095b4516b9d8f34e8685df90024915ee8fd14278d361b00\n" + //"0055627c9e194cb4542bae2aa5492e3c1575bbb81b612b7d234b86a503ef5497\n" +
-                                        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
-                                        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+            byte[] third = [];
 
-        string thirdActualSts = _chunkedSigBuilder.CreateStringToSign(_testDate, scope, secondActualSig.HexDecode(), third, 0, third.Length);
-        Assert.Equal(thirdExpectedSts, thirdActualSts);
+            const string thirdExpectedSts = "AWS4-HMAC-SHA256-PAYLOAD\n" +
+                                            "20130524T000000Z\n" +
+                                            "20130524/us-east-1/s3/aws4_request\n" +
+                                            "970a9d34c5f01ef4f095b4516b9d8f34e8685df90024915ee8fd14278d361b00\n" + //"0055627c9e194cb4542bae2aa5492e3c1575bbb81b612b7d234b86a503ef5497\n" +
+                                            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
+                                            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
-        const string thirdExpectedSig = "433b9e5990bba9945ee26d418d377ae25cbf2a7db3e2d508a2b84e31e3c2d655"; //"b6c6ea8a5354eaf15b3cb7646744f4275b71ea724fed81ceb9323e279d449df9";
-        string thirdActualSig = _chunkedSigBuilder.CreateSignature(_testDate, thirdActualSts).HexEncode();
-        Assert.Equal(thirdExpectedSig, thirdActualSig);
+            string thirdActualSts = _chunkedSigBuilder.CreateStringToSign(_testDate, scope, secondActualSig.HexDecode(), third, 0, third.Length);
+            Assert.Equal(thirdExpectedSts, thirdActualSts);
+
+            const string thirdExpectedSig = "433b9e5990bba9945ee26d418d377ae25cbf2a7db3e2d508a2b84e31e3c2d655"; //"b6c6ea8a5354eaf15b3cb7646744f4275b71ea724fed81ceb9323e279d449df9";
+            string thirdActualSig = _chunkedSigBuilder.CreateSignature(_testDate, thirdActualSts).HexEncode();
+            Assert.Equal(thirdExpectedSig, thirdActualSig);
+        }
+        finally
+        {
+            HeaderWhitelist.ShouldSignHeader = originalHeaderCheck;
+        }
+    }
+
+    [Fact]
+    public void AmazonTrailingHeaderTestSuite()
+    {
+        //Test is based on the example here: https://docs.aws.amazon.com/AmazonS3/latest/developerguide/sigv4-streaming-trailers.html
+
+        const string expectedSeedCr = "PUT\n" +
+                                      "/examplebucket/chunkObject.txt\n" +
+                                      "\n" +
+                                      "content-encoding:aws-chunked\n" +
+                                      "host:s3.amazonaws.com\n" +
+                                      "x-amz-content-sha256:STREAMING-AWS4-HMAC-SHA256-PAYLOAD-TRAILER\n" +
+                                      "x-amz-date:20130524T000000Z\n" +
+                                      "x-amz-decoded-content-length:66560\n" +
+                                      "x-amz-storage-class:REDUCED_REDUNDANCY\n" +
+                                      "x-amz-trailer:x-amz-checksum-crc32c\n" +
+                                      "\n" +
+                                      "content-encoding;host;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length;x-amz-storage-class;x-amz-trailer\n" +
+                                      "STREAMING-AWS4-HMAC-SHA256-PAYLOAD-TRAILER";
+
+        const string expectedSeedSts = "AWS4-HMAC-SHA256\n" +
+                                       "20130524T000000Z\n" +
+                                       "20130524/us-east-1/s3/aws4_request\n" +
+                                       "44d48b8c2f70eae815a0198cc73d7a546a73a93359c070abbaa5e6c7de112559";
+
+        Dictionary<string, string> headers = new Dictionary<string, string>
+        {
+            [HttpHeaders.ContentEncoding] = "aws-chunked",
+            [HttpHeaders.Host] = "s3.amazonaws.com",
+            [AmzHeaders.XAmzContentSha256] = "STREAMING-AWS4-HMAC-SHA256-PAYLOAD-TRAILER",
+            [AmzHeaders.XAmzDate] = "20130524T000000Z",
+            [AmzHeaders.XAmzDecodedContentLength] = "66560",
+            [AmzHeaders.XAmzStorageClass] = "REDUCED_REDUNDANCY",
+            [AmzHeaders.XAmzTrailer] = AmzHeaders.XAmzChecksumCrc32C
+        };
+
+        Func<string, bool> originalHeaderCheck = HeaderWhitelist.ShouldSignHeader;
+
+        try
+        {
+            HeaderWhitelist.ShouldSignHeader = _ => true;
+
+            string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethodType.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(new Dictionary<string, string>()), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD-TRAILER");
+            Assert.Equal(expectedSeedCr, actualSeedCr);
+
+            string scope = _scopeBuilder.CreateScope("s3", _testDate);
+            string actualSts = _sigBuilder.CreateStringToSign(_testDate, scope, actualSeedCr);
+            Assert.Equal(expectedSeedSts, actualSts);
+
+            const string expectedSeedSig = "106e2a8a18243abcf37539882f36619c00e2dfc72633413f02d3b74544bfeb8e";
+            byte[] seedSignature = _sigBuilder.CreateSignature(_testDate, actualSts);
+            Assert.Equal(expectedSeedSig, seedSignature.HexEncode());
+
+            byte[] file = new byte[65 * 1024];
+            Array.Fill(file, (byte)'a');
+
+            const int chunkSize = 64 * 1024;
+            List<byte[]> chunks = file.Chunk(chunkSize).Select(x => x.ToArray()).ToList();
+            Assert.Equal(2, chunks.Count);
+
+            const string firstExpectedSts = "AWS4-HMAC-SHA256-PAYLOAD\n" +
+                                            "20130524T000000Z\n" +
+                                            "20130524/us-east-1/s3/aws4_request\n" +
+                                            "106e2a8a18243abcf37539882f36619c00e2dfc72633413f02d3b74544bfeb8e\n" +
+                                            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
+                                            "bf718b6f653bebc184e1479f1935b8da974d701b893afcf49e701f3e2f9f9c5a";
+
+            string firstActualSts = _chunkedSigBuilder.CreateStringToSign(_testDate, scope, seedSignature, chunks[0], 0, chunks[0].Length);
+            Assert.Equal(firstExpectedSts, firstActualSts);
+
+            const string firstExpectedSig = "b474d8862b1487a5145d686f57f013e54db672cee1c953b3010fb58501ef5aa2";
+            string firstActualSig = _chunkedSigBuilder.CreateSignature(_testDate, firstActualSts).HexEncode();
+            Assert.Equal(firstExpectedSig, firstActualSig);
+
+            const string secondExpectedSts = "AWS4-HMAC-SHA256-PAYLOAD\n" +
+                                             "20130524T000000Z\n" +
+                                             "20130524/us-east-1/s3/aws4_request\n" +
+                                             "b474d8862b1487a5145d686f57f013e54db672cee1c953b3010fb58501ef5aa2\n" +
+                                             "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
+                                             "2edc986847e209b4016e141a6dc8716d3207350f416969382d431539bf292e4a";
+
+            string secondActualSts = _chunkedSigBuilder.CreateStringToSign(_testDate, scope, firstActualSig.HexDecode(), chunks[1], 0, chunks[1].Length);
+            Assert.Equal(secondExpectedSts, secondActualSts);
+
+            const string secondExpectedSig = "1c1344b170168f8e65b41376b44b20fe354e373826ccbbe2c1d40a8cae51e5c7";
+            string secondActualSig = _chunkedSigBuilder.CreateSignature(_testDate, secondActualSts).HexEncode();
+            Assert.Equal(secondExpectedSig, secondActualSig);
+
+            byte[] emptyChunk = [];
+            const string thirdExpectedSts = "AWS4-HMAC-SHA256-PAYLOAD\n" +
+                                            "20130524T000000Z\n" +
+                                            "20130524/us-east-1/s3/aws4_request\n" +
+                                            "1c1344b170168f8e65b41376b44b20fe354e373826ccbbe2c1d40a8cae51e5c7\n" +
+                                            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
+                                            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+
+            string thirdActualSts = _chunkedSigBuilder.CreateStringToSign(_testDate, scope, secondActualSig.HexDecode(), emptyChunk, 0, emptyChunk.Length);
+            Assert.Equal(thirdExpectedSts, thirdActualSts);
+
+            const string thirdExpectedSig = "2ca2aba2005185cf7159c6277faf83795951dd77a3a99e6e65d5c9f85863f992";
+            string thirdActualSig = _chunkedSigBuilder.CreateSignature(_testDate, thirdActualSts).HexEncode();
+            Assert.Equal(thirdExpectedSig, thirdActualSig);
+
+            const string canonicalTrailerHeaders = "x-amz-checksum-crc32c:sOO8/Q==\n";
+            const string trailerExpectedSts = "AWS4-HMAC-SHA256-TRAILER\n" +
+                                              "20130524T000000Z\n" +
+                                              "20130524/us-east-1/s3/aws4_request\n" +
+                                              "2ca2aba2005185cf7159c6277faf83795951dd77a3a99e6e65d5c9f85863f992\n" +
+                                              "1e376db7e1a34a8ef1c4bcee131a2d60a1cb62503747488624e10995f448d774";
+
+            string trailerActualSts = _chunkedSigBuilder.CreateTrailerStringToSign(_testDate, scope, thirdActualSig.HexDecode(), canonicalTrailerHeaders);
+            Assert.Equal(trailerExpectedSts, trailerActualSts);
+
+            const string trailerExpectedSig = "d81f82fc3505edab99d459891051a732e8730629a2e4a59689829ca17fe2e435";
+            string trailerActualSig = _chunkedSigBuilder.CreateSignature(_testDate, trailerActualSts).HexEncode();
+            Assert.Equal(trailerExpectedSig, trailerActualSig);
+        }
+        finally
+        {
+            HeaderWhitelist.ShouldSignHeader = originalHeaderCheck;
+        }
+    }
+
+    [Fact]
+    public void CanonicalTrailingHeadersNormalizeNamesValuesAndOrder()
+    {
+        Dictionary<string, string> trailers = new Dictionary<string, string>
+        {
+            ["X-Zebra"] = "  spaced\t\tvalue  ",
+            ["x-alpha"] = "first"
+        };
+
+        string actual = ChunkedSignatureBuilder.CreateCanonicalTrailingHeaders(trailers);
+
+        Assert.Equal("x-alpha:first\nx-zebra:spaced value\n", actual);
     }
 
     [Theory]
