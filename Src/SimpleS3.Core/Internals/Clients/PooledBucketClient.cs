@@ -129,6 +129,16 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
 
     public Task<DeleteBucketWebsiteResponse> DeleteBucketWebsiteAsync(string bucketName, Action<DeleteBucketWebsiteRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketWebsiteRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.DeleteBucketWebsiteAsync(req, token));
 
+    public Task<DeleteBucketAnalyticsConfigurationResponse> DeleteBucketAnalyticsConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketAnalyticsConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketAnalyticsConfigurationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, configurationId); config?.Invoke(req); }, req => BucketOperations.DeleteBucketAnalyticsConfigurationAsync(req, token));
+
+    public Task<DeleteBucketInventoryConfigurationResponse> DeleteBucketInventoryConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketInventoryConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketInventoryConfigurationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, configurationId); config?.Invoke(req); }, req => BucketOperations.DeleteBucketInventoryConfigurationAsync(req, token));
+
+    public Task<DeleteBucketMetricsConfigurationResponse> DeleteBucketMetricsConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketMetricsConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketMetricsConfigurationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, configurationId); config?.Invoke(req); }, req => BucketOperations.DeleteBucketMetricsConfigurationAsync(req, token));
+
+    public Task<DeleteBucketIntelligentTieringConfigurationResponse> DeleteBucketIntelligentTieringConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketIntelligentTieringConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketIntelligentTieringConfigurationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, configurationId); config?.Invoke(req); }, req => BucketOperations.DeleteBucketIntelligentTieringConfigurationAsync(req, token));
+
+    public Task<DeleteBucketReplicationResponse> DeleteBucketReplicationAsync(string bucketName, Action<DeleteBucketReplicationRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketReplicationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.DeleteBucketReplicationAsync(req, token));
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
     {
         return ObjectPool<PutBucketTaggingRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);

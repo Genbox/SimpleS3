@@ -159,6 +159,20 @@ public class MissingS3OperationMarshalTests
     }
 
     [Fact]
+    public void BucketConfigurationDeleteRequestsSetSubresourceAndId()
+    {
+        DeleteBucketAnalyticsConfigurationRequest analytics = new DeleteBucketAnalyticsConfigurationRequest("bucket", "config-id");
+        DeleteBucketReplicationRequest replication = new DeleteBucketReplicationRequest("bucket");
+
+        new DeleteBucketAnalyticsConfigurationRequestMarshal().MarshalRequest(analytics, CreateConfig());
+        new DeleteBucketReplicationRequestMarshal().MarshalRequest(replication, CreateConfig());
+
+        Assert.Equal(string.Empty, analytics.QueryParameters[AmzParameters.Analytics]);
+        Assert.Equal("config-id", analytics.QueryParameters[AmzParameters.Id]);
+        Assert.Equal(string.Empty, replication.QueryParameters[AmzParameters.Replication]);
+    }
+
+    [Fact]
     public void PutObjectTaggingWritesTaggingXml()
     {
         PutObjectTaggingRequest request = new PutObjectTaggingRequest("bucket", "object", new Dictionary<string, string> { ["Key"] = "Value" });

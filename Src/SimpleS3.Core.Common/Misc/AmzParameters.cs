@@ -49,6 +49,12 @@ public static class AmzParameters
     public const string Policy = "policy";
     public const string PolicyStatus = "policyStatus";
     public const string Website = "website";
+    public const string Id = "id";
+    public const string Analytics = "analytics";
+    public const string Inventory = "inventory";
+    public const string Metrics = "metrics";
+    public const string IntelligentTiering = "intelligent-tiering";
+    public const string Replication = "replication";
 
     #region Presigning
 

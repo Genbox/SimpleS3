@@ -170,6 +170,41 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         return operations.DeleteBucketWebsiteAsync(request, token);
     }
 
+    public Task<DeleteBucketAnalyticsConfigurationResponse> DeleteBucketAnalyticsConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketAnalyticsConfigurationRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketAnalyticsConfigurationRequest request = new DeleteBucketAnalyticsConfigurationRequest(bucketName, configurationId);
+        config?.Invoke(request);
+        return operations.DeleteBucketAnalyticsConfigurationAsync(request, token);
+    }
+
+    public Task<DeleteBucketInventoryConfigurationResponse> DeleteBucketInventoryConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketInventoryConfigurationRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketInventoryConfigurationRequest request = new DeleteBucketInventoryConfigurationRequest(bucketName, configurationId);
+        config?.Invoke(request);
+        return operations.DeleteBucketInventoryConfigurationAsync(request, token);
+    }
+
+    public Task<DeleteBucketMetricsConfigurationResponse> DeleteBucketMetricsConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketMetricsConfigurationRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketMetricsConfigurationRequest request = new DeleteBucketMetricsConfigurationRequest(bucketName, configurationId);
+        config?.Invoke(request);
+        return operations.DeleteBucketMetricsConfigurationAsync(request, token);
+    }
+
+    public Task<DeleteBucketIntelligentTieringConfigurationResponse> DeleteBucketIntelligentTieringConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketIntelligentTieringConfigurationRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketIntelligentTieringConfigurationRequest request = new DeleteBucketIntelligentTieringConfigurationRequest(bucketName, configurationId);
+        config?.Invoke(request);
+        return operations.DeleteBucketIntelligentTieringConfigurationAsync(request, token);
+    }
+
+    public Task<DeleteBucketReplicationResponse> DeleteBucketReplicationAsync(string bucketName, Action<DeleteBucketReplicationRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketReplicationRequest request = new DeleteBucketReplicationRequest(bucketName);
+        config?.Invoke(request);
+        return operations.DeleteBucketReplicationAsync(request, token);
+    }
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
     {
         PutBucketTaggingRequest request = new PutBucketTaggingRequest(bucketName, tags);

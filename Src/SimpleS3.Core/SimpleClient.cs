@@ -111,6 +111,16 @@ public class SimpleClient : ISimpleClient
 
     public Task<DeleteBucketWebsiteResponse> DeleteBucketWebsiteAsync(string bucketName, Action<DeleteBucketWebsiteRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketWebsiteAsync(bucketName, config, token);
 
+    public Task<DeleteBucketAnalyticsConfigurationResponse> DeleteBucketAnalyticsConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketAnalyticsConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketAnalyticsConfigurationAsync(bucketName, configurationId, config, token);
+
+    public Task<DeleteBucketInventoryConfigurationResponse> DeleteBucketInventoryConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketInventoryConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketInventoryConfigurationAsync(bucketName, configurationId, config, token);
+
+    public Task<DeleteBucketMetricsConfigurationResponse> DeleteBucketMetricsConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketMetricsConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketMetricsConfigurationAsync(bucketName, configurationId, config, token);
+
+    public Task<DeleteBucketIntelligentTieringConfigurationResponse> DeleteBucketIntelligentTieringConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketIntelligentTieringConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketIntelligentTieringConfigurationAsync(bucketName, configurationId, config, token);
+
+    public Task<DeleteBucketReplicationResponse> DeleteBucketReplicationAsync(string bucketName, Action<DeleteBucketReplicationRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketReplicationAsync(bucketName, config, token);
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketTaggingAsync(bucketName, tags, config, token);
 
     public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketTaggingAsync(bucketName, config, token);

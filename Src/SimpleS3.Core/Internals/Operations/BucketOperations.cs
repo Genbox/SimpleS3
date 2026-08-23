@@ -51,6 +51,16 @@ internal sealed class BucketOperations(IRequestHandler handler) : IBucketOperati
 
     public Task<DeleteBucketWebsiteResponse> DeleteBucketWebsiteAsync(DeleteBucketWebsiteRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketWebsiteRequest, DeleteBucketWebsiteResponse>(request, token);
 
+    public Task<DeleteBucketAnalyticsConfigurationResponse> DeleteBucketAnalyticsConfigurationAsync(DeleteBucketAnalyticsConfigurationRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketAnalyticsConfigurationRequest, DeleteBucketAnalyticsConfigurationResponse>(request, token);
+
+    public Task<DeleteBucketInventoryConfigurationResponse> DeleteBucketInventoryConfigurationAsync(DeleteBucketInventoryConfigurationRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketInventoryConfigurationRequest, DeleteBucketInventoryConfigurationResponse>(request, token);
+
+    public Task<DeleteBucketMetricsConfigurationResponse> DeleteBucketMetricsConfigurationAsync(DeleteBucketMetricsConfigurationRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketMetricsConfigurationRequest, DeleteBucketMetricsConfigurationResponse>(request, token);
+
+    public Task<DeleteBucketIntelligentTieringConfigurationResponse> DeleteBucketIntelligentTieringConfigurationAsync(DeleteBucketIntelligentTieringConfigurationRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketIntelligentTieringConfigurationRequest, DeleteBucketIntelligentTieringConfigurationResponse>(request, token);
+
+    public Task<DeleteBucketReplicationResponse> DeleteBucketReplicationAsync(DeleteBucketReplicationRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketReplicationRequest, DeleteBucketReplicationResponse>(request, token);
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(PutBucketTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketTaggingRequest, PutBucketTaggingResponse>(request, token);
 
     public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(DeleteBucketTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketTaggingRequest, DeleteBucketTaggingResponse>(request, token);
