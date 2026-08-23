@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/_Docs/">
+    <File Path="Docs/CONTRIBUTING.md" />
+  </Folder>
   <Folder Name="/Clients/">
     <Project Path="Src/SimpleS3.AmazonS3.Tests/SimpleS3.AmazonS3.Tests.csproj" />
     <Project Path="Src/SimpleS3.AmazonS3/SimpleS3.AmazonS3.csproj" />
@@ -65,19 +68,21 @@
     <File Path="Locals/Tests.props" />
   </Folder>
   <Folder Name="/_Imports/Managed/">
-    <File Path="src/Directory.Build.props" />
-    <File Path="src/Directory.Build.targets" />
+    <File Path="Src/Directory.Build.props" />
+    <File Path="Src/Directory.Build.targets" />
   </Folder>
   <Folder Name="/_Imports/Managed/Packages/">
-    <File Path="src/Directory.Packages.Analyzers.props" />
-    <File Path="src/Directory.Packages.props" />
+    <File Path="Src/Directory.Packages.Analyzers.props" />
+    <File Path="Src/Directory.Packages.props" />
   </Folder>
   <Folder Name="/_Imports/Managed/Project/">
+    <File Path="Imports/Analyzers.props" />
     <File Path="Imports/Benchmarks.props" />
     <File Path="Imports/Console.props" />
     <File Path="Imports/Examples.props" />
     <File Path="Imports/Library.props" />
     <File Path="Imports/Tests.props" />
+    <File Path="Imports/Web.props" />
   </Folder>
   <Folder Name="/_Items/">
     <File Path=".editorconfig" />
@@ -85,12 +90,15 @@
     <File Path=".gitignore" />
     <File Path=".globalconfig" />
     <File Path="Config.json" />
+    <File Path="global.json" />
+    <File Path="Imports/BannedSymbols.txt" />
     <File Path="LICENSE.txt" />
     <File Path="README.md" />
     <File Path="SECURITY.md" />
   </Folder>
   <Folder Name="/_Scripts/">
     <File Path="Scripts/Build.ps1" />
+    <File Path="Scripts/Common.ps1" />
     <File Path="Scripts/Publish.ps1" />
   </Folder>
   <Project Path="Src/ProviderTests/ProviderTests.csproj" />

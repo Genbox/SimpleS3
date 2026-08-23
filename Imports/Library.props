@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsAotCompatible>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IncludeInternalsVisibleTo)' == 'True'">
@@ -14,25 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
     <PackageReference Include="MinVer" PrivateAssets="all" />
     <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(IncludeAnalyzers)' == 'True'">
-    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" PrivateAssets="all" />
-    <PackageReference Include="ConfigureAwaitChecker.Analyzer" PrivateAssets="all" />
-    <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
-    <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
-    <PackageReference Include="ToStringWithoutOverrideAnalyzer" PrivateAssets="all" />
-    <PackageReference Include="AspNetCoreAnalyzers" PrivateAssets="all" />
-    <PackageReference Include="ReflectionAnalyzers" PrivateAssets="all" />
-    <PackageReference Include="SmartAnalyzers.ExceptionAnalyzer" PrivateAssets="all" />
-    <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" PrivateAssets="all" />
-    <PackageReference Include="SharpSource" PrivateAssets="all" />
-    <PackageReference Include="Meziantou.Analyzer" PrivateAssets="all" />
-    <PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="all" />
   </ItemGroup>
 
   <Import Project="../Locals/Library.props" Condition="Exists('../Locals/Library.props')" />

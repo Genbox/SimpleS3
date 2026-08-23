@@ -1,0 +1,13 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IncludeAnalyzers)' == 'True'">
+    <PackageReference Include="AspNetCoreAnalyzers" PrivateAssets="all" />
+  </ItemGroup>
+
+  <Import Project="../Locals/Web.props" Condition="Exists('../Locals/Web.props')" />
+
+</Project>

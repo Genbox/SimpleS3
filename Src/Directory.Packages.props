@@ -1,17 +1,27 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="../Locals/Directory.Packages.props" Condition="Exists('../Locals/Directory.Packages.props')" />
-  <Import Project="Directory.Packages.Analyzers.props" />
-
   <ItemGroup>
+    <!--analyzer packages-->
+    <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" />
+    <PackageVersion Include="AspNetCoreAnalyzers" Version="0.3.0" />
+    <PackageVersion Include="IDisposableAnalyzers" Version="4.0.8" />
+    <PackageVersion Include="Meziantou.Analyzer" Version="3.0.174" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.7.23" />
+    <PackageVersion Include="ReflectionAnalyzers" Version="0.3.1" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.16.1" />
+    <PackageVersion Include="SharpSource" Version="1.33.3" />
+    <PackageVersion Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.32.0.713" />
+    <PackageVersion Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" />
     <!--test packages-->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
-    <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.0" />
     <!--dev packages-->
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.301" />
     <PackageVersion Include="MinVer" Version="7.0.0" />
     <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
     <!--benchmark packages-->
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
   </ItemGroup>
+
+  <Import Project="../Locals/Directory.Packages.props" Condition="Exists('../Locals/Directory.Packages.props')" />
 </Project>

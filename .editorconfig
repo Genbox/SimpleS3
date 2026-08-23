@@ -2,103 +2,83 @@ root = true
 
 [*]
 charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+tab_width = 4
+max_line_length = 2000
 trim_trailing_whitespace = true
 insert_final_newline = false
-max_line_length = 2000
 
 [**/{bin,obj}/**]
 generated_code = true
 
-# XML based formats
-[*.{appxmanifest,axml,build,config,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
-indent_style = space
+# Two-space formats
+[*.{appxmanifest,axml,build,config,csproj,css,dbml,discomap,dtd,htm,html,js,json,jsonc,jsproj,lsproj,njsproj,nuspec,proj,props,resjson,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd,yaml,yml}]
 indent_size = 2
 tab_width = 2
 ij_xml_space_inside_empty_tag = true
 ij_xml_keep_blank_lines = 1
 
-# JSON based formats
-[*.{json,resjson}]
-indent_style = space
-indent_size = 2
-tab_width = 2
-
-# YAML based formats
-[*.{yml,yaml}]
-indent_style = space
-indent_size = 2
-tab_width = 2
-
-# Markdown based formats
+# Markdown preserves intentional trailing spaces
 [*.md]
 trim_trailing_whitespace = false
-insert_final_newline = true
-
-# PowerShell scripts
-[*.{ps1,psd1,psm1}]
-indent_style = space
-indent_size = 4
-tab_width = 4
-
-# Web languages
-[*.{css,htm,html,js}]
-indent_style = space
-indent_size = 2
-tab_width = 2
 
 # Programming languages
 [*.{asax,ascx,aspx,axaml,cs,cshtml}]
-indent_style = space
-indent_size = 4
-tab_width = 4
-
-# Analyzer settings
-roslynator_accessibility_modifiers = explicit
 roslynator_enum_has_flag_style = method
-roslynator_object_creation_type_style = explicit
-roslynator_use_var_instead_of_implicit_object_creation = false
 csharp_style_namespace_declarations = file_scoped:error
 
-# Csharp styles
+# C# styles
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
+csharp_using_directive_placement = outside_namespace:error
+csharp_prefer_braces = when_multiline:suggestion
 csharp_new_line_before_members_in_object_initializers = false
-csharp_preferred_modifier_order = public, private, protected, internal, new, sealed, static, unsafe, override, extern, async, virtual, abstract, volatile, readonly:suggestion
+csharp_preferred_modifier_order = public, private, protected, internal, file, new, sealed, static, unsafe, override, extern, async, virtual, abstract, required, volatile, readonly, partial:suggestion
 csharp_preserve_single_line_blocks = true
 csharp_space_after_cast = false
-csharp_style_var_elsewhere = false:none
-csharp_style_var_when_type_is_apparent = false:none
+csharp_style_implicit_object_creation_when_type_is_apparent = false:suggestion
+csharp_style_expression_bodied_accessors = true:suggestion
+csharp_style_expression_bodied_local_functions = true:suggestion
+csharp_style_expression_bodied_methods = true:suggestion
+csharp_style_expression_bodied_operators = true:suggestion
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_prefer_collection_expression = when_types_loosely_match:suggestion
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_elsewhere = false:suggestion
+csharp_style_var_when_type_is_apparent = false:suggestion
 
-# ReSharper properties
+# ReSharper-specific properties without standard equivalents
 resharper_align_multiline_calls_chain = true
 resharper_arguments_skip_single = true
-resharper_blank_lines_after_block_statements = 0
+resharper_blank_lines_after_block_statements = 1
 resharper_blank_lines_after_start_comment = 0
+resharper_blank_lines_before_block_statements = 1
 resharper_blank_lines_around_auto_property = 1
 resharper_blank_lines_around_property = 1
 resharper_blank_lines_around_single_line_type = 0
-resharper_braces_for_fixed = required_for_multiline
-resharper_braces_for_for = required_for_multiline
-resharper_braces_for_foreach = required_for_multiline
-resharper_braces_for_ifelse = required_for_multiline
-resharper_braces_for_lock = required_for_multiline
-resharper_braces_for_using = required_for_multiline
-resharper_braces_for_while = required_for_multiline
 resharper_csharp_blank_lines_around_field = 0
 resharper_csharp_blank_lines_around_invocable = 1
 resharper_csharp_empty_block_style = together_same_line
 resharper_csharp_keep_blank_lines_in_code = 1
 resharper_csharp_keep_blank_lines_in_declarations = 1
+resharper_csharp_keep_existing_declaration_parens_arrangement = false
+resharper_csharp_keep_existing_invocation_parens_arrangement = false
+resharper_csharp_keep_existing_primary_constructor_declaration_parens_arrangement = false
+resharper_csharp_max_formal_parameters_on_line = 1000
 resharper_csharp_max_line_length = 2081
+resharper_csharp_max_primary_constructor_parameters_on_line = 1000
 resharper_csharp_space_before_trailing_comment = true
 resharper_csharp_wrap_lines = false
-resharper_csharp_wrap_parameters_style = chop_if_long
+resharper_csharp_wrap_parameters_style = wrap_if_long
+resharper_csharp_wrap_primary_constructor_parameters_style = wrap_if_long
 resharper_indent_preprocessor_other = do_not_change
 resharper_instance_members_qualify_declared_in = this_class
-resharper_keep_existing_attribute_arrangement = true
+resharper_keep_existing_attribute_arrangement = false
 resharper_keep_existing_enum_arrangement = false
-resharper_local_function_body = expression_body
-resharper_method_or_operator_body = expression_body
 resharper_nested_ternary_style = compact
-resharper_object_creation_when_type_evident = explicitly_typed
 resharper_place_accessorholder_attribute_on_same_line = false
 resharper_place_accessor_attribute_on_same_line = true
 resharper_place_expr_accessor_on_single_line = true
@@ -114,22 +94,27 @@ resharper_space_between_attribute_sections = false
 resharper_space_within_empty_braces = false
 resharper_space_within_single_line_array_initializer_braces = true
 resharper_wrap_object_and_collection_initializer_style = chop_always
-resharper_space_before_trailing_comment = true
 resharper_xmldoc_indent_text = ZeroIndent
 resharper_xmldoc_max_line_length = 300
 resharper_xmldoc_attribute_indent = align_by_first_attribute
 resharper_xmldoc_keep_user_linebreaks = true
-resharper_parentheses_non_obvious_operations = none, multiplicative, additive, arithmetic, shift, bitwise_and, bitwise_exclusive_or, bitwise_inclusive_or, bitwise
+resharper_parentheses_non_obvious_operations = multiplicative, additive, shift, bitwise_and, bitwise_exclusive_or, bitwise_inclusive_or
 
-# Microsoft .NET properties
-csharp_style_var_for_built_in_types = false:suggestion
+# Non-cryptographic randomness is intentional in tests and benchmarks
+# CA5394: Random is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security.
+# S2245: Use a cryptographically strong random number generator.
+[**/*Test*/**.cs]
+dotnet_diagnostic.CA5394.severity = none
+dotnet_diagnostic.S2245.severity = none
+
+[**/*Benchmark*/**.cs]
+dotnet_diagnostic.CA5394.severity = none
+dotnet_diagnostic.S2245.severity = none
 
 # Verify settings
 [*.{received,verified}.{json,txt,xml}]
 charset = utf-8-bom
-end_of_line = lf
 indent_size = unset
 indent_style = unset
-insert_final_newline = false
 tab_width = unset
 trim_trailing_whitespace = false

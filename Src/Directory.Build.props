@@ -23,7 +23,6 @@
     <Features>strict</Features>
     <ImplicitUsings>true</ImplicitUsings>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <NoWarn>$(NoWarn);CA1014;CS1573;CS1591</NoWarn>
 
     <!--.NET settings-->
     <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
@@ -34,7 +33,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
 
-    <!--Enable analyzers by default, but not during builds-->
+    <!--Enable analyzers during builds and live analysis by default-->
     <EnableNETAnalyzers>$(IncludeAnalyzers)</EnableNETAnalyzers>
     <RunAnalyzersDuringBuild>$(IncludeAnalyzers)</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
@@ -44,6 +43,7 @@
     <!--NuGet settings-->
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
 
     <!--Other settings-->
     <CopyRetryCount>2</CopyRetryCount>
@@ -69,7 +69,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <DeterministicSourcePaths>true</DeterministicSourcePaths>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -95,5 +94,6 @@
 
   <Import Project="../Locals/Directory.Build.props" Condition="Exists('../Locals/Directory.Build.props')" />
   <Import Project="../Imports/$(ProjectType).props" Condition="Exists('../Imports/$(ProjectType).props')" />
+  <Import Project="../Imports/Analyzers.props" Condition="'$(IncludeAnalyzers)' == 'True' AND Exists('../Imports/Analyzers.props')" />
 
 </Project>

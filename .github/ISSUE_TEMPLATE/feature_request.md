@@ -12,5 +12,4 @@ assignees: ''
 Sponsorship is required before you can submit feature requests. See https://github.com/sponsors/Genbox
 
 **Describe the feature**
-Provide a short description of the feature. Why would you like the feature?
-If the feature makes changes to an existing or new API please provide an example.
+Provide a short description of the feature. Why would you like the feature? If the feature makes changes to an existing or new API please provide an example.
