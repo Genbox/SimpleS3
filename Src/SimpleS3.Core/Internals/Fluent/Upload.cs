@@ -22,6 +22,7 @@ internal sealed class Upload : IUpload
     private readonly IMultipartTransfer _multipartTransfer;
     private readonly IObjectOperations _objectOperations;
     private readonly PutObjectRequest _request;
+    private bool _calculateContentMd5;
 
     internal Upload(IObjectOperations objectOperations, IMultipartTransfer multipartTransfer, string bucket, string objectKey)
     {
@@ -166,7 +167,8 @@ internal sealed class Upload : IUpload
 
     public IUpload CalculateContentMd5()
     {
-        _request.ContentMd5 = _request.Content == null ? Constants.EmptyMd5Bytes : CryptoHelper.Md5Hash(_request.Content, true);
+        // S3-015: Defer hashing until UploadAsync assigns the stream that will actually be sent.
+        _calculateContentMd5 = true;
         return this;
     }
 
@@ -221,6 +223,9 @@ internal sealed class Upload : IUpload
     {
         _request.Method = HttpMethodType.PUT;
         _request.Content = data;
+
+        if (_calculateContentMd5)
+            _request.ContentMd5 = data == null ? Constants.EmptyMd5Bytes : CryptoHelper.Md5Hash(data, true);
 
         return _objectOperations.PutObjectAsync(_request, token);
     }
