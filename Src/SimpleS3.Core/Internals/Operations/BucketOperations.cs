@@ -21,6 +21,10 @@ internal sealed class BucketOperations(IRequestHandler handler) : IBucketOperati
 
     public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(GetBucketTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketTaggingRequest, GetBucketTaggingResponse>(request, token);
 
+    public Task<GetBucketAclResponse> GetBucketAclAsync(GetBucketAclRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketAclRequest, GetBucketAclResponse>(request, token);
+
+    public Task<PutBucketAclResponse> PutBucketAclAsync(PutBucketAclRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketAclRequest, PutBucketAclResponse>(request, token);
+
     public Task<GetBucketCorsResponse> GetBucketCorsAsync(GetBucketCorsRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketCorsRequest, GetBucketCorsResponse>(request, token);
 
     public Task<PutBucketCorsResponse> PutBucketCorsAsync(PutBucketCorsRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketCorsRequest, PutBucketCorsResponse>(request, token);

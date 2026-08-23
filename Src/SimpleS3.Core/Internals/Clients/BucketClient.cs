@@ -65,6 +65,20 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         return operations.GetBucketTaggingAsync(request, token);
     }
 
+    public Task<GetBucketAclResponse> GetBucketAclAsync(string bucketName, Action<GetBucketAclRequest>? config = null, CancellationToken token = default)
+    {
+        GetBucketAclRequest request = new GetBucketAclRequest(bucketName);
+        config?.Invoke(request);
+        return operations.GetBucketAclAsync(request, token);
+    }
+
+    public Task<PutBucketAclResponse> PutBucketAclAsync(string bucketName, Action<PutBucketAclRequest>? config = null, CancellationToken token = default)
+    {
+        PutBucketAclRequest request = new PutBucketAclRequest(bucketName);
+        config?.Invoke(request);
+        return operations.PutBucketAclAsync(request, token);
+    }
+
     public Task<GetBucketCorsResponse> GetBucketCorsAsync(string bucketName, Action<GetBucketCorsRequest>? config = null, CancellationToken token = default)
     {
         GetBucketCorsRequest request = new GetBucketCorsRequest(bucketName);

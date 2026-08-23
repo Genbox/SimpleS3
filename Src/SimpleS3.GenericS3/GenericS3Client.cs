@@ -68,6 +68,9 @@ public sealed class GenericS3Client : ClientBase, ISimpleClient
 
     public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default) => Client.GetBucketTaggingAsync(bucketName, config, token);
 
+    public Task<GetBucketAclResponse> GetBucketAclAsync(string bucketName, Action<GetBucketAclRequest>? config = null, CancellationToken token = default) => Client.GetBucketAclAsync(bucketName, config, token);
+    public Task<PutBucketAclResponse> PutBucketAclAsync(string bucketName, Action<PutBucketAclRequest>? config = null, CancellationToken token = default) => Client.PutBucketAclAsync(bucketName, config, token);
+
     public Task<GetBucketCorsResponse> GetBucketCorsAsync(string bucketName, Action<GetBucketCorsRequest>? config = null, CancellationToken token = default) => Client.GetBucketCorsAsync(bucketName, config, token);
     public Task<PutBucketCorsResponse> PutBucketCorsAsync(string bucketName, IEnumerable<S3CorsRule> rules, Action<PutBucketCorsRequest>? config = null, CancellationToken token = default) => Client.PutBucketCorsAsync(bucketName, rules, config, token);
     public Task<DeleteBucketCorsResponse> DeleteBucketCorsAsync(string bucketName, Action<DeleteBucketCorsRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketCorsAsync(bucketName, config, token);

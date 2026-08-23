@@ -99,6 +99,10 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
         Task<GetBucketTaggingResponse> ActionAsync(GetBucketTaggingRequest request) => BucketOperations.GetBucketTaggingAsync(request, token);
     }
 
+    public Task<GetBucketAclResponse> GetBucketAclAsync(string bucketName, Action<GetBucketAclRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketAclRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.GetBucketAclAsync(req, token));
+
+    public Task<PutBucketAclResponse> PutBucketAclAsync(string bucketName, Action<PutBucketAclRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketAclRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.PutBucketAclAsync(req, token));
+
     public Task<GetBucketCorsResponse> GetBucketCorsAsync(string bucketName, Action<GetBucketCorsRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketCorsRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.GetBucketCorsAsync(req, token));
 
     public Task<PutBucketCorsResponse> PutBucketCorsAsync(string bucketName, IEnumerable<S3CorsRule> rules, Action<PutBucketCorsRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketCorsRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, rules); config?.Invoke(req); }, req => BucketOperations.PutBucketCorsAsync(req, token));

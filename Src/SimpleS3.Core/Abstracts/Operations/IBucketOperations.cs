@@ -34,6 +34,10 @@ public interface IBucketOperations
     /// <summary>Returns the tag set associated with the bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketTagging.html for details</summary>
     Task<GetBucketTaggingResponse> GetBucketTaggingAsync(GetBucketTaggingRequest request, CancellationToken token = default);
 
+    Task<GetBucketAclResponse> GetBucketAclAsync(GetBucketAclRequest request, CancellationToken token = default);
+
+    Task<PutBucketAclResponse> PutBucketAclAsync(PutBucketAclRequest request, CancellationToken token = default);
+
     Task<GetBucketCorsResponse> GetBucketCorsAsync(GetBucketCorsRequest request, CancellationToken token = default);
 
     Task<PutBucketCorsResponse> PutBucketCorsAsync(PutBucketCorsRequest request, CancellationToken token = default);

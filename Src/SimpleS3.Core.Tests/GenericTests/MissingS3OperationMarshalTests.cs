@@ -16,11 +16,41 @@ using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 
 public class MissingS3OperationMarshalTests
 {
+    [Fact]
+    public void PutBucketAclSetsAclQuery()
+    {
+        PutBucketAclRequest request = new PutBucketAclRequest("bucket");
+
+        new PutBucketAclRequestMarshal().MarshalRequest(request, CreateConfig());
+
+        Assert.Equal(string.Empty, request.QueryParameters[AmzParameters.Acl]);
+    }
+
+    [Fact]
+    public void GetBucketAclParsesGrants()
+    {
+        const string xml = """
+                           <AccessControlPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><Owner><ID>owner-id</ID><DisplayName>owner</DisplayName></Owner><AccessControlList><Grant><Grantee xsi:type="CanonicalUser"><ID>grantee-id</ID><DisplayName>grantee</DisplayName></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>
+                           """;
+        GetBucketAclResponse response = new GetBucketAclResponse();
+
+        using ContentStream content = CreateContent(xml);
+        new GetBucketAclResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(), content);
+
+        Assert.Equal("owner-id", response.Owner.Id);
+        Assert.Equal("owner", response.Owner.Name);
+        S3Grant grant = Assert.Single(response.Grants);
+        Assert.Equal(GrantType.CanonicalUser, grant.Grantee.Type);
+        Assert.Equal("grantee-id", grant.Grantee.Id);
+        Assert.Equal(S3Permission.FullControl, grant.Permission);
+    }
+
     [Fact]
     public void PutBucketCorsWritesCorsXml()
     {
