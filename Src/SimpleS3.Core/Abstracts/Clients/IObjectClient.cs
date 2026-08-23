@@ -81,6 +81,8 @@ public interface IObjectClient
     /// <param name="token">A cancellation token</param>
     Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest>? config = null, CancellationToken token = default);
 
+    Task<GetObjectAttributesResponse> GetObjectAttributesAsync(string bucketName, string objectKey, IEnumerable<ObjectAttribute> objectAttributes, Action<GetObjectAttributesRequest>? config = null, CancellationToken token = default);
+
     /// <summary>Gets an object's current Legal Hold status.</summary>
     /// <param name="bucketName">Name of the bucket</param>
     /// <param name="objectKey">The key of the object</param>

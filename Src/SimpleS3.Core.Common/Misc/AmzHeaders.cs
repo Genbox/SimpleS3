@@ -41,6 +41,7 @@ public static class AmzHeaders
     public const string XAmzChecksumMode = "x-amz-checksum-mode";
 
     public const string XAmzChecksumAlgorithm = "x-amz-checksum-algorithm";
+    public const string XAmzObjectAttributes = "x-amz-object-attributes";
     public const string XAmzChecksum = "x-amz-checksum-"; //Needs to be combined with XAmzChecksumAlgorithm
     public const string XAmzChecksumCrc32 = "x-amz-checksum-crc32";
     public const string XAmzChecksumCrc32C = "x-amz-checksum-crc32c";

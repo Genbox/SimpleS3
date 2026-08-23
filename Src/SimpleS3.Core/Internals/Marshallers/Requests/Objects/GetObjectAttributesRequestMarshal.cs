@@ -1,0 +1,20 @@
+using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Common.Misc;
+using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Network.Requests.Objects;
+
+namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects;
+
+internal sealed class GetObjectAttributesRequestMarshal : IRequestMarshal<GetObjectAttributesRequest>
+{
+    public Stream? MarshalRequest(GetObjectAttributesRequest request, SimpleS3Config config)
+    {
+        request.SetQueryParameter(AmzParameters.Attributes, string.Empty);
+        request.SetHeader(AmzHeaders.XAmzObjectAttributes, string.Join(",", request.ObjectAttributes.Where(x => x != ObjectAttribute.Unknown).Select(x => x.GetDisplayName())));
+        request.SetQueryParameter(AmzParameters.MaxParts, request.MaxParts);
+        request.SetQueryParameter(AmzParameters.PartNumberMarker, request.PartNumberMarker);
+        return null;
+    }
+}

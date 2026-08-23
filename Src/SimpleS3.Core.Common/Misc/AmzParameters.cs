@@ -35,6 +35,7 @@ public static class AmzParameters
     public const string LegalHold = "legal-hold";
     public const string ObjectLock = "object-lock";
     public const string Tagging = "tagging";
+    public const string Attributes = "attributes";
     public const string Cors = "cors";
     public const string Accelerate = "accelerate";
     public const string Lifecycle = "lifecycle";

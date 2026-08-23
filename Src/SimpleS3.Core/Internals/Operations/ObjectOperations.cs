@@ -56,6 +56,8 @@ internal sealed class ObjectOperations(IRequestHandler handler, IEnumerable<IReq
 
     public Task<GetObjectAclResponse> GetObjectAclAsync(GetObjectAclRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetObjectAclRequest, GetObjectAclResponse>(request, token);
 
+    public Task<GetObjectAttributesResponse> GetObjectAttributesAsync(GetObjectAttributesRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetObjectAttributesRequest, GetObjectAttributesResponse>(request, token);
+
     public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(GetObjectLegalHoldRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetObjectLegalHoldRequest, GetObjectLegalHoldResponse>(request, token);
 
     public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(PutObjectLegalHoldRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutObjectLegalHoldRequest, PutObjectLegalHoldResponse>(request, token);

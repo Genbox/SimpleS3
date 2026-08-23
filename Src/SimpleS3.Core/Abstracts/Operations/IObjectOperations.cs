@@ -43,6 +43,8 @@ public interface IObjectOperations
     /// <summary>Returns the access control list (ACL) of an object. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html for details</summary>
     Task<GetObjectAclResponse> GetObjectAclAsync(GetObjectAclRequest request, CancellationToken token = default);
 
+    Task<GetObjectAttributesResponse> GetObjectAttributesAsync(GetObjectAttributesRequest request, CancellationToken token = default);
+
     /// <summary>Gets an object's current Legal Hold status. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectLegalHold.html for details</summary>
     Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(GetObjectLegalHoldRequest request, CancellationToken token = default);
 

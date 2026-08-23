@@ -125,6 +125,18 @@ internal class PooledObjectClient(IObjectOperations operations) : IObjectClient
         }
     }
 
+    public Task<GetObjectAttributesResponse> GetObjectAttributesAsync(string bucketName, string objectKey, IEnumerable<ObjectAttribute> objectAttributes, Action<GetObjectAttributesRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<GetObjectAttributesRequest>.Shared.RentAndUseAsync(Setup, request => ObjectOperations.GetObjectAttributesAsync(request, token));
+
+        void Setup(GetObjectAttributesRequest req)
+        {
+            // ReSharper disable once PossibleMultipleEnumeration
+            req.Initialize(bucketName, objectKey, objectAttributes);
+            config?.Invoke(req);
+        }
+    }
+
     public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default)
     {
         return ObjectPool<GetObjectLegalHoldRequest>.Shared.RentAndUseAsync(Setup, request => ObjectOperations.GetObjectLegalHoldAsync(request, token));

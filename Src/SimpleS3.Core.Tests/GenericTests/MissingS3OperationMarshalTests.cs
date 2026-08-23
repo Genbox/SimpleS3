@@ -201,6 +201,48 @@ public class MissingS3OperationMarshalTests
         Assert.Equal("Value", response.Tags["Key"]);
     }
 
+    [Fact]
+    public void GetObjectAttributesWritesAttributesHeaderAndQuery()
+    {
+        GetObjectAttributesRequest request = new GetObjectAttributesRequest("bucket", "object", [ObjectAttribute.ETag, ObjectAttribute.Checksum, ObjectAttribute.ObjectParts])
+        {
+            MaxParts = 10,
+            PartNumberMarker = 2
+        };
+
+        new GetObjectAttributesRequestMarshal().MarshalRequest(request, CreateConfig());
+
+        Assert.Equal(string.Empty, request.QueryParameters[AmzParameters.Attributes]);
+        Assert.Equal("ETag,Checksum,ObjectParts", request.Headers[AmzHeaders.XAmzObjectAttributes]);
+        Assert.Equal("10", request.QueryParameters[AmzParameters.MaxParts]);
+        Assert.Equal("2", request.QueryParameters[AmzParameters.PartNumberMarker]);
+    }
+
+    [Fact]
+    public void GetObjectAttributesParsesAttributesAndParts()
+    {
+        const string xml = """
+                           <GetObjectAttributesResponse><ETag>&quot;etag&quot;</ETag><Checksum><ChecksumCRC32>AAAAAA==</ChecksumCRC32><ChecksumType>COMPOSITE</ChecksumType></Checksum><ObjectSize>123</ObjectSize><StorageClass>STANDARD</StorageClass><ObjectParts><TotalPartsCount>2</TotalPartsCount><PartNumberMarker>1</PartNumberMarker><NextPartNumberMarker>2</NextPartNumberMarker><MaxParts>10</MaxParts><IsTruncated>true</IsTruncated><Part><PartNumber>2</PartNumber><Size>100</Size><ChecksumSHA256>AQIDBA==</ChecksumSHA256></Part></ObjectParts></GetObjectAttributesResponse>
+                           """;
+        GetObjectAttributesResponse response = new GetObjectAttributesResponse();
+
+        using ContentStream content = CreateContent(xml);
+        new GetObjectAttributesResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string> { [AmzHeaders.XAmzVersionId] = "version" }, content);
+
+        Assert.Equal("\"etag\"", response.ETag);
+        Assert.Equal("version", response.VersionId);
+        Assert.Equal(123, response.ObjectSize);
+        Assert.Equal(StorageClass.Standard, response.StorageClass);
+        Assert.Equal(ChecksumType.Composite, response.ChecksumType);
+        Assert.Equal([0, 0, 0, 0], response.ChecksumCrc32);
+        Assert.True(response.IsTruncated);
+        Assert.Equal(2, response.TotalPartsCount);
+        S3ObjectAttributePart part = Assert.Single(response.Parts);
+        Assert.Equal(2, part.PartNumber);
+        Assert.Equal(100, part.Size);
+        Assert.Equal([1, 2, 3, 4], part.ChecksumSha256);
+    }
+
     private static SimpleS3Config CreateConfig() => new SimpleS3Config("Test", "https://s3.example.com");
 
     private static ContentStream CreateContent(string xml)

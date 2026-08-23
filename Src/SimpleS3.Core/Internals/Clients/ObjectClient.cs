@@ -97,6 +97,14 @@ internal sealed class ObjectClient(IObjectOperations operations) : IObjectClient
         return operations.GetObjectAclAsync(req, token);
     }
 
+    public Task<GetObjectAttributesResponse> GetObjectAttributesAsync(string bucketName, string objectKey, IEnumerable<ObjectAttribute> objectAttributes, Action<GetObjectAttributesRequest>? config = null, CancellationToken token = default)
+    {
+        GetObjectAttributesRequest req = new GetObjectAttributesRequest(bucketName, objectKey, objectAttributes);
+        config?.Invoke(req);
+
+        return operations.GetObjectAttributesAsync(req, token);
+    }
+
     public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default)
     {
         GetObjectLegalHoldRequest req = new GetObjectLegalHoldRequest(bucketName, objectKey);
