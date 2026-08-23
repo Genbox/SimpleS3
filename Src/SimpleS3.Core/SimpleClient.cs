@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Abstracts.Transfer;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
@@ -50,6 +51,16 @@ public class SimpleClient : ISimpleClient
 
     public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default) => _objectClient.PutObjectLegalHoldAsync(bucketName, objectKey, lockStatus, config, token);
 
+    public Task<GetObjectTaggingResponse> GetObjectTaggingAsync(string bucketName, string objectKey, Action<GetObjectTaggingRequest>? config = null, CancellationToken token = default) => _objectClient.GetObjectTaggingAsync(bucketName, objectKey, config, token);
+
+    public Task<PutObjectTaggingResponse> PutObjectTaggingAsync(string bucketName, string objectKey, IDictionary<string, string> tags, Action<PutObjectTaggingRequest>? config = null, CancellationToken token = default) => _objectClient.PutObjectTaggingAsync(bucketName, objectKey, tags, config, token);
+
+    public Task<DeleteObjectTaggingResponse> DeleteObjectTaggingAsync(string bucketName, string objectKey, Action<DeleteObjectTaggingRequest>? config = null, CancellationToken token = default) => _objectClient.DeleteObjectTaggingAsync(bucketName, objectKey, config, token);
+
+    public Task<GetObjectRetentionResponse> GetObjectRetentionAsync(string bucketName, string objectKey, Action<GetObjectRetentionRequest>? config = null, CancellationToken token = default) => _objectClient.GetObjectRetentionAsync(bucketName, objectKey, config, token);
+
+    public Task<PutObjectRetentionResponse> PutObjectRetentionAsync(string bucketName, string objectKey, LockMode lockMode, DateTimeOffset retainUntil, Action<PutObjectRetentionRequest>? config = null, CancellationToken token = default) => _objectClient.PutObjectRetentionAsync(bucketName, objectKey, lockMode, retainUntil, config, token);
+
     public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default) => _objectClient.ListObjectVersionsAsync(bucketName, config, token);
 
     public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default) => _bucketClient.CreateBucketAsync(bucketName, config, token);
@@ -78,7 +89,13 @@ public class SimpleClient : ISimpleClient
 
     public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketLifecycleConfigurationAsync(bucketName, rules, config, token);
 
+    public Task<DeleteBucketLifecycleResponse> DeleteBucketLifecycleAsync(string bucketName, Action<DeleteBucketLifecycleRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketLifecycleAsync(bucketName, config, token);
+
     public Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(string bucketName, IEnumerable<S3ServerSideEncryptionRule> rules, Action<PutBucketEncryptionRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketEncryptionAsync(bucketName, rules, config, token);
+
+    public Task<GetBucketEncryptionResponse> GetBucketEncryptionAsync(string bucketName, Action<GetBucketEncryptionRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketEncryptionAsync(bucketName, config, token);
+
+    public Task<DeleteBucketEncryptionResponse> DeleteBucketEncryptionAsync(string bucketName, Action<DeleteBucketEncryptionRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketEncryptionAsync(bucketName, config, token);
 
     public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketVersioningAsync(bucketName, enabled, config, token);
 
@@ -87,6 +104,10 @@ public class SimpleClient : ISimpleClient
     public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketLifecycleConfigurationAsync(bucketName, config, token);
 
     public Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(string bucketName, Action<PutPublicAccessBlockRequest>? config = null, CancellationToken token = default) => _bucketClient.PutPublicAccessBlockAsync(bucketName, config, token);
+
+    public Task<GetPublicAccessBlockResponse> GetPublicAccessBlockAsync(string bucketName, Action<GetPublicAccessBlockRequest>? config = null, CancellationToken token = default) => _bucketClient.GetPublicAccessBlockAsync(bucketName, config, token);
+
+    public Task<DeletePublicAccessBlockResponse> DeletePublicAccessBlockAsync(string bucketName, Action<DeletePublicAccessBlockRequest>? config = null, CancellationToken token = default) => _bucketClient.DeletePublicAccessBlockAsync(bucketName, config, token);
 
     public Task<GetBucketPolicyResponse> GetBucketPolicyAsync(string bucketName, Action<GetBucketPolicyRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketPolicyAsync(bucketName, config, token);
 
@@ -103,6 +124,8 @@ public class SimpleClient : ISimpleClient
     public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default) => _multipartClient.CreateMultipartUploadAsync(bucketName, objectKey, config, token);
 
     public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default) => _multipartClient.UploadPartAsync(bucketName, objectKey, partNumber, uploadId, content, config, token);
+
+    public Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default) => _multipartClient.UploadPartCopyAsync(sourceBucketName, sourceObjectKey, destinationBucketName, destinationObjectKey, partNumber, uploadId, config, token);
 
     public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default) => _multipartClient.ListPartsAsync(bucketName, objectKey, uploadId, config, token);
 

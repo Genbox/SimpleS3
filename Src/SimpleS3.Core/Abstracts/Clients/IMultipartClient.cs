@@ -28,6 +28,8 @@ public interface IMultipartClient
     /// <param name="token">A cancellation token</param>
     Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default);
 
+    Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default);
+
     /// <summary>List the parts of a multipart upload</summary>
     /// <param name="bucketName">Name of the bucket</param>
     /// <param name="objectKey">The key of the object</param>

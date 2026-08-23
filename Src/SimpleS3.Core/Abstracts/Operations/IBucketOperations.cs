@@ -58,11 +58,17 @@ public interface IBucketOperations
     /// </summary>
     Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(PutBucketLifecycleConfigurationRequest request, CancellationToken token = default);
 
+    Task<DeleteBucketLifecycleResponse> DeleteBucketLifecycleAsync(DeleteBucketLifecycleRequest request, CancellationToken token = default);
+
     /// <summary>
     /// Configures default encryption and blocked encryption types for an existing bucket. See
     /// https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketEncryption.html for details.
     /// </summary>
     Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(PutBucketEncryptionRequest request, CancellationToken token = default);
+
+    Task<GetBucketEncryptionResponse> GetBucketEncryptionAsync(GetBucketEncryptionRequest request, CancellationToken token = default);
+
+    Task<DeleteBucketEncryptionResponse> DeleteBucketEncryptionAsync(DeleteBucketEncryptionRequest request, CancellationToken token = default);
 
     /// <summary>
     /// Sets the versioning state of an existing bucket. To set the versioning state, you must be the bucket owner. See
@@ -83,6 +89,10 @@ public interface IBucketOperations
     /// Creates or modifies the PublicAccessBlock configuration for an Amazon S3 bucket. To use this operation, you must have the s3:PutBucketPublicAccessBlock permission.
     /// </summary>
     Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(PutPublicAccessBlockRequest request, CancellationToken token = default);
+
+    Task<GetPublicAccessBlockResponse> GetPublicAccessBlockAsync(GetPublicAccessBlockRequest request, CancellationToken token = default);
+
+    Task<DeletePublicAccessBlockResponse> DeletePublicAccessBlockAsync(DeletePublicAccessBlockRequest request, CancellationToken token = default);
 
     Task<GetBucketPolicyResponse> GetBucketPolicyAsync(GetBucketPolicyRequest request, CancellationToken token = default);
 

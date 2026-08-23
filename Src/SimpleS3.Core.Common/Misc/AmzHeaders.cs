@@ -96,6 +96,7 @@ public static class AmzHeaders
     public const string XAmzCopySourceIfModifiedSince = "x-amz-copy-source-if-modified-since";
     public const string XAmzCopySourceIfNoneMatch = "x-amz-copy-source-if-none-match";
     public const string XAmzCopySourceIfUnmodifiedSince = "x-amz-copy-source-if-unmodified-since";
+    public const string XAmzCopySourceRange = "x-amz-copy-source-range";
     public const string XAmzCopySourceSseCustomerAlgorithm = "x-amz-copy-source-server-side-encryption-customer-algorithm";
     public const string XAmzCopySourceSseCustomerKey = "x-amz-copy-source-server-side-encryption-customer-key";
     public const string XAmzCopySourceSseCustomerKeyMd5 = "x-amz-copy-source-server-side-encryption-customer-key-MD5";

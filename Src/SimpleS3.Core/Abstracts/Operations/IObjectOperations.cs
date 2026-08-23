@@ -48,4 +48,14 @@ public interface IObjectOperations
 
     /// <summary>Applies a Legal Hold configuration to the specified object. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectLegalHold.html for details</summary>
     Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(PutObjectLegalHoldRequest request, CancellationToken token = default);
+
+    Task<GetObjectTaggingResponse> GetObjectTaggingAsync(GetObjectTaggingRequest request, CancellationToken token = default);
+
+    Task<PutObjectTaggingResponse> PutObjectTaggingAsync(PutObjectTaggingRequest request, CancellationToken token = default);
+
+    Task<DeleteObjectTaggingResponse> DeleteObjectTaggingAsync(DeleteObjectTaggingRequest request, CancellationToken token = default);
+
+    Task<GetObjectRetentionResponse> GetObjectRetentionAsync(GetObjectRetentionRequest request, CancellationToken token = default);
+
+    Task<PutObjectRetentionResponse> PutObjectRetentionAsync(PutObjectRetentionRequest request, CancellationToken token = default);
 }

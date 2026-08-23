@@ -59,4 +59,14 @@ internal sealed class ObjectOperations(IRequestHandler handler, IEnumerable<IReq
     public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(GetObjectLegalHoldRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetObjectLegalHoldRequest, GetObjectLegalHoldResponse>(request, token);
 
     public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(PutObjectLegalHoldRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutObjectLegalHoldRequest, PutObjectLegalHoldResponse>(request, token);
+
+    public Task<GetObjectTaggingResponse> GetObjectTaggingAsync(GetObjectTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetObjectTaggingRequest, GetObjectTaggingResponse>(request, token);
+
+    public Task<PutObjectTaggingResponse> PutObjectTaggingAsync(PutObjectTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutObjectTaggingRequest, PutObjectTaggingResponse>(request, token);
+
+    public Task<DeleteObjectTaggingResponse> DeleteObjectTaggingAsync(DeleteObjectTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteObjectTaggingRequest, DeleteObjectTaggingResponse>(request, token);
+
+    public Task<GetObjectRetentionResponse> GetObjectRetentionAsync(GetObjectRetentionRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetObjectRetentionRequest, GetObjectRetentionResponse>(request, token);
+
+    public Task<PutObjectRetentionResponse> PutObjectRetentionAsync(PutObjectRetentionRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutObjectRetentionRequest, PutObjectRetentionResponse>(request, token);
 }

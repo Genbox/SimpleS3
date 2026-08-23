@@ -17,6 +17,8 @@ public interface IMultipartOperations
     /// <summary>Upload a part to a multipart upload See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_UploadPart.html for details</summary>
     Task<UploadPartResponse> UploadPartAsync(UploadPartRequest request, CancellationToken token = default);
 
+    Task<UploadPartCopyResponse> UploadPartCopyAsync(UploadPartCopyRequest request, CancellationToken token = default);
+
     /// <summary>List all parts as part of a multipart upload See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_ListParts.html for details</summary>
     Task<ListPartsResponse> ListPartsAsync(ListPartsRequest request, CancellationToken token = default);
 

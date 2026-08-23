@@ -1,5 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -110,5 +111,45 @@ internal sealed class ObjectClient(IObjectOperations operations) : IObjectClient
         config?.Invoke(req);
 
         return operations.PutObjectLegalHoldAsync(req, token);
+    }
+
+    public Task<GetObjectTaggingResponse> GetObjectTaggingAsync(string bucketName, string objectKey, Action<GetObjectTaggingRequest>? config = null, CancellationToken token = default)
+    {
+        GetObjectTaggingRequest req = new GetObjectTaggingRequest(bucketName, objectKey);
+        config?.Invoke(req);
+
+        return operations.GetObjectTaggingAsync(req, token);
+    }
+
+    public Task<PutObjectTaggingResponse> PutObjectTaggingAsync(string bucketName, string objectKey, IDictionary<string, string> tags, Action<PutObjectTaggingRequest>? config = null, CancellationToken token = default)
+    {
+        PutObjectTaggingRequest req = new PutObjectTaggingRequest(bucketName, objectKey, tags);
+        config?.Invoke(req);
+
+        return operations.PutObjectTaggingAsync(req, token);
+    }
+
+    public Task<DeleteObjectTaggingResponse> DeleteObjectTaggingAsync(string bucketName, string objectKey, Action<DeleteObjectTaggingRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteObjectTaggingRequest req = new DeleteObjectTaggingRequest(bucketName, objectKey);
+        config?.Invoke(req);
+
+        return operations.DeleteObjectTaggingAsync(req, token);
+    }
+
+    public Task<GetObjectRetentionResponse> GetObjectRetentionAsync(string bucketName, string objectKey, Action<GetObjectRetentionRequest>? config = null, CancellationToken token = default)
+    {
+        GetObjectRetentionRequest req = new GetObjectRetentionRequest(bucketName, objectKey);
+        config?.Invoke(req);
+
+        return operations.GetObjectRetentionAsync(req, token);
+    }
+
+    public Task<PutObjectRetentionResponse> PutObjectRetentionAsync(string bucketName, string objectKey, LockMode lockMode, DateTimeOffset retainUntil, Action<PutObjectRetentionRequest>? config = null, CancellationToken token = default)
+    {
+        PutObjectRetentionRequest req = new PutObjectRetentionRequest(bucketName, objectKey, lockMode, retainUntil);
+        config?.Invoke(req);
+
+        return operations.PutObjectRetentionAsync(req, token);
     }
 }

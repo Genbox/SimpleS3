@@ -24,6 +24,14 @@ internal sealed class MultipartClient(IMultipartOperations operations) : IMultip
         return operations.UploadPartAsync(req, token);
     }
 
+    public Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default)
+    {
+        UploadPartCopyRequest req = new UploadPartCopyRequest(sourceBucketName, sourceObjectKey, destinationBucketName, destinationObjectKey, uploadId, partNumber);
+        config?.Invoke(req);
+
+        return operations.UploadPartCopyAsync(req, token);
+    }
+
     public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default)
     {
         ListPartsRequest req = new ListPartsRequest(bucketName, objectKey, uploadId);

@@ -32,6 +32,8 @@ internal sealed class MultipartOperations : IMultipartOperations
 
     public Task<UploadPartResponse> UploadPartAsync(UploadPartRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<UploadPartRequest, UploadPartResponse>(request, token);
 
+    public Task<UploadPartCopyResponse> UploadPartCopyAsync(UploadPartCopyRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<UploadPartCopyRequest, UploadPartCopyResponse>(request, token);
+
     public Task<ListPartsResponse> ListPartsAsync(ListPartsRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<ListPartsRequest, ListPartsResponse>(request, token);
 
     public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(CompleteMultipartUploadRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<CompleteMultipartUploadRequest, CompleteMultipartUploadResponse>(request, token);

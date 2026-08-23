@@ -164,6 +164,17 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
         Task<PutBucketLifecycleConfigurationResponse> ActionAsync(PutBucketLifecycleConfigurationRequest request) => BucketOperations.PutBucketLifecycleConfigurationAsync(request, token);
     }
 
+    public Task<DeleteBucketLifecycleResponse> DeleteBucketLifecycleAsync(string bucketName, Action<DeleteBucketLifecycleRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<DeleteBucketLifecycleRequest>.Shared.RentAndUseAsync(Setup, request => BucketOperations.DeleteBucketLifecycleAsync(request, token));
+
+        void Setup(DeleteBucketLifecycleRequest req)
+        {
+            req.Initialize(bucketName);
+            config?.Invoke(req);
+        }
+    }
+
     public Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(string bucketName, IEnumerable<S3ServerSideEncryptionRule> rules, Action<PutBucketEncryptionRequest>? config = null, CancellationToken token = default)
     {
         return ObjectPool<PutBucketEncryptionRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
@@ -176,6 +187,28 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
         }
 
         Task<PutBucketEncryptionResponse> ActionAsync(PutBucketEncryptionRequest request) => BucketOperations.PutBucketEncryptionAsync(request, token);
+    }
+
+    public Task<GetBucketEncryptionResponse> GetBucketEncryptionAsync(string bucketName, Action<GetBucketEncryptionRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<GetBucketEncryptionRequest>.Shared.RentAndUseAsync(Setup, request => BucketOperations.GetBucketEncryptionAsync(request, token));
+
+        void Setup(GetBucketEncryptionRequest req)
+        {
+            req.Initialize(bucketName);
+            config?.Invoke(req);
+        }
+    }
+
+    public Task<DeleteBucketEncryptionResponse> DeleteBucketEncryptionAsync(string bucketName, Action<DeleteBucketEncryptionRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<DeleteBucketEncryptionRequest>.Shared.RentAndUseAsync(Setup, request => BucketOperations.DeleteBucketEncryptionAsync(request, token));
+
+        void Setup(DeleteBucketEncryptionRequest req)
+        {
+            req.Initialize(bucketName);
+            config?.Invoke(req);
+        }
     }
 
     public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
@@ -228,6 +261,28 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
         }
 
         Task<PutPublicAccessBlockResponse> ActionAsync(PutPublicAccessBlockRequest request) => BucketOperations.PutPublicAccessBlockAsync(request, token);
+    }
+
+    public Task<GetPublicAccessBlockResponse> GetPublicAccessBlockAsync(string bucketName, Action<GetPublicAccessBlockRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<GetPublicAccessBlockRequest>.Shared.RentAndUseAsync(Setup, request => BucketOperations.GetPublicAccessBlockAsync(request, token));
+
+        void Setup(GetPublicAccessBlockRequest req)
+        {
+            req.Initialize(bucketName);
+            config?.Invoke(req);
+        }
+    }
+
+    public Task<DeletePublicAccessBlockResponse> DeletePublicAccessBlockAsync(string bucketName, Action<DeletePublicAccessBlockRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<DeletePublicAccessBlockRequest>.Shared.RentAndUseAsync(Setup, request => BucketOperations.DeletePublicAccessBlockAsync(request, token));
+
+        void Setup(DeletePublicAccessBlockRequest req)
+        {
+            req.Initialize(bucketName);
+            config?.Invoke(req);
+        }
     }
 
     public Task<GetBucketPolicyResponse> GetBucketPolicyAsync(string bucketName, Action<GetBucketPolicyRequest>? config = null, CancellationToken token = default)

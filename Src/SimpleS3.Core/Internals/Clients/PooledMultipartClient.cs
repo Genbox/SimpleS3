@@ -37,6 +37,19 @@ internal sealed class PooledMultipartClient(IMultipartOperations operations) : I
         Task<UploadPartResponse> ActionAsync(UploadPartRequest request) => MultipartOperations.UploadPartAsync(request, token);
     }
 
+    public Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<UploadPartCopyRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+
+        void Setup(UploadPartCopyRequest req)
+        {
+            req.Initialize(sourceBucketName, sourceObjectKey, destinationBucketName, destinationObjectKey, uploadId, partNumber);
+            config?.Invoke(req);
+        }
+
+        Task<UploadPartCopyResponse> ActionAsync(UploadPartCopyRequest request) => MultipartOperations.UploadPartCopyAsync(request, token);
+    }
+
     public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default)
     {
         return ObjectPool<ListPartsRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);

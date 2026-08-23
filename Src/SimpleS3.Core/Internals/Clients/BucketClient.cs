@@ -104,12 +104,36 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         return operations.PutBucketLifecycleConfigurationAsync(request, token);
     }
 
+    public Task<DeleteBucketLifecycleResponse> DeleteBucketLifecycleAsync(string bucketName, Action<DeleteBucketLifecycleRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketLifecycleRequest request = new DeleteBucketLifecycleRequest(bucketName);
+        config?.Invoke(request);
+
+        return operations.DeleteBucketLifecycleAsync(request, token);
+    }
+
     public Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(string bucketName, IEnumerable<S3ServerSideEncryptionRule> rules, Action<PutBucketEncryptionRequest>? config = null, CancellationToken token = default)
     {
         PutBucketEncryptionRequest request = new PutBucketEncryptionRequest(bucketName, rules);
         config?.Invoke(request);
 
         return operations.PutBucketEncryptionAsync(request, token);
+    }
+
+    public Task<GetBucketEncryptionResponse> GetBucketEncryptionAsync(string bucketName, Action<GetBucketEncryptionRequest>? config = null, CancellationToken token = default)
+    {
+        GetBucketEncryptionRequest request = new GetBucketEncryptionRequest(bucketName);
+        config?.Invoke(request);
+
+        return operations.GetBucketEncryptionAsync(request, token);
+    }
+
+    public Task<DeleteBucketEncryptionResponse> DeleteBucketEncryptionAsync(string bucketName, Action<DeleteBucketEncryptionRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketEncryptionRequest request = new DeleteBucketEncryptionRequest(bucketName);
+        config?.Invoke(request);
+
+        return operations.DeleteBucketEncryptionAsync(request, token);
     }
 
     public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default)
@@ -142,6 +166,22 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         config?.Invoke(request);
 
         return operations.PutPublicAccessBlockAsync(request, token);
+    }
+
+    public Task<GetPublicAccessBlockResponse> GetPublicAccessBlockAsync(string bucketName, Action<GetPublicAccessBlockRequest>? config = null, CancellationToken token = default)
+    {
+        GetPublicAccessBlockRequest request = new GetPublicAccessBlockRequest(bucketName);
+        config?.Invoke(request);
+
+        return operations.GetPublicAccessBlockAsync(request, token);
+    }
+
+    public Task<DeletePublicAccessBlockResponse> DeletePublicAccessBlockAsync(string bucketName, Action<DeletePublicAccessBlockRequest>? config = null, CancellationToken token = default)
+    {
+        DeletePublicAccessBlockRequest request = new DeletePublicAccessBlockRequest(bucketName);
+        config?.Invoke(request);
+
+        return operations.DeletePublicAccessBlockAsync(request, token);
     }
 
     public Task<GetBucketPolicyResponse> GetBucketPolicyAsync(string bucketName, Action<GetBucketPolicyRequest>? config = null, CancellationToken token = default)

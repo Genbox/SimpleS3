@@ -31,7 +31,13 @@ internal sealed class BucketOperations(IRequestHandler handler) : IBucketOperati
 
     public Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(PutBucketLifecycleConfigurationRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketLifecycleConfigurationRequest, PutBucketLifecycleConfigurationResponse>(request, token);
 
+    public Task<DeleteBucketLifecycleResponse> DeleteBucketLifecycleAsync(DeleteBucketLifecycleRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketLifecycleRequest, DeleteBucketLifecycleResponse>(request, token);
+
     public Task<PutBucketEncryptionResponse> PutBucketEncryptionAsync(PutBucketEncryptionRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketEncryptionRequest, PutBucketEncryptionResponse>(request, token);
+
+    public Task<GetBucketEncryptionResponse> GetBucketEncryptionAsync(GetBucketEncryptionRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketEncryptionRequest, GetBucketEncryptionResponse>(request, token);
+
+    public Task<DeleteBucketEncryptionResponse> DeleteBucketEncryptionAsync(DeleteBucketEncryptionRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketEncryptionRequest, DeleteBucketEncryptionResponse>(request, token);
 
     public Task<PutBucketVersioningResponse> PutBucketVersioningAsync(PutBucketVersioningRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketVersioningRequest, PutBucketVersioningResponse>(request, token);
 
@@ -40,6 +46,10 @@ internal sealed class BucketOperations(IRequestHandler handler) : IBucketOperati
     public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(GetBucketLifecycleConfigurationRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketLifecycleConfigurationRequest, GetBucketLifecycleConfigurationResponse>(request, token);
 
     public Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(PutPublicAccessBlockRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutPublicAccessBlockRequest, PutPublicAccessBlockResponse>(request, token);
+
+    public Task<GetPublicAccessBlockResponse> GetPublicAccessBlockAsync(GetPublicAccessBlockRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetPublicAccessBlockRequest, GetPublicAccessBlockResponse>(request, token);
+
+    public Task<DeletePublicAccessBlockResponse> DeletePublicAccessBlockAsync(DeletePublicAccessBlockRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeletePublicAccessBlockRequest, DeletePublicAccessBlockResponse>(request, token);
 
     public Task<GetBucketPolicyResponse> GetBucketPolicyAsync(GetBucketPolicyRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketPolicyRequest, GetBucketPolicyResponse>(request, token);
 

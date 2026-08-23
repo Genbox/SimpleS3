@@ -1,5 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -153,6 +154,61 @@ internal class PooledObjectClient(IObjectOperations operations) : IObjectClient
         void Setup(ListObjectVersionsRequest req)
         {
             req.Initialize(bucketName);
+            config?.Invoke(req);
+        }
+    }
+
+    public Task<GetObjectTaggingResponse> GetObjectTaggingAsync(string bucketName, string objectKey, Action<GetObjectTaggingRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<GetObjectTaggingRequest>.Shared.RentAndUseAsync(Setup, request => ObjectOperations.GetObjectTaggingAsync(request, token));
+
+        void Setup(GetObjectTaggingRequest req)
+        {
+            req.Initialize(bucketName, objectKey);
+            config?.Invoke(req);
+        }
+    }
+
+    public Task<PutObjectTaggingResponse> PutObjectTaggingAsync(string bucketName, string objectKey, IDictionary<string, string> tags, Action<PutObjectTaggingRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<PutObjectTaggingRequest>.Shared.RentAndUseAsync(Setup, request => ObjectOperations.PutObjectTaggingAsync(request, token));
+
+        void Setup(PutObjectTaggingRequest req)
+        {
+            req.Initialize(bucketName, objectKey, tags);
+            config?.Invoke(req);
+        }
+    }
+
+    public Task<DeleteObjectTaggingResponse> DeleteObjectTaggingAsync(string bucketName, string objectKey, Action<DeleteObjectTaggingRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<DeleteObjectTaggingRequest>.Shared.RentAndUseAsync(Setup, request => ObjectOperations.DeleteObjectTaggingAsync(request, token));
+
+        void Setup(DeleteObjectTaggingRequest req)
+        {
+            req.Initialize(bucketName, objectKey);
+            config?.Invoke(req);
+        }
+    }
+
+    public Task<GetObjectRetentionResponse> GetObjectRetentionAsync(string bucketName, string objectKey, Action<GetObjectRetentionRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<GetObjectRetentionRequest>.Shared.RentAndUseAsync(Setup, request => ObjectOperations.GetObjectRetentionAsync(request, token));
+
+        void Setup(GetObjectRetentionRequest req)
+        {
+            req.Initialize(bucketName, objectKey);
+            config?.Invoke(req);
+        }
+    }
+
+    public Task<PutObjectRetentionResponse> PutObjectRetentionAsync(string bucketName, string objectKey, LockMode lockMode, DateTimeOffset retainUntil, Action<PutObjectRetentionRequest>? config = null, CancellationToken token = default)
+    {
+        return ObjectPool<PutObjectRetentionRequest>.Shared.RentAndUseAsync(Setup, request => ObjectOperations.PutObjectRetentionAsync(request, token));
+
+        void Setup(PutObjectRetentionRequest req)
+        {
+            req.Initialize(bucketName, objectKey, lockMode, retainUntil);
             config?.Invoke(req);
         }
     }
