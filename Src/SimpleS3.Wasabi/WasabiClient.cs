@@ -78,6 +78,9 @@ public sealed class WasabiClient : ClientBase, ISimpleClient
     public Task<GetBucketRequestPaymentResponse> GetBucketRequestPaymentAsync(string bucketName, Action<GetBucketRequestPaymentRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
     public Task<PutBucketRequestPaymentResponse> PutBucketRequestPaymentAsync(string bucketName, RequestPaymentPayer payer, Action<PutBucketRequestPaymentRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
     public Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(string bucketName, Action<GetBucketPolicyStatusRequest>? config = null, CancellationToken token = default) => Client.GetBucketPolicyStatusAsync(bucketName, config, token);
+    public Task<GetBucketWebsiteResponse> GetBucketWebsiteAsync(string bucketName, Action<GetBucketWebsiteRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
+    public Task<PutBucketWebsiteResponse> PutBucketWebsiteAsync(string bucketName, S3WebsiteConfiguration websiteConfiguration, Action<PutBucketWebsiteRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
+    public Task<DeleteBucketWebsiteResponse> DeleteBucketWebsiteAsync(string bucketName, Action<DeleteBucketWebsiteRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
 
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default) => Client.PutBucketTaggingAsync(bucketName, tags, config, token);
 

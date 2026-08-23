@@ -79,6 +79,12 @@ public interface IBucketClient
 
     Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(string bucketName, Action<GetBucketPolicyStatusRequest>? config = null, CancellationToken token = default);
 
+    Task<GetBucketWebsiteResponse> GetBucketWebsiteAsync(string bucketName, Action<GetBucketWebsiteRequest>? config = null, CancellationToken token = default);
+
+    Task<PutBucketWebsiteResponse> PutBucketWebsiteAsync(string bucketName, S3WebsiteConfiguration websiteConfiguration, Action<PutBucketWebsiteRequest>? config = null, CancellationToken token = default);
+
+    Task<DeleteBucketWebsiteResponse> DeleteBucketWebsiteAsync(string bucketName, Action<DeleteBucketWebsiteRequest>? config = null, CancellationToken token = default);
+
     /// <summary>Set tags associated with the bucket. This can be used to track bucket usage on your invoices.</summary>
     /// <param name="bucketName">The bucket name</param>
     /// <param name="tags">The tags</param>

@@ -117,6 +117,48 @@ public class MissingS3OperationMarshalTests
     }
 
     [Fact]
+    public void PutBucketWebsiteWritesWebsiteXml()
+    {
+        S3WebsiteConfiguration website = new S3WebsiteConfiguration
+        {
+            IndexDocumentSuffix = "index.html",
+            ErrorDocumentKey = "error.html"
+        };
+        website.RoutingRules.Add(new S3RoutingRule(new S3Redirect { ReplaceKeyWith = "docs/index.html", HttpRedirectCode = "302" }) { Condition = new S3RoutingRuleCondition { KeyPrefixEquals = "docs/" } });
+        PutBucketWebsiteRequest request = new PutBucketWebsiteRequest("bucket", website);
+
+        using Stream stream = new PutBucketWebsiteRequestMarshal().MarshalRequest(request, CreateConfig());
+        using StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+
+        string xml = reader.ReadToEnd();
+        Assert.Equal(string.Empty, request.QueryParameters[AmzParameters.Website]);
+        Assert.Contains("<Suffix>index.html</Suffix>", xml, StringComparison.Ordinal);
+        Assert.Contains("<Key>error.html</Key>", xml, StringComparison.Ordinal);
+        Assert.Contains("<KeyPrefixEquals>docs/</KeyPrefixEquals>", xml, StringComparison.Ordinal);
+        Assert.Contains("<ReplaceKeyWith>docs/index.html</ReplaceKeyWith>", xml, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GetBucketWebsiteParsesWebsiteConfiguration()
+    {
+        const string xml = """
+                           <WebsiteConfiguration><IndexDocument><Suffix>index.html</Suffix></IndexDocument><ErrorDocument><Key>error.html</Key></ErrorDocument><RoutingRules><RoutingRule><Condition><HttpErrorCodeReturnedEquals>404</HttpErrorCodeReturnedEquals></Condition><Redirect><HostName>example.com</HostName><Protocol>https</Protocol><ReplaceKeyPrefixWith>errors/</ReplaceKeyPrefixWith></Redirect></RoutingRule></RoutingRules></WebsiteConfiguration>
+                           """;
+        GetBucketWebsiteResponse response = new GetBucketWebsiteResponse();
+
+        using ContentStream content = CreateContent(xml);
+        new GetBucketWebsiteResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(), content);
+
+        Assert.Equal("index.html", response.WebsiteConfiguration.IndexDocumentSuffix);
+        Assert.Equal("error.html", response.WebsiteConfiguration.ErrorDocumentKey);
+        S3RoutingRule rule = Assert.Single(response.WebsiteConfiguration.RoutingRules);
+        Assert.Equal("404", rule.Condition?.HttpErrorCodeReturnedEquals);
+        Assert.Equal("example.com", rule.Redirect.HostName);
+        Assert.Equal("https", rule.Redirect.Protocol);
+        Assert.Equal("errors/", rule.Redirect.ReplaceKeyPrefixWith);
+    }
+
+    [Fact]
     public void PutObjectTaggingWritesTaggingXml()
     {
         PutObjectTaggingRequest request = new PutObjectTaggingRequest("bucket", "object", new Dictionary<string, string> { ["Key"] = "Value" });

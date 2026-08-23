@@ -48,6 +48,7 @@ public static class AmzParameters
     public const string VersionIdMarker = "version-id-marker";
     public const string Policy = "policy";
     public const string PolicyStatus = "policyStatus";
+    public const string Website = "website";
 
     #region Presigning
 

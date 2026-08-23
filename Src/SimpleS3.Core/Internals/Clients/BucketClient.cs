@@ -149,6 +149,27 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         return operations.GetBucketPolicyStatusAsync(request, token);
     }
 
+    public Task<GetBucketWebsiteResponse> GetBucketWebsiteAsync(string bucketName, Action<GetBucketWebsiteRequest>? config = null, CancellationToken token = default)
+    {
+        GetBucketWebsiteRequest request = new GetBucketWebsiteRequest(bucketName);
+        config?.Invoke(request);
+        return operations.GetBucketWebsiteAsync(request, token);
+    }
+
+    public Task<PutBucketWebsiteResponse> PutBucketWebsiteAsync(string bucketName, S3WebsiteConfiguration websiteConfiguration, Action<PutBucketWebsiteRequest>? config = null, CancellationToken token = default)
+    {
+        PutBucketWebsiteRequest request = new PutBucketWebsiteRequest(bucketName, websiteConfiguration);
+        config?.Invoke(request);
+        return operations.PutBucketWebsiteAsync(request, token);
+    }
+
+    public Task<DeleteBucketWebsiteResponse> DeleteBucketWebsiteAsync(string bucketName, Action<DeleteBucketWebsiteRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteBucketWebsiteRequest request = new DeleteBucketWebsiteRequest(bucketName);
+        config?.Invoke(request);
+        return operations.DeleteBucketWebsiteAsync(request, token);
+    }
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
     {
         PutBucketTaggingRequest request = new PutBucketTaggingRequest(bucketName, tags);

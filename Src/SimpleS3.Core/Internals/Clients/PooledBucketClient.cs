@@ -123,6 +123,12 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
 
     public Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(string bucketName, Action<GetBucketPolicyStatusRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketPolicyStatusRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.GetBucketPolicyStatusAsync(req, token));
 
+    public Task<GetBucketWebsiteResponse> GetBucketWebsiteAsync(string bucketName, Action<GetBucketWebsiteRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketWebsiteRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.GetBucketWebsiteAsync(req, token));
+
+    public Task<PutBucketWebsiteResponse> PutBucketWebsiteAsync(string bucketName, S3WebsiteConfiguration websiteConfiguration, Action<PutBucketWebsiteRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketWebsiteRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, websiteConfiguration); config?.Invoke(req); }, req => BucketOperations.PutBucketWebsiteAsync(req, token));
+
+    public Task<DeleteBucketWebsiteResponse> DeleteBucketWebsiteAsync(string bucketName, Action<DeleteBucketWebsiteRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketWebsiteRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.DeleteBucketWebsiteAsync(req, token));
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
     {
         return ObjectPool<PutBucketTaggingRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);

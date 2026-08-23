@@ -81,6 +81,9 @@ public sealed class GenericS3Client : ClientBase, ISimpleClient
     public Task<GetBucketRequestPaymentResponse> GetBucketRequestPaymentAsync(string bucketName, Action<GetBucketRequestPaymentRequest>? config = null, CancellationToken token = default) => Client.GetBucketRequestPaymentAsync(bucketName, config, token);
     public Task<PutBucketRequestPaymentResponse> PutBucketRequestPaymentAsync(string bucketName, RequestPaymentPayer payer, Action<PutBucketRequestPaymentRequest>? config = null, CancellationToken token = default) => Client.PutBucketRequestPaymentAsync(bucketName, payer, config, token);
     public Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(string bucketName, Action<GetBucketPolicyStatusRequest>? config = null, CancellationToken token = default) => Client.GetBucketPolicyStatusAsync(bucketName, config, token);
+    public Task<GetBucketWebsiteResponse> GetBucketWebsiteAsync(string bucketName, Action<GetBucketWebsiteRequest>? config = null, CancellationToken token = default) => Client.GetBucketWebsiteAsync(bucketName, config, token);
+    public Task<PutBucketWebsiteResponse> PutBucketWebsiteAsync(string bucketName, S3WebsiteConfiguration websiteConfiguration, Action<PutBucketWebsiteRequest>? config = null, CancellationToken token = default) => Client.PutBucketWebsiteAsync(bucketName, websiteConfiguration, config, token);
+    public Task<DeleteBucketWebsiteResponse> DeleteBucketWebsiteAsync(string bucketName, Action<DeleteBucketWebsiteRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketWebsiteAsync(bucketName, config, token);
 
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default) => Client.PutBucketTaggingAsync(bucketName, tags, config, token);
 
