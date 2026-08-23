@@ -28,7 +28,8 @@ public static class StreamExtensions
         if (dir != null && !Directory.Exists(dir))
             Directory.CreateDirectory(dir);
 
-        using FileStream fs = File.OpenWrite(file);
+        // S3-006: Create truncates an existing destination so stale trailing bytes cannot remain.
+        using FileStream fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.None);
         await stream.CopyToAsync(fs, 81920, token).ConfigureAwait(false);
     }
 }

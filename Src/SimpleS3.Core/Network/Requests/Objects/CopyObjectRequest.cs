@@ -1,5 +1,6 @@
 using Genbox.HttpBuilders;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
@@ -12,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// Creates a copy of an object that is already stored in Amazon S3. When copying an object, you can preserve all metadata (default) or specify new metadata. However, the ACL
 /// is not preserved and is set to private for the user making the request. To override the default ACL setting, specify a new ACL when generating a copy request.
 /// </summary>
-public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey, IHasLegalHold
+public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey, IHasLegalHold, IAutoMapConfig
 {
     private byte[]? _sseCustomerKey;
 
@@ -84,6 +85,9 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
     public TagBuilder Tags { get; }
     public string? VersionId { get; set; }
     public string? WebsiteRedirectLocation { get; set; }
+
+    // S3-003: Generic version mapping would incorrectly put the source version on the destination query.
+    public Func<Type, bool> AutoMapDisabledFor => type => type == typeof(IHasVersionId);
 
     internal void Initialize(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey)
     {

@@ -12,10 +12,13 @@ internal sealed class GetPublicAccessBlockResponseMarshal : IResponseMarshal<Get
     {
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
 
-        while (reader.Read())
+        while (!reader.EOF)
         {
             if (!reader.IsStartElement())
+            {
+                reader.Read();
                 continue;
+            }
 
             switch (reader.Name)
             {
@@ -30,6 +33,9 @@ internal sealed class GetPublicAccessBlockResponseMarshal : IResponseMarshal<Get
                     break;
                 case "RestrictPublicBuckets":
                     response.RestrictPublicBuckets = ValueHelper.ParseBool(reader.ReadElementContentAsString());
+                    break;
+                default:
+                    reader.Read();
                     break;
             }
         }

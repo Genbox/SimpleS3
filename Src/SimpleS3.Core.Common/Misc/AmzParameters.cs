@@ -55,6 +55,11 @@ public static class AmzParameters
     public const string Metrics = "metrics";
     public const string IntelligentTiering = "intelligent-tiering";
     public const string Replication = "replication";
+    public const string Annotation = "annotation";
+    public const string AnnotationName = "annotationName";
+    public const string AnnotationPrefix = "annotation-prefix";
+    public const string MaxAnnotationResults = "max-annotation-results";
+    public const string MetadataAnnotationTable = "metadataAnnotationTable";
 
     #region Presigning
 

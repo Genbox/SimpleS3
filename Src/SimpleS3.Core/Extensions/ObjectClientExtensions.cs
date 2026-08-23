@@ -108,8 +108,7 @@ public static class ObjectClientExtensions
                 {
                     string cToken = response.NextContinuationToken;
 
-                    if (response.EncodingType == EncodingType.Url)
-                        cToken = HttpUtility.UrlDecode(cToken);
+                    // S3-007: Continuation tokens are opaque and must be replayed byte-for-byte.
 
                     responseTask = client.ListObjectsAsync(bucketName, req =>
                     {
@@ -197,13 +196,16 @@ public static class ObjectClientExtensions
                 if (response.IsTruncated)
                 {
                     string keyMarker = response.NextKeyMarker;
+                    string versionIdMarker = response.NextVersionIdMarker;
 
                     if (response.EncodingType == EncodingType.Url)
                         keyMarker = HttpUtility.UrlDecode(keyMarker);
 
                     responseTask = client.ListObjectVersionsAsync(bucketName, req =>
                     {
+                        // DPR-037: Version listings must advance both key-marker and version-id-marker.
                         req.KeyMarker = keyMarker;
+                        req.VersionIdMarker = versionIdMarker;
                         configure?.Invoke(req);
                     }, prefetchCancellation.Token);
                 }
@@ -318,8 +320,7 @@ public static class ObjectClientExtensions
                 {
                     string cToken = response.NextContinuationToken;
 
-                    if (response.EncodingType == EncodingType.Url)
-                        cToken = HttpUtility.UrlDecode(cToken);
+                    // S3-007: Continuation tokens are opaque and must be replayed byte-for-byte.
 
                     responseTask = client.ListObjectsAsync(bucketName, req =>
                     {
@@ -387,13 +388,16 @@ public static class ObjectClientExtensions
                 if (response.IsTruncated)
                 {
                     string keyMarker = response.NextKeyMarker;
+                    string versionIdMarker = response.NextVersionIdMarker;
 
                     if (response.EncodingType == EncodingType.Url)
                         keyMarker = HttpUtility.UrlDecode(keyMarker);
 
                     responseTask = client.ListObjectVersionsAsync(bucketName, req =>
                     {
+                        // DPR-037: Version listings must advance both key-marker and version-id-marker.
                         req.KeyMarker = keyMarker;
+                        req.VersionIdMarker = versionIdMarker;
                         configure?.Invoke(req);
                     }, prefetchCancellation.Token);
                 }

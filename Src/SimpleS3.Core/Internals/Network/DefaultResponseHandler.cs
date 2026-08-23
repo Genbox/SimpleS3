@@ -66,21 +66,8 @@ public class DefaultResponseHandler : IResponseHandler
         response.ResponseId = headers.GetOptionalValue(AmzHeaders.XAmzId2);
         response.RequestId = headers.GetOptionalValue(AmzHeaders.XAmzRequestId);
 
-        // https://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
-        response.IsSuccess = !(statusCode == 403 //Forbidden
-                               || statusCode == 400 //BadRequest
-                               || statusCode == 500 //InternalServerError
-                               || statusCode == 416 //RequestedRangeNotSatisfiable
-                               || statusCode == 405 //MethodNotAllowed
-                               || statusCode == 411 //LengthRequired
-                               || statusCode == 404 //NotFound
-                               || statusCode == 501 //NotImplemented
-                               || statusCode == 504 //GatewayTimeout
-                               || statusCode == 301 //MovedPermanently
-                               || statusCode == 412 //PreconditionFailed
-                               || statusCode == 307 //TemporaryRedirect
-                               || statusCode == 409 //Conflict
-                               || statusCode == 503); //ServiceUnavailable
+        // S3-001: HTTP success is strictly the inclusive 200-299 range.
+        response.IsSuccess = statusCode >= 200 && statusCode < 300;
 
         ContentStream? responseStream = httpResp.Content;
 

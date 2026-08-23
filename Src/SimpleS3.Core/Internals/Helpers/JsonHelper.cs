@@ -9,6 +9,8 @@ internal static class JsonHelper
     {
         //We build JSON here ourselves
         StringBuilder sb = StringBuilderPool.Shared.Rent(dict.Count * 15);
+        // S3-016: A KMS encryption context is a JSON object, not an unwrapped member list.
+        sb.Append('{');
 
         int count = dict.Count;
 
@@ -24,6 +26,7 @@ internal static class JsonHelper
                 sb.Append(',');
         }
 
+        sb.Append('}');
         return StringBuilderPool.Shared.ReturnString(sb);
     }
 

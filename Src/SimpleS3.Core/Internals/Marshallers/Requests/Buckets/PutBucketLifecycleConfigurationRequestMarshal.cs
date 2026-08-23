@@ -35,7 +35,11 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
                 writer.WriteStartElement("Expiration");
 
                 if (rule.Expiration.ExpireOnDate.HasValue)
-                    writer.WriteElement("Date", ValueHelper.DateToString(rule.Expiration.ExpireOnDate.Value.Date, DateTimeFormat.Iso8601DateTimeExt));
+                {
+                    DateTimeOffset value = rule.Expiration.ExpireOnDate.Value;
+                    DateTimeOffset expirationDate = new DateTimeOffset(value.Year, value.Month, value.Day, 0, 0, 0, TimeSpan.Zero);
+                    writer.WriteElement("Date", ValueHelper.DateToString(expirationDate, DateTimeFormat.Iso8601DateTimeExt));
+                }
 
                 if (rule.Expiration.ExpireAfterDays.HasValue)
                     writer.WriteElement("Days", rule.Expiration.ExpireAfterDays.Value);

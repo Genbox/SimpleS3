@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
+using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -38,6 +39,15 @@ internal sealed class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectRes
         response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
 
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
+
+        // S3-002: CopyObject can report an Error document with HTTP 200.
+        if (xmlReader.MoveToContent() == XmlNodeType.Element && xmlReader.LocalName == "Error")
+        {
+            response.IsSuccess = false;
+            response.Error = ErrorHandler.Create(xmlReader);
+            return;
+        }
+
         xmlReader.ReadToDescendant("CopyObjectResult");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))

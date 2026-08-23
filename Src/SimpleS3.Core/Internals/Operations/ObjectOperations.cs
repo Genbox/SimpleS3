@@ -58,6 +58,14 @@ internal sealed class ObjectOperations(IRequestHandler handler, IEnumerable<IReq
 
     public Task<GetObjectAttributesResponse> GetObjectAttributesAsync(GetObjectAttributesRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetObjectAttributesRequest, GetObjectAttributesResponse>(request, token);
 
+    public Task<GetObjectAnnotationResponse> GetObjectAnnotationAsync(GetObjectAnnotationRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetObjectAnnotationRequest, GetObjectAnnotationResponse>(request, token);
+
+    public Task<PutObjectAnnotationResponse> PutObjectAnnotationAsync(PutObjectAnnotationRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutObjectAnnotationRequest, PutObjectAnnotationResponse>(request, token);
+
+    public Task<DeleteObjectAnnotationResponse> DeleteObjectAnnotationAsync(DeleteObjectAnnotationRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteObjectAnnotationRequest, DeleteObjectAnnotationResponse>(request, token);
+
+    public Task<ListObjectAnnotationsResponse> ListObjectAnnotationsAsync(ListObjectAnnotationsRequest request, CancellationToken token = default) => handler.SendRequestAsync<ListObjectAnnotationsRequest, ListObjectAnnotationsResponse>(request, token);
+
     public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(GetObjectLegalHoldRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetObjectLegalHoldRequest, GetObjectLegalHoldResponse>(request, token);
 
     public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(PutObjectLegalHoldRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutObjectLegalHoldRequest, PutObjectLegalHoldResponse>(request, token);

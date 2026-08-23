@@ -33,13 +33,14 @@ internal static class RequestExtensions
         switch (format)
         {
             case DateTimeFormat.Iso8601DateTime:
-                request.SetHeader(key, date.Value.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
+                // S3-017: Literal-Z request timestamps must represent UTC.
+                request.SetHeader(key, date.Value.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
                 break;
             case DateTimeFormat.Iso8601DateTimeExt:
-                request.SetHeader(key, date.Value.ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo));
+                request.SetHeader(key, date.Value.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo));
                 break;
             case DateTimeFormat.Rfc1123:
-                request.SetHeader(key, date.Value.ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo));
+                request.SetHeader(key, date.Value.ToUniversalTime().ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo));
                 break;
             case DateTimeFormat.Unknown:
             case DateTimeFormat.Iso8601Date:
@@ -101,10 +102,10 @@ internal static class RequestExtensions
         switch (format)
         {
             case DateTimeFormat.Iso8601DateTime:
-                request.SetQueryParameter(key, date.Value.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
+                request.SetQueryParameter(key, date.Value.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
                 break;
             case DateTimeFormat.Rfc1123:
-                request.SetQueryParameter(key, date.Value.ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo));
+                request.SetQueryParameter(key, date.Value.ToUniversalTime().ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo));
                 break;
             case DateTimeFormat.Unknown:
             case DateTimeFormat.Iso8601Date:

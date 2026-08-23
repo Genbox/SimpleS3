@@ -14,6 +14,7 @@ using Genbox.SimpleS3.Core.Internals.Builders;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Network.Requests;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -57,6 +58,9 @@ internal sealed class DefaultRequestHandler : IRequestHandler
 
         request.Timestamp = DateTimeOffset.UtcNow;
         request.RequestId = Guid.NewGuid();
+
+        if (request is BaseRequest baseRequest)
+            baseRequest.ClearTransportState();
 
         _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
 

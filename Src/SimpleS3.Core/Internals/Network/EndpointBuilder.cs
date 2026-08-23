@@ -39,9 +39,13 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
     {
         string endpoint = _config.Endpoint;
 
+        // S3-012: AWS China regions use the amazonaws.com.cn DNS partition.
+        if (_config.ProviderName == "AmazonS3" && regionCode.StartsWith("cn-", StringComparison.OrdinalIgnoreCase) && endpoint.EndsWith("amazonaws.com", StringComparison.Ordinal))
+            endpoint += ".cn";
+
         if (endpoint.IndexOf('{') >= 0)
         {
-            endpoint = _regex.Replace(_config.Endpoint, match =>
+            endpoint = _regex.Replace(endpoint, match =>
             {
                 string? str;
 

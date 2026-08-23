@@ -13,7 +13,13 @@ internal sealed class CopyObjectRequestMarshal : IRequestMarshal<CopyObjectReque
 {
     public Stream? MarshalRequest(CopyObjectRequest request, SimpleS3Config config)
     {
-        request.SetHeader(AmzHeaders.XAmzCopySource, '/' + UrlHelper.UrlEncode(request.SourceBucketName) + '/' + UrlHelper.UrlPathEncode(request.SourceObjectKey));
+        string copySource = '/' + UrlHelper.UrlEncode(request.SourceBucketName) + '/' + UrlHelper.UrlPathEncode(request.SourceObjectKey);
+
+        // S3-003: A copy version identifies the source and is part of x-amz-copy-source.
+        if (request.VersionId != null)
+            copySource += "?versionId=" + UrlHelper.UrlEncode(request.VersionId);
+
+        request.SetHeader(AmzHeaders.XAmzCopySource, copySource);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfMatch, request.IfETagMatch);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfNoneMatch, request.IfETagNotMatch);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfModifiedSince, request.IfModifiedSince, DateTimeFormat.Rfc1123);

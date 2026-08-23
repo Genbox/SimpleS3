@@ -15,5 +15,10 @@ public enum ChecksumAlgorithm
     [Display(Name = "CRC32C")]Crc32C,
     [Display(Name = "SHA1")]Sha1,
     [Display(Name = "SHA256")]Sha256,
-    [Display(Name = "CRC64NVME")]Crc64Nvme
+    [Display(Name = "CRC64NVME")]Crc64Nvme,
+    [Display(Name = "SHA512")]Sha512,
+    [Display(Name = "MD5")]Md5,
+    [Display(Name = "XXHASH64")]XxHash64,
+    [Display(Name = "XXHASH3")]XxHash3,
+    [Display(Name = "XXHASH128")]XxHash128
 }

@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
@@ -32,7 +33,17 @@ internal sealed class CompleteMultipartUploadResponseMarshal : IResponseMarshal<
         }
 
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
-        xmlReader.ReadToDescendant("CompleteMultipartUploadResult");
+
+        // S3-002: CompleteMultipartUpload can report an Error document with HTTP 200.
+        if (xmlReader.MoveToContent() == XmlNodeType.Element && xmlReader.LocalName == "Error")
+        {
+            response.IsSuccess = false;
+            response.Error = ErrorHandler.Create(xmlReader);
+            return;
+        }
+
+        if (xmlReader.LocalName != "CompleteMultipartUploadResult" && !xmlReader.ReadToDescendant("CompleteMultipartUploadResult"))
+            return;
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))
         {

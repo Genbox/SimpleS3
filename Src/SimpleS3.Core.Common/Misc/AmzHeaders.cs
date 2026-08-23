@@ -48,6 +48,12 @@ public static class AmzHeaders
     public const string XAmzChecksumCrc64Nvme = "x-amz-checksum-crc64nvme";
     public const string XAmzChecksumSha1 = "x-amz-checksum-sha1";
     public const string XAmzChecksumSha256 = "x-amz-checksum-sha256";
+    public const string XAmzChecksumSha512 = "x-amz-checksum-sha512";
+    public const string XAmzChecksumMd5 = "x-amz-checksum-md5";
+    public const string XAmzChecksumXxHash64 = "x-amz-checksum-xxhash64";
+    public const string XAmzChecksumXxHash3 = "x-amz-checksum-xxhash3";
+    public const string XAmzChecksumXxHash128 = "x-amz-checksum-xxhash128";
+    public const string XAmzObjectIfMatch = "x-amz-object-if-match";
 
     #endregion
 

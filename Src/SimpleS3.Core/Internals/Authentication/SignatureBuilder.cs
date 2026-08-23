@@ -48,6 +48,10 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
         logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+        // S3-008: The canonical URI starts with any path configured on the endpoint.
+        string basePath = GetEndpointBasePath(_options.Endpoint);
+        if (basePath.Length > 0)
+            sb.Append(basePath);
         RequestHelper.AppendPath(sb, _options, request);
         string url = StringBuilderPool.Shared.ReturnString(sb);
 
@@ -62,6 +66,24 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
             logger.LogDebug("Signature created");
 
         return signature;
+    }
+
+    private static string GetEndpointBasePath(string endpoint)
+    {
+        int authority = endpoint.IndexOf("://", StringComparison.Ordinal);
+        int pathStart = authority < 0 ? -1 : endpoint.IndexOf('/', authority + 3);
+
+        if (pathStart < 0)
+            return string.Empty;
+
+        string path = endpoint.Substring(pathStart);
+        int suffix = path.IndexOfAny(['?', '#']);
+
+        if (suffix >= 0)
+            path = path.Substring(0, suffix);
+
+        string escapedPath = new Uri("http://localhost" + path).GetComponents(UriComponents.Path, UriFormat.UriEscaped).TrimEnd('/');
+        return escapedPath.Length == 0 ? string.Empty : '/' + escapedPath;
     }
 
     /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of: Hmac-Sha256(SigningKey, StringToSign)</summary>

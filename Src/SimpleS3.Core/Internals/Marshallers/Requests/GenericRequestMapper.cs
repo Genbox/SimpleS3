@@ -34,7 +34,10 @@ internal static class GenericRequestMapper
         }
 
         if (req is IHasBypassGovernanceRetention hasBypassGovernanceRetention && !disabledFor(typeof(IHasBypassGovernanceRetention)))
-            req.SetHeader(AmzHeaders.XAmzBypassGovernanceRetention, hasBypassGovernanceRetention.BypassGovernanceRetention);
+        {
+            string? bypassGovernanceRetention = hasBypassGovernanceRetention.BypassGovernanceRetention?.ToString().ToLowerInvariant();
+            req.SetOptionalHeader(AmzHeaders.XAmzBypassGovernanceRetention, bypassGovernanceRetention);
+        }
 
         if (req is IHasCache hasCache && !disabledFor(typeof(IHasCache)))
         {

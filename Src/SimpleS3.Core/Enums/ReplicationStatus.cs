@@ -9,6 +9,7 @@ public enum ReplicationStatus
     Unknown = 0,
     [Display(Name = "PENDING")]Pending,
     [Display(Name = "COMPLETED")]Completed,
+    [Display(Name = "COMPLETE")]Complete,
     [Display(Name = "FAILED")]Failed,
     [Display(Name = "REPLICA")]Replica
 }

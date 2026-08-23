@@ -139,6 +139,8 @@ internal class PooledBucketClient(IBucketOperations operations) : IBucketClient
 
     public Task<DeleteBucketReplicationResponse> DeleteBucketReplicationAsync(string bucketName, Action<DeleteBucketReplicationRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketReplicationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName); config?.Invoke(req); }, req => BucketOperations.DeleteBucketReplicationAsync(req, token));
 
+    public Task<UpdateBucketMetadataAnnotationTableConfigurationResponse> UpdateBucketMetadataAnnotationTableConfigurationAsync(string bucketName, S3AnnotationTableConfiguration configuration, Action<UpdateBucketMetadataAnnotationTableConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<UpdateBucketMetadataAnnotationTableConfigurationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, configuration); config?.Invoke(req); }, req => BucketOperations.UpdateBucketMetadataAnnotationTableConfigurationAsync(req, token));
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
     {
         return ObjectPool<PutBucketTaggingRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);

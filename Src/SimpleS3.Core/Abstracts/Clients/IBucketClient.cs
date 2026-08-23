@@ -95,6 +95,8 @@ public interface IBucketClient
 
     Task<DeleteBucketReplicationResponse> DeleteBucketReplicationAsync(string bucketName, Action<DeleteBucketReplicationRequest>? config = null, CancellationToken token = default);
 
+    Task<UpdateBucketMetadataAnnotationTableConfigurationResponse> UpdateBucketMetadataAnnotationTableConfigurationAsync(string bucketName, S3AnnotationTableConfiguration configuration, Action<UpdateBucketMetadataAnnotationTableConfigurationRequest>? config = null, CancellationToken token = default);
+
     /// <summary>Set tags associated with the bucket. This can be used to track bucket usage on your invoices.</summary>
     /// <param name="bucketName">The bucket name</param>
     /// <param name="tags">The tags</param>

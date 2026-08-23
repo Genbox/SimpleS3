@@ -1,3 +1,4 @@
+using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
@@ -77,6 +78,38 @@ public class ObjectClientExtensionsTests
     }
 
     [Fact]
+    public async Task ListAllMultipartUploadsAsyncUsesBothPaginationMarkers()
+    {
+        PagingMultipartClient client = new PagingMultipartClient();
+
+        List<S3Upload> uploads = await CollectAsync(client.ListAllMultipartUploadsAsync("bucket", TestContext.Current.CancellationToken), TestContext.Current.CancellationToken).ConfigureAwait(false);
+
+        Assert.Equal(2, uploads.Count);
+        Assert.Equal("next-key", client.SecondRequestKeyMarker);
+        Assert.Equal("next-upload", client.SecondRequestUploadIdMarker);
+    }
+
+    [Fact]
+    public async Task ListAllMultipartUploadsAsyncThrowsOnFailedPage()
+    {
+        PagingMultipartClient client = new PagingMultipartClient(failFirstPage: true);
+
+        await Assert.ThrowsAsync<S3RequestException>(async () => await CollectAsync(client.ListAllMultipartUploadsAsync("bucket", TestContext.Current.CancellationToken), TestContext.Current.CancellationToken).ConfigureAwait(false));
+    }
+
+    [Fact]
+    public async Task ListAllObjectVersionsAsyncUsesVersionIdMarker()
+    {
+        PagingObjectClient client = new PagingObjectClient(versionPages: true);
+
+        List<S3Version> versions = await CollectAsync(client.ListAllObjectVersionsAsync("bucket", token: TestContext.Current.CancellationToken), TestContext.Current.CancellationToken).ConfigureAwait(false);
+
+        Assert.Equal(2, versions.Count);
+        Assert.Equal("next-key", client.SecondVersionRequestKeyMarker);
+        Assert.Equal("next-version", client.SecondVersionRequestVersionIdMarker);
+    }
+
+    [Fact]
     public async Task ListAllBucketsAsyncThrowsWhenCanceledBetweenItems()
     {
         StaticBucketClient client = new StaticBucketClient();
@@ -96,21 +129,44 @@ public class ObjectClientExtensionsTests
         }
     }
 
-    private sealed class PagingObjectClient(int objectsPerPage = 1, bool blockSecondRequest = false) : IObjectClient
+    private static async Task<List<T>> CollectAsync<T>(IAsyncEnumerable<T> source, CancellationToken token)
+    {
+        List<T> result = new List<T>();
+
+        await foreach (T item in source.WithCancellation(token).ConfigureAwait(false))
+            result.Add(item);
+
+        return result;
+    }
+
+    private sealed class PagingObjectClient : IObjectClient
     {
         private readonly TaskCompletionSource _prefetchStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly TaskCompletionSource _prefetchCanceled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly bool _blockSecondRequest;
+        private readonly int _objectsPerPage;
+        private readonly bool _versionPages;
         private int _listObjectsCalls;
+        private int _listObjectVersionsCalls;
+
+        public PagingObjectClient(int objectsPerPage = 1, bool blockSecondRequest = false, bool versionPages = false)
+        {
+            _objectsPerPage = objectsPerPage;
+            _blockSecondRequest = blockSecondRequest;
+            _versionPages = versionPages;
+        }
 
         public int ListObjectsCalls => Volatile.Read(ref _listObjectsCalls);
         public Task PrefetchStarted => _prefetchStarted.Task;
         public Task PrefetchCanceled => _prefetchCanceled.Task;
+        public string? SecondVersionRequestKeyMarker { get; private set; }
+        public string? SecondVersionRequestVersionIdMarker { get; private set; }
 
         public async Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
         {
             int call = Interlocked.Increment(ref _listObjectsCalls);
 
-            if (blockSecondRequest && call == 2)
+            if (_blockSecondRequest && call == 2)
             {
                 _prefetchStarted.SetResult();
 
@@ -134,7 +190,7 @@ public class ObjectClientExtensionsTests
 
             response.Objects.Add(new S3Object("first", DateTimeOffset.UnixEpoch, 0, null, null, default, default, default));
 
-            if (objectsPerPage > 1)
+            if (_objectsPerPage > 1)
                 response.Objects.Add(new S3Object("second", DateTimeOffset.UnixEpoch, 0, null, null, default, default, default));
 
             return response;
@@ -150,6 +206,10 @@ public class ObjectClientExtensionsTests
         public Task<PutObjectAclResponse> PutObjectAclAsync(string bucketName, string objectKey, Action<PutObjectAclRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<GetObjectAttributesResponse> GetObjectAttributesAsync(string bucketName, string objectKey, IEnumerable<ObjectAttribute> objectAttributes, Action<GetObjectAttributesRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<GetObjectAnnotationResponse> GetObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<GetObjectAnnotationRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<PutObjectAnnotationResponse> PutObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Stream content, Action<PutObjectAnnotationRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<DeleteObjectAnnotationResponse> DeleteObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<DeleteObjectAnnotationRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<ListObjectAnnotationsResponse> ListObjectAnnotationsAsync(string bucketName, string objectKey, Action<ListObjectAnnotationsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<GetObjectTaggingResponse> GetObjectTaggingAsync(string bucketName, string objectKey, Action<GetObjectTaggingRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
@@ -157,7 +217,71 @@ public class ObjectClientExtensionsTests
         public Task<DeleteObjectTaggingResponse> DeleteObjectTaggingAsync(string bucketName, string objectKey, Action<DeleteObjectTaggingRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<GetObjectRetentionResponse> GetObjectRetentionAsync(string bucketName, string objectKey, Action<GetObjectRetentionRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<PutObjectRetentionResponse> PutObjectRetentionAsync(string bucketName, string objectKey, LockMode lockMode, DateTimeOffset retainUntil, Action<PutObjectRetentionRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
-        public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default)
+        {
+            if (!_versionPages)
+                throw new NotSupportedException();
+
+            int call = Interlocked.Increment(ref _listObjectVersionsCalls);
+            ListObjectVersionsRequest request = new ListObjectVersionsRequest(bucketName);
+            config?.Invoke(request);
+
+            if (call == 2)
+            {
+                SecondVersionRequestKeyMarker = request.KeyMarker;
+                SecondVersionRequestVersionIdMarker = request.VersionIdMarker;
+            }
+
+            ListObjectVersionsResponse response = new ListObjectVersionsResponse
+            {
+                IsSuccess = true,
+                IsTruncated = call == 1,
+                NextKeyMarker = "next-key",
+                NextVersionIdMarker = "next-version"
+            };
+
+            response.Versions.Add(new S3Version("version-" + call, "id-" + call, true, DateTimeOffset.UnixEpoch, "etag", 0, null, default, default, default));
+            return Task.FromResult(response);
+        }
+    }
+
+    private sealed class PagingMultipartClient(bool failFirstPage = false) : IMultipartClient
+    {
+        private int _calls;
+
+        public string? SecondRequestKeyMarker { get; private set; }
+        public string? SecondRequestUploadIdMarker { get; private set; }
+
+        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default)
+        {
+            int call = Interlocked.Increment(ref _calls);
+            ListMultipartUploadsRequest request = new ListMultipartUploadsRequest(bucketName);
+            config?.Invoke(request);
+
+            if (call == 2)
+            {
+                SecondRequestKeyMarker = request.KeyMarker;
+                SecondRequestUploadIdMarker = request.UploadIdMarker;
+            }
+
+            ListMultipartUploadsResponse response = new ListMultipartUploadsResponse
+            {
+                IsSuccess = !failFirstPage,
+                IsTruncated = call == 1,
+                NextKeyMarker = "next-key",
+                NextUploadIdMarker = "next-upload"
+            };
+
+            response.Uploads.Add(new S3Upload("upload-" + call, "upload-id-" + call, null, null, default, DateTimeOffset.UnixEpoch));
+            return Task.FromResult(response);
+        }
+
+        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
     }
 
     private sealed class StaticMultipartClient : IMultipartClient
@@ -214,6 +338,7 @@ public class ObjectClientExtensionsTests
         public Task<DeleteBucketMetricsConfigurationResponse> DeleteBucketMetricsConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketMetricsConfigurationRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<DeleteBucketIntelligentTieringConfigurationResponse> DeleteBucketIntelligentTieringConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketIntelligentTieringConfigurationRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<DeleteBucketReplicationResponse> DeleteBucketReplicationAsync(string bucketName, Action<DeleteBucketReplicationRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<UpdateBucketMetadataAnnotationTableConfigurationResponse> UpdateBucketMetadataAnnotationTableConfigurationAsync(string bucketName, S3AnnotationTableConfiguration configuration, Action<UpdateBucketMetadataAnnotationTableConfigurationRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(string bucketName, Action<DeleteBucketTaggingRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<PutBucketAccelerateConfigurationResponse> PutBucketAccelerateConfigurationAsync(string bucketName, bool enabled, Action<PutBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();

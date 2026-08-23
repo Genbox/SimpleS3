@@ -103,6 +103,9 @@ internal sealed class FastXmlWriter
 
             if (c == '&')
                 _sb.Append("&amp;");
+            // S3-014: XML parsers normalize literal CR, so preserve it as a character reference.
+            else if (c == '\r')
+                _sb.Append("&#13;");
             else if (c == '<')
                 _sb.Append("&lt;");
             else if (c == '>')

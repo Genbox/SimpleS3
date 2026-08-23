@@ -2,6 +2,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,7 +19,8 @@ public class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFactoryCon
     public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         HttpResponseMessage httpResponse;
-        using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(request.Method), url))
+        // S3-010: Construct the transport URI without removing escaped dot-only key segments.
+        using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(request.Method), UrlHelper.CreateUriWithoutPathNormalization(url)))
         {
             if (_config.HttpVersion == HttpVersion.Http1)
                 httpRequest.Version = _httpVersion1;

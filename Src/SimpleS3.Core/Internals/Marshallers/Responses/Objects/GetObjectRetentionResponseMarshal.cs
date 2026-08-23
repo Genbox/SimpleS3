@@ -16,10 +16,13 @@ internal sealed class GetObjectRetentionResponseMarshal : IResponseMarshal<GetOb
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
-        while (reader.Read())
+        while (!reader.EOF)
         {
             if (!reader.IsStartElement())
+            {
+                reader.Read();
                 continue;
+            }
 
             switch (reader.Name)
             {
@@ -28,6 +31,9 @@ internal sealed class GetObjectRetentionResponseMarshal : IResponseMarshal<GetOb
                     break;
                 case "RetainUntilDate":
                     response.LockRetainUntil = ValueHelper.ParseDate(reader.ReadElementContentAsString(), DateTimeFormat.Iso8601DateTimeExt);
+                    break;
+                default:
+                    reader.Read();
                     break;
             }
         }

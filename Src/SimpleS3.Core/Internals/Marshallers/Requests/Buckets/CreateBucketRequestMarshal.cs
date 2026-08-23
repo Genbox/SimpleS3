@@ -15,7 +15,8 @@ internal sealed class CreateBucketRequestMarshal : IRequestMarshal<CreateBucketR
             request.SetHeader(AmzHeaders.XAmzBucketObjectLockEnabled, "TRUE");
 
         //Hard-code the LocationConstraint to the region from the config
-        if (config.ProviderName != "BackBlazeB2")
+        // S3-011: S3 requires no LocationConstraint body for the us-east-1 region.
+        if (config.ProviderName != "BackBlazeB2" && !string.Equals(config.RegionCode, "us-east-1", StringComparison.OrdinalIgnoreCase))
         {
             FastXmlWriter writer = new FastXmlWriter(128);
             writer.WriteStartElement("CreateBucketConfiguration");

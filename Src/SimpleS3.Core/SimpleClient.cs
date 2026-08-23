@@ -49,6 +49,14 @@ public class SimpleClient : ISimpleClient
 
     public Task<GetObjectAttributesResponse> GetObjectAttributesAsync(string bucketName, string objectKey, IEnumerable<ObjectAttribute> objectAttributes, Action<GetObjectAttributesRequest>? config = null, CancellationToken token = default) => _objectClient.GetObjectAttributesAsync(bucketName, objectKey, objectAttributes, config, token);
 
+    public Task<GetObjectAnnotationResponse> GetObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<GetObjectAnnotationRequest>? config = null, CancellationToken token = default) => _objectClient.GetObjectAnnotationAsync(bucketName, objectKey, annotationName, config, token);
+
+    public Task<PutObjectAnnotationResponse> PutObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Stream content, Action<PutObjectAnnotationRequest>? config = null, CancellationToken token = default) => _objectClient.PutObjectAnnotationAsync(bucketName, objectKey, annotationName, content, config, token);
+
+    public Task<DeleteObjectAnnotationResponse> DeleteObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<DeleteObjectAnnotationRequest>? config = null, CancellationToken token = default) => _objectClient.DeleteObjectAnnotationAsync(bucketName, objectKey, annotationName, config, token);
+
+    public Task<ListObjectAnnotationsResponse> ListObjectAnnotationsAsync(string bucketName, string objectKey, Action<ListObjectAnnotationsRequest>? config = null, CancellationToken token = default) => _objectClient.ListObjectAnnotationsAsync(bucketName, objectKey, config, token);
+
     public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default) => _objectClient.GetObjectLegalHoldAsync(bucketName, objectKey, config, token);
 
     public Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default) => _objectClient.PutObjectLegalHoldAsync(bucketName, objectKey, lockStatus, config, token);
@@ -120,6 +128,8 @@ public class SimpleClient : ISimpleClient
     public Task<DeleteBucketIntelligentTieringConfigurationResponse> DeleteBucketIntelligentTieringConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketIntelligentTieringConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketIntelligentTieringConfigurationAsync(bucketName, configurationId, config, token);
 
     public Task<DeleteBucketReplicationResponse> DeleteBucketReplicationAsync(string bucketName, Action<DeleteBucketReplicationRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketReplicationAsync(bucketName, config, token);
+
+    public Task<UpdateBucketMetadataAnnotationTableConfigurationResponse> UpdateBucketMetadataAnnotationTableConfigurationAsync(string bucketName, S3AnnotationTableConfiguration configuration, Action<UpdateBucketMetadataAnnotationTableConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.UpdateBucketMetadataAnnotationTableConfigurationAsync(bucketName, configuration, config, token);
 
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketTaggingAsync(bucketName, tags, config, token);
 

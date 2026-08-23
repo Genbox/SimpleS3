@@ -205,6 +205,13 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         return operations.DeleteBucketReplicationAsync(request, token);
     }
 
+    public Task<UpdateBucketMetadataAnnotationTableConfigurationResponse> UpdateBucketMetadataAnnotationTableConfigurationAsync(string bucketName, S3AnnotationTableConfiguration configuration, Action<UpdateBucketMetadataAnnotationTableConfigurationRequest>? config = null, CancellationToken token = default)
+    {
+        UpdateBucketMetadataAnnotationTableConfigurationRequest request = new UpdateBucketMetadataAnnotationTableConfigurationRequest(bucketName, configuration);
+        config?.Invoke(request);
+        return operations.UpdateBucketMetadataAnnotationTableConfigurationAsync(request, token);
+    }
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
     {
         PutBucketTaggingRequest request = new PutBucketTaggingRequest(bucketName, tags);

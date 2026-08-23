@@ -1,20 +1,24 @@
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
+using Genbox.SimpleS3.Core.Internals.Marshallers.Requests;
 using Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 using Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Multipart;
 using Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Objects;
 using Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
+using Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart;
 using Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
@@ -127,7 +131,7 @@ public class MissingS3OperationMarshalTests
         website.RoutingRules.Add(new S3RoutingRule(new S3Redirect { ReplaceKeyWith = "docs/index.html", HttpRedirectCode = "302" }) { Condition = new S3RoutingRuleCondition { KeyPrefixEquals = "docs/" } });
         PutBucketWebsiteRequest request = new PutBucketWebsiteRequest("bucket", website);
 
-        using Stream stream = new PutBucketWebsiteRequestMarshal().MarshalRequest(request, CreateConfig());
+        using Stream stream = Assert.IsAssignableFrom<Stream>(new PutBucketWebsiteRequestMarshal().MarshalRequest(request, CreateConfig()));
         using StreamReader reader = new StreamReader(stream, Encoding.UTF8);
 
         string xml = reader.ReadToEnd();
@@ -173,6 +177,21 @@ public class MissingS3OperationMarshalTests
     }
 
     [Fact]
+    public void GetPublicAccessBlockParsesAllCompactElements()
+    {
+        const string xml = "<PublicAccessBlockConfiguration><BlockPublicAcls>true</BlockPublicAcls><IgnorePublicAcls>false</IgnorePublicAcls><BlockPublicPolicy>true</BlockPublicPolicy><RestrictPublicBuckets>false</RestrictPublicBuckets></PublicAccessBlockConfiguration>";
+        GetPublicAccessBlockResponse response = new GetPublicAccessBlockResponse();
+
+        using ContentStream content = CreateContent(xml);
+        new GetPublicAccessBlockResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(), content);
+
+        Assert.True(response.BlockPublicAcls);
+        Assert.False(response.IgnorePublicAcls);
+        Assert.True(response.BlockPublicPolicy);
+        Assert.False(response.RestrictPublicBuckets);
+    }
+
+    [Fact]
     public void PutObjectTaggingWritesTaggingXml()
     {
         PutObjectTaggingRequest request = new PutObjectTaggingRequest("bucket", "object", new Dictionary<string, string> { ["Key"] = "Value" });
@@ -200,6 +219,19 @@ public class MissingS3OperationMarshalTests
         Assert.Equal(string.Empty, request.QueryParameters[AmzParameters.Retention]);
         Assert.Contains("<Mode>GOVERNANCE</Mode>", xml, StringComparison.Ordinal);
         Assert.Contains("<RetainUntilDate>" + ValueHelper.DateToString(retainUntil, DateTimeFormat.Iso8601DateTimeExt) + "</RetainUntilDate>", xml, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GetObjectRetentionParsesAllCompactElements()
+    {
+        const string xml = "<Retention><Mode>GOVERNANCE</Mode><RetainUntilDate>2026-05-25T12:30:00.000Z</RetainUntilDate></Retention>";
+        GetObjectRetentionResponse response = new GetObjectRetentionResponse();
+
+        using ContentStream content = CreateContent(xml);
+        new GetObjectRetentionResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(), content);
+
+        Assert.Equal(LockMode.Governance, response.LockMode);
+        Assert.Equal(new DateTimeOffset(2026, 5, 25, 12, 30, 0, TimeSpan.Zero), response.LockRetainUntil);
     }
 
     [Fact]
@@ -297,6 +329,168 @@ public class MissingS3OperationMarshalTests
         Assert.Equal(2, part.PartNumber);
         Assert.Equal(100, part.Size);
         Assert.Equal([1, 2, 3, 4], part.ChecksumSha256);
+    }
+
+    [Fact]
+    public void ObjectAnnotationRequestsWriteAnnotationParameters()
+    {
+        GetObjectAnnotationRequest get = new GetObjectAnnotationRequest("bucket", "object", "review") { EnableChecksum = true };
+        DeleteObjectAnnotationRequest delete = new DeleteObjectAnnotationRequest("bucket", "object", "review")
+        {
+            ObjectIfMatch = "etag",
+            BypassGovernanceRetention = true
+        };
+        ListObjectAnnotationsRequest list = new ListObjectAnnotationsRequest("bucket", "object")
+        {
+            AnnotationPrefix = "rev",
+            ContinuationToken = "next",
+            MaxAnnotationResults = 20
+        };
+
+        new GetObjectAnnotationRequestMarshal().MarshalRequest(get, CreateConfig());
+        GenericRequestMapper.Map(delete);
+        new DeleteObjectAnnotationRequestMarshal().MarshalRequest(delete, CreateConfig());
+        new ListObjectAnnotationsRequestMarshal().MarshalRequest(list, CreateConfig());
+
+        Assert.Equal(string.Empty, get.QueryParameters[AmzParameters.Annotation]);
+        Assert.Equal("review", get.QueryParameters[AmzParameters.AnnotationName]);
+        Assert.Equal("ENABLED", get.Headers[AmzHeaders.XAmzChecksumMode]);
+        Assert.Equal("etag", delete.Headers[AmzHeaders.XAmzObjectIfMatch]);
+        Assert.Equal("true", delete.Headers[AmzHeaders.XAmzBypassGovernanceRetention]);
+        Assert.Equal("rev", list.QueryParameters[AmzParameters.AnnotationPrefix]);
+        Assert.Equal("next", list.QueryParameters[AmzParameters.ContinuationToken]);
+        Assert.Equal("20", list.QueryParameters[AmzParameters.MaxAnnotationResults]);
+    }
+
+    [Fact]
+    public void PutObjectAnnotationRetainsRawContent()
+    {
+        using MemoryStream content = new MemoryStream(Encoding.UTF8.GetBytes("annotation body"));
+        PutObjectAnnotationRequest request = new PutObjectAnnotationRequest("bucket", "object", "review", content) { ObjectIfMatch = "etag" };
+
+        Stream? marshalledContent = new PutObjectAnnotationRequestMarshal().MarshalRequest(request, CreateConfig());
+
+        Assert.Null(marshalledContent);
+        Assert.Same(content, request.Content);
+        Assert.IsAssignableFrom<ISupportStreaming>(request);
+        Assert.IsNotAssignableFrom<IContentMd5Config>(request);
+        Assert.Equal(string.Empty, request.QueryParameters[AmzParameters.Annotation]);
+        Assert.Equal("review", request.QueryParameters[AmzParameters.AnnotationName]);
+        Assert.Equal("etag", request.Headers[AmzHeaders.XAmzObjectIfMatch]);
+    }
+
+    [Fact]
+    public void GetObjectAnnotationMapsContentAndMetadata()
+    {
+        GetObjectAnnotationResponse response = new GetObjectAnnotationResponse();
+        Dictionary<string, string> headers = new Dictionary<string, string>
+        {
+            [HttpHeaders.ETag] = "etag",
+            [HttpHeaders.LastModified] = "Sun, 23 Aug 2026 12:00:00 GMT",
+            [AmzHeaders.XAmzVersionId] = "version",
+            [AmzHeaders.XAmzSse] = "aws:kms",
+            [AmzHeaders.XAmzSseAwsKmsKeyId] = "key-id",
+            [AmzHeaders.XAmzChecksumSha256] = "AQIDBA==",
+            [AmzHeaders.XAmzChecksumType] = "FULL_OBJECT",
+            [AmzHeaders.XAmzReplicationStatus] = "COMPLETE"
+        };
+
+        using ContentStream content = CreateContent("annotation body");
+        new GetObjectAnnotationResponseMarshal().MarshalResponse(CreateConfig(), response, headers, content);
+
+        Assert.Same(content, response.Content);
+        Assert.Equal("etag", response.ETag);
+        Assert.Equal("version", response.VersionId);
+        Assert.Equal(SseAlgorithm.AwsKms, response.SseAlgorithm);
+        Assert.Equal("key-id", response.SseKmsKeyId);
+        Assert.Equal(ChecksumAlgorithm.Sha256, response.ChecksumAlgorithm);
+        Assert.Equal(ChecksumType.FullObject, response.ChecksumType);
+        Assert.Equal([1, 2, 3, 4], response.Checksum);
+        Assert.Equal(ReplicationStatus.Complete, response.ReplicationStatus);
+    }
+
+    [Fact]
+    public void ListObjectAnnotationsParsesEntriesAndPagination()
+    {
+        const string xml = """
+                           <ListObjectAnnotationsOutput><Annotations><AnnotationEntry><AnnotationName>review</AnnotationName><LastModified>2026-08-23T12:00:00.000Z</LastModified><Size>42</Size><ETag>etag</ETag><ChecksumAlgorithm>CRC64NVME</ChecksumAlgorithm><ReplicationStatus>COMPLETE</ReplicationStatus></AnnotationEntry></Annotations><Bucket>bucket</Bucket><Key>object</Key><AnnotationPrefix>rev</AnnotationPrefix><MaxAnnotationResults>20</MaxAnnotationResults><AnnotationCount>1</AnnotationCount><ContinuationToken>current</ContinuationToken><NextContinuationToken>next</NextContinuationToken></ListObjectAnnotationsOutput>
+                           """;
+        ListObjectAnnotationsResponse response = new ListObjectAnnotationsResponse();
+
+        using ContentStream content = CreateContent(xml);
+        new ListObjectAnnotationsResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(), content);
+
+        S3Annotation annotation = Assert.Single(response.Annotations);
+        Assert.Equal("review", annotation.Name);
+        Assert.Equal(42, annotation.Size);
+        Assert.Equal("etag", annotation.ETag);
+        Assert.Equal(ChecksumAlgorithm.Crc64Nvme, Assert.Single(annotation.ChecksumAlgorithms));
+        Assert.Equal(ReplicationStatus.Complete, annotation.ReplicationStatus);
+        Assert.Equal("bucket", response.BucketName);
+        Assert.Equal("object", response.ObjectKey);
+        Assert.Equal(1, response.AnnotationCount);
+        Assert.Equal("next", response.NextContinuationToken);
+    }
+
+    [Fact]
+    public void UpdateMetadataAnnotationTableWritesConfigurationXml()
+    {
+        S3AnnotationTableConfiguration configuration = new S3AnnotationTableConfiguration(AnnotationTableConfigurationState.Enabled)
+        {
+            Role = "arn:aws:iam::123456789012:role/metadata",
+            EncryptionConfiguration = new S3MetadataTableEncryptionConfiguration(SseAlgorithm.AwsKms)
+            {
+                KmsKeyArn = "arn:aws:kms:us-east-1:123456789012:key/key-id"
+            }
+        };
+        UpdateBucketMetadataAnnotationTableConfigurationRequest request = new UpdateBucketMetadataAnnotationTableConfigurationRequest("bucket", configuration);
+        request.ChecksumAlgorithm = ChecksumAlgorithm.Sha256;
+        request.Checksum = [1, 2, 3, 4];
+
+        GenericRequestMapper.Map(request);
+        using Stream stream = new UpdateBucketMetadataAnnotationTableConfigurationRequestMarshal().MarshalRequest(request, CreateConfig());
+        using StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+        string xml = reader.ReadToEnd();
+
+        Assert.Equal(string.Empty, request.QueryParameters[AmzParameters.MetadataAnnotationTable]);
+        Assert.Equal("AQIDBA==", request.Headers[AmzHeaders.XAmzChecksumSha256]);
+        Assert.Contains("<ConfigurationState>ENABLED</ConfigurationState>", xml, StringComparison.Ordinal);
+        Assert.Contains("<SseAlgorithm>aws:kms</SseAlgorithm>", xml, StringComparison.Ordinal);
+        Assert.Contains("<KmsKeyArn>arn:aws:kms:us-east-1:123456789012:key/key-id</KmsKeyArn>", xml, StringComparison.Ordinal);
+        Assert.Contains("<Role>arn:aws:iam::123456789012:role/metadata</Role>", xml, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void PutBucketLifecycleWritesExpirationAtMidnightUtc()
+    {
+        S3Rule rule = new S3Rule("rule", true)
+        {
+            Expiration = new S3Expiration(new DateTimeOffset(2026, 8, 24, 15, 30, 0, TimeSpan.FromHours(2)))
+        };
+        PutBucketLifecycleConfigurationRequest request = new PutBucketLifecycleConfigurationRequest("bucket", [rule]);
+
+        using Stream stream = new PutBucketLifecycleConfigurationRequestMarshal().MarshalRequest(request, CreateConfig());
+        using StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+
+        Assert.Contains("<Date>2026-08-24T00:00:00Z</Date>", reader.ReadToEnd(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void CompleteMultipartUploadParsesSuccessfulResultRoot()
+    {
+        const string xml = "<CompleteMultipartUploadResult><Location>https://example.com/object</Location><Bucket>bucket</Bucket><Key>key</Key><ETag>&quot;etag&quot;</ETag><ChecksumType>COMPOSITE</ChecksumType><ChecksumSHA1>AQIDBA==-1</ChecksumSHA1></CompleteMultipartUploadResult>";
+        CompleteMultipartUploadResponse response = new CompleteMultipartUploadResponse();
+
+        using ContentStream content = CreateContent(xml);
+        new CompleteMultipartUploadResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(), content);
+
+        Assert.Equal("https://example.com/object", response.Location);
+        Assert.Equal("bucket", response.BucketName);
+        Assert.Equal("key", response.ObjectKey);
+        Assert.Equal("\"etag\"", response.ETag);
+        Assert.Equal(ChecksumType.Composite, response.ChecksumType);
+        Assert.Equal(ChecksumAlgorithm.Sha1, response.ChecksumAlgorithm);
+        Assert.Equal(new byte[] { 1, 2, 3, 4 }, response.Checksum);
     }
 
     private static SimpleS3Config CreateConfig() => new SimpleS3Config("Test", "https://s3.example.com");

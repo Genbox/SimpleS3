@@ -105,6 +105,34 @@ internal sealed class ObjectClient(IObjectOperations operations) : IObjectClient
         return operations.GetObjectAttributesAsync(req, token);
     }
 
+    public Task<GetObjectAnnotationResponse> GetObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<GetObjectAnnotationRequest>? config = null, CancellationToken token = default)
+    {
+        GetObjectAnnotationRequest req = new GetObjectAnnotationRequest(bucketName, objectKey, annotationName);
+        config?.Invoke(req);
+        return operations.GetObjectAnnotationAsync(req, token);
+    }
+
+    public Task<PutObjectAnnotationResponse> PutObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Stream content, Action<PutObjectAnnotationRequest>? config = null, CancellationToken token = default)
+    {
+        PutObjectAnnotationRequest req = new PutObjectAnnotationRequest(bucketName, objectKey, annotationName, content);
+        config?.Invoke(req);
+        return operations.PutObjectAnnotationAsync(req, token);
+    }
+
+    public Task<DeleteObjectAnnotationResponse> DeleteObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<DeleteObjectAnnotationRequest>? config = null, CancellationToken token = default)
+    {
+        DeleteObjectAnnotationRequest req = new DeleteObjectAnnotationRequest(bucketName, objectKey, annotationName);
+        config?.Invoke(req);
+        return operations.DeleteObjectAnnotationAsync(req, token);
+    }
+
+    public Task<ListObjectAnnotationsResponse> ListObjectAnnotationsAsync(string bucketName, string objectKey, Action<ListObjectAnnotationsRequest>? config = null, CancellationToken token = default)
+    {
+        ListObjectAnnotationsRequest req = new ListObjectAnnotationsRequest(bucketName, objectKey);
+        config?.Invoke(req);
+        return operations.ListObjectAnnotationsAsync(req, token);
+    }
+
     public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default)
     {
         GetObjectLegalHoldRequest req = new GetObjectLegalHoldRequest(bucketName, objectKey);

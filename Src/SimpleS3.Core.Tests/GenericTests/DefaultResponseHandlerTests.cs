@@ -25,17 +25,35 @@ public class DefaultResponseHandlerTests
             new NoopRequestValidatorFactory(),
             new NoopMarshalFactory(),
             new NoopPostMapperFactory(),
-            new StubNetworkDriver(content),
+            new StubNetworkDriver(content, 400),
             loggerFactory.CreateLogger<DefaultResponseHandler>());
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => handler.HandleResponseAsync<ListObjectsRequest, ListObjectsResponse>(new ListObjectsRequest("bucket"), "https://example.com", null, cts.Token));
     }
 
-    private sealed class StubNetworkDriver(ContentStream content) : INetworkDriver
+    [Fact]
+    public async Task HandleResponseAsyncTreatsRedirectAsFailure()
+    {
+        using ILoggerFactory loggerFactory = new LoggerFactory();
+        DefaultResponseHandler handler = new DefaultResponseHandler(
+            Options.Create(new SimpleS3Config()),
+            new NoopRequestValidatorFactory(),
+            new NoopMarshalFactory(),
+            new NoopPostMapperFactory(),
+            new StubNetworkDriver(null, 302),
+            loggerFactory.CreateLogger<DefaultResponseHandler>());
+
+        ListObjectsResponse response = await handler.HandleResponseAsync<ListObjectsRequest, ListObjectsResponse>(new ListObjectsRequest("bucket"), "https://example.com", null, TestContext.Current.CancellationToken).ConfigureAwait(false);
+
+        Assert.False(response.IsSuccess);
+        Assert.Equal(302, response.StatusCode);
+    }
+
+    private sealed class StubNetworkDriver(ContentStream? content, int statusCode) : INetworkDriver
     {
         public Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
         {
-            return Task.FromResult(new HttpResponse(content, new Dictionary<string, string>(), 400));
+            return Task.FromResult(new HttpResponse(content, new Dictionary<string, string>(), statusCode));
         }
     }
 

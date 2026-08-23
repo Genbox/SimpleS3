@@ -45,6 +45,14 @@ public interface IObjectOperations
 
     Task<GetObjectAttributesResponse> GetObjectAttributesAsync(GetObjectAttributesRequest request, CancellationToken token = default);
 
+    Task<GetObjectAnnotationResponse> GetObjectAnnotationAsync(GetObjectAnnotationRequest request, CancellationToken token = default);
+
+    Task<PutObjectAnnotationResponse> PutObjectAnnotationAsync(PutObjectAnnotationRequest request, CancellationToken token = default);
+
+    Task<DeleteObjectAnnotationResponse> DeleteObjectAnnotationAsync(DeleteObjectAnnotationRequest request, CancellationToken token = default);
+
+    Task<ListObjectAnnotationsResponse> ListObjectAnnotationsAsync(ListObjectAnnotationsRequest request, CancellationToken token = default);
+
     /// <summary>Gets an object's current Legal Hold status. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectLegalHold.html for details</summary>
     Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(GetObjectLegalHoldRequest request, CancellationToken token = default);
 

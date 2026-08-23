@@ -61,6 +61,8 @@ internal sealed class BucketOperations(IRequestHandler handler) : IBucketOperati
 
     public Task<DeleteBucketReplicationResponse> DeleteBucketReplicationAsync(DeleteBucketReplicationRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketReplicationRequest, DeleteBucketReplicationResponse>(request, token);
 
+    public Task<UpdateBucketMetadataAnnotationTableConfigurationResponse> UpdateBucketMetadataAnnotationTableConfigurationAsync(UpdateBucketMetadataAnnotationTableConfigurationRequest request, CancellationToken token = default) => handler.SendRequestAsync<UpdateBucketMetadataAnnotationTableConfigurationRequest, UpdateBucketMetadataAnnotationTableConfigurationResponse>(request, token);
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(PutBucketTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketTaggingRequest, PutBucketTaggingResponse>(request, token);
 
     public Task<DeleteBucketTaggingResponse> DeleteBucketTaggingAsync(DeleteBucketTaggingRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketTaggingRequest, DeleteBucketTaggingResponse>(request, token);
