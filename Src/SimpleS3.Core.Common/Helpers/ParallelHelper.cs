@@ -15,38 +15,48 @@ public static class ParallelHelper
     {
         ValidateArguments(source, action, concurrentThreads);
 
-        using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
-        using SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
-        using IEnumerator<T> enumerator = source.GetEnumerator();
-        List<Task> tasks = new List<Task>();
-        CancellationToken innerToken = cancellation.Token;
-
+        CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
         try
         {
-            while (true)
+            using IEnumerator<T> enumerator = source.GetEnumerator();
+            List<Task> tasks = new List<Task>();
+            CancellationToken innerToken = cancellation.Token;
+            Action cancel = cancellation.Cancel;
+            Func<int> release = throttler.Release;
+
+            try
             {
-                await throttler.WaitAsync(innerToken).ConfigureAwait(false);
-
-                if (!enumerator.MoveNext())
+                while (true)
                 {
-                    throttler.Release();
-                    break;
+                    await throttler.WaitAsync(innerToken).ConfigureAwait(false);
+
+                    if (!enumerator.MoveNext())
+                    {
+                        throttler.Release();
+                        break;
+                    }
+
+                    tasks.Add(ExecuteElementAsync(enumerator.Current, action, cancel, innerToken, release));
                 }
-
-                tasks.Add(ExecuteElementAsync(enumerator.Current, action, cancellation, innerToken, throttler));
             }
+            catch
+            {
+                cancellation.Cancel();
+                await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
+                ThrowFirstTaskFailure(tasks);
+                throw;
+            }
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
-        catch
+        finally
         {
-            cancellation.Cancel();
-            await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
-            ThrowFirstTaskFailure(tasks);
-            throw;
+            throttler.Dispose();
+            cancellation.Dispose();
         }
 
-        await Task.WhenAll(tasks).ConfigureAwait(false);
-
-        static async Task ExecuteElementAsync(T element, Func<T, CancellationToken, Task> action, CancellationTokenSource cancellation, CancellationToken innerToken, SemaphoreSlim throttler)
+        static async Task ExecuteElementAsync(T element, Func<T, CancellationToken, Task> action, Action cancel, CancellationToken innerToken, Func<int> release)
         {
             try
             {
@@ -54,12 +64,12 @@ public static class ParallelHelper
             }
             catch
             {
-                cancellation.Cancel();
+                cancel();
                 throw;
             }
             finally
             {
-                throttler.Release();
+                release();
             }
         }
     }
@@ -76,39 +86,49 @@ public static class ParallelHelper
     {
         ValidateArguments(source, action, concurrentThreads);
 
-        using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
         List<Task<TReturn>> tasks = new List<Task<TReturn>>();
 
-        using SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
-        using IEnumerator<T> enumerator = source.GetEnumerator();
-        CancellationToken innerToken = cancellation.Token;
-
+        SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
         try
         {
-            while (true)
+            using IEnumerator<T> enumerator = source.GetEnumerator();
+            CancellationToken innerToken = cancellation.Token;
+            Action cancel = cancellation.Cancel;
+            Func<int> release = throttler.Release;
+
+            try
             {
-                await throttler.WaitAsync(innerToken).ConfigureAwait(false);
-
-                if (!enumerator.MoveNext())
+                while (true)
                 {
-                    throttler.Release();
-                    break;
+                    await throttler.WaitAsync(innerToken).ConfigureAwait(false);
+
+                    if (!enumerator.MoveNext())
+                    {
+                        throttler.Release();
+                        break;
+                    }
+
+                    tasks.Add(ExecuteElementAsync(enumerator.Current, action, cancel, innerToken, release));
                 }
-
-                tasks.Add(ExecuteElementAsync(enumerator.Current, action, cancellation, innerToken, throttler));
             }
+            catch
+            {
+                cancellation.Cancel();
+                await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
+                ThrowFirstTaskFailure(tasks);
+                throw;
+            }
+
+            return await Task.WhenAll(tasks).ConfigureAwait(false);
         }
-        catch
+        finally
         {
-            cancellation.Cancel();
-            await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
-            ThrowFirstTaskFailure(tasks);
-            throw;
+            throttler.Dispose();
+            cancellation.Dispose();
         }
 
-        return await Task.WhenAll(tasks).ConfigureAwait(false);
-
-        static async Task<TReturn> ExecuteElementAsync(T element, Func<T, CancellationToken, Task<TReturn>> action, CancellationTokenSource cancellation, CancellationToken innerToken, SemaphoreSlim throttler)
+        static async Task<TReturn> ExecuteElementAsync(T element, Func<T, CancellationToken, Task<TReturn>> action, Action cancel, CancellationToken innerToken, Func<int> release)
         {
             try
             {
@@ -116,12 +136,12 @@ public static class ParallelHelper
             }
             catch
             {
-                cancellation.Cancel();
+                cancel();
                 throw;
             }
             finally
             {
-                throttler.Release();
+                release();
             }
         }
     }
@@ -138,46 +158,56 @@ public static class ParallelHelper
     {
         ValidateArguments(source, action, concurrentThreads);
 
-        using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
         List<Task<TReturn>> tasks = new List<Task<TReturn>>();
 
-        using SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
-        IAsyncEnumerator<T> enumerator = source.GetAsyncEnumerator(cancellation.Token);
-        CancellationToken innerToken = cancellation.Token;
-
+        SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
         try
         {
+            IAsyncEnumerator<T> enumerator = source.GetAsyncEnumerator(cancellation.Token);
+            CancellationToken innerToken = cancellation.Token;
+            Action cancel = cancellation.Cancel;
+            Func<int> release = throttler.Release;
+
             try
             {
-                while (true)
+                try
                 {
-                    await throttler.WaitAsync(innerToken).ConfigureAwait(false);
-
-                    if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                    while (true)
                     {
-                        throttler.Release();
-                        break;
+                        await throttler.WaitAsync(innerToken).ConfigureAwait(false);
+
+                        if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                        {
+                            throttler.Release();
+                            break;
+                        }
+
+                        tasks.Add(ExecuteElementAsync(enumerator.Current, action, cancel, innerToken, release));
                     }
-
-                    tasks.Add(ExecuteElementAsync(enumerator.Current, action, cancellation, innerToken, throttler));
                 }
-            }
-            catch
-            {
-                cancellation.Cancel();
-                await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
-                ThrowFirstTaskFailure(tasks);
-                throw;
-            }
+                catch
+                {
+                    cancellation.Cancel();
+                    await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
+                    ThrowFirstTaskFailure(tasks);
+                    throw;
+                }
 
-            return await Task.WhenAll(tasks).ConfigureAwait(false);
+                return await Task.WhenAll(tasks).ConfigureAwait(false);
+            }
+            finally
+            {
+                await enumerator.DisposeAsync().ConfigureAwait(false);
+            }
         }
         finally
         {
-            await enumerator.DisposeAsync().ConfigureAwait(false);
+            throttler.Dispose();
+            cancellation.Dispose();
         }
 
-        static async Task<TReturn> ExecuteElementAsync(T element, Func<T, CancellationToken, Task<TReturn>> action, CancellationTokenSource cancellation, CancellationToken innerToken, SemaphoreSlim throttler)
+        static async Task<TReturn> ExecuteElementAsync(T element, Func<T, CancellationToken, Task<TReturn>> action, Action cancel, CancellationToken innerToken, Func<int> release)
         {
             try
             {
@@ -185,12 +215,12 @@ public static class ParallelHelper
             }
             catch
             {
-                cancellation.Cancel();
+                cancel();
                 throw;
             }
             finally
             {
-                throttler.Release();
+                release();
             }
         }
     }
@@ -207,7 +237,7 @@ public static class ParallelHelper
         }
     }
 
-    private static void ValidateArguments(object? source, Delegate? action, int concurrentThreads)
+    private static void ValidateArguments(object source, Delegate action, int concurrentThreads)
     {
         if (source == null)
             throw new ArgumentNullException(nameof(source));
