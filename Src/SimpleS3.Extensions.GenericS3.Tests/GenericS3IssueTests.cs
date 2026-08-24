@@ -1,5 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase.Code;
@@ -35,10 +36,11 @@ public class GenericS3IssueTests
         //Replace the network driver with the null one for testing
         services.Replace(ServiceDescriptor.Singleton<INetworkDriver, NullNetworkDriver>());
 
-        ServiceProvider provider = services.BuildServiceProvider();
+        await using ServiceProvider provider = services.BuildServiceProvider();
 
         GenericS3Client client = provider.GetRequiredService<GenericS3Client>();
-        GetObjectResponse resp = await client.GetObjectAsync("bucket", "object");
+        GetObjectResponse resp = await client.GetObjectAsync("bucket", "object", token: TestContext.Current.CancellationToken);
+        await using ContentStream content = resp.Content;
         Assert.True(resp.IsSuccess);
     }
 }

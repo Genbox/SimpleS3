@@ -17,7 +17,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
-internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<SignatureBuilder> logger) : ISignatureBuilder
+internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<SignatureBuilder> logger) : ISignatureBuilder
 {
     //https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-authenticating-requests.html
 
@@ -45,7 +45,7 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
     {
         Validator.RequireNotNull(request);
 
-        logger.LogTrace("Creating signature for {RequestId}", request.RequestId);
+        CreatingSignature(request.RequestId);
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
         // S3-008: The canonical URI starts with any path configured on the endpoint.
@@ -61,9 +61,9 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
         if (_options.LogSensitiveMaterial)
-            logger.LogDebug("Signature: {Signature}", signature);
+            LogSignature(signature);
         else
-            logger.LogDebug("Signature created");
+            SignatureCreated();
 
         return signature;
     }
@@ -110,7 +110,7 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
 
     internal string CreateCanonicalRequest(Guid requestId, string url, HttpMethodType method, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> query, string contentHash)
     {
-        logger.LogTrace("Creating canonical request for {RequestId}", requestId);
+        CreatingCanonicalRequest(requestId);
 
         //Consists of:
         // HTTP Verb + \n
@@ -135,14 +135,14 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
         string canonicalRequest = StringBuilderPool.Shared.ReturnString(sb);
 
         if (_options.LogSensitiveMaterial)
-            logger.LogDebug("CanonicalRequest: {CanonicalRequest}", canonicalRequest);
+            LogCanonicalRequest(canonicalRequest);
 
         return canonicalRequest;
     }
 
     internal string CreateStringToSign(DateTimeOffset dateTime, string scope, string canonicalRequest)
     {
-        logger.LogTrace("Creating StringToSign");
+        CreatingStringToSign();
 
         //Consists of:
         // "AWS4-HMAC-SHA256" + \n
@@ -159,7 +159,7 @@ internal sealed class SignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuil
         string sts = StringBuilderPool.Shared.ReturnString(sb);
 
         if (_options.LogSensitiveMaterial)
-            logger.LogDebug("StringToSign: {StringToSign}", sts);
+            LogStringToSign(sts);
 
         return sts;
     }

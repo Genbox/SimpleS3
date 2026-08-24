@@ -16,10 +16,11 @@ public class DefaultResponseHandlerTests
     public async Task HandleResponseAsyncPropagatesCancellationWhileMappingErrorBody()
     {
         using CancellationTokenSource cts = new CancellationTokenSource();
-        await cts.CancelAsync().ConfigureAwait(false);
+        await cts.CancelAsync();
 
         using ILoggerFactory loggerFactory = new LoggerFactory();
-        using ContentStream content = new ContentStream(new CancelingReadStream(cts.Token), null);
+        await using CancelingReadStream innerStream = new CancelingReadStream(cts.Token);
+        await using ContentStream content = new ContentStream(innerStream, null);
         DefaultResponseHandler handler = new DefaultResponseHandler(
             Options.Create(new SimpleS3Config()),
             new NoopRequestValidatorFactory(),
@@ -43,7 +44,7 @@ public class DefaultResponseHandlerTests
             new StubNetworkDriver(null, 302),
             loggerFactory.CreateLogger<DefaultResponseHandler>());
 
-        ListObjectsResponse response = await handler.HandleResponseAsync<ListObjectsRequest, ListObjectsResponse>(new ListObjectsRequest("bucket"), "https://example.com", null, TestContext.Current.CancellationToken).ConfigureAwait(false);
+        ListObjectsResponse response = await handler.HandleResponseAsync<ListObjectsRequest, ListObjectsResponse>(new ListObjectsRequest("bucket"), "https://example.com", null, TestContext.Current.CancellationToken);
 
         Assert.False(response.IsSuccess);
         Assert.Equal(302, response.StatusCode);

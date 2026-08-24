@@ -13,7 +13,7 @@ public class StaticCreatorTests
         GoogleCloudStorageConfig config = new GoogleCloudStorageConfig("GOOGTS7C7FUP3AIRVJTE2BCDKINBTES3HC2GY5CBFJDCQ2SYHV6A6XXVTJFSA", "bGoa+V7g/yqDXvKRqq+JTFn4uQZbPiQJo4pf9RzJ", GoogleCloudStorageRegion.EuropeWest1);
         using GoogleCloudStorageClient client = new GoogleCloudStorageClient(config, driver);
 
-        await client.GetObjectAsync("testbucket", "GetObjectAsync");
+        await using Stream content = (await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken)).Content;
         Assert.Equal("https://testbucket.storage.googleapis.com/GetObjectAsync", driver.LastUrl);
     }
 }

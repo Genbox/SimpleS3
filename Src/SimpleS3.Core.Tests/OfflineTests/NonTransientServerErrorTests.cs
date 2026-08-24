@@ -31,16 +31,16 @@ public class NonTransientServerErrorTests(ITestOutputHelper helper) : OfflineTes
     [Fact]
     public async Task TestNonTransientServerError()
     {
-        using MemoryStream ms = new MemoryStream(new byte[4096]);
+        await using MemoryStream ms = new MemoryStream(new byte[4096]);
 
         // One request should succeed
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientServerError) + "-0", ms);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientServerError) + "-0", ms, token: TestContext.Current.CancellationToken);
 
         Assert.True(response.IsSuccess);
         Assert.Equal(1, _handler.RequestCounter);
 
         // Second request should fail
-        response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientServerError) + "-1", ms);
+        response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientServerError) + "-1", ms, token: TestContext.Current.CancellationToken);
 
         Assert.False(response.IsSuccess);
         Assert.Equal(2, _handler.RequestCounter);

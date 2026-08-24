@@ -13,7 +13,7 @@ public class StaticCreatorTests
         WasabiConfig config = new WasabiConfig("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", WasabiRegion.EuCentral1);
         using WasabiClient client = new WasabiClient(config, driver);
 
-        await client.GetObjectAsync("testbucket", "GetObjectAsync");
+        await using Stream content = (await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken)).Content;
         Assert.Equal("https://testbucket.s3.eu-central-1.wasabisys.com/GetObjectAsync", driver.LastUrl);
     }
 }

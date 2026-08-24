@@ -13,7 +13,7 @@ public class ContentStreamTests
         using CancellationTokenSource cts = new CancellationTokenSource();
         byte[] buffer = new byte[1];
 
-        await content.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
+        _ = await content.ReadAsync(buffer, cts.Token);
 
         Assert.Equal(cts.Token, inner.ReadToken);
     }
@@ -23,10 +23,10 @@ public class ContentStreamTests
     {
         CapturingStream inner = new CapturingStream();
         await using ContentStream content = new ContentStream(inner, null);
-        using MemoryStream destination = new MemoryStream();
+        await using MemoryStream destination = new MemoryStream();
         using CancellationTokenSource cts = new CancellationTokenSource();
 
-        await content.CopyToAsync(destination, 81920, cts.Token).ConfigureAwait(false);
+        await content.CopyToAsync(destination, 81920, cts.Token);
 
         Assert.Equal(cts.Token, inner.CopyToken);
     }
@@ -68,5 +68,13 @@ public class ContentStreamTests
         public override void SetLength(long value) => _inner.SetLength(value);
         public override void Write(byte[] buffer, int offset, int count) => _inner.Write(buffer, offset, count);
         public override void Flush() => _inner.Flush();
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                _inner.Dispose();
+
+            base.Dispose(disposing);
+        }
     }
 }

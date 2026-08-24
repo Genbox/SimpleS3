@@ -24,7 +24,8 @@ public class MultipartTransferTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            await foreach (GetObjectResponse _ in transfer.MultipartDownloadAsync("bucket", "object", output, bufferSize: 1, numParallelParts: 2, token: TestContext.Current.CancellationToken)) {}
+            await foreach (GetObjectResponse response in transfer.MultipartDownloadAsync("bucket", "object", output, bufferSize: 1, numParallelParts: 2, token: TestContext.Current.CancellationToken))
+                await response.Content.DisposeAsync();
         });
 
         Assert.True(objectClient.GetPartRequests < 10);
@@ -46,7 +47,7 @@ public class MultipartTransferTests
 
             Thread.Sleep(20);
             Interlocked.Decrement(ref activeCallbacks);
-        }, token: TestContext.Current.CancellationToken).ConfigureAwait(false);
+        }, token: TestContext.Current.CancellationToken);
 
         Assert.True(response.IsSuccess);
         Assert.Equal(1, Volatile.Read(ref maxActiveCallbacks));
@@ -62,8 +63,8 @@ public class MultipartTransferTests
 
         Task<CompleteMultipartUploadResponse> uploadTask = transfer.MultipartUploadAsync("bucket", "object", data, partSize: 1, numParallelParts: 1, token: cts.Token);
 
-        await data.ReadStarted.Task.WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
-        await cts.CancelAsync().ConfigureAwait(false);
+        await data.ReadStarted.Task.WaitAsync(TestContext.Current.CancellationToken);
+        await cts.CancelAsync();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => uploadTask);
         Assert.True(data.CapturedToken.IsCancellationRequested);
@@ -111,7 +112,7 @@ public class MultipartTransferTests
             if (request.PartNumber == 1)
                 throw new InvalidOperationException();
 
-            await Task.Delay(Timeout.InfiniteTimeSpan, token).ConfigureAwait(false);
+            await Task.Delay(Timeout.InfiniteTimeSpan, token);
             return new GetObjectResponse();
         }
 
@@ -156,7 +157,7 @@ public class MultipartTransferTests
 
         public async Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default)
         {
-            await Task.Delay(10, token).ConfigureAwait(false);
+            await Task.Delay(10, token);
 
             return new UploadPartResponse
             {
@@ -238,7 +239,7 @@ public class MultipartTransferTests
         {
             CapturedToken = cancellationToken;
             ReadStarted.TrySetResult();
-            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
+            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
             return 0;
         }
 
@@ -246,7 +247,7 @@ public class MultipartTransferTests
         {
             CapturedToken = cancellationToken;
             ReadStarted.TrySetResult();
-            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
+            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
             return 0;
         }
 

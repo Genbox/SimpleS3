@@ -15,9 +15,10 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 
-public class SignedUrlTests
+public sealed class SignedUrlTests : IDisposable
 {
     private readonly SimpleS3Config _options;
+    private readonly ServiceProvider _provider;
     private readonly ScopeBuilder _scopeBuilder;
     private readonly SignatureBuilder _sigBuilder;
     private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
@@ -38,11 +39,11 @@ public class SignedUrlTests
             x.NamingMode = NamingMode.PathStyle;
         });
 
-        ServiceProvider provider = services.BuildServiceProvider();
+        _provider = services.BuildServiceProvider();
 
-        _scopeBuilder = (ScopeBuilder)provider.GetRequiredService<IScopeBuilder>();
-        _sigBuilder = (SignatureBuilder)provider.GetRequiredService<ISignatureBuilder>();
-        _options = provider.GetRequiredService<IOptions<SimpleS3Config>>().Value;
+        _scopeBuilder = (ScopeBuilder)_provider.GetRequiredService<IScopeBuilder>();
+        _sigBuilder = (SignatureBuilder)_provider.GetRequiredService<ISignatureBuilder>();
+        _options = _provider.GetRequiredService<IOptions<SimpleS3Config>>().Value;
     }
 
     [Fact]
@@ -83,4 +84,6 @@ public class SignedUrlTests
 
         Assert.Equal("aeeed9bbccd4d02ee5c0109b86d86835f995330da4c265957d157751f604d404", signature.HexEncode());
     }
+
+    public void Dispose() => _provider.Dispose();
 }

@@ -67,7 +67,7 @@ public class PoolTypeTests
         Assert.Empty(failed);
     }
 
-    private IEnumerable<Type> GetRequestTypes()
+    private static IEnumerable<Type> GetRequestTypes()
     {
         Type baseType = typeof(BaseRequest);
         IEnumerable<Type> types = TypeHelper.GetTypesInheritedFrom(baseType);

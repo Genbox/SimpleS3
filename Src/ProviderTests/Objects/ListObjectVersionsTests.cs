@@ -51,7 +51,7 @@ public class ListObjectVersionsTests : TestBase
             Assert.Equal("1", version1.ObjectKey);
             Assert.Equal(putResp1.VersionId, version1.VersionId);
             Assert.True(version1.IsLatest);
-            Assert.Equal(DateTimeOffset.UtcNow.DateTime, version1.LastModified.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, version1.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
             Assert.Equal("\"0cc175b9c0f1b6a831c399e269772661\"", version1.Etag);
             Assert.Equal(1, version1.Size);
 
@@ -65,7 +65,7 @@ public class ListObjectVersionsTests : TestBase
             Assert.Equal("2", version2.ObjectKey);
             Assert.Equal(putResp2.VersionId, version2.VersionId);
             Assert.False(version2.IsLatest);
-            Assert.Equal(DateTimeOffset.UtcNow.DateTime, version2.LastModified.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, version2.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
             Assert.Equal("\"4124bc0a9335c27f086f24ba207a4912\"", version2.Etag);
             Assert.Equal(2, version2.Size);
 
@@ -80,7 +80,7 @@ public class ListObjectVersionsTests : TestBase
             Assert.Equal("3", version3.ObjectKey);
             Assert.Equal(putResp5.VersionId, version3.VersionId);
             Assert.True(version3.IsLatest);
-            Assert.Equal(DateTimeOffset.UtcNow.DateTime, version3.LastModified.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, version3.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
             Assert.Equal("\"74b87337454200d4d33f80c4663dc5e5\"", version3.Etag);
             Assert.Equal(4, version3.Size);
 
@@ -95,7 +95,7 @@ public class ListObjectVersionsTests : TestBase
             Assert.Equal("3", version3A.ObjectKey);
             Assert.Equal(putResp3.VersionId, version3A.VersionId);
             Assert.False(version3A.IsLatest);
-            Assert.Equal(DateTimeOffset.UtcNow.DateTime, version3A.LastModified.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, version3A.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
             Assert.Equal("\"47bce5c74f589f4867dbd57e9ca9f808\"", version3A.Etag);
             Assert.Equal(3, version3A.Size);
 
@@ -110,7 +110,7 @@ public class ListObjectVersionsTests : TestBase
             Assert.True(delMarker.IsLatest);
             Assert.Equal("2", delMarker.ObjectKey);
             Assert.Equal(putResp4.VersionId, delMarker.VersionId);
-            Assert.Equal(DateTimeOffset.UtcNow.DateTime, delMarker.LastModified.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, delMarker.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
 
             Assert.NotNull(delMarker.Owner.Id);
             Assert.Null(delMarker.Owner.Name);

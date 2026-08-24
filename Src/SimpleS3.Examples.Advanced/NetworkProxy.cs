@@ -29,6 +29,7 @@ public static class NetworkProxy
 
         using ServiceProvider provider = services.BuildServiceProvider();
         ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
+        Console.WriteLine($"Created {client.GetType().Name} with proxy.");
     }
 
     /// <summary>Example on how to setup a S3 client with proxy</summary>

@@ -42,7 +42,7 @@ public class DependencyInjectionTests
 
         using ServiceProvider provider = services.BuildServiceProvider();
         INetworkDriver driver = provider.GetRequiredService<INetworkDriver>();
-        FieldInfo configField = typeof(HttpClientFactoryNetworkDriver).GetField("_config", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        FieldInfo configField = typeof(HttpClientFactoryNetworkDriver).GetField("_config", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)!;
         HttpClientFactoryConfig config = Assert.IsType<HttpClientFactoryConfig>(configField.GetValue(driver));
 
         Assert.Equal(SimpleS3HttpVersion.Http2, config.HttpVersion);

@@ -24,7 +24,7 @@ public class BucketLockConfigurationTests : TestBase
             GetBucketLockConfigurationResponse getResp = await client.GetBucketLockConfigurationAsync(tempBucket);
             Assert.Equal(200, getResp.StatusCode);
             Assert.Equal(mode, getResp.LockMode);
-            Assert.Equal(DateTimeOffset.UtcNow.AddDays(2).DateTime, getResp.LockRetainUntil!.Value.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.AddDays(2).UtcDateTime, getResp.LockRetainUntil!.Value.UtcDateTime, TimeSpan.FromMinutes(1));
         }, r => r.EnableObjectLocking = true);
     }
 
@@ -68,7 +68,7 @@ public class BucketLockConfigurationTests : TestBase
             GetBucketLockConfigurationResponse getResp = await client.GetBucketLockConfigurationAsync(tempBucket);
             Assert.Equal(200, getResp.StatusCode);
             Assert.Equal(LockMode.Compliance, getResp.LockMode);
-            Assert.Equal(DateTimeOffset.UtcNow.AddDays(2).DateTime, getResp.LockRetainUntil!.Value.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.AddDays(2).UtcDateTime, getResp.LockRetainUntil!.Value.UtcDateTime, TimeSpan.FromMinutes(1));
 
             PutBucketLockConfigurationResponse putResp2 = await client.PutBucketLockConfigurationAsync(tempBucket, true, r =>
             {
@@ -80,7 +80,7 @@ public class BucketLockConfigurationTests : TestBase
             GetBucketLockConfigurationResponse getResp2 = await client.GetBucketLockConfigurationAsync(tempBucket);
             Assert.Equal(200, getResp2.StatusCode);
             Assert.Equal(LockMode.Governance, getResp2.LockMode);
-            Assert.Equal(DateTimeOffset.UtcNow.AddDays(5).DateTime, getResp2.LockRetainUntil!.Value.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(DateTimeOffset.UtcNow.AddDays(5).UtcDateTime, getResp2.LockRetainUntil!.Value.UtcDateTime, TimeSpan.FromMinutes(1));
         });
     }
 }

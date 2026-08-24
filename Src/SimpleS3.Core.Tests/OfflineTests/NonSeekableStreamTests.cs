@@ -25,7 +25,7 @@ public class NonSeekableStreamTests(ITestOutputHelper helper) : OfflineTestBase(
 
         //We test if it is possible send a non-seekable stream. This should succeed as we use ChunkedStream
         await using NonSeekableStream stream = new NonSeekableStream(data);
-        PutObjectResponse resp = await ObjectClient.PutObjectAsync(BucketName, nameof(SendNonSeekableStream), stream);
+        PutObjectResponse resp = await ObjectClient.PutObjectAsync(BucketName, nameof(SendNonSeekableStream), stream, token: TestContext.Current.CancellationToken);
         Assert.True(resp.IsSuccess);
     }
 }

@@ -129,7 +129,7 @@ public class ChunkedStreamTests
     public void PositionedStreamUsesRemainingLengthAndRewindsToInitialPosition()
     {
         byte[] content = "prefix-payload"u8.ToArray();
-        MemoryStream source = new MemoryStream(content) { Position = 7 };
+        using MemoryStream source = new MemoryStream(content) { Position = 7 };
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
         PutObjectRequest request = new PutObjectRequest("bucket", "object", source);
@@ -162,8 +162,8 @@ public class ChunkedStreamTests
         byte[] buffer = new byte[1];
         int read;
 
-        while ((read = await wrapped.ReadAsync(buffer, 0, buffer.Length, TestContext.Current.CancellationToken)) > 0)
-            await output.WriteAsync(buffer, 0, read, TestContext.Current.CancellationToken);
+        while ((read = await wrapped.ReadAsync(buffer.AsMemory(), TestContext.Current.CancellationToken)) > 0)
+            await output.WriteAsync(buffer.AsMemory(0, read), TestContext.Current.CancellationToken);
 
         Assert.Equal(string.Empty, request.Trailers[AmzHeaders.XAmzChecksumCrc32C]);
         Assert.Contains(AmzHeaders.XAmzChecksumCrc32C + ":Nks/tw==\r\n", Encoding.UTF8.GetString(output.ToArray()), StringComparison.Ordinal);
@@ -196,7 +196,7 @@ public class ChunkedStreamTests
         {
             CopyBytes(wrapped, output, trailerOffset);
 
-            Assert.Equal(0, await wrapped.ReadAsync([], 0, 0, TestContext.Current.CancellationToken));
+            Assert.Equal(0, await wrapped.ReadAsync(Memory<byte>.Empty, TestContext.Current.CancellationToken));
             await wrapped.CopyToAsync(output, TestContext.Current.CancellationToken);
 
             Assert.Equal(wrapped.Length, output.Length);
@@ -250,7 +250,7 @@ public class ChunkedStreamTests
     {
         byte[] firstPayload = "abc"u8.ToArray();
         byte[] secondPayload = "def"u8.ToArray();
-        MemoryStream source = new MemoryStream(firstPayload.ToArray());
+        using MemoryStream source = new MemoryStream(firstPayload.ToArray());
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
         PutObjectRequest request = new PutObjectRequest("bucket", "object", source) { ChecksumAlgorithm = ChecksumAlgorithm.Sha256 };

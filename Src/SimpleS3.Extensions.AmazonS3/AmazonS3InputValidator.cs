@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3;
 /// <summary>Provides the <c>AmazonS3InputValidator</c> API.</summary>
 public class AmazonS3InputValidator : InputValidatorBase
 {
-    private readonly Regex _ipRegex = new Regex(@"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    private static readonly Regex _ipRegex = new Regex(@"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", RegexOptions.CultureInvariant | RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     /// <summary>Provides the <c>TryValidateKeyIdInternal</c> API.</summary>
     protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)

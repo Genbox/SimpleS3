@@ -12,8 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 
-public class CanonicalRequestFileTests
+public sealed class CanonicalRequestFileTests : IDisposable
 {
+    private readonly ServiceProvider _provider;
     private readonly ScopeBuilder _scopeBuilder;
     private readonly SignatureBuilder _sigBuilder;
     private readonly DateTimeOffset _testOffset = new DateTimeOffset(2015, 08, 30, 12, 36, 0, TimeSpan.Zero);
@@ -30,10 +31,10 @@ public class CanonicalRequestFileTests
             x.Endpoint = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
         });
 
-        ServiceProvider provider = services.BuildServiceProvider();
+        _provider = services.BuildServiceProvider();
 
-        _scopeBuilder = (ScopeBuilder)provider.GetRequiredService<IScopeBuilder>();
-        _sigBuilder = (SignatureBuilder)provider.GetRequiredService<ISignatureBuilder>();
+        _scopeBuilder = (ScopeBuilder)_provider.GetRequiredService<IScopeBuilder>();
+        _sigBuilder = (SignatureBuilder)_provider.GetRequiredService<ISignatureBuilder>();
     }
 
     [Theory]
@@ -74,4 +75,6 @@ public class CanonicalRequestFileTests
             yield return [content, expectedCr, expectedSts];
         }
     }
+
+    public void Dispose() => _provider.Dispose();
 }

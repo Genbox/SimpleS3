@@ -19,7 +19,7 @@ public class ReuseRequestTests(ITestOutputHelper helper) : OfflineTestBase(helpe
 
         for (int i = 0; i < 2; i++)
         {
-            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req);
+            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req, TestContext.Current.CancellationToken);
             Assert.True(resp.IsSuccess);
 
             //None of the essential properties must change
@@ -30,7 +30,7 @@ public class ReuseRequestTests(ITestOutputHelper helper) : OfflineTestBase(helpe
             Assert.Equal(5, req.PartNumber);
             Assert.Equal("versionid", req.VersionId);
 
-            await Task.Delay(2000);
+            await Task.Delay(2000, TestContext.Current.CancellationToken);
 
             //The resolution on signatures is pr. second, so because we wait 2 seconds, it changes, and therefore the signature changes too
             string currentHeader = req.Headers[HttpHeaders.Authorization];
@@ -56,7 +56,7 @@ public class ReuseRequestTests(ITestOutputHelper helper) : OfflineTestBase(helpe
             string key = i.ToString(NumberFormatInfo.InvariantInfo);
             req.ObjectKey = key;
 
-            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req);
+            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req, TestContext.Current.CancellationToken);
             Assert.True(resp.IsSuccess);
 
             //The key must not change after the request is sent

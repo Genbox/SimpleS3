@@ -77,7 +77,7 @@ public class ListPartsTests : TestBase
             S3Part part = Assert.Single(listResp2.Parts);
 
             Assert.Equal(1, part.PartNumber);
-            Assert.Equal(DateTime.UtcNow, part.LastModified.DateTime, TimeSpan.FromSeconds(5));
+            Assert.Equal(DateTime.UtcNow, part.LastModified.UtcDateTime, TimeSpan.FromSeconds(5));
             Assert.Equal("\"32ca18808933aa12e979375d07048a11\"", part.ETag);
             Assert.Equal(file.Length, part.Size);
 

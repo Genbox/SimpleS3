@@ -32,7 +32,7 @@ public class ValidationTests
             config.Credentials = new StringAccessKey("test", "secret");
         });
 
-        IServiceProvider serviceProvider = services.BuildServiceProvider();
+        using ServiceProvider serviceProvider = services.BuildServiceProvider();
 
         OptionsValidationException ex = Assert.Throws<OptionsValidationException>(serviceProvider.GetRequiredService<ISimpleClient>);
         Assert.Equal("Invalid key id: The input was not the correct length. Length should be '20'", ex.Message);
@@ -57,7 +57,7 @@ public class ValidationTests
         });
 
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
-        serviceProvider.GetRequiredService<ISimpleClient>();
+        Assert.NotNull(serviceProvider.GetRequiredService<ISimpleClient>());
     }
 
     private sealed class LocalValidator : InputValidatorBase

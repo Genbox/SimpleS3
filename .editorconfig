@@ -10,8 +10,17 @@ max_line_length = 2000
 trim_trailing_whitespace = true
 insert_final_newline = false
 
-[**/{bin,obj}/**]
+[**/bin/**/*.cs]
 generated_code = true
+dotnet_diagnostic.CS1591.severity = none
+
+[**/obj/**/*.cs]
+generated_code = true
+dotnet_diagnostic.CS1591.severity = none
+
+[*.g.cs]
+generated_code = true
+dotnet_diagnostic.CS1591.severity = none
 
 # Two-space formats
 [*.{appxmanifest,axml,build,config,csproj,css,dbml,discomap,dtd,htm,html,js,json,jsonc,jsproj,lsproj,njsproj,nuspec,proj,props,resjson,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd,yaml,yml}]
@@ -26,6 +35,7 @@ trim_trailing_whitespace = false
 
 # Programming languages
 [*.{asax,ascx,aspx,axaml,cs,cshtml}]
+dotnet_diagnostic.CS1591.severity = error
 roslynator_enum_has_flag_style = method
 csharp_style_namespace_declarations = file_scoped:error
 
@@ -100,12 +110,21 @@ resharper_xmldoc_attribute_indent = align_by_first_attribute
 resharper_xmldoc_keep_user_linebreaks = true
 resharper_parentheses_non_obvious_operations = multiplicative, additive, shift, bitwise_and, bitwise_exclusive_or, bitwise_inclusive_or
 
-# Non-cryptographic randomness is intentional in tests and benchmarks
-# CA5394: Random is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security.
-# S2245: Use a cryptographically strong random number generator.
+# Test projects and their shared fixtures contain "Test" in the project directory name.
 [**/*Test*/**.cs]
+# Non-cryptographic randomness is intentional in tests.
 dotnet_diagnostic.CA5394.severity = none
 dotnet_diagnostic.S2245.severity = none
+# xUnit owns the test synchronization context and explicitly discourages ConfigureAwait(false).
+dotnet_diagnostic.MA0004.severity = none
+dotnet_diagnostic.MA0079.severity = none
+# Keep cancellation and ownership findings visible without forcing broad mechanical churn in test code.
+dotnet_diagnostic.MA0040.severity = warning
+dotnet_diagnostic.VSTHRD003.severity = warning
+dotnet_diagnostic.IDISP001.severity = warning
+dotnet_diagnostic.IDISP004.severity = warning
+# MemoryStream has no asynchronous cleanup work; synchronous disposal keeps tests simpler.
+dotnet_diagnostic.SS059.severity = none
 
 [**/*Benchmark*/**.cs]
 dotnet_diagnostic.CA5394.severity = none

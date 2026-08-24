@@ -40,7 +40,7 @@ public static class UsingProfileManager
             setup.SetupDefaultProfile();
         }
 
-        ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
+        ShowClient(provider.GetRequiredService<ISimpleClient>());
     }
 
     /// <summary>ProfileManager can handle credentials securely. This example shows how to use it via a normal client.</summary>
@@ -68,5 +68,8 @@ public static class UsingProfileManager
         clientConfig.UseProfile(profile);
 
         using AmazonS3Client client = new AmazonS3Client(clientConfig);
+        ShowClient(client);
     }
+
+    private static void ShowClient(ISimpleClient client) => Console.WriteLine($"Created {client.GetType().Name}.");
 }

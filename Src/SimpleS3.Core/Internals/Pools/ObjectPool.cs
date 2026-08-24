@@ -14,7 +14,9 @@ internal class ObjectPool<T>(int maxCapacity = 32) where T : IPooledObject
     public T Rent(Action<T> setup)
     {
         if (!_pool.TryTake(out T? obj))
+#pragma warning disable S3011 // Pooled implementation types may intentionally expose non-public parameterless constructors.
             obj = (T)Activator.CreateInstance(typeof(T), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture)!;
+#pragma warning restore S3011
 
         setup(obj);
         return obj;

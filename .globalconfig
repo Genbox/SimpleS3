@@ -504,7 +504,7 @@ dotnet_diagnostic.RCS1209.severity = error # Order type parameter constraints
 dotnet_diagnostic.RCS1258.severity = error # Avoid redundant enum flags
 
 # Compiler diagnostics
-dotnet_diagnostic.CS1591.severity = error # Missing XML comment for publicly visible type or member
+dotnet_diagnostic.CS1591.severity = none # Source generators cannot supply XML comments for emitted public APIs; handwritten C# restores this below.
 dotnet_diagnostic.CS1574.severity = error # XML documentation cref attributes must resolve
 dotnet_diagnostic.CS1580.severity = error # XML documentation cref parameter types must be valid
 dotnet_diagnostic.CS1581.severity = error # Invalid return type in XML comment cref attribute

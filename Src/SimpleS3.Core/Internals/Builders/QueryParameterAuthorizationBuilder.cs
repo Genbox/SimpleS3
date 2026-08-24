@@ -7,13 +7,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Genbox.SimpleS3.Core.Internals.Builders;
 
-internal sealed class QueryParameterAuthorizationBuilder(ISignatureBuilder builder, ILogger<QueryParameterAuthorizationBuilder> logger) : IAuthorizationBuilder
+internal sealed partial class QueryParameterAuthorizationBuilder(ISignatureBuilder builder, ILogger<QueryParameterAuthorizationBuilder> logger) : IAuthorizationBuilder
 {
     public void BuildAuthorization(IRequest request)
     {
         Validator.RequireNotNull(request);
 
-        logger.LogTrace("Building parameter based authorization");
+        BuildingParameterAuthorization();
 
         byte[]? signature = null;
 

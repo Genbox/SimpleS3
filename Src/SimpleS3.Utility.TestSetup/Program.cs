@@ -20,7 +20,8 @@ internal static class Program
 
             string profileName = UtilityHelper.GetProfileName(s3Provider);
 
-            await using ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
+            ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
+            await using var configuredProvider = provider.ConfigureAwait(false);
 
             IProfile profile = UtilityHelper.GetOrSetupProfile(provider, s3Provider, profileName);
 
@@ -29,7 +30,7 @@ internal static class Program
             string bucketName = UtilityHelper.GetTestBucket(profile);
             Console.WriteLine($"Setting up bucket '{bucketName}' in {s3Provider}");
 
-            if (await TryCreateBucketAsync(bucketClient, bucketName))
+            if (await TryCreateBucketAsync(bucketClient, bucketName).ConfigureAwait(false))
             {
                 if (s3Provider == S3Provider.AmazonS3)
                     await PostConfigureAmazonS3(bucketClient, bucketName).ConfigureAwait(false);
@@ -41,20 +42,20 @@ internal static class Program
 
     private static async Task PostConfigureBackBlazeB2(IBucketClient bucketClient, string bucketName)
     {
-        await SetLockConfigAsync(bucketClient, bucketName);
+        await SetLockConfigAsync(bucketClient, bucketName).ConfigureAwait(false);
     }
 
     private static async Task PostConfigureAmazonS3(IBucketClient bucketClient, string bucketName)
     {
-        await SetLockConfigAsync(bucketClient, bucketName);
-        await SetEncryptionConfigAsync(bucketClient, bucketName);
-        await SetExpireAllAsync(bucketClient, bucketName);
-        await SetPublicAccessBlockAsync(bucketClient, bucketName);
+        await SetLockConfigAsync(bucketClient, bucketName).ConfigureAwait(false);
+        await SetEncryptionConfigAsync(bucketClient, bucketName).ConfigureAwait(false);
+        await SetExpireAllAsync(bucketClient, bucketName).ConfigureAwait(false);
+        await SetPublicAccessBlockAsync(bucketClient, bucketName).ConfigureAwait(false);
     }
 
     private static async Task<bool> TryCreateBucketAsync(IBucketClient bucketClient, string bucketName)
     {
-        HeadBucketResponse headResp = await bucketClient.HeadBucketAsync(bucketName);
+        HeadBucketResponse headResp = await bucketClient.HeadBucketAsync(bucketName, token: CancellationToken.None).ConfigureAwait(false);
 
         Console.Write("- Created: ");
 
@@ -69,7 +70,7 @@ internal static class Program
         {
             r.ObjectOwnership = ObjectOwnership.BucketOwnerPreferred;
             r.EnableObjectLocking = true;
-        }).ConfigureAwait(false);
+        }, CancellationToken.None).ConfigureAwait(false);
 
         if (resp.IsSuccess)
         {
@@ -85,7 +86,7 @@ internal static class Program
     {
         Console.Write("- Lock configuration: ");
 
-        PutBucketLockConfigurationResponse resp = await bucketClient.PutBucketLockConfigurationAsync(bucketName, true).ConfigureAwait(false);
+        PutBucketLockConfigurationResponse resp = await bucketClient.PutBucketLockConfigurationAsync(bucketName, true, token: CancellationToken.None).ConfigureAwait(false);
         Console.WriteLine(resp.IsSuccess ? "[x]" : "[ ]");
     }
 
@@ -96,7 +97,7 @@ internal static class Program
         S3ServerSideEncryptionRule rule = new S3ServerSideEncryptionRule(SseAlgorithm.Aes256);
         rule.BlockedEncryptionTypes.Add(BlockedEncryptionType.None);
 
-        PutBucketEncryptionResponse resp = await bucketClient.PutBucketEncryptionAsync(bucketName, [rule]).ConfigureAwait(false);
+        PutBucketEncryptionResponse resp = await bucketClient.PutBucketEncryptionAsync(bucketName, [rule], token: CancellationToken.None).ConfigureAwait(false);
         Console.WriteLine(resp.IsSuccess ? "[x]" : "[ ]");
     }
 
@@ -115,7 +116,7 @@ internal static class Program
             }
         ];
 
-        PutBucketLifecycleConfigurationResponse resp = await bucketClient.PutBucketLifecycleConfigurationAsync(bucketName, rules).ConfigureAwait(false);
+        PutBucketLifecycleConfigurationResponse resp = await bucketClient.PutBucketLifecycleConfigurationAsync(bucketName, rules, token: CancellationToken.None).ConfigureAwait(false);
         Console.WriteLine(resp.IsSuccess ? "[x]" : "[ ]");
     }
 
@@ -123,7 +124,7 @@ internal static class Program
     {
         Console.Write("- Public access block: ");
 
-        PutPublicAccessBlockResponse resp = await bucketClient.PutPublicAccessBlockAsync(bucketName).ConfigureAwait(false);
+        PutPublicAccessBlockResponse resp = await bucketClient.PutPublicAccessBlockAsync(bucketName, token: CancellationToken.None).ConfigureAwait(false);
         Console.WriteLine(resp.IsSuccess ? "[x]" : "[ ]");
     }
 }

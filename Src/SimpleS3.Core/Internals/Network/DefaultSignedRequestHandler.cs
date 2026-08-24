@@ -21,12 +21,11 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Network;
 
-internal sealed class DefaultSignedRequestHandler : ISignedRequestHandler
+internal sealed partial class DefaultSignedRequestHandler : ISignedRequestHandler
 {
     private readonly QueryParameterAuthorizationBuilder _authBuilder;
     private readonly SimpleS3Config _config;
     private readonly IEndpointBuilder _endpointBuilder;
-    private readonly ILogger<DefaultSignedRequestHandler> _logger;
     private readonly IMarshalFactory _marshaller;
     private readonly IResponseHandler _responseHandler;
     private readonly IScopeBuilder _scopeBuilder;
@@ -56,9 +55,11 @@ internal sealed class DefaultSignedRequestHandler : ISignedRequestHandler
             request.Timestamp = DateTimeOffset.UtcNow;
             request.RequestId = Guid.NewGuid();
 
-            _marshaller.MarshalRequest(_config, request); //We don't use the return stream
+#pragma warning disable IDISP004 // MarshalRequest can return caller-owned request content; signing must not dispose it.
+            _ = _marshaller.MarshalRequest(_config, request);
+#pragma warning restore IDISP004
 
-            _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
+            HandlingRequest(typeof(TReq).Name, request.RequestId);
 
             IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
             request.SetHeader(HttpHeaders.Host, endpointData.Host);

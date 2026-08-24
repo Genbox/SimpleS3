@@ -31,7 +31,7 @@ public class PollyHttpMessageHandlerTests
 
         using ServiceProvider provider = services.BuildServiceProvider();
         RetryableBufferingStreamWrapper wrapper = Assert.IsType<RetryableBufferingStreamWrapper>(provider.GetRequiredService<IRequestStreamWrapper>());
-        FieldInfo configField = typeof(RetryableBufferingStreamWrapper).GetField("_config", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        FieldInfo configField = typeof(RetryableBufferingStreamWrapper).GetField("_config", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)!;
         PollyConfig config = Assert.IsType<PollyConfig>(configField.GetValue(wrapper));
 
         Assert.Equal(123, config.MaxMemoryBufferSize);
@@ -41,7 +41,7 @@ public class PollyHttpMessageHandlerTests
     public async Task UseRetryAndTimeoutHonorsNoDelayRetryMode()
     {
         ServiceCollection services = new ServiceCollection();
-        using CountingHandler handler = new CountingHandler();
+        CountingHandler handler = new CountingHandler();
 
         services.AddHttpClient("custom")
                 .ConfigurePrimaryHttpMessageHandler(() => handler)
@@ -53,10 +53,10 @@ public class PollyHttpMessageHandlerTests
                 });
 
         await using ServiceProvider provider = services.BuildServiceProvider();
-        HttpClient client = provider.GetRequiredService<IHttpClientFactory>().CreateClient("custom");
+        using HttpClient client = provider.GetRequiredService<IHttpClientFactory>().CreateClient("custom");
 
         Stopwatch stopwatch = Stopwatch.StartNew();
-        using HttpResponseMessage response = await client.GetAsync("https://example.com");
+        using HttpResponseMessage response = await client.GetAsync("https://example.com", TestContext.Current.CancellationToken);
         stopwatch.Stop();
 
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);

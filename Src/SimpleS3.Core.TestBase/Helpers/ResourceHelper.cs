@@ -10,7 +10,7 @@ public static class ResourceHelper
 {
     public static IEnumerable<(string name, string content)> GetResources(Assembly assembly, string filter)
     {
-        Regex regex = new Regex(filter, RegexOptions.Compiled);
+        Regex regex = new Regex(filter, RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
         foreach (string resourceName in assembly.GetManifestResourceNames())
         {

@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers;
 
 internal static class ParserHelper
 {
-    private static readonly Regex _expirationRegex = new Regex("expiry-date=\"(?<date>.+?)\", rule-id=\"(?<id>.+?)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+    private static readonly Regex _expirationRegex = new Regex("expiry-date=\"(?<date>.+?)\", rule-id=\"(?<id>.+?)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, TimeSpan.FromSeconds(1));
 
     public static IDictionary<string, string> ParseMetadata(IDictionary<string, string> headers)
     {

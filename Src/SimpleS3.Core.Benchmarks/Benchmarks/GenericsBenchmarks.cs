@@ -17,7 +17,7 @@ public class GenericsBenchmarks
         bool DoWork();
     }
 
-    private class TestRequest : IRequest
+    private sealed class TestRequest : IRequest
     {
         [MethodImpl(MethodImplOptions.NoInlining)]
         public bool DoWork() => true;

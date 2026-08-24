@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using FluentValidation;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -12,6 +13,7 @@ namespace Genbox.SimpleS3.Core.TestBase;
 
 public abstract class UnitTestBase : IDisposable
 {
+    [SuppressMessage("Design", "MA0056:Do not call overridable members in constructor", Justification = "Derived test fixtures customize their isolated dependency-injection container here.")]
     protected UnitTestBase(ITestOutputHelper helper, string bucketName)
     {
         BucketName = bucketName;
@@ -37,7 +39,6 @@ public abstract class UnitTestBase : IDisposable
         collection.RemoveAll(typeof(IValidator<>));
 
         ConfigureServices(collection);
-
         Services = collection.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
     }
 

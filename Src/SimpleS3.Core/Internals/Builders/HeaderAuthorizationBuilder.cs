@@ -14,7 +14,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Builders;
 
-internal sealed class HeaderAuthorizationBuilder(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<HeaderAuthorizationBuilder> logger) : IAuthorizationBuilder
+internal sealed partial class HeaderAuthorizationBuilder(IOptions<SimpleS3Config> options, IScopeBuilder scopeBuilder, ISignatureBuilder signatureBuilder, ILogger<HeaderAuthorizationBuilder> logger) : IAuthorizationBuilder
 {
     private readonly SimpleS3Config _config = options.Value;
 
@@ -40,7 +40,7 @@ internal sealed class HeaderAuthorizationBuilder(IOptions<SimpleS3Config> option
     internal string BuildInternal(DateTimeOffset date, IReadOnlyDictionary<string, string> headers, byte[] signature)
     {
         Validator.RequireNotNull(_config.Credentials, "If we get to this point, we expect to have valid credentials");
-        logger.LogTrace("Building header based authorization");
+        BuildingHeaderAuthorization();
 
         string scope = scopeBuilder.CreateScope("s3", date);
 
@@ -52,9 +52,9 @@ internal sealed class HeaderAuthorizationBuilder(IOptions<SimpleS3Config> option
 
         string authHeader = StringBuilderPool.Shared.ReturnString(header, clearContents: true);
         if (_config.LogSensitiveMaterial)
-            logger.LogDebug("AuthHeader: {AuthHeader}", authHeader);
+            LogAuthorizationHeader(authHeader);
         else
-            logger.LogDebug("Authorization header created");
+            AuthorizationHeaderCreated();
 
         return authHeader;
     }

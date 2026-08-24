@@ -100,8 +100,13 @@ public static class HttpClientBuilderExtensions
     {
         int maxDelay = (int)config.MaxRandomDelay.TotalMilliseconds;
 
+        if (maxDelay <= 0)
+            return TimeSpan.Zero;
+
+#pragma warning disable CA5394, S2245 // Retry jitter is non-security-sensitive; Random avoids unnecessary cryptographic allocation.
         lock (_rng)
             return TimeSpan.FromMilliseconds(_rng.Next(0, maxDelay));
+#pragma warning restore CA5394, S2245
     }
 
     private sealed class PollyPolicyRegistration(string name)

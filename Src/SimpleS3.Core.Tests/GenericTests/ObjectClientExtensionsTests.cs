@@ -19,22 +19,22 @@ public class ObjectClientExtensionsTests
     public async Task ListAllObjectsAsyncCancelsPrefetchedNextPageWhenEnumerationStops()
     {
         PagingObjectClient client = new PagingObjectClient(objectsPerPage: 2, blockSecondRequest: true);
-        IAsyncEnumerator<S3Object> enumerator = client.ListAllObjectsAsync("bucket", token: TestContext.Current.CancellationToken).GetAsyncEnumerator();
+        IAsyncEnumerator<S3Object> enumerator = client.ListAllObjectsAsync("bucket", token: TestContext.Current.CancellationToken).GetAsyncEnumerator(TestContext.Current.CancellationToken);
 
         try
         {
-            Assert.True(await enumerator.MoveNextAsync().AsTask().WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false));
+            Assert.True(await enumerator.MoveNextAsync().AsTask().WaitAsync(TestContext.Current.CancellationToken));
             Assert.Equal("first", enumerator.Current.ObjectKey);
 
-            await client.PrefetchStarted.WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+            await client.PrefetchStarted.WaitAsync(TestContext.Current.CancellationToken);
             Assert.Equal(2, client.ListObjectsCalls);
         }
         finally
         {
-            await enumerator.DisposeAsync().AsTask().WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+            await enumerator.DisposeAsync().AsTask().WaitAsync(TestContext.Current.CancellationToken);
         }
 
-        await client.PrefetchCanceled.WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+        await client.PrefetchCanceled.WaitAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -42,18 +42,18 @@ public class ObjectClientExtensionsTests
     {
         PagingObjectClient client = new PagingObjectClient(objectsPerPage: 2);
         using CancellationTokenSource cts = new CancellationTokenSource();
-        IAsyncEnumerator<S3Object> enumerator = client.ListAllObjectsAsync("bucket", token: cts.Token).GetAsyncEnumerator();
+        IAsyncEnumerator<S3Object> enumerator = client.ListAllObjectsAsync("bucket", token: cts.Token).GetAsyncEnumerator(cts.Token);
 
         try
         {
-            Assert.True(await enumerator.MoveNextAsync().AsTask().ConfigureAwait(false));
-            await cts.CancelAsync().ConfigureAwait(false);
+            Assert.True(await enumerator.MoveNextAsync().AsTask());
+            await cts.CancelAsync();
 
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await enumerator.MoveNextAsync().AsTask().ConfigureAwait(false));
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await enumerator.MoveNextAsync().AsTask());
         }
         finally
         {
-            await enumerator.DisposeAsync().AsTask().ConfigureAwait(false);
+            await enumerator.DisposeAsync().AsTask();
         }
     }
 
@@ -62,18 +62,18 @@ public class ObjectClientExtensionsTests
     {
         StaticMultipartClient client = new StaticMultipartClient();
         using CancellationTokenSource cts = new CancellationTokenSource();
-        IAsyncEnumerator<S3Upload> enumerator = client.ListAllMultipartUploadsAsync("bucket", cts.Token).GetAsyncEnumerator();
+        IAsyncEnumerator<S3Upload> enumerator = client.ListAllMultipartUploadsAsync("bucket", cts.Token).GetAsyncEnumerator(cts.Token);
 
         try
         {
-            Assert.True(await enumerator.MoveNextAsync().AsTask().ConfigureAwait(false));
-            await cts.CancelAsync().ConfigureAwait(false);
+            Assert.True(await enumerator.MoveNextAsync().AsTask());
+            await cts.CancelAsync();
 
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await enumerator.MoveNextAsync().AsTask().ConfigureAwait(false));
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await enumerator.MoveNextAsync().AsTask());
         }
         finally
         {
-            await enumerator.DisposeAsync().AsTask().ConfigureAwait(false);
+            await enumerator.DisposeAsync().AsTask();
         }
     }
 
@@ -82,7 +82,7 @@ public class ObjectClientExtensionsTests
     {
         PagingMultipartClient client = new PagingMultipartClient();
 
-        List<S3Upload> uploads = await CollectAsync(client.ListAllMultipartUploadsAsync("bucket", TestContext.Current.CancellationToken), TestContext.Current.CancellationToken).ConfigureAwait(false);
+        List<S3Upload> uploads = await CollectAsync(client.ListAllMultipartUploadsAsync("bucket", TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
 
         Assert.Equal(2, uploads.Count);
         Assert.Equal("next-key", client.SecondRequestKeyMarker);
@@ -94,7 +94,7 @@ public class ObjectClientExtensionsTests
     {
         PagingMultipartClient client = new PagingMultipartClient(failFirstPage: true);
 
-        await Assert.ThrowsAsync<S3RequestException>(async () => await CollectAsync(client.ListAllMultipartUploadsAsync("bucket", TestContext.Current.CancellationToken), TestContext.Current.CancellationToken).ConfigureAwait(false));
+        await Assert.ThrowsAsync<S3RequestException>(async () => await CollectAsync(client.ListAllMultipartUploadsAsync("bucket", TestContext.Current.CancellationToken), TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class ObjectClientExtensionsTests
     {
         PagingObjectClient client = new PagingObjectClient(versionPages: true);
 
-        List<S3Version> versions = await CollectAsync(client.ListAllObjectVersionsAsync("bucket", token: TestContext.Current.CancellationToken), TestContext.Current.CancellationToken).ConfigureAwait(false);
+        List<S3Version> versions = await CollectAsync(client.ListAllObjectVersionsAsync("bucket", token: TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
 
         Assert.Equal(2, versions.Count);
         Assert.Equal("next-key", client.SecondVersionRequestKeyMarker);
@@ -114,18 +114,18 @@ public class ObjectClientExtensionsTests
     {
         StaticBucketClient client = new StaticBucketClient();
         using CancellationTokenSource cts = new CancellationTokenSource();
-        IAsyncEnumerator<S3Bucket> enumerator = client.ListAllBucketsAsync(token: cts.Token).GetAsyncEnumerator();
+        IAsyncEnumerator<S3Bucket> enumerator = client.ListAllBucketsAsync(token: cts.Token).GetAsyncEnumerator(cts.Token);
 
         try
         {
-            Assert.True(await enumerator.MoveNextAsync().AsTask().ConfigureAwait(false));
-            await cts.CancelAsync().ConfigureAwait(false);
+            Assert.True(await enumerator.MoveNextAsync().AsTask());
+            await cts.CancelAsync();
 
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await enumerator.MoveNextAsync().AsTask().ConfigureAwait(false));
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await enumerator.MoveNextAsync().AsTask());
         }
         finally
         {
-            await enumerator.DisposeAsync().AsTask().ConfigureAwait(false);
+            await enumerator.DisposeAsync().AsTask();
         }
     }
 
@@ -133,7 +133,7 @@ public class ObjectClientExtensionsTests
     {
         List<T> result = new List<T>();
 
-        await foreach (T item in source.WithCancellation(token).ConfigureAwait(false))
+        await foreach (T item in source.WithCancellation(token))
             result.Add(item);
 
         return result;
@@ -172,7 +172,7 @@ public class ObjectClientExtensionsTests
 
                 try
                 {
-                    await Task.Delay(Timeout.InfiniteTimeSpan, token).ConfigureAwait(false);
+                    await Task.Delay(Timeout.InfiniteTimeSpan, token);
                 }
                 catch (OperationCanceledException) when (token.IsCancellationRequested)
                 {

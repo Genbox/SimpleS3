@@ -22,7 +22,7 @@ public class EndpointBuilderTests
     [InlineData("http://s3.{Region}.{Region}-amazonaws.com", null, "http://s3.eu-west-1.eu-west-1-amazonaws.com")] //Test that we can use a label twice
     public void ParseEndpointTest(string template, string? bucketName, string result)
     {
-        SimpleS3Config config = new SimpleS3Config(null!, template, "eu-west-1");
+        SimpleS3Config config = new SimpleS3Config(null, template, "eu-west-1");
         config.NamingMode = NamingMode.VirtualHost;
 
         EndpointBuilder builder = new EndpointBuilder(Options.Create(config));
@@ -41,7 +41,7 @@ public class EndpointBuilderTests
     [Fact]
     public async Task ConcurrentVirtualHostRequestsUseTheirOwnBucket()
     {
-        SimpleS3Config config = new SimpleS3Config(null!, "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com", "eu-west-1");
+        SimpleS3Config config = new SimpleS3Config(null, "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com", "eu-west-1");
         config.NamingMode = NamingMode.VirtualHost;
         EndpointBuilder builder = new EndpointBuilder(Options.Create(config));
 

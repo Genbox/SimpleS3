@@ -83,7 +83,7 @@ public class HeadObjectTests : TestBase
         Assert.Equal("attachment; filename=\"filename.txt\"", resp.ContentDisposition);
         Assert.Equal("da-DK", resp.ContentLanguage);
         Assert.Equal("text/html; charset=utf-8", resp.ContentType);
-        Assert.Equal(DateTime.UtcNow, resp.ExpiresOn!.Value.DateTime, TimeSpan.FromSeconds(5));
+        Assert.Equal(DateTime.UtcNow, resp.ExpiresOn!.Value.UtcDateTime, TimeSpan.FromSeconds(5));
     }
 
     [Theory]

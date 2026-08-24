@@ -28,14 +28,14 @@ public class TimeoutTests(ITestOutputHelper helper) : OfflineTestBase(helper)
     [Fact]
     public async Task TestClientCancellationToken()
     {
-        using MemoryStream ms = new MemoryStream(new byte[4096]);
+        await using MemoryStream ms = new MemoryStream(new byte[4096]);
         using CancellationTokenSource tcs = new CancellationTokenSource();
 
         Task<PutObjectResponse> task = ObjectClient.PutObjectAsync(BucketName, nameof(TestClientCancellationToken), ms, token: tcs.Token);
         tcs.CancelAfter(500);
 
         Stopwatch sw = Stopwatch.StartNew();
-        await Assert.ThrowsAsync<TaskCanceledException>(async () => await task.ConfigureAwait(false));
+        await Assert.ThrowsAsync<TaskCanceledException>(async () => await task);
         sw.Stop();
 
         // We should have canceled within 750ms
@@ -45,9 +45,9 @@ public class TimeoutTests(ITestOutputHelper helper) : OfflineTestBase(helper)
     [Fact]
     public async Task TestTimeoutError()
     {
-        using MemoryStream ms = new MemoryStream(new byte[4096]);
+        await using MemoryStream ms = new MemoryStream(new byte[4096]);
 
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError), ms);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError), ms, token: TestContext.Current.CancellationToken);
 
         // Request should succeed after N tries
         Assert.True(response.IsSuccess);
@@ -59,7 +59,7 @@ public class TimeoutTests(ITestOutputHelper helper) : OfflineTestBase(helper)
     {
         await using NonSeekableStream ms = new NonSeekableStream(new byte[4096]);
 
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError_NonSeekableStream), ms);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTimeoutError_NonSeekableStream), ms, token: TestContext.Current.CancellationToken);
 
         // Request should succeed after N tries
         Assert.True(response.IsSuccess);

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ExceptionServices;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
@@ -9,6 +10,7 @@ using Genbox.SimpleS3.Utility.Shared;
 
 namespace Genbox.ProviderTests.Code;
 
+[SuppressMessage("Naming", "CA1724:Type names should not match namespaces", Justification = "This established provider-test fixture name is intentionally generic.")]
 public abstract class TestBase
 {
     private static readonly ConcurrentDictionary<S3Provider, SemaphoreSlim> _temporaryBucketLocks = new ConcurrentDictionary<S3Provider, SemaphoreSlim>();
@@ -65,7 +67,7 @@ public abstract class TestBase
             }
             finally
             {
-                (Exception? cleanupFailure, bool cleanupDeferred) = await UtilityHelper.TryDeleteTemporaryBucketAsync(provider, client, tempBucket);
+                (Exception? cleanupFailure, bool cleanupDeferred) = await UtilityHelper.TryDeleteTemporaryBucketAsync(provider, client, tempBucket, token: token);
 
                 if (cleanupFailure != null)
                 {

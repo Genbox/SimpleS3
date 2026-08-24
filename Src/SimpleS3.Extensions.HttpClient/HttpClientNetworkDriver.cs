@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3.Extensions.HttpClient;
 
 /// <summary>Provides the <c>HttpClientNetworkDriver</c> API.</summary>
-public sealed class HttpClientNetworkDriver(IOptionsMonitor<HttpClientConfig> options, ILogger<HttpClientNetworkDriver> logger, System.Net.Http.HttpClient client, string optionsName) : INetworkDriver
+public sealed partial class HttpClientNetworkDriver(IOptionsMonitor<HttpClientConfig> options, ILogger<HttpClientNetworkDriver> logger, System.Net.Http.HttpClient client, string optionsName) : INetworkDriver
 {
     private readonly HttpClientConfig _config = options.Get(optionsName);
     private readonly Version _httpVersion1 = new Version("1.1");
@@ -18,6 +19,7 @@ public sealed class HttpClientNetworkDriver(IOptionsMonitor<HttpClientConfig> op
     private readonly Version _httpVersion3 = new Version("3.0");
 
     /// <summary>Provides the <c>SendRequestAsync&lt;T&gt;</c> API.</summary>
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "Transport response ownership is transferred to the returned response content.")]
     public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         HttpResponseMessage httpResponse;
@@ -44,13 +46,11 @@ public sealed class HttpClientNetworkDriver(IOptionsMonitor<HttpClientConfig> op
             foreach (KeyValuePair<string, string> pair in request.Headers)
                 httpRequest.AddHeader(pair.Key, pair.Value);
 
-            logger.LogTrace("Sending HTTP request");
+            SendingRequest();
 
- #pragma warning disable IDISP001 - We cannot dispose the response as the stream it delivers is reused by our response object
             httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
- #pragma warning restore IDISP001
         }
-        logger.LogDebug("Got an {Status} response with {StatusCode}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
+        ReceivedResponse(httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
 
         Dictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -65,9 +65,7 @@ public sealed class HttpClientNetworkDriver(IOptionsMonitor<HttpClientConfig> op
                 responseHeaders.Add(header.Key, header.Value.First());
 
             Stream innerStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#pragma warning disable CA2000 // Ownership is transferred to HttpResponse.Content and disposed with the response stream.
             contentStream = new ContentStream(innerStream, httpResponse.Content.Headers.ContentLength, httpResponse);
-#pragma warning restore CA2000
         }
         else
             httpResponse.Dispose();

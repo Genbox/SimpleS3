@@ -18,11 +18,12 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 
-public class ChunkedSignatureTests
+public sealed class ChunkedSignatureTests : IDisposable
 {
     private readonly HeaderAuthorizationBuilder _authBuilder;
     private readonly ChunkedSignatureBuilder _chunkedSigBuilder;
     private readonly SimpleS3Config _config;
+    private readonly ServiceProvider _provider;
     private readonly ScopeBuilder _scopeBuilder;
     private readonly SignatureBuilder _sigBuilder;
     private readonly DateTimeOffset _testDate = new DateTimeOffset(2013, 05, 24, 0, 0, 0, TimeSpan.Zero);
@@ -41,13 +42,13 @@ public class ChunkedSignatureTests
             x.NamingMode = NamingMode.PathStyle;
         });
 
-        ServiceProvider provider = services.BuildServiceProvider();
+        _provider = services.BuildServiceProvider();
 
-        _scopeBuilder = (ScopeBuilder)provider.GetRequiredService<IScopeBuilder>();
-        _sigBuilder = (SignatureBuilder)provider.GetRequiredService<ISignatureBuilder>();
-        _chunkedSigBuilder = (ChunkedSignatureBuilder)provider.GetRequiredService<IChunkedSignatureBuilder>();
-        _authBuilder = provider.GetRequiredService<HeaderAuthorizationBuilder>();
-        _config = provider.GetRequiredService<IOptions<SimpleS3Config>>().Value;
+        _scopeBuilder = (ScopeBuilder)_provider.GetRequiredService<IScopeBuilder>();
+        _sigBuilder = (SignatureBuilder)_provider.GetRequiredService<ISignatureBuilder>();
+        _chunkedSigBuilder = (ChunkedSignatureBuilder)_provider.GetRequiredService<IChunkedSignatureBuilder>();
+        _authBuilder = _provider.GetRequiredService<HeaderAuthorizationBuilder>();
+        _config = _provider.GetRequiredService<IOptions<SimpleS3Config>>().Value;
     }
 
     [Fact]
@@ -311,9 +312,9 @@ public class ChunkedSignatureTests
 
     [Theory]
     [InlineData(0, "9bd7be022acc19c03c9d92444bf41f22dee2b55936b8e62d30ae8ebaa62dc2f6")]
-    [InlineData(80 * 1024 - 1, "09e7b448c6d02db9448eabd564e9e7c01673581930c3a3bbced7b20adee96dec", "4839de3be25a94022f830ae1ae28987e026aa7ccc5467a76aa5e3272b2ff3028")]
+    [InlineData((80 * 1024) - 1, "09e7b448c6d02db9448eabd564e9e7c01673581930c3a3bbced7b20adee96dec", "4839de3be25a94022f830ae1ae28987e026aa7ccc5467a76aa5e3272b2ff3028")]
     [InlineData(80 * 1024, "ffa0af214af9c70d10e78ac1bc15cc619bbaae6cf480608a0d15d3163228761a", "79a011a78294a3f8242b5e912f0240d1c38e8319061e5c0de5aad638d0fd8e2b")] // Default chunk size
-    [InlineData(80 * 1024 + 1, "ffa0af214af9c70d10e78ac1bc15cc619bbaae6cf480608a0d15d3163228761a", "b3e03375420ec2f31f86567bdc715efb466c21a41ae217154cceaec265cd89ef", "c399aad5e87548b0798944ef24f4c4b3ee504193c04ff57d8a202a3ca3184778")]
+    [InlineData((80 * 1024) + 1, "ffa0af214af9c70d10e78ac1bc15cc619bbaae6cf480608a0d15d3163228761a", "b3e03375420ec2f31f86567bdc715efb466c21a41ae217154cceaec265cd89ef", "c399aad5e87548b0798944ef24f4c4b3ee504193c04ff57d8a202a3ca3184778")]
     public void StreamTest(int dataSize, params string[] expectedSignatures)
     {
         byte[] originalData = new byte[dataSize];
@@ -351,4 +352,6 @@ public class ChunkedSignatureTests
         string actual = sr.ReadToEnd();
         Assert.Equal(expected, actual);
     }
+
+    public void Dispose() => _provider.Dispose();
 }

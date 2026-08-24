@@ -45,6 +45,7 @@ public sealed class AwsSignatureVersion4Benchmarks : IDisposable
         }
 
         {
+            _request2.Dispose();
             _request2 = new HttpRequestMessage(HttpMethod.Get, "https://dummyurl");
             _credentials = new ImmutableCredentials("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123", null);
 

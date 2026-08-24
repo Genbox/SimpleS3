@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Builders;
 /// <summary>Provides the <c>TagBuilder</c> API.</summary>
 public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, string>>
 {
-    private readonly Regex _validChar = new Regex(@"^[a-z0-9 \+\-=\._:/]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex _validChar = new Regex(@"^[a-z0-9 \+\-=\._:/]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase, TimeSpan.FromSeconds(1));
     private Dictionary<string, string>? _tags;
 
     /// <summary>Provides the <c>GetEnumerator</c> API.</summary>

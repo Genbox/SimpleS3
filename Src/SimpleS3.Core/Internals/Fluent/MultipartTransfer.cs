@@ -18,7 +18,7 @@ namespace Genbox.SimpleS3.Core.Internals.Fluent;
 
 internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient multipartClient, IMultipartOperations multipartOperations, IEnumerable<IRequestWrapper> requestWrappers) : IMultipartTransfer
 {
-    public async IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
+    public IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default)
     {
         Validator.RequireNotNull(output);
         if (bufferSize <= 0)
@@ -26,6 +26,12 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
 
         if (numParallelParts <= 0)
             throw new ArgumentOutOfRangeException(nameof(numParallelParts), "Number of parallel parts must be greater than zero.");
+
+        return MultipartDownloadCoreAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
+    }
+
+    private async IAsyncEnumerable<GetObjectResponse> MultipartDownloadCoreAsync(string bucketName, string objectKey, Stream output, int bufferSize, int numParallelParts, Action<GetObjectRequest>? config, [EnumeratorCancellation] CancellationToken token)
+    {
 
         //Use a HEAD request on the object key to determine if the file was originally uploaded with multipart
         HeadObjectResponse headResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req => req.PartNumber = 1, token).ConfigureAwait(false);
@@ -142,13 +148,13 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         if (data.CanSeek && data.Length - data.Position > partSize && partSize < 5 * 1024 * 1024)
             throw new ArgumentOutOfRangeException(nameof(partSize), "S3 multipart upload parts must be at least 5 MiB except for the final part.");
 
-#pragma warning disable IDISP003 // Wrappers transfer stream ownership to the returned wrapper.
+#pragma warning disable IDISP001, IDISP003 // Wrappers transfer stream ownership to the returned wrapper.
         foreach (IRequestWrapper wrapper in requestWrappers)
         {
             if (wrapper.IsSupported(req))
                 data = wrapper.Wrap(data, req);
         }
-#pragma warning restore IDISP003
+#pragma warning restore IDISP001, IDISP003
 
         string bucket = req.BucketName;
         string objectKey = req.ObjectKey;

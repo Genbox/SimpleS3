@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net;
+using System.Runtime.CompilerServices;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Validation;
@@ -95,6 +96,7 @@ public static class UtilityHelper
                                         .SetBasePath(Environment.CurrentDirectory)
                                         .AddJsonFile("Config.json", false)
                                         .Build();
+        using IDisposable configRootLifetime = (IDisposable)configRoot;
 
         IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
 
@@ -148,46 +150,47 @@ public static class UtilityHelper
         return profile;
     }
 
-    public static async Task<int> ForceEmptyBucketAsync(S3Provider provider, ISimpleClient client, string bucket)
+    public static async Task<int> ForceEmptyBucketAsync(S3Provider provider, ISimpleClient client, string bucket, CancellationToken token = default)
     {
-        HashSet<S3DeleteError> errors = new HashSet<S3DeleteError>(ErrorComparer.Instance);
+        Dictionary<(string? ObjectKey, string? VersionId), S3DeleteError> errors = new Dictionary<(string? ObjectKey, string? VersionId), S3DeleteError>();
+        int operationErrors = 0;
 
         //Google and BackBlaze counts multipart uploads as part of bucket
         //Abort all incomplete multipart uploads
-        IAsyncEnumerable<S3Upload> partUploads = client.ListAllMultipartUploadsAsync(bucket);
+        IAsyncEnumerable<S3Upload> partUploads = client.ListAllMultipartUploadsAsync(bucket, token: token);
 
-        await foreach (S3Upload partUpload in partUploads)
+        await foreach (S3Upload partUpload in partUploads.WithCancellation(token).ConfigureAwait(false))
         {
-            AbortMultipartUploadResponse abortResp = await client.AbortMultipartUploadAsync(bucket, partUpload.ObjectKey, partUpload.UploadId);
+            AbortMultipartUploadResponse abortResp = await client.AbortMultipartUploadAsync(bucket, partUpload.ObjectKey, partUpload.UploadId, token: token).ConfigureAwait(false);
 
             if (!abortResp.IsSuccess)
-                errors.Add(new S3DeleteError(partUpload.ObjectKey, ErrorCode.Unknown, string.Empty, null));
+                operationErrors++;
         }
 
         //Try to delete all objects
-        await foreach (S3DeleteError error in DeleteAllObjectVersions(provider, client, bucket))
-            errors.Add(error);
+        await foreach (S3DeleteError error in DeleteAllObjectVersions(provider, client, bucket, token).WithCancellation(token).ConfigureAwait(false))
+            errors[(error.ObjectKey, error.VersionId)] = error;
 
         if (provider == S3Provider.GoogleCloudStorage)
         {
-            await foreach (S3Object obj in client.ListAllObjectsAsync(bucket))
+            await foreach (S3Object obj in client.ListAllObjectsAsync(bucket, token: token).WithCancellation(token).ConfigureAwait(false))
             {
-                DeleteObjectResponse deleteResponse = await client.DeleteObjectAsync(bucket, obj.ObjectKey);
+                DeleteObjectResponse deleteResponse = await client.DeleteObjectAsync(bucket, obj.ObjectKey, token: token).ConfigureAwait(false);
 
                 if (!deleteResponse.IsSuccess)
-                    errors.Add(new S3DeleteError(obj.ObjectKey, deleteResponse.Error?.Code ?? ErrorCode.Unknown, deleteResponse.Error?.Message ?? "Unable to delete object.", null));
+                    errors[(obj.ObjectKey, null)] = new S3DeleteError(obj.ObjectKey, deleteResponse.Error?.Code ?? ErrorCode.Unknown, deleteResponse.Error?.Message ?? "Unable to delete object.", null);
             }
         }
 
         //If we have any errors at this point, it might be because of legal hold. Force delete them too.
         if (errors.Count > 0)
         {
-            foreach (S3DeleteError error in errors.ToArray()) // ToArray ensures stability since we mutate the set
+            foreach (S3DeleteError error in errors.Values.ToArray()) // ToArray ensures stability since we mutate the dictionary
             {
                 if (string.IsNullOrEmpty(error.ObjectKey))
                     continue;
 
-                PutObjectLegalHoldResponse legalResp = await client.PutObjectLegalHoldAsync(bucket, error.ObjectKey, false, r => r.VersionId = error.VersionId);
+                PutObjectLegalHoldResponse legalResp = await client.PutObjectLegalHoldAsync(bucket, error.ObjectKey, false, r => r.VersionId = error.VersionId, token).ConfigureAwait(false);
 
                 if (legalResp.IsSuccess)
                 {
@@ -195,19 +198,21 @@ public static class UtilityHelper
                     {
                         request.VersionId = error.VersionId;
                         request.BypassGovernanceRetention = provider == S3Provider.AmazonS3;
-                    });
+                    }, token).ConfigureAwait(false);
 
                     if (delResp.IsSuccess)
-                        errors.Remove(error);
+                        errors.Remove((error.ObjectKey, error.VersionId));
                 }
             }
         }
 
-        return errors.Count;
+        return operationErrors + errors.Count;
     }
 
-    public static async Task<(Exception? Failure, bool Deferred)> TryDeleteTemporaryBucketAsync(S3Provider provider, ISimpleClient client, string bucket, int maxAttempts = 6)
+    public static async Task<(Exception? Failure, bool Deferred)> TryDeleteTemporaryBucketAsync(S3Provider provider, ISimpleClient client, string bucket, int maxAttempts = 6, CancellationToken token = default)
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(maxAttempts, 1);
+
         if (!IsTemporaryBucket(bucket))
             return (new ArgumentException("Only temporary buckets can be deleted by this operation.", nameof(bucket)), false);
 
@@ -221,17 +226,21 @@ public static class UtilityHelper
 
             try
             {
-                errors = await ForceEmptyBucketAsync(provider, client, bucket).ConfigureAwait(false);
+                errors = await ForceEmptyBucketAsync(provider, client, bucket, token).ConfigureAwait(false);
                 lastEmptyErrors = errors;
             }
-            catch (Exception ex)
+            catch (OperationCanceledException) when (token.IsCancellationRequested)
             {
-                lastFailure = ex;
+                throw;
+            }
+            catch (Exception)
+            {
+                // The bucket-delete response below is authoritative for this retry attempt.
             }
 
             try
             {
-                DeleteBucketResponse response = await client.DeleteBucketAsync(bucket).ConfigureAwait(false);
+                DeleteBucketResponse response = await client.DeleteBucketAsync(bucket, token: token).ConfigureAwait(false);
                 lastStatusCode = response.StatusCode;
 
                 if (response.IsSuccess || response.StatusCode == 404)
@@ -240,13 +249,17 @@ public static class UtilityHelper
                 string message = response.Error?.Message ?? "Unknown error";
                 lastFailure = new InvalidOperationException($"Unable to delete temporary bucket '{bucket}'. Status: {response.StatusCode}. Empty errors: {errors}. Message: {message}");
             }
+            catch (OperationCanceledException) when (token.IsCancellationRequested)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 lastFailure = ex;
             }
 
             if (attempt + 1 < maxAttempts)
-                await Task.Delay(TimeSpan.FromSeconds(1 << attempt)).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromSeconds(1 << Math.Min(attempt, 5)), token).ConfigureAwait(false);
         }
 
         lastFailure ??= new InvalidOperationException($"Unable to delete temporary bucket '{bucket}'.");
@@ -254,10 +267,10 @@ public static class UtilityHelper
         return (lastFailure, deferred);
     }
 
-    private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersions(S3Provider provider, ISimpleClient client, string bucket)
+    private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersions(S3Provider provider, ISimpleClient client, string bucket, [EnumeratorCancellation] CancellationToken token = default)
     {
         Task<ListObjectVersionsResponse>? responseTask = null;
-        CancellationTokenSource prefetchCancellation = new CancellationTokenSource();
+        CancellationTokenSource prefetchCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
 
         try
         {
@@ -298,7 +311,7 @@ public static class UtilityHelper
                 {
                     foreach (S3DeleteInfo info in delete)
                     {
-                        DeleteObjectResponse deleteResponse = await client.DeleteObjectAsync(bucket, info.ObjectKey, info.VersionId, token: prefetchCancellation.Token);
+                        DeleteObjectResponse deleteResponse = await client.DeleteObjectAsync(bucket, info.ObjectKey, info.VersionId, token: prefetchCancellation.Token).ConfigureAwait(false);
 
                         if (!deleteResponse.IsSuccess)
                             yield return new S3DeleteError(info.ObjectKey, deleteResponse.Error?.Code ?? ErrorCode.Unknown, deleteResponse.Error?.Message ?? "Unable to delete object.", info.VersionId);
@@ -323,7 +336,7 @@ public static class UtilityHelper
         }
         finally
         {
-            await prefetchCancellation.CancelAsync();
+            await prefetchCancellation.CancelAsync().ConfigureAwait(false);
             await ObservePrefetchTaskAsync(responseTask).ConfigureAwait(false);
             prefetchCancellation.Dispose();
         }
@@ -336,7 +349,9 @@ public static class UtilityHelper
 
         try
         {
+#pragma warning disable VSTHRD003 // This helper deliberately observes a prefetch task started by its caller.
             await task.ConfigureAwait(false);
+#pragma warning restore VSTHRD003
         }
         catch
         {
@@ -344,24 +359,4 @@ public static class UtilityHelper
         }
     }
 
-    private sealed class ErrorComparer : IEqualityComparer<S3DeleteError>
-    {
-        public static readonly ErrorComparer Instance = new ErrorComparer();
-        private ErrorComparer() {}
-
-        public bool Equals(S3DeleteError? x, S3DeleteError? y)
-        {
-            if (ReferenceEquals(x, y))
-                return true;
-            if (ReferenceEquals(x, null))
-                return false;
-            if (ReferenceEquals(y, null))
-                return false;
-            if (x.GetType() != y.GetType())
-                return false;
-            return x.ObjectKey == y.ObjectKey && x.VersionId == y.VersionId;
-        }
-
-        public int GetHashCode(S3DeleteError obj) => HashCode.Combine(obj.ObjectKey, obj.VersionId);
-    }
 }

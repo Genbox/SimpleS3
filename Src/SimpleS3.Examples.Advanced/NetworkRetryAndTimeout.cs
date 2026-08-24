@@ -33,6 +33,7 @@ public static class NetworkRetryAndTimeout
 
         using ServiceProvider provider = services.BuildServiceProvider();
         ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
+        Console.WriteLine($"Created {client.GetType().Name} with retry and timeout policies.");
     }
 
     /// <summary>Example on how to setup a S3 client with retry and timeout</summary>

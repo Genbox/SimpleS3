@@ -16,10 +16,9 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3.Core.Internals.Network;
 
 /// <summary>Provides the <c>DefaultResponseHandler</c> API.</summary>
-public class DefaultResponseHandler : IResponseHandler
+public partial class DefaultResponseHandler : IResponseHandler
 {
     private readonly SimpleS3Config _config;
-    private readonly ILogger<DefaultResponseHandler> _logger;
     private readonly IMarshalFactory _marshaller;
     private readonly INetworkDriver _networkDriver;
     private readonly IPostMapperFactory _postMapper;
@@ -43,7 +42,7 @@ public class DefaultResponseHandler : IResponseHandler
     /// <summary>Provides the <c>HandleResponseAsync&lt;TReq,TResp&gt;</c> API.</summary>
     public async Task<TResp> HandleResponseAsync<TReq, TResp>(TReq request, string url, Stream? requestStream, CancellationToken token) where TReq : IRequest where TResp : IResponse, new()
     {
-        _logger.LogDebug("Sending request to {Url}", url);
+        SendingRequest(url);
 
         HttpResponse httpResp;
         try
@@ -93,7 +92,7 @@ public class DefaultResponseHandler : IResponseHandler
                         using (XmlReader reader = XmlReader.Create(ms))
                             response.Error = ErrorHandler.Create(reader);
 
-                        _logger.LogDebug("Received error: '{Message}'. Details: '{Details}'", response.Error.Message, response.Error.GetErrorDetails());
+                        ReceivedError(response.Error.Message, response.Error.GetErrorDetails());
                     }
                 }
                 catch (OperationCanceledException)
@@ -102,7 +101,7 @@ public class DefaultResponseHandler : IResponseHandler
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogDebug(ex, "Failed to map error");
+                    FailedToMapError(ex);
                 }
             }
         }

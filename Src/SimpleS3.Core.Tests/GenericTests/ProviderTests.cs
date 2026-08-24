@@ -29,7 +29,7 @@ public class ProviderTests
         Assert.NotNull(objectClient);
 
         NullNetworkDriver driver = (NullNetworkDriver)serviceCollection.GetRequiredService<INetworkDriver>();
-        await objectClient.GetObjectAsync("bucket", "key");
+        await objectClient.GetObjectAsync("bucket", "key", token: TestContext.Current.CancellationToken);
         return driver.LastUrl;
     }
 

@@ -7,25 +7,28 @@ public class RetryableBufferingStreamTests
     [Fact]
     public async Task ReadAsyncPassesCancellationTokenWhileBuffering()
     {
-        CapturingCancellationStream source = new CapturingCancellationStream();
+        await using CapturingCancellationStream source = new CapturingCancellationStream();
         await using RetryableBufferingStream stream = new RetryableBufferingStream(source, 1024);
         using CancellationTokenSource cts = new CancellationTokenSource();
         byte[] buffer = new byte[1];
 
-        await stream.ReadAsync(buffer.AsMemory(0, buffer.Length), cts.Token);
+        int read = await stream.ReadAsync(buffer.AsMemory(0, buffer.Length), cts.Token);
 
+        Assert.Equal(0, read);
         Assert.Equal(cts.Token, source.CapturedToken);
     }
 
     [Fact]
     public void SpilledTempFileIsRemovedOnDispose()
     {
-        RetryableBufferingStream stream = new RetryableBufferingStream(new NonSeekableDataStream("hello"u8.ToArray()), 1);
+        using NonSeekableDataStream source = new NonSeekableDataStream("hello"u8.ToArray());
+        using RetryableBufferingStream stream = new RetryableBufferingStream(source, 1);
         byte[] buffer = new byte[5];
 
-        stream.Read(buffer, 0, buffer.Length);
+        int read = stream.Read(buffer, 0, buffer.Length);
         string path = Assert.IsType<string>(stream.TempFilePath);
 
+        Assert.Equal(buffer.Length, read);
         stream.Dispose();
 
         Assert.False(File.Exists(path));
@@ -34,8 +37,8 @@ public class RetryableBufferingStreamTests
     [Fact]
     public void DisposeLeavesUnderlyingStreamOpen()
     {
-        NonSeekableDataStream source = new NonSeekableDataStream("hello"u8.ToArray());
-        RetryableBufferingStream stream = new RetryableBufferingStream(source, 1);
+        using NonSeekableDataStream source = new NonSeekableDataStream("hello"u8.ToArray());
+        using RetryableBufferingStream stream = new RetryableBufferingStream(source, 1);
 
         stream.Dispose();
 
@@ -47,7 +50,8 @@ public class RetryableBufferingStreamTests
     [Fact]
     public async Task ReadAsyncRejectsRetryAfterInterruptedBuffering()
     {
-        await using RetryableBufferingStream stream = new RetryableBufferingStream(new CancelAfterConsumingStream("abcdef"u8.ToArray(), 3), 1024);
+        await using CancelAfterConsumingStream source = new CancelAfterConsumingStream("abcdef"u8.ToArray(), 3);
+        await using RetryableBufferingStream stream = new RetryableBufferingStream(source, 1024);
         byte[] buffer = new byte[6];
 
         await Assert.ThrowsAsync<OperationCanceledException>(() => stream.ReadAsync(buffer, 0, buffer.Length, TestContext.Current.CancellationToken));
@@ -116,7 +120,9 @@ public class RetryableBufferingStreamTests
         protected override void Dispose(bool disposing)
         {
             Disposed = true;
-            _inner.Dispose();
+            if (disposing)
+                _inner.Dispose();
+
             base.Dispose(disposing);
         }
     }
@@ -154,7 +160,7 @@ public class RetryableBufferingStreamTests
                 throw new OperationCanceledException(cancellationToken);
             }
 
-            return Task.FromResult(Read(buffer, offset, count));
+            return ReadAsync(buffer.AsMemory(offset, count), cancellationToken).AsTask();
         }
 
         public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)

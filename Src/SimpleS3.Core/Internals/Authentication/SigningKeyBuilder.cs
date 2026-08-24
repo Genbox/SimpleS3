@@ -10,11 +10,10 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
-internal sealed class SigningKeyBuilder : ISigningKeyBuilder
+internal sealed partial class SigningKeyBuilder : ISigningKeyBuilder
 {
     private readonly SimpleS3Config _config;
     private readonly byte[] _dateBytes;
-    private readonly ILogger<SigningKeyBuilder> _logger;
     private readonly IAccessKeyProtector? _protector;
     private readonly byte[] _regionBytes;
     private readonly byte[] _requestBytes;
@@ -38,7 +37,7 @@ internal sealed class SigningKeyBuilder : ISigningKeyBuilder
     public byte[] CreateSigningKey(DateTimeOffset dateTime)
     {
         Validator.RequireNotNull(_config.Credentials, "If we get to this point, we expect to have valid credentials");
-        _logger.LogTrace("Creating key created on {DateTime}", dateTime);
+        CreatingSigningKey(dateTime);
 
         //https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
         //Documentation says the key is valid for 7 days, but tests shows that is not true.
@@ -65,9 +64,9 @@ internal sealed class SigningKeyBuilder : ISigningKeyBuilder
         byte[] signingKey = CryptoHelper.HmacSign(_requestBytes, hashService);
 
         if (_config.LogSensitiveMaterial)
-            _logger.LogDebug("Signing key created: {SigningKey}", signingKey);
+            LogSigningKey(signingKey);
         else
-            _logger.LogDebug("Signing key created");
+            SigningKeyCreated();
 
         return signingKey;
     }

@@ -22,7 +22,7 @@ internal sealed class HttpHandler : IHttpHeadersHandler, IHttpRequestLineHandler
 
     public void OnStartLine(HttpMethod method, HttpVersion version, Span<byte> target, Span<byte> path, Span<byte> query, Span<byte> customMethod, bool pathEncoded)
     {
-        Method = Enum.Parse<HttpMethodType>(method.ToString().ToUpperInvariant());
+        Method = Enum.Parse<HttpMethodType>(method.ToString().ToUpperInvariant(), ignoreCase: false);
         Target = Encoding.UTF8.GetString(target);
 
         //We need to remove parameters from the target

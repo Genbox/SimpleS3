@@ -83,7 +83,8 @@ public class FastXmlWriterTests
         writer.WriteElement("test", sb.ToString());
 
         using MemoryStream ms = new MemoryStream(writer.GetBytes());
-        XDocument _ = XDocument.Load(ms);
+        XDocument document = XDocument.Load(ms);
+        Assert.Equal("test", document.Root?.Name.LocalName);
     }
 
     [Theory]
@@ -102,5 +103,6 @@ public class FastXmlWriterTests
         XmlDocument xmlDoc = new XmlDocument();
         using MemoryStream ms = new MemoryStream(writer.GetBytes());
         xmlDoc.Load(ms);
+        Assert.Equal("test", xmlDoc.DocumentElement?.Name);
     }
 }

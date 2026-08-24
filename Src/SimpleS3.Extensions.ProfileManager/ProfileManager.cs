@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Common.Exceptions;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3.Extensions.ProfileManager;
 
 /// <summary>Provides the <c>ProfileManager</c> API.</summary>
+[SuppressMessage("Naming", "CA1724:Type names should not match namespaces", Justification = "The established public API intentionally mirrors the extension package name.")]
 public class ProfileManager(IInputValidator validator, IProfileSerializer serializer, IStorage storage, IOptions<ProfileManagerOptions> options, IAccessKeyProtector? protector = null) : IProfileManager
 {
     /// <summary>Provides the <c>DefaultProfile</c> API.</summary>

@@ -20,5 +20,6 @@ public static class SetupDependencyInjection
 
         //Now we can get the client.
         ISimpleClient client = serviceProvider.GetRequiredService<ISimpleClient>();
+        Console.WriteLine($"Resolved {client.GetType().Name} from dependency injection.");
     }
 }

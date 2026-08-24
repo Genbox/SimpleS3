@@ -14,11 +14,12 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
 [MemoryDiagnoser]
-public class SignatureBenchmarks
+public sealed class SignatureBenchmarks : IDisposable
 {
     private readonly ChunkedSignatureBuilder _chunkSigBuilder;
+    private readonly MemoryStream _content;
     private readonly DateTimeOffset _date;
-    private readonly BaseRequest _req;
+    private readonly PutObjectRequest _req;
     private readonly SignatureBuilder _signatureBuilder;
     private readonly SigningKeyBuilder _signingKeyBuilder;
 
@@ -37,7 +38,8 @@ public class SignatureBenchmarks
 
         byte[] data = "Hello world"u8.ToArray();
 
-        _req = new PutObjectRequest("examplebucket", "benchmark", new MemoryStream(data));
+        _content = new MemoryStream(data);
+        _req = new PutObjectRequest("examplebucket", "benchmark", _content);
         _req.SetHeader(AmzHeaders.XAmzContentSha256, CryptoHelper.Sha256Hash(data).HexEncode());
 
         _date = DateTimeOffset.UtcNow;
@@ -51,4 +53,6 @@ public class SignatureBenchmarks
 
     [Benchmark]
     public byte[] ChunkedSignatureBuilder() => _chunkSigBuilder.CreateChunkSignature(_req, new byte[32], new byte[32], 0, 32);
+
+    public void Dispose() => _content.Dispose();
 }

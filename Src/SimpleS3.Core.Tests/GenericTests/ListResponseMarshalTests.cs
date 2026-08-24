@@ -52,7 +52,9 @@ public class ListResponseMarshalTests
                            <Error><Code>InvalidArgument</Code><Message>&xxe;</Message></Error>
                            """;
 
-        Assert.Throws<XmlException>(() => ErrorHandler.Create(XmlReader.Create(CreateContent(xml))));
+        using ContentStream content = CreateContent(xml);
+        using XmlReader reader = XmlReader.Create(content);
+        Assert.Throws<XmlException>(() => ErrorHandler.Create(reader));
     }
 
     private static SimpleS3Config CreateConfig() => new SimpleS3Config { AutoUrlDecodeResponses = true };

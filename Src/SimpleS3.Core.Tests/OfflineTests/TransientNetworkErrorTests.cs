@@ -31,9 +31,9 @@ public class TransientNetworkErrorTests(ITestOutputHelper helper) : OfflineTestB
     [Fact]
     public async Task TestTransientNetworkError()
     {
-        using MemoryStream ms = new MemoryStream(new byte[4096]);
+        await using MemoryStream ms = new MemoryStream(new byte[4096]);
 
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTransientNetworkError), ms);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTransientNetworkError), ms, token: TestContext.Current.CancellationToken);
 
         Assert.True(response.IsSuccess);
         Assert.True(_handler.RequestCounter >= 2);
@@ -44,7 +44,7 @@ public class TransientNetworkErrorTests(ITestOutputHelper helper) : OfflineTestB
     {
         await using NonSeekableStream ms = new NonSeekableStream(new byte[4096]);
 
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTransientNetworkError_NonSeekable), ms);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestTransientNetworkError_NonSeekable), ms, token: TestContext.Current.CancellationToken);
 
         Assert.True(response.IsSuccess);
         Assert.True(_handler.RequestCounter >= 2);

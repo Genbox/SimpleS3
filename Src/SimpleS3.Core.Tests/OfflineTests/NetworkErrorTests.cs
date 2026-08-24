@@ -40,7 +40,7 @@ public sealed class NetworkErrorTests(ITestOutputHelper helper) : OfflineTestBas
         Assert.Equal(1, _handler.RequestCounter);
 
         // Second request should fail with a network error
-        await Assert.ThrowsAsync<IOException>(async () => await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-1", ms).ConfigureAwait(false));
+        await Assert.ThrowsAsync<IOException>(async () => await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-1", ms));
 
         // Because network errors are transient, they should be retried
         Assert.Equal(5, _handler.RequestCounter);
@@ -48,7 +48,9 @@ public sealed class NetworkErrorTests(ITestOutputHelper helper) : OfflineTestBas
 
     protected override void Dispose(bool disposing)
     {
-        _handler.Dispose();
+        if (disposing)
+            _handler.Dispose();
+
         base.Dispose(disposing);
     }
 }

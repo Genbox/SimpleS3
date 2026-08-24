@@ -14,7 +14,7 @@ public class StaticCreatorTests
         GenericS3Config config = new GenericS3Config(new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"), "https://myendpoint.com", "us-east-1");
         using GenericS3Client client = new GenericS3Client(config, driver);
 
-        await client.GetObjectAsync("testbucket", "GetObjectAsync");
+        await using Stream content = (await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken)).Content;
         Assert.Equal("https://myendpoint.com/GetObjectAsync", driver.LastUrl);
     }
 }

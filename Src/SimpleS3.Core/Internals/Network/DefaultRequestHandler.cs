@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
@@ -21,12 +22,11 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3.Core.Internals.Network;
 
 /// <summary>Handles common request and response logic before sending to transport drivers.</summary>
-internal sealed class DefaultRequestHandler : IRequestHandler
+internal sealed partial class DefaultRequestHandler : IRequestHandler
 {
     private readonly HeaderAuthorizationBuilder _authBuilder;
     private readonly SimpleS3Config _config;
     private readonly IEndpointBuilder _endpointBuilder;
-    private readonly ILogger<DefaultRequestHandler> _logger;
     private readonly IMarshalFactory _marshaller;
     private readonly IRequestStreamWrapper[]? _requestStreamWrappers;
     private readonly IRequestValidatorFactory _requestValidator;
@@ -52,6 +52,8 @@ internal sealed class DefaultRequestHandler : IRequestHandler
         _requestStreamWrappers = requestStreamWrappers?.ToArray();
     }
 
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "Request stream ownership is transferred to the response handler.")]
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP003:Dispose previous before re-assigning", Justification = "Each wrapper assumes ownership of the stream it replaces.")]
     public Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken token = default) where TReq : IRequest where TResp : IResponse, new()
     {
         token.ThrowIfCancellationRequested();
@@ -62,7 +64,7 @@ internal sealed class DefaultRequestHandler : IRequestHandler
         if (request is BaseRequest baseRequest)
             baseRequest.ClearTransportState();
 
-        _logger.LogTrace("Handling {RequestType} with request id {RequestId}", typeof(TReq).Name, request.RequestId);
+        HandlingRequest(typeof(TReq).Name, request.RequestId);
 
         Stream? requestStream = _marshaller.MarshalRequest(_config, request);
 
@@ -72,7 +74,6 @@ internal sealed class DefaultRequestHandler : IRequestHandler
         request.SetHeader(HttpHeaders.Host, endpointData.Host);
         request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
 
-#pragma warning disable IDISP003 // Wrappers transfer stream ownership to the returned wrapper.
         if (requestStream != null && _requestStreamWrappers != null)
         {
             foreach (IRequestStreamWrapper wrapper in _requestStreamWrappers)
@@ -81,8 +82,6 @@ internal sealed class DefaultRequestHandler : IRequestHandler
                     requestStream = wrapper.Wrap(requestStream, request);
             }
         }
-#pragma warning restore IDISP003
-
         if (!request.Headers.TryGetValue(AmzHeaders.XAmzContentSha256, out string? contentHash))
         {
             if (_config.PayloadSignatureMode == SignatureMode.Unsigned)
@@ -93,7 +92,7 @@ internal sealed class DefaultRequestHandler : IRequestHandler
             request.SetHeader(AmzHeaders.XAmzContentSha256, contentHash);
         }
 
-        _logger.LogDebug("ContentSha256 is {ContentSha256}", contentHash);
+        ContentSha256(contentHash);
 
         //We add the authorization header here because we need ALL other headers to be present when we do
         if (_config.Credentials != null)

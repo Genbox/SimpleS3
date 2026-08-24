@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory;
 
 /// <summary>Provides the <c>HttpClientFactoryNetworkDriver</c> API.</summary>
-public class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFactoryConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory, string optionsName) : INetworkDriver
+public partial class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFactoryConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory, string optionsName) : INetworkDriver
 {
     private readonly HttpClientFactoryConfig _config = options.Get(optionsName);
     private readonly Version _httpVersion1 = new Version("1.1");
@@ -18,6 +19,7 @@ public class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFactoryCon
     private readonly Version _httpVersion3 = new Version("3.0");
 
     /// <summary>Provides the <c>SendRequestAsync&lt;T&gt;</c> API.</summary>
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "Transport response ownership is transferred to the returned response content.")]
     public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         HttpResponseMessage httpResponse;
@@ -44,16 +46,14 @@ public class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFactoryCon
             foreach (KeyValuePair<string, string> item in request.Headers)
                 httpRequest.AddHeader(item.Key, item.Value);
 
-            logger.LogTrace("Sending HTTP request");
+            SendingRequest();
 
             using HttpClient client = clientFactory.CreateClient(optionsName);
 
- #pragma warning disable IDISP001 - We cannot dispose as we need the response stream
             httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
- #pragma warning restore IDISP001
         }
 
-        logger.LogDebug("Got an {Status} response with {StatusCode}", httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
+        ReceivedResponse(httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
 
         Dictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -68,9 +68,7 @@ public class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFactoryCon
                 responseHeaders.Add(header.Key, header.Value.First());
 
             Stream innerStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#pragma warning disable CA2000 // Ownership is transferred to HttpResponse.Content and disposed with the response stream.
             contentStream = new ContentStream(innerStream, httpResponse.Content.Headers.ContentLength, httpResponse);
-#pragma warning restore CA2000
         }
         else
             httpResponse.Dispose();

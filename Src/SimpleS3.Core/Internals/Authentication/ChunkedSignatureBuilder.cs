@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
-internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<ChunkedSignatureBuilder> logger) : IChunkedSignatureBuilder, ITrailerSignatureBuilder
+internal sealed partial class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, IScopeBuilder scopeBuilder, IOptions<SimpleS3Config> options, ILogger<ChunkedSignatureBuilder> logger) : IChunkedSignatureBuilder, ITrailerSignatureBuilder
 {
     private readonly SimpleS3Config _config = options.Value;
 
@@ -21,15 +21,15 @@ internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, ISc
     {
         Validator.RequireNotNull(request);
 
-        logger.LogTrace("Creating chunk signature for {RequestId}", request.RequestId);
+        CreatingChunkSignature(request.RequestId);
 
         string stringToSign = CreateStringToSign(request.Timestamp, scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, content, offset, length);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
         if (_config.LogSensitiveMaterial)
-            logger.LogDebug("Chunk signature: {Signature}", signature);
+            LogChunkSignature(signature);
         else
-            logger.LogDebug("Chunk signature created");
+            ChunkSignatureCreated();
 
         return signature;
     }
@@ -38,7 +38,7 @@ internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, ISc
     {
         Validator.RequireNotNull(request);
 
-        logger.LogTrace("Creating trailer signature for {RequestId}", request.RequestId);
+        CreatingTrailerSignature(request.RequestId);
 
         IReadOnlyDictionary<string, string> trailers = (request as IRequestTrailers)?.Trailers ?? EmptyTrailers;
         string canonicalTrailingHeaders = CreateCanonicalTrailingHeaders(trailers);
@@ -46,16 +46,16 @@ internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, ISc
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
         if (_config.LogSensitiveMaterial)
-            logger.LogDebug("Trailer signature: {Signature}", signature);
+            LogTrailerSignature(signature);
         else
-            logger.LogDebug("Trailer signature created");
+            TrailerSignatureCreated();
 
         return signature;
     }
 
     internal string CreateStringToSign(DateTimeOffset dateTime, string scope, byte[] previousSignature, byte[] content, int offset, int length)
     {
-        logger.LogTrace("Creating chunked StringToSign");
+        CreatingChunkedStringToSign();
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(300);
 
@@ -68,14 +68,14 @@ internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, ISc
 
         string sts = StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
         if (_config.LogSensitiveMaterial)
-            logger.LogDebug("Chunked StringToSign: {StringToSign}", sts);
+            LogChunkedStringToSign(sts);
 
         return sts;
     }
 
     internal string CreateTrailerStringToSign(DateTimeOffset dateTime, string scope, byte[] previousSignature, string canonicalTrailingHeaders)
     {
-        logger.LogTrace("Creating trailer StringToSign");
+        CreatingTrailerStringToSign();
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(300);
 
@@ -87,7 +87,7 @@ internal sealed class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuilder, ISc
 
         string sts = StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
         if (_config.LogSensitiveMaterial)
-            logger.LogDebug("Trailer StringToSign: {StringToSign}", sts);
+            LogTrailerStringToSign(sts);
 
         return sts;
     }

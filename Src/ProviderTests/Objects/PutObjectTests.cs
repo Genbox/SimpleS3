@@ -42,7 +42,7 @@ public class PutObjectTests : TestBase
         GetObjectResponse getResp = await client.GetObjectAsync(bucket, objectKey);
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal(lockMode, getResp.LockMode);
-        Assert.Equal(lockRetainUntil.DateTime, getResp.LockRetainUntil!.Value.DateTime, TimeSpan.FromSeconds(1));
+        Assert.Equal(lockRetainUntil.UtcDateTime, getResp.LockRetainUntil!.Value.UtcDateTime, TimeSpan.FromSeconds(1));
     }
 
     [Theory]
@@ -271,7 +271,7 @@ public class PutObjectTests : TestBase
         Assert.Equal("gzip", getResp.ContentEncoding);
         Assert.Equal("da-DK", getResp.ContentLanguage);
         Assert.Equal("text/html; charset=utf-8", getResp.ContentType);
-        Assert.Equal(DateTime.UtcNow, getResp.ExpiresOn!.Value.DateTime, TimeSpan.FromSeconds(5));
+        Assert.Equal(DateTime.UtcNow, getResp.ExpiresOn!.Value.UtcDateTime, TimeSpan.FromSeconds(5));
     }
 
     [Theory]

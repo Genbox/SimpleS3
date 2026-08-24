@@ -45,16 +45,16 @@ public class ParallelHelperTests
         Task<IEnumerable<int>> task = ParallelHelper.ExecuteAsync(Source(), async (value, token) =>
         {
             entered.TrySetResult();
-            await release.Task.WaitAsync(token).ConfigureAwait(false);
+            await release.Task.WaitAsync(token);
             return value;
         }, 1, TestContext.Current.CancellationToken);
 
-        await entered.Task.WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+        await entered.Task.WaitAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(1, Volatile.Read(ref yielded));
 
         release.SetResult();
-        Assert.Equal([0, 1, 2], await task.ConfigureAwait(false));
+        Assert.Equal([0, 1, 2], await task);
 
         IEnumerable<int> Source()
         {
@@ -78,7 +78,7 @@ public class ParallelHelperTests
             if (value == 0)
                 throw new InvalidOperationException();
 
-            await Task.Delay(Timeout.InfiniteTimeSpan, token).ConfigureAwait(false);
+            await Task.Delay(Timeout.InfiniteTimeSpan, token);
             return value;
         }, 2, TestContext.Current.CancellationToken));
 
@@ -93,10 +93,10 @@ public class ParallelHelperTests
         Task task = ParallelHelper.ExecuteAsync(Source(), async (_, token) =>
         {
             entered.SetResult();
-            await Task.Delay(Timeout.InfiniteTimeSpan, token).ConfigureAwait(false);
+            await Task.Delay(Timeout.InfiniteTimeSpan, token);
         }, 2, TestContext.Current.CancellationToken);
 
-        await entered.Task.WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+        await entered.Task.WaitAsync(TestContext.Current.CancellationToken);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => task.WaitAsync(TestContext.Current.CancellationToken));
 
@@ -115,11 +115,11 @@ public class ParallelHelperTests
         Task<IEnumerable<int>> task = ParallelHelper.ExecuteAsync(Source(TestContext.Current.CancellationToken), async (_, token) =>
         {
             entered.SetResult();
-            await Task.Delay(Timeout.InfiniteTimeSpan, token).ConfigureAwait(false);
+            await Task.Delay(Timeout.InfiniteTimeSpan, token);
             return 1;
         }, 2, TestContext.Current.CancellationToken);
 
-        await entered.Task.WaitAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+        await entered.Task.WaitAsync(TestContext.Current.CancellationToken);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => task.WaitAsync(TestContext.Current.CancellationToken));
 

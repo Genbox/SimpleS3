@@ -415,7 +415,7 @@ internal sealed class ChunkedStream : Stream
             return;
 
         _checksum.TransformFinalBlock([], 0, 0);
-        _requestTrailers.SetTrailer(_checksumTrailer, Convert.ToBase64String(_checksum.Hash!));
+        _requestTrailers.SetTrailer(_checksumTrailer, Convert.ToBase64String(_checksum.Hash));
     }
 
     private static (ChecksumAlgorithm Algorithm, string? Trailer, HashAlgorithm? Hash) CreateChecksum(IRequest request, IReadOnlyDictionary<string, string> trailers)
