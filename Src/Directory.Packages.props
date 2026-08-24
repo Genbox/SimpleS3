@@ -14,6 +14,7 @@
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.32.0.713" />
     <!--test packages-->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.0" />
     <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.0" />
     <!--dev packages-->
     <PackageVersion Include="MinVer" Version="7.0.0" />

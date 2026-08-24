@@ -1,6 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\Imports\Tests.props" />
+  <!-- Do not import Imports\Tests.props: this is a shared helper library, and the import makes it a runnable test project that fails because it contains no tests. -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\..\Config.json" Link="Config.json">
@@ -9,9 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MartinCostello.Logging.XUnit.V3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="xunit.v3.extensibility.core" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
