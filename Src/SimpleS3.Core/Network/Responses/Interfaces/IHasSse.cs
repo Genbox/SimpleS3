@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
+/// <summary>Provides the <c>IHasSse</c> API.</summary>
 [PublicAPI]
 public interface IHasSse
 {

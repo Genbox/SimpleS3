@@ -2,6 +2,7 @@ using Genbox.SimpleS3.Core.Builders;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
+/// <summary>Provides the <c>IHasMetadata</c> API.</summary>
 public interface IHasMetadata
 {
     /// <summary>

@@ -1,5 +1,6 @@
 namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
+/// <summary>Provides the <c>IHasWebsiteRedirect</c> API.</summary>
 public interface IHasWebsiteRedirect
 {
     /// <summary>

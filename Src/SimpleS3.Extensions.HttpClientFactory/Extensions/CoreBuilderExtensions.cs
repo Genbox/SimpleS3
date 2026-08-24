@@ -12,20 +12,24 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 
+/// <summary>Provides the <c>CoreBuilderExtensions</c> API.</summary>
 public static class CoreBuilderExtensions
 {
+    /// <summary>Provides the <c>UseHttpClientFactory</c> API.</summary>
     public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(clientBuilder.Name, config);
         return UseHttpClientFactory(clientBuilder);
     }
 
+    /// <summary>Provides the <c>UseHttpClientFactory</c> API.</summary>
     public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig> config)
     {
         clientBuilder.Services.Configure(clientBuilder.Name, config);
         return UseHttpClientFactory(clientBuilder);
     }
 
+    /// <summary>Provides the <c>UseHttpClientFactory</c> API.</summary>
     public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder)
     {
         CustomHttpClientFactoryBuilder builder = new CustomHttpClientFactoryBuilder(clientBuilder.Services, clientBuilder.Name);

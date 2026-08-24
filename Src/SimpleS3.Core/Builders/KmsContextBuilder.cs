@@ -4,10 +4,12 @@ using Genbox.SimpleS3.Core.Internals.Helpers;
 
 namespace Genbox.SimpleS3.Core.Builders;
 
+/// <summary>Provides the <c>KmsContextBuilder</c> API.</summary>
 public class KmsContextBuilder : IHttpHeaderBuilder
 {
     private Dictionary<string, string>? _dict;
 
+    /// <summary>Provides the <c>KmsContextBuilder</c> API.</summary>
     public KmsContextBuilder(IDictionary<string, string>? dict = null)
     {
         if (dict == null)
@@ -17,8 +19,10 @@ public class KmsContextBuilder : IHttpHeaderBuilder
             AddEntry(pair.Key, pair.Value);
     }
 
+    /// <summary>Provides the <c>HeaderName</c> API.</summary>
     public string? HeaderName => null;
 
+    /// <summary>Provides the <c>Build</c> API.</summary>
     public string? Build()
     {
         if (!HasData())
@@ -27,13 +31,16 @@ public class KmsContextBuilder : IHttpHeaderBuilder
         return JsonHelper.EncodeJson(_dict!);
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public void Reset()
     {
         _dict?.Clear();
     }
 
+    /// <summary>Provides the <c>HasData</c> API.</summary>
     public bool HasData() => _dict != null && _dict.Count > 0;
 
+    /// <summary>Provides the <c>AddEntry</c> API.</summary>
     public void AddEntry(string key, string value)
     {
         Validator.RequireNotNull(key);

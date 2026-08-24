@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Clients;
 
+/// <summary>Provides the <c>IObjectClient</c> API.</summary>
 [PublicAPI]
 public interface IObjectClient
 {
@@ -81,14 +82,19 @@ public interface IObjectClient
     /// <param name="token">A cancellation token</param>
     Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>GetObjectAttributesAsync</c> API.</summary>
     Task<GetObjectAttributesResponse> GetObjectAttributesAsync(string bucketName, string objectKey, IEnumerable<ObjectAttribute> objectAttributes, Action<GetObjectAttributesRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>GetObjectAnnotationAsync</c> API.</summary>
     Task<GetObjectAnnotationResponse> GetObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<GetObjectAnnotationRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>PutObjectAnnotationAsync</c> API.</summary>
     Task<PutObjectAnnotationResponse> PutObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Stream content, Action<PutObjectAnnotationRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>DeleteObjectAnnotationAsync</c> API.</summary>
     Task<DeleteObjectAnnotationResponse> DeleteObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<DeleteObjectAnnotationRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>ListObjectAnnotationsAsync</c> API.</summary>
     Task<ListObjectAnnotationsResponse> ListObjectAnnotationsAsync(string bucketName, string objectKey, Action<ListObjectAnnotationsRequest>? config = null, CancellationToken token = default);
 
     /// <summary>Gets an object's current Legal Hold status.</summary>
@@ -106,15 +112,21 @@ public interface IObjectClient
     /// <param name="token">A cancellation token</param>
     Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(string bucketName, string objectKey, bool lockStatus, Action<PutObjectLegalHoldRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>GetObjectTaggingAsync</c> API.</summary>
     Task<GetObjectTaggingResponse> GetObjectTaggingAsync(string bucketName, string objectKey, Action<GetObjectTaggingRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>PutObjectTaggingAsync</c> API.</summary>
     Task<PutObjectTaggingResponse> PutObjectTaggingAsync(string bucketName, string objectKey, IDictionary<string, string> tags, Action<PutObjectTaggingRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>DeleteObjectTaggingAsync</c> API.</summary>
     Task<DeleteObjectTaggingResponse> DeleteObjectTaggingAsync(string bucketName, string objectKey, Action<DeleteObjectTaggingRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>GetObjectRetentionAsync</c> API.</summary>
     Task<GetObjectRetentionResponse> GetObjectRetentionAsync(string bucketName, string objectKey, Action<GetObjectRetentionRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>PutObjectRetentionAsync</c> API.</summary>
     Task<PutObjectRetentionResponse> PutObjectRetentionAsync(string bucketName, string objectKey, LockMode lockMode, DateTimeOffset retainUntil, Action<PutObjectRetentionRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>ListObjectVersionsAsync</c> API.</summary>
     Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default);
 }

@@ -8,8 +8,10 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Internal.Helpers;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Setup;
 
+/// <summary>Provides the <c>ConsoleProfileSetup</c> API.</summary>
 public class ConsoleProfileSetup(IProfileManager profileManager, IInputValidator inputValidator, IRegionConverter regionConverter, IRegionData regionData) : IProfileSetup
 {
+    /// <summary>Provides the <c>SetupProfile</c> API.</summary>
     public IProfile SetupProfile(string profileName, bool persist = true)
     {
         IProfile? existingProfile = profileManager.GetProfile(profileName);

@@ -2,10 +2,13 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3;
 
+/// <summary>Provides the <c>AmazonS3RegionData</c> API.</summary>
 public class AmazonS3RegionData : IRegionData
 {
+    /// <summary>Provides the <c>Instance</c> API.</summary>
     public static AmazonS3RegionData Instance { get; } = new AmazonS3RegionData();
 
+    /// <summary>Provides the <c>GetRegions</c> API.</summary>
     public IEnumerable<IRegionInfo> GetRegions()
     {
         yield return new RegionInfo(AmazonS3Region.AfSouth1, "af-south-1", "Africa (Cape Town)");

@@ -4,10 +4,12 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Storage;
 
+/// <summary>Provides the <c>DiskStorage</c> API.</summary>
 public class DiskStorage(IOptions<DiskStorageOptions> options) : IStorage
 {
     private readonly DiskStorageOptions _options = options.Value;
 
+    /// <summary>Provides the <c>Get</c> API.</summary>
     public byte[]? Get(string name)
     {
         string path = GetProfilePath(name);
@@ -18,6 +20,7 @@ public class DiskStorage(IOptions<DiskStorageOptions> options) : IStorage
         return File.ReadAllBytes(path);
     }
 
+    /// <summary>Provides the <c>Put</c> API.</summary>
     public string Put(string name, byte[] data, bool forceOverwrite = false)
     {
         string path = GetProfilePath(name);
@@ -38,6 +41,7 @@ public class DiskStorage(IOptions<DiskStorageOptions> options) : IStorage
         return path;
     }
 
+    /// <summary>Provides the <c>List</c> API.</summary>
     public IEnumerable<string> List()
     {
         if (!Directory.Exists(_options.ProfileLocation))

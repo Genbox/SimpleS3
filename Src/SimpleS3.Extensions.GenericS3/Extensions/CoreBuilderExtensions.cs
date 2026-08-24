@@ -9,13 +9,16 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.GenericS3.Extensions;
 
+/// <summary>Provides the <c>CoreBuilderExtensions</c> API.</summary>
 public static class CoreBuilderExtensions
 {
+    /// <summary>Provides the <c>UseGenericS3</c> API.</summary>
     public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder, Action<GenericS3Config> config)
     {
         return UseGenericS3(clientBuilder, (s3Config, _) => config.Invoke(s3Config));
     }
 
+    /// <summary>Provides the <c>UseGenericS3</c> API.</summary>
     public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder, Action<GenericS3Config, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(config);
@@ -23,6 +26,7 @@ public static class CoreBuilderExtensions
         return UseGenericS3(clientBuilder);
     }
 
+    /// <summary>Provides the <c>UseGenericS3</c> API.</summary>
     public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder)
     {
         clientBuilder.Services.AddSingleton<IRegionData, GenericS3RegionData>();

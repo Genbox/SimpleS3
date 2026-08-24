@@ -11,11 +11,13 @@ public class GetBucketLockConfigurationRequest : BaseRequest, IHasBucketName
 {
     internal GetBucketLockConfigurationRequest() : base(HttpMethodType.GET) {}
 
+    /// <summary>Provides the <c>GetBucketLockConfigurationRequest</c> API.</summary>
     public GetBucketLockConfigurationRequest(string bucketName) : this()
     {
         Initialize(bucketName);
     }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)

@@ -5,8 +5,10 @@ using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.BackBlazeB2;
 
+/// <summary>Provides the <c>BackblazeB2InputValidator</c> API.</summary>
 public class BackblazeB2InputValidator : InputValidatorBase
 {
+    /// <summary>Provides the <c>TryValidateKeyIdInternal</c> API.</summary>
     protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)
     {
         //B2 master keys are 12. Application keys are 25
@@ -32,6 +34,7 @@ public class BackblazeB2InputValidator : InputValidatorBase
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateAccessKeyInternal</c> API.</summary>
     protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status, out string? message)
     {
         if (accessKey.Length != 31)
@@ -46,6 +49,7 @@ public class BackblazeB2InputValidator : InputValidatorBase
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateBucketNameInternal</c> API.</summary>
     protected override bool TryValidateBucketNameInternal(string bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {
         //https://www.backblaze.com/b2/docs/buckets.html
@@ -81,6 +85,7 @@ public class BackblazeB2InputValidator : InputValidatorBase
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateObjectKeyInternal</c> API.</summary>
     protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
     {
         //https://www.backblaze.com/b2/docs/files.html

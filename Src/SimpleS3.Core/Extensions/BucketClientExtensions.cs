@@ -7,6 +7,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Extensions;
 
+/// <summary>Provides the <c>BucketClientExtensions</c> API.</summary>
 public static class BucketClientExtensions
 {
     /// <summary>List all buckets</summary>

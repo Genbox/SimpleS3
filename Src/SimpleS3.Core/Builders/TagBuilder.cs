@@ -6,11 +6,13 @@ using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Core.Builders;
 
+/// <summary>Provides the <c>TagBuilder</c> API.</summary>
 public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, string>>
 {
     private readonly Regex _validChar = new Regex(@"^[a-z0-9 \+\-=\._:/]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private Dictionary<string, string>? _tags;
 
+    /// <summary>Provides the <c>GetEnumerator</c> API.</summary>
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
     {
         if (_tags == null)
@@ -21,6 +23,7 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    /// <summary>Provides the <c>Build</c> API.</summary>
     public string? Build()
     {
         if (!HasData())
@@ -29,13 +32,16 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
         return string.Join("&", _tags!.Select(x => UrlHelper.UrlEncode(x.Key) + '=' + UrlHelper.UrlEncode(x.Value)));
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public void Reset()
     {
         _tags?.Clear();
     }
 
+    /// <summary>Provides the <c>HasData</c> API.</summary>
     public bool HasData() => _tags != null && _tags.Count > 0;
 
+    /// <summary>Provides the <c>HeaderName</c> API.</summary>
     public string? HeaderName => null;
 
     //From https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html
@@ -51,6 +57,7 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
     // - You can't backdate the application of a tag. This means that tags only start appearing on your cost allocation report after you apply them and don't appear on earlier reports.
     // - Allowed characters are Unicode letters, whitespace, and numbers, plus the following special characters: + - = . _ : /
 
+    /// <summary>Provides the <c>Add</c> API.</summary>
     public TagBuilder Add(string key, string value)
     {
         Validator.RequireNotNull(key);

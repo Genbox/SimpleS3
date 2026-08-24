@@ -1,5 +1,6 @@
 namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
+/// <summary>Provides the <c>IHasContentMd5</c> API.</summary>
 public interface IHasContentMd5
 {
     /// <summary>

@@ -29,6 +29,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Extensions;
 
+/// <summary>Provides the <c>SimpleS3CoreServices</c> API.</summary>
 [PublicAPI]
 public static class SimpleS3CoreServices
 {

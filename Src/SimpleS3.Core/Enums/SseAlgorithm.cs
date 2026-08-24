@@ -3,9 +3,11 @@ using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 
+/// <summary>Provides the <c>SseAlgorithm</c> API.</summary>
 [FastEnum]
 public enum SseAlgorithm
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
 
     /// <summary>

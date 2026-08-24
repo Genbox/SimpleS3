@@ -4,10 +4,12 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Authentication;
 
+/// <summary>Provides the <c>HeaderWhitelist</c> API.</summary>
 [PublicAPI]
 public static class HeaderWhitelist
 {
     //These headers are always signed
+    /// <summary>Provides the <c>Whitelist</c> API.</summary>
     public static ISet<string> Whitelist { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
     {
         HttpHeaders.Host,
@@ -15,6 +17,7 @@ public static class HeaderWhitelist
         HttpHeaders.ContentMd5
     };
 
+    /// <summary>Provides the <c>ShouldSignHeader</c> API.</summary>
     public static Func<string, bool> ShouldSignHeader { get; set; } = DefaultHeaderCheck;
 
     private static bool DefaultHeaderCheck(string header)

@@ -5,9 +5,11 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Common.Validation;
 
+/// <summary>Provides the <c>InputValidatorBase</c> API.</summary>
 [PublicAPI]
 public abstract class InputValidatorBase : IInputValidator
 {
+    /// <summary>Provides the <c>TryValidateKeyId</c> API.</summary>
     public bool TryValidateKeyId(string? keyId, out ValidationStatus status, out string? message)
     {
         if (keyId == null)
@@ -20,6 +22,7 @@ public abstract class InputValidatorBase : IInputValidator
         return TryValidateKeyIdInternal(keyId, out status, out message);
     }
 
+    /// <summary>Provides the <c>TryValidateAccessKey</c> API.</summary>
     public bool TryValidateAccessKey(byte[]? accessKey, out ValidationStatus status, out string? message)
     {
         if (accessKey == null)
@@ -61,6 +64,7 @@ public abstract class InputValidatorBase : IInputValidator
         };
     }
 
+    /// <summary>Provides the <c>TryValidateObjectKey</c> API.</summary>
     public bool TryValidateObjectKey(string? objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
     {
         Validator.RequireThat(Enums.ObjectKeyValidationMode.IsDefined(mode), "Mode must not be Unknown");
@@ -90,14 +94,19 @@ public abstract class InputValidatorBase : IInputValidator
         };
     }
 
+    /// <summary>Provides the <c>TryValidateKeyIdInternal</c> API.</summary>
     protected abstract bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message);
 
+    /// <summary>Provides the <c>TryValidateAccessKeyInternal</c> API.</summary>
     protected abstract bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status, out string? message);
 
+    /// <summary>Provides the <c>TryValidateBucketNameInternal</c> API.</summary>
     protected abstract bool TryValidateBucketNameInternal(string bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message);
 
+    /// <summary>Provides the <c>TryValidateObjectKeyInternal</c> API.</summary>
     protected abstract bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message);
 
+    /// <summary>Provides the <c>TryValidateBlacklisted</c> API.</summary>
     protected static bool TryValidateBlacklisted(string input, out ValidationStatus status, out string? message)
     {
         foreach (char c in input)
@@ -116,6 +125,7 @@ public abstract class InputValidatorBase : IInputValidator
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateObjectSafeOnly</c> API.</summary>
     protected static bool TryValidateObjectSafeOnly(string input, out ValidationStatus status, out string? message)
     {
         foreach (char c in input)
@@ -133,6 +143,7 @@ public abstract class InputValidatorBase : IInputValidator
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateObjectAsciiOnly</c> API.</summary>
     protected static bool TryValidateObjectAsciiOnly(string input, out ValidationStatus status, out string? message)
     {
         foreach (char c in input)
@@ -150,6 +161,7 @@ public abstract class InputValidatorBase : IInputValidator
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateObjectExtAsciiOnly</c> API.</summary>
     protected static bool TryValidateObjectExtAsciiOnly(string input, out ValidationStatus status, out string? message)
     {
         foreach (char c in input)
@@ -167,6 +179,7 @@ public abstract class InputValidatorBase : IInputValidator
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateBucketDns</c> API.</summary>
     protected static bool TryValidateBucketDns(string input, out ValidationStatus status, out string? message)
     {
         int curPos = 0;

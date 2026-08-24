@@ -3,9 +3,11 @@ using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Enums;
 
+/// <summary>Provides the <c>ErrorCode</c> API.</summary>
 [FastEnum]
 public enum ErrorCode
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
 
     /// <summary>Access Denied</summary>
@@ -265,7 +267,9 @@ public enum ErrorCode
     /// </summary>
     InvalidBucketAclWithObjectOwnership,
 
+    /// <summary>Provides the <c>InvalidBucketAclWithBlockPublicAccessError</c> API.</summary>
     InvalidBucketAclWithBlockPublicAccessError,
 
+    /// <summary>Provides the <c>MalformedPolicy</c> API.</summary>
     MalformedPolicy
 }

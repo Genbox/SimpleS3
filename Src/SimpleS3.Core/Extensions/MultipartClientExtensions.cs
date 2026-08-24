@@ -9,6 +9,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Extensions;
 
+/// <summary>Provides the <c>MultipartClientExtensions</c> API.</summary>
 public static class MultipartClientExtensions
 {
     /// <summary>List all multipart uploads</summary>

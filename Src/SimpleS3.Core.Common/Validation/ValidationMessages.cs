@@ -3,8 +3,10 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Common.Validation;
 
+/// <summary>Provides the <c>ValidationMessages</c> API.</summary>
 public static class ValidationMessages
 {
+    /// <summary>Provides the <c>Messages</c> API.</summary>
     public static IDictionary<ValidationStatus, string> Messages { get; } = new Dictionary<ValidationStatus, string>
     {
         { ValidationStatus.Ok, string.Empty },
@@ -15,6 +17,7 @@ public static class ValidationMessages
         { ValidationStatus.Unknown, "An unknown error occurred" }
     };
 
+    /// <summary>Provides the <c>GetMessage</c> API.</summary>
     public static string GetMessage(ValidationStatus status, string? disallowed)
     {
         string message = Messages[status];

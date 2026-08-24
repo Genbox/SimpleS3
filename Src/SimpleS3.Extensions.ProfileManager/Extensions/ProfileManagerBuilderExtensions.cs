@@ -12,8 +12,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 
+/// <summary>Provides the <c>ProfileManagerBuilderExtensions</c> API.</summary>
 public static class ProfileManagerBuilderExtensions
 {
+    /// <summary>Provides the <c>UseDataProtection</c> API.</summary>
     public static IDataProtectionBuilder UseDataProtection(this IProfileManagerBuilder builder)
     {
         IDataProtectionBuilder dataProtectionBuilder = builder.Services.AddDataProtection(options => options.ApplicationDiscriminator = "SimpleS3");
@@ -21,18 +23,21 @@ public static class ProfileManagerBuilderExtensions
         return dataProtectionBuilder;
     }
 
+    /// <summary>Provides the <c>BindConfigToProfile</c> API.</summary>
     public static IProfileManagerBuilder BindConfigToProfile(this IProfileManagerBuilder builder, string profileName)
     {
         builder.Services.Configure<SimpleS3Config>((x, y) => x.UseProfile(y.GetRequiredService<IProfileManager>(), profileName));
         return builder;
     }
 
+    /// <summary>Provides the <c>BindConfigToDefaultProfile</c> API.</summary>
     public static IProfileManagerBuilder BindConfigToDefaultProfile(this IProfileManagerBuilder builder)
     {
         builder.Services.Configure<SimpleS3Config>((x, y) => x.UseDefaultProfile(y.GetRequiredService<IProfileManager>()));
         return builder;
     }
 
+    /// <summary>Provides the <c>UseConsoleSetup</c> API.</summary>
     public static IProfileManagerBuilder UseConsoleSetup(this IProfileManagerBuilder builder)
     {
         builder.Services.AddSingleton<IProfileSetup, ConsoleProfileSetup>();

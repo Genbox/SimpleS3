@@ -2,8 +2,15 @@ using System.Runtime.ExceptionServices;
 
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 
+/// <summary>Executes asynchronous operations with bounded concurrency and coordinated cancellation.</summary>
 public static class ParallelHelper
 {
+    /// <summary>Executes an asynchronous action for every item while limiting the number of concurrent operations.</summary>
+    /// <typeparam name="T">The source item type.</typeparam>
+    /// <param name="source">The items to process.</param>
+    /// <param name="action">The asynchronous action to invoke for each item.</param>
+    /// <param name="concurrentThreads">The maximum number of actions that may run concurrently.</param>
+    /// <param name="token">A token that cancels enumeration and all running actions.</param>
     public static async Task ExecuteAsync<T>(IEnumerable<T> source, Func<T, CancellationToken, Task> action, int concurrentThreads, CancellationToken token = default)
     {
         using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
@@ -55,6 +62,14 @@ public static class ParallelHelper
         }
     }
 
+    /// <summary>Executes an asynchronous projection for every item while limiting concurrency.</summary>
+    /// <typeparam name="T">The source item type.</typeparam>
+    /// <typeparam name="TReturn">The projected result type.</typeparam>
+    /// <param name="source">The items to process.</param>
+    /// <param name="action">The asynchronous projection to invoke for each item.</param>
+    /// <param name="concurrentThreads">The maximum number of projections that may run concurrently.</param>
+    /// <param name="token">A token that cancels enumeration and all running projections.</param>
+    /// <returns>The projected results in source order.</returns>
     public static async Task<IEnumerable<TReturn>> ExecuteAsync<T, TReturn>(IEnumerable<T> source, Func<T, CancellationToken, Task<TReturn>> action, int concurrentThreads, CancellationToken token = default)
     {
         using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
@@ -107,6 +122,14 @@ public static class ParallelHelper
         }
     }
 
+    /// <summary>Asynchronously enumerates and projects every item while limiting concurrency.</summary>
+    /// <typeparam name="T">The source item type.</typeparam>
+    /// <typeparam name="TReturn">The projected result type.</typeparam>
+    /// <param name="source">The asynchronous sequence to process.</param>
+    /// <param name="action">The asynchronous projection to invoke for each item.</param>
+    /// <param name="concurrentThreads">The maximum number of projections that may run concurrently.</param>
+    /// <param name="token">A token that cancels enumeration and all running projections.</param>
+    /// <returns>The projected results in source order.</returns>
     public static async Task<IEnumerable<TReturn>> ExecuteAsync<T, TReturn>(IAsyncEnumerable<T> source, Func<T, CancellationToken, Task<TReturn>> action, int concurrentThreads, CancellationToken token = default)
     {
         using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);

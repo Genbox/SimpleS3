@@ -7,6 +7,7 @@ namespace Genbox.SimpleS3.Core.Enums;
 [FastEnum]
 public enum StorageClass
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
 
     /// <summary>
@@ -36,6 +37,7 @@ public enum StorageClass
     [Display(Name = "STANDARD")]
     Standard,
 
+    /// <summary>Provides the <c>ReducedRedundancy</c> API.</summary>
     [Display(Name = "REDUCED_REDUNDANCY")]ReducedRedundancy,
 
     /// <summary>

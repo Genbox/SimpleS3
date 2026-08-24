@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Request;
 
+/// <summary>Provides the <c>IRequestTrailers</c> API.</summary>
 [PublicAPI]
 public interface IRequestTrailers
 {

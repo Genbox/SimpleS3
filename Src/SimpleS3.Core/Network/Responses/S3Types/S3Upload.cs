@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
+/// <summary>Provides the <c>S3Upload</c> API.</summary>
 public class S3Upload(string objectKey, string uploadId, S3Identity? initiator, S3Identity? owner, StorageClass storageClass, DateTimeOffset initiated) : IHasStorageClass, IHasUploadId, IHasObjectKey
 {
     /// <summary>
@@ -21,9 +22,12 @@ public class S3Upload(string objectKey, string uploadId, S3Identity? initiator, 
     /// <summary>The object key</summary>
     public string ObjectKey { get; internal set; } = objectKey;
 
+    /// <summary>Provides the <c>StorageClass</c> API.</summary>
     public StorageClass StorageClass { get; } = storageClass;
 
+    /// <summary>Provides the <c>UploadId</c> API.</summary>
     public string UploadId { get; } = uploadId;
 
+    /// <summary>Provides the <c>ToString</c> API.</summary>
     public override string ToString() => $"{ObjectKey} ({UploadId})";
 }

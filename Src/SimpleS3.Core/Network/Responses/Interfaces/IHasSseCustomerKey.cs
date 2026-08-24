@@ -2,6 +2,7 @@ using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
+/// <summary>Provides the <c>IHasSseCustomerKey</c> API.</summary>
 public interface IHasSseCustomerKey
 {
     /// <summary>If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</summary>

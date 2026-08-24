@@ -1,5 +1,6 @@
 namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
+/// <summary>Provides the <c>IHasTruncatedExt</c> API.</summary>
 public interface IHasTruncatedExt
 {
     /// <summary>Keys that begin with the indicated prefix.</summary>

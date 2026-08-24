@@ -2,10 +2,13 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 
 namespace Genbox.SimpleS3.Extensions.BackBlazeB2;
 
+/// <summary>Provides the <c>BackblazeB2RegionData</c> API.</summary>
 public class BackblazeB2RegionData : IRegionData
 {
+    /// <summary>Provides the <c>Instance</c> API.</summary>
     public static BackblazeB2RegionData Instance { get; } = new BackblazeB2RegionData();
 
+    /// <summary>Provides the <c>GetRegions</c> API.</summary>
     public IEnumerable<IRegionInfo> GetRegions()
     {
         yield return new RegionInfo(BackBlazeB2Region.UsWest000, "us-west-000", "US West 0");

@@ -8,13 +8,16 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.Wasabi.Extensions;
 
+/// <summary>Provides the <c>CoreBuilderExtensions</c> API.</summary>
 public static class CoreBuilderExtensions
 {
+    /// <summary>Provides the <c>UseWasabi</c> API.</summary>
     public static ICoreBuilder UseWasabi(this ICoreBuilder clientBuilder, Action<WasabiConfig> config)
     {
         return UseWasabi(clientBuilder, (s3Config, _) => config.Invoke(s3Config));
     }
 
+    /// <summary>Provides the <c>UseWasabi</c> API.</summary>
     public static ICoreBuilder UseWasabi(this ICoreBuilder clientBuilder, Action<WasabiConfig, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(config);
@@ -22,6 +25,7 @@ public static class CoreBuilderExtensions
         return UseWasabi(clientBuilder);
     }
 
+    /// <summary>Provides the <c>UseWasabi</c> API.</summary>
     public static ICoreBuilder UseWasabi(this ICoreBuilder clientBuilder)
     {
         clientBuilder.Services.AddSingleton<IRegionData, WasabiRegionData>();

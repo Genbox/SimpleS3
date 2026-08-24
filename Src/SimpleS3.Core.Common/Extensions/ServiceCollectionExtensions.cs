@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Common.Extensions;
 
+/// <summary>Provides the <c>ServiceCollectionExtensions</c> API.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>Same as Microsoft.DependencyInjection's TryAddEnumerable, but also returns if it was able to add it or not</summary>
@@ -28,8 +29,10 @@ public static class ServiceCollectionExtensions
 
     //The extensions here add the ability to get the IServiceProvider when binding options
 
+    /// <summary>Provides the <c>Configure&lt;TOptions&gt;</c> API.</summary>
     public static IServiceCollection Configure<TOptions>(this IServiceCollection services, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class => services.Configure(Options.DefaultName, configureOptions);
 
+    /// <summary>Provides the <c>Configure&lt;TOptions&gt;</c> API.</summary>
     public static IServiceCollection Configure<TOptions>(this IServiceCollection services, string name, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
     {
         if (services == null)
@@ -43,8 +46,10 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>Provides the <c>PostConfigure&lt;TOptions&gt;</c> API.</summary>
     public static IServiceCollection PostConfigure<TOptions>(this IServiceCollection services, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class => services.PostConfigure(Options.DefaultName, configureOptions);
 
+    /// <summary>Provides the <c>PostConfigure&lt;TOptions&gt;</c> API.</summary>
     public static IServiceCollection PostConfigure<TOptions>(this IServiceCollection services, string name, Action<TOptions, IServiceProvider> configureOptions) where TOptions : class
     {
         if (services == null)

@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
+/// <summary>Provides the <c>IHasObjectAcl</c> API.</summary>
 [PublicAPI]
 public interface IHasObjectAcl
 {

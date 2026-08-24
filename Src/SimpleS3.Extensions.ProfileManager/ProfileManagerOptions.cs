@@ -1,5 +1,6 @@
 namespace Genbox.SimpleS3.Extensions.ProfileManager;
 
+/// <summary>Provides the <c>ProfileManagerOptions</c> API.</summary>
 public class ProfileManagerOptions
 {
     /// <summary>Controls whether the ProfileManager should clear the input key when creating profiles or not. Defaults to true.</summary>

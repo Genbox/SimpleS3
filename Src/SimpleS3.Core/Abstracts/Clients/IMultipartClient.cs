@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Clients;
 
+/// <summary>Provides the <c>IMultipartClient</c> API.</summary>
 [PublicAPI]
 public interface IMultipartClient
 {
@@ -28,6 +29,7 @@ public interface IMultipartClient
     /// <param name="token">A cancellation token</param>
     Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>UploadPartCopyAsync</c> API.</summary>
     Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default);
 
     /// <summary>List the parts of a multipart upload</summary>

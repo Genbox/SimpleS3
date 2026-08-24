@@ -6,10 +6,12 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 
+/// <summary>Provides the <c>RestoreObjectRequest</c> API.</summary>
 public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId, IHasBucketName, IHasObjectKey
 {
     internal RestoreObjectRequest() : base(HttpMethodType.POST) {}
 
+    /// <summary>Provides the <c>RestoreObjectRequest</c> API.</summary>
     public RestoreObjectRequest(string bucketName, string objectKey) : this()
     {
         Initialize(bucketName, objectKey);
@@ -27,16 +29,23 @@ public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId
     /// <summary>Glacier retrieval tier at which the restore will be processed.</summary>
     public RetrievalTier RequestTier { get; set; }
 
+    /// <summary>Provides the <c>RequestType</c> API.</summary>
     public RestoreRequestType RequestType { get; set; }
 
     /// <summary>The optional description for the job.</summary>
     public string? Description { get; set; }
 
+    /// <summary>Provides the <c>SelectParameters</c> API.</summary>
     public S3SelectParameters? SelectParameters { get; set; }
+    /// <summary>Provides the <c>OutputLocation</c> API.</summary>
     public S3OutputLocation? OutputLocation { get; set; }
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+    /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+    /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
+    /// <summary>Provides the <c>VersionId</c> API.</summary>
     public string? VersionId { get; set; }
 
     internal void Initialize(string bucketName, string objectKey)
@@ -45,6 +54,7 @@ public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId
         ObjectKey = objectKey;
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         SelectParameters?.Reset();

@@ -19,14 +19,19 @@ public class PutBucketTaggingRequest : BaseRequest, IHasBucketName, IContentMd5C
         Tags = new TagBuilder();
     }
 
+    /// <summary>Provides the <c>PutBucketTaggingRequest</c> API.</summary>
     public PutBucketTaggingRequest(string bucketName, IDictionary<string, string> tags) : this()
     {
         Initialize(bucketName, tags);
     }
 
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
+    /// <summary>Provides the <c>ForceContentMd5</c> API.</summary>
     public Func<bool> ForceContentMd5 => () => true;
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+    /// <summary>Provides the <c>Tags</c> API.</summary>
     public TagBuilder Tags { get; }
 
     internal void Initialize(string bucketName, IDictionary<string, string> tags)
@@ -37,6 +42,7 @@ public class PutBucketTaggingRequest : BaseRequest, IHasBucketName, IContentMd5C
             Tags.Add(pair.Key, pair.Value);
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         ContentMd5 = null;

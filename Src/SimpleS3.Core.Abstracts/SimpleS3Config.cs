@@ -4,17 +4,21 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Abstracts;
 
+/// <summary>Provides the <c>SimpleS3Config</c> API.</summary>
 [PublicAPI]
 public class SimpleS3Config
 {
+    /// <summary>Provides the <c>SimpleS3Config</c> API.</summary>
     public SimpleS3Config() {} //Needed for config binding
 
+    /// <summary>Provides the <c>SimpleS3Config</c> API.</summary>
     public SimpleS3Config(string providerName, string endpoint)
     {
         ProviderName = providerName;
         Endpoint = endpoint;
     }
 
+    /// <summary>Provides the <c>SimpleS3Config</c> API.</summary>
     public SimpleS3Config(IAccessKey? credentials, string endpoint, string regionCode) : this(string.Empty, endpoint) //Used internally
     {
         Credentials = credentials;
@@ -76,7 +80,9 @@ public class SimpleS3Config
     /// <summary>Set this to true to include sensitive signing material and signed request query strings in logs.</summary>
     public bool LogSensitiveMaterial { get; set; }
 
+    /// <summary>Provides the <c>RegionCode</c> API.</summary>
     public string RegionCode { get; set; }
 
+    /// <summary>Provides the <c>ProviderName</c> API.</summary>
     public string ProviderName { get; set; }
 }

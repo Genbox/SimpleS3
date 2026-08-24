@@ -6,8 +6,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Genbox.SimpleS3.Core.Extensions;
 
+/// <summary>Provides the <c>CoreBuilderExtensions</c> API.</summary>
 public static class CoreBuilderExtensions
 {
+    /// <summary>Provides the <c>UsePooledClients</c> API.</summary>
     public static ICoreBuilder UsePooledClients(this ICoreBuilder builder)
     {
         builder.Services.Replace(ServiceDescriptor.Singleton<IBucketClient, PooledBucketClient>());

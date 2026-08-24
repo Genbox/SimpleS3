@@ -1,5 +1,6 @@
 namespace Genbox.SimpleS3.Core.Common.Misc;
 
+/// <summary>Provides the <c>HttpHeaders</c> API.</summary>
 public static class HttpHeaders
 {
     /// <summary>https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Host</summary>

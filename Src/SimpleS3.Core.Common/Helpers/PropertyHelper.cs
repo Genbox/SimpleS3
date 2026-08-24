@@ -2,8 +2,10 @@ using System.Reflection;
 
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 
+/// <summary>Provides the <c>PropertyHelper</c> API.</summary>
 public static class PropertyHelper
 {
+    /// <summary>Provides the <c>MapObjects&lt;T,T2&gt;</c> API.</summary>
     public static void MapObjects<T, T2>(T? source, T2? destination) where T : class, T2 where T2 : class, new()
     {
         if (source == null || destination == null)

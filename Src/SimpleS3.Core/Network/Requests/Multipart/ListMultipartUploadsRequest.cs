@@ -16,6 +16,7 @@ public class ListMultipartUploadsRequest : BaseRequest, IHasBucketName
 {
     internal ListMultipartUploadsRequest() : base(HttpMethodType.GET) {}
 
+    /// <summary>Provides the <c>ListMultipartUploadsRequest</c> API.</summary>
     public ListMultipartUploadsRequest(string bucketName) : this()
     {
         Initialize(bucketName);
@@ -61,6 +62,7 @@ public class ListMultipartUploadsRequest : BaseRequest, IHasBucketName
     /// </summary>
     public string? UploadIdMarker { get; set; }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)
@@ -68,6 +70,7 @@ public class ListMultipartUploadsRequest : BaseRequest, IHasBucketName
         BucketName = bucketName;
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         Delimiter = null;

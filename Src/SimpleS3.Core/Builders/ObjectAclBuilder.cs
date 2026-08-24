@@ -2,13 +2,19 @@ using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Builders;
 
+/// <summary>Provides the <c>ObjectAclBuilder</c> API.</summary>
 public class ObjectAclBuilder
 {
+    /// <summary>Provides the <c>ReadObject</c> API.</summary>
     public AclBuilder ReadObject { get; } = new AclBuilder();
+    /// <summary>Provides the <c>ReadAcl</c> API.</summary>
     public AclBuilder ReadAcl { get; } = new AclBuilder();
+    /// <summary>Provides the <c>WriteAcl</c> API.</summary>
     public AclBuilder WriteAcl { get; } = new AclBuilder();
+    /// <summary>Provides the <c>FullControl</c> API.</summary>
     public AclBuilder FullControl { get; } = new AclBuilder();
 
+    /// <summary>Provides the <c>AddEmail</c> API.</summary>
     public ObjectAclBuilder AddEmail(string email, ObjectPermissions permissions)
     {
         if (permissions.HasFlag(ObjectPermissions.Read))
@@ -26,6 +32,7 @@ public class ObjectAclBuilder
         return this;
     }
 
+    /// <summary>Provides the <c>AddUserId</c> API.</summary>
     public ObjectAclBuilder AddUserId(string userId, ObjectPermissions permissions)
     {
         if (permissions.HasFlag(ObjectPermissions.Read))
@@ -43,6 +50,7 @@ public class ObjectAclBuilder
         return this;
     }
 
+    /// <summary>Provides the <c>AddGroup</c> API.</summary>
     public ObjectAclBuilder AddGroup(string uri, ObjectPermissions permissions)
     {
         if (permissions.HasFlag(ObjectPermissions.Read))
@@ -60,6 +68,7 @@ public class ObjectAclBuilder
         return this;
     }
 
+    /// <summary>Provides the <c>AddGroup</c> API.</summary>
     public ObjectAclBuilder AddGroup(PredefinedGroup group, ObjectPermissions permissions)
     {
         if (permissions.HasFlag(ObjectPermissions.Read))

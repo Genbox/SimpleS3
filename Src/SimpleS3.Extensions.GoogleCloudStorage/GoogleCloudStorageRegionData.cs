@@ -2,10 +2,13 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 
 namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage;
 
+/// <summary>Provides the <c>GoogleCloudStorageRegionData</c> API.</summary>
 public class GoogleCloudStorageRegionData : IRegionData
 {
+    /// <summary>Provides the <c>Instance</c> API.</summary>
     public static GoogleCloudStorageRegionData Instance { get; } = new GoogleCloudStorageRegionData();
 
+    /// <summary>Provides the <c>GetRegions</c> API.</summary>
     public IEnumerable<IRegionInfo> GetRegions()
     {
         //North America

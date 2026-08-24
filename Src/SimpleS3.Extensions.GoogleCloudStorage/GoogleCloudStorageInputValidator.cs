@@ -5,8 +5,10 @@ using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage;
 
+/// <summary>Provides the <c>GoogleCloudStorageInputValidator</c> API.</summary>
 public class GoogleCloudStorageInputValidator : InputValidatorBase
 {
+    /// <summary>Provides the <c>TryValidateKeyIdInternal</c> API.</summary>
     protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)
     {
         //https://cloud.google.com/storage/docs/authentication/hmackeys
@@ -34,6 +36,7 @@ public class GoogleCloudStorageInputValidator : InputValidatorBase
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateAccessKeyInternal</c> API.</summary>
     protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status, out string? message)
     {
         //https://cloud.google.com/storage/docs/authentication/hmackeys
@@ -64,6 +67,7 @@ public class GoogleCloudStorageInputValidator : InputValidatorBase
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateBucketNameInternal</c> API.</summary>
     protected override bool TryValidateBucketNameInternal(string bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {
         //https://cloud.google.com/storage/docs/naming-buckets
@@ -119,6 +123,7 @@ public class GoogleCloudStorageInputValidator : InputValidatorBase
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateObjectKeyInternal</c> API.</summary>
     protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
     {
         //https://cloud.google.com/storage/docs/request-endpoints#encoding

@@ -21,6 +21,7 @@ public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBy
         Objects = new List<S3DeleteInfo>();
     }
 
+    /// <summary>Provides the <c>DeleteObjectsRequest</c> API.</summary>
     public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : this()
     {
         Initialize(bucketName, resources);
@@ -32,12 +33,17 @@ public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBy
     /// <summary>The list of objects</summary>
     public IList<S3DeleteInfo> Objects { get; }
 
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
     Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+    /// <summary>Provides the <c>BypassGovernanceRetention</c> API.</summary>
     public bool? BypassGovernanceRetention { get; set; }
+    /// <summary>Provides the <c>Mfa</c> API.</summary>
     public MfaAuthenticationBuilder Mfa { get; }
+    /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
 
     internal void Initialize(string bucketName, IEnumerable<S3DeleteInfo> resources)
@@ -48,6 +54,7 @@ public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBy
             Objects.Add(info);
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         Objects.Clear();

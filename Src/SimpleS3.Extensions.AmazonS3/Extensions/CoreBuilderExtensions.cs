@@ -8,13 +8,16 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
 
+/// <summary>Provides the <c>CoreBuilderExtensions</c> API.</summary>
 public static class CoreBuilderExtensions
 {
+    /// <summary>Provides the <c>UseAmazonS3</c> API.</summary>
     public static ICoreBuilder UseAmazonS3(this ICoreBuilder clientBuilder, Action<AmazonS3Config> config)
     {
         return UseAmazonS3(clientBuilder, (s3Config, _) => config.Invoke(s3Config));
     }
 
+    /// <summary>Provides the <c>UseAmazonS3</c> API.</summary>
     public static ICoreBuilder UseAmazonS3(this ICoreBuilder clientBuilder, Action<AmazonS3Config, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(config);
@@ -22,6 +25,7 @@ public static class CoreBuilderExtensions
         return UseAmazonS3(clientBuilder);
     }
 
+    /// <summary>Provides the <c>UseAmazonS3</c> API.</summary>
     public static ICoreBuilder UseAmazonS3(this ICoreBuilder clientBuilder)
     {
         clientBuilder.Services.AddSingleton<IRegionData, AmazonS3RegionData>();

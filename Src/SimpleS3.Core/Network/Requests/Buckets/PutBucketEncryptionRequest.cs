@@ -10,14 +10,19 @@ public class PutBucketEncryptionRequest : BaseRequest, IHasBucketName, IContentM
 {
     internal PutBucketEncryptionRequest() : base(HttpMethodType.PUT) {}
 
+    /// <summary>Provides the <c>PutBucketEncryptionRequest</c> API.</summary>
     public PutBucketEncryptionRequest(string bucketName, IEnumerable<S3ServerSideEncryptionRule> rules) : this()
     {
         Initialize(bucketName, rules);
     }
 
+    /// <summary>Provides the <c>Rules</c> API.</summary>
     public IList<S3ServerSideEncryptionRule> Rules { get; } = new List<S3ServerSideEncryptionRule>();
+    /// <summary>Provides the <c>ForceContentMd5</c> API.</summary>
     public Func<bool> ForceContentMd5 => () => true;
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName, IEnumerable<S3ServerSideEncryptionRule> rules)
@@ -28,6 +33,7 @@ public class PutBucketEncryptionRequest : BaseRequest, IHasBucketName, IContentM
             Rules.Add(rule);
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         ContentMd5 = null;

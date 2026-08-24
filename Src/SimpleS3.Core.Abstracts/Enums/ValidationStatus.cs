@@ -1,13 +1,20 @@
 namespace Genbox.SimpleS3.Core.Abstracts.Enums;
 
+/// <summary>Provides the <c>ValidationStatus</c> API.</summary>
 public enum ValidationStatus
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
+    /// <summary>Provides the <c>Ok</c> API.</summary>
     Ok,
+    /// <summary>Provides the <c>NullInput</c> API.</summary>
     NullInput,
+    /// <summary>Provides the <c>WrongLength</c> API.</summary>
     WrongLength,
+    /// <summary>Provides the <c>WrongFormat</c> API.</summary>
     WrongFormat,
 #pragma warning disable CA1700 // Public API name describes provider-reserved bucket names.
+    /// <summary>Provides the <c>ReservedName</c> API.</summary>
     ReservedName
 #pragma warning restore CA1700
 }

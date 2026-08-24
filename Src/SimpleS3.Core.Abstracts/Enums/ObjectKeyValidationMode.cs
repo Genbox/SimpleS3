@@ -2,9 +2,11 @@ using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Enums;
 
+/// <summary>Provides the <c>ObjectKeyValidationMode</c> API.</summary>
 [FastEnum]
 public enum ObjectKeyValidationMode
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
 
     ///<summary>Only safe characters such as a-z, A-Z and 0-9 are allowed</summary>

@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Response;
 
+/// <summary>Provides the <c>IResponse</c> API.</summary>
 [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors | ImplicitUseTargetFlags.WithMembers)]
 public interface IResponse
 {
@@ -26,7 +27,9 @@ public interface IResponse
     /// <summary>Return true if the request was successfully processed.</summary>
     bool IsSuccess { get; set; }
 
+    /// <summary>Provides the <c>StatusCode</c> API.</summary>
     int StatusCode { get; set; }
 
+    /// <summary>Provides the <c>Error</c> API.</summary>
     IError? Error { get; set; }
 }

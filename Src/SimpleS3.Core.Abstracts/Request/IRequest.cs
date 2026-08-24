@@ -3,9 +3,11 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Request;
 
+/// <summary>Provides the <c>IRequest</c> API.</summary>
 [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors | ImplicitUseTargetFlags.WithMembers)]
 public interface IRequest
 {
+    /// <summary>Provides the <c>RequestId</c> API.</summary>
     Guid RequestId { get; set; }
 
     /// <summary>Date of the request</summary>

@@ -13,8 +13,10 @@ public class AclBuilder : IHttpHeaderBuilder
     private HashSet<string>? _ids;
     private HashSet<string>? _uris;
 
+    /// <summary>Provides the <c>HeaderName</c> API.</summary>
     public string? HeaderName => null;
 
+    /// <summary>Provides the <c>Build</c> API.</summary>
     public string? Build()
     {
         if (!HasData())
@@ -69,6 +71,7 @@ public class AclBuilder : IHttpHeaderBuilder
         return StringBuilderPool.Shared.ReturnString(sb);
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public void Reset()
     {
         _emails?.Clear();
@@ -76,6 +79,7 @@ public class AclBuilder : IHttpHeaderBuilder
         _uris?.Clear();
     }
 
+    /// <summary>Provides the <c>HasData</c> API.</summary>
     public bool HasData() => _emails?.Count > 0 || _ids?.Count > 0 || _uris?.Count > 0;
 
     /// <summary>

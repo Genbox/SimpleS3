@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Internals.Network;
 
+/// <summary>Provides the <c>DefaultResponseHandler</c> API.</summary>
 public class DefaultResponseHandler : IResponseHandler
 {
     private readonly SimpleS3Config _config;
@@ -23,6 +24,7 @@ public class DefaultResponseHandler : IResponseHandler
     private readonly INetworkDriver _networkDriver;
     private readonly IPostMapperFactory _postMapper;
 
+    /// <summary>Provides the <c>DefaultResponseHandler</c> API.</summary>
     public DefaultResponseHandler(IOptions<SimpleS3Config> options, IRequestValidatorFactory validator, IMarshalFactory marshaller, IPostMapperFactory postMapper, INetworkDriver networkDriver, ILogger<DefaultResponseHandler> logger)
     {
         Validator.RequireNotNull(options);
@@ -38,6 +40,7 @@ public class DefaultResponseHandler : IResponseHandler
         _config = options.Value;
     }
 
+    /// <summary>Provides the <c>HandleResponseAsync&lt;TReq,TResp&gt;</c> API.</summary>
     public async Task<TResp> HandleResponseAsync<TReq, TResp>(TReq request, string url, Stream? requestStream, CancellationToken token) where TReq : IRequest where TResp : IResponse, new()
     {
         _logger.LogDebug("Sending request to {Url}", url);

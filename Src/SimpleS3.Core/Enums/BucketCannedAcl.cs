@@ -7,6 +7,7 @@ namespace Genbox.SimpleS3.Core.Enums;
 [FastEnum]
 public enum BucketCannedAcl
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
 
     /// <summary>Owner gets full control. No one else has access rights (default).</summary>

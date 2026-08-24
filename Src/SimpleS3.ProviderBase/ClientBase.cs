@@ -13,10 +13,12 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.ProviderBase;
 
+/// <summary>Provides the <c>ClientBase</c> API.</summary>
 public abstract class ClientBase : IDisposable
 {
     private ServiceProvider? _serviceProvider;
 
+    /// <summary>Provides the <c>ClientBase</c> API.</summary>
     protected ClientBase(IInputValidator inputValidator, SimpleS3Config config, NetworkConfig? networkConfig = null)
     {
         ServiceCollection services = new ServiceCollection();
@@ -44,6 +46,7 @@ public abstract class ClientBase : IDisposable
         Client = Build(services);
     }
 
+    /// <summary>Provides the <c>ClientBase</c> API.</summary>
     protected ClientBase(IInputValidator inputValidator, SimpleS3Config config, INetworkDriver networkDriver)
     {
         ServiceCollection services = new ServiceCollection();
@@ -58,13 +61,16 @@ public abstract class ClientBase : IDisposable
         Client = Build(services);
     }
 
+    /// <summary>Provides the <c>ClientBase</c> API.</summary>
     protected ClientBase(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedClient signedObjectClient)
     {
         Client = new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
     }
 
+    /// <summary>Provides the <c>Client</c> API.</summary>
     protected SimpleClient Client { get; }
 
+    /// <summary>Provides the <c>Dispose</c> API.</summary>
     public void Dispose()
     {
         Dispose(true);
@@ -89,6 +95,7 @@ public abstract class ClientBase : IDisposable
         return new SimpleClient(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
     }
 
+    /// <summary>Provides the <c>Dispose</c> API.</summary>
     protected virtual void Dispose(bool disposing)
     {
         if (disposing)

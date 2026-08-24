@@ -12,13 +12,16 @@ public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketNa
 {
     internal PutBucketAccelerateConfigurationRequest() : base(HttpMethodType.PUT) {}
 
+    /// <summary>Provides the <c>PutBucketAccelerateConfigurationRequest</c> API.</summary>
     public PutBucketAccelerateConfigurationRequest(string bucketName, bool enabled) : this()
     {
         Initialize(bucketName, enabled);
     }
 
+    /// <summary>Provides the <c>AccelerationEnabled</c> API.</summary>
     public bool AccelerationEnabled { get; set; }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName, bool enabled)

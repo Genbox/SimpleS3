@@ -5,10 +5,13 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Operations;
 
+/// <summary>Provides the <c>IMultipartOperations</c> API.</summary>
 [PublicAPI]
 public interface IMultipartOperations
 {
+    /// <summary>Provides the <c>RequestWrappers</c> API.</summary>
     IList<IRequestWrapper> RequestWrappers { get; }
+    /// <summary>Provides the <c>ResponseWrappers</c> API.</summary>
     IList<IResponseWrapper> ResponseWrappers { get; }
 
     /// <summary>Create a multipart upload See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_CreateMultipartUpload.html for details</summary>
@@ -17,6 +20,7 @@ public interface IMultipartOperations
     /// <summary>Upload a part to a multipart upload See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_UploadPart.html for details</summary>
     Task<UploadPartResponse> UploadPartAsync(UploadPartRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>UploadPartCopyAsync</c> API.</summary>
     Task<UploadPartCopyResponse> UploadPartCopyAsync(UploadPartCopyRequest request, CancellationToken token = default);
 
     /// <summary>List all parts as part of a multipart upload See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_ListParts.html for details</summary>

@@ -2,6 +2,7 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Response;
 
+/// <summary>Provides the <c>IError</c> API.</summary>
 public interface IError
 {
     /// <summary>Contains the error code returned from AWS S3</summary>

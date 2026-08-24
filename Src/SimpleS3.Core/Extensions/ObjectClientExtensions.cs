@@ -16,6 +16,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Extensions;
 
+/// <summary>Provides the <c>ObjectClientExtensions</c> API.</summary>
 public static class ObjectClientExtensions
 {
     /// <summary>Delete a single object</summary>
@@ -233,6 +234,7 @@ public static class ObjectClientExtensions
         }
     }
 
+    /// <summary>Provides the <c>PutObjectDataAsync</c> API.</summary>
     public static async Task<PutObjectResponse> PutObjectDataAsync(this IObjectClient client, string bucketName, string objectKey, byte[] data, Action<PutObjectRequest>? config = null, CancellationToken token = default)
     {
         Validator.RequireNotNull(client);
@@ -243,6 +245,7 @@ public static class ObjectClientExtensions
         return await client.PutObjectAsync(bucketName, objectKey, ms, config, token).ConfigureAwait(false);
     }
 
+    /// <summary>Provides the <c>PutObjectStringAsync</c> API.</summary>
     public static Task<PutObjectResponse> PutObjectStringAsync(this IObjectClient client, string bucketName, string objectKey, string content, Encoding? encoding = null, Action<PutObjectRequest>? config = null, CancellationToken token = default)
     {
         Validator.RequireNotNull(client);
@@ -254,6 +257,7 @@ public static class ObjectClientExtensions
         return client.PutObjectDataAsync(bucketName, objectKey, encoding.GetBytes(content), config, token);
     }
 
+    /// <summary>Provides the <c>PutObjectFileAsync</c> API.</summary>
     public static async Task<PutObjectResponse> PutObjectFileAsync(this IObjectClient client, string bucketName, string objectKey, string file, Action<PutObjectRequest>? config = null, CancellationToken token = default)
     {
         Validator.RequireNotNull(client);

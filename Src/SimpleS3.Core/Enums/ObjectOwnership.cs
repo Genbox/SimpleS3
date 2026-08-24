@@ -2,9 +2,11 @@ using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 
+/// <summary>Provides the <c>ObjectOwnership</c> API.</summary>
 [FastEnum]
 public enum ObjectOwnership
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
 
     /// <summary>Objects uploaded to the bucket change ownership to the bucket owner if the objects are uploaded with the bucket-owner-full-control canned ACL.</summary>

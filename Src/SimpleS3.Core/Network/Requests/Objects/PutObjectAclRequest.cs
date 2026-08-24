@@ -21,20 +21,31 @@ public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, I
         AclGrantFullControl = new AclBuilder();
     }
 
+    /// <summary>Provides the <c>PutObjectAclRequest</c> API.</summary>
     public PutObjectAclRequest(string bucketName, string objectKey) : this()
     {
         Initialize(bucketName, objectKey);
     }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
+    /// <summary>Provides the <c>Acl</c> API.</summary>
     public ObjectCannedAcl Acl { get; set; }
+    /// <summary>Provides the <c>AclGrantRead</c> API.</summary>
     public AclBuilder AclGrantRead { get; }
+    /// <summary>Provides the <c>AclGrantReadAcp</c> API.</summary>
     public AclBuilder AclGrantReadAcp { get; }
+    /// <summary>Provides the <c>AclGrantWriteAcp</c> API.</summary>
     public AclBuilder AclGrantWriteAcp { get; }
+    /// <summary>Provides the <c>AclGrantFullControl</c> API.</summary>
     public AclBuilder AclGrantFullControl { get; }
+    /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+    /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
+    /// <summary>Provides the <c>VersionId</c> API.</summary>
     public string? VersionId { get; set; }
 
     internal void Initialize(string bucketName, string objectKey)
@@ -43,6 +54,7 @@ public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, I
         ObjectKey = objectKey;
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         ContentMd5 = null;

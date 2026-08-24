@@ -2,8 +2,10 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 
+/// <summary>Provides the <c>KeyHelper</c> API.</summary>
 public static class KeyHelper
 {
+    /// <summary>Provides the <c>ProtectKey</c> API.</summary>
     public static byte[] ProtectKey(byte[] key, IAccessKeyProtector? protector, bool clearKey = true)
     {
         if (protector == null)
@@ -18,6 +20,7 @@ public static class KeyHelper
         return key;
     }
 
+    /// <summary>Provides the <c>UnprotectKey</c> API.</summary>
     public static byte[] UnprotectKey(byte[] key, IAccessKeyProtector? protector)
     {
         if (protector == null)

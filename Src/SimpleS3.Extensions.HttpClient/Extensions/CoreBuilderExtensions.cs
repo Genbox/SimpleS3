@@ -10,20 +10,24 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient.Extensions;
 
+/// <summary>Provides the <c>CoreBuilderExtensions</c> API.</summary>
 public static class CoreBuilderExtensions
 {
+    /// <summary>Provides the <c>UseHttpClient</c> API.</summary>
     public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder, Action<HttpClientConfig, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(clientBuilder.Name, config);
         return UseHttpClient(clientBuilder);
     }
 
+    /// <summary>Provides the <c>UseHttpClient</c> API.</summary>
     public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder, Action<HttpClientConfig> config)
     {
         clientBuilder.Services.Configure(clientBuilder.Name, config);
         return UseHttpClient(clientBuilder);
     }
 
+    /// <summary>Provides the <c>UseHttpClient</c> API.</summary>
     public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder)
     {
         CustomHttpClientBuilder builder = new CustomHttpClientBuilder(clientBuilder.Services, clientBuilder.Name);

@@ -8,19 +8,23 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage.Extensions;
 
+/// <summary>Provides the <c>CoreBuilderExtensions</c> API.</summary>
 public static class CoreBuilderExtensions
 {
+    /// <summary>Provides the <c>UseGoogleCloudStorage</c> API.</summary>
     public static ICoreBuilder UseGoogleCloudStorage(this ICoreBuilder clientBuilder, Action<GoogleCloudStorageConfig> config)
     {
         return UseGoogleCloudStorage(clientBuilder, (b2Config, _) => config.Invoke(b2Config));
     }
 
+    /// <summary>Provides the <c>UseGoogleCloudStorage</c> API.</summary>
     public static ICoreBuilder UseGoogleCloudStorage(this ICoreBuilder clientBuilder, Action<GoogleCloudStorageConfig, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(config);
         return UseGoogleCloudStorage(clientBuilder);
     }
 
+    /// <summary>Provides the <c>UseGoogleCloudStorage</c> API.</summary>
     public static ICoreBuilder UseGoogleCloudStorage(this ICoreBuilder clientBuilder)
     {
         clientBuilder.Services.AddSingleton<IRegionData, GoogleCloudStorageRegionData>();

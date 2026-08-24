@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory;
 
+/// <summary>Provides the <c>HttpClientFactoryNetworkDriver</c> API.</summary>
 public class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFactoryConfig> options, ILogger<HttpClientFactoryNetworkDriver> logger, IHttpClientFactory clientFactory, string optionsName) : INetworkDriver
 {
     private readonly HttpClientFactoryConfig _config = options.Get(optionsName);
@@ -16,6 +17,7 @@ public class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFactoryCon
     private readonly Version _httpVersion2 = new Version("2.0");
     private readonly Version _httpVersion3 = new Version("3.0");
 
+    /// <summary>Provides the <c>SendRequestAsync&lt;T&gt;</c> API.</summary>
     public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         HttpResponseMessage httpResponse;

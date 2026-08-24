@@ -7,12 +7,14 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests;
 
+/// <summary>Provides the <c>BaseRequest</c> API.</summary>
 public abstract class BaseRequest(HttpMethodType method) : IRequest, IRequestTrailers, IPooledObject, IHasExpectedBucketOwner
 {
     private readonly Dictionary<string, string> _headers = new Dictionary<string, string>(StringComparer.Ordinal);
     private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>(StringComparer.Ordinal);
     private readonly Dictionary<string, string> _trailers = new Dictionary<string, string>(StringComparer.Ordinal);
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public virtual void Reset()
     {
         _headers.Clear();
@@ -30,25 +32,34 @@ public abstract class BaseRequest(HttpMethodType method) : IRequest, IRequestTra
         _queryParameters.Clear();
     }
 
+    /// <summary>Provides the <c>RequestId</c> API.</summary>
     public Guid RequestId { get; set; }
+    /// <summary>Provides the <c>Timestamp</c> API.</summary>
     public DateTimeOffset Timestamp { get; set; }
+    /// <summary>Provides the <c>Method</c> API.</summary>
     public HttpMethodType Method { get; internal set; } = method;
+    /// <summary>Provides the <c>Headers</c> API.</summary>
     public IReadOnlyDictionary<string, string> Headers => _headers;
+    /// <summary>Provides the <c>QueryParameters</c> API.</summary>
     public IReadOnlyDictionary<string, string> QueryParameters => _queryParameters;
+    /// <summary>Provides the <c>Trailers</c> API.</summary>
     public IReadOnlyDictionary<string, string> Trailers => _trailers;
 
+    /// <summary>Provides the <c>SetQueryParameter</c> API.</summary>
     public void SetQueryParameter(string key, string value)
     {
         //Query parameters can contain different casing. 'partNumber' and 'uploadId' are two of them. They MUST be cased as such.
         _queryParameters[key] = value;
     }
 
+    /// <summary>Provides the <c>SetHeader</c> API.</summary>
     public void SetHeader(string key, string value)
     {
         Debug.Assert(!key.Any(char.IsUpper), "There was an uppercase character in the header: " + key);
         _headers[key] = value;
     }
 
+    /// <summary>Provides the <c>SetTrailer</c> API.</summary>
     public void SetTrailer(string key, string value)
     {
         if (key == null)
@@ -72,5 +83,6 @@ public abstract class BaseRequest(HttpMethodType method) : IRequest, IRequestTra
                                                          or >= '0' and <= '9'
                                                          or '!' or '#' or '$' or '%' or '&' or '\'' or '*' or '+' or '-' or '.' or '^' or '_' or '`' or '|' or '~';
 
+    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
     public string? ExpectedBucketOwner { get; set; }
 }

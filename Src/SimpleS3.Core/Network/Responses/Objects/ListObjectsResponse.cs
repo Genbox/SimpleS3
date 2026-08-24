@@ -5,8 +5,10 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Objects;
 
+/// <summary>Provides the <c>ListObjectsResponse</c> API.</summary>
 public class ListObjectsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt, IHasRequestCharged, IHasBucketName
 {
+    /// <summary>Provides the <c>ListObjectsResponse</c> API.</summary>
     public ListObjectsResponse()
     {
         Objects = new List<S3Object>();
@@ -40,11 +42,17 @@ public class ListObjectsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt
     /// <summary>Name of the bucket.</summary>
     public string BucketName { get; internal set; }
 
+    /// <summary>Provides the <c>RequestCharged</c> API.</summary>
     public bool RequestCharged { get; internal set; }
 
+    /// <summary>Provides the <c>IsTruncated</c> API.</summary>
     public bool IsTruncated { get; internal set; }
+    /// <summary>Provides the <c>EncodingType</c> API.</summary>
     public EncodingType EncodingType { get; internal set; }
+    /// <summary>Provides the <c>Prefix</c> API.</summary>
     public string? Prefix { get; internal set; }
+    /// <summary>Provides the <c>Delimiter</c> API.</summary>
     public string? Delimiter { get; internal set; }
+    /// <summary>Provides the <c>CommonPrefixes</c> API.</summary>
     public IList<string> CommonPrefixes { get; }
 }

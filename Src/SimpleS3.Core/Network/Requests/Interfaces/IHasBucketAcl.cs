@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
+/// <summary>Provides the <c>IHasBucketAcl</c> API.</summary>
 public interface IHasBucketAcl
 {
     /// <summary>The canned ACL to apply to the bucket you are creating.</summary>

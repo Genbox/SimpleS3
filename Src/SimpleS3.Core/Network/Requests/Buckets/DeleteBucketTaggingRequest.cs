@@ -11,11 +11,13 @@ public class DeleteBucketTaggingRequest : BaseRequest, IHasBucketName
 {
     internal DeleteBucketTaggingRequest() : base(HttpMethodType.DELETE) {}
 
+    /// <summary>Provides the <c>DeleteBucketTaggingRequest</c> API.</summary>
     public DeleteBucketTaggingRequest(string bucketName) : this()
     {
         Initialize(bucketName);
     }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)

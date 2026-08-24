@@ -8,11 +8,13 @@ public class GetBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
 {
     internal GetBucketLifecycleConfigurationRequest() : base(HttpMethodType.GET) {}
 
+    /// <summary>Provides the <c>GetBucketLifecycleConfigurationRequest</c> API.</summary>
     public GetBucketLifecycleConfigurationRequest(string bucketName) : this()
     {
         Initialize(bucketName);
     }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)

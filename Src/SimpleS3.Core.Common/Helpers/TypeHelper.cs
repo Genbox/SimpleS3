@@ -2,10 +2,13 @@ using System.Reflection;
 
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 
+/// <summary>Provides the <c>TypeHelper</c> API.</summary>
 public static class TypeHelper
 {
+    /// <summary>Provides the <c>GetInstanceTypesInheritedFrom&lt;T&gt;</c> API.</summary>
     public static IEnumerable<Type> GetInstanceTypesInheritedFrom<T>(Assembly? assembly = null) => GetInstanceTypesInheritedFrom(typeof(T), assembly);
 
+    /// <summary>Provides the <c>GetInstanceTypesInheritedFrom</c> API.</summary>
     public static IEnumerable<Type> GetInstanceTypesInheritedFrom(Type type, Assembly? assembly = null)
     {
         if (assembly == null)
@@ -26,6 +29,7 @@ public static class TypeHelper
         }
     }
 
+    /// <summary>Provides the <c>GetTypesInheritedFrom</c> API.</summary>
     public static IEnumerable<Type> GetTypesInheritedFrom(Type type, Assembly? assembly = null)
     {
         if (assembly == null)

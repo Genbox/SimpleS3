@@ -1,5 +1,6 @@
 namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
+/// <summary>Provides the <c>IHasPartNumber</c> API.</summary>
 public interface IHasPartNumber
 {
     /// <summary>

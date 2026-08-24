@@ -3,9 +3,11 @@ using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 
+/// <summary>Provides the <c>PredefinedGroup</c> API.</summary>
 [FastEnum]
 public enum PredefinedGroup
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
 
     /// <summary>

@@ -2,10 +2,13 @@ using Genbox.SimpleS3.Core.Abstracts.Region;
 
 namespace Genbox.SimpleS3.Extensions.Wasabi;
 
+/// <summary>Provides the <c>WasabiRegionData</c> API.</summary>
 public class WasabiRegionData : IRegionData
 {
+    /// <summary>Provides the <c>Instance</c> API.</summary>
     public static WasabiRegionData Instance { get; } = new WasabiRegionData();
 
+    /// <summary>Provides the <c>GetRegions</c> API.</summary>
     public IEnumerable<IRegionInfo> GetRegions()
     {
         yield return new RegionInfo(WasabiRegion.UsEast1, "us-east-1", "North America (North Virginia)");

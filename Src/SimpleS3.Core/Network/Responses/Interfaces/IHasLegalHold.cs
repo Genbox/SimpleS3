@@ -1,5 +1,6 @@
 namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
+/// <summary>Provides the <c>IHasLegalHold</c> API.</summary>
 public interface IHasLegalHold
 {
     /// <summary>

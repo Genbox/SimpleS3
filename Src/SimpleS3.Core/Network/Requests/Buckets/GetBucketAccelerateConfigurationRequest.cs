@@ -12,11 +12,13 @@ public class GetBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketNa
 {
     internal GetBucketAccelerateConfigurationRequest() : base(HttpMethodType.GET) {}
 
+    /// <summary>Provides the <c>GetBucketAccelerateConfigurationRequest</c> API.</summary>
     public GetBucketAccelerateConfigurationRequest(string bucketName) : this()
     {
         Initialize(bucketName);
     }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)

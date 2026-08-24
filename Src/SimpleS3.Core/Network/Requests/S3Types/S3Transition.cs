@@ -36,7 +36,10 @@ public class S3Transition
         StorageClass = storageClass;
     }
 
+    /// <summary>Provides the <c>TransitionOnDate</c> API.</summary>
     public DateTimeOffset? TransitionOnDate { get; }
+    /// <summary>Provides the <c>TransitionAfterDays</c> API.</summary>
     public int? TransitionAfterDays { get; }
+    /// <summary>Provides the <c>StorageClass</c> API.</summary>
     public StorageClass StorageClass { get; }
 }

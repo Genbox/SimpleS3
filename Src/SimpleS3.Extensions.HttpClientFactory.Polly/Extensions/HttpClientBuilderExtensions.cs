@@ -13,12 +13,14 @@ using Polly.Timeout;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 
+/// <summary>Provides the <c>HttpClientBuilderExtensions</c> API.</summary>
 [PublicAPI]
 public static class HttpClientBuilderExtensions
 {
     private static readonly Func<HttpResponseMessage, bool> _statusCodes = resp => (int)resp.StatusCode >= (int)HttpStatusCode.InternalServerError || resp.StatusCode == HttpStatusCode.RequestTimeout;
     private static readonly Random _rng = new Random();
 
+    /// <summary>Provides the <c>UseRetryAndTimeout</c> API.</summary>
     public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder, int retries, TimeSpan timeout)
     {
         builder.Services.Configure<PollyConfig>(builder.Name, x =>
@@ -30,12 +32,14 @@ public static class HttpClientBuilderExtensions
         return UseRetryAndTimeout(builder);
     }
 
+    /// <summary>Provides the <c>UseRetryAndTimeout</c> API.</summary>
     public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder, Action<PollyConfig> configure)
     {
         builder.Services.Configure(builder.Name, configure);
         return UseRetryAndTimeout(builder);
     }
 
+    /// <summary>Provides the <c>UseRetryAndTimeout</c> API.</summary>
     public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder)
     {
         //Add IRequestStreamWrapper if it does not already exist. We need to add it such that it is combined with other IRequestStreamWrapper

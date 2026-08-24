@@ -10,6 +10,7 @@ public class ListPartsRequest : BaseRequest, IHasUploadId, IHasRequestPayer, IHa
 {
     internal ListPartsRequest() : base(HttpMethodType.GET) {}
 
+    /// <summary>Provides the <c>ListPartsRequest</c> API.</summary>
     public ListPartsRequest(string bucketName, string objectKey, string uploadId) : this()
     {
         Initialize(bucketName, objectKey, uploadId);
@@ -24,9 +25,13 @@ public class ListPartsRequest : BaseRequest, IHasUploadId, IHasRequestPayer, IHa
     /// <summary>Specifies the part after which listing should begin. Only parts with higher part numbers will be listed.</summary>
     public string? PartNumberMarker { get; set; }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+    /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+    /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
+    /// <summary>Provides the <c>UploadId</c> API.</summary>
     public string UploadId { get; set; } = null!;
 
     internal void Initialize(string bucketName, string objectKey, string uploadId)
@@ -36,6 +41,7 @@ public class ListPartsRequest : BaseRequest, IHasUploadId, IHasRequestPayer, IHa
         UploadId = uploadId;
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         RequestPayer = Payer.Unknown;

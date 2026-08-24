@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory;
 
+/// <summary>Provides the <c>HttpClientFactoryConfig</c> API.</summary>
 [PublicAPI]
 public class HttpClientFactoryConfig
 {

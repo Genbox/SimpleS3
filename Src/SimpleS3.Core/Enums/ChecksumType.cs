@@ -10,7 +10,10 @@ namespace Genbox.SimpleS3.Core.Enums;
 [FastEnum]
 public enum ChecksumType
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
+    /// <summary>Provides the <c>Composite</c> API.</summary>
     [Display(Name = "COMPOSITE")]Composite,
+    /// <summary>Provides the <c>FullObject</c> API.</summary>
     [Display(Name = "FULL_OBJECT")]FullObject
 }

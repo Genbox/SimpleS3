@@ -9,12 +9,15 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager;
 
+/// <summary>Provides the <c>ProfileManager</c> API.</summary>
 public class ProfileManager(IInputValidator validator, IProfileSerializer serializer, IStorage storage, IOptions<ProfileManagerOptions> options, IAccessKeyProtector? protector = null) : IProfileManager
 {
+    /// <summary>Provides the <c>DefaultProfile</c> API.</summary>
     public const string DefaultProfile = "DefaultProfile";
     private const int _currentProfileVersion = 2;
     private readonly ProfileManagerOptions _config = options.Value;
 
+    /// <summary>Provides the <c>GetProfile</c> API.</summary>
     public IProfile? GetProfile(string name)
     {
         byte[]? data;
@@ -48,6 +51,7 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
         return profile;
     }
 
+    /// <summary>Provides the <c>CreateProfile</c> API.</summary>
     public IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, out string? location, bool persist = true)
     {
         validator.ValidateKeyIdAndThrow(keyId);
@@ -76,6 +80,7 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
         return profile;
     }
 
+    /// <summary>Provides the <c>List</c> API.</summary>
     public IEnumerable<IProfile> List()
     {
         foreach (string name in storage.List())
@@ -89,6 +94,7 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
         }
     }
 
+    /// <summary>Provides the <c>SaveProfile</c> API.</summary>
     public string SaveProfile(IProfile profile)
     {
         byte[] data = serializer.Serialize(profile);

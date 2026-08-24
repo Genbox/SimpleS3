@@ -11,6 +11,7 @@ public class PutPublicAccessBlockRequest : BaseRequest, IHasBucketName
 {
     internal PutPublicAccessBlockRequest() : base(HttpMethodType.PUT) {}
 
+    /// <summary>Provides the <c>PutPublicAccessBlockRequest</c> API.</summary>
     public PutPublicAccessBlockRequest(string bucketName) : this()
     {
         Initialize(bucketName);
@@ -59,6 +60,7 @@ public class PutPublicAccessBlockRequest : BaseRequest, IHasBucketName
     /// </summary>
     public bool RestrictPublicBuckets { get; set; }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)
@@ -66,6 +68,7 @@ public class PutPublicAccessBlockRequest : BaseRequest, IHasBucketName
         BucketName = bucketName;
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         BlockPublicAcls = false;

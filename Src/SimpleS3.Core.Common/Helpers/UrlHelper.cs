@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Common.Pools;
 
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 
+/// <summary>Provides the <c>UrlHelper</c> API.</summary>
 public static class UrlHelper
 {
     //Valid URL characters according to RFC3986: https://tools.ietf.org/html/rfc3986#section-2.3
@@ -20,6 +21,7 @@ public static class UrlHelper
         }
     }
 
+    /// <summary>Provides the <c>UrlPathEncode</c> API.</summary>
     public static string UrlPathEncode(string input)
     {
         string[] pathSegments = input.Split('/');
@@ -33,6 +35,7 @@ public static class UrlHelper
         }));
     }
 
+    /// <summary>Provides the <c>CreateUriWithoutPathNormalization</c> API.</summary>
     public static Uri CreateUriWithoutPathNormalization(string url)
     {
         // S3-010: Resolve the runtime-specific option from the same core library as Uri.
@@ -96,6 +99,7 @@ public static class UrlHelper
         return false;
     }
 
+    /// <summary>Provides the <c>UrlEncode</c> API.</summary>
     public static string UrlEncode(string data)
     {
         StringBuilder sb = StringBuilderPool.Shared.Rent(data.Length * 3);
@@ -111,6 +115,7 @@ public static class UrlHelper
         return StringBuilderPool.Shared.ReturnString(sb);
     }
 
+    /// <summary>Provides the <c>CreateQueryString</c> API.</summary>
     public static string CreateQueryString(IEnumerable<KeyValuePair<string, string>> parameters, bool encode = true, bool outputEqualOnEmpty = false)
     {
         StringBuilder sb = StringBuilderPool.Shared.Rent(512);

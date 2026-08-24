@@ -11,11 +11,13 @@ public class HeadBucketRequest : BaseRequest, IHasBucketName
 {
     internal HeadBucketRequest() : base(HttpMethodType.HEAD) {}
 
+    /// <summary>Provides the <c>HeadBucketRequest</c> API.</summary>
     public HeadBucketRequest(string bucketName) : this()
     {
         Initialize(bucketName);
     }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)

@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Errors;
 
+/// <summary>Provides the <c>PreconditionFailedError</c> API.</summary>
 [PublicAPI]
 public class PreconditionFailedError : GenericError
 {
@@ -12,7 +13,9 @@ public class PreconditionFailedError : GenericError
         Condition = lookup.GetOptionalValue("Condition");
     }
 
+    /// <summary>Provides the <c>Condition</c> API.</summary>
     public string? Condition { get; }
 
+    /// <summary>Provides the <c>GetErrorDetails</c> API.</summary>
     public override string GetErrorDetails() => "Condition: " + Condition;
 }

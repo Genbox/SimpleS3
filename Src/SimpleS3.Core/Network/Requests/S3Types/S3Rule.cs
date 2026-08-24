@@ -1,5 +1,6 @@
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
+/// <summary>Provides the <c>S3Rule</c> API.</summary>
 public class S3Rule(string id, bool enabled)
 {
     /// <summary>Unique identifier for the rule. The value cannot be longer than 255 characters.</summary>

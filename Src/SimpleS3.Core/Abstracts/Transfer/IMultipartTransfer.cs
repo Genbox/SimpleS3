@@ -5,6 +5,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Transfer;
 
+/// <summary>Provides the <c>IMultipartTransfer</c> API.</summary>
 public interface IMultipartTransfer
 {
     /// <summary>
@@ -13,6 +14,7 @@ public interface IMultipartTransfer
     /// </summary>
     IAsyncEnumerable<GetObjectResponse> MultipartDownloadAsync(string bucketName, string objectKey, Stream output, int bufferSize = 16777216, int numParallelParts = 4, Action<GetObjectRequest>? config = null, CancellationToken token = default);
 
+    /// <summary>Provides the <c>MultipartUploadAsync</c> API.</summary>
     Task<CompleteMultipartUploadResponse> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default);
 
     /// <summary>An extension that performs multipart upload.</summary>

@@ -4,8 +4,10 @@ using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 
 namespace Genbox.SimpleS3.Extensions.ProfileManager.Serializers;
 
+/// <summary>Provides the <c>DefaultProfileSerializer</c> API.</summary>
 public class DefaultProfileSerializer : IProfileSerializer
 {
+    /// <summary>Provides the <c>Serialize&lt;T&gt;</c> API.</summary>
     public byte[] Serialize<T>(T profile) where T : IProfile
     {
         using MemoryStream ms = new MemoryStream();
@@ -27,6 +29,7 @@ public class DefaultProfileSerializer : IProfileSerializer
         return ms.ToArray();
     }
 
+    /// <summary>Provides the <c>Deserialize&lt;T&gt;</c> API.</summary>
     public T Deserialize<T>(byte[] data) where T : IProfile
     {
         using MemoryStream ms = new MemoryStream(data, false);

@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
+/// <summary>Provides the <c>S3DeletedObject</c> API.</summary>
 public class S3DeletedObject(string objectKey, string? versionId, bool isDeleteMarker, string? deleteMarkerVersionId) : IHasDeleteMarker, IHasVersionId, IHasObjectKey
 {
     /// <summary>
@@ -11,6 +12,7 @@ public class S3DeletedObject(string objectKey, string? versionId, bool isDeleteM
     /// </summary>
     public string? DeleteMarkerVersionId { get; } = deleteMarkerVersionId;
 
+    /// <summary>Provides the <c>IsDeleteMarker</c> API.</summary>
     public bool IsDeleteMarker { get; } = isDeleteMarker;
 
     /// <summary>The name of the deleted object.</summary>
@@ -19,5 +21,6 @@ public class S3DeletedObject(string objectKey, string? versionId, bool isDeleteM
     /// <summary>The version ID of the deleted object.</summary>
     public string? VersionId { get; } = versionId;
 
+    /// <summary>Provides the <c>ToString</c> API.</summary>
     public override string ToString() => ObjectKey;
 }

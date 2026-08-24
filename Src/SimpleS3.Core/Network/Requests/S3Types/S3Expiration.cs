@@ -2,6 +2,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
+/// <summary>Provides the <c>S3Expiration</c> API.</summary>
 public class S3Expiration
 {
     /// <summary>Set a future date where the objects should expire.</summary>
@@ -34,7 +35,10 @@ public class S3Expiration
         ExpireObjectDeleteMarker = expireObjectDeleteMarker;
     }
 
+    /// <summary>Provides the <c>ExpireOnDate</c> API.</summary>
     public DateTimeOffset? ExpireOnDate { get; }
+    /// <summary>Provides the <c>ExpireAfterDays</c> API.</summary>
     public int? ExpireAfterDays { get; }
+    /// <summary>Provides the <c>ExpireObjectDeleteMarker</c> API.</summary>
     public bool? ExpireObjectDeleteMarker { get; }
 }

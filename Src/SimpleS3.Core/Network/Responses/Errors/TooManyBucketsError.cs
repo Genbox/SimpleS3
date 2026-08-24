@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Errors;
 
+/// <summary>Provides the <c>TooManyBucketsError</c> API.</summary>
 [PublicAPI]
 public class TooManyBucketsError : GenericError
 {
@@ -15,8 +16,11 @@ public class TooManyBucketsError : GenericError
             AllowedNumberOfBuckets = int.Parse(allowed, NumberFormatInfo.InvariantInfo);
     }
 
+    /// <summary>Provides the <c>CurrentNumberOfBuckets</c> API.</summary>
     public int CurrentNumberOfBuckets { get; }
+    /// <summary>Provides the <c>AllowedNumberOfBuckets</c> API.</summary>
     public int AllowedNumberOfBuckets { get; }
 
+    /// <summary>Provides the <c>GetErrorDetails</c> API.</summary>
     public override string GetErrorDetails() => $"CurrentNumberOfBuckets: {CurrentNumberOfBuckets.ToString(NumberFormatInfo.InvariantInfo)} - AllowedNumberOfBuckets: {AllowedNumberOfBuckets.ToString(NumberFormatInfo.InvariantInfo)}";
 }

@@ -1,5 +1,6 @@
 namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
+/// <summary>Provides the <c>IHasExpiration</c> API.</summary>
 public interface IHasExpiration
 {
     /// <summary>The datetime the object expires</summary>

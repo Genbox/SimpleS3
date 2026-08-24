@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
+/// <summary>Provides the <c>IHasResponseHeader</c> API.</summary>
 [PublicAPI]
 public interface IHasResponseHeader
 {

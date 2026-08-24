@@ -22,17 +22,24 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
         UploadParts = new List<S3PartInfo>();
     }
 
+    /// <summary>Provides the <c>CompleteMultipartUploadRequest</c> API.</summary>
     public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, params S3PartInfo[] parts) : this(bucketName, objectKey, uploadId, (IEnumerable<S3PartInfo>)parts) {}
 
+    /// <summary>Provides the <c>CompleteMultipartUploadRequest</c> API.</summary>
     public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts) : this()
     {
         Initialize(bucketName, objectKey, uploadId, parts);
     }
 
+    /// <summary>Provides the <c>UploadParts</c> API.</summary>
     public IList<S3PartInfo> UploadParts { get; private set; }
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+    /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+    /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
+    /// <summary>Provides the <c>UploadId</c> API.</summary>
     public string UploadId { get; set; } = null!;
 
     internal void Initialize(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts)
@@ -46,6 +53,7 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
             UploadParts.Add(part);
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         RequestPayer = Payer.Unknown;

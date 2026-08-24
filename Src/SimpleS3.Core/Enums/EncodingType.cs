@@ -7,6 +7,8 @@ namespace Genbox.SimpleS3.Core.Enums;
 [FastEnum]
 public enum EncodingType
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
+    /// <summary>Provides the <c>Url</c> API.</summary>
     [Display(Name = "url")]Url
 }

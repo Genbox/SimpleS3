@@ -5,8 +5,10 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
+/// <summary>Provides the <c>ListPartsResponse</c> API.</summary>
 public class ListPartsResponse : BaseResponse, IHasRequestCharged, IHasAbort, IHasTruncated, IHasStorageClass, IHasUploadId, IHasBucketName, IHasObjectKey
 {
+    /// <summary>Provides the <c>ListPartsResponse</c> API.</summary>
     public ListPartsResponse()
     {
         Parts = new List<S3Part>();
@@ -39,7 +41,9 @@ public class ListPartsResponse : BaseResponse, IHasRequestCharged, IHasAbort, IH
     /// <summary>The list of parts</summary>
     public IList<S3Part> Parts { get; }
 
+    /// <summary>Provides the <c>AbortsOn</c> API.</summary>
     public DateTimeOffset? AbortsOn { get; internal set; }
+    /// <summary>Provides the <c>AbortRuleId</c> API.</summary>
     public string? AbortRuleId { get; internal set; }
 
     /// <summary>Name of the bucket to which the multipart upload was initiated.</summary>
@@ -48,9 +52,14 @@ public class ListPartsResponse : BaseResponse, IHasRequestCharged, IHasAbort, IH
     /// <summary>Object key for which the multipart upload was initiated.</summary>
     public string ObjectKey { get; internal set; }
 
+    /// <summary>Provides the <c>RequestCharged</c> API.</summary>
     public bool RequestCharged { get; internal set; }
+    /// <summary>Provides the <c>StorageClass</c> API.</summary>
     public StorageClass StorageClass { get; internal set; }
+    /// <summary>Provides the <c>IsTruncated</c> API.</summary>
     public bool IsTruncated { get; internal set; }
+    /// <summary>Provides the <c>EncodingType</c> API.</summary>
     public EncodingType EncodingType { get; internal set; }
+    /// <summary>Provides the <c>UploadId</c> API.</summary>
     public string UploadId { get; internal set; }
 }

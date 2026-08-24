@@ -12,6 +12,7 @@ public class ListObjectVersionsRequest : BaseRequest, IHasBucketName
 {
     internal ListObjectVersionsRequest() : base(HttpMethodType.GET) {}
 
+    /// <summary>Provides the <c>ListObjectVersionsRequest</c> API.</summary>
     public ListObjectVersionsRequest(string bucketName) : this()
     {
         Initialize(bucketName);
@@ -49,6 +50,7 @@ public class ListObjectVersionsRequest : BaseRequest, IHasBucketName
     /// <summary>Specifies the object version you want to start listing from.</summary>
     public string? VersionIdMarker { get; set; }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)
@@ -56,6 +58,7 @@ public class ListObjectVersionsRequest : BaseRequest, IHasBucketName
         BucketName = bucketName;
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         Delimiter = null;

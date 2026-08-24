@@ -3,6 +3,7 @@ using System.Text;
 
 namespace Genbox.SimpleS3.Core.Common.Pools;
 
+/// <summary>Provides the <c>StringBuilderPool</c> API.</summary>
 public sealed class StringBuilderPool
 {
     /// <summary>The default initial capacity of builder.</summary>
@@ -83,6 +84,7 @@ public sealed class StringBuilderPool
         return _sharedInstance;
     }
 
+    /// <summary>Provides the <c>Rent</c> API.</summary>
     public StringBuilder Rent()
     {
         // Examine the first builder.
@@ -94,6 +96,7 @@ public sealed class StringBuilderPool
         return builder;
     }
 
+    /// <summary>Provides the <c>Rent</c> API.</summary>
     public StringBuilder Rent(int capacity)
     {
         if (capacity <= _maxBuilderCapacity)
@@ -118,6 +121,7 @@ public sealed class StringBuilderPool
         return new StringBuilder(_initialBuilderCapacity);
     }
 
+    /// <summary>Provides the <c>Return</c> API.</summary>
     public void Return(StringBuilder builder)
     {
         if (builder.Capacity > _maxBuilderCapacity)
@@ -135,6 +139,7 @@ public sealed class StringBuilderPool
             ReturnViaScan(builder);
     }
 
+    /// <summary>Provides the <c>ReturnString</c> API.</summary>
     public string ReturnString(StringBuilder builder, bool clearContents = false)
     {
         string value = builder.ToString();

@@ -8,19 +8,23 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
 
+/// <summary>Provides the <c>CoreBuilderExtensions</c> API.</summary>
 public static class CoreBuilderExtensions
 {
+    /// <summary>Provides the <c>UseBackBlazeB2</c> API.</summary>
     public static ICoreBuilder UseBackBlazeB2(this ICoreBuilder clientBuilder, Action<BackBlazeB2Config> config)
     {
         return UseBackBlazeB2(clientBuilder, (b2Config, _) => config.Invoke(b2Config));
     }
 
+    /// <summary>Provides the <c>UseBackBlazeB2</c> API.</summary>
     public static ICoreBuilder UseBackBlazeB2(this ICoreBuilder clientBuilder, Action<BackBlazeB2Config, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(config);
         return UseBackBlazeB2(clientBuilder);
     }
 
+    /// <summary>Provides the <c>UseBackBlazeB2</c> API.</summary>
     public static ICoreBuilder UseBackBlazeB2(this ICoreBuilder clientBuilder)
     {
         clientBuilder.Services.AddSingleton<IRegionData, BackblazeB2RegionData>();

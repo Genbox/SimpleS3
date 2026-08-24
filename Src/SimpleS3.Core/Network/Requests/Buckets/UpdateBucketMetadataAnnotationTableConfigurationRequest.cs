@@ -7,15 +7,22 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
+/// <summary>Provides the <c>UpdateBucketMetadataAnnotationTableConfigurationRequest</c> API.</summary>
 public sealed class UpdateBucketMetadataAnnotationTableConfigurationRequest : BaseRequest, IHasBucketName, IContentMd5Config, IHasChecksumProperties
 {
     internal UpdateBucketMetadataAnnotationTableConfigurationRequest() : base(HttpMethodType.PUT) {}
+    /// <summary>Provides the <c>UpdateBucketMetadataAnnotationTableConfigurationRequest</c> API.</summary>
     public UpdateBucketMetadataAnnotationTableConfigurationRequest(string bucketName, S3AnnotationTableConfiguration configuration) : this() => Initialize(bucketName, configuration);
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+    /// <summary>Provides the <c>Configuration</c> API.</summary>
     public S3AnnotationTableConfiguration Configuration { get; private set; } = null!;
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
     Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
+    /// <summary>Provides the <c>ChecksumAlgorithm</c> API.</summary>
     public ChecksumAlgorithm ChecksumAlgorithm { get; set; }
+    /// <summary>Provides the <c>Checksum</c> API.</summary>
     public byte[]? Checksum { get; set; }
 
     internal void Initialize(string bucketName, S3AnnotationTableConfiguration configuration)
@@ -24,6 +31,7 @@ public sealed class UpdateBucketMetadataAnnotationTableConfigurationRequest : Ba
         Configuration = configuration;
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         Configuration = null!;

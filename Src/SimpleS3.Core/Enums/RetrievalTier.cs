@@ -2,9 +2,11 @@ using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 
+/// <summary>Provides the <c>RetrievalTier</c> API.</summary>
 [FastEnum]
 public enum RetrievalTier
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
 
     /// <summary>

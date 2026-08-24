@@ -5,6 +5,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
+/// <summary>Provides the <c>S3OutputLocation</c> API.</summary>
 public class S3OutputLocation(string bucketName, string prefix) : IHasSse, IHasObjectAcl, IHasStorageClass, IHasBucketName
 {
     /// <summary>
@@ -25,14 +26,23 @@ public class S3OutputLocation(string bucketName, string prefix) : IHasSse, IHasO
     /// <summary>The name of the bucket where the restore results will be placed.</summary>
     public string BucketName { get; set; } = bucketName;
 
+    /// <summary>Provides the <c>Acl</c> API.</summary>
     public ObjectCannedAcl Acl { get; set; }
+    /// <summary>Provides the <c>AclGrantRead</c> API.</summary>
     public AclBuilder AclGrantRead { get; } = new AclBuilder();
+    /// <summary>Provides the <c>AclGrantReadAcp</c> API.</summary>
     public AclBuilder AclGrantReadAcp { get; } = new AclBuilder();
+    /// <summary>Provides the <c>AclGrantWriteAcp</c> API.</summary>
     public AclBuilder AclGrantWriteAcp { get; } = new AclBuilder();
+    /// <summary>Provides the <c>AclGrantFullControl</c> API.</summary>
     public AclBuilder AclGrantFullControl { get; } = new AclBuilder();
+    /// <summary>Provides the <c>SseAlgorithm</c> API.</summary>
     public SseAlgorithm SseAlgorithm { get; set; }
+    /// <summary>Provides the <c>SseKmsKeyId</c> API.</summary>
     public string? SseKmsKeyId { get; set; }
+    /// <summary>Provides the <c>SseContext</c> API.</summary>
     public KmsContextBuilder SseContext { get; } = new KmsContextBuilder();
+    /// <summary>Provides the <c>StorageClass</c> API.</summary>
     public StorageClass StorageClass { get; set; }
 
     internal void Reset()

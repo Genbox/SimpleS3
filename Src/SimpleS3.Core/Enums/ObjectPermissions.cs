@@ -1,8 +1,10 @@
 namespace Genbox.SimpleS3.Core.Enums;
 
+/// <summary>Provides the <c>ObjectPermissions</c> API.</summary>
 [Flags]
 public enum ObjectPermissions
 {
+    /// <summary>Provides the <c>None</c> API.</summary>
     None = 0,
 
     /// <summary>Equivalent to s3:GetObject, s3:GetObjectVersion, and s3:GetObjectTorrent</summary>

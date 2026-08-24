@@ -13,6 +13,7 @@ public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
 {
     internal ListObjectsRequest() : base(HttpMethodType.GET) {}
 
+    /// <summary>Provides the <c>ListObjectsRequest</c> API.</summary>
     public ListObjectsRequest(string bucketName) : this()
     {
         Initialize(bucketName);
@@ -63,8 +64,10 @@ public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
     /// </summary>
     public string? StartAfter { get; set; }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
+    /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
 
     internal void Initialize(string bucketName)
@@ -72,6 +75,7 @@ public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
         BucketName = bucketName;
     }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         Delimiter = null;

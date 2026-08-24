@@ -12,13 +12,16 @@ public class GetObjectRequest : HeadObjectRequest, IHasRequestPayer
 {
     internal GetObjectRequest() : base(HttpMethodType.GET) {}
 
+    /// <summary>Provides the <c>GetObjectRequest</c> API.</summary>
     public GetObjectRequest(string bucketName, string objectKey) : this()
     {
         Initialize(bucketName, objectKey);
     }
 
+    /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
 
+    /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
         RequestPayer = Payer.Unknown;

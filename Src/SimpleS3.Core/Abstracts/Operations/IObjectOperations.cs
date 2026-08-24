@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Operations;
 
+/// <summary>Provides the <c>IObjectOperations</c> API.</summary>
 [PublicAPI]
 public interface IObjectOperations
 {
@@ -43,14 +44,19 @@ public interface IObjectOperations
     /// <summary>Returns the access control list (ACL) of an object. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html for details</summary>
     Task<GetObjectAclResponse> GetObjectAclAsync(GetObjectAclRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>GetObjectAttributesAsync</c> API.</summary>
     Task<GetObjectAttributesResponse> GetObjectAttributesAsync(GetObjectAttributesRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>GetObjectAnnotationAsync</c> API.</summary>
     Task<GetObjectAnnotationResponse> GetObjectAnnotationAsync(GetObjectAnnotationRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>PutObjectAnnotationAsync</c> API.</summary>
     Task<PutObjectAnnotationResponse> PutObjectAnnotationAsync(PutObjectAnnotationRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>DeleteObjectAnnotationAsync</c> API.</summary>
     Task<DeleteObjectAnnotationResponse> DeleteObjectAnnotationAsync(DeleteObjectAnnotationRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>ListObjectAnnotationsAsync</c> API.</summary>
     Task<ListObjectAnnotationsResponse> ListObjectAnnotationsAsync(ListObjectAnnotationsRequest request, CancellationToken token = default);
 
     /// <summary>Gets an object's current Legal Hold status. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectLegalHold.html for details</summary>
@@ -59,13 +65,18 @@ public interface IObjectOperations
     /// <summary>Applies a Legal Hold configuration to the specified object. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectLegalHold.html for details</summary>
     Task<PutObjectLegalHoldResponse> PutObjectLegalHoldAsync(PutObjectLegalHoldRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>GetObjectTaggingAsync</c> API.</summary>
     Task<GetObjectTaggingResponse> GetObjectTaggingAsync(GetObjectTaggingRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>PutObjectTaggingAsync</c> API.</summary>
     Task<PutObjectTaggingResponse> PutObjectTaggingAsync(PutObjectTaggingRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>DeleteObjectTaggingAsync</c> API.</summary>
     Task<DeleteObjectTaggingResponse> DeleteObjectTaggingAsync(DeleteObjectTaggingRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>GetObjectRetentionAsync</c> API.</summary>
     Task<GetObjectRetentionResponse> GetObjectRetentionAsync(GetObjectRetentionRequest request, CancellationToken token = default);
 
+    /// <summary>Provides the <c>PutObjectRetentionAsync</c> API.</summary>
     Task<PutObjectRetentionResponse> PutObjectRetentionAsync(PutObjectRetentionRequest request, CancellationToken token = default);
 }

@@ -2,6 +2,7 @@ using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
+/// <summary>Provides the <c>IHasTruncated</c> API.</summary>
 public interface IHasTruncated
 {
     /// <summary>

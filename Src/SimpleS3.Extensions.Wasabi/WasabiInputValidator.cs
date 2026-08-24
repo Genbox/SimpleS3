@@ -6,10 +6,12 @@ using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.Wasabi;
 
+/// <summary>Provides the <c>WasabiInputValidator</c> API.</summary>
 public class WasabiInputValidator : InputValidatorBase
 {
     private readonly Regex _ipRegex = new Regex(@"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+    /// <summary>Provides the <c>TryValidateKeyIdInternal</c> API.</summary>
     protected override bool TryValidateKeyIdInternal(string keyId, out ValidationStatus status, out string? message)
     {
         if (keyId.Length != 20)
@@ -34,6 +36,7 @@ public class WasabiInputValidator : InputValidatorBase
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateAccessKeyInternal</c> API.</summary>
     protected override bool TryValidateAccessKeyInternal(byte[] accessKey, out ValidationStatus status, out string? message)
     {
         if (accessKey.Length != 40)
@@ -48,6 +51,7 @@ public class WasabiInputValidator : InputValidatorBase
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateBucketNameInternal</c> API.</summary>
     protected override bool TryValidateBucketNameInternal(string bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {
         //Source: https://wasabi.com/wp-content/themes/wasabi/docs/User_Guide/topics/Creating_a_Bucket.htm
@@ -102,6 +106,7 @@ public class WasabiInputValidator : InputValidatorBase
         return true;
     }
 
+    /// <summary>Provides the <c>TryValidateObjectKeyInternal</c> API.</summary>
     protected override bool TryValidateObjectKeyInternal(string objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
     {
         //Source: https://wasabi.com/wp-content/themes/wasabi/docs/User_Guide/topics/Storing_Objects_in_a_Bucket.htm

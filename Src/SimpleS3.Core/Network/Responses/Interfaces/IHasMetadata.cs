@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
+/// <summary>Provides the <c>IHasMetadata</c> API.</summary>
 [PublicAPI]
 public interface IHasMetadata
 {

@@ -8,11 +8,13 @@ public class DeleteBucketRequest : BaseRequest, IHasBucketName
 {
     internal DeleteBucketRequest() : base(HttpMethodType.DELETE) {}
 
+    /// <summary>Provides the <c>DeleteBucketRequest</c> API.</summary>
     public DeleteBucketRequest(string bucketName) : this()
     {
         Initialize(bucketName);
     }
 
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName)

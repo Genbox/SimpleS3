@@ -2,9 +2,11 @@ using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Enums;
 
+/// <summary>Provides the <c>BucketNameValidationMode</c> API.</summary>
 [FastEnum]
 public enum BucketNameValidationMode
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
 
     ///<summary>In this mode, only valid DNS characters is allowed</summary>

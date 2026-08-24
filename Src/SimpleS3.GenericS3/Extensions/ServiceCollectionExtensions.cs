@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.GenericS3.Extensions;
 
+/// <summary>Provides the <c>ServiceCollectionExtensions</c> API.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>Add SimpleS3 services to a service collection.</summary>

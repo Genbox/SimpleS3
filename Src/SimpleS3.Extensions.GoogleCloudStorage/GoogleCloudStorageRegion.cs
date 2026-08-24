@@ -1,8 +1,10 @@
 namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage;
 //https://cloud.google.com/storage/docs/locations
 
+/// <summary>Provides the <c>GoogleCloudStorageRegion</c> API.</summary>
 public enum GoogleCloudStorageRegion
 {
+    /// <summary>Provides the <c>Unknown</c> API.</summary>
     Unknown = 0,
 
     /// <summary>North America (Montréal)</summary>

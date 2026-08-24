@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Extensions.HttpClient;
 
+/// <summary>Provides the <c>HttpClientConfig</c> API.</summary>
 [PublicAPI]
 public class HttpClientConfig
 {
@@ -12,5 +13,6 @@ public class HttpClientConfig
     /// <summary>Use this to set a proxy to which all requests should be sent through.</summary>
     public string? Proxy { get; set; }
 
+    /// <summary>Provides the <c>HttpVersion</c> API.</summary>
     public HttpVersion HttpVersion { get; set; }
 }

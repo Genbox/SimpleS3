@@ -2,6 +2,7 @@ using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
+/// <summary>Provides the <c>S3CsvInputFormat</c> API.</summary>
 public class S3CsvInputFormat : S3InputFormat
 {
     /// <summary>Indicate if the first line of the file should be used</summary>
