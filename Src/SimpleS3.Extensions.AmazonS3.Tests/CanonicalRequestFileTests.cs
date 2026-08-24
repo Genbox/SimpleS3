@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 
-public sealed class CanonicalRequestFileTests : IDisposable
+public sealed partial class CanonicalRequestFileTests : IDisposable
 {
     private readonly ServiceProvider _provider;
     private readonly ScopeBuilder _scopeBuilder;
@@ -67,7 +68,7 @@ public sealed class CanonicalRequestFileTests : IDisposable
 
         Assembly assembly = typeof(CanonicalRequestFileTests).Assembly;
 
-        foreach ((string name, string content) in ResourceHelper.GetResources(assembly, @".*\.req$"))
+        foreach ((string name, string content) in ResourceHelper.GetResources(assembly, RequestResourceRegex()))
         {
             string expectedCr = ResourceHelper.GetResource(assembly, Path.ChangeExtension(name, "creq"));
             string expectedSts = ResourceHelper.GetResource(assembly, Path.ChangeExtension(name, "sts"));
@@ -75,6 +76,9 @@ public sealed class CanonicalRequestFileTests : IDisposable
             yield return [content, expectedCr, expectedSts];
         }
     }
+
+    [GeneratedRegex(@".*\.req$", RegexOptions.CultureInvariant, 1000)]
+    private static partial Regex RequestResourceRegex();
 
     public void Dispose() => _provider.Dispose();
 }

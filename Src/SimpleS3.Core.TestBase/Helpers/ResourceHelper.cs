@@ -8,13 +8,11 @@ namespace Genbox.SimpleS3.Core.TestBase.Helpers;
 [SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
 public static class ResourceHelper
 {
-    public static IEnumerable<(string name, string content)> GetResources(Assembly assembly, string filter)
+    public static IEnumerable<(string name, string content)> GetResources(Assembly assembly, Regex filter)
     {
-        Regex regex = new Regex(filter, RegexOptions.Compiled, TimeSpan.FromSeconds(1));
-
         foreach (string resourceName in assembly.GetManifestResourceNames())
         {
-            if (!regex.IsMatch(resourceName))
+            if (!filter.IsMatch(resourceName))
                 continue;
 
             yield return (resourceName, GetResource(assembly, resourceName));
