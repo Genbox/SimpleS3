@@ -19,10 +19,10 @@ public class KmsContextBuilderTests
 
         b.AddEntry("SomeKey", "SomeValue");
 
-        Assert.Equal("\"SomeKey\":\"SomeValue\"", b.Build());
+        Assert.Equal("{\"SomeKey\":\"SomeValue\"}", b.Build());
 
         b.AddEntry("SomeOtherKey", "SomeOtherValue");
 
-        Assert.Equal("\"SomeKey\":\"SomeValue\",\"SomeOtherKey\":\"SomeOtherValue\"", b.Build());
+        Assert.Equal("{\"SomeKey\":\"SomeValue\",\"SomeOtherKey\":\"SomeOtherValue\"}", b.Build());
     }
 }
