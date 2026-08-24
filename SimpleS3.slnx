@@ -72,7 +72,6 @@
     <File Path="Src/Directory.Build.targets" />
   </Folder>
   <Folder Name="/_Imports/Managed/Packages/">
-    <File Path="Src/Directory.Packages.Analyzers.props" />
     <File Path="Src/Directory.Packages.props" />
   </Folder>
   <Folder Name="/_Imports/Managed/Project/">

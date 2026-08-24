@@ -142,9 +142,6 @@ dotnet_diagnostic.S6610.severity = none # "StartsWith" and "EndsWith" overloads 
 
 # ToString fallback analysis
 dotnet_diagnostic.MA0150.severity = error # Do not call ToString() when the type falls back to object.ToString(); enabled as the owner for explicit calls
-dotnet_diagnostic.ExplicitToStringWithoutOverrideAnalyzer.severity = none # Suspicious conversion to string; disabled because MA0150 owns explicit ToString calls
-dotnet_diagnostic.StringFormatArgumentImplicitToStringAnalyzer.severity = error # Suspicious conversion to string; enabled because MA0150 does not inspect String.Format arguments
-dotnet_diagnostic.InterpolatedStringImplicitToStringAnalyzer.severity = error # Suspicious conversion to string; enabled because MA0150 does not inspect interpolated-string conversions
 
 # Framework design and naming rules owned by the .NET SDK analyzers
 dotnet_diagnostic.CA1018.severity = error # Mark attributes with AttributeUsageAttribute; enabled as the canonical attribute-usage rule
