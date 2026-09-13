@@ -448,4 +448,16 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
 
         Task<PutBucketPolicyResponse> ActionAsync(PutBucketPolicyRequest request) => operations.PutBucketPolicyAsync(request, token);
     }
+
+    public Task<GetBucketAbacResponse> GetBucketAbacAsync(string bucketName, Action<GetBucketAbacRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketAbacRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName);
+        config?.Invoke(request);
+    }, request => operations.GetBucketAbacAsync(request, token));
+
+    public Task<PutBucketAbacResponse> PutBucketAbacAsync(string bucketName, bool enabled, Action<PutBucketAbacRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketAbacRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName, enabled);
+        config?.Invoke(request);
+    }, request => operations.PutBucketAbacAsync(request, token));
 }

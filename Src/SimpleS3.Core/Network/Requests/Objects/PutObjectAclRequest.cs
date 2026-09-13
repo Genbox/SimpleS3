@@ -1,8 +1,10 @@
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 
@@ -11,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// of an object. Depending on your application needs, you can choose to set the ACL on an object using either the request body or the headers. For example, if you have an existing
 /// application that updates a bucket ACL using the request body, you can continue to use that approach.
 /// </summary>
-public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasObjectAcl, IHasVersionId, IHasContentMd5, IHasRequestPayer
+public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasObjectAcl, IHasVersionId, IContentMd5Config, IHasRequestPayer
 {
     internal PutObjectAclRequest() : base(HttpMethodType.PUT)
     {
@@ -19,6 +21,7 @@ public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, I
         AclGrantReadAcp = new AclBuilder();
         AclGrantWriteAcp = new AclBuilder();
         AclGrantFullControl = new AclBuilder();
+        Grants = new List<S3Grant>();
     }
 
     /// <summary>Provides the <c>PutObjectAclRequest</c> API.</summary>
@@ -27,11 +30,20 @@ public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, I
         Initialize(bucketName, objectKey);
     }
 
-    /// <summary>Provides the <c>BucketName</c> API.</summary>
-    public string BucketName { get; set; } = null!;
+    /// <summary>Optional owner to include in an XML access-control list.</summary>
+    public S3Identity? Owner { get; set; }
+
+    /// <summary>Access-control grants to include in an XML access-control list.</summary>
+    public IList<S3Grant> Grants { get; }
 
     /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
+
+    /// <summary>Determines whether the marshalled ACL body requires an automatically calculated Content-MD5 header.</summary>
+    public Func<bool> ForceContentMd5 => () => Owner != null || Grants.Count != 0;
+
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
+    public string BucketName { get; set; } = null!;
 
     /// <summary>Provides the <c>Acl</c> API.</summary>
     public ObjectCannedAcl Acl { get; set; }
@@ -74,6 +86,8 @@ public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, I
         AclGrantFullControl.Reset();
         RequestPayer = Payer.Unknown;
         VersionId = null;
+        Owner = null;
+        Grants.Clear();
 
         base.Reset();
     }

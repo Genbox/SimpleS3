@@ -11,7 +11,16 @@ internal sealed class GetBucketPolicyStatusResponseMarshal : IResponseMarshal<Ge
     public void MarshalResponse(SimpleS3Config config, GetBucketPolicyStatusResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
-        if (reader.ReadToDescendant("IsPublic"))
-            response.IsPublic = ValueHelper.ParseBool(reader.ReadElementContentAsString());
+        reader.MoveToContent();
+
+        foreach (string name in XmlHelper.ReadChildren(reader))
+        {
+            if (name != "IsPublic")
+                continue;
+
+            string value = reader.ReadString().Trim();
+            response.IsPublic = value == "1" || ValueHelper.ParseBool(value);
+            break;
+        }
     }
 }

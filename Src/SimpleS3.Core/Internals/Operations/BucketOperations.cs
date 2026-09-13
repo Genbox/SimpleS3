@@ -98,4 +98,8 @@ internal sealed class BucketOperations(IRequestHandler handler) : IBucketOperati
     public Task<DeleteBucketPolicyResponse> DeleteBucketPolicyAsync(DeleteBucketPolicyRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteBucketPolicyRequest, DeleteBucketPolicyResponse>(request, token);
 
     public Task<PutBucketPolicyResponse> PutBucketPolicyAsync(PutBucketPolicyRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketPolicyRequest, PutBucketPolicyResponse>(request, token);
+
+    public Task<GetBucketAbacResponse> GetBucketAbacAsync(GetBucketAbacRequest request, CancellationToken token = default) => handler.SendRequestAsync<GetBucketAbacRequest, GetBucketAbacResponse>(request, token);
+
+    public Task<PutBucketAbacResponse> PutBucketAbacAsync(PutBucketAbacRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutBucketAbacRequest, PutBucketAbacResponse>(request, token);
 }

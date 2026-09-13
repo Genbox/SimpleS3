@@ -1,3 +1,4 @@
+using Genbox.SimpleS3.Core;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -108,6 +109,12 @@ public sealed class BackBlazeB2Client : ClientBase, ISimpleClient
 
     /// <summary>Provides the <c>GetBucketPolicyStatusAsync</c> API.</summary>
     public Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(string bucketName, Action<GetBucketPolicyStatusRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
+
+    /// <summary>Provides the <c>GetBucketAbacAsync</c> API.</summary>
+    public Task<GetBucketAbacResponse> GetBucketAbacAsync(string bucketName, Action<GetBucketAbacRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
+
+    /// <summary>Provides the <c>PutBucketAbacAsync</c> API.</summary>
+    public Task<PutBucketAbacResponse> PutBucketAbacAsync(string bucketName, bool enabled, Action<PutBucketAbacRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);
 
     /// <summary>Provides the <c>GetBucketWebsiteAsync</c> API.</summary>
     public Task<GetBucketWebsiteResponse> GetBucketWebsiteAsync(string bucketName, Action<GetBucketWebsiteRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException(ErrorMessages.ProviderNotSupported);

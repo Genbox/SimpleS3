@@ -17,6 +17,7 @@ public class S3Grantee(GrantType type, string? id, string? displayName, string? 
     public string? DisplayName { get; } = displayName;
 
     /// <summary>Provides the <c>Uri</c> API.</summary>
+    [SuppressMessage("Design", "CA1056", Justification = "The value is an S3 group identifier preserved verbatim from the ACL response.")]
     public string? Uri { get; } = uri;
 
     /// <summary>Provides the <c>EmailAddress</c> API.</summary>

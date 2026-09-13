@@ -19,6 +19,15 @@ internal sealed class PutBucketEncryptionRequestMarshal : IRequestMarshal<PutBuc
 
         foreach (S3ServerSideEncryptionRule rule in request.Rules)
         {
+            if (!Enum.IsDefined(typeof(SseAlgorithm), rule.SseAlgorithm))
+                throw new ArgumentOutOfRangeException(nameof(request), rule.SseAlgorithm, "Unknown server-side encryption algorithm");
+
+            foreach (BlockedEncryptionType encryptionType in rule.BlockedEncryptionTypes)
+            {
+                if (encryptionType is not (BlockedEncryptionType.None or BlockedEncryptionType.SseC))
+                    throw new ArgumentOutOfRangeException(nameof(request), encryptionType, "Unsupported blocked encryption type for Amazon S3");
+            }
+
             writer.WriteStartElement("Rule");
 
             if (rule.SseAlgorithm != SseAlgorithm.Unknown)
@@ -37,10 +46,7 @@ internal sealed class PutBucketEncryptionRequestMarshal : IRequestMarshal<PutBuc
                 writer.WriteStartElement("BlockedEncryptionTypes");
 
                 foreach (BlockedEncryptionType encryptionType in rule.BlockedEncryptionTypes)
-                {
-                    if (encryptionType != BlockedEncryptionType.Unknown)
-                        writer.WriteElement("EncryptionType", encryptionType.GetDisplayName());
-                }
+                    writer.WriteElement("EncryptionType", encryptionType.GetDisplayName());
 
                 writer.WriteEndElement("BlockedEncryptionTypes");
             }

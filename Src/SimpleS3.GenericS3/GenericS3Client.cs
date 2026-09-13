@@ -112,6 +112,12 @@ public sealed class GenericS3Client : ClientBase, ISimpleClient
     /// <summary>Provides the <c>GetBucketPolicyStatusAsync</c> API.</summary>
     public Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(string bucketName, Action<GetBucketPolicyStatusRequest>? config = null, CancellationToken token = default) => Client.GetBucketPolicyStatusAsync(bucketName, config, token);
 
+    /// <summary>Provides the <c>GetBucketAbacAsync</c> API.</summary>
+    public Task<GetBucketAbacResponse> GetBucketAbacAsync(string bucketName, Action<GetBucketAbacRequest>? config = null, CancellationToken token = default) => Client.GetBucketAbacAsync(bucketName, config, token);
+
+    /// <summary>Provides the <c>PutBucketAbacAsync</c> API.</summary>
+    public Task<PutBucketAbacResponse> PutBucketAbacAsync(string bucketName, bool enabled, Action<PutBucketAbacRequest>? config = null, CancellationToken token = default) => Client.PutBucketAbacAsync(bucketName, enabled, config, token);
+
     /// <summary>Provides the <c>GetBucketWebsiteAsync</c> API.</summary>
     public Task<GetBucketWebsiteResponse> GetBucketWebsiteAsync(string bucketName, Action<GetBucketWebsiteRequest>? config = null, CancellationToken token = default) => Client.GetBucketWebsiteAsync(bucketName, config, token);
 

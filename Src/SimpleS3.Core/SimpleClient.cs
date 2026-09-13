@@ -234,6 +234,12 @@ public class SimpleClient : ISimpleClient
     /// <summary>Provides the <c>PutBucketPolicyAsync</c> API.</summary>
     public Task<PutBucketPolicyResponse> PutBucketPolicyAsync(string bucketName, string policy, Action<PutBucketPolicyRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketPolicyAsync(bucketName, policy, config, token);
 
+    /// <summary>Provides the <c>GetBucketAbacAsync</c> API.</summary>
+    public virtual Task<GetBucketAbacResponse> GetBucketAbacAsync(string bucketName, Action<GetBucketAbacRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketAbacAsync(bucketName, config, token);
+
+    /// <summary>Provides the <c>PutBucketAbacAsync</c> API.</summary>
+    public virtual Task<PutBucketAbacResponse> PutBucketAbacAsync(string bucketName, bool enabled, Action<PutBucketAbacRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketAbacAsync(bucketName, enabled, config, token);
+
     /// <summary>Provides the <c>DeleteObjectAsync</c> API.</summary>
     public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default) => _objectClient.DeleteObjectAsync(bucketName, objectKey, config, token);
 

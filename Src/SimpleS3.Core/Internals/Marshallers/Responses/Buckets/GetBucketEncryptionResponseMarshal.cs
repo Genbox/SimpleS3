@@ -13,48 +13,72 @@ internal sealed class GetBucketEncryptionResponseMarshal : IResponseMarshal<GetB
     public void MarshalResponse(SimpleS3Config config, GetBucketEncryptionResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
+        reader.MoveToContent();
 
-        while (reader.ReadToFollowing("Rule"))
+        foreach (string name in XmlHelper.ReadChildren(reader))
         {
-            SseAlgorithm algorithm = SseAlgorithm.Unknown;
-            string? kmsKeyId = null;
-            bool? bucketKeyEnabled = null;
-            List<BlockedEncryptionType> blockedTypes = new List<BlockedEncryptionType>();
+            if (name == "Rule")
+                response.Rules.Add(ParseRule(reader));
+        }
+    }
 
-            using XmlReader rule = reader.ReadSubtree();
+    private static S3ServerSideEncryptionRule ParseRule(XmlReader reader)
+    {
+        SseAlgorithm algorithm = SseAlgorithm.Unknown;
+        string? kmsKeyId = null;
+        bool? bucketKeyEnabled = null;
+        List<BlockedEncryptionType> blockedTypes = new List<BlockedEncryptionType>();
 
-            while (rule.Read())
+        foreach (string name in XmlHelper.ReadChildren(reader))
+        {
+            switch (name)
             {
-                if (!rule.IsStartElement())
-                    continue;
-
-                switch (rule.Name)
-                {
-                    case "SSEAlgorithm":
-                        algorithm = Core.Enums.Enums.SseAlgorithm.Parse(rule.ReadElementContentAsString(), SseAlgorithmFormat.DisplayName);
-                        break;
-                    case "KMSMasterKeyID":
-                        kmsKeyId = rule.ReadElementContentAsString();
-                        break;
-                    case "BucketKeyEnabled":
-                        bucketKeyEnabled = ValueHelper.ParseBool(rule.ReadElementContentAsString());
-                        break;
-                    case "EncryptionType":
-                        blockedTypes.Add(Core.Enums.Enums.BlockedEncryptionType.Parse(rule.ReadElementContentAsString(), BlockedEncryptionTypeFormat.DisplayName));
-                        break;
-                }
+                case "ApplyServerSideEncryptionByDefault":
+                    ReadDefaults(reader, ref algorithm, ref kmsKeyId);
+                    break;
+                case "BlockedEncryptionTypes":
+                    ReadBlockedTypes(reader, blockedTypes);
+                    break;
+                case "BucketKeyEnabled":
+                    bucketKeyEnabled = ValueHelper.ParseBool(reader.ReadString());
+                    break;
             }
+        }
 
-            S3ServerSideEncryptionRule encryptionRule = new S3ServerSideEncryptionRule(algorithm)
+        S3ServerSideEncryptionRule rule = new S3ServerSideEncryptionRule(algorithm)
+        {
+            KmsMasterKeyId = kmsKeyId,
+            BucketKeyEnabled = bucketKeyEnabled
+        };
+
+        foreach (BlockedEncryptionType type in blockedTypes)
+            rule.BlockedEncryptionTypes.Add(type);
+
+        return rule;
+    }
+
+    private static void ReadDefaults(XmlReader reader, ref SseAlgorithm algorithm, ref string? kmsKeyId)
+    {
+        foreach (string name in XmlHelper.ReadChildren(reader))
+        {
+            switch (name)
             {
-                KmsMasterKeyId = kmsKeyId,
-                BucketKeyEnabled = bucketKeyEnabled
-            };
+                case "SSEAlgorithm":
+                    algorithm = Core.Enums.Enums.SseAlgorithm.Parse(reader.ReadString(), SseAlgorithmFormat.DisplayName);
+                    break;
+                case "KMSMasterKeyID":
+                    kmsKeyId = reader.ReadString();
+                    break;
+            }
+        }
+    }
 
-            foreach (BlockedEncryptionType blockedType in blockedTypes)
-                encryptionRule.BlockedEncryptionTypes.Add(blockedType);
-
-            response.Rules.Add(encryptionRule);
+    private static void ReadBlockedTypes(XmlReader reader, List<BlockedEncryptionType> blockedTypes)
+    {
+        foreach (string name in XmlHelper.ReadChildren(reader))
+        {
+            if (name == "EncryptionType")
+                blockedTypes.Add(Core.Enums.Enums.BlockedEncryptionType.Parse(reader.ReadString(), BlockedEncryptionTypeFormat.DisplayName));
         }
     }
 }

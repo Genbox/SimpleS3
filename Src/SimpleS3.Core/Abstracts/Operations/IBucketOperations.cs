@@ -171,4 +171,10 @@ public interface IBucketOperations
 
     /// <summary>Provides the <c>PutBucketPolicyAsync</c> API.</summary>
     Task<PutBucketPolicyResponse> PutBucketPolicyAsync(PutBucketPolicyRequest request, CancellationToken token = default);
+
+    /// <summary>Gets a bucket's ABAC status.</summary>
+    Task<GetBucketAbacResponse> GetBucketAbacAsync(GetBucketAbacRequest request, CancellationToken token = default);
+
+    /// <summary>Sets a bucket's ABAC status.</summary>
+    Task<PutBucketAbacResponse> PutBucketAbacAsync(PutBucketAbacRequest request, CancellationToken token = default);
 }

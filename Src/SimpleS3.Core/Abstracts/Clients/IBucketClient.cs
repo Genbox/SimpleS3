@@ -210,4 +210,10 @@ public interface IBucketClient
 
     /// <summary>Provides the <c>PutBucketPolicyAsync</c> API.</summary>
     Task<PutBucketPolicyResponse> PutBucketPolicyAsync(string bucketName, string policy, Action<PutBucketPolicyRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Gets a bucket's ABAC status.</summary>
+    Task<GetBucketAbacResponse> GetBucketAbacAsync(string bucketName, Action<GetBucketAbacRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Sets a bucket's ABAC status.</summary>
+    Task<PutBucketAbacResponse> PutBucketAbacAsync(string bucketName, bool enabled, Action<PutBucketAbacRequest>? config = null, CancellationToken token = default);
 }
