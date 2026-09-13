@@ -32,6 +32,12 @@ public interface IBucketOperations
     /// </summary>
     Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(GetBucketLockConfigurationRequest request, CancellationToken token = default);
 
+    /// <summary>Gets the bucket logging configuration.</summary>
+    Task<GetBucketLoggingResponse> GetBucketLoggingAsync(GetBucketLoggingRequest request, CancellationToken token = default);
+
+    /// <summary>Sets the bucket logging configuration.</summary>
+    Task<PutBucketLoggingResponse> PutBucketLoggingAsync(PutBucketLoggingRequest request, CancellationToken token = default);
+
     /// <summary>Returns the tag set associated with the bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketTagging.html for details</summary>
     Task<GetBucketTaggingResponse> GetBucketTaggingAsync(GetBucketTaggingRequest request, CancellationToken token = default);
 

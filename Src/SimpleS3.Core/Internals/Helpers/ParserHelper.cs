@@ -150,7 +150,7 @@ internal static class ParserHelper
         }
     }
 
-    private static S3Grant ParseGrant(XmlReader xmlReader)
+    public static S3Grant ParseGrant(XmlReader xmlReader)
     {
         S3Grantee? grantee = null;
         S3Permission permission = S3Permission.Unknown;
@@ -195,4 +195,5 @@ internal static class ParserHelper
         GrantType type = string.IsNullOrWhiteSpace(typeValue) ? GrantType.Unknown : Core.Enums.Enums.GrantType.Parse(typeValue);
         return new S3Grantee(type, id, displayName, uri, emailAddress);
     }
+
 }
