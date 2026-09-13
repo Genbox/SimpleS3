@@ -16,10 +16,8 @@ internal sealed class PutBucketVersioningRequestMarshal : IRequestMarshal<PutBuc
         writer.WriteStartElement("VersioningConfiguration", XmlConstants.S3Namespace);
         writer.WriteElement("Status", request.Status ? "Enabled" : "Suspended");
 
-        string? mfa = request.Mfa.Build();
-
-        if (mfa != null)
-            writer.WriteElement("MfaDelete", mfa);
+        if (request.MfaDelete.HasValue)
+            writer.WriteElement("MfaDelete", request.MfaDelete.Value ? "Enabled" : "Disabled");
 
         writer.WriteEndElement("VersioningConfiguration");
 

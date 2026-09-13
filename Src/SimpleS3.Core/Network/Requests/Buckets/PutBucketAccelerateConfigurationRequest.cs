@@ -1,5 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Marshal;
+using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
@@ -8,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// Amazon S3. To use this operation, you must have permission to perform the s3:PutAccelerateConfiguration action. The bucket owner has this permission by default. The bucket owner
 /// can grant this permission to others.
 /// </summary>
-public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketName
+public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner
 {
     internal PutBucketAccelerateConfigurationRequest() : base(HttpMethodType.PUT) {}
 
@@ -24,9 +25,21 @@ public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketNa
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
+    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
+    public string? ExpectedBucketOwner { get; set; }
+
     internal void Initialize(string bucketName, bool enabled)
     {
         BucketName = bucketName;
         AccelerationEnabled = enabled;
+    }
+
+    /// <summary>Provides the <c>Reset</c> API.</summary>
+    public override void Reset()
+    {
+        AccelerationEnabled = false;
+        BucketName = null!;
+        ExpectedBucketOwner = null;
+        base.Reset();
     }
 }

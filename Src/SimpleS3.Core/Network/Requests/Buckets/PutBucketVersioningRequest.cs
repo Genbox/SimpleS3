@@ -23,6 +23,10 @@ public class PutBucketVersioningRequest : BaseRequest, IHasBucketName, IContentM
     /// <summary>Provides the <c>Status</c> API.</summary>
     public bool Status { get; set; }
 
+    /// <summary>Enables or disables MFA Delete. Null leaves the existing MFA Delete configuration unchanged.</summary>
+    /// <remarks>Changing this setting requires bucket-owner authorization and valid MFA authentication supplied through <see cref="Mfa" />.</remarks>
+    public bool? MfaDelete { get; set; }
+
     /// <summary>Provides the <c>ForceContentMd5</c> API.</summary>
     public Func<bool> ForceContentMd5 => () => true;
 
@@ -45,6 +49,7 @@ public class PutBucketVersioningRequest : BaseRequest, IHasBucketName, IContentM
     public override void Reset()
     {
         ContentMd5 = null;
+        MfaDelete = null;
         Mfa.Reset();
         base.Reset();
     }

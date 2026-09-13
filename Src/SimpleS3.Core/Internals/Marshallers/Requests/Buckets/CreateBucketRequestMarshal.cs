@@ -1,6 +1,7 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Misc;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
@@ -10,6 +11,9 @@ internal sealed class CreateBucketRequestMarshal : IRequestMarshal<CreateBucketR
 {
     public Stream? MarshalRequest(CreateBucketRequest request, SimpleS3Config config)
     {
+        if (request.BucketNamespace != BucketNamespace.Unknown)
+            request.SetHeader("x-amz-bucket-namespace", request.BucketNamespace.GetDisplayName());
+
         //We only enable object locking on creation. We can't disable it, so there is no "false" option
         if (request.EnableObjectLocking == true)
             request.SetHeader(AmzHeaders.XAmzBucketObjectLockEnabled, "TRUE");

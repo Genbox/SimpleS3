@@ -10,6 +10,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -79,10 +80,11 @@ public partial class DefaultResponseHandler : IResponseHandler
 
             bool transfersContentOwnership = response.IsSuccess && response is IHasContent;
 
-            //Only marshal successful responses
-            if (response.IsSuccess)
+            // HeadBucket also reports location headers on unsuccessful requests.
+            if (response.IsSuccess || response is HeadBucketResponse)
                 _marshaller.MarshalResponse(_config, response, headers, responseStream ?? ContentStream.Null);
-            else if (responseStream != null)
+
+            if (!response.IsSuccess && responseStream != null)
             {
                 try
                 {

@@ -1,5 +1,7 @@
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Marshal;
+using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
@@ -8,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// perform faster data transfers to and from Amazon S3. To use this operation, you must have permission to perform the s3:GetAccelerateConfiguration action. The bucket owner has this
 /// permission by default. The bucket owner can grant this permission to others.
 /// </summary>
-public class GetBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketName
+public class GetBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketName, IHasRequestPayer, IHasExpectedBucketOwner
 {
     internal GetBucketAccelerateConfigurationRequest() : base(HttpMethodType.GET) {}
 
@@ -21,5 +23,19 @@ public class GetBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketNa
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
+    /// <summary>Specifies that the requester agrees to pay request and data transfer charges.</summary>
+    public Payer RequestPayer { get; set; }
+
+    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
+    public string? ExpectedBucketOwner { get; set; }
+
     internal void Initialize(string bucketName) => BucketName = bucketName;
+    /// <summary>Provides the <c>Reset</c> API.</summary>
+    public override void Reset()
+    {
+        RequestPayer = Payer.Unknown;
+        ExpectedBucketOwner = null;
+        BucketName = null!;
+        base.Reset();
+    }
 }

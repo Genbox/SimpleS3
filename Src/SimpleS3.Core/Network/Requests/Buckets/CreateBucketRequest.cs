@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
@@ -26,6 +27,9 @@ public class CreateBucketRequest : BaseRequest, IHasBucketAcl, IHasBucketName
     {
         Initialize(bucketName);
     }
+
+    /// <summary>The namespace for the bucket name. Unknown omits the header.</summary>
+    public BucketNamespace BucketNamespace { get; set; }
 
     /// <summary>Enable object locking on the bucket.</summary>
     public bool? EnableObjectLocking { get; set; }
@@ -68,6 +72,8 @@ public class CreateBucketRequest : BaseRequest, IHasBucketAcl, IHasBucketName
         AclGrantFullControl.Reset();
         ObjectOwnership = ObjectOwnership.Unknown;
 
+        BucketNamespace = BucketNamespace.Unknown;
+        BucketName = null!;
         base.Reset();
     }
 }
