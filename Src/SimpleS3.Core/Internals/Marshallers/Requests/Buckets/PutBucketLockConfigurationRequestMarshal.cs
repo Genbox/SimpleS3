@@ -11,7 +11,20 @@ internal sealed class PutBucketLockConfigurationRequestMarshal : IRequestMarshal
 {
     public Stream MarshalRequest(PutBucketLockConfigurationRequest request, SimpleS3Config config)
     {
+        if (!request.Enabled)
+            throw new ArgumentException("Object Lock cannot be disabled. Use ClearBucketDefaultRetentionAsync to remove the default retention rule.", nameof(request));
+
+        bool hasDays = request.LockRetainDays.HasValue;
+        bool hasYears = request.LockRetainYears.HasValue;
+        bool hasMode = request.LockMode != LockMode.Unknown;
+        if (hasMode ? hasDays == hasYears : hasDays || hasYears)
+            throw new ArgumentException("Default retention requires a mode and exactly one duration in days or years.", nameof(request));
+        if (request.LockRetainDays <= 0 || request.LockRetainYears <= 0)
+            throw new ArgumentException("Default retention duration must be greater than zero.", nameof(request));
+
         request.SetQueryParameter(AmzParameters.ObjectLock, string.Empty);
+        if (request.LockToken != null)
+            request.SetHeader("x-amz-bucket-object-lock-token", request.LockToken);
 
         FastXmlWriter writer = new FastXmlWriter(128);
         writer.WriteStartElement("ObjectLockConfiguration", XmlConstants.S3Namespace);
@@ -23,8 +36,10 @@ internal sealed class PutBucketLockConfigurationRequestMarshal : IRequestMarshal
             writer.WriteStartElement("DefaultRetention");
             writer.WriteElement("Mode", request.LockMode.GetDisplayName());
 
-            if (request.LockRetainUntil.HasValue)
-                writer.WriteElement("Days", GetRetainForDays(request.LockRetainUntil.Value));
+            if (hasDays)
+                writer.WriteElement("Days", request.LockRetainDays!.Value);
+            if (hasYears)
+                writer.WriteElement("Years", request.LockRetainYears!.Value);
 
             writer.WriteEndElement("DefaultRetention");
             writer.WriteEndElement("Rule");
@@ -33,11 +48,5 @@ internal sealed class PutBucketLockConfigurationRequestMarshal : IRequestMarshal
         writer.WriteEndElement("ObjectLockConfiguration");
 
         return new MemoryStream(writer.GetBytes());
-    }
-
-    private static int GetRetainForDays(DateTimeOffset lockRetainUntil)
-    {
-        int days = checked((int)Math.Ceiling((lockRetainUntil - DateTimeOffset.UtcNow).TotalDays));
-        return days <= 0 ? throw new ArgumentOutOfRangeException(nameof(lockRetainUntil), "Bucket lock retention must be in the future.") : days;
     }
 }

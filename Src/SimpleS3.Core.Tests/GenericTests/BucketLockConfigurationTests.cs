@@ -1,28 +1,73 @@
-using System.Text;
-using Genbox.SimpleS3.Core.Abstracts;
+using System.Xml.Linq;
+using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Abstracts.Response;
+using Genbox.SimpleS3.Core.Common.Authentication;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
-using Genbox.SimpleS3.Core.Network.Requests.Buckets;
+using Genbox.SimpleS3.Core.Extensions;
+using Genbox.SimpleS3.Core.Network.Responses.Buckets;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 
 public class BucketLockConfigurationTests
 {
     [Fact]
-    public void BucketLockRetentionUsesTotalDaysRoundedUp()
+    public async Task DisablingObjectLockIsRejectedBeforeSending()
     {
-        PutBucketLockConfigurationRequest request = new PutBucketLockConfigurationRequest("bucket", true)
+        LockNetworkDriver driver = new LockNetworkDriver();
+        await using ServiceProvider provider = CreateProvider(driver);
+        IBucketClient client = provider.GetRequiredService<IBucketClient>();
+
+        await Assert.ThrowsAsync<ArgumentException>(() => client.PutBucketLockConfigurationAsync("bucket", false, token: TestContext.Current.CancellationToken));
+        Assert.Null(driver.Configuration);
+    }
+
+    [Fact]
+    public async Task ClearingDefaultRetentionLeavesObjectLockEnabled()
+    {
+        LockNetworkDriver driver = new LockNetworkDriver();
+        await using ServiceProvider provider = CreateProvider(driver);
+        IBucketClient client = provider.GetRequiredService<IBucketClient>();
+
+        PutBucketLockConfigurationResponse response = await client.ClearBucketDefaultRetentionAsync("bucket", request =>
         {
-            LockMode = LockMode.Governance,
-            LockRetainUntil = DateTimeOffset.UtcNow.AddDays(2)
-        };
+            request.LockMode = LockMode.Governance;
+            request.LockRetainDays = 7;
+            request.LockRetainYears = 1;
+        }, TestContext.Current.CancellationToken);
 
-        PutBucketLockConfigurationRequestMarshal marshal = new PutBucketLockConfigurationRequestMarshal();
+        Assert.True(response.IsSuccess);
+        Assert.NotNull(driver.Configuration);
+        XNamespace ns = "http://s3.amazonaws.com/doc/2006-03-01/";
+        Assert.Equal("Enabled", (string?)driver.Configuration.Element(ns + "ObjectLockEnabled"));
+        Assert.Null(driver.Configuration.Element(ns + "Rule"));
+    }
 
-        using Stream stream = marshal.MarshalRequest(request, new SimpleS3Config("Test", "https://s3.example.com"));
-        using StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+    private static ServiceProvider CreateProvider(LockNetworkDriver driver)
+    {
+        ServiceCollection services = new ServiceCollection();
+        SimpleS3CoreServices.AddSimpleS3Core(services, config =>
+        {
+            config.Endpoint = "https://example.test";
+            config.RegionCode = "us-east-1";
+            config.NamingMode = NamingMode.PathStyle;
+            config.Credentials = new StringAccessKey("key", "secret");
+        });
+        services.AddSingleton<INetworkDriver>(driver);
+        return services.BuildServiceProvider();
+    }
 
-        string xml = reader.ReadToEnd();
-        Assert.Contains("<Days>2</Days>", xml, StringComparison.Ordinal);
+    private sealed class LockNetworkDriver : INetworkDriver
+    {
+        public XElement? Configuration { get; private set; }
+
+        public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
+        {
+            Assert.NotNull(requestStream);
+            Configuration = await XElement.LoadAsync(requestStream, LoadOptions.None, cancellationToken);
+            return new HttpResponse(null, new Dictionary<string, string>(StringComparer.Ordinal), 200);
+        }
     }
 }

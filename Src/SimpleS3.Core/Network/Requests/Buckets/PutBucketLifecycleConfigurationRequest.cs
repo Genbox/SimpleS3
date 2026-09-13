@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Common.Marshal;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
@@ -20,6 +21,9 @@ public class PutBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
     {
         Initialize(bucketName, rules);
     }
+
+    /// <summary>The default minimum object size for lifecycle transitions. Preserve the GET value when replacing a configuration.</summary>
+    public TransitionDefaultMinimumObjectSize TransitionDefaultMinimumObjectSize { get; set; }
 
     /// <summary>Provides the <c>Rules</c> API.</summary>
     public IList<S3Rule> Rules { get; }
@@ -46,7 +50,8 @@ public class PutBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
     {
         ContentMd5 = null;
         Rules.Clear();
-
+        TransitionDefaultMinimumObjectSize = TransitionDefaultMinimumObjectSize.Unknown;
+        BucketName = null!;
         base.Reset();
     }
 }

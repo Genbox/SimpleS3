@@ -12,9 +12,35 @@ internal sealed class GetBucketLockConfigurationResponseMarshal : IResponseMarsh
     public void MarshalResponse(SimpleS3Config config, GetBucketLockConfigurationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
-        xmlReader.ReadToDescendant("DefaultRetention");
+        if (!XmlHelper.ReadToDescendant(xmlReader, "ObjectLockConfiguration"))
+            return;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
+        {
+            switch (name)
+            {
+                case "ObjectLockEnabled":
+                    response.Enabled = xmlReader.ReadString().Trim() == "Enabled";
+                    break;
+                case "Rule":
+                    ReadRule(response, xmlReader);
+                    break;
+            }
+        }
+    }
+
+    private static void ReadRule(GetBucketLockConfigurationResponse response, XmlReader xmlReader)
+    {
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
+        {
+            if (name == "DefaultRetention")
+                ReadDefaultRetention(response, xmlReader);
+        }
+    }
+
+    private static void ReadDefaultRetention(GetBucketLockConfigurationResponse response, XmlReader xmlReader)
+    {
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -22,10 +48,10 @@ internal sealed class GetBucketLockConfigurationResponseMarshal : IResponseMarsh
                     response.LockMode = Core.Enums.Enums.LockMode.Parse(xmlReader.ReadString(), LockModeFormat.DisplayName);
                     break;
                 case "Days":
-                    response.LockRetainUntil = DateTimeOffset.UtcNow.AddDays(xmlReader.ReadElementContentAsInt());
+                    response.LockRetainDays = XmlConvert.ToInt32(xmlReader.ReadString());
                     break;
                 case "Years":
-                    response.LockRetainUntil = DateTimeOffset.UtcNow.AddYears(xmlReader.ReadElementContentAsInt());
+                    response.LockRetainYears = XmlConvert.ToInt32(xmlReader.ReadString());
                     break;
             }
         }

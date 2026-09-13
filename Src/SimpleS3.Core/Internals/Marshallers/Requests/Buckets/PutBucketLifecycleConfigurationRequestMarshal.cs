@@ -1,3 +1,4 @@
+using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Misc;
@@ -15,6 +16,9 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
     public Stream MarshalRequest(PutBucketLifecycleConfigurationRequest request, SimpleS3Config config)
     {
         request.SetQueryParameter(AmzParameters.Lifecycle, string.Empty);
+
+        if (request.TransitionDefaultMinimumObjectSize != TransitionDefaultMinimumObjectSize.Unknown)
+            request.SetHeader("x-amz-transition-default-minimum-object-size", request.TransitionDefaultMinimumObjectSize.GetDisplayName());
 
         FastXmlWriter writer = new FastXmlWriter(600);
         writer.WriteStartElement("LifecycleConfiguration", XmlConstants.S3Namespace);
@@ -36,7 +40,7 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
 
                 if (rule.Expiration.ExpireOnDate.HasValue)
                 {
-                    DateTimeOffset value = rule.Expiration.ExpireOnDate.Value;
+                    DateTimeOffset value = rule.Expiration.ExpireOnDate.Value.ToUniversalTime();
                     DateTimeOffset expirationDate = new DateTimeOffset(value.Year, value.Month, value.Day, 0, 0, 0, TimeSpan.Zero);
                     writer.WriteElement("Date", ValueHelper.DateToString(expirationDate, DateTimeFormat.Iso8601DateTimeExt));
                 }
@@ -52,6 +56,7 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
 
             if (rule.Filter != null)
             {
+                FilterHelper.Validate(rule.Filter);
                 writer.WriteStartElement("Filter");
 
                 if (rule.Filter.Prefix != null)
@@ -66,6 +71,12 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
                 }
 
                 S3AndCondition? andCondition = rule.Filter.AndConditions;
+
+                if (rule.Filter.ObjectSizeGreaterThan.HasValue)
+                    writer.WriteElement("ObjectSizeGreaterThan", XmlConvert.ToString(rule.Filter.ObjectSizeGreaterThan.Value));
+
+                if (rule.Filter.ObjectSizeLessThan.HasValue)
+                    writer.WriteElement("ObjectSizeLessThan", XmlConvert.ToString(rule.Filter.ObjectSizeLessThan.Value));
 
                 if (andCondition != null)
                 {
@@ -82,18 +93,31 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
                         writer.WriteEndElement("Tag");
                     }
 
+                    if (andCondition.ObjectSizeGreaterThan.HasValue)
+                        writer.WriteElement("ObjectSizeGreaterThan", XmlConvert.ToString(andCondition.ObjectSizeGreaterThan.Value));
+
+                    if (andCondition.ObjectSizeLessThan.HasValue)
+                        writer.WriteElement("ObjectSizeLessThan", XmlConvert.ToString(andCondition.ObjectSizeLessThan.Value));
+
                     writer.WriteEndElement("And");
                 }
 
                 writer.WriteEndElement("Filter");
             }
 
-            writer.WriteElement("ID", rule.Id);
+            if (rule.Id != null)
+                writer.WriteElement("ID", rule.Id);
 
-            if (rule.NonCurrentVersionExpirationDays != null)
+            if (rule.Prefix != null)
+                writer.WriteElement("Prefix", rule.Prefix);
+
+            if (rule.NonCurrentVersionExpirationDays.HasValue || rule.NonCurrentVersionExpirationNewerVersions.HasValue)
             {
                 writer.WriteStartElement("NoncurrentVersionExpiration");
-                writer.WriteElement("NoncurrentDays", rule.NonCurrentVersionExpirationDays.Value);
+                if (rule.NonCurrentVersionExpirationDays.HasValue)
+                    writer.WriteElement("NoncurrentDays", rule.NonCurrentVersionExpirationDays.Value);
+                if (rule.NonCurrentVersionExpirationNewerVersions.HasValue)
+                    writer.WriteElement("NewerNoncurrentVersions", rule.NonCurrentVersionExpirationNewerVersions.Value);
                 writer.WriteEndElement("NoncurrentVersionExpiration");
             }
 
@@ -101,6 +125,8 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
             {
                 writer.WriteStartElement("NoncurrentVersionTransition");
                 writer.WriteElement("NoncurrentDays", transition.NonCurrentDays);
+                if (transition.NewerNonCurrentVersions.HasValue)
+                    writer.WriteElement("NewerNoncurrentVersions", transition.NewerNonCurrentVersions.Value);
                 writer.WriteElement("StorageClass", transition.StorageClass.GetDisplayName());
                 writer.WriteEndElement("NoncurrentVersionTransition");
             }
@@ -112,7 +138,11 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
                 writer.WriteStartElement("Transition");
 
                 if (transition.TransitionOnDate.HasValue)
-                    writer.WriteElement("Date", ValueHelper.DateToString(transition.TransitionOnDate.Value, DateTimeFormat.Iso8601Date));
+                {
+                    DateTimeOffset value = transition.TransitionOnDate.Value.ToUniversalTime();
+                    DateTimeOffset transitionDate = new DateTimeOffset(value.Year, value.Month, value.Day, 0, 0, 0, TimeSpan.Zero);
+                    writer.WriteElement("Date", ValueHelper.DateToString(transitionDate, DateTimeFormat.Iso8601DateTimeExt));
+                }
 
                 if (transition.TransitionAfterDays.HasValue)
                     writer.WriteElement("Days", transition.TransitionAfterDays.Value);
