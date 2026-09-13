@@ -19,8 +19,6 @@ internal sealed class PutBucketCorsRequestMarshal : IRequestMarshal<PutBucketCor
         foreach (S3CorsRule rule in request.Rules)
         {
             writer.WriteStartElement("CORSRule");
-            if (rule.Id != null)
-                writer.WriteElement("ID", rule.Id);
             foreach (string value in rule.AllowedHeaders)
                 writer.WriteElement("AllowedHeader", value);
             foreach (string value in rule.AllowedMethods)
@@ -29,6 +27,8 @@ internal sealed class PutBucketCorsRequestMarshal : IRequestMarshal<PutBucketCor
                 writer.WriteElement("AllowedOrigin", value);
             foreach (string value in rule.ExposeHeaders)
                 writer.WriteElement("ExposeHeader", value);
+            if (rule.Id != null)
+                writer.WriteElement("ID", rule.Id);
             if (rule.MaxAgeSeconds.HasValue)
                 writer.WriteElement("MaxAgeSeconds", ValueHelper.IntToString(rule.MaxAgeSeconds.Value));
             writer.WriteEndElement("CORSRule");

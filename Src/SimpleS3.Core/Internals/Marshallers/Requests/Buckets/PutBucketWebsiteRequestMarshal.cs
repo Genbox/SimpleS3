@@ -17,8 +17,12 @@ internal sealed class PutBucketWebsiteRequestMarshal : IRequestMarshal<PutBucket
 
         writer.WriteStartElement("WebsiteConfiguration", XmlConstants.S3Namespace);
 
-        if (website.RedirectAllRequestsTo != null)
-            WriteRedirectAllRequestsTo(writer, website.RedirectAllRequestsTo);
+        if (website.ErrorDocumentKey != null)
+        {
+            writer.WriteStartElement("ErrorDocument");
+            writer.WriteElement("Key", website.ErrorDocumentKey);
+            writer.WriteEndElement("ErrorDocument");
+        }
 
         if (website.IndexDocumentSuffix != null)
         {
@@ -27,12 +31,8 @@ internal sealed class PutBucketWebsiteRequestMarshal : IRequestMarshal<PutBucket
             writer.WriteEndElement("IndexDocument");
         }
 
-        if (website.ErrorDocumentKey != null)
-        {
-            writer.WriteStartElement("ErrorDocument");
-            writer.WriteElement("Key", website.ErrorDocumentKey);
-            writer.WriteEndElement("ErrorDocument");
-        }
+        if (website.RedirectAllRequestsTo != null)
+            WriteRedirectAllRequestsTo(writer, website.RedirectAllRequestsTo);
 
         if (website.RoutingRules.Count > 0)
         {
@@ -67,11 +67,11 @@ internal sealed class PutBucketWebsiteRequestMarshal : IRequestMarshal<PutBucket
         {
             writer.WriteStartElement("Condition");
 
-            if (rule.Condition.KeyPrefixEquals != null)
-                writer.WriteElement("KeyPrefixEquals", rule.Condition.KeyPrefixEquals);
-
             if (rule.Condition.HttpErrorCodeReturnedEquals != null)
                 writer.WriteElement("HttpErrorCodeReturnedEquals", rule.Condition.HttpErrorCodeReturnedEquals);
+
+            if (rule.Condition.KeyPrefixEquals != null)
+                writer.WriteElement("KeyPrefixEquals", rule.Condition.KeyPrefixEquals);
 
             writer.WriteEndElement("Condition");
         }
@@ -87,6 +87,9 @@ internal sealed class PutBucketWebsiteRequestMarshal : IRequestMarshal<PutBucket
         if (redirect.HostName != null)
             writer.WriteElement("HostName", redirect.HostName);
 
+        if (redirect.HttpRedirectCode != null)
+            writer.WriteElement("HttpRedirectCode", redirect.HttpRedirectCode);
+
         if (redirect.Protocol != null)
             writer.WriteElement("Protocol", redirect.Protocol);
 
@@ -95,9 +98,6 @@ internal sealed class PutBucketWebsiteRequestMarshal : IRequestMarshal<PutBucket
 
         if (redirect.ReplaceKeyWith != null)
             writer.WriteElement("ReplaceKeyWith", redirect.ReplaceKeyWith);
-
-        if (redirect.HttpRedirectCode != null)
-            writer.WriteElement("HttpRedirectCode", redirect.HttpRedirectCode);
 
         writer.WriteEndElement("Redirect");
     }
