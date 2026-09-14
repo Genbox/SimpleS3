@@ -17,6 +17,7 @@ using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Builders;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Misc;
+using Genbox.SimpleS3.Core.Network.Requests;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -70,6 +71,13 @@ internal sealed partial class DefaultSignedRequestHandler : ISignedRequestHandle
             request.SetQueryParameter(AmzParameters.XAmzCredential, _config.Credentials.KeyId + '/' + scope);
             request.SetQueryParameter(AmzParameters.XAmzDate, request.Timestamp.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
             request.SetQueryParameter(AmzParameters.XAmzExpires, expiresIn.TotalSeconds.ToString(NumberFormatInfo.InvariantInfo));
+
+            if (request is BaseRequest baseRequest)
+            {
+                baseRequest.RemoveQueryParameter(AmzParameters.XAmzSecurityToken);
+                baseRequest.RemoveQueryParameter(AmzParameters.XAmzSignature);
+            }
+
             if (_config.Credentials is ISessionAccessKey sessionCredentials)
                 request.SetQueryParameter(AmzParameters.XAmzSecurityToken, sessionCredentials.SessionToken);
             request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, string.Join(";", HeaderWhitelist.FilterHeaders(request.Headers).Select(x => x.Key)));
