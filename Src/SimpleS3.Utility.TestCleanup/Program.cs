@@ -17,12 +17,11 @@ internal static class Program
             return 2;
         }
 
-        S3Provider[] providers = [S3Provider.AmazonS3, S3Provider.BackBlazeB2, S3Provider.GoogleCloudStorage, S3Provider.Wasabi];
         int failures = 0;
 
         Console.WriteLine("Deleting buckets matching 'tempbucket-{guid}' from configured providers.");
 
-        foreach (S3Provider s3Provider in providers)
+        foreach (S3Provider s3Provider in UtilityHelper.SelectProviders())
         {
             string profileName = UtilityHelper.GetProfileName(s3Provider);
             await using ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
