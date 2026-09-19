@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -6,6 +7,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 namespace Genbox.SimpleS3.Extensions.GoogleCloudStorage;
 
 /// <summary>Provides the <c>GoogleCloudStorageInputValidator</c> API.</summary>
+[SuppressMessage("Design", "CA1062", Justification = "The public InputValidatorBase entry points handle null input before invoking these protected validation routines.")]
 public class GoogleCloudStorageInputValidator : InputValidatorBase
 {
     /// <summary>Provides the <c>TryValidateKeyIdInternal</c> API.</summary>

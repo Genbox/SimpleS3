@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase;
@@ -29,6 +30,7 @@ public sealed class NetworkErrorTests(ITestOutputHelper helper) : OfflineTestBas
     }
 
     [Fact]
+    [SuppressMessage("Usage", "SS059", Justification = "MemoryStream has no asynchronous cleanup.")]
     public async Task TestNonTransientNetworkError()
     {
         using MemoryStream ms = new MemoryStream(new byte[4096]);

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
@@ -12,5 +13,6 @@ public class S3Grantee(GrantType type, string? id, string? displayName, string? 
     /// <summary>Provides the <c>DisplayName</c> API.</summary>
     public string? DisplayName { get; } = displayName;
     /// <summary>Provides the <c>Uri</c> API.</summary>
+    [SuppressMessage("Design", "CA1056", Justification = "The value is an S3 group identifier preserved verbatim from the ACL response.")]
     public string? Uri { get; } = uri;
 }

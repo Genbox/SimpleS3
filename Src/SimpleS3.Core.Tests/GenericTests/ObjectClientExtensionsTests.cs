@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Enums;
@@ -13,6 +14,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 
+[SuppressMessage("Usage", "S5034", Justification = "Each MoveNextAsync call creates a distinct ValueTask that is converted to a Task exactly once before it is awaited.")]
 public class ObjectClientExtensionsTests
 {
     [Fact]

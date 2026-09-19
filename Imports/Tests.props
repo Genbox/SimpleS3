@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <DisableConfigureAwaitFody>true</DisableConfigureAwaitFody>
   </PropertyGroup>
 
   <ItemGroup>

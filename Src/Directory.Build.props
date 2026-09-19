@@ -12,10 +12,12 @@
     <IncludeBaseProject>true</IncludeBaseProject>
     <IncludeInternalsVisibleTo>true</IncludeInternalsVisibleTo>
     <IncludeAnalyzers>true</IncludeAnalyzers>
+    <ContinueOnCapturedContext Condition="'$(ContinueOnCapturedContext)' == ''">false</ContinueOnCapturedContext>
 
     <!--Assembly settings-->
     <RootNamespace>Genbox.$(MSBuildProjectName)</RootNamespace>
-    <AssemblyName Condition="'$(PackAssemblyName)' == 'true'">Genbox.$(MSBuildProjectName)</AssemblyName>
+    <AssemblyNamePrefix Condition="'$(_IsPacking)' == 'true' OR '$(_IsPublishing)' == 'true'">Genbox.</AssemblyNamePrefix>
+    <AssemblyName Condition="'$(AssemblyNamePrefix)' != ''">$(AssemblyNamePrefix)$(MSBuildProjectName)</AssemblyName>
 
     <!--C# settings-->
     <LangVersion>latest</LangVersion>
@@ -95,5 +97,18 @@
   <Import Project="../Locals/Directory.Build.props" Condition="Exists('../Locals/Directory.Build.props')" />
   <Import Project="../Imports/$(ProjectType).props" Condition="Exists('../Imports/$(ProjectType).props')" />
   <Import Project="../Imports/Analyzers.props" Condition="'$(IncludeAnalyzers)' == 'True' AND Exists('../Imports/Analyzers.props')" />
+
+  <PropertyGroup Condition="'$(DisableConfigureAwaitFody)' != 'true' AND '$(DisableFody)' != 'true'">
+    <WeaverConfiguration>
+      <Weavers>
+        <ConfigureAwait ContinueOnCapturedContext="$(ContinueOnCapturedContext)" />
+      </Weavers>
+    </WeaverConfiguration>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(DisableConfigureAwaitFody)' != 'true' AND '$(DisableFody)' != 'true'">
+    <PackageReference Include="Fody" PrivateAssets="all" />
+    <PackageReference Include="ConfigureAwait.Fody" PrivateAssets="all" />
+  </ItemGroup>
 
 </Project>

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -342,6 +343,7 @@ public static class UtilityHelper
         }
     }
 
+    [SuppressMessage("Usage", "VSTHRD003", Justification = "Cleanup intentionally observes the pre-started speculative prefetch task.")]
     private static async Task ObservePrefetchTaskAsync(Task? task)
     {
         if (task == null)

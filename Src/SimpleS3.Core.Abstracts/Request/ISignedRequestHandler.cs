@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 
@@ -10,5 +11,6 @@ public interface ISignedRequestHandler
     string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest;
 
     /// <summary>Provides the <c>SendRequestAsync&lt;TResp&gt;</c> API.</summary>
+    [SuppressMessage("Design", "CA1054", Justification = "The signing pipeline preserves the raw escaped request URL; constructing a Uri earlier can normalize object keys and invalidate signatures.")]
     Task<TResp> SendRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new();
 }

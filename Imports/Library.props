@@ -7,12 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IncludeInternalsVisibleTo)' == 'True'">
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>$(AssemblyName).Tests</_Parameter1>
-    </AssemblyAttribute>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>$(AssemblyName).Benchmarks</_Parameter1>
-    </AssemblyAttribute>
+    <!--Use the active prefix so normal and pack/publish friend identities stay aligned.-->
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)$(MSBuildProjectName).Tests" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)$(MSBuildProjectName).Benchmarks" />
   </ItemGroup>
 
   <ItemGroup>

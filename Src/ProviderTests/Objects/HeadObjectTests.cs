@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using Genbox.HttpBuilders.Enums;
 using Genbox.ProviderTests.Code;
@@ -100,6 +101,7 @@ public class HeadObjectTests : TestBase
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
+    [SuppressMessage("Security", "CA5350", Justification = "S3 requires this legacy hash for its wire-level checksum; it is not used for password storage or a new signature scheme.")]
     public async Task HeadObjectChecksum(S3Provider _, string bucket, ISimpleClient client)
     {
         byte[] data = [1, 2, 3, 4];

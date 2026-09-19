@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common.Validation;
@@ -10,6 +11,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Errors;
 public class GenericError : IError
 {
     /// <summary>Provides the <c>GenericError</c> API.</summary>
+    [SuppressMessage("Design", "CA1062", Justification = "Reading the required error fields rejects a null lookup before constructing the error data.")]
     public GenericError(IDictionary<string, string> lookup)
     {
         Validator.RequireNotNull(lookup);

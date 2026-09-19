@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
@@ -26,6 +27,7 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
     public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, params S3PartInfo[] parts) : this(bucketName, objectKey, uploadId, (IEnumerable<S3PartInfo>)parts) {}
 
     /// <summary>Provides the <c>CompleteMultipartUploadRequest</c> API.</summary>
+    [SuppressMessage("Design", "CA1062", Justification = "Initialize consumes the required collection before construction completes; preserve its existing null-input failure behavior.")]
     public CompleteMultipartUploadRequest(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts) : this()
     {
         Initialize(bucketName, objectKey, uploadId, parts);

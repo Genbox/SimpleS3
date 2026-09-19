@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Text;
@@ -18,6 +19,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Extensions.AmazonS3.Tests;
 
+[SuppressMessage("Design", "CA1062", Justification = "The test data supplies non-null arguments; these tests exercise signing and stream behavior rather than argument validation.")]
 public sealed class ChunkedSignatureTests : IDisposable
 {
     private readonly HeaderAuthorizationBuilder _authBuilder;

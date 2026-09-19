@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ExceptionServices;
 
 namespace Genbox.SimpleS3.Core.Common.Helpers;
@@ -154,6 +155,7 @@ public static class ParallelHelper
     /// <param name="concurrentThreads">The maximum number of projections that may run concurrently.</param>
     /// <param name="token">A token that cancels enumeration and all running projections.</param>
     /// <returns>The projected results in source order.</returns>
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP016:Don't use disposed instance", Justification = "All workers complete before the async enumerator is disposed in the finally block.")]
     public static async Task<IEnumerable<TReturn>> ExecuteAsync<T, TReturn>(IAsyncEnumerable<T> source, Func<T, CancellationToken, Task<TReturn>> action, int concurrentThreads, CancellationToken token = default)
     {
         ValidateArguments(source, action, concurrentThreads);

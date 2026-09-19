@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -55,7 +56,7 @@ internal sealed partial class DefaultSignedRequestHandler : ISignedRequestHandle
             request.Timestamp = DateTimeOffset.UtcNow;
             request.RequestId = Guid.NewGuid();
 
-#pragma warning disable IDISP004 // MarshalRequest can return caller-owned request content; signing must not dispose it.
+#pragma warning disable IDISP004 // MarshalRequest may return caller-owned request content; signing must not dispose it.
             _ = _marshaller.MarshalRequest(_config, request);
 #pragma warning restore IDISP004
 
@@ -96,6 +97,8 @@ internal sealed partial class DefaultSignedRequestHandler : ISignedRequestHandle
         }
     }
 
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "The response handler owns the prepared request stream after a successful handoff; this method disposes it on preparation failure.")]
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP003:Dispose previous before re-assigning", Justification = "Each request stream wrapper owns the stream it replaces.")]
     public async Task<TResp> SendRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new()
     {
         SignedRequest req = new SignedRequest(httpMethod);

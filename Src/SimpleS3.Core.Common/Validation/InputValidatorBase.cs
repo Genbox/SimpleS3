@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -7,6 +8,7 @@ namespace Genbox.SimpleS3.Core.Common.Validation;
 
 /// <summary>Provides the <c>InputValidatorBase</c> API.</summary>
 [PublicAPI]
+[SuppressMessage("Design", "CA1062", Justification = "The public InputValidatorBase entry points handle null input before invoking these protected validation routines.")]
 public abstract class InputValidatorBase : IInputValidator
 {
     /// <summary>Provides the <c>TryValidateKeyId</c> API.</summary>

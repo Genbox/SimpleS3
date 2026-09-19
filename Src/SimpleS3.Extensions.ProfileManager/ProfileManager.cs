@@ -54,6 +54,7 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
     }
 
     /// <summary>Provides the <c>CreateProfile</c> API.</summary>
+    [SuppressMessage("Design", "CA1062", Justification = "ValidateAccessKeyAndThrow rejects null key material before the key is copied or protected.")]
     public IProfile CreateProfile(string name, string keyId, byte[] accessKey, string region, out string? location, bool persist = true)
     {
         validator.ValidateKeyIdAndThrow(keyId);

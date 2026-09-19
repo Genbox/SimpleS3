@@ -11,6 +11,6 @@ internal sealed class RetryableBufferingStreamWrapper(IOptionsMonitor<PollyConfi
 
     public bool IsSupported(IRequest request) => true;
 
-    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP015:Member should not return created and cached instance")]
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP015:Member should not return created and cached instance", Justification = "Seekable input is returned unchanged; otherwise each call creates a new wrapper owned by the request pipeline.")]
     public Stream Wrap(Stream input, IRequest request) => input.CanSeek ? input : new RetryableBufferingStream(input, _config.MaxMemoryBufferSize);
 }

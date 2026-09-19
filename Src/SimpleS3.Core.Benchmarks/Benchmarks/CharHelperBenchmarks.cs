@@ -3,7 +3,7 @@ using Genbox.SimpleS3.Core.Common.Helpers;
 
 namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
-[SuppressMessage("ReSharper", "ConvertToConstant.Local")]
+[SuppressMessage("ReSharper", "ConvertToConstant.Local", Justification = "The benchmark variants intentionally use the same local-variable input form.")]
 public class CharHelperBenchmarks
 {
     [Benchmark]

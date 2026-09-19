@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel.DataAnnotations;
 using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;
 
 /// <summary>Provides the <c>PredefinedGroup</c> API.</summary>
+[SuppressMessage("Security", "S5332", Justification = "These HTTP URIs are fixed S3 group identifiers, not network endpoints.")]
 [FastEnum]
 public enum PredefinedGroup
 {

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Builders;
@@ -51,6 +52,7 @@ public class ObjectAclBuilder
     }
 
     /// <summary>Provides the <c>AddGroup</c> API.</summary>
+    [SuppressMessage("Design", "CA1054", Justification = "S3 group URIs are protocol identifiers whose exact string representation is preserved in ACLs.")]
     public ObjectAclBuilder AddGroup(string uri, ObjectPermissions permissions)
     {
         if (permissions.HasFlag(ObjectPermissions.Read))

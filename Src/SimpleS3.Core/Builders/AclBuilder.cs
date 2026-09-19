@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Genbox.HttpBuilders.Abstracts;
 using Genbox.SimpleS3.Core.Common.Pools;
@@ -141,6 +142,7 @@ public class AclBuilder : IHttpHeaderBuilder
 
     /// <summary>Grant permission to a predefined Amazon S3 group.</summary>
     /// <param name="uri">An URI to the group</param>
+    [SuppressMessage("Design", "CA1054", Justification = "S3 group URIs are protocol identifiers whose exact string representation is preserved in ACLs.")]
     public AclBuilder AddGroup(string uri)
     {
         Validator.RequireNotNullOrWhiteSpace(uri);

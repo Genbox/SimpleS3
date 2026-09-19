@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 
+[SuppressMessage("Usage", "IDISP017", Justification = "The tests dispose explicitly to verify stream ownership and post-disposal behavior.")]
 public class DefaultResponseHandlerTests
 {
     [Fact]

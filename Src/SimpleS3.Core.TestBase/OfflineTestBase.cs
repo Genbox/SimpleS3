@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Authentication;
@@ -9,6 +10,7 @@ namespace Genbox.SimpleS3.Core.TestBase;
 
 public abstract class OfflineTestBase(ITestOutputHelper helper) : UnitTestBase(helper, "main-test-bucket")
 {
+    [SuppressMessage("Design", "CA1062", Justification = "The test harness supplies the configuration instance before invoking this override.")]
     protected override void ConfigureConfig(SimpleS3Config config)
     {
         config.RegionCode = "eu-west-1";

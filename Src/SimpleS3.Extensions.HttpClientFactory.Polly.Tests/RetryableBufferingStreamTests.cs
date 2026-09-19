@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Tests;
 
+[SuppressMessage("Usage", "IDISP017", Justification = "The tests dispose explicitly to verify stream ownership and post-disposal behavior.")]
 public class RetryableBufferingStreamTests
 {
     [Fact]

@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Genbox.SimpleS3.Core.Common.Pools;
 
 /// <summary>Provides the <c>StringBuilderPool</c> API.</summary>
+[SuppressMessage("Design", "CA1062", Justification = "Returning a builder requires an existing instance; its members already fail immediately for null.")]
 public sealed class StringBuilderPool
 {
     /// <summary>The default initial capacity of builder.</summary>

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
@@ -32,6 +33,7 @@ public class MultipartTransferTests
     }
 
     [Fact]
+    [SuppressMessage("Usage", "S2925", Justification = "The synchronous response callback deliberately stays active briefly to expose overlapping callbacks in this serialization regression test.")]
     public async Task MultipartUploadAsyncSerializesPartResponseCallbacks()
     {
         FakeMultipartApi multipartApi = new FakeMultipartApi();

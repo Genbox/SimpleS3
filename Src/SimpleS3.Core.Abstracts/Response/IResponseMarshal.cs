@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
 namespace Genbox.SimpleS3.Core.Abstracts.Response;
 
 /// <summary>Provides the <c>IResponseMarshal</c> API.</summary>
+[SuppressMessage("Design", "CA1040", Justification = "This marker interface identifies a capability or provides the non-generic base used by dependency injection and marshal discovery.")]
 [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
 public interface IResponseMarshal;
 

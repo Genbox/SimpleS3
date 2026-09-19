@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -311,6 +312,7 @@ public class MultipartTests : TestBase
         Assert.Equal(10, count);
     }
 
+    [SuppressMessage("Security", "CA5350", Justification = "S3 requires this legacy hash for its wire-level checksum; it is not used for password storage or a new signature scheme.")]
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task MultipartChecksum(S3Provider provider, string bucket, ISimpleClient client)

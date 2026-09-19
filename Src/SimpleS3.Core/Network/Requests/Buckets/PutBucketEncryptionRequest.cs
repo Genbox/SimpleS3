@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Common.Marshal;
@@ -11,6 +12,7 @@ public class PutBucketEncryptionRequest : BaseRequest, IHasBucketName, IContentM
     internal PutBucketEncryptionRequest() : base(HttpMethodType.PUT) {}
 
     /// <summary>Provides the <c>PutBucketEncryptionRequest</c> API.</summary>
+    [SuppressMessage("Design", "CA1062", Justification = "Initialize consumes the required collection before construction completes; preserve its existing null-input failure behavior.")]
     public PutBucketEncryptionRequest(string bucketName, IEnumerable<S3ServerSideEncryptionRule> rules) : this()
     {
         Initialize(bucketName, rules);

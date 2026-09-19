@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Common.Pools;
@@ -5,6 +6,8 @@ using Genbox.SimpleS3.Core.Common.Pools;
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 
 /// <summary>Provides the <c>UrlHelper</c> API.</summary>
+[SuppressMessage("Design", "CA1062", Justification = "String encoding helpers preserve null-input failures from the underlying string and encoding APIs.")]
+[SuppressMessage("Design", "CA1055", Justification = "These encoders return escaped URL components, not complete URIs.")]
 public static class UrlHelper
 {
     //Valid URL characters according to RFC3986: https://tools.ietf.org/html/rfc3986#section-2.3
@@ -36,6 +39,7 @@ public static class UrlHelper
     }
 
     /// <summary>Provides the <c>CreateUriWithoutPathNormalization</c> API.</summary>
+    [SuppressMessage("Design", "CA1054", Justification = "This factory accepts the original URL text specifically to avoid normalization by an already-constructed Uri.")]
     public static Uri CreateUriWithoutPathNormalization(string url)
     {
         // S3-010: Resolve the runtime-specific option from the same core library as Uri.

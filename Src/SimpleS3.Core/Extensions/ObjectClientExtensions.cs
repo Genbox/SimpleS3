@@ -421,7 +421,7 @@ public static class ObjectClientExtensions
         }
     }
 
-    [SuppressMessage("Usage", "VSTHRD003:Avoid awaiting foreign Tasks")]
+    [SuppressMessage("Usage", "VSTHRD003:Avoid awaiting foreign Tasks", Justification = "Cleanup intentionally observes the pre-started speculative prefetch task.")]
     private static async Task ObservePrefetchTaskAsync(Task? task)
     {
         if (task == null)

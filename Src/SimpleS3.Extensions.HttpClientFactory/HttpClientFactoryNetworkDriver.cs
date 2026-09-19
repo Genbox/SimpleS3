@@ -20,6 +20,7 @@ public partial class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFa
 
     /// <summary>Provides the <c>SendRequestAsync&lt;T&gt;</c> API.</summary>
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "Transport response ownership is transferred to the returned response content.")]
+    [SuppressMessage("Design", "CA1062", Justification = "The request method is read before creating a message or sending data, preserving immediate failure for a null request.")]
     public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
     {
         HttpResponseMessage httpResponse;

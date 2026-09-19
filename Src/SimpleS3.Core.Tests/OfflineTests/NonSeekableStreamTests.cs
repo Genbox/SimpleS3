@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -6,6 +7,7 @@ using Genbox.SimpleS3.Core.Tests.Code.Streams;
 
 namespace Genbox.SimpleS3.Core.Tests.OfflineTests;
 
+[SuppressMessage("Design", "CA1062", Justification = "The test data supplies non-null arguments; these tests exercise signing and stream behavior rather than argument validation.")]
 public class NonSeekableStreamTests(ITestOutputHelper helper) : OfflineTestBase(helper)
 {
     protected override void ConfigureConfig(SimpleS3Config config)

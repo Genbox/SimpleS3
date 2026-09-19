@@ -42,7 +42,7 @@ public class ObjectPoolTests
         Assert.Equal(1, second.ResetCount);
     }
 
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "ObjectPool creates this test type through reflection.")]
     private sealed class TestPooledObject : IPooledObject
     {
         public int ResetCount { get; private set; }

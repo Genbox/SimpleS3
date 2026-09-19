@@ -43,8 +43,7 @@ Features provided by SimpleS3:
 - [![Google Cloud Storage](https://img.shields.io/nuget/v/Genbox.SimpleS3.GoogleCloudStorage.svg?style=flat-square&label=Google%20Cloud%20Storage)](https://www.nuget.org/packages/Genbox.SimpleS3.GoogleCloudStorage/)
 - [![Wasabi](https://img.shields.io/nuget/v/Genbox.SimpleS3.Wasabi.svg?style=flat-square&label=Wasabi)](https://www.nuget.org/packages/Genbox.SimpleS3.Wasabi/)
 
-See the [provider status page](https://github.com/Genbox/SimpleS3/wiki/Provider-status) for the list of operations that are currently supported. For the purpose of the examples
-below, we are going to use the Amazon S3 provider.
+See the [provider status page](https://github.com/Genbox/SimpleS3/wiki/Provider-status) for the list of operations that are currently supported. For the purpose of the examples below, we are going to use the Amazon S3 provider.
 
 #### Setup the config and client
 
@@ -67,8 +66,7 @@ AmazonS3Client client = provider.GetRequiredService<AmazonS3Client>();
 
 #### Download/Upload using the Transfer API
 
-The fluent Transfer API makes downloading/uploading objects easier by providing a convenient way of supplying information such as cache control, content-disposition, encryption
-keys, etc.
+The fluent Transfer API makes downloading/uploading objects easier by providing a convenient way of supplying information such as cache control, content-disposition, encryption keys, etc.
 
 ```csharp
 //Upload
@@ -92,8 +90,7 @@ Console.WriteLine(await dlResp.Content.AsStringAsync()); //Outputs "Hello"
 
 SimpleS3 is extensible and has multiple different network drivers and extensions you can use. Click on the extension below for more information.
 
-If you are already using the **SimpleS3.AmazonS3** package, you already have a dependency on most of the extensions below. These are only for advanced users that want to tweak
-their setup to their own liking.
+If you are already using the **SimpleS3.AmazonS3** package, you already have a dependency on most of the extensions below. These are only for advanced users that want to tweak their setup to their own liking.
 
 | Nuget                                                                                                                                                                                                                                 | Extension                                                                                                                 | Description                                                                                                                                                                                                                                     |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

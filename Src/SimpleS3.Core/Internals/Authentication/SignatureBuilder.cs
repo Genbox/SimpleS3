@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -68,6 +69,7 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
         return signature;
     }
 
+    [SuppressMessage("Usage", "S1075", Justification = "The dummy host is used only to escape a path with Uri; no request is sent to it.")]
     private static string GetEndpointBasePath(string endpoint)
     {
         int authority = endpoint.IndexOf("://", StringComparison.Ordinal);

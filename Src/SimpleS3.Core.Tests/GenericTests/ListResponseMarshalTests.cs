@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -59,6 +60,7 @@ public class ListResponseMarshalTests
 
     private static SimpleS3Config CreateConfig() => new SimpleS3Config { AutoUrlDecodeResponses = true };
 
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "The returned ContentStream owns and disposes the memory stream.")]
     private static ContentStream CreateContent(string xml)
     {
         MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));

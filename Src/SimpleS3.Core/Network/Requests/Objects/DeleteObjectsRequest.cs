@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Builders;
@@ -22,6 +23,7 @@ public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBy
     }
 
     /// <summary>Provides the <c>DeleteObjectsRequest</c> API.</summary>
+    [SuppressMessage("Design", "CA1062", Justification = "Initialize consumes the required collection before construction completes; preserve its existing null-input failure behavior.")]
     public DeleteObjectsRequest(string bucketName, IEnumerable<S3DeleteInfo> resources) : this()
     {
         Initialize(bucketName, resources);

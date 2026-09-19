@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Genbox.HttpBuilders;
 using Genbox.HttpBuilders.Enums;
@@ -75,5 +76,6 @@ public interface IUpload
     /// <summary>Provides the <c>UploadStringAsync</c> API.</summary>
     Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default);
     /// <summary>Provides the <c>WithWebsiteRedirectLocation</c> API.</summary>
+    [SuppressMessage("Design", "CA1054", Justification = "S3 website redirects accept object-key paths as well as absolute URLs.")]
     IUpload WithWebsiteRedirectLocation(string url);
 }

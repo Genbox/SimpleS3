@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics;
 using System.Net;
 using System.Reflection;
@@ -11,6 +12,7 @@ using Polly;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Tests;
 
+[SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP011:Do not return disposed instance", Justification = "Retry tests hand locally scoped handlers to HttpClientFactory and complete all requests before disposing them.")]
 public class PollyHttpMessageHandlerTests
 {
     [Fact]

@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 
 [MemoryDiagnoser]
-[SuppressMessage("Design", "CA1034:Nested types should not be visible")]
+[SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "XmlSerializer requires public model types; nesting keeps these benchmark-only models with their fixture.")]
 public class XmlReaderBenchmarks
 {
     private readonly byte[] _data = Encoding.UTF8.GetBytes("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -86,7 +86,7 @@ public class XmlReaderBenchmarks
     }
 
     [XmlRoot]
-    [SuppressMessage("Usage", "CA2227:Collection properties should be read only")]
+    [SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "The manual XML reader assigns a pre-sized collection to the same model used by the serializer benchmark.")]
     public class XmlTestObject
     {
         [XmlElement("Person")]

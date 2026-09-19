@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Genbox.SimpleS3.Core.TestBase.Helpers;
 
-[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
+[SuppressMessage("Design", "CA1062", Justification = "Test resource helpers use non-null assemblies and filters supplied by their fixtures and preserve deferred enumeration.")]
 public static class ResourceHelper
 {
     public static IEnumerable<(string name, string content)> GetResources(Assembly assembly, Regex filter)

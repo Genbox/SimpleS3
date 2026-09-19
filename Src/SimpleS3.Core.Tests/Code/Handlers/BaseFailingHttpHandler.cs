@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mime;
 using System.Text;
@@ -13,6 +14,7 @@ internal abstract class BaseFailingHttpHandler : HttpMessageHandler
 
     protected static HttpContent GetEmptyXmlContent() => new StringContent(string.Empty, Encoding.UTF8, MediaTypeNames.Application.Xml);
 
+    [SuppressMessage("Usage", "SS059", Justification = "MemoryStream has no asynchronous cleanup.")]
     protected async Task ConsumeRequestAsync(HttpRequestMessage request)
     {
         using MemoryStream ms = new MemoryStream();

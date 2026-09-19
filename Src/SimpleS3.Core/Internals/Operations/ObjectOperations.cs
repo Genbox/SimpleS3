@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
@@ -34,6 +35,7 @@ internal sealed class ObjectOperations(IRequestHandler handler, IEnumerable<IReq
         return handler.SendRequestAsync<PutObjectRequest, PutObjectResponse>(request, token);
     }
 
+    [SuppressMessage("Usage", "IDISP011", Justification = "The response is disposed only on the failure path, which always rethrows; successful responses remain owned by the caller.")]
     public async Task<GetObjectResponse> GetObjectAsync(GetObjectRequest request, CancellationToken token = default)
     {
         GetObjectResponse response = await handler.SendRequestAsync<GetObjectRequest, GetObjectResponse>(request, token).ConfigureAwait(false);

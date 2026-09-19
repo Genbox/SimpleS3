@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -7,6 +8,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 namespace Genbox.SimpleS3.Extensions.AmazonS3;
 
 /// <summary>Provides the <c>AmazonS3InputValidator</c> API.</summary>
+[SuppressMessage("Design", "CA1062", Justification = "The public InputValidatorBase entry points handle null input before invoking these protected validation routines.")]
 public class AmazonS3InputValidator : InputValidatorBase
 {
     private static readonly Regex _ipRegex = new Regex(@"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", RegexOptions.CultureInvariant | RegexOptions.Compiled, TimeSpan.FromSeconds(1));

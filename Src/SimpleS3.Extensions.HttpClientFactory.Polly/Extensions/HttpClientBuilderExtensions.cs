@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Common.Extensions;
@@ -18,6 +19,7 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 public static class HttpClientBuilderExtensions
 {
     private static readonly Func<HttpResponseMessage, bool> _statusCodes = resp => (int)resp.StatusCode >= (int)HttpStatusCode.InternalServerError || resp.StatusCode == HttpStatusCode.RequestTimeout;
+    [SuppressMessage("Security", "S2245", Justification = "Retry jitter is non-security-sensitive; Random avoids unnecessary cryptographic allocation.")]
     private static readonly Random _rng = new Random();
 
     /// <summary>Provides the <c>UseRetryAndTimeout</c> API.</summary>
@@ -96,6 +98,7 @@ public static class HttpClientBuilderExtensions
         _ => throw new InvalidOperationException($"Unsupported retry mode: {config.RetryMode}")
     };
 
+    [SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Retry jitter is non-security-sensitive; Random avoids unnecessary cryptographic allocation.")]
     private static TimeSpan GetJitter(PollyConfig config)
     {
         int maxDelay = (int)config.MaxRandomDelay.TotalMilliseconds;
@@ -103,10 +106,8 @@ public static class HttpClientBuilderExtensions
         if (maxDelay <= 0)
             return TimeSpan.Zero;
 
-#pragma warning disable CA5394, S2245 // Retry jitter is non-security-sensitive; Random avoids unnecessary cryptographic allocation.
         lock (_rng)
             return TimeSpan.FromMilliseconds(_rng.Next(0, maxDelay));
-#pragma warning restore CA5394, S2245
     }
 
     private sealed class PollyPolicyRegistration(string name)

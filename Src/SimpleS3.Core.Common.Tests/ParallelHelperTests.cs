@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Genbox.SimpleS3.Core.Common.Helpers;
 
 namespace Genbox.SimpleS3.Core.Common.Tests;
 
+[SuppressMessage("Usage", "VSTHRD003:Avoid awaiting foreign Tasks", Justification = "Concurrency tests deliberately coordinate pre-started operations with test-controlled task signals.")]
 public class ParallelHelperTests
 {
     [Fact]

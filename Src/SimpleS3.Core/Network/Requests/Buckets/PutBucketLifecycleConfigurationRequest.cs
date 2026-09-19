@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Common.Marshal;
@@ -14,6 +15,7 @@ public class PutBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
     }
 
     /// <summary>Provides the <c>PutBucketLifecycleConfigurationRequest</c> API.</summary>
+    [SuppressMessage("Design", "CA1062", Justification = "Initialize consumes the required collection before construction completes; preserve its existing null-input failure behavior.")]
     public PutBucketLifecycleConfigurationRequest(string bucketName, IEnumerable<S3Rule> rules) : this()
     {
         Initialize(bucketName, rules);

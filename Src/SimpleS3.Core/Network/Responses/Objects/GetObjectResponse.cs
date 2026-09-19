@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 
@@ -20,6 +21,7 @@ public class GetObjectResponse : HeadObjectResponse, IHasContent, IHasRequestCha
     public bool RequestCharged { get; internal set; }
 
     /// <summary>Provides the <c>Dispose</c> API.</summary>
+    [SuppressMessage("Usage", "IDISP007", Justification = "The response owns the content stream transferred to it by the network driver.")]
     protected virtual void Dispose(bool disposing)
     {
         if (disposing)

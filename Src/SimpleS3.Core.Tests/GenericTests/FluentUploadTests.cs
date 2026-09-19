@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -10,6 +11,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 public class FluentUploadTests
 {
     [Fact]
+    [SuppressMessage("Usage", "SS059", Justification = "MemoryStream has no asynchronous cleanup.")]
     public async Task CalculateContentMd5HashesRemainingStreamAndRestoresPosition()
     {
         byte[] data = [1, 2, 3, 4];

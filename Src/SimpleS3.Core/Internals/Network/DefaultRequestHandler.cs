@@ -52,7 +52,7 @@ internal sealed partial class DefaultRequestHandler : IRequestHandler
         _requestStreamWrappers = requestStreamWrappers?.ToArray();
     }
 
-    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "Request stream ownership is transferred to the response handler.")]
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "Request stream ownership is transferred to the response handler after preparation succeeds.")]
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP003:Dispose previous before re-assigning", Justification = "Each wrapper assumes ownership of the stream it replaces.")]
     public Task<TResp> SendRequestAsync<TReq, TResp>(TReq request, CancellationToken token = default) where TReq : IRequest where TResp : IResponse, new()
     {

@@ -12,10 +12,13 @@
     <PackageVersion Include="SharpSource" Version="1.33.3" />
     <PackageVersion Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.32.0.713" />
+    <PackageVersion Include="System.IO.Hashing" Version="10.0.0" />
     <!--test packages-->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.0" />
     <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.0" />
+    <!--build packages-->
+    <PackageVersion Include="Fody" Version="6.9.3" />
+    <PackageVersion Include="ConfigureAwait.Fody" Version="3.4.1" />
     <!--dev packages-->
     <PackageVersion Include="MinVer" Version="7.0.0" />
     <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />

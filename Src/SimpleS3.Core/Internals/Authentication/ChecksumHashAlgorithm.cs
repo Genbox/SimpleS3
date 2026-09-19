@@ -1,8 +1,13 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Internals.Authentication;
 
+[SuppressMessage("Security", "S2257", Justification = "CRC32 and CRC64 are non-cryptographic S3 checksums; HashAlgorithm adapts them to the shared streaming checksum API.")]
+[SuppressMessage("Security", "S4790", Justification = "S3 requires this legacy hash for its wire-level checksum; it is not used for password storage or a new signature scheme.")]
+[SuppressMessage("Security", "CA5350", Justification = "S3 requires this legacy hash for its wire-level checksum; it is not used for password storage or a new signature scheme.")]
+[SuppressMessage("Security", "CA5351", Justification = "MD5 is an S3 wire checksum selected by the caller, not a security primitive.")]
 internal static class ChecksumHashAlgorithm
 {
     public static HashAlgorithm Create(ChecksumAlgorithm algorithm) => algorithm switch

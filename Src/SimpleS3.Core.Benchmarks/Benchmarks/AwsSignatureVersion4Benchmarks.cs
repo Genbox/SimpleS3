@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Amazon.Runtime;
 using Amazon.Util;
 using AwsSignatureVersion4.Private;
@@ -26,6 +27,7 @@ public sealed class AwsSignatureVersion4Benchmarks : IDisposable
     public void Dispose() => _request2.Dispose();
 
     [GlobalSetup]
+    [SuppressMessage("Usage", "S1075", Justification = "The benchmark uses a fixed dummy request URI so each signing iteration has identical input.")]
     public void Setup()
     {
         {

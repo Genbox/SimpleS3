@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 namespace Genbox.SimpleS3.Core.Abstracts.Enums;
 
 /// <summary>Provides the <c>ValidationStatus</c> API.</summary>
@@ -13,8 +14,7 @@ public enum ValidationStatus
     WrongLength,
     /// <summary>Provides the <c>WrongFormat</c> API.</summary>
     WrongFormat,
-#pragma warning disable CA1700 // Public API name describes provider-reserved bucket names.
     /// <summary>Provides the <c>ReservedName</c> API.</summary>
+    [SuppressMessage("Naming", "CA1700:Do not name enum values Reserved", Justification = "The public API name describes provider-reserved bucket names.")]
     ReservedName
-#pragma warning restore CA1700
 }

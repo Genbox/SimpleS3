@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Security.Cryptography;
 using Genbox.ProviderTests.Code;
@@ -209,6 +210,7 @@ public class ListObjectVersionsTests : TestBase
         });
     }
 
+    [SuppressMessage("Security", "CA5350", Justification = "S3 requires this legacy hash for its wire-level checksum; it is not used for password storage or a new signature scheme.")]
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task ListObjectsChecksum(S3Provider provider, string _, ISimpleClient client)

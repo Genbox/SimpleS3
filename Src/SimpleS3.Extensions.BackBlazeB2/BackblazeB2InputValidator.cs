@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -6,6 +7,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 namespace Genbox.SimpleS3.Extensions.BackBlazeB2;
 
 /// <summary>Provides the <c>BackblazeB2InputValidator</c> API.</summary>
+[SuppressMessage("Design", "CA1062", Justification = "The public InputValidatorBase entry points handle null input before invoking these protected validation routines.")]
 public class BackblazeB2InputValidator : InputValidatorBase
 {
     /// <summary>Provides the <c>TryValidateKeyIdInternal</c> API.</summary>
