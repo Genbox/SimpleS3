@@ -215,6 +215,7 @@ internal sealed class Upload : IUpload
         req.LockMode = _request.LockMode;
         req.LockRetainUntil = _request.LockRetainUntil;
         req.LockLegalHold = _request.LockLegalHold;
+        req.CalculateContentMd5 = _calculateContentMd5;
 
         return _multipartTransfer.MultipartUploadAsync(req, data, token: token);
     }

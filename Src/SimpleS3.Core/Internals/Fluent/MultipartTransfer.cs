@@ -90,10 +90,12 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             IEnumerable<UploadPartResponse> responses = await ParallelHelper.ExecuteAsync(chunks, async (bytes, innerToken) =>
             {
                 int currentPartNumber = Interlocked.Increment(ref partNumber);
+                byte[]? contentMd5 = req.CalculateContentMd5 ? CryptoHelper.Md5Hash(bytes.Array!, bytes.Offset, bytes.Count) : null;
 
                 using MemoryStream ms = new MemoryStream(bytes.Array!, 0, bytes.Count);
                 UploadPartResponse resp = await multipartClient.UploadPartAsync(bucket, objectKey, currentPartNumber, initResp.UploadId, ms, uploadPart =>
                 {
+                    uploadPart.ContentMd5 = contentMd5;
                     uploadPart.SseCustomerAlgorithm = req.SseCustomerAlgorithm;
                     uploadPart.SseCustomerKey = encryptionKey;
                     uploadPart.SseCustomerKeyMd5 = req.SseCustomerKeyMd5;

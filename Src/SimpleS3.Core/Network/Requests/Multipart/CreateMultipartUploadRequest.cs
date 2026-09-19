@@ -50,6 +50,8 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
     /// <summary>Provides the <c>ChecksumType</c> API.</summary>
     public ChecksumType ChecksumType { get; set; }
 
+    internal bool CalculateContentMd5 { get; set; }
+
     /// <summary>Provides the <c>ContentDisposition</c> API.</summary>
     public ContentDispositionBuilder ContentDisposition { get; internal set; }
 
@@ -172,6 +174,7 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
         StorageClass = StorageClass.Unknown;
         ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
         ChecksumType = ChecksumType.Unknown;
+        CalculateContentMd5 = false;
 
         base.Reset();
     }
