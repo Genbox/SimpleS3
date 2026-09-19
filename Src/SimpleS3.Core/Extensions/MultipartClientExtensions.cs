@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
@@ -13,7 +14,11 @@ namespace Genbox.SimpleS3.Core.Extensions;
 public static class MultipartClientExtensions
 {
     /// <summary>List all multipart uploads</summary>
-    public static async IAsyncEnumerable<S3Upload> ListAllMultipartUploadsAsync(this IMultipartClient client, string bucketName, [EnumeratorCancellation]CancellationToken token = default)
+    public static IAsyncEnumerable<S3Upload> ListAllMultipartUploadsAsync(this IMultipartClient client, string bucketName, CancellationToken token = default) =>
+        ListAllMultipartUploadsAsync(client, bucketName, null, token);
+
+    /// <summary>List all multipart uploads</summary>
+    public static async IAsyncEnumerable<S3Upload> ListAllMultipartUploadsAsync(this IMultipartClient client, string bucketName, Action<ListMultipartUploadsRequest>? config, [EnumeratorCancellation]CancellationToken token = default)
     {
         Validator.RequireNotNull(client);
         Validator.RequireNotNull(bucketName);
@@ -33,6 +38,7 @@ public static class MultipartClientExtensions
                 // DPR-036: S3 multipart pagination requires both key-marker and upload-id-marker.
                 req.KeyMarker = currentKeyMarker;
                 req.UploadIdMarker = currentUploadIdMarker;
+                config?.Invoke(req);
             }, token);
 
             // DPR-036: Do not silently enumerate uploads from failed pages.
