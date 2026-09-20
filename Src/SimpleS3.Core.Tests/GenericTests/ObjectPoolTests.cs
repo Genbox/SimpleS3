@@ -6,18 +6,6 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 public class ObjectPoolTests
 {
     [Fact]
-    public void RentAndUseReturnsObjectWhenActionThrows()
-    {
-        ObjectPool<TestPooledObject> pool = new ObjectPool<TestPooledObject>();
-
-        Assert.Throws<InvalidOperationException>(() => pool.RentAndUse<int>(_ => {}, _ => throw new InvalidOperationException()));
-
-        TestPooledObject rented = pool.Rent(_ => {});
-
-        Assert.Equal(1, rented.ResetCount);
-    }
-
-    [Fact]
     public async Task RentAndUseAsyncReturnsObjectWhenActionThrows()
     {
         ObjectPool<TestPooledObject> pool = new ObjectPool<TestPooledObject>();

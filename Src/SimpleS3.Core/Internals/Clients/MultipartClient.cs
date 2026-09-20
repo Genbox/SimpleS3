@@ -1,5 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
+using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
@@ -10,57 +11,93 @@ internal sealed class MultipartClient(IMultipartOperations operations) : IMultip
 {
     public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default)
     {
-        CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, objectKey);
-        config?.Invoke(req);
+        return ObjectPool<CreateMultipartUploadRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
 
-        return operations.CreateMultipartUploadAsync(req, token);
+        void Setup(CreateMultipartUploadRequest req)
+        {
+            req.Initialize(bucketName, objectKey);
+            config?.Invoke(req);
+        }
+
+        Task<CreateMultipartUploadResponse> ActionAsync(CreateMultipartUploadRequest request) => operations.CreateMultipartUploadAsync(request, token);
     }
 
     public Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default)
     {
-        UploadPartRequest req = new UploadPartRequest(bucketName, objectKey, uploadId, partNumber, content);
-        config?.Invoke(req);
+        return ObjectPool<UploadPartRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
 
-        return operations.UploadPartAsync(req, token);
+        void Setup(UploadPartRequest req)
+        {
+            req.Initialize(bucketName, objectKey, uploadId, partNumber, content);
+            config?.Invoke(req);
+        }
+
+        Task<UploadPartResponse> ActionAsync(UploadPartRequest request) => operations.UploadPartAsync(request, token);
     }
 
     public Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default)
     {
-        UploadPartCopyRequest req = new UploadPartCopyRequest(sourceBucketName, sourceObjectKey, destinationBucketName, destinationObjectKey, uploadId, partNumber);
-        config?.Invoke(req);
+        return ObjectPool<UploadPartCopyRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
 
-        return operations.UploadPartCopyAsync(req, token);
+        void Setup(UploadPartCopyRequest req)
+        {
+            req.Initialize(sourceBucketName, sourceObjectKey, destinationBucketName, destinationObjectKey, uploadId, partNumber);
+            config?.Invoke(req);
+        }
+
+        Task<UploadPartCopyResponse> ActionAsync(UploadPartCopyRequest request) => operations.UploadPartCopyAsync(request, token);
     }
 
     public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default)
     {
-        ListPartsRequest req = new ListPartsRequest(bucketName, objectKey, uploadId);
-        config?.Invoke(req);
+        return ObjectPool<ListPartsRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
 
-        return operations.ListPartsAsync(req, token);
+        void Setup(ListPartsRequest req)
+        {
+            req.Initialize(bucketName, objectKey, uploadId);
+            config?.Invoke(req);
+        }
+
+        Task<ListPartsResponse> ActionAsync(ListPartsRequest request) => operations.ListPartsAsync(request, token);
     }
 
     public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default)
     {
-        CompleteMultipartUploadRequest req = new CompleteMultipartUploadRequest(bucketName, objectKey, uploadId, parts);
-        config?.Invoke(req);
+        return ObjectPool<CompleteMultipartUploadRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
 
-        return operations.CompleteMultipartUploadAsync(req, token);
+        void Setup(CompleteMultipartUploadRequest req)
+        {
+            // ReSharper disable once PossibleMultipleEnumeration
+            req.Initialize(bucketName, objectKey, uploadId, parts);
+            config?.Invoke(req);
+        }
+
+        Task<CompleteMultipartUploadResponse> ActionAsync(CompleteMultipartUploadRequest request) => operations.CompleteMultipartUploadAsync(request, token);
     }
 
     public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default)
     {
-        AbortMultipartUploadRequest req = new AbortMultipartUploadRequest(bucketName, objectKey, uploadId);
-        config?.Invoke(req);
+        return ObjectPool<AbortMultipartUploadRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
 
-        return operations.AbortMultipartUploadAsync(req, token);
+        void Setup(AbortMultipartUploadRequest req)
+        {
+            req.Initialize(bucketName, objectKey, uploadId);
+            config?.Invoke(req);
+        }
+
+        Task<AbortMultipartUploadResponse> ActionAsync(AbortMultipartUploadRequest request) => operations.AbortMultipartUploadAsync(request, token);
     }
 
     public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default)
     {
-        ListMultipartUploadsRequest request = new ListMultipartUploadsRequest(bucketName);
-        config?.Invoke(request);
+        return ObjectPool<ListMultipartUploadsRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
 
-        return operations.ListMultipartUploadsAsync(request, token);
+        void Setup(ListMultipartUploadsRequest req)
+        {
+            req.Initialize(bucketName);
+            config?.Invoke(req);
+        }
+
+        Task<ListMultipartUploadsResponse> ActionAsync(ListMultipartUploadsRequest request) => operations.ListMultipartUploadsAsync(request, token);
     }
 }

@@ -9,8 +9,9 @@ internal class ObjectPool<T>(int maxCapacity = 32) where T : IPooledObject
 {
     public static readonly ObjectPool<T> Shared = new ObjectPool<T>();
     private readonly ConcurrentBag<T> _pool = new ConcurrentBag<T>();
+    private int _count;
 
-    public int Count => _pool.Count;
+    public int Count => Volatile.Read(ref _count);
 
     [SuppressMessage("Major Code Smell", "S3011", Justification = "Pooled implementation types may intentionally expose non-public parameterless constructors.")]
     public T Rent(Action<T> setup)
@@ -18,21 +19,18 @@ internal class ObjectPool<T>(int maxCapacity = 32) where T : IPooledObject
         if (!_pool.TryTake(out T? obj))
             obj = (T)Activator.CreateInstance(typeof(T), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture)!;
 
-        setup(obj);
-        return obj;
-    }
-
-    public TReturn RentAndUse<TReturn>(Action<T> setup, Func<T, TReturn> action)
-    {
-        T obj = Rent(setup);
+        else
+            Interlocked.Decrement(ref _count);
 
         try
         {
-            return action(obj);
+            setup(obj);
+            return obj;
         }
-        finally
+        catch
         {
             Return(obj);
+            throw;
         }
     }
 
@@ -55,21 +53,18 @@ internal class ObjectPool<T>(int maxCapacity = 32) where T : IPooledObject
         //We reset here instead of in Rent() because it frees memory for strings and objects by releasing references.
         obj.Reset();
 
-        if (_pool.Count > maxCapacity)
+        if (Interlocked.Increment(ref _count) > maxCapacity)
+        {
+            Interlocked.Decrement(ref _count);
             return;
+        }
 
         _pool.Add(obj);
     }
 
-    public void Return(IEnumerable<T> objs)
+    public void Return(IEnumerable<T> objects)
     {
-        //We reset here instead of in Rent() because it frees memory for strings and objects by releasing references.
-        foreach (T obj in objs)
-        {
-            obj.Reset();
-
-            if (_pool.Count <= maxCapacity)
-                _pool.Add(obj);
-        }
+        foreach (T obj in objects)
+            Return(obj);
     }
 }
