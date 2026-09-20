@@ -13,9 +13,7 @@ namespace Genbox.SimpleS3.Core.Internals.Authentication;
 internal sealed partial class SigningKeyBuilder : ISigningKeyBuilder
 {
     private readonly SimpleS3Config _config;
-    private readonly byte[] _dateBytes;
     private readonly IAccessKeyProtector? _protector;
-    private readonly byte[] _regionBytes;
     private readonly byte[] _requestBytes;
     private readonly byte[] _schemeBytes;
     private readonly byte[] _serviceBytes;
@@ -28,10 +26,8 @@ internal sealed partial class SigningKeyBuilder : ISigningKeyBuilder
 
         // Cache fixed signing components. RegionCode remains mutable.
         _serviceBytes = "s3"u8.ToArray();
-        _regionBytes = Encoding.UTF8.GetBytes(_config.RegionCode);
         _requestBytes = "aws4_request"u8.ToArray();
         _schemeBytes = Encoding.UTF8.GetBytes(SigningConstants.Scheme);
-        _dateBytes = new byte[8];
     }
 
     public byte[] CreateSigningKey(DateTimeOffset dateTime)
@@ -42,7 +38,7 @@ internal sealed partial class SigningKeyBuilder : ISigningKeyBuilder
         //https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
         //Documentation says the key is valid for 7 days, but tests shows that is not true.
         string date = dateTime.ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo);
-        Encoding.UTF8.GetBytes(date, 0, date.Length, _dateBytes, 0);
+        byte[] dateBytes = Encoding.UTF8.GetBytes(date);
 
         byte[] accessKey = KeyHelper.UnprotectKey(_config.Credentials.SecretKey, _protector);
 
@@ -54,12 +50,13 @@ internal sealed partial class SigningKeyBuilder : ISigningKeyBuilder
         if (_protector != null)
             Array.Clear(accessKey, 0, accessKey.Length);
 
-        byte[] hashDate = CryptoHelper.HmacSign(_dateBytes, key);
+        byte[] hashDate = CryptoHelper.HmacSign(dateBytes, key);
 
         //Security: clear key material
+        Array.Clear(dateBytes, 0, dateBytes.Length);
         Array.Clear(key, 0, key.Length);
 
-        byte[] hashRegion = CryptoHelper.HmacSign(_regionBytes, hashDate);
+        byte[] hashRegion = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(_config.RegionCode), hashDate);
         byte[] hashService = CryptoHelper.HmacSign(_serviceBytes, hashRegion);
         byte[] signingKey = CryptoHelper.HmacSign(_requestBytes, hashService);
 
