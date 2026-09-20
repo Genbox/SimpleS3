@@ -42,6 +42,9 @@ public class ConsoleProfileSetup(IProfileManager profileManager, IInputValidator
 
                 key = Console.ReadKey(true).Key;
             } while (key != ConsoleKey.Y && key != ConsoleKey.N);
+
+            if (key == ConsoleKey.N)
+                Array.Clear(accessKey, 0, accessKey.Length);
         } while (key == ConsoleKey.N);
 
         IProfile profile = profileManager.CreateProfile(profileName, enteredKeyId, accessKey, region.Code, out string? location, persist);
@@ -165,7 +168,7 @@ public class ConsoleProfileSetup(IProfileManager profileManager, IInputValidator
 
             if (enteredRegion != null)
             {
-                if (int.TryParse(enteredRegion, out int index) && index >= 0 && index <= counter)
+                if (int.TryParse(enteredRegion, out int index) && index > 0 && index <= counter)
                     return regionConverter.GetRegion(index);
 
                 if (validRegionId.Contains(enteredRegion))
