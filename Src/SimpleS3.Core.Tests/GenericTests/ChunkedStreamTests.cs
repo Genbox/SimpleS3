@@ -17,6 +17,28 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 public class ChunkedStreamTests
 {
     [Theory]
+    [InlineData(8095, false)]
+    [InlineData(8096, false)]
+    [InlineData(8191, false)]
+    [InlineData(8192, true)]
+    public void ConfigRejectsChunkSizesBelowEightKiB(int size, bool expectedValid)
+    {
+        SimpleS3Config config = new SimpleS3Config(null, "{:Scheme}://{:Bucket:.}s3.example.test", "region") { StreamingChunkSize = size };
+        Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs.ConfigValidator validator = new Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs.ConfigValidator(new FluentValidation.InlineValidator<IAccessKey?>());
+        FluentValidation.Results.ValidationResult result = validator.Validate(config);
+        Assert.Equal(expectedValid, result.IsValid);
+
+        if (!expectedValid)
+        {
+            FluentValidation.Results.ValidationFailure error = Assert.Single(result.Errors);
+            Assert.Equal(nameof(SimpleS3Config.StreamingChunkSize), error.PropertyName);
+            Assert.Contains("8192", error.ErrorMessage, StringComparison.Ordinal);
+        }
+
+        Assert.Equal(size, config.StreamingChunkSize);
+    }
+
+    [Theory]
     [InlineData(0)]
     [InlineData(1)]
     [InlineData(8192)]

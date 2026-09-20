@@ -21,7 +21,7 @@ internal sealed class ConfigValidator : ConfigValidatorBase<SimpleS3Config>
         RuleFor(x => x.ObjectKeyValidationMode).IsInEnum().Must(x => x != ObjectKeyValidationMode.Unknown).WithMessage("You must provide a valid object key validation mode");
         RuleFor(x => x.Credentials).SetValidator(validator);
 
-        //See https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
-        RuleFor(x => x.StreamingChunkSize).GreaterThanOrEqualTo(8096).WithMessage("Please specify a chunk size of more than or equal to 8096 bytes");
+        //See https://docs.aws.amazon.com/AmazonS3/latest/developerguide/sigv4-streaming.html
+        RuleFor(x => x.StreamingChunkSize).GreaterThanOrEqualTo(8192).WithMessage("Please specify a chunk size of more than or equal to 8192 bytes");
     }
 }

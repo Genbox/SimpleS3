@@ -13,7 +13,7 @@ public class NonSeekableStreamTests(ITestOutputHelper helper) : OfflineTestBase(
     protected override void ConfigureConfig(SimpleS3Config config)
     {
         //We force streaming signatures as it is the only one that supports non-seekable streams
-        config.StreamingChunkSize = 8096;
+        config.StreamingChunkSize = 8192;
         config.PayloadSignatureMode = SignatureMode.StreamingSignature;
 
         base.ConfigureConfig(config);
