@@ -56,6 +56,8 @@ public class MultipartTransferTests
     }
 
     [Fact]
+    [SuppressMessage("Usage", "VSTHRD003", Justification = "The test starts the upload, waits for its read signal, and then cancels and observes the upload.")]
+    [SuppressMessage("Usage", "CA2025", Justification = "The finally block cancels and awaits the upload before disposing its input stream and cancellation source.")]
     public async Task MultipartUploadAsyncPassesCancellationTokenToChunkReads()
     {
         FakeMultipartApi multipartApi = new FakeMultipartApi();
@@ -63,10 +65,18 @@ public class MultipartTransferTests
         await using BlockingReadStream data = new BlockingReadStream();
         using CancellationTokenSource cts = new CancellationTokenSource();
 
-        await data.ReadStarted.Task.WaitAsync(TestContext.Current.CancellationToken);
-        await cts.CancelAsync();
+        Task<CompleteMultipartUploadResponse> uploadTask = transfer.MultipartUploadAsync("bucket", "object", data, 1, 1, token: cts.Token);
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await transfer.MultipartUploadAsync("bucket", "object", data, 1, 1, token: cts.Token));
+        try
+        {
+            await data.ReadStarted.Task.WaitAsync(TestContext.Current.CancellationToken);
+        }
+        finally
+        {
+            await cts.CancelAsync();
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => uploadTask);
+        }
+
         Assert.True(data.CapturedToken.IsCancellationRequested);
     }
 
