@@ -12,9 +12,9 @@ internal static class ErrorHandler
 
         // S3-002: Embedded HTTP-200 errors may already be positioned on the Error root.
         if (xmlReader.NodeType != XmlNodeType.Element || xmlReader.LocalName != "Error")
-            xmlReader.ReadToDescendant("Error");
+            XmlHelper.ReadToDescendant(xmlReader, "Error");
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
             lookup.Add(name, xmlReader.ReadString());
 
         string code = lookup["Code"];
