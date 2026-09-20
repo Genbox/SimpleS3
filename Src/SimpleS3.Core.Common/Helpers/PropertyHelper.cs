@@ -11,19 +11,13 @@ public static class PropertyHelper
         if (source == null || destination == null)
             return;
 
-        Type sourceType = source.GetType();
-        PropertyInfo[] sourceProperties = sourceType.GetProperties();
-
-        Type destType = destination.GetType();
-        PropertyInfo[] destProperties = destType.GetProperties();
-
+        PropertyInfo[] properties = typeof(T2).GetProperties(BindingFlags.Instance | BindingFlags.Public);
         T2 defaultDestObj = new T2();
 
-        int diff = sourceProperties.Length - destProperties.Length;
-
-        for (int i = 0; i < destProperties.Length; i++)
+        foreach (PropertyInfo prop in properties)
         {
-            PropertyInfo prop = sourceProperties[i + diff];
+            if (!prop.CanRead || !prop.CanWrite || prop.GetIndexParameters().Length != 0)
+                continue;
 
             object? sourceVal = prop.GetValue(source, null);
             object? destVal = prop.GetValue(destination, null);
