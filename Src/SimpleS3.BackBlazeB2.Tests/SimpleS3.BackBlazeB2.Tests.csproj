@@ -1,7 +1,3 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\SimpleS3.BackBlazeB2\SimpleS3.BackBlazeB2.csproj" />
-  </ItemGroup>
-
 </Project>

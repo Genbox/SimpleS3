@@ -1,7 +1,3 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\SimpleS3.AmazonS3\SimpleS3.AmazonS3.csproj" />
-  </ItemGroup>
-
 </Project>

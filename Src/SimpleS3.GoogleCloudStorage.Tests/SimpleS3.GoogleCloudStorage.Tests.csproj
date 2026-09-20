@@ -1,7 +1,3 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\SimpleS3.GoogleCloudStorage\SimpleS3.GoogleCloudStorage.csproj" />
-  </ItemGroup>
-
 </Project>
