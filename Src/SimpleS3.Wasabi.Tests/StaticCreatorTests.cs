@@ -11,7 +11,7 @@ public class StaticCreatorTests
     {
         NullNetworkDriver driver = new NullNetworkDriver();
 
-        WasabiConfig config = new WasabiConfig("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", WasabiRegion.EuCentral1);
+        WasabiConfig config = new WasabiConfig("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", WasabiRegion.EuCentral1);
         using WasabiClient client = new WasabiClient(config, driver);
 
         using GetObjectResponse response = await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken);

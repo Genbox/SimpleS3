@@ -11,7 +11,7 @@ public class StaticCreatorTests
     {
         NullNetworkDriver driver = new NullNetworkDriver();
 
-        BackBlazeB2Config config = new BackBlazeB2Config("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", BackBlazeB2Region.UsWest001);
+        BackBlazeB2Config config = new BackBlazeB2Config("61a951f6abb8", "0000000000000000000000000000000", BackBlazeB2Region.UsWest001);
         using BackBlazeB2Client client = new BackBlazeB2Client(config, driver);
 
         using GetObjectResponse response = await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken);
