@@ -13,4 +13,9 @@
     <ProjectReference Include="..\SimpleS3.Core.Common\SimpleS3.Core.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)ProviderTests" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.AmazonS3.Tests" />
+  </ItemGroup>
+
 </Project>
