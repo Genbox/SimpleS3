@@ -56,7 +56,7 @@ public class DefaultResponseHandlerTests
         using ILoggerFactory loggerFactory = new LoggerFactory();
         DefaultResponseHandler handler = new DefaultResponseHandler(Options.Create(new SimpleS3Config()),
             new NoopRequestValidatorFactory(),
-            new NoopMarshalFactory(),
+            new SuccessMarshalFactory(),
             new NoopPostMapperFactory(),
             new StubNetworkDriver(null, 200, new Dictionary<string, string>(StringComparer.Ordinal) { ["connection"] = "close" }),
             loggerFactory.CreateLogger<DefaultResponseHandler>());
@@ -70,6 +70,11 @@ public class DefaultResponseHandlerTests
         public Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken token = default) where T : IResponse => Task.FromResult(new HttpResponse(content, headers ?? new Dictionary<string, string>(StringComparer.Ordinal), statusCode));
     }
 
+    private sealed class SuccessMarshalFactory : IMarshalFactory
+    {
+        public Stream? MarshalRequest<TRequest>(SimpleS3Config config, TRequest request) where TRequest : IRequest => throw new NotSupportedException();
+        public void MarshalResponse<TResponse>(SimpleS3Config config, TResponse response, IDictionary<string, string> headers, ContentStream responseStream) where TResponse : IResponse {}
+    }
     private sealed class NoopMarshalFactory : IMarshalFactory
     {
         public Stream? MarshalRequest<TRequest>(SimpleS3Config config, TRequest request) where TRequest : IRequest => throw new NotSupportedException();
