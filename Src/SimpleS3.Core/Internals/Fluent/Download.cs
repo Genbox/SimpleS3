@@ -86,15 +86,23 @@ internal sealed class Download : IDownload
         return this;
     }
 
-    public Task<GetObjectResponse> DownloadAsync(CancellationToken token = default) => _operations.GetObjectAsync(_request, token);
+    public Task<GetObjectResponse> DownloadAsync(CancellationToken token = default)
+    {
+        GetObjectRequest request = new GetObjectRequest(_request.BucketName, _request.ObjectKey);
+        CopyProperties(request);
+        return _operations.GetObjectAsync(request, token);
+    }
 
-    private void CopyProperties(GetObjectRequest req)
+    internal void CopyProperties(GetObjectRequest req)
     {
         int? partNum = req.PartNumber;
 
-        req.Range = _request.Range;
-        req.IfETagMatch = _request.IfETagMatch;
-        req.IfETagNotMatch = _request.IfETagNotMatch;
+        if (_request.Range.HasData())
+            req.Range = _request.Range;
+        if (_request.IfETagMatch.HasData())
+            req.IfETagMatch.Set(_request.IfETagMatch.Build());
+        if (_request.IfETagNotMatch.HasData())
+            req.IfETagNotMatch.Set(_request.IfETagNotMatch.Build());
         req.IfModifiedSince = _request.IfModifiedSince;
         req.IfUnmodifiedSince = _request.IfUnmodifiedSince;
         req.RequestPayer = _request.RequestPayer;
@@ -102,6 +110,6 @@ internal sealed class Download : IDownload
         req.SseCustomerKey = _request.SseCustomerKey;
         req.SseCustomerKeyMd5 = _request.SseCustomerKeyMd5;
         req.VersionId = _request.VersionId;
-        req.PartNumber = partNum;
+        req.PartNumber = _request.PartNumber ?? partNum;
     }
 }
