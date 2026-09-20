@@ -23,7 +23,7 @@ internal static class ValueHelper
             // S3-017: S3 timestamp formats carrying Z/GMT are parsed and normalized as UTC.
             DateTimeFormat.Iso8601Date => DateTimeOffset.TryParseExact(value, DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTimeOffset result) ? result : DateTimeOffset.MinValue,
             DateTimeFormat.Iso8601DateTime => DateTimeOffset.TryParseExact(value, DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTimeOffset result) ? result : DateTimeOffset.MinValue,
-            DateTimeFormat.Iso8601DateTimeExt => DateTimeOffset.TryParseExact(value, DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTimeOffset result) ? result : DateTimeOffset.MinValue,
+            DateTimeFormat.Iso8601DateTimeExt => DateTimeOffset.TryParseExact(value, DateTimeFormats.Iso8601DateTimeExtendedWithOffset, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTimeOffset result) ? result : DateTimeOffset.MinValue,
             DateTimeFormat.Rfc1123 => DateTimeOffset.TryParseExact(value, DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTimeOffset result) ? result : DateTimeOffset.MinValue,
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
