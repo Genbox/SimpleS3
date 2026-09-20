@@ -11,12 +11,17 @@ using Microsoft.Extensions.Options;
 namespace Genbox.SimpleS3.Extensions.HttpClient;
 
 /// <summary>Provides the <c>HttpClientNetworkDriver</c> API.</summary>
-public sealed partial class HttpClientNetworkDriver(IOptionsMonitor<HttpClientConfig> options, ILogger<HttpClientNetworkDriver> logger, System.Net.Http.HttpClient client, string optionsName) : INetworkDriver
+/// <remarks>The supplied HTTP client is owned by this driver and is disposed with it.</remarks>
+public sealed partial class HttpClientNetworkDriver(IOptionsMonitor<HttpClientConfig> options, ILogger<HttpClientNetworkDriver> logger, System.Net.Http.HttpClient client, string optionsName) : INetworkDriver, IDisposable
 {
     private readonly HttpClientConfig _config = options.Get(optionsName);
     private readonly Version _httpVersion1 = new Version("1.1");
     private readonly Version _httpVersion2 = new Version("2.0");
     private readonly Version _httpVersion3 = new Version("3.0");
+
+    /// <summary>Disposes the owned HTTP client and its handler.</summary>
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP007:Don't dispose injected", Justification = "The constructor transfers HTTP client ownership to the driver.")]
+    public void Dispose() => client.Dispose();
 
     /// <summary>Provides the <c>SendRequestAsync&lt;T&gt;</c> API.</summary>
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "Transport response ownership is transferred to the returned response content.")]
