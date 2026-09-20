@@ -28,9 +28,14 @@ public static class StreamExtensions
     /// <summary>Provides the <c>CopyToFileAsync</c> API.</summary>
     public static async Task CopyToFileAsync(this Stream stream, string file, CancellationToken token = default)
     {
+        if (stream == null)
+            throw new ArgumentNullException(nameof(stream));
+
+        token.ThrowIfCancellationRequested();
+
         string? dir = Path.GetDirectoryName(file);
 
-        if (dir != null && !Directory.Exists(dir))
+        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
             Directory.CreateDirectory(dir);
 
         // S3-006: Create truncates an existing destination so stale trailing bytes cannot remain.
