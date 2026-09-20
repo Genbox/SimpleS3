@@ -15,7 +15,7 @@ internal sealed class PutBucketEncryptionRequestMarshal : IRequestMarshal<PutBuc
         request.SetQueryParameter(AmzParameters.Encryption, string.Empty);
 
         FastXmlWriter writer = new FastXmlWriter(300);
-        writer.WriteStartElement("ServerSideEncryptionConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("ServerSideEncryptionConfiguration", XmlConstants.S3Namespace);
 
         foreach (S3ServerSideEncryptionRule rule in request.Rules)
         {

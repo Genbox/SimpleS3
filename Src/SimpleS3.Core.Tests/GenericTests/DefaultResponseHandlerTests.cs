@@ -23,8 +23,7 @@ public class DefaultResponseHandlerTests
         using ILoggerFactory loggerFactory = new LoggerFactory();
         await using CancelingReadStream innerStream = new CancelingReadStream(cts.Token);
         await using ContentStream content = new ContentStream(innerStream, null);
-        DefaultResponseHandler handler = new DefaultResponseHandler(
-            Options.Create(new SimpleS3Config()),
+        DefaultResponseHandler handler = new DefaultResponseHandler(Options.Create(new SimpleS3Config()),
             new NoopRequestValidatorFactory(),
             new NoopMarshalFactory(),
             new NoopPostMapperFactory(),
@@ -38,8 +37,7 @@ public class DefaultResponseHandlerTests
     public async Task HandleResponseAsyncTreatsRedirectAsFailure()
     {
         using ILoggerFactory loggerFactory = new LoggerFactory();
-        DefaultResponseHandler handler = new DefaultResponseHandler(
-            Options.Create(new SimpleS3Config()),
+        DefaultResponseHandler handler = new DefaultResponseHandler(Options.Create(new SimpleS3Config()),
             new NoopRequestValidatorFactory(),
             new NoopMarshalFactory(),
             new NoopPostMapperFactory(),
@@ -54,10 +52,7 @@ public class DefaultResponseHandlerTests
 
     private sealed class StubNetworkDriver(ContentStream? content, int statusCode) : INetworkDriver
     {
-        public Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
-        {
-            return Task.FromResult(new HttpResponse(content, new Dictionary<string, string>(), statusCode));
-        }
+        public Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken token = default) where T : IResponse => Task.FromResult(new HttpResponse(content, new Dictionary<string, string>(StringComparer.Ordinal), statusCode));
     }
 
     private sealed class NoopMarshalFactory : IMarshalFactory

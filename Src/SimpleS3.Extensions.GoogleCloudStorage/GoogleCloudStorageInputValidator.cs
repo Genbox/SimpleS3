@@ -139,7 +139,7 @@ public class GoogleCloudStorageInputValidator : InputValidatorBase
             return false;
         }
 
-        //Spec: Objects cannot be named . or ...
+        //Spec: Objects cannot be named . or ..
         if (objectKey.Length == 1 && objectKey[0] == '.')
         {
             status = ValidationStatus.WrongFormat;

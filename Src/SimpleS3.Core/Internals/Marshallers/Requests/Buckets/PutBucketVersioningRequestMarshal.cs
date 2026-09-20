@@ -13,7 +13,7 @@ internal sealed class PutBucketVersioningRequestMarshal : IRequestMarshal<PutBuc
         request.SetQueryParameter(AmzParameters.Versioning, string.Empty);
 
         FastXmlWriter writer = new FastXmlWriter(128);
-        writer.WriteStartElement("VersioningConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("VersioningConfiguration", XmlConstants.S3Namespace);
         writer.WriteElement("Status", request.Status ? "Enabled" : "Suspended");
 
         string? mfa = request.Mfa.Build();

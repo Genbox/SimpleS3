@@ -15,7 +15,7 @@ internal abstract class BaseFailingHttpHandler : HttpMessageHandler
     protected static HttpContent GetEmptyXmlContent() => new StringContent(string.Empty, Encoding.UTF8, MediaTypeNames.Application.Xml);
 
     [SuppressMessage("Usage", "SS059", Justification = "MemoryStream has no asynchronous cleanup.")]
-    protected async Task ConsumeRequestAsync(HttpRequestMessage request)
+    protected async Task ConsumeRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         using MemoryStream ms = new MemoryStream();
 
@@ -24,7 +24,7 @@ internal abstract class BaseFailingHttpHandler : HttpMessageHandler
         // Mimick regular HTTP handler, and use CopyToAsync() to let the HttpContent _write_ to our network stream
         // Using ReadAsStreamAsync() is entirely different, and will always buffer/reuse the retrieved stream (meant for _reading_ from the network)
         if (request.Content != null)
-            await request.Content.CopyToAsync(ms).ConfigureAwait(false);
+            await request.Content.CopyToAsync(ms, cancellationToken);
 
         RequestBodies.Add(ms.ToArray());
 

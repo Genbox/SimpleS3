@@ -1,5 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 
@@ -42,7 +42,7 @@ internal class ObjectPool<T>(int maxCapacity = 32) where T : IPooledObject
 
         try
         {
-            return await action(obj).ConfigureAwait(false);
+            return await action(obj);
         }
         finally
         {

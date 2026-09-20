@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 using Genbox.SimpleS3.Core.Common.Pools;
 
@@ -12,7 +13,7 @@ public static class UrlHelper
 {
     //Valid URL characters according to RFC3986: https://tools.ietf.org/html/rfc3986#section-2.3
     private const string _validUrlCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-    private static readonly HashSet<byte> _validUrlLookup = [..BuildLookup(_validUrlCharacters)];
+    private static readonly HashSet<byte> _validUrlLookup = new HashSet<byte>(BuildLookup(_validUrlCharacters));
 
     private static IEnumerable<byte> BuildLookup(string charList)
     {
@@ -44,9 +45,9 @@ public static class UrlHelper
     {
         // S3-010: Resolve the runtime-specific option from the same core library as Uri.
         Type? optionsType = typeof(Uri).Assembly.GetType("System.UriCreationOptions");
-        System.Reflection.MethodInfo? method = typeof(Uri).GetMethods().FirstOrDefault(x =>
+        MethodInfo? method = typeof(Uri).GetMethods().FirstOrDefault(x =>
         {
-            System.Reflection.ParameterInfo[] parameters = x.GetParameters();
+            ParameterInfo[] parameters = x.GetParameters();
             return x.Name == nameof(Uri.TryCreate) && parameters.Length == 3 && parameters[1].ParameterType.GetElementType() == optionsType;
         });
 

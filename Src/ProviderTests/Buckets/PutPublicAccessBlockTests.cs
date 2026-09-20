@@ -9,12 +9,9 @@ public class PutPublicAccessBlockTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task PutPublicAccessBlockRequest(S3Provider provider, string _, ISimpleClient client)
+    public async Task PutPublicAccessBlockRequest(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
-        await CreateTempBucketAsync(provider, client, async tempBucket =>
-        {
-            PutPublicAccessBlockResponse resp = await client.PutPublicAccessBlockAsync(tempBucket);
-            Assert.Equal(200, resp.StatusCode);
-        });
-    }
+        PutPublicAccessBlockResponse resp = await client.PutPublicAccessBlockAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, resp.StatusCode);
+    });
 }

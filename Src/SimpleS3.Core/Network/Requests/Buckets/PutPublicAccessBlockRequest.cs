@@ -63,10 +63,7 @@ public class PutPublicAccessBlockRequest : BaseRequest, IHasBucketName
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
-    internal void Initialize(string bucketName)
-    {
-        BucketName = bucketName;
-    }
+    internal void Initialize(string bucketName) => BucketName = bucketName;
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()

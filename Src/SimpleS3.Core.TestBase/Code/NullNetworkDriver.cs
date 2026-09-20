@@ -11,9 +11,9 @@ public class NullNetworkDriver : INetworkDriver
 
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "The returned ContentStream owns and disposes the memory stream.")]
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP004:Don't ignore created IDisposable", Justification = "The returned ContentStream owns and disposes the memory stream.")]
-    public Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
+    public Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken token = default) where T : IResponse
     {
         LastUrl = url;
-        return Task.FromResult(new HttpResponse(null, new Dictionary<string, string>(), 200));
+        return Task.FromResult(new HttpResponse(null, new Dictionary<string, string>(StringComparer.Ordinal), 200));
     }
 }

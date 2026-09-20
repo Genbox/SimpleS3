@@ -17,13 +17,15 @@ public class PutBucketPolicyRequest : BaseRequest, IHasBucketName, IHasContentMd
 
     /// <summary>Provides the <c>ConfirmRemoveSelfBucketAccess</c> API.</summary>
     public bool ConfirmRemoveSelfBucketAccess { get; set; }
-    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
-    public byte[]? ContentMd5 { get; set; }
+
     /// <summary>Provides the <c>Policy</c> API.</summary>
-    public string Policy { get; set; }
+    public string Policy { get; set; } = null!;
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
-    public string BucketName { get; set; }
+    public string BucketName { get; set; } = null!;
+
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
+    public byte[]? ContentMd5 { get; set; }
 
     internal void Initialize(string bucketName, string policy)
     {

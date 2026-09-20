@@ -15,6 +15,7 @@ public class InvalidArgumentError : GenericError
 
     /// <summary>Provides the <c>ArgumentName</c> API.</summary>
     public string? ArgumentName { get; }
+
     /// <summary>Provides the <c>ArgumentValue</c> API.</summary>
     public string? ArgumentValue { get; }
 

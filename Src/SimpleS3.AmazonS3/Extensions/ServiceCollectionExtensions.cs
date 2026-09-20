@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.AmazonS3.Extensions;
 
-/// <summary>Provides the <c>ServiceCollectionExtensions</c> API.</summary>
+/// <summary>Provides Amazon S3 registration extensions.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>Add SimpleS3 services to a service collection.</summary>
@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
     public static IClientBuilder AddAmazonS3(this IServiceCollection collection, Action<AmazonS3Config, IServiceProvider> config)
     {
         collection.Configure(config);
-        return AddAmazonS3(collection);
+        return collection.AddAmazonS3();
     }
 
     /// <summary>Add SimpleS3 services to a service collection.</summary>
@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
     public static IClientBuilder AddAmazonS3(this IServiceCollection collection, Action<AmazonS3Config> config)
     {
         collection.Configure(config);
-        return AddAmazonS3(collection);
+        return collection.AddAmazonS3();
     }
 
     /// <summary>Add SimpleS3 services to a service collection.</summary>

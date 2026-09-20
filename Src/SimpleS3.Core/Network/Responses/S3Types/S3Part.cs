@@ -7,10 +7,13 @@ public class S3Part(int partNumber, DateTimeOffset lastModified, long size, stri
 {
     /// <summary>Provides the <c>PartNumber</c> API.</summary>
     public int PartNumber { get; } = partNumber;
+
     /// <summary>Provides the <c>LastModified</c> API.</summary>
     public DateTimeOffset LastModified { get; } = lastModified;
+
     /// <summary>Provides the <c>Size</c> API.</summary>
     public long Size { get; } = size;
+
     /// <summary>Provides the <c>ETag</c> API.</summary>
     public string? ETag { get; } = eTag;
 

@@ -2,7 +2,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
@@ -14,7 +13,7 @@ internal sealed class PutBucketRequestPaymentRequestMarshal : IRequestMarshal<Pu
     {
         request.SetQueryParameter(AmzParameters.RequestPayment, string.Empty);
         FastXmlWriter writer = new FastXmlWriter(128);
-        writer.WriteStartElement("RequestPaymentConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("RequestPaymentConfiguration", XmlConstants.S3Namespace);
         if (request.Payer != RequestPaymentPayer.Unknown)
             writer.WriteElement("Payer", request.Payer.GetString());
         writer.WriteEndElement("RequestPaymentConfiguration");

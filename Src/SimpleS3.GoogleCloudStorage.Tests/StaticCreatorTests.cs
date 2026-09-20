@@ -1,3 +1,4 @@
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.GoogleCloudStorage;
 
@@ -13,7 +14,7 @@ public class StaticCreatorTests
         GoogleCloudStorageConfig config = new GoogleCloudStorageConfig("GOOGTS7C7FUP3AIRVJTE2BCDKINBTES3HC2GY5CBFJDCQ2SYHV6A6XXVTJFSA", "bGoa+V7g/yqDXvKRqq+JTFn4uQZbPiQJo4pf9RzJ", GoogleCloudStorageRegion.EuropeWest1);
         using GoogleCloudStorageClient client = new GoogleCloudStorageClient(config, driver);
 
-        await using Stream content = (await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken)).Content;
+        using GetObjectResponse response = await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken);
         Assert.Equal("https://testbucket.storage.googleapis.com/GetObjectAsync", driver.LastUrl);
     }
 }

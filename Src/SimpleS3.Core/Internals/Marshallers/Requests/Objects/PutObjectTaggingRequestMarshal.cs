@@ -13,7 +13,7 @@ internal sealed class PutObjectTaggingRequestMarshal : IRequestMarshal<PutObject
         request.SetQueryParameter(AmzParameters.Tagging, string.Empty);
 
         FastXmlWriter writer = new FastXmlWriter(512);
-        writer.WriteStartElement("Tagging", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("Tagging", XmlConstants.S3Namespace);
         writer.WriteStartElement("TagSet");
 
         foreach (KeyValuePair<string, string> tag in request.Tags)

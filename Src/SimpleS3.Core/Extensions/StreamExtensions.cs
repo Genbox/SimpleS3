@@ -10,7 +10,7 @@ public static class StreamExtensions
     public static async Task<byte[]> AsDataAsync(this Stream stream, CancellationToken token = default)
     {
         using MemoryStream ms = new MemoryStream();
-        await stream.CopyToAsync(ms, 81920, token).ConfigureAwait(false);
+        await stream.CopyToAsync(ms, 81920, token);
 
         return ms.ToArray();
     }
@@ -20,7 +20,7 @@ public static class StreamExtensions
     {
         encoding ??= Constants.Utf8NoBom;
 
-        byte[] data = await AsDataAsync(stream, token).ConfigureAwait(false);
+        byte[] data = await stream.AsDataAsync(token);
         return encoding.GetString(data);
     }
 
@@ -34,6 +34,6 @@ public static class StreamExtensions
 
         // S3-006: Create truncates an existing destination so stale trailing bytes cannot remain.
         using FileStream fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.None);
-        await stream.CopyToAsync(fs, 81920, token).ConfigureAwait(false);
+        await stream.CopyToAsync(fs, 81920, token);
     }
 }

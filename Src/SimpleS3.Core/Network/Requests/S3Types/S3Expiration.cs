@@ -6,7 +6,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 public class S3Expiration
 {
     /// <summary>Set a future date where the objects should expire.</summary>
-    /// <param name="expireOn">Indicates at what date the object is to be moved or deleted</param>
+    /// <param name="expireOn">The expiration date. S3 request serialization converts this value to UTC and uses midnight at the start of that UTC calendar day. The supplied value is retained in this object.</param>
     public S3Expiration(DateTimeOffset expireOn)
     {
         ExpireOnDate = expireOn;
@@ -37,8 +37,10 @@ public class S3Expiration
 
     /// <summary>Provides the <c>ExpireOnDate</c> API.</summary>
     public DateTimeOffset? ExpireOnDate { get; }
+
     /// <summary>Provides the <c>ExpireAfterDays</c> API.</summary>
     public int? ExpireAfterDays { get; }
+
     /// <summary>Provides the <c>ExpireObjectDeleteMarker</c> API.</summary>
     public bool? ExpireObjectDeleteMarker { get; }
 }

@@ -48,28 +48,22 @@ internal static class ValueHelper
 
     public static string LongToString(long value) => value.ToString(NumberFormatInfo.InvariantInfo);
 
-    public static string DateToString(DateTime date, DateTimeFormat format)
+    public static string DateToString(DateTime date, DateTimeFormat format) => format switch
     {
-        return format switch
-        {
-            // S3-017: Formats with a literal Z/GMT must be generated from UTC values.
-            DateTimeFormat.Iso8601Date => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo),
-            DateTimeFormat.Iso8601DateTime => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo),
-            DateTimeFormat.Iso8601DateTimeExt => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo),
-            DateTimeFormat.Rfc1123 => date.ToUniversalTime().ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo),
-            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
-        };
-    }
+        // S3-017: Formats with a literal Z/GMT must be generated from UTC values.
+        DateTimeFormat.Iso8601Date => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo),
+        DateTimeFormat.Iso8601DateTime => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo),
+        DateTimeFormat.Iso8601DateTimeExt => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo),
+        DateTimeFormat.Rfc1123 => date.ToUniversalTime().ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo),
+        _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+    };
 
-    public static string DateToString(DateTimeOffset date, DateTimeFormat format)
+    public static string DateToString(DateTimeOffset date, DateTimeFormat format) => format switch
     {
-        return format switch
-        {
-            DateTimeFormat.Iso8601Date => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo),
-            DateTimeFormat.Iso8601DateTime => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo),
-            DateTimeFormat.Iso8601DateTimeExt => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo),
-            DateTimeFormat.Rfc1123 => date.ToUniversalTime().ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo),
-            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
-        };
-    }
+        DateTimeFormat.Iso8601Date => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo),
+        DateTimeFormat.Iso8601DateTime => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo),
+        DateTimeFormat.Iso8601DateTimeExt => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo),
+        DateTimeFormat.Rfc1123 => date.ToUniversalTime().ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo),
+        _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+    };
 }

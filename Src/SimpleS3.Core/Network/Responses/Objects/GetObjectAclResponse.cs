@@ -13,9 +13,11 @@ public class GetObjectAclResponse : BaseResponse, IHasRequestCharged
     }
 
     /// <summary>Provides the <c>Owner</c> API.</summary>
-    public S3Identity Owner { get; internal set; }
+    public S3Identity? Owner { get; internal set; }
+
     /// <summary>Provides the <c>Grants</c> API.</summary>
     public IList<S3Grant> Grants { get; }
+
     /// <summary>Provides the <c>RequestCharged</c> API.</summary>
     public bool RequestCharged { get; internal set; }
 }

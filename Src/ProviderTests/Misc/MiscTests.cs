@@ -13,7 +13,7 @@ public class MiscTests : TestBase
     public async Task IsEncodingCorrect(S3Provider _, string bucket, ISimpleClient client)
     {
         //This tests if '=' is NOT encoded. S3 does not use encoding of paths in signed requests, but all other AWS APIs do
-        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, "a=a", "hello");
+        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, "a=a", "hello", token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
     }
 
@@ -22,10 +22,10 @@ public class MiscTests : TestBase
     public async Task StreamReturnsLength(S3Provider _, string bucket, ISimpleClient client)
     {
         //We need a file to test with
-        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, "testfile", "hello world");
+        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, "testfile", "hello world", token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, "testfile");
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, "testfile", token: TestContext.Current.CancellationToken);
         Assert.True(getResp.Content.HasLength);
         Assert.Equal(11, getResp.Content.Length);
     }

@@ -11,6 +11,7 @@ using Genbox.SimpleS3.Extensions.AmazonS3;
 namespace Genbox.SimpleS3.Examples;
 
 [SuppressMessage("Usage", "MA0032:Use an overload with a CancellationToken", Justification = "The introductory example intentionally uses convenience overloads for clarity.")]
+[SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "These examples dispose downloaded response content with await using.")]
 internal static class Program
 {
     private static async Task Main()
@@ -26,41 +27,38 @@ internal static class Program
         const string objectName = "some-object";
 
         //First we create the a bucket.
-        await client.CreateBucketAsync(bucketName).ConfigureAwait(false);
+        await client.CreateBucketAsync(bucketName);
 
         //Upload then download an object using the normal API.
-        await UploadDownloadStandard(client, bucketName, objectName).ConfigureAwait(false);
+        await UploadDownloadStandardAsync(client, bucketName, objectName);
 
         //Upload then download an object using the Transfer API.
-        await UploadDownloadTransfer(client, bucketName, objectName).ConfigureAwait(false);
+        await UploadDownloadTransferAsync(client, bucketName, objectName);
     }
 
-    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "The response content is disposed by configuredContent.")]
-    private static async Task UploadDownloadStandard(AmazonS3Client client, string bucketName, string objectName)
+    private static async Task UploadDownloadStandardAsync(AmazonS3Client client, string bucketName, string objectName)
     {
         Console.WriteLine();
         Console.WriteLine("Using the standard API");
 
         //We upload and object to the bucket with "Hello World" inside it.
-        MemoryStream memoryStream = new MemoryStream("Hello World"u8.ToArray());
-        await using var configuredMemoryStream = memoryStream.ConfigureAwait(false);
-        PutObjectResponse putResp = await client.PutObjectAsync(bucketName, objectName, memoryStream).ConfigureAwait(false);
+        await using MemoryStream memoryStream = new MemoryStream("Hello World"u8.ToArray());
+        PutObjectResponse putResp = await client.PutObjectAsync(bucketName, objectName, memoryStream);
 
         if (putResp.IsSuccess)
         {
             Console.WriteLine("Successfully uploaded the object");
 
-            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, objectName).ConfigureAwait(false);
-            ContentStream content = getResp.Content;
-            await using var configuredContent = content.ConfigureAwait(false);
+            GetObjectResponse getResp = await client.GetObjectAsync(bucketName, objectName);
+            await using ContentStream content = getResp.Content;
 
             //Here we try to download the object again. If successful, we should see it print the content to the screen.
             if (getResp.IsSuccess)
             {
-                Console.WriteLine("Success! The object contained: " + await content.AsStringAsync().ConfigureAwait(false));
+                Console.WriteLine("Success! The object contained: " + await content.AsStringAsync());
 
                 //Finally, we clean up after us and remove the object.
-                DeleteObjectResponse delResp = await client.DeleteObjectAsync(bucketName, objectName).ConfigureAwait(false);
+                DeleteObjectResponse delResp = await client.DeleteObjectAsync(bucketName, objectName);
 
                 Console.WriteLine(delResp.IsSuccess ? "Successfully deleted the object" : "Failed deleting the object");
             }
@@ -71,8 +69,7 @@ internal static class Program
             Console.WriteLine("Failed uploading object");
     }
 
-    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "The response content is disposed by configuredContent.")]
-    private static async Task UploadDownloadTransfer(AmazonS3Client client, string bucketName, string objectName)
+    private static async Task UploadDownloadTransferAsync(AmazonS3Client client, string bucketName, string objectName)
     {
         Console.WriteLine();
         Console.WriteLine("Using the Transfer API");
@@ -83,7 +80,7 @@ internal static class Program
                                .WithCacheControl(CacheControlType.NoCache)
                                .WithEncryption();
 
-        PutObjectResponse putResp = await upload.UploadStringAsync("Hello World!").ConfigureAwait(false);
+        PutObjectResponse putResp = await upload.UploadStringAsync("Hello World!");
 
         if (putResp.IsSuccess)
         {
@@ -93,14 +90,11 @@ internal static class Program
             IDownload download = client.CreateDownload(bucketName, objectName)
                                        .WithRange(0, 5); //Adjust this to return only part of the string
 
-            GetObjectResponse getResp = await download.DownloadAsync().ConfigureAwait(false);
-            ContentStream content = getResp.Content;
-            await using var configuredContent = content.ConfigureAwait(false);
+            GetObjectResponse getResp = await download.DownloadAsync();
+            await using ContentStream content = getResp.Content;
 
             if (getResp.IsSuccess)
-            {
-                Console.WriteLine("Success! The object contained: " + await content.AsStringAsync().ConfigureAwait(false));
-            }
+                Console.WriteLine("Success! The object contained: " + await content.AsStringAsync());
             else
                 Console.WriteLine("Failed to download the object");
         }

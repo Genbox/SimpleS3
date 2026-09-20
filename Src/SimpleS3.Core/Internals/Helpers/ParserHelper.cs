@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Misc;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
@@ -61,7 +60,7 @@ internal static class ParserHelper
                     displayName = xmlReader.ReadString();
 
                     // To circumvent providers that return empty. We want to represent missing display names as null.
-                    if (displayName == "")
+                    if (displayName.Length == 0)
                         displayName = null;
                     break;
             }
@@ -99,7 +98,7 @@ internal static class ParserHelper
         return (owner, grants);
     }
 
-    private static void ParseAcl(ICollection<S3Grant> grants, XmlReader xmlReader)
+    private static void ParseAcl(List<S3Grant> grants, XmlReader xmlReader)
     {
         foreach (string name in XmlHelper.ReadElements(xmlReader, "AccessControlList"))
         {

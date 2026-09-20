@@ -31,11 +31,10 @@ public class TimeoutTests(ITestOutputHelper helper) : OfflineTestBase(helper)
         await using MemoryStream ms = new MemoryStream(new byte[4096]);
         using CancellationTokenSource tcs = new CancellationTokenSource();
 
-        Task<PutObjectResponse> task = ObjectClient.PutObjectAsync(BucketName, nameof(TestClientCancellationToken), ms, token: tcs.Token);
         tcs.CancelAfter(500);
 
         Stopwatch sw = Stopwatch.StartNew();
-        await Assert.ThrowsAsync<TaskCanceledException>(async () => await task);
+        await Assert.ThrowsAsync<TaskCanceledException>(() => ObjectClient.PutObjectAsync(BucketName, nameof(TestClientCancellationToken), ms, token: tcs.Token));
         sw.Stop();
 
         // We should have canceled within 750ms

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+
 namespace Genbox.SimpleS3.Core.Abstracts.Enums;
 
 /// <summary>Provides the <c>ValidationStatus</c> API.</summary>

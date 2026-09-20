@@ -12,8 +12,4 @@
     <ProjectReference Include="..\SimpleS3.Utility.Shared\SimpleS3.Utility.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Linq.Async" />
-  </ItemGroup>
-
 </Project>

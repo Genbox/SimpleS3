@@ -19,7 +19,7 @@ public class BackBlazeIssues : TestBase
 
         byte[] bytes = new byte[5 * 1024 * 1024];
         Random.Shared.NextBytes(bytes);
-        PutObjectResponse resp = await client.PutObjectDataAsync(bucket, "Technical Details.pdf", bytes);
+        PutObjectResponse resp = await client.PutObjectDataAsync(bucket, "Technical Details.pdf", bytes, token: TestContext.Current.CancellationToken);
         Assert.True(resp.IsSuccess);
     }
 }

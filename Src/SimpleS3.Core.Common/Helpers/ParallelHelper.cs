@@ -18,6 +18,7 @@ public static class ParallelHelper
 
         CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
         SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
+
         try
         {
             using IEnumerator<T> enumerator = source.GetEnumerator();
@@ -30,7 +31,7 @@ public static class ParallelHelper
             {
                 while (true)
                 {
-                    await throttler.WaitAsync(innerToken).ConfigureAwait(false);
+                    await throttler.WaitAsync(innerToken);
 
                     if (!enumerator.MoveNext())
                     {
@@ -44,12 +45,12 @@ public static class ParallelHelper
             catch
             {
                 cancellation.Cancel();
-                await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
+                await WaitForRunningTasksAsync(tasks);
                 ThrowFirstTaskFailure(tasks);
                 throw;
             }
 
-            await Task.WhenAll(tasks).ConfigureAwait(false);
+            await Task.WhenAll(tasks);
         }
         finally
         {
@@ -61,7 +62,7 @@ public static class ParallelHelper
         {
             try
             {
-                await action(element, innerToken).ConfigureAwait(false);
+                await action(element, innerToken);
             }
             catch
             {
@@ -91,6 +92,7 @@ public static class ParallelHelper
         List<Task<TReturn>> tasks = new List<Task<TReturn>>();
 
         SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
+
         try
         {
             using IEnumerator<T> enumerator = source.GetEnumerator();
@@ -102,7 +104,7 @@ public static class ParallelHelper
             {
                 while (true)
                 {
-                    await throttler.WaitAsync(innerToken).ConfigureAwait(false);
+                    await throttler.WaitAsync(innerToken);
 
                     if (!enumerator.MoveNext())
                     {
@@ -116,12 +118,12 @@ public static class ParallelHelper
             catch
             {
                 cancellation.Cancel();
-                await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
+                await WaitForRunningTasksAsync(tasks);
                 ThrowFirstTaskFailure(tasks);
                 throw;
             }
 
-            return await Task.WhenAll(tasks).ConfigureAwait(false);
+            return await Task.WhenAll(tasks);
         }
         finally
         {
@@ -133,7 +135,7 @@ public static class ParallelHelper
         {
             try
             {
-                return await action(element, innerToken).ConfigureAwait(false);
+                return await action(element, innerToken);
             }
             catch
             {
@@ -164,6 +166,7 @@ public static class ParallelHelper
         List<Task<TReturn>> tasks = new List<Task<TReturn>>();
 
         SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
+
         try
         {
             IAsyncEnumerator<T> enumerator = source.GetAsyncEnumerator(cancellation.Token);
@@ -177,9 +180,9 @@ public static class ParallelHelper
                 {
                     while (true)
                     {
-                        await throttler.WaitAsync(innerToken).ConfigureAwait(false);
+                        await throttler.WaitAsync(innerToken);
 
-                        if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                        if (!await enumerator.MoveNextAsync())
                         {
                             throttler.Release();
                             break;
@@ -191,16 +194,16 @@ public static class ParallelHelper
                 catch
                 {
                     cancellation.Cancel();
-                    await WaitForRunningTasksAsync(tasks).ConfigureAwait(false);
+                    await WaitForRunningTasksAsync(tasks);
                     ThrowFirstTaskFailure(tasks);
                     throw;
                 }
 
-                return await Task.WhenAll(tasks).ConfigureAwait(false);
+                return await Task.WhenAll(tasks);
             }
             finally
             {
-                await enumerator.DisposeAsync().ConfigureAwait(false);
+                await enumerator.DisposeAsync();
             }
         }
         finally
@@ -213,7 +216,7 @@ public static class ParallelHelper
         {
             try
             {
-                return await action(element, innerToken).ConfigureAwait(false);
+                return await action(element, innerToken);
             }
             catch
             {
@@ -231,7 +234,7 @@ public static class ParallelHelper
     {
         try
         {
-            await Task.WhenAll(tasks).ConfigureAwait(false);
+            await Task.WhenAll(tasks);
         }
         catch
         {

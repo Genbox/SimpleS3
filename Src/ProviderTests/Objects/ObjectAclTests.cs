@@ -16,11 +16,11 @@ public class ObjectAclTests : TestBase
         const string objectKey = nameof(PutGetObjectAcl);
 
         //Create an object
-        PutObjectResponse putResp1 = await client.PutObjectAsync(bucket, objectKey, null);
+        PutObjectResponse putResp1 = await client.PutObjectAsync(bucket, objectKey, null, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp1.StatusCode);
 
         //Get the ACL, which should be the default one (owner has ACL)
-        GetObjectAclResponse getResp = await client.GetObjectAclAsync(bucket, objectKey);
+        GetObjectAclResponse getResp = await client.GetObjectAclAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
 
         S3Grant grant = Assert.Single(getResp.Grants);
@@ -37,18 +37,23 @@ public class ObjectAclTests : TestBase
         Assert.Null(grant.Grantee.DisplayName);
 
         //Update the object to have another ACL using Canned ACLs
-        PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucket, objectKey, r => r.Acl = ObjectCannedAcl.PublicRead);
+        PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucket, objectKey, r => r.Acl = ObjectCannedAcl.PublicRead, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp2.StatusCode);
 
-        GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucket, objectKey);
+        GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp2.StatusCode);
         Assert.Equal(2, getResp2.Grants.Count);
-        Assert.NotNull(getResp2.Owner.Id);
+        S3Identity? owner = getResp2.Owner;
+        Assert.NotNull(owner);
+        Assert.NotNull(owner.Id);
 
         if (provider == S3Provider.AmazonS3)
-            Assert.Null(getResp2.Owner.Name);
+            Assert.Null(owner.Name);
         else if (provider == S3Provider.GoogleCloudStorage)
-            Assert.Equal(TestConstants.TestEmail, getResp2.Owner.Name, StringComparer.OrdinalIgnoreCase);
+        {
+            Assert.NotNull(owner.Name);
+            Assert.Equal(TestConstants.TestEmail, owner.Name, StringComparer.OrdinalIgnoreCase);
+        }
 
         //This is the default owner ACL
         S3Grant first = getResp2.Grants[0];

@@ -12,7 +12,7 @@ public class ListBucketsResponse : BaseResponse
     }
 
     /// <summary>The owner of the buckets inside <see cref="Buckets" />.</summary>
-    public S3Identity Owner { get; internal set; }
+    public S3Identity? Owner { get; internal set; }
 
     /// <summary>The list of buckets</summary>
     public IList<S3Bucket> Buckets { get; }

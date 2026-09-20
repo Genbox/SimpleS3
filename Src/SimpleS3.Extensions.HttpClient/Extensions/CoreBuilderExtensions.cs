@@ -17,14 +17,14 @@ public static class CoreBuilderExtensions
     public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder, Action<HttpClientConfig, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(clientBuilder.Name, config);
-        return UseHttpClient(clientBuilder);
+        return clientBuilder.UseHttpClient();
     }
 
     /// <summary>Provides the <c>UseHttpClient</c> API.</summary>
     public static IHttpClientBuilder UseHttpClient(this ICoreBuilder clientBuilder, Action<HttpClientConfig> config)
     {
         clientBuilder.Services.Configure(clientBuilder.Name, config);
-        return UseHttpClient(clientBuilder);
+        return clientBuilder.UseHttpClient();
     }
 
     /// <summary>Provides the <c>UseHttpClient</c> API.</summary>

@@ -19,14 +19,14 @@ internal sealed class SlowHttpHandler : BaseFailingHttpHandler
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        await ConsumeRequestAsync(request).ConfigureAwait(false);
+        await ConsumeRequestAsync(request, cancellationToken);
 
         // After N requests we should succeed
         if (++RequestCounter % _successRate == 0)
             return CreateResponse(request, HttpStatusCode.OK);
 
         // Delay for some time to let timeout occur
-        await Task.Delay(_delay, cancellationToken).ConfigureAwait(false);
+        await Task.Delay(_delay, cancellationToken);
 
         return CreateResponse(request, HttpStatusCode.RequestTimeout);
     }

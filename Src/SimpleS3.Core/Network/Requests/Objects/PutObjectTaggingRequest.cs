@@ -17,17 +17,23 @@ public sealed class PutObjectTaggingRequest : BaseRequest, IHasBucketName, IHasO
         Initialize(bucketName, objectKey, tags);
     }
 
-    /// <summary>Provides the <c>BucketName</c> API.</summary>
-    public string BucketName { get; set; } = null!;
+    /// <summary>Provides the <c>Tags</c> API.</summary>
+    public IDictionary<string, string> Tags { get; private set; } = new Dictionary<string, string>(StringComparer.Ordinal);
+
     /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
+
     Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
+
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
+    public string BucketName { get; set; } = null!;
+
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+
     /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
-    /// <summary>Provides the <c>Tags</c> API.</summary>
-    public IDictionary<string, string> Tags { get; private set; } = new Dictionary<string, string>();
+
     /// <summary>Provides the <c>VersionId</c> API.</summary>
     public string? VersionId { get; set; }
 
@@ -43,7 +49,7 @@ public sealed class PutObjectTaggingRequest : BaseRequest, IHasBucketName, IHasO
     {
         ContentMd5 = null;
         RequestPayer = Payer.Unknown;
-        Tags = new Dictionary<string, string>();
+        Tags = new Dictionary<string, string>(StringComparer.Ordinal);
         VersionId = null;
         base.Reset();
     }

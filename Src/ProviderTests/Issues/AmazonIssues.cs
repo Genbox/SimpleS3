@@ -26,14 +26,14 @@ public class AmazonIssues : TestBase
         {
             //Create objects
             foreach (string name in names)
-                await client.PutObjectStringAsync(tempBucket, name, "");
+                await client.PutObjectStringAsync(tempBucket, name, "", token: TestContext.Current.CancellationToken);
 
             //List them while forcing pagination
             List<S3Version> objects = await ToListAsync(client.ListAllObjectVersionsAsync(tempBucket, r =>
             {
                 r.MaxKeys = 2;
                 r.EncodingType = EncodingType.Url;
-            }));
+            }, TestContext.Current.CancellationToken));
 
             Assert.Equal(4, objects.Count);
         });
@@ -41,9 +41,9 @@ public class AmazonIssues : TestBase
 
     private static async Task<List<T>> ToListAsync<T>(IAsyncEnumerable<T> list)
     {
-        List<T> res = new List<T>();
+        List<T> res = [];
 
-        await foreach (T item in list)
+        await foreach (T item in list.WithCancellation(TestContext.Current.CancellationToken))
             res.Add(item);
 
         return res;

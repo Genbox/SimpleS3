@@ -7,10 +7,13 @@ public class S3SelectParameters(string expression, S3InputFormat? inputFormat, S
 {
     /// <summary>Provides the <c>Expression</c> API.</summary>
     public string Expression { get; } = expression;
+
     /// <summary>Provides the <c>ExpressionType</c> API.</summary>
     public ExpressionType ExpressionType { get; set; }
+
     /// <summary>Provides the <c>InputFormat</c> API.</summary>
     public S3InputFormat? InputFormat { get; } = inputFormat;
+
     /// <summary>Provides the <c>OutputFormat</c> API.</summary>
     public S3OutputFormat OutputFormat { get; } = outputFormat;
 

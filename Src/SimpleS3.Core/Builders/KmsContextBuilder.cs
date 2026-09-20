@@ -32,10 +32,7 @@ public class KmsContextBuilder : IHttpHeaderBuilder
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public void Reset()
-    {
-        _dict?.Clear();
-    }
+    public void Reset() => _dict?.Clear();
 
     /// <summary>Provides the <c>HasData</c> API.</summary>
     public bool HasData() => _dict != null && _dict.Count > 0;
@@ -46,7 +43,7 @@ public class KmsContextBuilder : IHttpHeaderBuilder
         Validator.RequireNotNull(key);
         Validator.RequireNotNull(value);
 
-        _dict ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        _dict ??= new Dictionary<string, string>(StringComparer.Ordinal);
 
         if (!Valid(key))
             throw new ArgumentException("Invalid character in key. Only digits, letters and the follow characters are allowed _, -, /, \\, :", nameof(key));

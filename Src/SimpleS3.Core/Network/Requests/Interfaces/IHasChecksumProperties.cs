@@ -7,6 +7,7 @@ public interface IHasChecksumProperties
 {
     /// <summary>Provides the <c>ChecksumAlgorithm</c> API.</summary>
     ChecksumAlgorithm ChecksumAlgorithm { get; }
+
     /// <summary>Provides the <c>Checksum</c> API.</summary>
     byte[]? Checksum { get; }
 }

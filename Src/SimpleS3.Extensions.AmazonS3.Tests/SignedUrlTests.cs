@@ -46,6 +46,8 @@ public sealed class SignedUrlTests : IDisposable
         _options = _provider.GetRequiredService<IOptions<SimpleS3Config>>().Value;
     }
 
+    public void Dispose() => _provider.Dispose();
+
     [Fact]
     public void TestAgainstAmazonsExample()
     {
@@ -84,6 +86,4 @@ public sealed class SignedUrlTests : IDisposable
 
         Assert.Equal("aeeed9bbccd4d02ee5c0109b86d86835f995330da4c265957d157751f604d404", signature.HexEncode());
     }
-
-    public void Dispose() => _provider.Dispose();
 }

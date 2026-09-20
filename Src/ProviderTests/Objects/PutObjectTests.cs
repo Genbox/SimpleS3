@@ -20,7 +20,7 @@ public class PutObjectTests : TestBase
     [MultipleProvidersWithData(S3Provider.GoogleCloudStorage, ObjectCannedAcl.AuthenticatedRead, ObjectCannedAcl.BucketOwnerFullControl, ObjectCannedAcl.BucketOwnerRead, ObjectCannedAcl.Private, ObjectCannedAcl.PublicRead)]
     public async Task PutObjectCannedAcl(S3Provider _, string bucket, ISimpleClient client, ObjectCannedAcl acl)
     {
-        PutObjectResponse resp = await client.PutObjectAsync(bucket, $"{nameof(PutObjectCannedAcl)}-{acl}", null, r => r.Acl = acl);
+        PutObjectResponse resp = await client.PutObjectAsync(bucket, $"{nameof(PutObjectCannedAcl)}-{acl}", null, r => r.Acl = acl, TestContext.Current.CancellationToken);
         Assert.Equal(200, resp.StatusCode);
     }
 
@@ -37,10 +37,10 @@ public class PutObjectTests : TestBase
         {
             r.LockMode = lockMode;
             r.LockRetainUntil = lockRetainUntil;
-        });
+        }, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, objectKey);
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal(lockMode, getResp.LockMode);
         Assert.Equal(lockRetainUntil.UtcDateTime, getResp.LockRetainUntil!.Value.UtcDateTime, TimeSpan.FromSeconds(1));
@@ -50,10 +50,10 @@ public class PutObjectTests : TestBase
     [MultipleProvidersWithData(S3Provider.All, "NormalFile", "This/Should/Look/Like/Directories/File.txt", "_\\_", "~", "/", " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~/")]
     public async Task PutObjectValidCharacters(S3Provider _, string bucket, ISimpleClient client, string name)
     {
-        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, name, "test");
+        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, name, "test", token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, name);
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, name, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
     }
 
@@ -63,7 +63,7 @@ public class PutObjectTests : TestBase
     public async Task PutObjectInvalidCharacters(S3Provider _, string bucket, ISimpleClient client, string name)
     {
         //These 2 test cases came after an exhaustive search in the whole UTF-16 character space.
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, name, null);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, name, null, token: TestContext.Current.CancellationToken);
 
         //We use IsSuccess here since different providers return different error codes
         Assert.False(putResp.IsSuccess);
@@ -74,11 +74,11 @@ public class PutObjectTests : TestBase
     [MultipleProvidersWithData(S3Provider.BackBlazeB2, SseAlgorithm.Aes256)]
     public async Task PutObjectServerSideEncryption(S3Provider _, string bucket, ISimpleClient client, SseAlgorithm algorithm)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectServerSideEncryption), null, r => r.SseAlgorithm = algorithm);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectServerSideEncryption), null, r => r.SseAlgorithm = algorithm, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
         Assert.Equal(algorithm, putResp.SseAlgorithm);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectServerSideEncryption));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectServerSideEncryption), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
     }
 
@@ -87,14 +87,14 @@ public class PutObjectTests : TestBase
     [MultipleProvidersWithData(S3Provider.BackBlazeB2 | S3Provider.GoogleCloudStorage, StorageClass.Standard)]
     public async Task PutObjectStorageClass(S3Provider _, string bucket, ISimpleClient client, StorageClass storageClass)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectStorageClass) + "-" + storageClass, null, r => r.StorageClass = storageClass);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectStorageClass) + "-" + storageClass, null, r => r.StorageClass = storageClass, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
         Assert.Equal(storageClass, putResp.StorageClass);
 
         if (storageClass is StorageClass.DeepArchive or StorageClass.Glacier)
             return;
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectStorageClass) + "-" + storageClass);
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectStorageClass) + "-" + storageClass, token: TestContext.Current.CancellationToken);
         Assert.Equal(storageClass, getResp.StorageClass);
         Assert.Equal(200, getResp.StatusCode);
     }
@@ -109,7 +109,7 @@ public class PutObjectTests : TestBase
             r.AclGrantReadAcp.AddEmail(TestConstants.TestEmail);
             r.AclGrantWriteAcp.AddEmail(TestConstants.TestEmail);
             r.AclGrantFullControl.AddEmail(TestConstants.TestEmail);
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(200, putResp.StatusCode);
     }
@@ -118,10 +118,10 @@ public class PutObjectTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task PutObjectCacheControl(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectCacheControl), null, r => r.CacheControl.Add(CacheControlType.MaxAge, 100));
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectCacheControl), null, r => r.CacheControl.Add(CacheControlType.MaxAge, 100), TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectCacheControl));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectCacheControl), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal("max-age=100", getResp.CacheControl);
     }
@@ -135,10 +135,10 @@ public class PutObjectTests : TestBase
             r.ContentDisposition.Set(ContentDispositionType.Attachment, "filename.jpg");
             r.ContentEncoding.Add(ContentEncodingType.Identity);
             r.ContentType.Set(MediaType.Text_plain, Charset.Utf_8);
-        });
+        }, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectContentProperties));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectContentProperties), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal(4, getResp.ContentLength);
         Assert.Equal("attachment; filename*=\"filename.jpg\"", getResp.ContentDisposition);
@@ -149,16 +149,16 @@ public class PutObjectTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task PutObjectEtag(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectEtag), null);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectEtag), null, token: TestContext.Current.CancellationToken);
 
-        await client.GetObjectAsync(bucket, nameof(PutObjectEtag), r => r.IfETagMatch.Set(putResp.ETag));
+        await client.GetObjectAsync(bucket, nameof(PutObjectEtag), r => r.IfETagMatch.Set(putResp.ETag), TestContext.Current.CancellationToken);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectEtag), r => r.IfETagMatch.Set("not the tag you are looking for"));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectEtag), r => r.IfETagMatch.Set("not the tag you are looking for"), TestContext.Current.CancellationToken);
         Assert.Equal(412, getResp.StatusCode);
 
-        await client.GetObjectAsync(bucket, nameof(PutObjectEtag), r => r.IfETagNotMatch.Set("not the tag you are looking for"));
+        await client.GetObjectAsync(bucket, nameof(PutObjectEtag), r => r.IfETagNotMatch.Set("not the tag you are looking for"), TestContext.Current.CancellationToken);
 
-        GetObjectResponse getResp2 = await client.GetObjectAsync(bucket, nameof(PutObjectEtag), r => r.IfETagNotMatch.Set(putResp.ETag));
+        using GetObjectResponse getResp2 = await client.GetObjectAsync(bucket, nameof(PutObjectEtag), r => r.IfETagNotMatch.Set(putResp.ETag), TestContext.Current.CancellationToken);
         Assert.Equal(304, getResp2.StatusCode);
     }
 
@@ -173,10 +173,10 @@ public class PutObjectTests : TestBase
         {
             //Amazon ignores the metadata prefix and header separator, so we just need to count key length + value length
             r.Metadata.Add("a", value);
-        });
+        }, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectMultipleMetadata));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectMultipleMetadata), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal(value, getResp.Metadata!["a"]);
     }
@@ -185,13 +185,13 @@ public class PutObjectTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
     public async Task PutObjectLegalHold(S3Provider _, string bucket, ISimpleClient client)
     {
-        await client.PutObjectStringAsync(bucket, nameof(PutObjectLegalHold), "test", null, r => r.LockLegalHold = true);
+        await client.PutObjectStringAsync(bucket, nameof(PutObjectLegalHold), "test", null, r => r.LockLegalHold = true, TestContext.Current.CancellationToken);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectLegalHold));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectLegalHold), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.True(getResp.LockLegalHold);
 
-        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(PutObjectLegalHold));
+        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(PutObjectLegalHold), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, headResp.StatusCode);
         Assert.True(headResp.LockLegalHold);
     }
@@ -200,7 +200,7 @@ public class PutObjectTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task PutObjectLifecycle(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectLifecycle), null);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectLifecycle), null, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
         //Test lifecycle expiration (yes, we add 2 days. I don't know why Amazon works like this)
@@ -212,7 +212,7 @@ public class PutObjectTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task PutObjectMetadataSpecialCharacters(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectMultipleMetadata), null, r => r.Metadata.Add("a", "!\" #$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"));
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectMultipleMetadata), null, r => r.Metadata.Add("a", "!\" #$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"), TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
     }
 
@@ -224,10 +224,10 @@ public class PutObjectTests : TestBase
         {
             for (int i = 0; i < 10; i++)
                 r.Metadata.Add("mykey" + i, "myvalue" + i);
-        });
+        }, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectMultipleMetadata));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectMultipleMetadata), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal(10, getResp.Metadata!.Count);
     }
@@ -240,10 +240,10 @@ public class PutObjectTests : TestBase
         {
             r.Tags.Add("mykey1", "myvalue1");
             r.Tags.Add("mykey2", "myvalue2");
-        });
+        }, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectMultipleTags));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectMultipleTags), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal(2, getResp.TagCount);
     }
@@ -253,10 +253,10 @@ public class PutObjectTests : TestBase
     public async Task PutObjectResponseHeaders(S3Provider _, string bucket, ISimpleClient client)
     {
         //Upload a file for tests
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectResponseHeaders), null);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectResponseHeaders), null, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectResponseHeaders), req =>
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectResponseHeaders), req =>
         {
             req.ResponseCacheControl.Add(CacheControlType.MaxAge, 42);
             req.ResponseContentDisposition.Set(ContentDispositionType.Attachment, "filename.txt");
@@ -264,7 +264,7 @@ public class PutObjectTests : TestBase
             req.ResponseContentLanguage.Add("da-DK");
             req.ResponseContentType.Set("text/html", "utf-8");
             req.ResponseExpires = DateTimeOffset.UtcNow;
-        });
+        }, TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
 
         Assert.Equal("max-age=42", getResp.CacheControl);
@@ -291,17 +291,17 @@ public class PutObjectTests : TestBase
             r.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
             r.SseCustomerKey = key;
             r.SseCustomerKeyMd5 = keyHash;
-        });
+        }, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
         Assert.Equal(SseCustomerAlgorithm.Aes256, putResp.SseCustomerAlgorithm);
         Assert.Equal(keyHash, putResp.SseCustomerKeyMd5);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectServerSideEncryptionCustomerKey), r =>
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectServerSideEncryptionCustomerKey), r =>
         {
             r.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
             r.SseCustomerKey = key;
             r.SseCustomerKeyMd5 = keyHash;
-        });
+        }, TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
     }
 
@@ -309,33 +309,30 @@ public class PutObjectTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task PutObjectSingleMetadata(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectSingleMetadata), null, r => r.Metadata.Add("mykey", "myvalue"));
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectSingleMetadata), null, r => r.Metadata.Add("mykey", "myvalue"), TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectSingleMetadata));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(PutObjectSingleMetadata), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal("myvalue", getResp.Metadata!["mykey"]);
     }
 
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task PutObjectTooManyTags(S3Provider _, string bucket, ISimpleClient client)
+    public async Task PutObjectTooManyTags(S3Provider _, string bucket, ISimpleClient client) => await Assert.ThrowsAsync<InvalidOperationException>(async () => await client.PutObjectAsync(bucket, nameof(PutObjectTooManyTags), null, r =>
     {
-        await Assert.ThrowsAsync<InvalidOperationException>(async () => await client.PutObjectAsync(bucket, nameof(PutObjectTooManyTags), null, r =>
-        {
-            for (int i = 0; i < 51; i++)
-                r.Tags.Add(i.ToString(NumberFormatInfo.InvariantInfo), i.ToString(NumberFormatInfo.InvariantInfo));
-        }));
-    }
+        for (int i = 0; i < 51; i++)
+            r.Tags.Add(i.ToString(NumberFormatInfo.InvariantInfo), i.ToString(NumberFormatInfo.InvariantInfo));
+    }, TestContext.Current.CancellationToken));
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task PutObjectWebsiteRedirect(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectWebsiteRedirect), null, r => r.WebsiteRedirectLocation = "https://google.com");
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(PutObjectWebsiteRedirect), null, r => r.WebsiteRedirectLocation = "https://google.com", TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse resp = await client.GetObjectAsync(bucket, nameof(PutObjectWebsiteRedirect));
+        using GetObjectResponse resp = await client.GetObjectAsync(bucket, nameof(PutObjectWebsiteRedirect), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, resp.StatusCode);
         Assert.Equal("https://google.com", resp.WebsiteRedirectLocation);
     }
@@ -352,13 +349,13 @@ public class PutObjectTests : TestBase
         {
             r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
             r.Checksum = checksum;
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(200, putResp.StatusCode);
         Assert.Equal(checksum, putResp.Checksum);
         Assert.Equal(ChecksumType.FullObject, putResp.ChecksumType);
 
-        GetObjectResponse resp = await client.GetObjectAsync(bucket, nameof(PutObjectChecksum), r => r.EnableChecksum = true);
+        using GetObjectResponse resp = await client.GetObjectAsync(bucket, nameof(PutObjectChecksum), r => r.EnableChecksum = true, TestContext.Current.CancellationToken);
         Assert.Equal(200, resp.StatusCode);
         Assert.Equal(ChecksumType.FullObject, resp.ChecksumType);
         Assert.Equal(ChecksumAlgorithm.Sha1, resp.ChecksumAlgorithm);

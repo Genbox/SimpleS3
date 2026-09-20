@@ -11,7 +11,7 @@ internal sealed class PutObjectAnnotationResponseMarshal : IResponseMarshal<PutO
 {
     public void MarshalResponse(SimpleS3Config config, PutObjectAnnotationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        var data = ObjectAnnotationResponseMarshalHelper.MapHeaders(headers);
+        (string? VersionId, string? ETag, Core.Enums.SseAlgorithm SseAlgorithm, string? SseKmsKeyId, Core.Enums.ChecksumAlgorithm ChecksumAlgorithm, Core.Enums.ChecksumType ChecksumType, byte[]? Checksum) data = ObjectAnnotationResponseMarshalHelper.MapHeaders(headers);
         response.VersionId = data.VersionId;
         response.ETag = data.ETag;
         response.SseAlgorithm = data.SseAlgorithm;
@@ -23,6 +23,7 @@ internal sealed class PutObjectAnnotationResponseMarshal : IResponseMarshal<PutO
 
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
         reader.ReadToDescendant("PutObjectAnnotationOutput");
+
         foreach (string name in XmlHelper.ReadElements(reader))
         {
             if (name == "Key")

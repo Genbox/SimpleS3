@@ -8,7 +8,7 @@ internal static class StreamExtensions
 
         while (count > 0)
         {
-            int numRead = await stream.ReadAsync(buffer, offset, count, token).ConfigureAwait(false);
+            int numRead = await stream.ReadAsync(buffer, offset, count, token);
 
             if (numRead == 0)
                 break;

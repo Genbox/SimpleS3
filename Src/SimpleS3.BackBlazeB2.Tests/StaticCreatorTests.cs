@@ -1,3 +1,4 @@
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.BackBlazeB2;
 
@@ -13,7 +14,7 @@ public class StaticCreatorTests
         BackBlazeB2Config config = new BackBlazeB2Config("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", BackBlazeB2Region.UsWest001);
         using BackBlazeB2Client client = new BackBlazeB2Client(config, driver);
 
-        await using Stream content = (await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken)).Content;
+        using GetObjectResponse response = await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken);
         Assert.Equal("https://testbucket.s3.us-west-001.backblazeb2.com/GetObjectAsync", driver.LastUrl);
     }
 }

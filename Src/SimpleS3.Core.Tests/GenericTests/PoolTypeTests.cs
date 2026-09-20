@@ -77,7 +77,7 @@ public class PoolTypeTests
             if (type.IsAbstract)
                 continue;
 
-            //This type does not have any properties what so ever, so it is exempt from the check.
+            // ListBucketsRequest has a public parameterless constructor and no required initialization arguments.
             if (type == typeof(ListBucketsRequest))
                 continue;
 

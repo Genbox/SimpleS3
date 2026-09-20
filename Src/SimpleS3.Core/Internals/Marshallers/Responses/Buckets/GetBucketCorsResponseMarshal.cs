@@ -12,9 +12,11 @@ internal sealed class GetBucketCorsResponseMarshal : IResponseMarshal<GetBucketC
     public void MarshalResponse(SimpleS3Config config, GetBucketCorsResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
+
         while (reader.ReadToFollowing("CORSRule"))
         {
             S3CorsRule rule = new S3CorsRule();
+
             foreach (string name in XmlHelper.ReadElements(reader, "CORSRule"))
             {
                 switch (name)

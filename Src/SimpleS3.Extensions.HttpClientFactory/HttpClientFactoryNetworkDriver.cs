@@ -21,9 +21,10 @@ public partial class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFa
     /// <summary>Provides the <c>SendRequestAsync&lt;T&gt;</c> API.</summary>
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "Transport response ownership is transferred to the returned response content.")]
     [SuppressMessage("Design", "CA1062", Justification = "The request method is read before creating a message or sending data, preserving immediate failure for a null request.")]
-    public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken cancellationToken = default) where T : IResponse
+    public async Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken token = default) where T : IResponse
     {
         HttpResponseMessage httpResponse;
+
         // S3-010: Construct the transport URI without removing escaped dot-only key segments.
         using (HttpRequestMessage httpRequest = new HttpRequestMessage(ConvertToMethod(request.Method), UrlHelper.CreateUriWithoutPathNormalization(url)))
         {
@@ -51,7 +52,7 @@ public partial class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFa
 
             using HttpClient client = clientFactory.CreateClient(optionsName);
 
-            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token);
         }
 
         ReceivedResponse(httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
@@ -68,7 +69,7 @@ public partial class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFa
             foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
                 responseHeaders.Add(header.Key, header.Value.First());
 
-            Stream innerStream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            Stream innerStream = await httpResponse.Content.ReadAsStreamAsync();
             contentStream = new ContentStream(innerStream, httpResponse.Content.Headers.ContentLength, httpResponse);
         }
         else
@@ -77,16 +78,13 @@ public partial class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFa
         return new HttpResponse(contentStream, responseHeaders, (int)httpResponse.StatusCode);
     }
 
-    private static HttpMethod ConvertToMethod(HttpMethodType method)
+    private static HttpMethod ConvertToMethod(HttpMethodType method) => method switch
     {
-        return method switch
-        {
-            HttpMethodType.GET => HttpMethod.Get,
-            HttpMethodType.PUT => HttpMethod.Put,
-            HttpMethodType.HEAD => HttpMethod.Head,
-            HttpMethodType.DELETE => HttpMethod.Delete,
-            HttpMethodType.POST => HttpMethod.Post,
-            _ => throw new ArgumentOutOfRangeException(nameof(method), method, "Unsupported HTTP method")
-        };
-    }
+        HttpMethodType.GET => HttpMethod.Get,
+        HttpMethodType.PUT => HttpMethod.Put,
+        HttpMethodType.HEAD => HttpMethod.Head,
+        HttpMethodType.DELETE => HttpMethod.Delete,
+        HttpMethodType.POST => HttpMethod.Post,
+        _ => throw new ArgumentOutOfRangeException(nameof(method), method, "Unsupported HTTP method")
+    };
 }

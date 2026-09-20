@@ -41,52 +41,81 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
 
     /// <summary>Provides the <c>SourceBucketName</c> API.</summary>
     public string SourceBucketName { get; private set; } = null!;
+
     /// <summary>Provides the <c>SourceObjectKey</c> API.</summary>
     public string SourceObjectKey { get; private set; } = null!;
+
     /// <summary>Provides the <c>DestinationBucketName</c> API.</summary>
     public string DestinationBucketName { get; private set; } = null!;
+
     /// <summary>Provides the <c>DestinationObjectKey</c> API.</summary>
     public string DestinationObjectKey { get; private set; } = null!;
+
     /// <summary>Provides the <c>MetadataDirective</c> API.</summary>
     public MetadataDirective MetadataDirective { get; set; }
+
     /// <summary>Provides the <c>TaggingDirective</c> API.</summary>
     public TaggingDirective TaggingDirective { get; set; }
+
+    // S3-003: Generic version mapping would incorrectly put the source version on the destination query.
+    /// <summary>Provides the <c>AutoMapDisabledFor</c> API.</summary>
+    public Func<Type, bool> AutoMapDisabledFor => type => type == typeof(IHasVersionId);
+
     string IHasBucketName.BucketName => DestinationBucketName;
+
     /// <summary>Provides the <c>IfModifiedSince</c> API.</summary>
     public DateTimeOffset? IfModifiedSince { get; set; }
+
     /// <summary>Provides the <c>IfUnmodifiedSince</c> API.</summary>
     public DateTimeOffset? IfUnmodifiedSince { get; set; }
+
     /// <summary>Provides the <c>IfETagMatch</c> API.</summary>
     public ETagBuilder IfETagMatch { get; }
+
     /// <summary>Provides the <c>IfETagNotMatch</c> API.</summary>
     public ETagBuilder IfETagNotMatch { get; }
+
     /// <summary>Provides the <c>LockLegalHold</c> API.</summary>
     public bool? LockLegalHold { get; set; }
+
     /// <summary>Provides the <c>LockMode</c> API.</summary>
     public LockMode LockMode { get; set; }
+
     /// <summary>Provides the <c>LockRetainUntil</c> API.</summary>
     public DateTimeOffset? LockRetainUntil { get; set; }
+
     /// <summary>Provides the <c>Metadata</c> API.</summary>
     public MetadataBuilder Metadata { get; }
+
     /// <summary>Provides the <c>Acl</c> API.</summary>
     public ObjectCannedAcl Acl { get; set; }
+
     /// <summary>Provides the <c>AclGrantRead</c> API.</summary>
     public AclBuilder AclGrantRead { get; }
+
     /// <summary>Provides the <c>AclGrantReadAcp</c> API.</summary>
     public AclBuilder AclGrantReadAcp { get; }
+
     /// <summary>Provides the <c>AclGrantWriteAcp</c> API.</summary>
     public AclBuilder AclGrantWriteAcp { get; }
+
     /// <summary>Provides the <c>AclGrantFullControl</c> API.</summary>
     public AclBuilder AclGrantFullControl { get; }
+
     string IHasObjectKey.ObjectKey => DestinationObjectKey;
+
     /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
+
     /// <summary>Provides the <c>SseAlgorithm</c> API.</summary>
     public SseAlgorithm SseAlgorithm { get; set; }
+
     /// <summary>Provides the <c>SseKmsKeyId</c> API.</summary>
     public string? SseKmsKeyId { get; set; }
+
     /// <summary>Provides the <c>SseContext</c> API.</summary>
     public KmsContextBuilder SseContext { get; }
+
     /// <summary>Provides the <c>SseCustomerAlgorithm</c> API.</summary>
     public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
 
@@ -109,18 +138,18 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
 
     /// <summary>Provides the <c>SseCustomerKeyMd5</c> API.</summary>
     public byte[]? SseCustomerKeyMd5 { get; set; }
+
     /// <summary>Provides the <c>StorageClass</c> API.</summary>
     public StorageClass StorageClass { get; set; }
+
     /// <summary>Provides the <c>Tags</c> API.</summary>
     public TagBuilder Tags { get; }
+
     /// <summary>Provides the <c>VersionId</c> API.</summary>
     public string? VersionId { get; set; }
+
     /// <summary>Provides the <c>WebsiteRedirectLocation</c> API.</summary>
     public string? WebsiteRedirectLocation { get; set; }
-
-    // S3-003: Generic version mapping would incorrectly put the source version on the destination query.
-    /// <summary>Provides the <c>AutoMapDisabledFor</c> API.</summary>
-    public Func<Type, bool> AutoMapDisabledFor => type => type == typeof(IHasVersionId);
 
     internal void Initialize(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey)
     {

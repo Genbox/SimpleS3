@@ -1,5 +1,5 @@
-using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -22,22 +22,22 @@ internal sealed class ChunkedStream : Stream
     private const string _chunkSignature = ";chunk-signature=";
     private static readonly byte[] _newline = [13, 10];
     private readonly byte[] _buffer;
-    private readonly IChunkedSignatureBuilder _chunkedSigBuilder;
     private readonly HashAlgorithm? _checksum;
-    private readonly int _chunkSize;
     private readonly ChecksumAlgorithm _checksumAlgorithm;
     private readonly string? _checksumTrailer;
-    private readonly IRequestTrailers? _requestTrailers;
-    private readonly ITrailerSignatureBuilder? _trailerSigBuilder;
-    private readonly IReadOnlyDictionary<string, string> _trailers;
+    private readonly int _chunkSize;
+    private readonly IChunkedSignatureBuilder _chunkedSigBuilder;
+    private readonly long _decodedLength;
 
     private readonly int _headerSize;
-    private readonly long _decodedLength;
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "The request stream is caller-owned and can be reused after ChunkedStream is disposed.")]
     private readonly Stream _originalStream;
     private readonly long _originalStreamPosition;
     private readonly IRequest _request;
+    private readonly IRequestTrailers? _requestTrailers;
     private readonly byte[] _seedSignature;
+    private readonly ITrailerSignatureBuilder? _trailerSigBuilder;
+    private readonly IReadOnlyDictionary<string, string> _trailers;
     private int _bufferLength = -1;
     private int _bufferPosition = -1;
     private bool _inputStreamConsumed;
@@ -87,6 +87,8 @@ internal sealed class ChunkedStream : Stream
         set => Seek(value, SeekOrigin.Begin);
     }
 
+    private static IReadOnlyDictionary<string, string> EmptyTrailers { get; } = new Dictionary<string, string>(0, StringComparer.Ordinal);
+
     public override void Flush()
     {
         // Do nothing
@@ -108,12 +110,13 @@ internal sealed class ChunkedStream : Stream
             }
 
             int totalRead = 0;
+
             if (!_inputStreamConsumed)
             {
                 while (totalRead < _chunkSize && !_inputStreamConsumed)
                 {
                     int remaining = _chunkSize - totalRead;
-                    int read = await _originalStream.ReadAsync(_buffer, _headerSize + totalRead, remaining, cancellationToken).ConfigureAwait(false);
+                    int read = await _originalStream.ReadAsync(_buffer, _headerSize + totalRead, remaining, cancellationToken);
 
                     if (read == 0)
                         _inputStreamConsumed = true;
@@ -175,6 +178,7 @@ internal sealed class ChunkedStream : Stream
             }
 
             int totalRead = 0;
+
             if (!_inputStreamConsumed)
             {
                 while (totalRead < _chunkSize && !_inputStreamConsumed)
@@ -256,15 +260,9 @@ internal sealed class ChunkedStream : Stream
         return 0;
     }
 
-    public override void SetLength(long value)
-    {
-        throw new NotSupportedException(nameof(ChunkedStream) + " does not support length");
-    }
+    public override void SetLength(long value) => throw new NotSupportedException(nameof(ChunkedStream) + " does not support length");
 
-    public override void Write(byte[] buffer, int offset, int count)
-    {
-        throw new NotSupportedException(nameof(ChunkedStream) + " does not support writing");
-    }
+    public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException(nameof(ChunkedStream) + " does not support writing");
 
     protected override void Dispose(bool disposing)
     {
@@ -335,7 +333,7 @@ internal sealed class ChunkedStream : Stream
             .Append(chunkSignature.HexEncode())
             .Append(_newlineStr);
 
-        string value = StringBuilderPool.Shared.ReturnString(chunkHeader, clearContents: true);
+        string value = StringBuilderPool.Shared.ReturnString(chunkHeader, true);
 
         return Encoding.UTF8.GetBytes(value, 0, value.Length, buffer, 0);
     }
@@ -345,6 +343,7 @@ internal sealed class ChunkedStream : Stream
         _trailerBuffer ??= CreateTrailerBuffer();
 
         int lengthRemaining = _trailerBuffer.Length - _trailerBufferPosition;
+
         if (lengthRemaining == 0)
         {
             _trailingHeadersConsumed = true;
@@ -390,7 +389,7 @@ internal sealed class ChunkedStream : Stream
                    .Append(_newlineStr)
                    .Append(_newlineStr);
 
-            string value = StringBuilderPool.Shared.ReturnString(trailer, clearContents: true);
+            string value = StringBuilderPool.Shared.ReturnString(trailer, true);
             return Encoding.UTF8.GetBytes(value);
         }
         finally
@@ -432,6 +431,4 @@ internal sealed class ChunkedStream : Stream
     }
 
     private static string GetChecksumTrailer(ChecksumAlgorithm algorithm) => AmzHeaders.XAmzChecksum + algorithm.ToString().ToLowerInvariant();
-
-    private static IReadOnlyDictionary<string, string> EmptyTrailers { get; } = new Dictionary<string, string>(0);
 }

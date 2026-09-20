@@ -31,14 +31,14 @@ public static class HttpClientBuilderExtensions
             x.Retries = retries;
         });
 
-        return UseRetryAndTimeout(builder);
+        return builder.UseRetryAndTimeout();
     }
 
     /// <summary>Provides the <c>UseRetryAndTimeout</c> API.</summary>
     public static IHttpClientBuilder UseRetryAndTimeout(this IHttpClientBuilder builder, Action<PollyConfig> configure)
     {
         builder.Services.Configure(builder.Name, configure);
-        return UseRetryAndTimeout(builder);
+        return builder.UseRetryAndTimeout();
     }
 
     /// <summary>Provides the <c>UseRetryAndTimeout</c> API.</summary>

@@ -36,7 +36,7 @@ public class GoogleCloudStorageConfig : SimpleS3Config
     /// <summary>Provides the <c>GoogleCloudStorageConfig</c> API.</summary>
     public GoogleCloudStorageConfig(IAccessKey? credentials, GoogleCloudStorageRegion region) : this(credentials, _converter.GetRegion(region).Code) {}
 
-    /// <summary>Provides the <c>Region</c> API.</summary>
+    /// <summary>Gets the region matching RegionCode, or Unknown for an unrecognized code. Setting a known region updates RegionCode.</summary>
     public GoogleCloudStorageRegion Region
     {
         get => _region;

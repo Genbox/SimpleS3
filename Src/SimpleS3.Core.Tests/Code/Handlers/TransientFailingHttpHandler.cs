@@ -17,7 +17,7 @@ internal sealed class TransientFailingHttpHandler : BaseFailingHttpHandler
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        await ConsumeRequestAsync(request).ConfigureAwait(false);
+        await ConsumeRequestAsync(request, cancellationToken);
 
         if (++RequestCounter % _successRate == 0)
         {

@@ -8,12 +8,16 @@ public class S3DeleteMarker(bool isLatest, string objectKey, DateTimeOffset last
 {
     /// <summary>Provides the <c>IsLatest</c> API.</summary>
     public bool IsLatest { get; } = isLatest;
+
     /// <summary>Provides the <c>LastModified</c> API.</summary>
     public DateTimeOffset LastModified { get; } = lastModified;
+
     /// <summary>Provides the <c>Owner</c> API.</summary>
     public S3Identity Owner { get; } = owner;
+
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; internal set; } = objectKey;
+
     /// <summary>Provides the <c>VersionId</c> API.</summary>
     public string VersionId { get; } = versionId;
 }

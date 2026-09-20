@@ -15,10 +15,10 @@ public class RestoreObjectTests : TestBase
     public async Task Restore(S3Provider _, string bucket, ISimpleClient client)
     {
         //Upload an object to glacier
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(Restore), null, r => r.StorageClass = StorageClass.Glacier);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(Restore), null, r => r.StorageClass = StorageClass.Glacier, TestContext.Current.CancellationToken);
         Assert.Equal(StorageClass.Glacier, putResp.StorageClass);
 
-        RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(Restore), r => r.Days = 2);
+        RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(Restore), r => r.Days = 2, TestContext.Current.CancellationToken);
 
         Assert.Equal(202, restoreResp.StatusCode);
     }
@@ -34,7 +34,7 @@ public class RestoreObjectTests : TestBase
             await sw.WriteLineAsync("\"donald trump\",7,present");
             await sw.WriteLineAsync("fantastic fox,31,missing");
 
-            await client.PutObjectStringAsync(bucket, nameof(RestoreWithSelect), sw.ToString(), null, r => r.StorageClass = StorageClass.Glacier);
+            await client.PutObjectStringAsync(bucket, nameof(RestoreWithSelect), sw.ToString(), null, r => r.StorageClass = StorageClass.Glacier, TestContext.Current.CancellationToken);
         }
 
         RestoreObjectResponse restoreResp = await client.RestoreObjectAsync(bucket, nameof(RestoreWithSelect), r =>
@@ -51,10 +51,10 @@ public class RestoreObjectTests : TestBase
 
             r.OutputLocation = new S3OutputLocation(bucket, "outputJob");
             r.OutputLocation.StorageClass = StorageClass.Standard;
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(202, restoreResp.StatusCode);
 
-        //TODO: List objects beneath outputJob/* and GET file to determine if format is correct
+        // Pending: List objects beneath outputJob/* and GET file to determine if format is correct.
     }
 }

@@ -20,8 +20,5 @@ public class DeleteBucketTaggingRequest : BaseRequest, IHasBucketName
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
-    internal void Initialize(string bucketName)
-    {
-        BucketName = bucketName;
-    }
+    internal void Initialize(string bucketName) => BucketName = bucketName;
 }

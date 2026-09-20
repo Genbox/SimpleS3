@@ -14,20 +14,19 @@ public class DeleteBucketTests : TestBase
     public async Task DeleteBucket(S3Provider provider, string _, ISimpleClient client)
     {
         Assert.NotEqual(S3Provider.None, provider);
-
         string tempBucketName = GetTemporaryBucket();
 
-        DeleteBucketResponse deleteResp1 = await client.DeleteBucketAsync(tempBucketName);
+        DeleteBucketResponse deleteResp1 = await client.DeleteBucketAsync(tempBucketName, token: TestContext.Current.CancellationToken);
         Assert.False(deleteResp1.IsSuccess);
         Assert.Equal(ErrorCode.NoSuchBucket, deleteResp1.Error?.Code);
 
-        await client.CreateBucketAsync(tempBucketName);
+        await client.CreateBucketAsync(tempBucketName, token: TestContext.Current.CancellationToken);
 
-        DeleteBucketResponse deleteResp2 = await client.DeleteBucketAsync(tempBucketName);
+        DeleteBucketResponse deleteResp2 = await client.DeleteBucketAsync(tempBucketName, token: TestContext.Current.CancellationToken);
         Assert.True(deleteResp2.IsSuccess);
         Assert.Equal(204, deleteResp2.StatusCode);
 
-        ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucketName);
+        ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucketName, token: TestContext.Current.CancellationToken);
         Assert.False(listResp.IsSuccess);
         Assert.Equal(404, listResp.StatusCode);
     }

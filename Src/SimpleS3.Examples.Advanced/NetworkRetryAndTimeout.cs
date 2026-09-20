@@ -8,6 +8,7 @@ using Genbox.SimpleS3.ProviderBase;
 using Genbox.SimpleS3.ProviderBase.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
 
+// Justification: The standalone example favors a compact walkthrough over IDE style and unused-entry-point inspections.
 // ReSharper disable All
 
 namespace Genbox.SimpleS3.Examples.Advanced;

@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 public class S3Transition
 {
     /// <summary>Set a future date where the objects should transition.</summary>
-    /// <param name="date">Indicates at what date the object is transitioned</param>
+    /// <param name="date">The transition date. S3 request serialization converts this value to UTC and uses midnight at the start of that UTC calendar day. The supplied value is retained in this object.</param>
     /// <param name="storageClass">The storage class to which you want the object to transition.</param>
     public S3Transition(DateTimeOffset date, StorageClass storageClass)
     {
@@ -18,7 +18,7 @@ public class S3Transition
     }
 
     /// <summary>Indicates the number of days after creation when objects are transitioned to the specified storage class.</summary>
-    /// <param name="transitionAfterDays">The value must be a positive integer.</param>
+    /// <param name="transitionAfterDays">The value must be zero or a positive integer.</param>
     /// <param name="storageClass">The storage class to which you want the object to transition.</param>
     public S3Transition(int transitionAfterDays, StorageClass storageClass)
     {
@@ -38,8 +38,10 @@ public class S3Transition
 
     /// <summary>Provides the <c>TransitionOnDate</c> API.</summary>
     public DateTimeOffset? TransitionOnDate { get; }
+
     /// <summary>Provides the <c>TransitionAfterDays</c> API.</summary>
     public int? TransitionAfterDays { get; }
+
     /// <summary>Provides the <c>StorageClass</c> API.</summary>
     public StorageClass StorageClass { get; }
 }

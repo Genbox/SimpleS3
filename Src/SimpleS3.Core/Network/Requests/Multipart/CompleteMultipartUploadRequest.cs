@@ -35,12 +35,16 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
 
     /// <summary>Provides the <c>UploadParts</c> API.</summary>
     public IList<S3PartInfo> UploadParts { get; private set; }
+
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+
     /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
+
     /// <summary>Provides the <c>UploadId</c> API.</summary>
     public string UploadId { get; set; } = null!;
 

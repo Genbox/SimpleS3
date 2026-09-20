@@ -13,21 +13,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.GoogleCloudStorage.Extensions;
 
-/// <summary>Provides the <c>ServiceCollectionExtensions</c> API.</summary>
+/// <summary>Provides Google Cloud Storage registration extensions.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>Provides the <c>AddGoogleCloudStorage</c> API.</summary>
     public static IClientBuilder AddGoogleCloudStorage(this IServiceCollection collection, Action<GoogleCloudStorageConfig, IServiceProvider> config)
     {
         collection.Configure(config);
-        return AddGoogleCloudStorage(collection);
+        return collection.AddGoogleCloudStorage();
     }
 
     /// <summary>Provides the <c>AddGoogleCloudStorage</c> API.</summary>
     public static IClientBuilder AddGoogleCloudStorage(this IServiceCollection collection, Action<GoogleCloudStorageConfig> config)
     {
         collection.Configure(config);
-        return AddGoogleCloudStorage(collection);
+        return collection.AddGoogleCloudStorage();
     }
 
     /// <summary>Provides the <c>AddGoogleCloudStorage</c> API.</summary>

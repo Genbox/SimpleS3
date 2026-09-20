@@ -5,7 +5,7 @@ namespace Genbox.SimpleS3.Core.Benchmarks.Benchmarks;
 [MemoryDiagnoser]
 public class KeyValueTupleBenchmarks
 {
-    private readonly Dictionary<string, string> _dict = new Dictionary<string, string>();
+    private readonly Dictionary<string, string> _dict = new Dictionary<string, string>(StringComparer.Ordinal);
 
     public KeyValueTupleBenchmarks()
     {
@@ -16,10 +16,7 @@ public class KeyValueTupleBenchmarks
     }
 
     [Benchmark]
-    public IList<(string, string)> ToTuples()
-    {
-        return _dict.Select(x => (x.Key, x.Value)).ToList();
-    }
+    public IList<(string, string)> ToTuples() => _dict.Select(x => (x.Key, x.Value)).ToList();
 
     [Benchmark]
     public IList<KeyValuePair<string, string>> ToKeyValue()

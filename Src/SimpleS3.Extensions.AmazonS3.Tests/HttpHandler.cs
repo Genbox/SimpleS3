@@ -15,14 +15,11 @@ internal sealed class HttpHandler : IHttpHeadersHandler, IHttpRequestLineHandler
     public string RawQuery { get; private set; } = null!;
     public byte[] Body { get; internal set; } = null!;
 
-    public void OnHeader(Span<byte> name, Span<byte> value)
-    {
-        Headers.Add(Encoding.UTF8.GetString(name), Encoding.UTF8.GetString(value));
-    }
+    public void OnHeader(Span<byte> name, Span<byte> value) => Headers.Add(Encoding.UTF8.GetString(name), Encoding.UTF8.GetString(value));
 
     public void OnStartLine(HttpMethod method, HttpVersion version, Span<byte> target, Span<byte> path, Span<byte> query, Span<byte> customMethod, bool pathEncoded)
     {
-        Method = Enum.Parse<HttpMethodType>(method.ToString().ToUpperInvariant(), ignoreCase: false);
+        Method = Enum.Parse<HttpMethodType>(method.ToString().ToUpperInvariant(), false);
         Target = Encoding.UTF8.GetString(target);
 
         //We need to remove parameters from the target

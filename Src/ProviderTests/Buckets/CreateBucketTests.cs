@@ -16,11 +16,11 @@ public class CreateBucketTests : TestBase
 
         string tempBucketName = GetTemporaryBucket();
 
-        CreateBucketResponse resp = await client.CreateBucketAsync(tempBucketName);
+        CreateBucketResponse resp = await client.CreateBucketAsync(tempBucketName, token: TestContext.Current.CancellationToken);
         Assert.True(resp.IsSuccess);
 
         //Delete again to cleanup
-        await client.DeleteBucketAsync(tempBucketName);
+        await client.DeleteBucketAsync(tempBucketName, token: TestContext.Current.CancellationToken);
     }
 
     //[Theory]
@@ -29,7 +29,7 @@ public class CreateBucketTests : TestBase
     //{
     //    await CreateTempBucketAsync(provider, client, async tempBucket =>
     //    {
-    //        //TODO: Check ACL once we have that functionality
+    //        // Pending: Check ACL once we have that functionality.
     //    }, r => r.Acl = BucketCannedAcl.Private);
     //}
 
@@ -39,7 +39,7 @@ public class CreateBucketTests : TestBase
     //{
     //    await CreateTempBucketAsync(provider, client, async tempBucket =>
     //    {
-    //        //TODO: Check ACL once we have that functionality
+    //        // Pending: Check ACL once we have that functionality.
     //    }, r =>
     //    {
     //        r.AclGrantReadAcp.AddEmail(TestConstants.TestEmail);
@@ -56,7 +56,7 @@ public class CreateBucketTests : TestBase
     //{
     //    await CreateTempBucketAsync(provider, client, async tempBucket =>
     //    {
-    //        //TODO: Check locking is enabled once we have that functionality
+    //        // Pending: Check locking is enabled once we have that functionality.
     //    }, r => r.EnableObjectLocking = true);
     //}
 }

@@ -12,7 +12,7 @@ internal sealed class GetObjectAnnotationResponseMarshal : IResponseMarshal<GetO
 {
     public void MarshalResponse(SimpleS3Config config, GetObjectAnnotationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        var data = ObjectAnnotationResponseMarshalHelper.MapHeaders(headers);
+        (string? VersionId, string? ETag, Core.Enums.SseAlgorithm SseAlgorithm, string? SseKmsKeyId, Core.Enums.ChecksumAlgorithm ChecksumAlgorithm, Core.Enums.ChecksumType ChecksumType, byte[]? Checksum) data = ObjectAnnotationResponseMarshalHelper.MapHeaders(headers);
         response.VersionId = data.VersionId;
         response.ETag = data.ETag;
         response.SseAlgorithm = data.SseAlgorithm;

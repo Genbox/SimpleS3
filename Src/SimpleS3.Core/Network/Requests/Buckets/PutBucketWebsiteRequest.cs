@@ -10,18 +10,39 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 public sealed class PutBucketWebsiteRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner, IContentMd5Config
 {
     internal PutBucketWebsiteRequest() : base(HttpMethodType.PUT) {}
+
     /// <summary>Provides the <c>PutBucketWebsiteRequest</c> API.</summary>
-    public PutBucketWebsiteRequest(string bucketName, S3WebsiteConfiguration websiteConfiguration) : this() => Initialize(bucketName, websiteConfiguration);
-    /// <summary>Provides the <c>BucketName</c> API.</summary>
-    public string BucketName { get; set; } = null!;
-    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
-    public byte[]? ContentMd5 { get; set; }
-    Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
+    public PutBucketWebsiteRequest(string bucketName, S3WebsiteConfiguration websiteConfiguration) : this()
+    {
+        Initialize(bucketName, websiteConfiguration);
+    }
+
     /// <summary>Provides the <c>WebsiteConfiguration</c> API.</summary>
     public S3WebsiteConfiguration WebsiteConfiguration { get; private set; } = null!;
-    internal void Initialize(string bucketName, S3WebsiteConfiguration websiteConfiguration) { BucketName = bucketName; WebsiteConfiguration = websiteConfiguration; }
+
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
+    public byte[]? ContentMd5 { get; set; }
+
+    Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
+
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
+    public string BucketName { get; set; } = null!;
+
+    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
+    public string? ExpectedBucketOwner { get; set; }
+
+    internal void Initialize(string bucketName, S3WebsiteConfiguration websiteConfiguration)
+    {
+        BucketName = bucketName;
+        WebsiteConfiguration = websiteConfiguration;
+    }
+
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset() { ContentMd5 = null; ExpectedBucketOwner = null; WebsiteConfiguration = null!; base.Reset(); }
+    public override void Reset()
+    {
+        ContentMd5 = null;
+        ExpectedBucketOwner = null;
+        WebsiteConfiguration = null!;
+        base.Reset();
+    }
 }

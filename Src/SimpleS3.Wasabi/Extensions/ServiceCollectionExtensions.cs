@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Wasabi.Extensions;
 
-/// <summary>Provides the <c>ServiceCollectionExtensions</c> API.</summary>
+/// <summary>Provides Wasabi registration extensions.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>Add SimpleS3 services to a service collection.</summary>
@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
     public static IClientBuilder AddWasabi(this IServiceCollection collection, Action<WasabiConfig, IServiceProvider> config)
     {
         collection.Configure(config);
-        return AddWasabi(collection);
+        return collection.AddWasabi();
     }
 
     /// <summary>Add SimpleS3 services to a service collection.</summary>
@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
     public static IClientBuilder AddWasabi(this IServiceCollection collection, Action<WasabiConfig> config)
     {
         collection.Configure(config);
-        return AddWasabi(collection);
+        return collection.AddWasabi();
     }
 
     /// <summary>Add SimpleS3 services to a service collection.</summary>

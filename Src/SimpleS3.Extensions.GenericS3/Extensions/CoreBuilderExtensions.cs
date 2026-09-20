@@ -13,17 +13,14 @@ namespace Genbox.SimpleS3.Extensions.GenericS3.Extensions;
 public static class CoreBuilderExtensions
 {
     /// <summary>Provides the <c>UseGenericS3</c> API.</summary>
-    public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder, Action<GenericS3Config> config)
-    {
-        return UseGenericS3(clientBuilder, (s3Config, _) => config.Invoke(s3Config));
-    }
+    public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder, Action<GenericS3Config> config) => clientBuilder.UseGenericS3((s3Config, _) => config.Invoke(s3Config));
 
     /// <summary>Provides the <c>UseGenericS3</c> API.</summary>
     public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder, Action<GenericS3Config, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(config);
 
-        return UseGenericS3(clientBuilder);
+        return clientBuilder.UseGenericS3();
     }
 
     /// <summary>Provides the <c>UseGenericS3</c> API.</summary>

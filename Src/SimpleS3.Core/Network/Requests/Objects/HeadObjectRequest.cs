@@ -43,36 +43,54 @@ public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCusto
         Initialize(bucketName, objectKey);
     }
 
+    /// <summary>Provides the <c>EnableChecksum</c> API.</summary>
+    public bool EnableChecksum { get; set; }
+
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+
     /// <summary>Provides the <c>IfModifiedSince</c> API.</summary>
     public DateTimeOffset? IfModifiedSince { get; set; }
+
     /// <summary>Provides the <c>IfUnmodifiedSince</c> API.</summary>
     public DateTimeOffset? IfUnmodifiedSince { get; set; }
+
     /// <summary>Provides the <c>IfETagMatch</c> API.</summary>
     public ETagBuilder IfETagMatch { get; internal set; }
+
     /// <summary>Provides the <c>IfETagNotMatch</c> API.</summary>
     public ETagBuilder IfETagNotMatch { get; internal set; }
+
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+
     /// <summary>Provides the <c>PartNumber</c> API.</summary>
     public int? PartNumber { get; set; }
+
     /// <summary>Provides the <c>Range</c> API.</summary>
     public RangeBuilder Range { get; internal set; }
+
     /// <summary>Provides the <c>ResponseExpires</c> API.</summary>
     public DateTimeOffset? ResponseExpires { get; set; }
+
     /// <summary>Provides the <c>ResponseCacheControl</c> API.</summary>
     public CacheControlBuilder ResponseCacheControl { get; }
+
     /// <summary>Provides the <c>ResponseContentType</c> API.</summary>
     public ContentTypeBuilder ResponseContentType { get; }
+
     /// <summary>Provides the <c>ResponseContentDisposition</c> API.</summary>
     public ContentDispositionBuilder ResponseContentDisposition { get; }
+
     /// <summary>Provides the <c>ResponseContentLanguage</c> API.</summary>
     public ContentLanguageBuilder ResponseContentLanguage { get; }
+
     /// <summary>Provides the <c>ResponseContentEncoding</c> API.</summary>
     public ContentEncodingBuilder ResponseContentEncoding { get; }
+
     /// <summary>Provides the <c>SseCustomerAlgorithm</c> API.</summary>
     public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
+
     /// <summary>Provides the <c>SseCustomerKeyMd5</c> API.</summary>
     public byte[]? SseCustomerKeyMd5 { get; set; }
 
@@ -95,8 +113,6 @@ public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCusto
 
     /// <summary>Provides the <c>VersionId</c> API.</summary>
     public string? VersionId { get; set; }
-    /// <summary>Provides the <c>EnableChecksum</c> API.</summary>
-    public bool EnableChecksum { get; set; }
 
     internal void Initialize(string bucketName, string objectKey)
     {

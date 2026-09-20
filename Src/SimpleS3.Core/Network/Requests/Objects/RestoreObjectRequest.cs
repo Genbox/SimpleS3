@@ -19,11 +19,11 @@ public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId
 
     /// <summary>
     /// The number of days that you want the restored copy to exist. After the specified period, Amazon S3 deletes the temporary copy but the object remains archived in the
-    /// <see cref="StorageClass.Glacier" /> or <see cref="StorageClass.DeepArchive" /> storage class that object was restored from. Do not use with restores that specify OutputLocation.
+    /// <see cref="StorageClass.Glacier" /> or <see cref="StorageClass.DeepArchive" /> storage class that object was restored from.
     /// </summary>
     public int Days { get; set; }
 
-    /// <summary>Set the tier you want the Glacier job to be handled with. Do not use with restores that specify OutputLocation.</summary>
+    /// <summary>Set the tier you want the Glacier job to be handled with.</summary>
     public RetrievalTier GlacierTier { get; set; }
 
     /// <summary>Glacier retrieval tier at which the restore will be processed.</summary>
@@ -37,14 +37,19 @@ public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId
 
     /// <summary>Provides the <c>SelectParameters</c> API.</summary>
     public S3SelectParameters? SelectParameters { get; set; }
+
     /// <summary>Provides the <c>OutputLocation</c> API.</summary>
     public S3OutputLocation? OutputLocation { get; set; }
+
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+
     /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
+
     /// <summary>Provides the <c>VersionId</c> API.</summary>
     public string? VersionId { get; set; }
 

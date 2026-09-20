@@ -36,13 +36,13 @@ public sealed class NetworkErrorTests(ITestOutputHelper helper) : OfflineTestBas
         using MemoryStream ms = new MemoryStream(new byte[4096]);
 
         // One request should succeed
-        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-0", ms);
+        PutObjectResponse response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-0", ms, token: TestContext.Current.CancellationToken);
 
         Assert.True(response.IsSuccess);
         Assert.Equal(1, _handler.RequestCounter);
 
         // Second request should fail with a network error
-        await Assert.ThrowsAsync<IOException>(async () => await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-1", ms));
+        await Assert.ThrowsAsync<IOException>(() => ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientNetworkError) + "-1", ms, token: TestContext.Current.CancellationToken));
 
         // Because network errors are transient, they should be retried
         Assert.Equal(5, _handler.RequestCounter);

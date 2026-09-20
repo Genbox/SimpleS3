@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.GenericS3.Extensions;
 
-/// <summary>Provides the <c>ServiceCollectionExtensions</c> API.</summary>
+/// <summary>Provides generic S3 registration extensions.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>Add SimpleS3 services to a service collection.</summary>
@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
     public static IClientBuilder AddGenericS3(this IServiceCollection collection, Action<GenericS3Config, IServiceProvider> config)
     {
         collection.Configure(config);
-        return AddGenericS3(collection);
+        return collection.AddGenericS3();
     }
 
     /// <summary>Add SimpleS3 services to a service collection.</summary>
@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
     public static IClientBuilder AddGenericS3(this IServiceCollection collection, Action<GenericS3Config> config)
     {
         collection.Configure(config);
-        return AddGenericS3(collection);
+        return collection.AddGenericS3();
     }
 
     /// <summary>Add SimpleS3 services to a service collection.</summary>

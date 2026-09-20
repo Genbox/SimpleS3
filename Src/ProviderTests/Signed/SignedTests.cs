@@ -25,26 +25,26 @@ public class SignedTests : TestBase
 
         await using (MemoryStream ms = new MemoryStream("hello world"u8.ToArray()))
         {
-            PutObjectResponse putResp = await client.SendSignedRequestAsync<PutObjectResponse>(url, HttpMethodType.PUT, ms);
+            PutObjectResponse putResp = await client.SendSignedRequestAsync<PutObjectResponse>(url, HttpMethodType.PUT, ms, TestContext.Current.CancellationToken);
             Assert.Equal(200, putResp.StatusCode);
         }
 
         GetObjectRequest getReq = new GetObjectRequest(bucket, objectKey);
         url = client.SignRequest(getReq, expire);
 
-        GetObjectResponse getResp = await client.SendSignedRequestAsync<GetObjectResponse>(url, HttpMethodType.GET);
+        using GetObjectResponse getResp = await client.SendSignedRequestAsync<GetObjectResponse>(url, HttpMethodType.GET, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
 
         DeleteObjectRequest deleteReq = new DeleteObjectRequest(bucket, objectKey);
         url = client.SignRequest(deleteReq, expire);
 
-        DeleteObjectResponse deleteResp = await client.SendSignedRequestAsync<DeleteObjectResponse>(url, HttpMethodType.DELETE);
+        DeleteObjectResponse deleteResp = await client.SendSignedRequestAsync<DeleteObjectResponse>(url, HttpMethodType.DELETE, token: TestContext.Current.CancellationToken);
         Assert.Equal(204, deleteResp.StatusCode);
 
         HeadObjectRequest headReq = new HeadObjectRequest(bucket, objectKey);
         url = client.SignRequest(headReq, expire);
 
-        HeadObjectResponse headResp = await client.SendSignedRequestAsync<HeadObjectResponse>(url, HttpMethodType.HEAD);
+        HeadObjectResponse headResp = await client.SendSignedRequestAsync<HeadObjectResponse>(url, HttpMethodType.HEAD, token: TestContext.Current.CancellationToken);
         Assert.Equal(404, headResp.StatusCode);
     }
 
@@ -58,7 +58,7 @@ public class SignedTests : TestBase
         //Create (pre-signed)
         CreateMultipartUploadRequest createReq = new CreateMultipartUploadRequest(bucket, key);
         string url = client.SignRequest(createReq, expire);
-        CreateMultipartUploadResponse createResp = await client.SendSignedRequestAsync<CreateMultipartUploadResponse>(url, HttpMethodType.POST);
+        CreateMultipartUploadResponse createResp = await client.SendSignedRequestAsync<CreateMultipartUploadResponse>(url, HttpMethodType.POST, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, createResp.StatusCode);
 
         List<S3PartInfo> infos = new List<S3PartInfo>();
@@ -68,14 +68,14 @@ public class SignedTests : TestBase
             //Upload (pre-signed)
             UploadPartRequest req = new UploadPartRequest(bucket, key, createResp.UploadId, 1, null);
             url = client.SignRequest(req, expire);
-            UploadPartResponse partResp = await client.SendSignedRequestAsync<UploadPartResponse>(url, HttpMethodType.PUT, ms);
+            UploadPartResponse partResp = await client.SendSignedRequestAsync<UploadPartResponse>(url, HttpMethodType.PUT, ms, TestContext.Current.CancellationToken);
             Assert.Equal(200, partResp.StatusCode);
 
             infos.Add(new S3PartInfo(partResp.ETag, 1));
         }
 
         //Complete (not pre-signed due to using XML)
-        CompleteMultipartUploadResponse compResp = await client.CompleteMultipartUploadAsync(bucket, key, createResp.UploadId, infos);
+        CompleteMultipartUploadResponse compResp = await client.CompleteMultipartUploadAsync(bucket, key, createResp.UploadId, infos, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, compResp.StatusCode);
     }
 }

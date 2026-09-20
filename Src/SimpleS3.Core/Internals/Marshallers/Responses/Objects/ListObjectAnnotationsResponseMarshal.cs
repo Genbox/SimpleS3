@@ -20,6 +20,7 @@ internal sealed class ListObjectAnnotationsResponseMarshal : IResponseMarshal<Li
 
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
         reader.ReadToDescendant("ListObjectAnnotationsOutput");
+
         foreach (string name in XmlHelper.ReadElements(reader))
         {
             switch (name)

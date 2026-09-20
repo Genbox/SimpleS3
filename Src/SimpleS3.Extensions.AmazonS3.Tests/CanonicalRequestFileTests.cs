@@ -38,6 +38,8 @@ public sealed partial class CanonicalRequestFileTests : IDisposable
         _sigBuilder = (SignatureBuilder)_provider.GetRequiredService<ISignatureBuilder>();
     }
 
+    public void Dispose() => _provider.Dispose();
+
     [Theory]
     [MemberData(nameof(Data))]
     public void TestFile(string content, string expectedCr, string expectedSts)
@@ -59,6 +61,7 @@ public sealed partial class CanonicalRequestFileTests : IDisposable
         Assert.Equal(expectedSts, actualSts);
     }
 
+    // Justification: The test framework discovers this public member-data source by name.
     // ReSharper disable once MemberCanBePrivate.Global
     public static IEnumerable<object[]> Data()
     {
@@ -79,6 +82,4 @@ public sealed partial class CanonicalRequestFileTests : IDisposable
 
     [GeneratedRegex(@".*\.req$", RegexOptions.CultureInvariant, 1000)]
     private static partial Regex RequestResourceRegex();
-
-    public void Dispose() => _provider.Dispose();
 }

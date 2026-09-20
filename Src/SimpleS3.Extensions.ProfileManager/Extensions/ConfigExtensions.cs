@@ -27,8 +27,5 @@ public static class ConfigExtensions
     }
 
     /// <summary>Provides the <c>UseDefaultProfile</c> API.</summary>
-    public static void UseDefaultProfile(this SimpleS3Config config, IProfileManager profileManager)
-    {
-        UseProfile(config, profileManager, ProfileManager.DefaultProfile);
-    }
+    public static void UseDefaultProfile(this SimpleS3Config config, IProfileManager profileManager) => config.UseProfile(profileManager, ProfileManager.DefaultProfile);
 }

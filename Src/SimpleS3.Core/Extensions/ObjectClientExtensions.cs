@@ -38,7 +38,7 @@ public static class ObjectClientExtensions
 
             if (mfa != null)
                 req.Mfa = mfa;
-        }, token).ConfigureAwait(false);
+        }, token);
 
         return resp;
     }
@@ -65,10 +65,7 @@ public static class ObjectClientExtensions
     /// <param name="token">A cancellation token</param>
     /// <returns>This method yields all the errors that occurred while trying to delete the objects</returns>
     /// <exception cref="S3RequestException">If any of the requests fails this exception will be thrown</exception>
-    public static IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, string prefix, CancellationToken token = default)
-    {
-        return DeleteAllObjectsAsync(client, bucketName, req => req.Prefix = prefix, token);
-    }
+    public static IAsyncEnumerable<S3DeleteError> DeleteAllObjectsAsync(this IObjectClient client, string bucketName, string prefix, CancellationToken token = default) => client.DeleteAllObjectsAsync(bucketName, req => req.Prefix = prefix, token);
 
     /// <summary>Delete all objects within the bucket</summary>
     /// <param name="client">The ObjectClient</param>
@@ -92,11 +89,12 @@ public static class ObjectClientExtensions
             responseTask = client.ListObjectsAsync(bucketName, configure, prefetchCancellation.Token);
 
             ListObjectsResponse response;
+
             do
             {
                 token.ThrowIfCancellationRequested();
 
-                response = await responseTask.ConfigureAwait(false);
+                response = await responseTask!;
                 responseTask = null;
 
                 if (!response.IsSuccess)
@@ -107,7 +105,7 @@ public static class ObjectClientExtensions
 
                 if (response.IsTruncated)
                 {
-                    string cToken = response.NextContinuationToken;
+                    string cToken = response.NextContinuationToken!;
 
                     // S3-007: Continuation tokens are opaque and must be replayed byte-for-byte.
 
@@ -124,7 +122,7 @@ public static class ObjectClientExtensions
 
                 try
                 {
-                    multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
+                    multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token);
                 }
                 finally
                 {
@@ -144,7 +142,7 @@ public static class ObjectClientExtensions
         finally
         {
             prefetchCancellation.Cancel();
-            await ObservePrefetchTaskAsync(responseTask).ConfigureAwait(false);
+            await ObservePrefetchTaskAsync(responseTask);
             prefetchCancellation.Dispose();
         }
     }
@@ -156,10 +154,7 @@ public static class ObjectClientExtensions
     /// <param name="token">A cancellation token</param>
     /// <returns>This method yields all the errors that occurred while trying to delete the objects</returns>
     /// <exception cref="S3RequestException">If any of the requests fails this exception will be thrown</exception>
-    public static IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(this IObjectClient client, string bucketName, string prefix, CancellationToken token = default)
-    {
-        return DeleteAllObjectVersionsAsync(client, bucketName, req => req.Prefix = prefix, token);
-    }
+    public static IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(this IObjectClient client, string bucketName, string prefix, CancellationToken token = default) => client.DeleteAllObjectVersionsAsync(bucketName, req => req.Prefix = prefix, token);
 
     /// <summary>Delete all object versions within a bucket</summary>
     /// <param name="client">The ObjectClient</param>
@@ -181,11 +176,12 @@ public static class ObjectClientExtensions
             responseTask = client.ListObjectVersionsAsync(bucketName, configure, prefetchCancellation.Token);
 
             ListObjectVersionsResponse response;
+
             do
             {
                 token.ThrowIfCancellationRequested();
 
-                response = await responseTask.ConfigureAwait(false);
+                response = await responseTask!;
                 responseTask = null;
 
                 if (!response.IsSuccess)
@@ -196,11 +192,11 @@ public static class ObjectClientExtensions
 
                 if (response.IsTruncated)
                 {
-                    string keyMarker = response.NextKeyMarker;
-                    string versionIdMarker = response.NextVersionIdMarker;
+                    string keyMarker = response.NextKeyMarker!;
+                    string versionIdMarker = response.NextVersionIdMarker!;
 
                     if (response.EncodingType == EncodingType.Url)
-                        keyMarker = HttpUtility.UrlDecode(keyMarker);
+                        keyMarker = HttpUtility.UrlDecode(keyMarker)!;
 
                     responseTask = client.ListObjectVersionsAsync(bucketName, req =>
                     {
@@ -214,7 +210,7 @@ public static class ObjectClientExtensions
                 IEnumerable<S3DeleteInfo> delete = response.Versions.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId))
                                                            .Concat(response.DeleteMarkers.Select(x => new S3DeleteInfo(x.ObjectKey, x.VersionId)));
 
-                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token).ConfigureAwait(false);
+                DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucketName, delete, req => req.Quiet = false, token);
 
                 if (!multiDelResponse.IsSuccess)
                     throw new S3RequestException(response, $"Unable to delete objects in bucket '{bucketName}");
@@ -229,7 +225,7 @@ public static class ObjectClientExtensions
         finally
         {
             prefetchCancellation.Cancel();
-            await ObservePrefetchTaskAsync(responseTask).ConfigureAwait(false);
+            await ObservePrefetchTaskAsync(responseTask);
             prefetchCancellation.Dispose();
         }
     }
@@ -242,7 +238,7 @@ public static class ObjectClientExtensions
         Validator.RequireNotNull(objectKey);
 
         using MemoryStream ms = new MemoryStream(data);
-        return await client.PutObjectAsync(bucketName, objectKey, ms, config, token).ConfigureAwait(false);
+        return await client.PutObjectAsync(bucketName, objectKey, ms, config, token);
     }
 
     /// <summary>Provides the <c>PutObjectStringAsync</c> API.</summary>
@@ -268,7 +264,7 @@ public static class ObjectClientExtensions
             throw new FileNotFoundException("The file does not exist.", file);
 
         using FileStream fs = File.OpenRead(file);
-        return await client.PutObjectAsync(bucketName, objectKey, fs, config, token).ConfigureAwait(false);
+        return await client.PutObjectAsync(bucketName, objectKey, fs, config, token);
     }
 
     /// <summary>List all objects within a bucket</summary>
@@ -278,14 +274,11 @@ public static class ObjectClientExtensions
     /// <param name="getOwnerInfo">Set to true if you need owner information on the response objects</param>
     /// <param name="token">A cancellation token</param>
     /// <returns>A list of objects</returns>
-    public static IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, string prefix, bool getOwnerInfo = false, CancellationToken token = default)
+    public static IAsyncEnumerable<S3Object> ListAllObjectsAsync(this IObjectClient client, string bucketName, string prefix, bool getOwnerInfo = false, CancellationToken token = default) => client.ListAllObjectsAsync(bucketName, req =>
     {
-        return ListAllObjectsAsync(client, bucketName, req =>
-        {
-            req.Prefix = prefix;
-            req.FetchOwner = getOwnerInfo;
-        }, token);
-    }
+        req.Prefix = prefix;
+        req.FetchOwner = getOwnerInfo;
+    }, token);
 
     /// <summary>List all objects within a bucket</summary>
     /// <param name="client">The ObjectClient</param>
@@ -307,11 +300,12 @@ public static class ObjectClientExtensions
             responseTask = client.ListObjectsAsync(bucketName, configure, prefetchCancellation.Token);
 
             ListObjectsResponse response;
+
             do
             {
                 token.ThrowIfCancellationRequested();
 
-                response = await responseTask.ConfigureAwait(false);
+                response = await responseTask!;
                 responseTask = null;
 
                 if (!response.IsSuccess)
@@ -322,7 +316,7 @@ public static class ObjectClientExtensions
 
                 if (response.IsTruncated)
                 {
-                    string cToken = response.NextContinuationToken;
+                    string cToken = response.NextContinuationToken!;
 
                     // S3-007: Continuation tokens are opaque and must be replayed byte-for-byte.
 
@@ -343,7 +337,7 @@ public static class ObjectClientExtensions
         finally
         {
             prefetchCancellation.Cancel();
-            await ObservePrefetchTaskAsync(responseTask).ConfigureAwait(false);
+            await ObservePrefetchTaskAsync(responseTask);
             prefetchCancellation.Dispose();
         }
     }
@@ -353,10 +347,7 @@ public static class ObjectClientExtensions
     /// <param name="bucketName">The name of the bucket you want to list objects in.</param>
     /// <param name="prefix">A prefix to use</param>
     /// <param name="token">A cancellation token</param>
-    public static IAsyncEnumerable<S3Version> ListAllObjectVersionsAsync(this IObjectClient client, string bucketName, string prefix, CancellationToken token = default)
-    {
-        return ListAllObjectVersionsAsync(client, bucketName, req => req.Prefix = prefix, token);
-    }
+    public static IAsyncEnumerable<S3Version> ListAllObjectVersionsAsync(this IObjectClient client, string bucketName, string prefix, CancellationToken token = default) => client.ListAllObjectVersionsAsync(bucketName, req => req.Prefix = prefix, token);
 
     /// <summary>List all object versions in a bucket</summary>
     /// <param name="client">The ObjectClient</param>
@@ -376,11 +367,12 @@ public static class ObjectClientExtensions
             responseTask = client.ListObjectVersionsAsync(bucketName, configure, prefetchCancellation.Token);
 
             ListObjectVersionsResponse response;
+
             do
             {
                 token.ThrowIfCancellationRequested();
 
-                response = await responseTask.ConfigureAwait(false);
+                response = await responseTask!;
                 responseTask = null;
 
                 if (!response.IsSuccess)
@@ -391,11 +383,11 @@ public static class ObjectClientExtensions
 
                 if (response.IsTruncated)
                 {
-                    string keyMarker = response.NextKeyMarker;
-                    string versionIdMarker = response.NextVersionIdMarker;
+                    string keyMarker = response.NextKeyMarker!;
+                    string versionIdMarker = response.NextVersionIdMarker!;
 
                     if (response.EncodingType == EncodingType.Url)
-                        keyMarker = HttpUtility.UrlDecode(keyMarker);
+                        keyMarker = HttpUtility.UrlDecode(keyMarker)!;
 
                     responseTask = client.ListObjectVersionsAsync(bucketName, req =>
                     {
@@ -416,7 +408,7 @@ public static class ObjectClientExtensions
         finally
         {
             prefetchCancellation.Cancel();
-            await ObservePrefetchTaskAsync(responseTask).ConfigureAwait(false);
+            await ObservePrefetchTaskAsync(responseTask);
             prefetchCancellation.Dispose();
         }
     }
@@ -429,7 +421,7 @@ public static class ObjectClientExtensions
 
         try
         {
-            await task.ConfigureAwait(false);
+            await task;
         }
         catch
         {

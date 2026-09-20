@@ -10,8 +10,5 @@ public abstract class S3InputFormat
     /// <summary>Provides the <c>CompressionType</c> API.</summary>
     public CompressionType CompressionType { get; set; }
 
-    internal virtual void Reset()
-    {
-        CompressionType = CompressionType.Unknown;
-    }
+    internal virtual void Reset() => CompressionType = CompressionType.Unknown;
 }

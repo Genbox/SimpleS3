@@ -14,7 +14,7 @@ internal sealed class PutBucketLockConfigurationRequestMarshal : IRequestMarshal
         request.SetQueryParameter(AmzParameters.ObjectLock, string.Empty);
 
         FastXmlWriter writer = new FastXmlWriter(128);
-        writer.WriteStartElement("ObjectLockConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("ObjectLockConfiguration", XmlConstants.S3Namespace);
         writer.WriteElement("ObjectLockEnabled", "Enabled");
 
         if (request.LockMode != LockMode.Unknown)

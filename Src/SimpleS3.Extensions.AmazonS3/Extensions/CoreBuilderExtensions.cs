@@ -12,17 +12,14 @@ namespace Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
 public static class CoreBuilderExtensions
 {
     /// <summary>Provides the <c>UseAmazonS3</c> API.</summary>
-    public static ICoreBuilder UseAmazonS3(this ICoreBuilder clientBuilder, Action<AmazonS3Config> config)
-    {
-        return UseAmazonS3(clientBuilder, (s3Config, _) => config.Invoke(s3Config));
-    }
+    public static ICoreBuilder UseAmazonS3(this ICoreBuilder clientBuilder, Action<AmazonS3Config> config) => clientBuilder.UseAmazonS3((s3Config, _) => config.Invoke(s3Config));
 
     /// <summary>Provides the <c>UseAmazonS3</c> API.</summary>
     public static ICoreBuilder UseAmazonS3(this ICoreBuilder clientBuilder, Action<AmazonS3Config, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(config);
 
-        return UseAmazonS3(clientBuilder);
+        return clientBuilder.UseAmazonS3();
     }
 
     /// <summary>Provides the <c>UseAmazonS3</c> API.</summary>

@@ -1,5 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -53,6 +53,8 @@ public sealed class ChunkedSignatureTests : IDisposable
         _config = _provider.GetRequiredService<IOptions<SimpleS3Config>>().Value;
     }
 
+    public void Dispose() => _provider.Dispose();
+
     [Fact]
     public void AmazonTestSuite()
     {
@@ -77,7 +79,7 @@ public sealed class ChunkedSignatureTests : IDisposable
                                        "20130524/us-east-1/s3/aws4_request\n" +
                                        "cee3fed04b70f867d036f722359b0b1f2f0e5dc0efadbc082b76c4c60e316455";
 
-        Dictionary<string, string> headers = new Dictionary<string, string>();
+        Dictionary<string, string> headers = new Dictionary<string, string>(StringComparer.Ordinal);
         headers.Add(HttpHeaders.ContentEncoding, "aws-chunked");
         headers.Add(HttpHeaders.ContentLength, "66824");
         headers.Add(HttpHeaders.Host, "s3.amazonaws.com");
@@ -86,7 +88,7 @@ public sealed class ChunkedSignatureTests : IDisposable
         headers.Add(AmzHeaders.XAmzDecodedContentLength, "66560");
         headers.Add(AmzHeaders.XAmzStorageClass, "REDUCED_REDUNDANCY");
 
-        IDictionary<string, string> query = new Dictionary<string, string>();
+        IDictionary<string, string> query = new Dictionary<string, string>(StringComparer.Ordinal);
 
         Func<string, bool> originalHeaderCheck = HeaderWhitelist.ShouldSignHeader;
 
@@ -200,7 +202,7 @@ public sealed class ChunkedSignatureTests : IDisposable
                                        "20130524/us-east-1/s3/aws4_request\n" +
                                        "44d48b8c2f70eae815a0198cc73d7a546a73a93359c070abbaa5e6c7de112559";
 
-        Dictionary<string, string> headers = new Dictionary<string, string>
+        Dictionary<string, string> headers = new Dictionary<string, string>(StringComparer.Ordinal)
         {
             [HttpHeaders.ContentEncoding] = "aws-chunked",
             [HttpHeaders.Host] = "s3.amazonaws.com",
@@ -217,7 +219,7 @@ public sealed class ChunkedSignatureTests : IDisposable
         {
             HeaderWhitelist.ShouldSignHeader = _ => true;
 
-            string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethodType.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(new Dictionary<string, string>()), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD-TRAILER");
+            string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethodType.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(StringComparer.Ordinal)), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD-TRAILER");
             Assert.Equal(expectedSeedCr, actualSeedCr);
 
             string scope = _scopeBuilder.CreateScope("s3", _testDate);
@@ -301,7 +303,7 @@ public sealed class ChunkedSignatureTests : IDisposable
     [Fact]
     public void CanonicalTrailingHeadersNormalizeNamesValuesAndOrder()
     {
-        Dictionary<string, string> trailers = new Dictionary<string, string>
+        Dictionary<string, string> trailers = new Dictionary<string, string>(StringComparer.Ordinal)
         {
             ["X-Zebra"] = "  spaced\t\tvalue  ",
             ["x-alpha"] = "first"
@@ -335,6 +337,7 @@ public sealed class ChunkedSignatureTests : IDisposable
         StringBuilder sbExpected = new StringBuilder();
 
         int remaining = dataSize;
+
         for (int i = 0; i < expectedSignatures.Length; i++)
         {
             int size = Math.Min(_config.StreamingChunkSize, remaining);
@@ -354,6 +357,4 @@ public sealed class ChunkedSignatureTests : IDisposable
         string actual = sr.ReadToEnd();
         Assert.Equal(expected, actual);
     }
-
-    public void Dispose() => _provider.Dispose();
 }

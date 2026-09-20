@@ -11,6 +11,7 @@ public class DefaultProfileSerializer : IProfileSerializer
     public byte[] Serialize<T>(T profile) where T : IProfile
     {
         using MemoryStream ms = new MemoryStream();
+
         using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8))
         {
             sw.WriteLine(nameof(profile.Name) + '=' + profile.Name);
@@ -26,6 +27,7 @@ public class DefaultProfileSerializer : IProfileSerializer
                     sw.WriteLine($"Tag.{tag.Key}={tag.Value}");
             }
         }
+
         return ms.ToArray();
     }
 

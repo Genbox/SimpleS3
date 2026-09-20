@@ -27,7 +27,7 @@ internal class NonTransientFailingHttpHandler : BaseFailingHttpHandler
             };
         }
 
-        await ConsumeRequestAsync(request).ConfigureAwait(false);
+        await ConsumeRequestAsync(request, cancellationToken);
 
         return CreateResponse(request, HttpStatusCode.OK);
     }

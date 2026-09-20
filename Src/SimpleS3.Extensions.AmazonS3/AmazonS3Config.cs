@@ -23,10 +23,11 @@ public class AmazonS3Config() : SimpleS3Config("AmazonS3", "{Scheme}://{Bucket:.
 
     /// <summary>Provides the <c>AmazonS3Config</c> API.</summary>
     public AmazonS3Config(string keyId, string secretKey, AmazonS3Region region) : this(new StringAccessKey(keyId, secretKey), region) {}
+
     /// <summary>Provides the <c>AmazonS3Config</c> API.</summary>
     public AmazonS3Config(IAccessKey? credentials, AmazonS3Region region) : this(credentials, _converter.GetRegion(region).Code) {}
 
-    /// <summary>Provides the <c>Region</c> API.</summary>
+    /// <summary>Gets the region matching RegionCode, or Unknown for an unrecognized code. Setting a known region updates RegionCode.</summary>
     public AmazonS3Region Region
     {
         get => _region;

@@ -8,13 +8,25 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 public sealed class DeleteBucketReplicationRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner
 {
     internal DeleteBucketReplicationRequest() : base(HttpMethodType.DELETE) {}
+
     /// <summary>Provides the <c>DeleteBucketReplicationRequest</c> API.</summary>
-    public DeleteBucketReplicationRequest(string bucketName) : this() => Initialize(bucketName);
+    public DeleteBucketReplicationRequest(string bucketName) : this()
+    {
+        Initialize(bucketName);
+    }
+
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+
     /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
     public string? ExpectedBucketOwner { get; set; }
+
     internal void Initialize(string bucketName) => BucketName = bucketName;
+
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset() { ExpectedBucketOwner = null; base.Reset(); }
+    public override void Reset()
+    {
+        ExpectedBucketOwner = null;
+        base.Reset();
+    }
 }

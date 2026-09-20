@@ -18,6 +18,7 @@ public class TooManyBucketsError : GenericError
 
     /// <summary>Provides the <c>CurrentNumberOfBuckets</c> API.</summary>
     public int CurrentNumberOfBuckets { get; }
+
     /// <summary>Provides the <c>AllowedNumberOfBuckets</c> API.</summary>
     public int AllowedNumberOfBuckets { get; }
 

@@ -23,8 +23,10 @@ public class PutBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
 
     /// <summary>Provides the <c>Rules</c> API.</summary>
     public IList<S3Rule> Rules { get; }
+
     /// <summary>Provides the <c>ForceContentMd5</c> API.</summary>
     public Func<bool> ForceContentMd5 => () => true;
+
     /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
 

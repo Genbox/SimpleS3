@@ -37,7 +37,6 @@ internal sealed class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectRes
         response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
 
         response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
-
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
 
         // S3-002: CopyObject can report an Error document with HTTP 200.

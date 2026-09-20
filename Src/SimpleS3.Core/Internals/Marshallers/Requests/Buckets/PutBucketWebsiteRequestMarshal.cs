@@ -15,7 +15,7 @@ internal sealed class PutBucketWebsiteRequestMarshal : IRequestMarshal<PutBucket
         FastXmlWriter writer = new FastXmlWriter(1024);
         S3WebsiteConfiguration website = request.WebsiteConfiguration;
 
-        writer.WriteStartElement("WebsiteConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("WebsiteConfiguration", XmlConstants.S3Namespace);
 
         if (website.RedirectAllRequestsTo != null)
             WriteRedirectAllRequestsTo(writer, website.RedirectAllRequestsTo);

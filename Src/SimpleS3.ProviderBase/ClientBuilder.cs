@@ -9,6 +9,7 @@ public class ClientBuilder(IServiceCollection services, IHttpClientBuilder httpB
 {
     /// <summary>Provides the <c>HttpBuilder</c> API.</summary>
     public IHttpClientBuilder HttpBuilder { get; } = httpBuilder;
+
     /// <summary>Provides the <c>CoreBuilder</c> API.</summary>
     public ICoreBuilder CoreBuilder { get; } = coreBuilder;
 }

@@ -26,11 +26,8 @@ public static class HttpClientBuilderExtensions
     }
 
     /// <summary>Provides the <c>UseProxy</c> API.</summary>
-    public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, IWebProxy proxy)
-    {
-        return UseProxy(builder, _ => proxy);
-    }
+    public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, IWebProxy proxy) => builder.UseProxy(_ => proxy);
 
     /// <summary>Provides the <c>UseProxy</c> API.</summary>
-    public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, string proxyUrl) => UseProxy(builder, new WebProxy(proxyUrl));
+    public static IHttpClientBuilder UseProxy(this IHttpClientBuilder builder, string proxyUrl) => builder.UseProxy(new WebProxy(proxyUrl));
 }

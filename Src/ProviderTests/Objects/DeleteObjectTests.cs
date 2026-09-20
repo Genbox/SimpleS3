@@ -11,10 +11,10 @@ public class DeleteObjectTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task DeleteObject(S3Provider provider, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(DeleteObject), null);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(DeleteObject), null, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        DeleteObjectResponse delREsp = await client.DeleteObjectAsync(bucket, nameof(DeleteObject));
+        DeleteObjectResponse delREsp = await client.DeleteObjectAsync(bucket, nameof(DeleteObject), token: TestContext.Current.CancellationToken);
         Assert.Equal(204, delREsp.StatusCode);
 
         if (provider == S3Provider.AmazonS3)

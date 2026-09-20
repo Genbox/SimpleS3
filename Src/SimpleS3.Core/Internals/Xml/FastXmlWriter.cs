@@ -23,7 +23,7 @@ internal sealed class FastXmlWriter
     public FastXmlWriter(int capacity, XmlStandard xmlStandard = XmlStandard.Xml10, XmlCharMode invalidChars = XmlCharMode.ThrowException, XmlCharMode discouragedChars = XmlCharMode.ThrowException)
     {
         if (invalidChars == XmlCharMode.EntityEncode)
-            throw new ArgumentException("EntityEncode mode is not supported for invalid XML characters");
+            throw new ArgumentException("EntityEncode mode is not supported for invalid XML characters", nameof(invalidChars));
 
         _xmlStandard = xmlStandard;
         _invalidCharMode = invalidChars;
@@ -103,6 +103,7 @@ internal sealed class FastXmlWriter
 
             if (c == '&')
                 _sb.Append("&amp;");
+
             // S3-014: XML parsers normalize literal CR, so preserve it as a character reference.
             else if (c == '\r')
                 _sb.Append("&#13;");

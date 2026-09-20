@@ -16,10 +16,10 @@ public class HeadObjectTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task HeadObject(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObject), null);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObject), null, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObject));
+        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObject), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, headResp.StatusCode);
     }
 
@@ -27,9 +27,9 @@ public class HeadObjectTests : TestBase
     [MultipleProviders(S3Provider.All)]
     public async Task HeadObjectContentRange(S3Provider _, string bucket, ISimpleClient client)
     {
-        await client.PutObjectStringAsync(bucket, nameof(HeadObjectContentRange), "test");
+        await client.PutObjectStringAsync(bucket, nameof(HeadObjectContentRange), "test", token: TestContext.Current.CancellationToken);
 
-        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObjectContentRange), r => r.Range.Add(0, 2));
+        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObjectContentRange), r => r.Range.Add(0, 2), TestContext.Current.CancellationToken);
         Assert.Equal("bytes", headResp.AcceptRanges);
         Assert.Equal("bytes 0-2/4", headResp.ContentRange);
     }
@@ -38,10 +38,10 @@ public class HeadObjectTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task HeadObjectLifecycle(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObjectLifecycle), null);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObjectLifecycle), null, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObjectLifecycle));
+        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObjectLifecycle), token: TestContext.Current.CancellationToken);
 
         //Expiration should work on head too
         Assert.Equal(DateTime.UtcNow.AddDays(2).Date, headResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
@@ -56,9 +56,9 @@ public class HeadObjectTests : TestBase
         {
             r.Tags.Add("mykey1", "myvalue1");
             r.Tags.Add("mykey2", "myvalue2");
-        });
+        }, TestContext.Current.CancellationToken);
 
-        HeadObjectResponse resp = await client.HeadObjectAsync(bucket, nameof(HeadObjectMultipleTags));
+        HeadObjectResponse resp = await client.HeadObjectAsync(bucket, nameof(HeadObjectMultipleTags), token: TestContext.Current.CancellationToken);
         Assert.Equal(2, resp.TagCount);
     }
 
@@ -67,7 +67,7 @@ public class HeadObjectTests : TestBase
     public async Task HeadObjectResponseHeaders(S3Provider _, string bucket, ISimpleClient client)
     {
         //Upload a file for tests
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObjectResponseHeaders), null);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObjectResponseHeaders), null, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
         HeadObjectResponse resp = await client.HeadObjectAsync(bucket, nameof(HeadObjectResponseHeaders), r =>
@@ -78,7 +78,7 @@ public class HeadObjectTests : TestBase
             r.ResponseContentLanguage.Add("da-DK");
             r.ResponseContentType.Set("text/html", "utf-8");
             r.ResponseExpires = DateTimeOffset.UtcNow;
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal("max-age=42", resp.CacheControl);
         Assert.Equal("attachment; filename=\"filename.txt\"", resp.ContentDisposition);
@@ -91,10 +91,10 @@ public class HeadObjectTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task HeadObjectWebsiteRedirect(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObjectWebsiteRedirect), null, r => r.WebsiteRedirectLocation = "https://google.com");
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObjectWebsiteRedirect), null, r => r.WebsiteRedirectLocation = "https://google.com", TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObjectWebsiteRedirect));
+        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObjectWebsiteRedirect), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, headResp.StatusCode);
         Assert.Equal("https://google.com", headResp.WebsiteRedirectLocation);
     }
@@ -111,13 +111,13 @@ public class HeadObjectTests : TestBase
         {
             r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
             r.Checksum = checksum;
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(200, putResp.StatusCode);
         Assert.Equal(checksum, putResp.Checksum);
         Assert.Equal(ChecksumType.FullObject, putResp.ChecksumType);
 
-        HeadObjectResponse resp = await client.HeadObjectAsync(bucket, nameof(HeadObjectChecksum), r => r.EnableChecksum = true);
+        HeadObjectResponse resp = await client.HeadObjectAsync(bucket, nameof(HeadObjectChecksum), r => r.EnableChecksum = true, TestContext.Current.CancellationToken);
         Assert.Equal(200, resp.StatusCode);
         Assert.Equal(ChecksumType.FullObject, resp.ChecksumType);
         Assert.Equal(ChecksumAlgorithm.Sha1, resp.ChecksumAlgorithm);

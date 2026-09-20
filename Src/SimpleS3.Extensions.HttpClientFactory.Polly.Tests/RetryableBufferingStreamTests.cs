@@ -131,8 +131,8 @@ public class RetryableBufferingStreamTests
 
     private sealed class CancelAfterConsumingStream(byte[] data, int bytesToConsume) : Stream
     {
-        private int _position;
         private bool _canceled;
+        private int _position;
 
         public override bool CanRead => true;
         public override bool CanSeek => false;

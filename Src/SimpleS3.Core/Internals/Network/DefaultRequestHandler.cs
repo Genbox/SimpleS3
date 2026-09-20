@@ -82,6 +82,7 @@ internal sealed partial class DefaultRequestHandler : IRequestHandler
                     requestStream = wrapper.Wrap(requestStream, request);
             }
         }
+
         if (!request.Headers.TryGetValue(AmzHeaders.XAmzContentSha256, out string? contentHash))
         {
             if (_config.PayloadSignatureMode == SignatureMode.Unsigned)

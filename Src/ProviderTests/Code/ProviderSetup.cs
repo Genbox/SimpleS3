@@ -6,8 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.ProviderTests.Code;
 
-internal class ProviderSetup
+internal sealed class ProviderSetup : IDisposable
 {
+    private readonly List<ServiceProvider> serviceProviders = [];
+
     private ProviderSetup()
     {
         BuildProvider(S3Provider.AmazonS3);
@@ -19,6 +21,12 @@ internal class ProviderSetup
     public static ProviderSetup Instance { get; } = new ProviderSetup();
     public IList<(S3Provider, IProfile, ISimpleClient)> Clients { get; } = new List<(S3Provider, IProfile, ISimpleClient)>();
 
+    public void Dispose()
+    {
+        foreach (ServiceProvider serviceProvider in serviceProviders)
+            serviceProvider.Dispose();
+    }
+
     private void BuildProvider(S3Provider provider)
     {
         ServiceProvider services = UtilityHelper.CreateSimpleS3(provider, "TestSetup-" + provider, false, c => c.ObjectKeyValidationMode = ObjectKeyValidationMode.Disabled);
@@ -28,6 +36,11 @@ internal class ProviderSetup
         IProfile? profile = profileManager.GetProfile("TestSetup-" + provider);
 
         if (profile != null)
+        {
+            serviceProviders.Add(services);
             Clients.Add((provider, profile, services.GetRequiredService<ISimpleClient>()));
+        }
+        else
+            services.Dispose();
     }
 }

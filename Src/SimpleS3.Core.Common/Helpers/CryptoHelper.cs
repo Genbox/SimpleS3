@@ -11,6 +11,7 @@ public static class CryptoHelper
     [ThreadStatic]private static HashAlgorithm? _md5Cache;
 
     private static HashAlgorithm Sha256 => _sha256Cache ??= SHA256.Create();
+
     [SuppressMessage("Security", "S4790", Justification = "S3 requires this legacy hash for its wire-level checksum; it is not used for password storage or a new signature scheme.")]
     [SuppressMessage("Security", "CA5351", Justification = "S3 requires this legacy hash for its wire-level checksum; it is not used for password storage or a new signature scheme.")]
     private static HashAlgorithm Md5 => _md5Cache ??= MD5.Create();

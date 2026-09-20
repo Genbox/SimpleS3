@@ -10,18 +10,39 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 public sealed class PutBucketRequestPaymentRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner, IContentMd5Config
 {
     internal PutBucketRequestPaymentRequest() : base(HttpMethodType.PUT) {}
+
     /// <summary>Provides the <c>PutBucketRequestPaymentRequest</c> API.</summary>
-    public PutBucketRequestPaymentRequest(string bucketName, RequestPaymentPayer payer) : this() => Initialize(bucketName, payer);
-    /// <summary>Provides the <c>BucketName</c> API.</summary>
-    public string BucketName { get; set; } = null!;
-    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
-    public byte[]? ContentMd5 { get; set; }
-    Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
+    public PutBucketRequestPaymentRequest(string bucketName, RequestPaymentPayer payer) : this()
+    {
+        Initialize(bucketName, payer);
+    }
+
     /// <summary>Provides the <c>Payer</c> API.</summary>
     public RequestPaymentPayer Payer { get; set; }
-    internal void Initialize(string bucketName, RequestPaymentPayer payer) { BucketName = bucketName; Payer = payer; }
+
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
+    public byte[]? ContentMd5 { get; set; }
+
+    Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
+
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
+    public string BucketName { get; set; } = null!;
+
+    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
+    public string? ExpectedBucketOwner { get; set; }
+
+    internal void Initialize(string bucketName, RequestPaymentPayer payer)
+    {
+        BucketName = bucketName;
+        Payer = payer;
+    }
+
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset() { ContentMd5 = null; ExpectedBucketOwner = null; Payer = RequestPaymentPayer.Unknown; base.Reset(); }
+    public override void Reset()
+    {
+        ContentMd5 = null;
+        ExpectedBucketOwner = null;
+        Payer = RequestPaymentPayer.Unknown;
+        base.Reset();
+    }
 }

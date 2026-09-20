@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 /// <summary>Provides the <c>CoreBuilderExtensions</c> API.</summary>
 public static class CoreBuilderExtensions
 {
-    /// <summary>Adds a profile manager that is configured to use the disk for storage and JSON for serialization</summary>
+    /// <summary>Adds a profile manager that is configured to use the disk for storage and key=value lines for serialization</summary>
     public static IProfileManagerBuilder UseProfileManager(this ICoreBuilder builder, Action<DiskStorageOptions>? config = null)
     {
         builder.Services.AddDataProtection(options => options.ApplicationDiscriminator = "SimpleS3");

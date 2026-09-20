@@ -12,16 +12,13 @@ namespace Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
 public static class CoreBuilderExtensions
 {
     /// <summary>Provides the <c>UseBackBlazeB2</c> API.</summary>
-    public static ICoreBuilder UseBackBlazeB2(this ICoreBuilder clientBuilder, Action<BackBlazeB2Config> config)
-    {
-        return UseBackBlazeB2(clientBuilder, (b2Config, _) => config.Invoke(b2Config));
-    }
+    public static ICoreBuilder UseBackBlazeB2(this ICoreBuilder clientBuilder, Action<BackBlazeB2Config> config) => clientBuilder.UseBackBlazeB2((b2Config, _) => config.Invoke(b2Config));
 
     /// <summary>Provides the <c>UseBackBlazeB2</c> API.</summary>
     public static ICoreBuilder UseBackBlazeB2(this ICoreBuilder clientBuilder, Action<BackBlazeB2Config, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(config);
-        return UseBackBlazeB2(clientBuilder);
+        return clientBuilder.UseBackBlazeB2();
     }
 
     /// <summary>Provides the <c>UseBackBlazeB2</c> API.</summary>

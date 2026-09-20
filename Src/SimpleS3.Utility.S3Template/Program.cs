@@ -4,7 +4,7 @@ namespace Genbox.SimpleS3.Utility.S3Template;
 
 internal static class Program
 {
-    private static readonly IDictionary<DataType, (string, string)> _data = new Dictionary<DataType, (string, string)>
+    private static readonly Dictionary<DataType, (string, string)> _data = new Dictionary<DataType, (string, string)>
     {
         { DataType.Request, ("Network/Requests/%Type%s/", "Request.cs") },
         { DataType.RequestMarshal, ("Internals/Marshallers/Requests/%Type%s/", "RequestMarshal.cs") },

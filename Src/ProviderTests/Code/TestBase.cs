@@ -25,7 +25,7 @@ public abstract class TestBase
         S3ServerSideEncryptionRule rule = new S3ServerSideEncryptionRule(SseAlgorithm.Aes256);
         rule.BlockedEncryptionTypes.Add(BlockedEncryptionType.None);
 
-        PutBucketEncryptionResponse resp = await client.PutBucketEncryptionAsync(bucketName, [rule]);
+        PutBucketEncryptionResponse resp = await client.PutBucketEncryptionAsync(bucketName, [rule], token: TestContext.Current.CancellationToken);
         Assert.Equal(200, resp.StatusCode);
     }
 

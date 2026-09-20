@@ -1,3 +1,4 @@
+// Justification: Enum member names preserve the standard uppercase HTTP method tokens.
 // ReSharper disable InconsistentNaming
 namespace Genbox.SimpleS3.Core.Abstracts.Enums;
 

@@ -1,13 +1,12 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
-using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Internal;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
+using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Internal;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Http;
 using Polly;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Tests;
@@ -43,7 +42,7 @@ public class PollyHttpMessageHandlerTests
     public async Task UseRetryAndTimeoutHonorsNoDelayRetryMode()
     {
         ServiceCollection services = new ServiceCollection();
-        CountingHandler handler = new CountingHandler();
+        using CountingHandler handler = new CountingHandler();
 
         services.AddHttpClient("custom")
                 .ConfigurePrimaryHttpMessageHandler(() => handler)
@@ -58,7 +57,7 @@ public class PollyHttpMessageHandlerTests
         using HttpClient client = provider.GetRequiredService<IHttpClientFactory>().CreateClient("custom");
 
         Stopwatch stopwatch = Stopwatch.StartNew();
-        using HttpResponseMessage response = await client.GetAsync("https://example.com", TestContext.Current.CancellationToken);
+        using HttpResponseMessage response = await client.GetAsync(new Uri("https://example.com"), TestContext.Current.CancellationToken);
         stopwatch.Stop();
 
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);

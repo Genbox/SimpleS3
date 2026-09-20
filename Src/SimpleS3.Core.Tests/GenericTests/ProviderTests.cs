@@ -11,7 +11,7 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 
 public class ProviderTests
 {
-    private static async Task<string?> TestProvider(Action<SimpleS3Config> configure)
+    private static async Task<string?> TestProviderAsync(Action<SimpleS3Config> configure)
     {
         ServiceCollection service = new ServiceCollection();
 
@@ -36,7 +36,7 @@ public class ProviderTests
     [Fact]
     internal async Task CustomProviderEndpoint()
     {
-        string? url = await TestProvider(config =>
+        string? url = await TestProviderAsync(config =>
         {
             config.Endpoint = "http://doesnotexist.local";
             config.NamingMode = NamingMode.PathStyle;
@@ -48,7 +48,7 @@ public class ProviderTests
     [Fact]
     internal async Task CustomProviderEndpointTemplateVirtualHost()
     {
-        string? url = await TestProvider(config =>
+        string? url = await TestProviderAsync(config =>
         {
             config.Endpoint = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
             config.NamingMode = NamingMode.VirtualHost;
@@ -60,7 +60,7 @@ public class ProviderTests
     [Fact]
     internal async Task CustomProviderEndpointTemplatePathStyle()
     {
-        string? url = await TestProvider(config =>
+        string? url = await TestProviderAsync(config =>
         {
             config.Endpoint = "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com";
             config.NamingMode = NamingMode.PathStyle;

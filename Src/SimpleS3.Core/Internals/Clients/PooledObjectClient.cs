@@ -137,13 +137,29 @@ internal class PooledObjectClient(IObjectOperations operations) : IObjectClient
         }
     }
 
-    public Task<GetObjectAnnotationResponse> GetObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<GetObjectAnnotationRequest>? config = null, CancellationToken token = default) => ObjectPool<GetObjectAnnotationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, objectKey, annotationName); config?.Invoke(req); }, req => ObjectOperations.GetObjectAnnotationAsync(req, token));
+    public Task<GetObjectAnnotationResponse> GetObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<GetObjectAnnotationRequest>? config = null, CancellationToken token = default) => ObjectPool<GetObjectAnnotationRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName, objectKey, annotationName);
+        config?.Invoke(req);
+    }, req => ObjectOperations.GetObjectAnnotationAsync(req, token));
 
-    public Task<PutObjectAnnotationResponse> PutObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Stream content, Action<PutObjectAnnotationRequest>? config = null, CancellationToken token = default) => ObjectPool<PutObjectAnnotationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, objectKey, annotationName, content); config?.Invoke(req); }, req => ObjectOperations.PutObjectAnnotationAsync(req, token));
+    public Task<PutObjectAnnotationResponse> PutObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Stream content, Action<PutObjectAnnotationRequest>? config = null, CancellationToken token = default) => ObjectPool<PutObjectAnnotationRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName, objectKey, annotationName, content);
+        config?.Invoke(req);
+    }, req => ObjectOperations.PutObjectAnnotationAsync(req, token));
 
-    public Task<DeleteObjectAnnotationResponse> DeleteObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<DeleteObjectAnnotationRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteObjectAnnotationRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, objectKey, annotationName); config?.Invoke(req); }, req => ObjectOperations.DeleteObjectAnnotationAsync(req, token));
+    public Task<DeleteObjectAnnotationResponse> DeleteObjectAnnotationAsync(string bucketName, string objectKey, string annotationName, Action<DeleteObjectAnnotationRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteObjectAnnotationRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName, objectKey, annotationName);
+        config?.Invoke(req);
+    }, req => ObjectOperations.DeleteObjectAnnotationAsync(req, token));
 
-    public Task<ListObjectAnnotationsResponse> ListObjectAnnotationsAsync(string bucketName, string objectKey, Action<ListObjectAnnotationsRequest>? config = null, CancellationToken token = default) => ObjectPool<ListObjectAnnotationsRequest>.Shared.RentAndUseAsync(req => { req.Initialize(bucketName, objectKey); config?.Invoke(req); }, req => ObjectOperations.ListObjectAnnotationsAsync(req, token));
+    public Task<ListObjectAnnotationsResponse> ListObjectAnnotationsAsync(string bucketName, string objectKey, Action<ListObjectAnnotationsRequest>? config = null, CancellationToken token = default) => ObjectPool<ListObjectAnnotationsRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName, objectKey);
+        config?.Invoke(req);
+    }, req => ObjectOperations.ListObjectAnnotationsAsync(req, token));
 
     public Task<GetObjectLegalHoldResponse> GetObjectLegalHoldAsync(string bucketName, string objectKey, Action<GetObjectLegalHoldRequest>? config = null, CancellationToken token = default)
     {

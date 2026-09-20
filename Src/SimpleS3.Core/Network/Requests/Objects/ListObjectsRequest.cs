@@ -70,10 +70,7 @@ public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
     /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
 
-    internal void Initialize(string bucketName)
-    {
-        BucketName = bucketName;
-    }
+    internal void Initialize(string bucketName) => BucketName = bucketName;
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()

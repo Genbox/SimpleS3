@@ -4,5 +4,5 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Buckets;
 public class GetBucketPolicyResponse : BaseResponse
 {
     /// <summary>Provides the <c>Policy</c> API.</summary>
-    public string Policy { get; internal set; }
+    public string Policy { get; internal set; } = null!;
 }

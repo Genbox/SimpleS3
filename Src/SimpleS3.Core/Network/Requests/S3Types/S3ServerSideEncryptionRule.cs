@@ -16,10 +16,13 @@ public class S3ServerSideEncryptionRule
 
     /// <summary>Provides the <c>SseAlgorithm</c> API.</summary>
     public SseAlgorithm SseAlgorithm { get; set; }
+
     /// <summary>Provides the <c>KmsMasterKeyId</c> API.</summary>
     public string? KmsMasterKeyId { get; set; }
+
     /// <summary>Provides the <c>BucketKeyEnabled</c> API.</summary>
     public bool? BucketKeyEnabled { get; set; }
+
     /// <summary>Provides the <c>BlockedEncryptionTypes</c> API.</summary>
     public IList<BlockedEncryptionType> BlockedEncryptionTypes { get; } = new List<BlockedEncryptionType>();
 }

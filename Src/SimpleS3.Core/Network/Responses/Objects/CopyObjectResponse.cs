@@ -8,26 +8,37 @@ public class CopyObjectResponse : BaseResponse, IHasRequestCharged, IHasVersionI
 {
     /// <summary>Provides the <c>NewVersionId</c> API.</summary>
     public string? NewVersionId { get; internal set; }
+
     /// <summary>Provides the <c>ETag</c> API.</summary>
     public string? ETag { get; internal set; }
+
     /// <summary>Provides the <c>LifeCycleExpiresOn</c> API.</summary>
     public DateTimeOffset? LifeCycleExpiresOn { get; internal set; }
+
     /// <summary>Provides the <c>LifeCycleRuleId</c> API.</summary>
     public string? LifeCycleRuleId { get; internal set; }
+
     /// <summary>Provides the <c>LastModified</c> API.</summary>
     public DateTimeOffset? LastModified { get; internal set; }
+
     /// <summary>Provides the <c>RequestCharged</c> API.</summary>
     public bool RequestCharged { get; internal set; }
+
     /// <summary>Provides the <c>SseAlgorithm</c> API.</summary>
     public SseAlgorithm SseAlgorithm { get; internal set; }
+
     /// <summary>Provides the <c>SseKmsKeyId</c> API.</summary>
     public string? SseKmsKeyId { get; internal set; }
+
     /// <summary>Provides the <c>SseContext</c> API.</summary>
     public string? SseContext { get; internal set; }
+
     /// <summary>Provides the <c>SseCustomerAlgorithm</c> API.</summary>
     public SseCustomerAlgorithm SseCustomerAlgorithm { get; internal set; }
+
     /// <summary>Provides the <c>SseCustomerKeyMd5</c> API.</summary>
     public byte[]? SseCustomerKeyMd5 { get; internal set; }
+
     /// <summary>Provides the <c>VersionId</c> API.</summary>
     public string? VersionId { get; internal set; }
 }

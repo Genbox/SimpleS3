@@ -19,7 +19,7 @@ public class ReuseRequestTests(ITestOutputHelper helper) : OfflineTestBase(helpe
 
         for (int i = 0; i < 2; i++)
         {
-            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req, TestContext.Current.CancellationToken);
+            using GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req, TestContext.Current.CancellationToken);
             Assert.True(resp.IsSuccess);
 
             //None of the essential properties must change
@@ -36,7 +36,7 @@ public class ReuseRequestTests(ITestOutputHelper helper) : OfflineTestBase(helpe
             string currentHeader = req.Headers[HttpHeaders.Authorization];
 
             if (i > 0)
-                Assert.NotEqual(prevHeader, currentHeader);
+                Assert.NotEqual(prevHeader, currentHeader, StringComparer.Ordinal);
 
             prevHeader = currentHeader;
         }
@@ -56,7 +56,7 @@ public class ReuseRequestTests(ITestOutputHelper helper) : OfflineTestBase(helpe
             string key = i.ToString(NumberFormatInfo.InvariantInfo);
             req.ObjectKey = key;
 
-            GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req, TestContext.Current.CancellationToken);
+            using GetObjectResponse resp = await ObjectOperations.GetObjectAsync(req, TestContext.Current.CancellationToken);
             Assert.True(resp.IsSuccess);
 
             //The key must not change after the request is sent
@@ -70,7 +70,7 @@ public class ReuseRequestTests(ITestOutputHelper helper) : OfflineTestBase(helpe
             string currentHeader = req.Headers[HttpHeaders.Authorization];
 
             if (i > 0)
-                Assert.NotEqual(prevHeader, currentHeader);
+                Assert.NotEqual(prevHeader, currentHeader, StringComparer.Ordinal);
 
             prevHeader = currentHeader;
         }

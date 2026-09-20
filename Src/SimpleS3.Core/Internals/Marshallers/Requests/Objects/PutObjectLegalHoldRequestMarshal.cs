@@ -13,7 +13,7 @@ internal sealed class PutObjectLegalHoldRequestMarshal : IRequestMarshal<PutObje
         request.SetQueryParameter(AmzParameters.LegalHold, string.Empty);
 
         FastXmlWriter xml = new FastXmlWriter(512);
-        xml.WriteStartElement("LegalHold", "http://s3.amazonaws.com/doc/2006-03-01/");
+        xml.WriteStartElement("LegalHold", XmlConstants.S3Namespace);
         xml.WriteElement("Status", request.LockLegalHold!.Value ? "ON" : "OFF");
         xml.WriteEndElement("LegalHold");
 

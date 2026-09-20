@@ -12,5 +12,6 @@ public enum BlockedEncryptionType
     /// <summary>Provides the <c>None</c> API.</summary>
     [Display(Name = "NONE")]None,
     /// <summary>Provides the <c>SseC</c> API.</summary>
-    [Display(Name = "SSE-C")]SseC
+    [Display(Name = "SSE-C")]
+    SseC
 }

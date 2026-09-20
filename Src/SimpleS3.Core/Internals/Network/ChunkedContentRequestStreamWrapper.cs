@@ -32,6 +32,8 @@ internal sealed class ChunkedContentRequestStreamWrapper : IRequestStreamWrapper
         _config = config.Value;
     }
 
+    private static IReadOnlyDictionary<string, string> EmptyTrailers { get; } = new Dictionary<string, string>(0, StringComparer.Ordinal);
+
     public bool IsSupported(IRequest request) => _config.PayloadSignatureMode == SignatureMode.StreamingSignature && request is ISupportStreaming && _config.Credentials != null;
 
     public Stream Wrap(Stream input, IRequest request)
@@ -99,6 +101,4 @@ internal sealed class ChunkedContentRequestStreamWrapper : IRequestStreamWrapper
 
         return contentEncoding.Split(',').Any(x => x.Trim().Equals("aws-chunked", StringComparison.OrdinalIgnoreCase)) ? contentEncoding : contentEncoding + ", aws-chunked";
     }
-
-    private static IReadOnlyDictionary<string, string> EmptyTrailers { get; } = new Dictionary<string, string>(0);
 }

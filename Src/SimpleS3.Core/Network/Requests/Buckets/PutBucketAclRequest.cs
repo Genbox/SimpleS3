@@ -19,27 +19,41 @@ public sealed class PutBucketAclRequest : BaseRequest, IHasBucketName, IHasBucke
     }
 
     /// <summary>Provides the <c>PutBucketAclRequest</c> API.</summary>
-    public PutBucketAclRequest(string bucketName) : this() => Initialize(bucketName);
-    /// <summary>Provides the <c>BucketName</c> API.</summary>
-    public string BucketName { get; set; } = null!;
-    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
-    public byte[]? ContentMd5 { get; set; }
+    public PutBucketAclRequest(string bucketName) : this()
+    {
+        Initialize(bucketName);
+    }
+
     /// <summary>Provides the <c>Acl</c> API.</summary>
     public BucketCannedAcl Acl { get; set; }
+
     /// <summary>Provides the <c>AclGrantRead</c> API.</summary>
     public AclBuilder AclGrantRead { get; }
+
     /// <summary>Provides the <c>AclGrantWrite</c> API.</summary>
     public AclBuilder AclGrantWrite { get; }
+
     /// <summary>Provides the <c>AclGrantReadAcp</c> API.</summary>
     public AclBuilder AclGrantReadAcp { get; }
+
     /// <summary>Provides the <c>AclGrantWriteAcp</c> API.</summary>
     public AclBuilder AclGrantWriteAcp { get; }
+
     /// <summary>Provides the <c>AclGrantFullControl</c> API.</summary>
     public AclBuilder AclGrantFullControl { get; }
+
     /// <summary>Provides the <c>ObjectOwnership</c> API.</summary>
     public ObjectOwnership ObjectOwnership { get; set; }
+
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
+    public string BucketName { get; set; } = null!;
+
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
+    public byte[]? ContentMd5 { get; set; }
+
     /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
     public string? ExpectedBucketOwner { get; set; }
+
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
     /// <summary>Provides the <c>Reset</c> API.</summary>

@@ -233,13 +233,13 @@ internal sealed class Upload : IUpload
     public async Task<PutObjectResponse> UploadFileAsync(string filePath, CancellationToken token = default)
     {
         using FileStream fs = File.OpenRead(filePath);
-        return await UploadAsync(fs, token).ConfigureAwait(false);
+        return await UploadAsync(fs, token);
     }
 
     public async Task<PutObjectResponse> UploadDataAsync(byte[] data, CancellationToken token = default)
     {
         using MemoryStream ms = new MemoryStream(data);
-        return await UploadAsync(ms, token).ConfigureAwait(false);
+        return await UploadAsync(ms, token);
     }
 
     public Task<PutObjectResponse> UploadStringAsync(string data, Encoding? encoding = null, CancellationToken token = default)

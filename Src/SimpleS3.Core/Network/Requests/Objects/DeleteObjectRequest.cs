@@ -25,14 +25,19 @@ public class DeleteObjectRequest : BaseRequest, IHasVersionId, IHasRequestPayer,
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+
     /// <summary>Provides the <c>BypassGovernanceRetention</c> API.</summary>
     public bool? BypassGovernanceRetention { get; set; }
+
     /// <summary>Provides the <c>Mfa</c> API.</summary>
     public MfaAuthenticationBuilder Mfa { get; internal set; }
+
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+
     /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
+
     /// <summary>Provides the <c>VersionId</c> API.</summary>
     public string? VersionId { get; set; }
 

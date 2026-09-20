@@ -13,21 +13,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.BackBlazeB2.Extensions;
 
-/// <summary>Provides the <c>ServiceCollectionExtensions</c> API.</summary>
+/// <summary>Provides Backblaze B2 registration extensions.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>Provides the <c>AddBackBlazeB2</c> API.</summary>
     public static IClientBuilder AddBackBlazeB2(this IServiceCollection collection, Action<BackBlazeB2Config, IServiceProvider> config)
     {
         collection.Configure(config);
-        return AddBackBlazeB2(collection);
+        return collection.AddBackBlazeB2();
     }
 
     /// <summary>Provides the <c>AddBackBlazeB2</c> API.</summary>
     public static IClientBuilder AddBackBlazeB2(this IServiceCollection collection, Action<BackBlazeB2Config> config)
     {
         collection.Configure(config);
-        return AddBackBlazeB2(collection);
+        return collection.AddBackBlazeB2();
     }
 
     /// <summary>Provides the <c>AddBackBlazeB2</c> API.</summary>

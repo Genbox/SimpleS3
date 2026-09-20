@@ -14,7 +14,8 @@ internal sealed class PutBucketCorsRequestMarshal : IRequestMarshal<PutBucketCor
     {
         request.SetQueryParameter(AmzParameters.Cors, string.Empty);
         FastXmlWriter writer = new FastXmlWriter(512);
-        writer.WriteStartElement("CORSConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("CORSConfiguration", XmlConstants.S3Namespace);
+
         foreach (S3CorsRule rule in request.Rules)
         {
             writer.WriteStartElement("CORSRule");
@@ -32,6 +33,7 @@ internal sealed class PutBucketCorsRequestMarshal : IRequestMarshal<PutBucketCor
                 writer.WriteElement("MaxAgeSeconds", ValueHelper.IntToString(rule.MaxAgeSeconds.Value));
             writer.WriteEndElement("CORSRule");
         }
+
         writer.WriteEndElement("CORSConfiguration");
         return new MemoryStream(writer.GetBytes());
     }

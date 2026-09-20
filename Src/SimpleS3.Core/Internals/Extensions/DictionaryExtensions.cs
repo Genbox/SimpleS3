@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Core.Internals.Extensions;
 
 internal static class DictionaryExtensions
 {
-    public static string? GetOptionalValue(this IDictionary<string, string> response, string key) => TryGetHeader(response, key, out string? value) ? value : null;
+    public static string? GetOptionalValue(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) ? value : null;
 
     public static string GetRequiredValue(this IDictionary<string, string> response, string key)
     {
@@ -19,13 +19,13 @@ internal static class DictionaryExtensions
 
     public static bool TryGetHeader(this IDictionary<string, string> response, string key, [NotNullWhen(true)]out string? value) => response.TryGetValue(key, out value);
 
-    public static int GetHeaderInt(this IDictionary<string, string> response, string key) => TryGetHeader(response, key, out string? value) ? ValueHelper.ParseInt(value) : default;
+    public static int GetHeaderInt(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseInt(value) : default;
 
-    public static long GetHeaderLong(this IDictionary<string, string> response, string key) => TryGetHeader(response, key, out string? value) ? ValueHelper.ParseLong(value) : default;
+    public static long GetHeaderLong(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseLong(value) : default;
 
-    public static DateTimeOffset GetHeaderDate(this IDictionary<string, string> response, string key, DateTimeFormat format) => TryGetHeader(response, key, out string? value) ? ValueHelper.ParseDate(value, format) : default;
+    public static DateTimeOffset GetHeaderDate(this IDictionary<string, string> response, string key, DateTimeFormat format) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseDate(value, format) : default;
 
-    public static byte[]? GetHeaderByteArray(this IDictionary<string, string> response, string key, BinaryEncoding encoding) => TryGetHeader(response, key, out string? value) ? ValueHelper.ParseByteArray(value, encoding) : null;
+    public static byte[]? GetHeaderByteArray(this IDictionary<string, string> response, string key, BinaryEncoding encoding) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseByteArray(value, encoding) : null;
 
-    public static bool GetHeaderBool(this IDictionary<string, string> response, string key) => TryGetHeader(response, key, out string? value) && ValueHelper.ParseBool(value);
+    public static bool GetHeaderBool(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) && ValueHelper.ParseBool(value);
 }

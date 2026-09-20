@@ -3,15 +3,6 @@ namespace Genbox.SimpleS3.Core.Common.Misc;
 /// <summary>Provides the <c>AmzHeaders</c> API.</summary>
 public static class AmzHeaders
 {
-    #region Streaming
-
-    /// <summary>Provides the <c>XAmzDecodedContentLength</c> API.</summary>
-    public const string XAmzDecodedContentLength = "x-amz-decoded-content-length";
-    /// <summary>Provides the <c>XAmzTrailer</c> API.</summary>
-    public const string XAmzTrailer = "x-amz-trailer";
-
-    #endregion
-
     /// <summary>Provides the <c>XAmzId2</c> API.</summary>
     public const string XAmzId2 = "x-amz-id-2";
     /// <summary>Provides the <c>XAmzWebsiteRedirectLocation</c> API.</summary>
@@ -40,6 +31,15 @@ public static class AmzHeaders
     public const string XAmzRequestCharged = "x-amz-request-charged";
     /// <summary>Provides the <c>XAmzRestoreOutputPath</c> API.</summary>
     public const string XAmzRestoreOutputPath = "x-amz-restore-output-path";
+
+    #region Streaming
+
+    /// <summary>Provides the <c>XAmzDecodedContentLength</c> API.</summary>
+    public const string XAmzDecodedContentLength = "x-amz-decoded-content-length";
+    /// <summary>Provides the <c>XAmzTrailer</c> API.</summary>
+    public const string XAmzTrailer = "x-amz-trailer";
+
+    #endregion
 
     #region Requests
 

@@ -1,12 +1,11 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Request;
-using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Marshallers.Requests;
 using Genbox.SimpleS3.Core.Internals.Network;
@@ -26,7 +25,8 @@ public class ChunkedStreamTests
     {
         byte[] payload = Enumerable.Repeat((byte)'a', payloadLength).ToArray();
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
-        using ChunkedStream stream = new ChunkedStream(config, new StableChunkedSignatureBuilder(), new PutObjectRequest("bucket", "object", null), new byte[32], new MemoryStream(payload));
+        using MemoryStream source = new MemoryStream(payload);
+        using ChunkedStream stream = new ChunkedStream(config, new StableChunkedSignatureBuilder(), new PutObjectRequest("bucket", "object", null), new byte[32], source);
         using MemoryStream output = new MemoryStream();
 
         stream.CopyTo(output);
@@ -40,7 +40,11 @@ public class ChunkedStreamTests
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
 
-        NotSupportedException ex = Assert.Throws<NotSupportedException>(() => wrapper.Wrap(new UnknownLengthStream(), new PutObjectRequest("bucket", "object", null)));
+        using UnknownLengthStream source = new UnknownLengthStream();
+        NotSupportedException ex = Assert.Throws<NotSupportedException>(() =>
+        {
+            using Stream wrapped = wrapper.Wrap(source, new PutObjectRequest("bucket", "object", null));
+        });
         Assert.Contains("exposes Length", ex.Message, StringComparison.OrdinalIgnoreCase);
     }
 
@@ -52,7 +56,8 @@ public class ChunkedStreamTests
         PutObjectRequest request = new PutObjectRequest("bucket", "object", null);
         request.SetTrailer(AmzHeaders.XAmzChecksumCrc32C, "sOO8/Q==");
 
-        using ChunkedStream stream = new ChunkedStream(config, new StableChunkedSignatureBuilder(), request, new byte[32], new MemoryStream(payload));
+        using MemoryStream source = new MemoryStream(payload);
+        using ChunkedStream stream = new ChunkedStream(config, new StableChunkedSignatureBuilder(), request, new byte[32], source);
         using MemoryStream output = new MemoryStream();
 
         stream.CopyTo(output);
@@ -77,14 +82,15 @@ public class ChunkedStreamTests
         byte[] payload = "abc"u8.ToArray();
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
-        PutObjectRequest request = new PutObjectRequest("bucket", "object", new MemoryStream(payload));
+        using MemoryStream source = new MemoryStream(payload);
+        PutObjectRequest request = new PutObjectRequest("bucket", "object", source);
         request.SetTrailer(AmzHeaders.XAmzChecksumCrc32C, "sOO8/Q==");
 
         using Stream wrapped = wrapper.Wrap(request.Content!, request);
 
         Assert.Equal("aws-chunked", request.Headers[HttpHeaders.ContentEncoding]);
         Assert.Equal("3", request.Headers[AmzHeaders.XAmzDecodedContentLength]);
-        Assert.Equal(ChunkedStream.ComputeChunkedContentLength(payload.Length, config.StreamingChunkSize, ChunkedStream.SignatureLength, request.Trailers).ToString(), request.Headers[HttpHeaders.ContentLength]);
+        Assert.Equal(ChunkedStream.ComputeChunkedContentLength(payload.Length, config.StreamingChunkSize, ChunkedStream.SignatureLength, request.Trailers).ToString(CultureInfo.InvariantCulture), request.Headers[HttpHeaders.ContentLength]);
         Assert.Equal("STREAMING-AWS4-HMAC-SHA256-PAYLOAD-TRAILER", request.Headers[AmzHeaders.XAmzContentSha256]);
         Assert.Equal(AmzHeaders.XAmzChecksumCrc32C, request.Headers[AmzHeaders.XAmzTrailer]);
     }
@@ -95,7 +101,8 @@ public class ChunkedStreamTests
         byte[] payload = "abc"u8.ToArray();
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
-        PutObjectRequest request = new PutObjectRequest("bucket", "object", new MemoryStream(payload));
+        using MemoryStream source = new MemoryStream(payload);
+        PutObjectRequest request = new PutObjectRequest("bucket", "object", source);
         request.SetHeader(HttpHeaders.ContentEncoding, "x-aws-chunked");
 
         using Stream wrapped = wrapper.Wrap(request.Content!, request);
@@ -109,7 +116,8 @@ public class ChunkedStreamTests
         byte[] payload = "abc"u8.ToArray();
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
-        PutObjectRequest request = new PutObjectRequest("bucket", "object", new MemoryStream(payload)) { ChecksumAlgorithm = ChecksumAlgorithm.Sha256 };
+        using MemoryStream source = new MemoryStream(payload);
+        PutObjectRequest request = new PutObjectRequest("bucket", "object", source) { ChecksumAlgorithm = ChecksumAlgorithm.Sha256 };
 
         using Stream wrapped = wrapper.Wrap(request.Content!, request);
         long expectedLength = ChunkedStream.ComputeChunkedContentLength(payload.Length, config.StreamingChunkSize, ChunkedStream.SignatureLength, request.Trailers, ChecksumAlgorithm.Sha256);
@@ -119,7 +127,7 @@ public class ChunkedStreamTests
         const string expectedChecksum = "ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0=";
         Assert.Equal("SHA256", request.Headers[AmzHeaders.XAmzSdkCheckumAlgorithm]);
         Assert.Equal(AmzHeaders.XAmzChecksumSha256, request.Headers[AmzHeaders.XAmzTrailer]);
-        Assert.Equal(expectedLength.ToString(), request.Headers[HttpHeaders.ContentLength]);
+        Assert.Equal(expectedLength.ToString(CultureInfo.InvariantCulture), request.Headers[HttpHeaders.ContentLength]);
         Assert.Equal(expectedLength, output.Length);
         Assert.Equal(string.Empty, request.Trailers[AmzHeaders.XAmzChecksumSha256]);
         Assert.Contains(AmzHeaders.XAmzChecksumSha256 + ":" + expectedChecksum + "\r\n", Encoding.UTF8.GetString(output.ToArray()), StringComparison.Ordinal);
@@ -155,7 +163,8 @@ public class ChunkedStreamTests
         byte[] payload = "abc"u8.ToArray();
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
-        PutObjectRequest request = new PutObjectRequest("bucket", "object", new MemoryStream(payload)) { ChecksumAlgorithm = ChecksumAlgorithm.Crc32C };
+        await using MemoryStream source = new MemoryStream(payload);
+        PutObjectRequest request = new PutObjectRequest("bucket", "object", source) { ChecksumAlgorithm = ChecksumAlgorithm.Crc32C };
 
         await using Stream wrapped = wrapper.Wrap(request.Content!, request);
         await using MemoryStream output = new MemoryStream();
@@ -173,8 +182,10 @@ public class ChunkedStreamTests
     [Fact]
     public void ZeroLengthReadDoesNotConsumeTrailers()
     {
-        (Stream wrapped, long trailerOffset) = CreateStreamWithTrailer();
+        (Stream wrapped, Stream source, long trailerOffset) = CreateStreamWithTrailer();
+
         using (wrapped)
+        using (source)
         using (MemoryStream output = new MemoryStream())
         {
             CopyBytes(wrapped, output, trailerOffset);
@@ -190,8 +201,10 @@ public class ChunkedStreamTests
     [Fact]
     public async Task ZeroLengthAsyncReadDoesNotConsumeTrailers()
     {
-        (Stream wrapped, long trailerOffset) = CreateStreamWithTrailer();
+        (Stream wrapped, Stream source, long trailerOffset) = CreateStreamWithTrailer();
+
         await using (wrapped)
+        await using (source)
         await using (MemoryStream output = new MemoryStream())
         {
             CopyBytes(wrapped, output, trailerOffset);
@@ -211,7 +224,8 @@ public class ChunkedStreamTests
         byte[] checksum = SHA256.HashData(payload);
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
-        PutObjectRequest request = new PutObjectRequest("bucket", "object", new MemoryStream(payload))
+        using MemoryStream source = new MemoryStream(payload);
+        PutObjectRequest request = new PutObjectRequest("bucket", "object", source)
         {
             ChecksumAlgorithm = ChecksumAlgorithm.Sha256,
             Checksum = checksum
@@ -232,7 +246,8 @@ public class ChunkedStreamTests
         byte[] payload = "abc"u8.ToArray();
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
-        PutObjectRequest request = new PutObjectRequest("bucket", "object", new MemoryStream(payload)) { ChecksumAlgorithm = ChecksumAlgorithm.Sha256 };
+        using MemoryStream source = new MemoryStream(payload);
+        PutObjectRequest request = new PutObjectRequest("bucket", "object", source) { ChecksumAlgorithm = ChecksumAlgorithm.Sha256 };
         using Stream wrapped = wrapper.Wrap(request.Content!, request);
         using MemoryStream first = new MemoryStream();
         using MemoryStream second = new MemoryStream();
@@ -272,7 +287,7 @@ public class ChunkedStreamTests
         string secondChecksum = Convert.ToBase64String(SHA256.HashData(secondPayload));
         Assert.Contains(AmzHeaders.XAmzChecksumSha256 + ":" + firstChecksum + "\r\n", Encoding.UTF8.GetString(firstOutput.ToArray()), StringComparison.Ordinal);
         Assert.Contains(AmzHeaders.XAmzChecksumSha256 + ":" + secondChecksum + "\r\n", Encoding.UTF8.GetString(secondOutput.ToArray()), StringComparison.Ordinal);
-        Assert.NotEqual(firstChecksum, secondChecksum);
+        Assert.NotEqual(firstChecksum, secondChecksum, StringComparer.Ordinal);
         Assert.Equal(string.Empty, request.Trailers[AmzHeaders.XAmzChecksumSha256]);
     }
 
@@ -293,9 +308,13 @@ public class ChunkedStreamTests
         byte[] payload = "abc"u8.ToArray();
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
-        PutObjectRequest request = new PutObjectRequest("bucket", "object", new MemoryStream(payload)) { ChecksumAlgorithm = ChecksumAlgorithm.Md5 };
+        using MemoryStream source = new MemoryStream(payload);
+        PutObjectRequest request = new PutObjectRequest("bucket", "object", source) { ChecksumAlgorithm = ChecksumAlgorithm.Md5 };
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => wrapper.Wrap(request.Content!, request));
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() =>
+        {
+            using Stream wrapped = wrapper.Wrap(request.Content!, request);
+        });
 
         Assert.Contains("precalculated", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
@@ -337,20 +356,22 @@ public class ChunkedStreamTests
         Assert.Throws<ArgumentException>(() => request.SetTrailer("x-amz-trailer-signature", "value"));
     }
 
-    private static (Stream Stream, long TrailerOffset) CreateStreamWithTrailer()
+    private static (Stream Stream, Stream Source, long TrailerOffset) CreateStreamWithTrailer()
     {
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         PutObjectRequest request = new PutObjectRequest("bucket", "object", null);
         request.SetTrailer(AmzHeaders.XAmzChecksumCrc32C, "sOO8/Q==");
-        ChunkedStream stream = new ChunkedStream(config, new StableChunkedSignatureBuilder(), request, new byte[32], new MemoryStream("abc"u8.ToArray()));
+        MemoryStream source = new MemoryStream("abc"u8.ToArray());
+        ChunkedStream stream = new ChunkedStream(config, new StableChunkedSignatureBuilder(), request, new byte[32], source);
         int trailerLength = Encoding.UTF8.GetByteCount(AmzHeaders.XAmzChecksumCrc32C + ":sOO8/Q==\r\n" +
-                                                      "x-amz-trailer-signature:" + new string('0', 64) + "\r\n\r\n");
-        return (stream, stream.Length - trailerLength);
+                                                       "x-amz-trailer-signature:" + new string('0', 64) + "\r\n\r\n");
+        return (stream, source, stream.Length - trailerLength);
     }
 
     private static void CopyBytes(Stream input, Stream output, long count)
     {
         byte[] buffer = new byte[128];
+
         while (count > 0)
         {
             int read = input.Read(buffer, 0, (int)Math.Min(buffer.Length, count));

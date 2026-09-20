@@ -38,7 +38,7 @@ internal sealed class ObjectOperations(IRequestHandler handler, IEnumerable<IReq
     [SuppressMessage("Usage", "IDISP011", Justification = "The response is disposed only on the failure path, which always rethrows; successful responses remain owned by the caller.")]
     public async Task<GetObjectResponse> GetObjectAsync(GetObjectRequest request, CancellationToken token = default)
     {
-        GetObjectResponse response = await handler.SendRequestAsync<GetObjectRequest, GetObjectResponse>(request, token).ConfigureAwait(false);
+        GetObjectResponse response = await handler.SendRequestAsync<GetObjectRequest, GetObjectResponse>(request, token);
 
         foreach (IResponseWrapper wrapper in _responseWrappers)
             response.Content = wrapper.Wrap(response.Content, response);

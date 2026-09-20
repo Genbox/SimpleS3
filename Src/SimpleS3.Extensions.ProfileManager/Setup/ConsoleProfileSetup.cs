@@ -114,7 +114,7 @@ public class ConsoleProfileSetup(IProfileManager profileManager, IInputValidator
 
             if (start != 0 || end != enteredAccessKey.Length - 1)
             {
-                char[] trimmed = new char[end + 1 - start];
+                char[] trimmed = new char[(end + 1) - start];
 
                 int count = 0;
                 for (int i = start; i < end + 1; i++, count++)
@@ -150,6 +150,7 @@ public class ConsoleProfileSetup(IProfileManager profileManager, IInputValidator
         int counter = 0; //used for validation further down
 
         Console.WriteLine("{0,-8}{1,-20}{2}", "Index", "Region Code", "Region Name");
+
         foreach (IRegionInfo regionInfo in regionData.GetRegions())
         {
             validRegionId.Add(regionInfo.Code);

@@ -25,34 +25,38 @@ public class ListObjectsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt
     public int MaxKeys { get; internal set; }
 
     /// <summary>If ContinuationToken was sent with the request, it is included in the response.</summary>
-    public string ContinuationToken { get; internal set; }
+    public string? ContinuationToken { get; internal set; }
 
     /// <summary>
     /// NextContinuationToken is sent when isTruncated is true which means there are more keys in the bucket that can be listed. The next list requests to Amazon S3 can be
     /// continued with this NextContinuationToken. NextContinuationToken is obfuscated and is not a real key
     /// </summary>
-    public string NextContinuationToken { get; internal set; }
+    public string? NextContinuationToken { get; internal set; }
 
     /// <summary>If StartAfter was sent with the request, it is included in the response.</summary>
-    public string StartAfter { get; internal set; }
+    public string? StartAfter { get; internal set; }
 
     /// <summary>The list of objects</summary>
     public IList<S3Object> Objects { get; }
 
     /// <summary>Name of the bucket.</summary>
-    public string BucketName { get; internal set; }
+    public string BucketName { get; internal set; } = null!;
 
     /// <summary>Provides the <c>RequestCharged</c> API.</summary>
     public bool RequestCharged { get; internal set; }
 
     /// <summary>Provides the <c>IsTruncated</c> API.</summary>
     public bool IsTruncated { get; internal set; }
+
     /// <summary>Provides the <c>EncodingType</c> API.</summary>
     public EncodingType EncodingType { get; internal set; }
+
     /// <summary>Provides the <c>Prefix</c> API.</summary>
     public string? Prefix { get; internal set; }
+
     /// <summary>Provides the <c>Delimiter</c> API.</summary>
     public string? Delimiter { get; internal set; }
+
     /// <summary>Provides the <c>CommonPrefixes</c> API.</summary>
     public IList<string> CommonPrefixes { get; }
 }

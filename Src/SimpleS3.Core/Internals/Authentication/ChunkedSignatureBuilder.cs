@@ -17,6 +17,8 @@ internal sealed partial class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuil
 {
     private readonly SimpleS3Config _config = options.Value;
 
+    private static IReadOnlyDictionary<string, string> EmptyTrailers { get; } = new Dictionary<string, string>(0, StringComparer.Ordinal);
+
     public byte[] CreateChunkSignature(IRequest request, byte[] previousSignature, byte[] content, int offset, int length)
     {
         Validator.RequireNotNull(request);
@@ -66,7 +68,7 @@ internal sealed partial class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuil
         sb.Append("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855").Append(SigningConstants.Newline);
         sb.Append(CryptoHelper.Sha256Hash(content, offset, length).HexEncode());
 
-        string sts = StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
+        string sts = StringBuilderPool.Shared.ReturnString(sb, true);
         if (_config.LogSensitiveMaterial)
             LogChunkedStringToSign(sts);
 
@@ -85,7 +87,7 @@ internal sealed partial class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuil
         sb.Append(previousSignature.HexEncode()).Append(SigningConstants.Newline);
         sb.Append(CryptoHelper.Sha256Hash(Encoding.UTF8.GetBytes(canonicalTrailingHeaders)).HexEncode());
 
-        string sts = StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
+        string sts = StringBuilderPool.Shared.ReturnString(sb, true);
         if (_config.LogSensitiveMaterial)
             LogTrailerStringToSign(sts);
 
@@ -104,12 +106,10 @@ internal sealed partial class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuil
               .Append(SigningConstants.Newline);
         }
 
-        return StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
+        return StringBuilderPool.Shared.ReturnString(sb, true);
     }
 
     private static string CanonicalizeHeaderValue(string value) => string.Join(" ", value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
-
-    private static IReadOnlyDictionary<string, string> EmptyTrailers { get; } = new Dictionary<string, string>(0);
 
     /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of: Hmac-Sha256(SigningKey, StringToSign)</summary>
     internal byte[] CreateSignature(DateTimeOffset date, string stringToSign)

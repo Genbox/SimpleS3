@@ -6,8 +6,5 @@ public class S3JsonOutputFormat(string recordDelimiter) : S3OutputFormat
     /// <summary>Provides the <c>RecordDelimiter</c> API.</summary>
     public string RecordDelimiter { get; set; } = recordDelimiter;
 
-    internal override void Reset()
-    {
-        RecordDelimiter = string.Empty;
-    }
+    internal override void Reset() => RecordDelimiter = string.Empty;
 }

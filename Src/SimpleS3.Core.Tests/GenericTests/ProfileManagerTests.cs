@@ -14,6 +14,12 @@ public sealed class ProfileManagerTests : IDisposable
 {
     private readonly string _profileLocation = Path.Combine(Path.GetTempPath(), "SimpleS3-" + Guid.NewGuid());
 
+    public void Dispose()
+    {
+        if (Directory.Exists(_profileLocation))
+            Directory.Delete(_profileLocation, true);
+    }
+
     [Fact]
     public void UseProfileManagerBuildsWithValidationWithoutConsoleSetup()
     {
@@ -108,12 +114,6 @@ public sealed class ProfileManagerTests : IDisposable
         Assert.Equal(2, profile.ProfileVersion);
         Assert.Equal(protectedAccessKey, GetProfileValue(migratedProfile, nameof(IProfile.AccessKey)));
         Assert.Contains("ProfileVersion=2", migratedProfile, StringComparison.Ordinal);
-    }
-
-    public void Dispose()
-    {
-        if (Directory.Exists(_profileLocation))
-            Directory.Delete(_profileLocation, true);
     }
 
     private ServiceProvider CreateProvider()

@@ -28,7 +28,7 @@ public class BackBlazeB2Config() : SimpleS3Config("BackBlazeB2", "{Scheme}://{Bu
     /// <summary>Provides the <c>BackBlazeB2Config</c> API.</summary>
     public BackBlazeB2Config(IAccessKey? credentials, BackBlazeB2Region region) : this(credentials, _converter.GetRegion(region).Code) {}
 
-    /// <summary>Provides the <c>Region</c> API.</summary>
+    /// <summary>Gets the region matching RegionCode, or Unknown for an unrecognized code. Setting a known region updates RegionCode.</summary>
     public BackBlazeB2Region Region
     {
         get => _region;

@@ -38,55 +38,83 @@ public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpire
         Initialize(bucketName, objectKey, content);
     }
 
-    internal void Initialize(string bucketName, string objectKey, Stream? content)
-    {
-        Content = content;
-        BucketName = bucketName;
-        ObjectKey = objectKey;
-    }
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
+    public byte[]? ContentMd5 { get; set; }
+
+    Func<bool> IContentMd5Config.ForceContentMd5 => () => LockLegalHold == true || LockMode != LockMode.Unknown;
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+
     /// <summary>Provides the <c>CacheControl</c> API.</summary>
     public CacheControlBuilder CacheControl { get; internal set; }
+
+    /// <summary>Provides the <c>ChecksumAlgorithm</c> API.</summary>
+    public ChecksumAlgorithm ChecksumAlgorithm { get; set; }
+
+    /// <summary>Provides the <c>Checksum</c> API.</summary>
+    public byte[]? Checksum { get; set; }
+
+    /// <summary>Provides the <c>Content</c> API.</summary>
+    public Stream? Content { get; internal set; }
+
     /// <summary>Provides the <c>ContentDisposition</c> API.</summary>
     public ContentDispositionBuilder ContentDisposition { get; internal set; }
+
     /// <summary>Provides the <c>ContentEncoding</c> API.</summary>
     public ContentEncodingBuilder ContentEncoding { get; internal set; }
+
     /// <summary>Provides the <c>ContentType</c> API.</summary>
     public ContentTypeBuilder ContentType { get; internal set; }
+
     /// <summary>Provides the <c>ExpiresOn</c> API.</summary>
     public DateTimeOffset? ExpiresOn { get; set; }
+
     /// <summary>Provides the <c>LockLegalHold</c> API.</summary>
     public bool? LockLegalHold { get; set; }
+
     /// <summary>Provides the <c>LockMode</c> API.</summary>
     public LockMode LockMode { get; set; }
+
     /// <summary>Provides the <c>LockRetainUntil</c> API.</summary>
     public DateTimeOffset? LockRetainUntil { get; set; }
+
     /// <summary>Provides the <c>Metadata</c> API.</summary>
     public MetadataBuilder Metadata { get; internal set; }
+
     /// <summary>Provides the <c>Acl</c> API.</summary>
     public ObjectCannedAcl Acl { get; set; }
+
     /// <summary>Provides the <c>AclGrantRead</c> API.</summary>
     public AclBuilder AclGrantRead { get; internal set; }
+
     /// <summary>Provides the <c>AclGrantReadAcp</c> API.</summary>
     public AclBuilder AclGrantReadAcp { get; internal set; }
+
     /// <summary>Provides the <c>AclGrantWriteAcp</c> API.</summary>
     public AclBuilder AclGrantWriteAcp { get; internal set; }
+
     /// <summary>Provides the <c>AclGrantFullControl</c> API.</summary>
     public AclBuilder AclGrantFullControl { get; internal set; }
+
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+
     /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
+
     /// <summary>Provides the <c>SseAlgorithm</c> API.</summary>
     public SseAlgorithm SseAlgorithm { get; set; }
+
     /// <summary>Provides the <c>SseKmsKeyId</c> API.</summary>
     public string? SseKmsKeyId { get; set; }
+
     /// <summary>Provides the <c>SseContext</c> API.</summary>
     public KmsContextBuilder SseContext { get; internal set; } //setter is needed for fluent Upload
+
     /// <summary>Provides the <c>SseCustomerAlgorithm</c> API.</summary>
     public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
+
     /// <summary>Provides the <c>SseCustomerKeyMd5</c> API.</summary>
     public byte[]? SseCustomerKeyMd5 { get; set; }
 
@@ -109,15 +137,19 @@ public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpire
 
     /// <summary>Provides the <c>StorageClass</c> API.</summary>
     public StorageClass StorageClass { get; set; }
+
     /// <summary>Provides the <c>Tags</c> API.</summary>
     public TagBuilder Tags { get; internal set; }
+
     /// <summary>Provides the <c>WebsiteRedirectLocation</c> API.</summary>
     public string? WebsiteRedirectLocation { get; set; }
 
-    /// <summary>Provides the <c>ChecksumAlgorithm</c> API.</summary>
-    public ChecksumAlgorithm ChecksumAlgorithm { get; set; }
-    /// <summary>Provides the <c>Checksum</c> API.</summary>
-    public byte[]? Checksum { get; set; }
+    internal void Initialize(string bucketName, string objectKey, Stream? content)
+    {
+        Content = content;
+        BucketName = bucketName;
+        ObjectKey = objectKey;
+    }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
@@ -154,10 +186,4 @@ public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpire
         ContentMd5 = null;
         base.Reset();
     }
-
-    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
-    public byte[]? ContentMd5 { get; set; }
-    Func<bool> IContentMd5Config.ForceContentMd5 => () => LockLegalHold == true || LockMode != LockMode.Unknown;
-    /// <summary>Provides the <c>Content</c> API.</summary>
-    public Stream? Content { get; internal set; }
 }

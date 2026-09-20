@@ -3,7 +3,6 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
-using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
@@ -17,7 +16,7 @@ internal sealed class PutObjectRetentionRequestMarshal : IRequestMarshal<PutObje
         request.SetQueryParameter(AmzParameters.Retention, string.Empty);
 
         FastXmlWriter writer = new FastXmlWriter(256);
-        writer.WriteStartElement("Retention", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("Retention", XmlConstants.S3Namespace);
 
         if (request.LockMode != LockMode.Unknown)
             writer.WriteElement("Mode", request.LockMode.GetDisplayName());

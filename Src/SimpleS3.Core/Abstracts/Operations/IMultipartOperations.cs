@@ -11,6 +11,7 @@ public interface IMultipartOperations
 {
     /// <summary>Provides the <c>RequestWrappers</c> API.</summary>
     IList<IRequestWrapper> RequestWrappers { get; }
+
     /// <summary>Provides the <c>ResponseWrappers</c> API.</summary>
     IList<IResponseWrapper> ResponseWrappers { get; }
 

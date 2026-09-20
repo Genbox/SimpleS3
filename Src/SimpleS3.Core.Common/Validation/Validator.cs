@@ -5,21 +5,16 @@ using NoEnumeration = JetBrains.Annotations.NoEnumerationAttribute;
 
 namespace Genbox.SimpleS3.Core.Common.Validation;
 
+// Justification: Validation helpers forward the original caller information instead of capturing the forwarding helper as the caller.
 // ReSharper disable ExplicitCallerInfoArgument
 /// <summary>Provides the <c>Validator</c> API.</summary>
 public static class Validator
 {
     /// <summary>Provides the <c>RequireNotNull&lt;T&gt;</c> API.</summary>
-    public static void RequireNotNull<T>([NotNull]T? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null) where T : class
-    {
-        RequireThat(value != null, message, callerArgument, callerMember, lineNumber);
-    }
+    public static void RequireNotNull<T>([NotNull]T? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null) where T : class => RequireThat(value != null, message, callerArgument, callerMember, lineNumber);
 
     /// <summary>Provides the <c>RequireNotNull&lt;T&gt;</c> API.</summary>
-    public static void RequireNotNull<T>([NotNull][NoEnumeration]IEnumerable<T>? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
-    {
-        RequireThat(value != null, message, callerArgument, callerMember, lineNumber);
-    }
+    public static void RequireNotNull<T>([NotNull][NoEnumeration]IEnumerable<T>? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null) => RequireThat(value != null, message, callerArgument, callerMember, lineNumber);
 
     /// <summary>Provides the <c>RequireNotNullOrEmpty</c> API.</summary>
     public static void RequireNotNullOrEmpty([NotNull]ICollection? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
@@ -31,7 +26,8 @@ public static class Validator
     /// <summary>Provides the <c>RequireNotNullOrEmpty</c> API.</summary>
     public static void RequireNotNullOrEmpty([NotNull]string? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
     {
-        RequireThat(!string.IsNullOrEmpty(value), message, callerArgument, callerMember, lineNumber);
+        RequireNotNull(value, message, callerArgument, callerMember, lineNumber);
+        RequireThat(value.Length > 0, message, callerArgument, callerMember, lineNumber);
     }
 
     /// <summary>Provides the <c>RequireValueAndItemsNotNull</c> API.</summary>
@@ -44,6 +40,7 @@ public static class Validator
     /// <summary>Provides the <c>RequireNotNullOrWhiteSpace</c> API.</summary>
     public static void RequireNotNullOrWhiteSpace([NotNull]string? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
     {
+        RequireNotNull(value, message, callerArgument, callerMember, lineNumber);
         RequireThat(!string.IsNullOrWhiteSpace(value), message, callerArgument, callerMember, lineNumber);
     }
 

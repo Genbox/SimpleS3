@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
+using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
@@ -20,7 +20,7 @@ public class ObjectClientExtensionsTests
     [Fact]
     public async Task ListAllObjectsAsyncCancelsPrefetchedNextPageWhenEnumerationStops()
     {
-        PagingObjectClient client = new PagingObjectClient(objectsPerPage: 2, blockSecondRequest: true);
+        PagingObjectClient client = new PagingObjectClient(2, true);
         IAsyncEnumerator<S3Object> enumerator = client.ListAllObjectsAsync("bucket", token: TestContext.Current.CancellationToken).GetAsyncEnumerator(TestContext.Current.CancellationToken);
 
         try
@@ -143,13 +143,13 @@ public class ObjectClientExtensionsTests
 
     private sealed class PagingObjectClient : IObjectClient
     {
-        private readonly TaskCompletionSource _prefetchStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        private readonly TaskCompletionSource _prefetchCanceled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly bool _blockSecondRequest;
         private readonly int _objectsPerPage;
+        private readonly TaskCompletionSource _prefetchCanceled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource _prefetchStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly bool _versionPages;
-        private int _listObjectsCalls;
         private int _listObjectVersionsCalls;
+        private int _listObjectsCalls;
 
         public PagingObjectClient(int objectsPerPage = 1, bool blockSecondRequest = false, bool versionPages = false)
         {
@@ -219,6 +219,7 @@ public class ObjectClientExtensionsTests
         public Task<DeleteObjectTaggingResponse> DeleteObjectTaggingAsync(string bucketName, string objectKey, Action<DeleteObjectTaggingRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<GetObjectRetentionResponse> GetObjectRetentionAsync(string bucketName, string objectKey, Action<GetObjectRetentionRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<PutObjectRetentionResponse> PutObjectRetentionAsync(string bucketName, string objectKey, LockMode lockMode, DateTimeOffset retainUntil, Action<PutObjectRetentionRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+
         public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default)
         {
             if (!_versionPages)

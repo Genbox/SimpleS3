@@ -16,10 +16,13 @@ public class PollyConfig
 
     /// <summary>Provides the <c>RetryMode</c> API.</summary>
     public RetryMode RetryMode { get; set; } = RetryMode.ExponentialBackoffJitter;
+
     /// <summary>Provides the <c>MaxRandomDelay</c> API.</summary>
     public TimeSpan MaxRandomDelay { get; set; } = TimeSpan.FromMilliseconds(1000);
+
     /// <summary>Provides the <c>Timeout</c> API.</summary>
     public TimeSpan Timeout { get; set; } = TimeSpan.FromMinutes(10);
+
     /// <summary>Provides the <c>MaxMemoryBufferSize</c> API.</summary>
     public int MaxMemoryBufferSize { get; set; } = 1024 * 1024 * 8;
 }

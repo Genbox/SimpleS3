@@ -16,6 +16,7 @@ internal sealed class GetObjectRetentionResponseMarshal : IResponseMarshal<GetOb
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
+
         while (!reader.EOF)
         {
             if (!reader.IsStartElement())

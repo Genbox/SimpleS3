@@ -30,103 +30,6 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         return MultipartDownloadCoreAsync(bucketName, objectKey, output, bufferSize, numParallelParts, config, token);
     }
 
-    private async IAsyncEnumerable<GetObjectResponse> MultipartDownloadCoreAsync(string bucketName, string objectKey, Stream output, int bufferSize, int numParallelParts, Action<GetObjectRequest>? config, [EnumeratorCancellation] CancellationToken token)
-    {
-
-        //Use a HEAD request on the object key to determine if the file was originally uploaded with multipart
-        HeadObjectResponse headResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req => req.PartNumber = 1, token).ConfigureAwait(false);
-
-        if (headResp.NumberOfParts == null)
-        {
-            GetObjectResponse getResp = await objectClient.GetObjectAsync(bucketName, objectKey, config, token).ConfigureAwait(false);
-
-            if (!getResp.IsSuccess)
-                throw new S3RequestException(getResp);
-
-            try
-            {
-                await getResp.Content.CopyToAsync(output, 81920, token).ConfigureAwait(false);
-            }
-            catch
-            {
-                getResp.Content.Dispose();
-                throw;
-            }
-
-            yield return getResp;
-        }
-        else
-        {
-            int parts = headResp.NumberOfParts.Value;
-            long[] partOffsets = new long[parts];
-            long nextOffset = headResp.ContentLength;
-
-            for (int i = 2; i <= parts; i++)
-            {
-                partOffsets[i - 1] = nextOffset;
-                HeadObjectResponse partHeadResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req => req.PartNumber = i, token).ConfigureAwait(false);
-                nextOffset += partHeadResp.ContentLength;
-            }
-
-            using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
-            using SemaphoreSlim semaphore = new SemaphoreSlim(numParallelParts);
-            using SemaphoreSlim writeLock = new SemaphoreSlim(1, 1);
-            List<Task<GetObjectResponse>> tasks = new List<Task<GetObjectResponse>>(parts);
-            ExceptionDispatchInfo? firstFailure = null;
-
-            try
-            {
-                for (int i = 1; i <= parts; i++)
-                {
-                    try
-                    {
-                        await semaphore.WaitAsync(cancellation.Token).ConfigureAwait(false);
-                    }
-                    catch (OperationCanceledException) when (firstFailure != null)
-                    {
-                        firstFailure.Throw();
-                        throw;
-                    }
-
-                    tasks.Add(DownloadPartAsync(bucketName, objectKey, output, partOffsets[i - 1], i, bufferSize, semaphore, writeLock, config, cancellation, ex => Interlocked.CompareExchange(ref firstFailure, ExceptionDispatchInfo.Capture(ex), null)));
-                }
-
-                foreach (Task<GetObjectResponse> task in tasks)
-                {
-                    GetObjectResponse response;
-
-                    try
-                    {
-                        response = await task.ConfigureAwait(false);
-                    }
-                    catch (OperationCanceledException) when (firstFailure != null)
-                    {
-                        firstFailure.Throw();
-                        throw;
-                    }
-
-                    yield return response;
-                }
-            }
-            finally
-            {
-                cancellation.Cancel();
-
-                foreach (Task<GetObjectResponse> task in tasks)
-                {
-                    try
-                    {
-                        await task.ConfigureAwait(false);
-                    }
-                    catch
-                    {
-                        // Preserve the original cancellation or download failure.
-                    }
-                }
-            }
-        }
-    }
-
     public Task<CompleteMultipartUploadResponse> MultipartUploadAsync(string bucketName, string objectKey, Stream data, int partSize = 16777216, int numParallelParts = 4, Action<CreateMultipartUploadRequest>? config = null, Action<UploadPartResponse>? onPartResponse = null, CancellationToken token = default)
     {
         CreateMultipartUploadRequest req = new CreateMultipartUploadRequest(bucketName, objectKey);
@@ -171,7 +74,7 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
                 Array.Copy(req.SseCustomerKey, 0, encryptionKey, 0, encryptionKey.Length);
             }
 
-            CreateMultipartUploadResponse initResp = await multipartOperations.CreateMultipartUploadAsync(req, token).ConfigureAwait(false);
+            CreateMultipartUploadResponse initResp = await multipartOperations.CreateMultipartUploadAsync(req, token);
 
             if (!initResp.IsSuccess)
                 throw new S3RequestException(initResp, "CreateMultipartUploadRequest was unsuccessful");
@@ -194,7 +97,7 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
                     uploadPart.SseCustomerAlgorithm = req.SseCustomerAlgorithm;
                     uploadPart.SseCustomerKey = encryptionKey;
                     uploadPart.SseCustomerKeyMd5 = req.SseCustomerKeyMd5;
-                }, innerToken).ConfigureAwait(false);
+                }, innerToken);
 
                 if (!resp.IsSuccess)
                     throw new S3RequestException(resp, "UploadPartRequest was unsuccessful");
@@ -209,9 +112,9 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
                 }
 
                 return resp;
-            }, numParallelParts, token).ConfigureAwait(false);
+            }, numParallelParts, token);
 
-            CompleteMultipartUploadResponse completeResp = await multipartClient.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, responses.Select(x => new S3PartInfo(x.ETag, x.PartNumber)).OrderBy(x => x.PartNumber), null, token).ConfigureAwait(false);
+            CompleteMultipartUploadResponse completeResp = await multipartClient.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, responses.Select(x => new S3PartInfo(x.ETag, x.PartNumber)).OrderBy(x => x.PartNumber), null, token);
             completed = completeResp.IsSuccess;
 
             return completeResp;
@@ -222,7 +125,7 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             {
                 try
                 {
-                    await multipartClient.AbortMultipartUploadAsync(bucket, objectKey, uploadId, null, CancellationToken.None).ConfigureAwait(false);
+                    await multipartClient.AbortMultipartUploadAsync(bucket, objectKey, uploadId, null, CancellationToken.None);
                 }
                 catch
                 {
@@ -232,6 +135,111 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
 
             if (encryptionKey != null)
                 Array.Clear(encryptionKey, 0, encryptionKey.Length);
+        }
+    }
+
+    private async IAsyncEnumerable<GetObjectResponse> MultipartDownloadCoreAsync(string bucketName, string objectKey, Stream output, int bufferSize, int numParallelParts, Action<GetObjectRequest>? config, [EnumeratorCancellation]CancellationToken token)
+    {
+        //Use a HEAD request on the object key to determine if the file was originally uploaded with multipart
+        HeadObjectResponse headResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req => req.PartNumber = 1, token);
+
+        if (headResp.NumberOfParts == null)
+        {
+            GetObjectResponse getResp = await objectClient.GetObjectAsync(bucketName, objectKey, config, token);
+
+            if (!getResp.IsSuccess)
+                throw new S3RequestException(getResp);
+
+            try
+            {
+                await getResp.Content.CopyToAsync(output, 81920, token);
+            }
+            catch
+            {
+#pragma warning disable IDISP007 // The response owns the content stream and this failed transfer must release it.
+                getResp.Content.Dispose();
+#pragma warning restore IDISP007
+                throw;
+            }
+
+            yield return getResp;
+        }
+        else
+        {
+            int parts = headResp.NumberOfParts.Value;
+            long[] partOffsets = new long[parts];
+            long nextOffset = headResp.ContentLength;
+
+            for (int i = 2; i <= parts; i++)
+            {
+                partOffsets[i - 1] = nextOffset;
+                HeadObjectResponse partHeadResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req => req.PartNumber = i, token);
+                nextOffset += partHeadResp.ContentLength;
+            }
+
+            CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+            SemaphoreSlim semaphore = new SemaphoreSlim(numParallelParts);
+            SemaphoreSlim writeLock = new SemaphoreSlim(1, 1);
+            List<Task<GetObjectResponse>> tasks = new List<Task<GetObjectResponse>>(parts);
+            ExceptionDispatchInfo? firstFailure = null;
+
+            try
+            {
+                for (int i = 1; i <= parts; i++)
+                {
+                    try
+                    {
+                        await semaphore.WaitAsync(cancellation.Token);
+                    }
+                    catch (OperationCanceledException) when (firstFailure != null)
+                    {
+                        firstFailure.Throw();
+                        throw;
+                    }
+
+                    // The finally block awaits every task before disposing these captured synchronization objects.
+#pragma warning disable CA2025
+                    tasks.Add(DownloadPartAsync(bucketName, objectKey, output, partOffsets[i - 1], i, bufferSize, semaphore, writeLock, config, cancellation, ex => Interlocked.CompareExchange(ref firstFailure, ExceptionDispatchInfo.Capture(ex), null)));
+#pragma warning restore CA2025
+                }
+
+                foreach (Task<GetObjectResponse> task in tasks)
+                {
+                    GetObjectResponse response;
+
+                    try
+                    {
+                        response = await task;
+                    }
+                    catch (OperationCanceledException) when (firstFailure != null)
+                    {
+                        firstFailure.Throw();
+                        throw;
+                    }
+
+                    yield return response;
+                }
+            }
+            finally
+            {
+                cancellation.Cancel();
+
+                foreach (Task<GetObjectResponse> task in tasks)
+                {
+                    try
+                    {
+                        await task;
+                    }
+                    catch
+                    {
+                        // Preserve the original cancellation or download failure.
+                    }
+                }
+
+                writeLock.Dispose();
+                semaphore.Dispose();
+                cancellation.Dispose();
+            }
         }
     }
 
@@ -245,24 +253,26 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             {
                 req.PartNumber = partNumber;
                 config?.Invoke(req);
-            }, token).ConfigureAwait(false);
+            }, token);
 
+#pragma warning disable IDISP007 // The response owns the content stream and the completed part is no longer exposed to callers.
             using (getResp.Content)
+#pragma warning restore IDISP007
             {
                 byte[] buffer = new byte[bufferSize];
 
                 while (true)
                 {
-                    int read = await getResp.Content.ReadUpToAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
+                    int read = await getResp.Content.ReadUpToAsync(buffer, 0, bufferSize, token);
 
                     if (read > 0)
                     {
-                        await writeLock.WaitAsync(token).ConfigureAwait(false);
+                        await writeLock.WaitAsync(token);
 
                         try
                         {
                             output.Seek(offset, SeekOrigin.Begin);
-                            await output.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
+                            await output.WriteAsync(buffer, 0, read, token);
                             offset += read;
                         }
                         finally
@@ -296,7 +306,7 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         while (true)
         {
             byte[] chunkData = new byte[chunkSize];
-            int read = await data.ReadUpToAsync(chunkData, 0, chunkData.Length, token).ConfigureAwait(false);
+            int read = await data.ReadUpToAsync(chunkData, 0, chunkData.Length, token);
 
             if (read == 0)
                 break;

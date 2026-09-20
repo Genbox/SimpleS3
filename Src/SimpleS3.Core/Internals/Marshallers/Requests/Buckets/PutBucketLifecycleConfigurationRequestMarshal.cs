@@ -17,7 +17,7 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
         request.SetQueryParameter(AmzParameters.Lifecycle, string.Empty);
 
         FastXmlWriter writer = new FastXmlWriter(600);
-        writer.WriteStartElement("LifecycleConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("LifecycleConfiguration", XmlConstants.S3Namespace);
 
         foreach (S3Rule rule in request.Rules)
         {

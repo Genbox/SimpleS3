@@ -32,9 +32,12 @@ public class GenericError : IError
 
     /// <summary>Provides the <c>Code</c> API.</summary>
     public ErrorCode Code { get; }
+
     /// <summary>Provides the <c>Message</c> API.</summary>
+
     public string Message { get; }
-    /// <summary>Provides the <c>Data</c> API.</summary>
+
+    /// <summary>Additional service error fields. For an unrecognized error code, the original string is retained under the Code key.</summary>
     public IDictionary<string, string> Data { get; }
 
     /// <summary>Provides the <c>GetErrorDetails</c> API.</summary>

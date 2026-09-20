@@ -57,8 +57,7 @@ public class EndpointBuilderTests
             }
         }
 
-        await Task.WhenAll(
-            AssertEndpointAsync("bucket-a"),
+        await Task.WhenAll(AssertEndpointAsync("bucket-a"),
             AssertEndpointAsync("bucket-b"),
             AssertEndpointAsync("bucket-c"),
             AssertEndpointAsync("bucket-d"));

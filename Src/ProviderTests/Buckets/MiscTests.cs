@@ -69,16 +69,16 @@ public class MiscTests : TestBase
                 request.BlockPublicPolicy = false;
                 request.IgnorePublicAcls = false;
                 request.RestrictPublicBuckets = false;
-            });
+            }, TestContext.Current.CancellationToken);
             Assert.True(resp1.IsSuccess);
 
-            PutBucketPolicyResponse resp2 = await authedClient.PutBucketPolicyAsync(tempBucket, policy);
+            PutBucketPolicyResponse resp2 = await authedClient.PutBucketPolicyAsync(tempBucket, policy, token: TestContext.Current.CancellationToken);
             Assert.True(resp2.IsSuccess);
 
-            PutObjectResponse resp3 = await client.PutObjectStringAsync(tempBucket, "test", "test");
+            PutObjectResponse resp3 = await client.PutObjectStringAsync(tempBucket, "test", "test", token: TestContext.Current.CancellationToken);
             Assert.True(resp3.IsSuccess);
 
-            GetObjectResponse resp4 = await client.GetObjectAsync(tempBucket, "test");
+            using GetObjectResponse resp4 = await client.GetObjectAsync(tempBucket, "test", token: TestContext.Current.CancellationToken);
             Assert.True(resp4.IsSuccess);
         });
     }

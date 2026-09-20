@@ -11,10 +11,10 @@ namespace Genbox.SimpleS3.Core.Internals.Network;
 
 internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuilder
 {
-    private readonly SimpleS3Config _config = config.Value;
     private static readonly Regex _templateRegex = new Regex("{(?:(?<pre>[^:}]*?):)?(?<val>Region|Bucket|Scheme)(?::(?<post>[^}]*?))?}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled, TimeSpan.FromSeconds(1));
-    private EndpointData? _lastCache;
+    private readonly SimpleS3Config _config = config.Value;
     private readonly object _lock = new object();
+    private EndpointData? _lastCache;
 
     public IEndpointData GetEndpoint(IRequest request)
     {

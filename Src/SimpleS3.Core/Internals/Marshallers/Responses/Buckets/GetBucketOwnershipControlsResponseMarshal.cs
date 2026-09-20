@@ -12,6 +12,7 @@ internal sealed class GetBucketOwnershipControlsResponseMarshal : IResponseMarsh
     public void MarshalResponse(SimpleS3Config config, GetBucketOwnershipControlsResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
+
         while (reader.Read())
         {
             if (reader.IsStartElement() && reader.Name == "ObjectOwnership")

@@ -24,7 +24,7 @@ internal static class HttpRequestMessageExtensions
 
         if (_contentHeaders.Contains(keyLowered))
         {
-            request.Content ??= new ByteArrayContent(Array.Empty<byte>());
+            request.Content ??= new ByteArrayContent([]);
             request.Content.Headers.TryAddWithoutValidation(keyLowered, value);
         }
         else

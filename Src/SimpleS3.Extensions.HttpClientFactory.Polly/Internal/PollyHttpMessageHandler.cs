@@ -8,10 +8,7 @@ internal sealed class PollyHttpMessageHandler(IAsyncPolicy<HttpResponseMessage> 
     private readonly IAsyncPolicy<HttpResponseMessage> _policy = policy ?? throw new ArgumentNullException(nameof(policy));
 
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "The request content owns its stream.")]
-    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-    {
-        return await _policy.ExecuteAsync((_, ct) => SendCoreAsync(request, ct), new Context(), cancellationToken).ConfigureAwait(false);
-    }
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) => await _policy.ExecuteAsync((_, ct) => SendCoreAsync(request, ct), new Context(), cancellationToken);
 
-    private Task<HttpResponseMessage> SendCoreAsync(HttpRequestMessage request, CancellationToken cancellationToken) => base.SendAsync(request, cancellationToken);
+    private Task<HttpResponseMessage> SendCoreAsync(HttpRequestMessage request, CancellationToken token) => base.SendAsync(request, token);
 }

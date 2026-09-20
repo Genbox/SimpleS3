@@ -5,6 +5,7 @@ public sealed class S3RoutingRuleCondition
 {
     /// <summary>Provides the <c>KeyPrefixEquals</c> API.</summary>
     public string? KeyPrefixEquals { get; set; }
+
     /// <summary>Provides the <c>HttpErrorCodeReturnedEquals</c> API.</summary>
     public string? HttpErrorCodeReturnedEquals { get; set; }
 }

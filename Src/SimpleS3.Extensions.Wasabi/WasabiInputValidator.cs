@@ -79,6 +79,7 @@ public class WasabiInputValidator : InputValidatorBase
 
         //Spec: The name must begin with a lower­case letter or number.
         char start = bucketName[0];
+
         if (!CharHelper.InRange(start, 'a', 'z') && !CharHelper.InRange(start, '0', '9'))
         {
             status = ValidationStatus.WrongFormat;
@@ -88,6 +89,7 @@ public class WasabiInputValidator : InputValidatorBase
 
         //Spec: The name must begin with a lower­case letter or number.
         char end = bucketName[bucketName.Length - 1];
+
         if (!CharHelper.InRange(end, 'a', 'z') && !CharHelper.InRange(end, '0', '9'))
         {
             status = ValidationStatus.WrongFormat;

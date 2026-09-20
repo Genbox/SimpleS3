@@ -20,10 +20,13 @@ public class PutBucketEncryptionRequest : BaseRequest, IHasBucketName, IContentM
 
     /// <summary>Provides the <c>Rules</c> API.</summary>
     public IList<S3ServerSideEncryptionRule> Rules { get; } = new List<S3ServerSideEncryptionRule>();
+
     /// <summary>Provides the <c>ForceContentMd5</c> API.</summary>
     public Func<bool> ForceContentMd5 => () => true;
+
     /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
+
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 

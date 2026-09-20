@@ -7,5 +7,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
 internal sealed class GetBucketPolicyStatusRequestMarshal : IRequestMarshal<GetBucketPolicyStatusRequest>
 {
-    public Stream? MarshalRequest(GetBucketPolicyStatusRequest request, SimpleS3Config config) { request.SetQueryParameter(AmzParameters.PolicyStatus, string.Empty); return null; }
+    public Stream? MarshalRequest(GetBucketPolicyStatusRequest request, SimpleS3Config config)
+    {
+        request.SetQueryParameter(AmzParameters.PolicyStatus, string.Empty);
+        return null;
+    }
 }

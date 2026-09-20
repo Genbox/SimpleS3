@@ -49,6 +49,7 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
         CreatingSignature(request.RequestId);
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
+
         // S3-008: The canonical URI starts with any path configured on the endpoint.
         string basePath = GetEndpointBasePath(_options.Endpoint);
         if (basePath.Length > 0)
@@ -201,7 +202,7 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
               .Append(SigningConstants.Newline);
         }
 
-        return StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
+        return StringBuilderPool.Shared.ReturnString(sb, true);
     }
 
     private static string CanonicalizeHeaderNames(OrderedDictionary<string, string> headers)

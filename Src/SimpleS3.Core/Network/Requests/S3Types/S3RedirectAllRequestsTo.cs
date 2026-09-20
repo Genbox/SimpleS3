@@ -5,6 +5,7 @@ public sealed class S3RedirectAllRequestsTo(string hostName)
 {
     /// <summary>Provides the <c>HostName</c> API.</summary>
     public string HostName { get; set; } = hostName;
+
     /// <summary>Provides the <c>Protocol</c> API.</summary>
     public string? Protocol { get; set; }
 }

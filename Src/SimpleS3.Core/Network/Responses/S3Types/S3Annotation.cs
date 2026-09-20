@@ -7,14 +7,19 @@ public sealed class S3Annotation(string name, DateTimeOffset lastModified, long 
 {
     /// <summary>Provides the <c>Name</c> API.</summary>
     public string Name { get; } = name;
+
     /// <summary>Provides the <c>LastModified</c> API.</summary>
     public DateTimeOffset LastModified { get; } = lastModified;
+
     /// <summary>Provides the <c>Size</c> API.</summary>
     public long Size { get; } = size;
+
     /// <summary>Provides the <c>ETag</c> API.</summary>
     public string? ETag { get; internal set; }
+
     /// <summary>Provides the <c>ChecksumAlgorithms</c> API.</summary>
     public IList<ChecksumAlgorithm> ChecksumAlgorithms { get; } = new List<ChecksumAlgorithm>();
+
     /// <summary>Provides the <c>ReplicationStatus</c> API.</summary>
     public ReplicationStatus ReplicationStatus { get; internal set; }
 }

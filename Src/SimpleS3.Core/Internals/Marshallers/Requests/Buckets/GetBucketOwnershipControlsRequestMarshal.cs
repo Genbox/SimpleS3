@@ -7,5 +7,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
 internal sealed class GetBucketOwnershipControlsRequestMarshal : IRequestMarshal<GetBucketOwnershipControlsRequest>
 {
-    public Stream? MarshalRequest(GetBucketOwnershipControlsRequest request, SimpleS3Config config) { request.SetQueryParameter(AmzParameters.OwnershipControls, string.Empty); return null; }
+    public Stream? MarshalRequest(GetBucketOwnershipControlsRequest request, SimpleS3Config config)
+    {
+        request.SetQueryParameter(AmzParameters.OwnershipControls, string.Empty);
+        return null;
+    }
 }

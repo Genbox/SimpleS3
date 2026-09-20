@@ -41,7 +41,6 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
         if (profile.ProfileVersion < _currentProfileVersion)
             MigrateFromVersion1(name, profile);
 
-        //Check if the we have the right protector
         string? protector1 = profile.GetTag("Protector");
 
         string profileProtector = protector1 ?? string.Empty;

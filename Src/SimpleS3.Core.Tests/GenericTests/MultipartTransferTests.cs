@@ -25,7 +25,7 @@ public class MultipartTransferTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            await foreach (GetObjectResponse response in transfer.MultipartDownloadAsync("bucket", "object", output, bufferSize: 1, numParallelParts: 2, token: TestContext.Current.CancellationToken))
+            await foreach (GetObjectResponse response in transfer.MultipartDownloadAsync("bucket", "object", output, 1, 2, token: TestContext.Current.CancellationToken))
                 await response.Content.DisposeAsync();
         });
 
@@ -42,7 +42,7 @@ public class MultipartTransferTests
         int activeCallbacks = 0;
         int maxActiveCallbacks = 0;
 
-        CompleteMultipartUploadResponse response = await transfer.MultipartUploadAsync("bucket", "object", data, partSize: 1, numParallelParts: 4, onPartResponse: _ =>
+        CompleteMultipartUploadResponse response = await transfer.MultipartUploadAsync("bucket", "object", data, 1, 4, onPartResponse: _ =>
         {
             int active = Interlocked.Increment(ref activeCallbacks);
             SetMax(ref maxActiveCallbacks, active);
@@ -63,12 +63,10 @@ public class MultipartTransferTests
         await using BlockingReadStream data = new BlockingReadStream();
         using CancellationTokenSource cts = new CancellationTokenSource();
 
-        Task<CompleteMultipartUploadResponse> uploadTask = transfer.MultipartUploadAsync("bucket", "object", data, partSize: 1, numParallelParts: 1, token: cts.Token);
-
         await data.ReadStarted.Task.WaitAsync(TestContext.Current.CancellationToken);
         await cts.CancelAsync();
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => uploadTask);
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await transfer.MultipartUploadAsync("bucket", "object", data, 1, 1, token: cts.Token));
         Assert.True(data.CapturedToken.IsCancellationRequested);
     }
 
@@ -143,18 +141,6 @@ public class MultipartTransferTests
 
     private sealed class FakeMultipartApi : IMultipartClient, IMultipartOperations
     {
-        public IList<IRequestWrapper> RequestWrappers { get; } = Array.Empty<IRequestWrapper>();
-        public IList<IResponseWrapper> ResponseWrappers { get; } = Array.Empty<IResponseWrapper>();
-
-        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(CreateMultipartUploadRequest request, CancellationToken token = default)
-        {
-            return Task.FromResult(new CreateMultipartUploadResponse
-            {
-                IsSuccess = true,
-                UploadId = "upload-id"
-            });
-        }
-
         public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
 
         public async Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default)
@@ -169,32 +155,35 @@ public class MultipartTransferTests
             };
         }
 
-        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default)
+        public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(string bucketName, string objectKey, string uploadId, IEnumerable<S3PartInfo> parts, Action<CompleteMultipartUploadRequest>? config = null, CancellationToken token = default) => Task.FromResult(new CompleteMultipartUploadResponse
         {
-            return Task.FromResult(new CompleteMultipartUploadResponse
-            {
-                IsSuccess = true
-            });
-        }
+            IsSuccess = true
+        });
+
+        public Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+
+        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default) => Task.FromResult(new AbortMultipartUploadResponse
+        {
+            IsSuccess = true
+        });
+
+        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public IList<IRequestWrapper> RequestWrappers { get; } = Array.Empty<IRequestWrapper>();
+        public IList<IResponseWrapper> ResponseWrappers { get; } = Array.Empty<IResponseWrapper>();
+
+        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(CreateMultipartUploadRequest request, CancellationToken token = default) => Task.FromResult(new CreateMultipartUploadResponse
+        {
+            IsSuccess = true,
+            UploadId = "upload-id"
+        });
 
         public Task<UploadPartResponse> UploadPartAsync(UploadPartRequest request, CancellationToken token = default) => throw new NotSupportedException();
         public Task<UploadPartCopyResponse> UploadPartCopyAsync(UploadPartCopyRequest request, CancellationToken token = default) => throw new NotSupportedException();
-        public Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
         public Task<ListPartsResponse> ListPartsAsync(ListPartsRequest request, CancellationToken token = default) => throw new NotSupportedException();
         public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(CompleteMultipartUploadRequest request, CancellationToken token = default) => throw new NotSupportedException();
         public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(AbortMultipartUploadRequest request, CancellationToken token = default) => throw new NotSupportedException();
         public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(ListMultipartUploadsRequest request, CancellationToken token = default) => throw new NotSupportedException();
-        public Task<ListPartsResponse> ListPartsAsync(string bucketName, string objectKey, string uploadId, Action<ListPartsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
-
-        public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(string bucketName, string objectKey, string uploadId, Action<AbortMultipartUploadRequest>? config = null, CancellationToken token = default)
-        {
-            return Task.FromResult(new AbortMultipartUploadResponse
-            {
-                IsSuccess = true
-            });
-        }
-
-        public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
     }
 
     private sealed class NonSeekableDataStream(byte[] data) : Stream

@@ -1,6 +1,5 @@
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;

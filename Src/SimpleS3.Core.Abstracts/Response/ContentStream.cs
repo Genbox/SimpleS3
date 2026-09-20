@@ -12,8 +12,10 @@ public class ContentStream(Stream stream, long? length, IDisposable? owner = nul
 
     /// <summary>Provides the <c>CanRead</c> API.</summary>
     public override bool CanRead => stream.CanRead;
+
     /// <summary>Provides the <c>CanSeek</c> API.</summary>
     public override bool CanSeek => stream.CanSeek;
+
     /// <summary>Provides the <c>CanWrite</c> API.</summary>
     public override bool CanWrite => stream.CanWrite;
 
@@ -35,20 +37,28 @@ public class ContentStream(Stream stream, long? length, IDisposable? owner = nul
 
     /// <summary>Provides the <c>Read</c> API.</summary>
     public override int Read(byte[] buffer, int offset, int count) => stream.Read(buffer, offset, count);
+
     /// <summary>Provides the <c>ReadAsync</c> API.</summary>
     public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => stream.ReadAsync(buffer, offset, count, cancellationToken);
+
     /// <summary>Provides the <c>Seek</c> API.</summary>
     public override long Seek(long offset, SeekOrigin origin) => stream.Seek(offset, origin);
+
     /// <summary>Provides the <c>SetLength</c> API.</summary>
     public override void SetLength(long value) => throw new AbandonedMutexException("This is a read-only stream");
+
     /// <summary>Provides the <c>Write</c> API.</summary>
     public override void Write(byte[] buffer, int offset, int count) => stream.Write(buffer, offset, count);
+
     /// <summary>Provides the <c>WriteAsync</c> API.</summary>
     public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => stream.WriteAsync(buffer, offset, count, cancellationToken);
+
     /// <summary>Provides the <c>Flush</c> API.</summary>
     public override void Flush() => stream.Flush();
+
     /// <summary>Provides the <c>FlushAsync</c> API.</summary>
     public override Task FlushAsync(CancellationToken cancellationToken) => stream.FlushAsync(cancellationToken);
+
     /// <summary>Provides the <c>CopyToAsync</c> API.</summary>
     public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken) => stream.CopyToAsync(destination, bufferSize, cancellationToken);
 

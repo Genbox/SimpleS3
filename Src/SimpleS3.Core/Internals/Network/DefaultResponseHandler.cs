@@ -45,9 +45,10 @@ public partial class DefaultResponseHandler : IResponseHandler
         SendingRequest(url);
 
         HttpResponse httpResp;
+
         try
         {
-            httpResp = await _networkDriver.SendRequestAsync<TResp>(request, url, requestStream, token).ConfigureAwait(false);
+            httpResp = await _networkDriver.SendRequestAsync<TResp>(request, url, requestStream, token);
         }
         finally
         {
@@ -83,7 +84,7 @@ public partial class DefaultResponseHandler : IResponseHandler
                 try
                 {
                     using MemoryStream ms = new MemoryStream();
-                    await responseStream.CopyToAsync(ms, 81920, token).ConfigureAwait(false);
+                    await responseStream.CopyToAsync(ms, 81920, token);
 
                     if (ms.Length > 0)
                     {

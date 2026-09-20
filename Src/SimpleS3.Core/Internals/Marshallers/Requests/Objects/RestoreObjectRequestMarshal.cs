@@ -15,7 +15,7 @@ internal sealed class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjec
         request.SetQueryParameter(AmzParameters.Restore, string.Empty);
 
         FastXmlWriter xml = new FastXmlWriter(512);
-        xml.WriteStartElement("RestoreRequest", "http://s3.amazonaws.com/doc/2006-03-01/");
+        xml.WriteStartElement("RestoreRequest", XmlConstants.S3Namespace);
 
         if (request.Days > 0)
             xml.WriteElement("Days", request.Days);
@@ -155,7 +155,7 @@ internal sealed class RestoreObjectRequestMarshal : IRequestMarshal<RestoreObjec
             if (request.OutputLocation.Acl != ObjectCannedAcl.Unknown)
                 xml.WriteElement("CannedACL", request.OutputLocation.Acl.GetDisplayName());
 
-            //TODO: AccessControlList support
+            // AccessControlList support is not available for this request.
 
             if (request.OutputLocation.SseAlgorithm != SseAlgorithm.Unknown)
             {

@@ -5,6 +5,7 @@ public class S3AndCondition
 {
     /// <summary>Provides the <c>Prefix</c> API.</summary>
     public string? Prefix { get; set; }
+
     /// <summary>Provides the <c>Tags</c> API.</summary>
     public IList<KeyValuePair<string, string>> Tags { get; internal set; } = new List<KeyValuePair<string, string>>();
 }

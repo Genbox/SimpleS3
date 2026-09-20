@@ -29,7 +29,7 @@ public class SimpleS3Config
     public IAccessKey? Credentials { get; set; }
 
     /// <summary>
-    /// There are 3 different signing modes: 1. Unsigned - means the request will be sent without a signature at all. 2. FullSignature - Means the full payload will be hashed
+    /// There are 3 different signing modes: 1. Unsigned - the payload is not signed; requests still use authentication when credentials are configured. 2. FullSignature - Means the full payload will be hashed
     /// before sending. This option is better when you are only sending small objects (up to 32 MB). 3. StreamingSignature - Means the payload will be hashed in chunks and streamed to the
     /// server. This option is better when you also send large objects (up to 5 TB).
     /// </summary>
@@ -49,15 +49,15 @@ public class SimpleS3Config
 
     /// <summary>
     ///     <para>
-    ///     Use this to set a custom endpoint. It can either be a URL like https://myserver.com:9101 or a template. When setting a endpoint to a URL <see cref="UseTls" />,
-    ///     <see cref="NamingMode" /> and <see cref="RegionCode" /> will be ignored.
+    ///     Use this to set a custom endpoint. It can either be a URL like https://myserver.com:9101 or a template. A literal URL keeps its supplied scheme and host.
+    ///     Path-style naming still adds the bucket to the request path; virtual-host naming uses the supplied host as-is. RegionCode still determines the signing region.
     ///     </para>
     ///     <para>
     ///     However, you can also set the endpoint to a template in the form of {Scheme}{Region:.}myserver.com:9101/{Bucket} and SimpleS3 will build an URL for you using
     ///     <see cref="UseTls" />, <see cref="NamingMode" /> and <see cref="RegionCode" />
     ///     </para>
     /// </summary>
-    public string Endpoint { get; set; }
+    public string Endpoint { get; set; } = string.Empty;
 
     /// <summary>Controls the level of validation performed on bucket names. You should only create buckets that are valid DNS names.</summary>
     public BucketNameValidationMode BucketNameValidationMode { get; set; } = BucketNameValidationMode.Default;
@@ -68,7 +68,8 @@ public class SimpleS3Config
     /// </summary>
     public ObjectKeyValidationMode ObjectKeyValidationMode { get; set; } = ObjectKeyValidationMode.Default;
 
-    /// <summary>If a response has EncodingType set to Url, SimpleS3 will automatically URL decode the encoded part of the response if this setting is true.</summary>
+    /// <summary>When EncodingType is Url, decode returned object keys, prefixes, delimiters, and StartAfter.</summary>
+    /// <remarks>Key-based pagination markers are always decoded for reuse. Opaque continuation tokens, version IDs, and upload IDs are never URL decoded.</remarks>
     public bool AutoUrlDecodeResponses { get; set; }
 
     /// <summary>When enabled, SimpleS3 will always calculate the ContentMD5 property before sending the request</summary>
@@ -81,8 +82,8 @@ public class SimpleS3Config
     public bool LogSensitiveMaterial { get; set; }
 
     /// <summary>Provides the <c>RegionCode</c> API.</summary>
-    public string RegionCode { get; set; }
+    public string RegionCode { get; set; } = string.Empty;
 
     /// <summary>Provides the <c>ProviderName</c> API.</summary>
-    public string ProviderName { get; set; }
+    public string ProviderName { get; set; } = string.Empty;
 }

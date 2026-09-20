@@ -23,7 +23,7 @@ internal class NetworkFailingHttpHandler : BaseFailingHttpHandler
             throw new IOException("NIC is missing");
         }
 
-        await ConsumeRequestAsync(request).ConfigureAwait(false);
+        await ConsumeRequestAsync(request, cancellationToken);
 
         return CreateResponse(request, HttpStatusCode.OK);
     }

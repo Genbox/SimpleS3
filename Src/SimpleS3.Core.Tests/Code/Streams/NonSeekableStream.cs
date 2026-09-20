@@ -15,10 +15,7 @@ internal class NonSeekableStream(byte[] data) : Stream
         set => throw new NotSupportedException();
     }
 
-    public override void Flush()
-    {
-        throw new NotSupportedException();
-    }
+    public override void Flush() => throw new NotSupportedException();
 
     public override int Read(byte[] buffer, int offset, int count) => _backingStream.Read(buffer, offset, count);
 
@@ -28,13 +25,7 @@ internal class NonSeekableStream(byte[] data) : Stream
 
     public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
 
-    public override void SetLength(long value)
-    {
-        throw new NotSupportedException();
-    }
+    public override void SetLength(long value) => throw new NotSupportedException();
 
-    public override void Write(byte[] buffer, int offset, int count)
-    {
-        throw new NotSupportedException();
-    }
+    public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 }

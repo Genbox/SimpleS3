@@ -87,11 +87,10 @@ internal sealed partial class DefaultSignedRequestHandler : ISignedRequestHandle
             sb.Append(endpointData.Endpoint);
             RequestHelper.AppendPath(sb, _config, request);
             RequestHelper.AppendQueryParameters(sb, request);
-            return StringBuilderPool.Shared.ReturnString(sb, clearContents: true);
+            return StringBuilderPool.Shared.ReturnString(sb, true);
         }
         finally
         {
-            //Clear sensitive material from the request
             if (request is IContainSensitiveMaterial sensitive)
                 sensitive.ClearSensitiveMaterial();
         }
@@ -102,6 +101,6 @@ internal sealed partial class DefaultSignedRequestHandler : ISignedRequestHandle
     public async Task<TResp> SendRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new()
     {
         SignedRequest req = new SignedRequest(httpMethod);
-        return await _responseHandler.HandleResponseAsync<SignedRequest, TResp>(req, url, content, token).ConfigureAwait(false);
+        return await _responseHandler.HandleResponseAsync<SignedRequest, TResp>(req, url, content, token);
     }
 }

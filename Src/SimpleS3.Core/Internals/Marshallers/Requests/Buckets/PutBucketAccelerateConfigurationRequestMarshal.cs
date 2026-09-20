@@ -13,7 +13,7 @@ internal sealed class PutBucketAccelerateConfigurationRequestMarshal : IRequestM
         request.SetQueryParameter(AmzParameters.Accelerate, string.Empty);
 
         FastXmlWriter writer = new FastXmlWriter(150);
-        writer.WriteStartElement("AccelerateConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("AccelerateConfiguration", XmlConstants.S3Namespace);
         writer.WriteElement("Status", request.AccelerationEnabled ? "Enabled" : "Suspended");
         writer.WriteEndElement("AccelerateConfiguration");
 

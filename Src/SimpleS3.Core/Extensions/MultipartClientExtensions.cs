@@ -33,7 +33,7 @@ public static class MultipartClientExtensions
                 // DPR-036: S3 multipart pagination requires both key-marker and upload-id-marker.
                 req.KeyMarker = currentKeyMarker;
                 req.UploadIdMarker = currentUploadIdMarker;
-            }, token).ConfigureAwait(false);
+            }, token);
 
             // DPR-036: Do not silently enumerate uploads from failed pages.
             if (!response.IsSuccess)

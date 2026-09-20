@@ -26,7 +26,7 @@ internal sealed partial class SigningKeyBuilder : ISigningKeyBuilder
         _logger = logger;
         _protector = protector;
 
-        //Cache ac couple of things to make signing faster
+        // Cache fixed signing components. RegionCode remains mutable.
         _serviceBytes = "s3"u8.ToArray();
         _regionBytes = Encoding.UTF8.GetBytes(_config.RegionCode);
         _requestBytes = "aws4_request"u8.ToArray();

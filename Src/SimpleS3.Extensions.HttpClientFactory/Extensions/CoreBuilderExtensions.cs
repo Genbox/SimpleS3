@@ -19,14 +19,14 @@ public static class CoreBuilderExtensions
     public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(clientBuilder.Name, config);
-        return UseHttpClientFactory(clientBuilder);
+        return clientBuilder.UseHttpClientFactory();
     }
 
     /// <summary>Provides the <c>UseHttpClientFactory</c> API.</summary>
     public static IHttpClientBuilder UseHttpClientFactory(this ICoreBuilder clientBuilder, Action<HttpClientFactoryConfig> config)
     {
         clientBuilder.Services.Configure(clientBuilder.Name, config);
-        return UseHttpClientFactory(clientBuilder);
+        return clientBuilder.UseHttpClientFactory();
     }
 
     /// <summary>Provides the <c>UseHttpClientFactory</c> API.</summary>

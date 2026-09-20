@@ -16,13 +16,13 @@ public class CopyObjectTests : TestBase
         const string sourceKey = nameof(CopyObject);
         const string destinationKey = sourceKey + "2";
 
-        await client.PutObjectStringAsync(bucket, sourceKey, "test");
+        await client.PutObjectStringAsync(bucket, sourceKey, "test", token: TestContext.Current.CancellationToken);
 
-        CopyObjectResponse copyResp = await client.CopyObjectAsync(bucket, sourceKey, bucket, destinationKey);
+        CopyObjectResponse copyResp = await client.CopyObjectAsync(bucket, sourceKey, bucket, destinationKey, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, copyResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, destinationKey);
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, destinationKey, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
-        Assert.Equal("test", await getResp.Content.AsStringAsync());
+        Assert.Equal("test", await getResp.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
     }
 }

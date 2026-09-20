@@ -7,5 +7,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
 internal sealed class GetBucketLocationRequestMarshal : IRequestMarshal<GetBucketLocationRequest>
 {
-    public Stream? MarshalRequest(GetBucketLocationRequest request, SimpleS3Config config) { request.SetQueryParameter(AmzParameters.Location, string.Empty); return null; }
+    public Stream? MarshalRequest(GetBucketLocationRequest request, SimpleS3Config config)
+    {
+        request.SetQueryParameter(AmzParameters.Location, string.Empty);
+        return null;
+    }
 }

@@ -7,7 +7,7 @@ public class JsonHelperTests
     [Fact]
     public void EscapeSpecialChars()
     {
-        Dictionary<string, string> pairs = new Dictionary<string, string>();
+        Dictionary<string, string> pairs = new Dictionary<string, string>(StringComparer.Ordinal);
         pairs.Add("\b \f \n \r \t \" \\ /", "value");
 
         Assert.Equal($"{{\"\\{(char)8} \\{(char)12} \\{'\n'} \\{'\r'} \\{'\t'} \\\" \\\\ \\/\":\"value\"}}", JsonHelper.EncodeJson(pairs));
@@ -21,7 +21,7 @@ public class JsonHelperTests
     [Fact]
     public void GenericTest()
     {
-        Dictionary<string, string> pairs = new Dictionary<string, string>();
+        Dictionary<string, string> pairs = new Dictionary<string, string>(StringComparer.Ordinal);
         pairs.Add("Key", "Value");
         Assert.Equal("{\"Key\":\"Value\"}", JsonHelper.EncodeJson(pairs));
 

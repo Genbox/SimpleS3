@@ -42,10 +42,7 @@ internal static class ChecksumHashAlgorithm
             HashSizeValue = 32;
         }
 
-        public override void Initialize()
-        {
-            _value = uint.MaxValue;
-        }
+        public override void Initialize() => _value = uint.MaxValue;
 
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
         {
@@ -61,6 +58,7 @@ internal static class ChecksumHashAlgorithm
         protected override byte[] HashFinal()
         {
             uint value = _value ^ uint.MaxValue;
+
             unchecked
             {
                 return [(byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value];
@@ -78,10 +76,7 @@ internal static class ChecksumHashAlgorithm
             HashSizeValue = 64;
         }
 
-        public override void Initialize()
-        {
-            _value = ulong.MaxValue;
-        }
+        public override void Initialize() => _value = ulong.MaxValue;
 
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
         {
@@ -97,6 +92,7 @@ internal static class ChecksumHashAlgorithm
         protected override byte[] HashFinal()
         {
             ulong value = _value ^ ulong.MaxValue;
+
             unchecked
             {
                 return

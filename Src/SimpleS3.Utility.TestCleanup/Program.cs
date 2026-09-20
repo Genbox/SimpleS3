@@ -25,8 +25,7 @@ internal static class Program
         foreach (S3Provider s3Provider in providers)
         {
             string profileName = UtilityHelper.GetProfileName(s3Provider);
-            ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
-            await using var configuredProvider = provider.ConfigureAwait(false);
+            await using ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
             IProfileManager profileManager = provider.GetRequiredService<IProfileManager>();
 
             if (profileManager.GetProfile(profileName) == null)
@@ -36,7 +35,7 @@ internal static class Program
             }
 
             ISimpleClient client = provider.GetRequiredService<ISimpleClient>();
-            ListBucketsResponse listResponse = await client.ListBucketsAsync(token: CancellationToken.None).ConfigureAwait(false);
+            ListBucketsResponse listResponse = await client.ListBucketsAsync(token: CancellationToken.None);
 
             if (!listResponse.IsSuccess)
             {
@@ -55,7 +54,7 @@ internal static class Program
 
                 Console.Write(bucketName);
 
-                (Exception? failure, bool deferred) = await UtilityHelper.TryDeleteTemporaryBucketAsync(s3Provider, client, bucketName, token: CancellationToken.None).ConfigureAwait(false);
+                (Exception? failure, bool deferred) = await UtilityHelper.TryDeleteTemporaryBucketAsync(s3Provider, client, bucketName, token: CancellationToken.None);
                 string outcome = deferred ? " [ ] deferred: " + failure?.Message : " [ ] failed: " + failure?.Message;
                 Console.WriteLine(failure == null ? " [x] deleted" : outcome);
 

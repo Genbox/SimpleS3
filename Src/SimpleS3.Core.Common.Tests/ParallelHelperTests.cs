@@ -8,7 +8,7 @@ namespace Genbox.SimpleS3.Core.Common.Tests;
 public class ParallelHelperTests
 {
     [Fact]
-    public async Task ExecuteAsyncDoesNotOverReleaseWhenWaitIsCanceled()
+    public async Task ExecuteAsyncDoesNotOverReleaseWhenWaitIsCanceledAsync()
     {
         using CancellationTokenSource cts = new CancellationTokenSource();
         TaskCompletionSource entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -19,26 +19,23 @@ public class ParallelHelperTests
             await Task.Delay(Timeout.InfiniteTimeSpan, token);
         }, 1, cts.Token);
 
-        await entered.Task;
+        await entered.Task.WaitAsync(TestContext.Current.CancellationToken);
         await cts.CancelAsync();
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task);
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task.WaitAsync(TestContext.Current.CancellationToken));
     }
 
     [Fact]
-    public async Task ExecuteAsyncWithReturnReleasesSlotWhenActionThrowsSynchronously()
+    public async Task ExecuteAsyncWithReturnReleasesSlotWhenActionThrowsSynchronouslyAsync() => await Assert.ThrowsAsync<InvalidOperationException>(() => ParallelHelper.ExecuteAsync([1, 2], (value, _) =>
     {
-        await Assert.ThrowsAsync<InvalidOperationException>(() => ParallelHelper.ExecuteAsync([1, 2], (value, _) =>
-        {
-            if (value == 1)
-                throw new InvalidOperationException();
+        if (value == 1)
+            throw new InvalidOperationException();
 
-            return Task.FromResult(value);
-        }, 1, TestContext.Current.CancellationToken));
-    }
+        return Task.FromResult(value);
+    }, 1, TestContext.Current.CancellationToken));
 
     [Fact]
-    public async Task ExecuteAsyncWithReturnDoesNotEnumeratePastAvailableSlots()
+    public async Task ExecuteAsyncWithReturnDoesNotEnumeratePastAvailableSlotsAsync()
     {
         int yielded = 0;
         TaskCompletionSource entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -69,7 +66,7 @@ public class ParallelHelperTests
     }
 
     [Fact]
-    public async Task ExecuteAsyncWithReturnCancelsSiblingsWhenActionThrows()
+    public async Task ExecuteAsyncWithReturnCancelsSiblingsWhenActionThrowsAsync()
     {
         int started = 0;
 
@@ -88,7 +85,7 @@ public class ParallelHelperTests
     }
 
     [Fact]
-    public async Task ExecuteAsyncCancelsRunningTasksWhenSourceThrows()
+    public async Task ExecuteAsyncCancelsRunningTasksWhenSourceThrowsAsync()
     {
         TaskCompletionSource entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -110,11 +107,11 @@ public class ParallelHelperTests
     }
 
     [Fact]
-    public async Task ExecuteAsyncWithAsyncSourceCancelsRunningTasksWhenSourceThrows()
+    public async Task ExecuteAsyncWithAsyncSourceCancelsRunningTasksWhenSourceThrowsAsync()
     {
         TaskCompletionSource entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        Task<IEnumerable<int>> task = ParallelHelper.ExecuteAsync(Source(TestContext.Current.CancellationToken), async (_, token) =>
+        Task<IEnumerable<int>> task = ParallelHelper.ExecuteAsync(SourceAsync(TestContext.Current.CancellationToken), async (_, token) =>
         {
             entered.SetResult();
             await Task.Delay(Timeout.InfiniteTimeSpan, token);
@@ -125,7 +122,7 @@ public class ParallelHelperTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => task.WaitAsync(TestContext.Current.CancellationToken));
 
-        static async IAsyncEnumerable<int> Source([EnumeratorCancellation]CancellationToken token = default)
+        static async IAsyncEnumerable<int> SourceAsync([EnumeratorCancellation]CancellationToken token = default)
         {
             yield return 1;
             await Task.Yield();

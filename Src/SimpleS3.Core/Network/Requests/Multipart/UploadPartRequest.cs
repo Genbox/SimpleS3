@@ -22,19 +22,31 @@ public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+
+    /// <summary>Provides the <c>ChecksumAlgorithm</c> API.</summary>
+    public ChecksumAlgorithm ChecksumAlgorithm { get; set; }
+
+    /// <summary>Provides the <c>Checksum</c> API.</summary>
+    public byte[]? Checksum { get; set; }
+
     /// <summary>Provides the <c>Content</c> API.</summary>
     public Stream? Content { get; private set; }
+
     /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
+
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
 
     /// <summary>Provides the <c>PartNumber</c> API.</summary>
     public int? PartNumber { get; set; }
+
     /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
+
     /// <summary>Provides the <c>SseCustomerAlgorithm</c> API.</summary>
     public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
+
     /// <summary>Provides the <c>SseCustomerKeyMd5</c> API.</summary>
     public byte[]? SseCustomerKeyMd5 { get; set; }
 
@@ -57,11 +69,6 @@ public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5
 
     /// <summary>Provides the <c>UploadId</c> API.</summary>
     public string UploadId { get; set; } = null!;
-
-    /// <summary>Provides the <c>ChecksumAlgorithm</c> API.</summary>
-    public ChecksumAlgorithm ChecksumAlgorithm { get; set; }
-    /// <summary>Provides the <c>Checksum</c> API.</summary>
-    public byte[]? Checksum { get; set; }
 
     internal void Initialize(string bucketName, string objectKey, string uploadId, int partNumber, Stream? content)
     {

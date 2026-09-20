@@ -13,7 +13,7 @@ public static class BucketClientExtensions
     /// <summary>List all buckets</summary>
     public static async IAsyncEnumerable<S3Bucket> ListAllBucketsAsync(this IBucketClient client, Action<ListBucketsRequest>? config = null, [EnumeratorCancellation]CancellationToken token = default)
     {
-        ListBucketsResponse response = await client.ListBucketsAsync(config, token).ConfigureAwait(false);
+        ListBucketsResponse response = await client.ListBucketsAsync(config, token);
 
         if (!response.IsSuccess)
             throw new S3RequestException(response, "Request failed");

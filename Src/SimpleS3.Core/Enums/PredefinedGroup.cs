@@ -1,5 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Genbox.FastEnum;
 
 namespace Genbox.SimpleS3.Core.Enums;

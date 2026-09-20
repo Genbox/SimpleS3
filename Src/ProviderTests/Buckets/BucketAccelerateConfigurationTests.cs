@@ -9,20 +9,17 @@ public class BucketAccelerateConfigurationTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task PutGetBucketAccelerateConfiguration(S3Provider provider, string _, ISimpleClient client)
+    public async Task PutGetBucketAccelerateConfiguration(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async x =>
     {
-        await CreateTempBucketAsync(provider, client, async x =>
-        {
-            GetBucketAccelerateConfigurationResponse getResp = await client.GetBucketAccelerateConfigurationAsync(x);
-            Assert.True(getResp.IsSuccess);
-            Assert.False(getResp.AccelerateEnabled);
+        GetBucketAccelerateConfigurationResponse getResp = await client.GetBucketAccelerateConfigurationAsync(x, token: TestContext.Current.CancellationToken);
+        Assert.True(getResp.IsSuccess);
+        Assert.False(getResp.AccelerateEnabled);
 
-            PutBucketAccelerateConfigurationResponse putResp = await client.PutBucketAccelerateConfigurationAsync(x, true);
-            Assert.True(putResp.IsSuccess);
+        PutBucketAccelerateConfigurationResponse putResp = await client.PutBucketAccelerateConfigurationAsync(x, true, token: TestContext.Current.CancellationToken);
+        Assert.True(putResp.IsSuccess);
 
-            getResp = await client.GetBucketAccelerateConfigurationAsync(x);
-            Assert.True(getResp.IsSuccess);
-            Assert.True(getResp.AccelerateEnabled);
-        });
-    }
+        getResp = await client.GetBucketAccelerateConfigurationAsync(x, token: TestContext.Current.CancellationToken);
+        Assert.True(getResp.IsSuccess);
+        Assert.True(getResp.AccelerateEnabled);
+    });
 }

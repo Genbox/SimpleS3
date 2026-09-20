@@ -8,7 +8,7 @@ using Xunit.v3;
 namespace Genbox.ProviderTests.Code;
 
 /// <summary>
-/// Intended for multiple providers. Providers not enabled will show up as skipped. Used to show providers that don't support a particular action.
+/// Selects providers for a scenario. Excluded providers are skipped without making an API-support claim.
 /// </summary>
 internal sealed class MultipleProvidersAttribute(S3Provider providers) : DataAttribute
 {

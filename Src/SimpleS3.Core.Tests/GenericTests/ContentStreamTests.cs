@@ -8,7 +8,7 @@ public class ContentStreamTests
     [Fact]
     public async Task ReadAsyncPassesCancellationTokenToInnerStream()
     {
-        CapturingStream inner = new CapturingStream();
+        await using CapturingStream inner = new CapturingStream();
         await using ContentStream content = new ContentStream(inner, null);
         using CancellationTokenSource cts = new CancellationTokenSource();
         byte[] buffer = new byte[1];
@@ -21,7 +21,7 @@ public class ContentStreamTests
     [Fact]
     public async Task CopyToAsyncPassesCancellationTokenToInnerStream()
     {
-        CapturingStream inner = new CapturingStream();
+        await using CapturingStream inner = new CapturingStream();
         await using ContentStream content = new ContentStream(inner, null);
         await using MemoryStream destination = new MemoryStream();
         using CancellationTokenSource cts = new CancellationTokenSource();

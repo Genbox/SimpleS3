@@ -8,6 +8,12 @@ public sealed class DiskStorageTests : IDisposable
 {
     private readonly string _profileLocation = Path.Combine(Path.GetTempPath(), "SimpleS3-" + Guid.NewGuid());
 
+    public void Dispose()
+    {
+        if (Directory.Exists(_profileLocation))
+            Directory.Delete(_profileLocation, true);
+    }
+
     [Theory]
     [InlineData("..")]
     [InlineData("../outside")]
@@ -25,13 +31,7 @@ public sealed class DiskStorageTests : IDisposable
         DiskStorage storage = CreateStorage();
         storage.Put("profile", [1, 2, 3]);
 
-        Assert.Equal(["profile"], storage.List());
-    }
-
-    public void Dispose()
-    {
-        if (Directory.Exists(_profileLocation))
-            Directory.Delete(_profileLocation, true);
+        Assert.Equal(["profile"], storage.List(), StringComparer.Ordinal);
     }
 
     private DiskStorage CreateStorage() => new DiskStorage(Options.Create(new DiskStorageOptions { ProfileLocation = _profileLocation }));

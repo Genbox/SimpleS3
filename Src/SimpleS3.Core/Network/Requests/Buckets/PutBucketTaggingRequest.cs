@@ -29,10 +29,13 @@ public class PutBucketTaggingRequest : BaseRequest, IHasBucketName, IContentMd5C
 
     /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
+
     /// <summary>Provides the <c>ForceContentMd5</c> API.</summary>
     public Func<bool> ForceContentMd5 => () => true;
+
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+
     /// <summary>Provides the <c>Tags</c> API.</summary>
     public TagBuilder Tags { get; }
 

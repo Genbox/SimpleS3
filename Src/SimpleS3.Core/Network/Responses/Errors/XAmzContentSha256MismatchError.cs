@@ -17,10 +17,13 @@ public class XAmzContentSha256MismatchError : GenericError
 
     /// <summary>Provides the <c>ClientSha256</c> API.</summary>
     public string? ClientSha256 { get; }
+
     /// <summary>Provides the <c>S3Sha256</c> API.</summary>
     public string? S3Sha256 { get; }
+
     /// <summary>Provides the <c>RequestId</c> API.</summary>
     public string? RequestId { get; }
+
     /// <summary>Provides the <c>HostId</c> API.</summary>
     public string? HostId { get; }
 

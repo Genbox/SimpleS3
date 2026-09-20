@@ -7,6 +7,7 @@ public class GetObjectLegalHoldResponse : BaseResponse, IHasRequestCharged
 {
     /// <summary>Provides the <c>LegalHold</c> API.</summary>
     public bool LegalHold { get; internal set; }
+
     /// <summary>Provides the <c>RequestCharged</c> API.</summary>
     public bool RequestCharged { get; internal set; }
 }

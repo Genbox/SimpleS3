@@ -26,13 +26,13 @@ public sealed class AwsSignatureVersion4Benchmarks : IDisposable
 
     public void Dispose() => _request2.Dispose();
 
-    [GlobalSetup]
     [SuppressMessage("Usage", "S1075", Justification = "The benchmark uses a fixed dummy request URI so each signing iteration has identical input.")]
+    [GlobalSetup]
     public void Setup()
     {
         {
             IAccessKey credentials = new StringAccessKey("keyidkeyidkeyidkeyid", "accesskeyacceskey123accesskeyacceskey123");
-            SimpleS3Config config = new SimpleS3Config(credentials, "http://domain/", "eu1-region");
+            SimpleS3Config config = new SimpleS3Config(credentials, "https://domain/", "eu1-region");
 
             IOptions<SimpleS3Config> options = Options.Create(config);
 
@@ -61,27 +61,22 @@ public sealed class AwsSignatureVersion4Benchmarks : IDisposable
     }
 
     [Benchmark]
-    public void SimpleS3()
-    {
-        _builder.BuildAuthorization(_request);
-    }
+    public void SimpleS3() => _builder.BuildAuthorization(_request);
 
     [Benchmark]
     public string Aws4()
     {
         // Build the canonical request
-        (string canonicalRequest, string signedHeaders) = CanonicalRequest.Build("s3", _request2, new Dictionary<string, IEnumerable<string>>(), string.Empty);
+        (string canonicalRequest, string signedHeaders) = CanonicalRequest.Build("s3", _request2, new Dictionary<string, IEnumerable<string>>(StringComparer.Ordinal), string.Empty);
 
         // Build the string to sign
-        (string stringToSign, string credentialScope) = StringToSign.Build(
-            DateTime.UtcNow,
+        (string stringToSign, string credentialScope) = StringToSign.Build(DateTime.UtcNow,
             "eu-west-1",
             "S3",
             canonicalRequest);
 
         // Build the authorization header
-        string authorizationHeader = AuthorizationHeader.Build(
-            DateTime.UtcNow,
+        string authorizationHeader = AuthorizationHeader.Build(DateTime.UtcNow,
             "eu-west-1",
             "S3",
             _credentials,

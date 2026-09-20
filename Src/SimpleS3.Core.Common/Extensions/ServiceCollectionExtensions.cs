@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
             throw new ArgumentException($"Implementation type {implType} is the same as {descriptor.ServiceType}", nameof(descriptor));
 
         int count = services.Count;
+
         for (int i = 0; i < count; i++)
         {
             ServiceDescriptor service = services[i];

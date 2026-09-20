@@ -5,6 +5,7 @@ public interface IEndpointData
 {
     /// <summary>Provides the <c>Host</c> API.</summary>
     string Host { get; }
+
     /// <summary>Provides the <c>Endpoint</c> API.</summary>
     string Endpoint { get; }
 }

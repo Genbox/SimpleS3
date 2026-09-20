@@ -20,12 +20,12 @@ public class GetObjectTests : TestBase
         byte[] binaryData = new byte[10];
         RandomNumberGenerator.Fill(binaryData);
 
-        PutObjectResponse putResp = await client.PutObjectDataAsync(bucket, nameof(GetObjectData), binaryData);
+        PutObjectResponse putResp = await client.PutObjectDataAsync(bucket, nameof(GetObjectData), binaryData, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectData));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectData), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
-        Assert.Equal(binaryData, await getResp.Content.AsDataAsync());
+        Assert.Equal(binaryData, await getResp.Content.AsDataAsync(TestContext.Current.CancellationToken));
     }
 
     [Theory]
@@ -38,39 +38,39 @@ public class GetObjectTests : TestBase
 
         const string stringData = "Hello 你好 ਸਤ ਸ੍ਰੀ ਅਕਾਲ Привет";
 
-        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, nameof(GetObjectString), stringData);
+        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, nameof(GetObjectString), stringData, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectString));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectString), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
-        Assert.Equal(stringData, await getResp.Content.AsStringAsync());
+        Assert.Equal(stringData, await getResp.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
     }
 
     [Theory]
     [MultipleProviders(S3Provider.All)]
     public async Task GetObjectContentRange(S3Provider _, string bucket, ISimpleClient client)
     {
-        await client.PutObjectStringAsync(bucket, nameof(GetObjectContentRange), "test");
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectContentRange), r => r.Range.Add(0, 2));
+        await client.PutObjectStringAsync(bucket, nameof(GetObjectContentRange), "test", token: TestContext.Current.CancellationToken);
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectContentRange), r => r.Range.Add(0, 2), TestContext.Current.CancellationToken);
 
         Assert.Equal(206, getResp.StatusCode);
         Assert.Equal(3, getResp.ContentLength);
         Assert.Equal("bytes", getResp.AcceptRanges);
         Assert.Equal("bytes 0-2/4", getResp.ContentRange);
-        Assert.Equal("tes", await getResp.Content.AsStringAsync());
+        Assert.Equal("tes", await getResp.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
     }
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task GetObjectLifecycle(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(GetObjectLifecycle), null);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(GetObjectLifecycle), null, token: TestContext.Current.CancellationToken);
 
         //Test lifecycle expiration (yes, we add 2 days. I don't know why Amazon works like this)
         Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
         Assert.Equal("ExpireAll", putResp.LifeCycleRuleId);
 
-        GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectLifecycle));
+        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectLifecycle), token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
 
         //Test lifecycle expiration

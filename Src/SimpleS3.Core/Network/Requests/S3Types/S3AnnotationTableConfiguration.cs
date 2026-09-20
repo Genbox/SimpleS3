@@ -7,8 +7,10 @@ public sealed class S3AnnotationTableConfiguration(AnnotationTableConfigurationS
 {
     /// <summary>Provides the <c>ConfigurationState</c> API.</summary>
     public AnnotationTableConfigurationState ConfigurationState { get; set; } = configurationState;
+
     /// <summary>Provides the <c>EncryptionConfiguration</c> API.</summary>
     public S3MetadataTableEncryptionConfiguration? EncryptionConfiguration { get; set; }
+
     /// <summary>Provides the <c>Role</c> API.</summary>
     public string? Role { get; set; }
 }

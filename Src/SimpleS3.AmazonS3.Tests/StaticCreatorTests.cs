@@ -1,3 +1,4 @@
+using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.AmazonS3;
 
@@ -13,7 +14,7 @@ public class StaticCreatorTests
         AmazonS3Config config = new AmazonS3Config("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", AmazonS3Region.UsEast1);
         using AmazonS3Client client = new AmazonS3Client(config, driver);
 
-        await using Stream content = (await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken)).Content;
+        using GetObjectResponse response = await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken);
         Assert.Equal("https://testbucket.s3.us-east-1.amazonaws.com/GetObjectAsync", driver.LastUrl);
     }
 }

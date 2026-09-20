@@ -19,6 +19,7 @@ public class S3DeleteInfo : IPooledObject, IHasObjectKey, IHasVersionId
 
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
+
     /// <summary>Provides the <c>VersionId</c> API.</summary>
     public string? VersionId { get; set; }
 

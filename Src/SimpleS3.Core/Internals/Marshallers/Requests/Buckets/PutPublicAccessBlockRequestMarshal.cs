@@ -12,7 +12,7 @@ internal sealed class PutPublicAccessBlockRequestMarshal : IRequestMarshal<PutPu
         request.SetQueryParameter("publicAccessBlock", string.Empty);
 
         FastXmlWriter xml = new FastXmlWriter(400);
-        xml.WriteStartElement("PublicAccessBlockConfiguration", "http://s3.amazonaws.com/doc/2006-03-01/");
+        xml.WriteStartElement("PublicAccessBlockConfiguration", XmlConstants.S3Namespace);
         xml.WriteElement("BlockPublicAcls", request.BlockPublicAcls ? "true" : "false");
         xml.WriteElement("BlockPublicPolicy", request.BlockPublicPolicy ? "true" : "false");
         xml.WriteElement("IgnorePublicAcls", request.IgnorePublicAcls ? "true" : "false");

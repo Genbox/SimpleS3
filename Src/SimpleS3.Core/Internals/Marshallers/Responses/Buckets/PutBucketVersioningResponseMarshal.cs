@@ -8,6 +8,6 @@ internal sealed class PutBucketVersioningResponseMarshal : IResponseMarshal<PutB
 {
     public void MarshalResponse(SimpleS3Config config, PutBucketVersioningResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        // The docs says there is an XML response, but there is none from the API.
+        // PutBucketVersioning returns an empty body; common response fields are mapped by the handler.
     }
 }

@@ -6,7 +6,6 @@ using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Extensions;
-using Genbox.SimpleS3.Core.Network.Requests;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -45,6 +44,8 @@ public sealed class SignatureBenchmarks : IDisposable
         _date = DateTimeOffset.UtcNow;
     }
 
+    public void Dispose() => _content.Dispose();
+
     [Benchmark]
     public byte[] SignatureKeyBuilder() => _signingKeyBuilder.CreateSigningKey(_date);
 
@@ -53,6 +54,4 @@ public sealed class SignatureBenchmarks : IDisposable
 
     [Benchmark]
     public byte[] ChunkedSignatureBuilder() => _chunkSigBuilder.CreateChunkSignature(_req, new byte[32], new byte[32], 0, 32);
-
-    public void Dispose() => _content.Dispose();
 }

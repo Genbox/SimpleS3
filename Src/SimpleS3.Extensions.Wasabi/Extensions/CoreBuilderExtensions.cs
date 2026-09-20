@@ -12,17 +12,14 @@ namespace Genbox.SimpleS3.Extensions.Wasabi.Extensions;
 public static class CoreBuilderExtensions
 {
     /// <summary>Provides the <c>UseWasabi</c> API.</summary>
-    public static ICoreBuilder UseWasabi(this ICoreBuilder clientBuilder, Action<WasabiConfig> config)
-    {
-        return UseWasabi(clientBuilder, (s3Config, _) => config.Invoke(s3Config));
-    }
+    public static ICoreBuilder UseWasabi(this ICoreBuilder clientBuilder, Action<WasabiConfig> config) => clientBuilder.UseWasabi((s3Config, _) => config.Invoke(s3Config));
 
     /// <summary>Provides the <c>UseWasabi</c> API.</summary>
     public static ICoreBuilder UseWasabi(this ICoreBuilder clientBuilder, Action<WasabiConfig, IServiceProvider> config)
     {
         clientBuilder.Services.Configure(config);
 
-        return UseWasabi(clientBuilder);
+        return clientBuilder.UseWasabi();
     }
 
     /// <summary>Provides the <c>UseWasabi</c> API.</summary>

@@ -26,7 +26,7 @@ public class WasabiConfig() : SimpleS3Config("Wasabi", "{Scheme}://{Bucket:.}s3.
     /// <summary>Provides the <c>WasabiConfig</c> API.</summary>
     public WasabiConfig(IAccessKey? credentials, WasabiRegion region) : this(credentials, _converter.GetRegion(region).Code) {}
 
-    /// <summary>Provides the <c>Region</c> API.</summary>
+    /// <summary>Gets the region matching RegionCode, or Unknown for an unrecognized code. Setting a known region updates RegionCode.</summary>
     public WasabiRegion Region
     {
         get => _region;

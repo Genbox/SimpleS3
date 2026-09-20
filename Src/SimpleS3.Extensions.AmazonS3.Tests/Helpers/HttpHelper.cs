@@ -49,6 +49,7 @@ internal static class HttpHelper
         while (namePos <= queryLength)
         {
             int valuePos = -1, valueEnd = -1;
+
             for (int q = namePos; q < queryLength; q++)
             {
                 if (valuePos == -1 && query[q] == '=')

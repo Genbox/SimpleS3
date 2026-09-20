@@ -2,7 +2,6 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -15,7 +14,8 @@ internal sealed class PutBucketOwnershipControlsRequestMarshal : IRequestMarshal
     {
         request.SetQueryParameter(AmzParameters.OwnershipControls, string.Empty);
         FastXmlWriter writer = new FastXmlWriter(256);
-        writer.WriteStartElement("OwnershipControls", "http://s3.amazonaws.com/doc/2006-03-01/");
+        writer.WriteStartElement("OwnershipControls", XmlConstants.S3Namespace);
+
         foreach (S3OwnershipControlsRule rule in request.Rules)
         {
             writer.WriteStartElement("Rule");
@@ -23,6 +23,7 @@ internal sealed class PutBucketOwnershipControlsRequestMarshal : IRequestMarshal
                 writer.WriteElement("ObjectOwnership", rule.ObjectOwnership.GetString());
             writer.WriteEndElement("Rule");
         }
+
         writer.WriteEndElement("OwnershipControls");
         return new MemoryStream(writer.GetBytes());
     }

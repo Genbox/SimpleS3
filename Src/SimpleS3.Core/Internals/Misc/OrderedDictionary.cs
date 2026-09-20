@@ -101,6 +101,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
     public bool TryGetValue(TKey key, out TValue value)
     {
         int index = IndexOf(key);
+
         if (index >= 0)
         {
             value = _entries[index].Value;
@@ -116,6 +117,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
         if ((candidate & 1) != 0)
         {
             int limit = (int)Math.Sqrt(candidate);
+
             for (int divisor = 3; divisor <= limit; divisor += 2)
             {
                 if (candidate % divisor == 0)
@@ -131,7 +133,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
     private int GetPrime(int min)
     {
         if (min < 0)
-            throw new ArgumentException("Hashtable's capacity overflowed and went negative. Check load factor, capacity and the current size of the table.");
+            throw new ArgumentException("Hashtable's capacity overflowed and went negative. Check load factor, capacity and the current size of the table.", nameof(min));
 
         for (int i = 0; i < _primes.Length; i++)
         {
@@ -156,10 +158,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
     /// <param name="value">The value of the element to add. The value can be null for reference types.</param>
     /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
     /// <exception cref="ArgumentException">An element with the same key already exists in the <see cref="OrderedDictionary{TKey, TValue}" />.</exception>
-    public void Add(TKey key, TValue value)
-    {
-        TryInsert(null, key, value, InsertionBehavior.ThrowOnExisting);
-    }
+    public void Add(TKey key, TValue value) => TryInsert(null, key, value, InsertionBehavior.ThrowOnExisting);
 
     /// <summary>Returns the zero-based index of the element with the specified key within the <see cref="OrderedDictionary{TKey, TValue}" /> as an O(1) operation.</summary>
     /// <param name="key">The key of the element to locate.</param>
@@ -193,16 +192,19 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
         }
 
         int index = _buckets[(int)(hashCode % (uint)_buckets.Length)] - 1;
+
         if (index >= 0)
         {
             Entry[] entries = _entries;
             int collisionCount = 0;
+
             do
             {
                 Entry entry = entries[index];
                 if (entry.HashCode == hashCode && _comparer.Equals(entry.Key, key))
                     break;
                 index = entry.Next;
+
                 if (collisionCount >= entries.Length)
                 {
                     // The chain of entries forms a loop; which means a concurrent update has happened.
@@ -220,6 +222,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
     private bool TryInsert(int? index, TKey key, TValue value, InsertionBehavior behavior)
     {
         int i = IndexOf(key, out uint hashCode);
+
         if (i >= 0)
         {
             switch (behavior)
@@ -228,7 +231,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
                     _entries[i].Value = value;
                     return true;
                 case InsertionBehavior.ThrowOnExisting:
-                    throw new ArgumentException(key + " already exists");
+                    throw new ArgumentException(key + " already exists", nameof(key));
                 default:
                     return false;
             }
@@ -253,7 +256,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
         return GetPrime(newSize);
     }
 
-    private int AddInternal(int? index, TKey key, TValue value, uint hashCode)
+    private void AddInternal(int? index, TKey key, TValue value, uint hashCode)
     {
         Entry[] entries = _entries;
 
@@ -264,6 +267,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
 
         // Increment indices >= index;
         int actualIndex = index ?? count;
+
         for (int i = count - 1; i >= actualIndex; --i)
         {
             entries[i + 1] = entries[i];
@@ -276,7 +280,6 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
         entry.Value = value;
         AddEntryToBucket(ref entry, actualIndex, _buckets);
         ++Count;
-        return actualIndex;
     }
 
     // Returns the index of the next entry in the bucket
@@ -301,9 +304,11 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
             // Start at the entry the bucket points to, and walk the chain until we find the entry with the index we want to increment.
             int i = b - 1;
             int collisionCount = 0;
+
             while (true)
             {
                 ref Entry e = ref entries[i];
+
                 if (e.Next == entryIndex)
                 {
                     e.Next += incrementAmount;
@@ -311,6 +316,7 @@ internal class OrderedDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValu
                 }
 
                 i = e.Next;
+
                 if (collisionCount >= entries.Length)
                 {
                     // The chain of entries forms a loop; which means a concurrent update has happened.

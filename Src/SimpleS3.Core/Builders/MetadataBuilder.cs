@@ -46,13 +46,13 @@ public class MetadataBuilder : IEnumerable<KeyValuePair<string, string>>, IPoole
         foreach (byte b in utf8Bytes)
         {
             if (!_allowed.Contains(b))
-                throw new ArgumentException($"Invalid character '{b}' in metadata");
+                throw new ArgumentException($"Invalid character '{b}' in metadata", nameof(key));
         }
 
         _totalSize += utf8Bytes.Length;
 
         if (_totalSize > 2048)
-            throw new ArgumentException("Metadata too large");
+            throw new ArgumentException("Metadata too large", nameof(value));
 
         _metadata.Add(key, value);
 

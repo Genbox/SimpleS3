@@ -17,10 +17,13 @@ public class MethodNotAllowedError : GenericError
 
     /// <summary>Provides the <c>Method</c> API.</summary>
     public string? Method { get; }
+
     /// <summary>Provides the <c>ResourceType</c> API.</summary>
     public string? ResourceType { get; }
+
     /// <summary>Provides the <c>RequestId</c> API.</summary>
     public string? RequestId { get; }
+
     /// <summary>Provides the <c>HostId</c> API.</summary>
     public string? HostId { get; }
 

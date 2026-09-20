@@ -8,10 +8,13 @@ public class ObjectAclBuilder
 {
     /// <summary>Provides the <c>ReadObject</c> API.</summary>
     public AclBuilder ReadObject { get; } = new AclBuilder();
+
     /// <summary>Provides the <c>ReadAcl</c> API.</summary>
     public AclBuilder ReadAcl { get; } = new AclBuilder();
+
     /// <summary>Provides the <c>WriteAcl</c> API.</summary>
     public AclBuilder WriteAcl { get; } = new AclBuilder();
+
     /// <summary>Provides the <c>FullControl</c> API.</summary>
     public AclBuilder FullControl { get; } = new AclBuilder();
 

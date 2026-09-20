@@ -32,11 +32,11 @@ public class DefaultProfileSerializerTests
 
     private sealed class TestProfile : IProfile
     {
+        public string Location { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string KeyId { get; set; } = null!;
         public byte[] AccessKey { get; set; } = null!;
         public string RegionCode { get; set; } = null!;
-        public string Location { get; set; } = null!;
         public DateTimeOffset CreatedOn { get; set; }
         public int ProfileVersion { get; set; }
         public IDictionary<string, string>? Tags { get; set; }

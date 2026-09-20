@@ -5,6 +5,7 @@ public interface IRegionConverter
 {
     /// <summary>Provides the <c>GetRegion</c> API.</summary>
     IRegionInfo GetRegion(int enumValue);
+
     /// <summary>Provides the <c>GetRegion</c> API.</summary>
     IRegionInfo GetRegion(string regionCode);
 }

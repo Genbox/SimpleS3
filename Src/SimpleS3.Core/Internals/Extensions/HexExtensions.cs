@@ -9,6 +9,7 @@ internal static class HexExtensions
     private static uint[] CreateLookup32()
     {
         uint[] result = new uint[256];
+
         for (int i = 0; i < 256; i++)
         {
             string s = i.ToString("x2", CultureInfo.InvariantCulture);
@@ -24,6 +25,7 @@ internal static class HexExtensions
             return [];
 
         byte[] bytes = new byte[hex.Length / 2];
+
         for (int i = 0; i < bytes.Length; i++)
         {
             unchecked
@@ -47,9 +49,11 @@ internal static class HexExtensions
             return string.Empty;
 
         char[] result = new char[bytes.Length * 2];
+
         for (int i = 0; i < bytes.Length; i++)
         {
             uint val = _lookup32[bytes[i]];
+
             unchecked
             {
                 result[2 * i] = (char)val;

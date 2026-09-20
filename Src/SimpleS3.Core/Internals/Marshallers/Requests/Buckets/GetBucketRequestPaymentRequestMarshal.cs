@@ -7,5 +7,9 @@ namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
 internal sealed class GetBucketRequestPaymentRequestMarshal : IRequestMarshal<GetBucketRequestPaymentRequest>
 {
-    public Stream? MarshalRequest(GetBucketRequestPaymentRequest request, SimpleS3Config config) { request.SetQueryParameter(AmzParameters.RequestPayment, string.Empty); return null; }
+    public Stream? MarshalRequest(GetBucketRequestPaymentRequest request, SimpleS3Config config)
+    {
+        request.SetQueryParameter(AmzParameters.RequestPayment, string.Empty);
+        return null;
+    }
 }

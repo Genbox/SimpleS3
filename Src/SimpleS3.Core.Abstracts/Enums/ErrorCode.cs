@@ -1,3 +1,4 @@
+// Justification: Enum member names preserve the S3 error-code spellings exposed by the public API.
 // ReSharper disable InconsistentNaming
 using Genbox.FastEnum;
 

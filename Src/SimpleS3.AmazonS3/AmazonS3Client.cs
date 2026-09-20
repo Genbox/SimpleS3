@@ -75,43 +75,61 @@ public sealed class AmazonS3Client : ClientBase, ISimpleClient
 
     /// <summary>Provides the <c>GetBucketAclAsync</c> API.</summary>
     public Task<GetBucketAclResponse> GetBucketAclAsync(string bucketName, Action<GetBucketAclRequest>? config = null, CancellationToken token = default) => Client.GetBucketAclAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>PutBucketAclAsync</c> API.</summary>
     public Task<PutBucketAclResponse> PutBucketAclAsync(string bucketName, Action<PutBucketAclRequest>? config = null, CancellationToken token = default) => Client.PutBucketAclAsync(bucketName, config, token);
 
     /// <summary>Provides the <c>GetBucketCorsAsync</c> API.</summary>
     public Task<GetBucketCorsResponse> GetBucketCorsAsync(string bucketName, Action<GetBucketCorsRequest>? config = null, CancellationToken token = default) => Client.GetBucketCorsAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>PutBucketCorsAsync</c> API.</summary>
     public Task<PutBucketCorsResponse> PutBucketCorsAsync(string bucketName, IEnumerable<S3CorsRule> rules, Action<PutBucketCorsRequest>? config = null, CancellationToken token = default) => Client.PutBucketCorsAsync(bucketName, rules, config, token);
+
     /// <summary>Provides the <c>DeleteBucketCorsAsync</c> API.</summary>
     public Task<DeleteBucketCorsResponse> DeleteBucketCorsAsync(string bucketName, Action<DeleteBucketCorsRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketCorsAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>GetBucketOwnershipControlsAsync</c> API.</summary>
     public Task<GetBucketOwnershipControlsResponse> GetBucketOwnershipControlsAsync(string bucketName, Action<GetBucketOwnershipControlsRequest>? config = null, CancellationToken token = default) => Client.GetBucketOwnershipControlsAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>PutBucketOwnershipControlsAsync</c> API.</summary>
     public Task<PutBucketOwnershipControlsResponse> PutBucketOwnershipControlsAsync(string bucketName, IEnumerable<S3OwnershipControlsRule> rules, Action<PutBucketOwnershipControlsRequest>? config = null, CancellationToken token = default) => Client.PutBucketOwnershipControlsAsync(bucketName, rules, config, token);
+
     /// <summary>Provides the <c>DeleteBucketOwnershipControlsAsync</c> API.</summary>
     public Task<DeleteBucketOwnershipControlsResponse> DeleteBucketOwnershipControlsAsync(string bucketName, Action<DeleteBucketOwnershipControlsRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketOwnershipControlsAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>GetBucketLocationAsync</c> API.</summary>
     public Task<GetBucketLocationResponse> GetBucketLocationAsync(string bucketName, Action<GetBucketLocationRequest>? config = null, CancellationToken token = default) => Client.GetBucketLocationAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>GetBucketRequestPaymentAsync</c> API.</summary>
     public Task<GetBucketRequestPaymentResponse> GetBucketRequestPaymentAsync(string bucketName, Action<GetBucketRequestPaymentRequest>? config = null, CancellationToken token = default) => Client.GetBucketRequestPaymentAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>PutBucketRequestPaymentAsync</c> API.</summary>
     public Task<PutBucketRequestPaymentResponse> PutBucketRequestPaymentAsync(string bucketName, RequestPaymentPayer payer, Action<PutBucketRequestPaymentRequest>? config = null, CancellationToken token = default) => Client.PutBucketRequestPaymentAsync(bucketName, payer, config, token);
+
     /// <summary>Provides the <c>GetBucketPolicyStatusAsync</c> API.</summary>
     public Task<GetBucketPolicyStatusResponse> GetBucketPolicyStatusAsync(string bucketName, Action<GetBucketPolicyStatusRequest>? config = null, CancellationToken token = default) => Client.GetBucketPolicyStatusAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>GetBucketWebsiteAsync</c> API.</summary>
     public Task<GetBucketWebsiteResponse> GetBucketWebsiteAsync(string bucketName, Action<GetBucketWebsiteRequest>? config = null, CancellationToken token = default) => Client.GetBucketWebsiteAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>PutBucketWebsiteAsync</c> API.</summary>
     public Task<PutBucketWebsiteResponse> PutBucketWebsiteAsync(string bucketName, S3WebsiteConfiguration websiteConfiguration, Action<PutBucketWebsiteRequest>? config = null, CancellationToken token = default) => Client.PutBucketWebsiteAsync(bucketName, websiteConfiguration, config, token);
+
     /// <summary>Provides the <c>DeleteBucketWebsiteAsync</c> API.</summary>
     public Task<DeleteBucketWebsiteResponse> DeleteBucketWebsiteAsync(string bucketName, Action<DeleteBucketWebsiteRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketWebsiteAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>DeleteBucketAnalyticsConfigurationAsync</c> API.</summary>
     public Task<DeleteBucketAnalyticsConfigurationResponse> DeleteBucketAnalyticsConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketAnalyticsConfigurationRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketAnalyticsConfigurationAsync(bucketName, configurationId, config, token);
+
     /// <summary>Provides the <c>DeleteBucketInventoryConfigurationAsync</c> API.</summary>
     public Task<DeleteBucketInventoryConfigurationResponse> DeleteBucketInventoryConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketInventoryConfigurationRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketInventoryConfigurationAsync(bucketName, configurationId, config, token);
+
     /// <summary>Provides the <c>DeleteBucketMetricsConfigurationAsync</c> API.</summary>
     public Task<DeleteBucketMetricsConfigurationResponse> DeleteBucketMetricsConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketMetricsConfigurationRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketMetricsConfigurationAsync(bucketName, configurationId, config, token);
+
     /// <summary>Provides the <c>DeleteBucketIntelligentTieringConfigurationAsync</c> API.</summary>
     public Task<DeleteBucketIntelligentTieringConfigurationResponse> DeleteBucketIntelligentTieringConfigurationAsync(string bucketName, string configurationId, Action<DeleteBucketIntelligentTieringConfigurationRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketIntelligentTieringConfigurationAsync(bucketName, configurationId, config, token);
+
     /// <summary>Provides the <c>DeleteBucketReplicationAsync</c> API.</summary>
     public Task<DeleteBucketReplicationResponse> DeleteBucketReplicationAsync(string bucketName, Action<DeleteBucketReplicationRequest>? config = null, CancellationToken token = default) => Client.DeleteBucketReplicationAsync(bucketName, config, token);
 
@@ -153,6 +171,7 @@ public sealed class AmazonS3Client : ClientBase, ISimpleClient
 
     /// <summary>Provides the <c>GetBucketLifecycleConfigurationAsync</c> API.</summary>
     public Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default) => Client.GetBucketLifecycleConfigurationAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>PutPublicAccessBlockAsync</c> API.</summary>
     public Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(string bucketName, Action<PutPublicAccessBlockRequest>? config = null, CancellationToken token = default) => Client.PutPublicAccessBlockAsync(bucketName, config, token);
 

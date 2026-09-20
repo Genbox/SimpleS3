@@ -33,10 +33,7 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public void Reset()
-    {
-        _tags?.Clear();
-    }
+    public void Reset() => _tags?.Clear();
 
     /// <summary>Provides the <c>HasData</c> API.</summary>
     public bool HasData() => _tags != null && _tags.Count > 0;
@@ -63,7 +60,7 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
         Validator.RequireNotNull(key);
         Validator.RequireNotNull(value);
 
-        _tags ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        _tags ??= new Dictionary<string, string>(StringComparer.Ordinal);
 
         if (_tags.Count == 50)
             throw new InvalidOperationException("Only 50 tags allowed per. object");

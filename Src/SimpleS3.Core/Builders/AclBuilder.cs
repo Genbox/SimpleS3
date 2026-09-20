@@ -118,7 +118,7 @@ public class AclBuilder : IHttpHeaderBuilder
         _emails ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         if (!_emails.Add(email))
-            throw new ArgumentException($"You already added the email {email}");
+            throw new ArgumentException($"You already added the email {email}", nameof(email));
 
         return this;
     }
@@ -132,10 +132,10 @@ public class AclBuilder : IHttpHeaderBuilder
         _ids ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         if (id.Length != 64)
-            throw new ArgumentException($"The user id {id} is not 64 characters long");
+            throw new ArgumentException($"The user id {id} is not 64 characters long", nameof(id));
 
         if (!_ids.Add(id))
-            throw new ArgumentException($"You already added the id {id}");
+            throw new ArgumentException($"You already added the id {id}", nameof(id));
 
         return this;
     }
@@ -150,7 +150,7 @@ public class AclBuilder : IHttpHeaderBuilder
         _uris ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         if (!_uris.Add(uri))
-            throw new ArgumentException($"You already added the URI {uri}");
+            throw new ArgumentException($"You already added the URI {uri}", nameof(uri));
 
         return this;
     }

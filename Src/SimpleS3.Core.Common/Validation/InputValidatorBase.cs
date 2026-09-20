@@ -191,6 +191,7 @@ public abstract class InputValidatorBase : IInputValidator
         {
             //find the dot or hit the end
             int newPos = curPos;
+
             while (newPos < end)
             {
                 if (input[newPos] == '.')

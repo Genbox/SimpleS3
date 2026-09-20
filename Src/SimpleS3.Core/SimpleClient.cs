@@ -18,12 +18,12 @@ namespace Genbox.SimpleS3.Core;
 /// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
 public class SimpleClient : ISimpleClient
 {
-    private readonly IBucketClient _bucketClient;
-    private readonly IMultipartClient _multipartClient;
-    private readonly IMultipartTransfer _multipartTransfer;
-    private readonly IObjectClient _objectClient;
-    private readonly ISignedClient _signedClient;
-    private readonly ITransfer _transfer;
+    private readonly IBucketClient _bucketClient = null!;
+    private readonly IMultipartClient _multipartClient = null!;
+    private readonly IMultipartTransfer _multipartTransfer = null!;
+    private readonly IObjectClient _objectClient = null!;
+    private readonly ISignedClient _signedClient = null!;
+    private readonly ITransfer _transfer = null!;
 
     /// <summary>Provides the <c>SimpleClient</c> API.</summary>
     public SimpleClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedClient signedObject)

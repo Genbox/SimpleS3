@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Common.Validation;
 
 namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
@@ -7,15 +6,11 @@ namespace Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Retry;
 internal sealed class RetryableBufferingStream : Stream
 {
     private readonly int _maxMemoryBufferSize;
-    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Injected from the outside")]
     private readonly Stream _underlyingStream;
     private Stream _bufferStream;
     private bool _buffered;
     private Exception? _bufferingFailure;
     private bool _disposed;
-    private string? _tempFilePath;
-
-    internal string? TempFilePath => _tempFilePath;
 
     public RetryableBufferingStream(Stream underlyingStream, int maxMemoryBufferSize)
     {
@@ -26,6 +21,8 @@ internal sealed class RetryableBufferingStream : Stream
         _maxMemoryBufferSize = maxMemoryBufferSize;
         _bufferStream = new MemoryStream();
     }
+
+    internal string? TempFilePath { get; private set; }
 
     public override bool CanRead => true;
     public override bool CanSeek => true;
@@ -61,24 +58,24 @@ internal sealed class RetryableBufferingStream : Stream
         {
             _bufferStream.Dispose();
 
-            if (_tempFilePath != null)
-                File.Delete(_tempFilePath);
+            if (TempFilePath != null)
+                File.Delete(TempFilePath);
         }
 
         base.Dispose(disposing);
     }
 
-    private async Task ReadSourceAsync(CancellationToken cancellationToken)
+    private async Task ReadSourceAsync(CancellationToken token)
     {
         try
         {
             byte[] buffer = new byte[81920];
             int read;
 
-            while ((read = await _underlyingStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+            while ((read = await _underlyingStream.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
             {
                 EnsureCapacity(read);
-                await _bufferStream.WriteAsync(buffer, 0, read, cancellationToken).ConfigureAwait(false);
+                await _bufferStream.WriteAsync(buffer, 0, read, token);
             }
 
             _bufferStream.Seek(0, SeekOrigin.Begin);
@@ -125,8 +122,8 @@ internal sealed class RetryableBufferingStream : Stream
         if (_bufferStream is not MemoryStream memoryStream || memoryStream.Length + additionalBytes <= _maxMemoryBufferSize)
             return;
 
-        _tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        FileStream fileStream = new FileStream(_tempFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.DeleteOnClose);
+        TempFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        FileStream fileStream = new FileStream(TempFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.DeleteOnClose);
 
         try
         {
@@ -157,25 +154,16 @@ internal sealed class RetryableBufferingStream : Stream
         ThrowIfBufferingFailed();
 
         if (!_buffered)
-            await ReadSourceAsync(cancellationToken).ConfigureAwait(false);
+            await ReadSourceAsync(cancellationToken);
 
-        return await _bufferStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+        return await _bufferStream.ReadAsync(buffer, offset, count, cancellationToken);
     }
 
     public override long Seek(long offset, SeekOrigin origin) => _bufferStream.Seek(offset, origin);
 
-    public override void SetLength(long value)
-    {
-        throw new NotSupportedException("SetLength is not supported");
-    }
+    public override void SetLength(long value) => throw new NotSupportedException("SetLength is not supported");
 
-    public override void Flush()
-    {
-        throw new NotSupportedException("Flush is not supported");
-    }
+    public override void Flush() => throw new NotSupportedException("Flush is not supported");
 
-    public override void Write(byte[] buffer, int offset, int count)
-    {
-        throw new NotSupportedException("Write is not supported");
-    }
+    public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException("Write is not supported");
 }
