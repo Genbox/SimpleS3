@@ -64,7 +64,8 @@ public static class HttpClientBuilderExtensions
                 //When we use Polly, we don't want to use HttpClient's weird timeout
                 x.HttpClientActions.Add(client => client.Timeout = TimeSpan.FromHours(100));
 
-                AsyncRetryPolicy<HttpResponseMessage> retryPolicy = b.WaitAndRetryAsync(config.Retries, retryAttempt => GetDelay(config, retryAttempt));
+                AsyncRetryPolicy<HttpResponseMessage> retryPolicy = b.WaitAndRetryAsync(config.Retries, retryAttempt => GetDelay(config, retryAttempt),
+                    (outcome, _, _, _) => outcome.Result?.Dispose());
 
                 AsyncTimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(config.Timeout);
 

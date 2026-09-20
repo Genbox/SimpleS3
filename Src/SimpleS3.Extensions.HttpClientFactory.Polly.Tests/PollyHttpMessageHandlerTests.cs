@@ -62,6 +62,8 @@ public class PollyHttpMessageHandlerTests
 
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         Assert.Equal(2, handler.Calls);
+        Assert.True(handler.ResponseContents[0].IsDisposed);
+        Assert.False(handler.ResponseContents[1].IsDisposed);
         Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(1), $"Retry delay took {stopwatch.Elapsed}.");
     }
 
@@ -74,11 +76,26 @@ public class PollyHttpMessageHandlerTests
     private sealed class CountingHandler : HttpMessageHandler
     {
         public int Calls { get; private set; }
+        public List<TrackingContent> ResponseContents { get; } = [];
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             Calls++;
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+            TrackingContent content = new TrackingContent();
+            ResponseContents.Add(content);
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError) { Content = content });
+        }
+    }
+
+    private sealed class TrackingContent : ByteArrayContent
+    {
+        public TrackingContent() : base([]) {}
+        public bool IsDisposed { get; private set; }
+
+        protected override void Dispose(bool disposing)
+        {
+            IsDisposed = true;
+            base.Dispose(disposing);
         }
     }
 }
