@@ -1,12 +1,15 @@
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
+using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.TestBase.Code;
+using Genbox.SimpleS3.Extensions.ProfileManager;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 
@@ -56,11 +59,12 @@ public sealed class ProfileManagerTests : IDisposable
         IProfileManager profileManager = provider.GetRequiredService<IProfileManager>();
 
         byte[] originalSecret = "plain-secret-key"u8.ToArray();
+        string encodedSecret = Convert.ToBase64String(originalSecret);
         profileManager.CreateProfile("profile", "key-id", originalSecret, "region", out string? location);
         Assert.NotNull(location);
 
         string persistedProfile = Encoding.UTF8.GetString(File.ReadAllBytes(location));
-        Assert.DoesNotContain(Convert.ToBase64String(originalSecret), persistedProfile, StringComparison.Ordinal);
+        Assert.DoesNotContain(encodedSecret, persistedProfile, StringComparison.Ordinal);
         Assert.DoesNotContain("plain-secret-key", persistedProfile, StringComparison.Ordinal);
     }
 
@@ -114,6 +118,33 @@ public sealed class ProfileManagerTests : IDisposable
         Assert.Equal(2, profile.ProfileVersion);
         Assert.Equal(protectedAccessKey, GetProfileValue(migratedProfile, nameof(IProfile.AccessKey)));
         Assert.Contains("ProfileVersion=2", migratedProfile, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void CreateProfileOwnsAndClearsInputKeyWithoutProtector()
+    {
+        using ServiceProvider provider = CreateProvider();
+        ProfileManager profileManager = new ProfileManager(provider.GetRequiredService<IInputValidator>(), provider.GetRequiredService<IProfileSerializer>(), new CustomStorage(), Options.Create(new ProfileManagerOptions()));
+        byte[] accessKey = "plain-secret-key"u8.ToArray();
+
+        IProfile profile = profileManager.CreateProfile("profile", "key-id", accessKey, "region", out _, false);
+
+        Assert.All(accessKey, value => Assert.Equal((byte)0, value));
+        Assert.NotSame(accessKey, profile.AccessKey);
+        Assert.Equal("plain-secret-key"u8.ToArray(), profile.AccessKey);
+    }
+
+    [Fact]
+    public void CreateProfileOwnsInputKeyWhenClearingIsDisabled()
+    {
+        using ServiceProvider provider = CreateProvider();
+        ProfileManager profileManager = new ProfileManager(provider.GetRequiredService<IInputValidator>(), provider.GetRequiredService<IProfileSerializer>(), new CustomStorage(), Options.Create(new ProfileManagerOptions { ClearInputKey = false }));
+        byte[] accessKey = "plain-secret-key"u8.ToArray();
+
+        IProfile profile = profileManager.CreateProfile("profile", "key-id", accessKey, "region", out _, false);
+        accessKey[0] = (byte)'X';
+
+        Assert.Equal("plain-secret-key"u8.ToArray(), profile.AccessKey);
     }
 
     private ServiceProvider CreateProvider()

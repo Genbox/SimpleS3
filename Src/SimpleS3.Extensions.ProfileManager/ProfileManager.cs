@@ -22,32 +22,27 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
     /// <summary>Provides the <c>GetProfile</c> API.</summary>
     public IProfile? GetProfile(string name)
     {
-        byte[]? data;
-
-        try
-        {
-            data = storage.Get(name);
-        }
-        catch
-        {
-            return null;
-        }
+        byte[]? data = storage.Get(name);
 
         if (data == null)
             return null;
 
         Profile profile = serializer.Deserialize<Profile>(data);
 
-        if (profile.ProfileVersion < _currentProfileVersion)
-            MigrateFromVersion1(name, profile);
+        if (profile.ProfileVersion < 0 || profile.ProfileVersion > _currentProfileVersion)
+            throw new S3Exception($"Profile version {profile.ProfileVersion} is not supported");
 
         string? protector1 = profile.GetTag("Protector");
 
         string profileProtector = protector1 ?? string.Empty;
         string userProtector = protector != null ? protector.GetType().Name : string.Empty;
 
-        if (!string.Equals(profileProtector, userProtector, StringComparison.OrdinalIgnoreCase))
+        // Legacy unprotected profiles may be protected as part of migration.
+        if (!string.Equals(profileProtector, userProtector, StringComparison.OrdinalIgnoreCase) && (profile.ProfileVersion >= _currentProfileVersion || protector1 != null))
             throw new S3Exception($"The access key is protected with '{protector1}' but it was not available");
+
+        if (profile.ProfileVersion < _currentProfileVersion)
+            MigrateFromVersion1(name, profile);
 
         return profile;
     }
@@ -59,10 +54,15 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
         validator.ValidateKeyIdAndThrow(keyId);
         validator.ValidateAccessKeyAndThrow(accessKey);
 
+        byte[] profileAccessKey = accessKey.ToArray();
+
+        if (_config.ClearInputKey)
+            Array.Clear(accessKey, 0, accessKey.Length);
+
         Profile profile = new Profile();
         profile.Name = name;
         profile.KeyId = keyId;
-        profile.AccessKey = KeyHelper.ProtectKey(accessKey, protector, _config.ClearInputKey);
+        profile.AccessKey = KeyHelper.ProtectKey(profileAccessKey, protector);
         profile.ProfileVersion = _currentProfileVersion;
 
         if (protector != null)
@@ -99,6 +99,9 @@ public class ProfileManager(IInputValidator validator, IProfileSerializer serial
     /// <summary>Provides the <c>SaveProfile</c> API.</summary>
     public string SaveProfile(IProfile profile)
     {
+        if (profile == null)
+            throw new ArgumentNullException(nameof(profile));
+
         byte[] data = serializer.Serialize(profile);
         return storage.Put(profile.Name, data);
     }
