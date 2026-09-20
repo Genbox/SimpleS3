@@ -223,13 +223,14 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
             }
 
             if (pendingSpace)
-                builder.Append('' '');
+                builder.Append(' ');
 
             builder.Append(character);
             hasValue = true;
             pendingSpace = false;
         }
     }
+
     private static string CanonicalizeHeaderNames(OrderedDictionary<string, string> headers)
     {
         if (headers.Count == 0)
