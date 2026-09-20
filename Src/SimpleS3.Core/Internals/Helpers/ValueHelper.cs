@@ -62,7 +62,7 @@ internal static class ValueHelper
     {
         DateTimeFormat.Iso8601Date => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601Date, DateTimeFormatInfo.InvariantInfo),
         DateTimeFormat.Iso8601DateTime => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo),
-        DateTimeFormat.Iso8601DateTimeExt => date.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo),
+        DateTimeFormat.Iso8601DateTimeExt => date.UtcDateTime.ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo),
         DateTimeFormat.Rfc1123 => date.ToUniversalTime().ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo),
         _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
     };
