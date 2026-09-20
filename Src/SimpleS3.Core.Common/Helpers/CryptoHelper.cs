@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 
 /// <summary>Provides the <c>CryptoHelper</c> API.</summary>
+[SuppressMessage("Design", "CA1062", Justification = "Stream and hash APIs already reject null input; these helpers preserve their existing exception behavior.")]
 public static class CryptoHelper
 {
     [ThreadStatic]private static HashAlgorithm? _sha256Cache;
@@ -23,38 +24,39 @@ public static class CryptoHelper
     public static byte[] Sha256Hash(byte[] data, int offset, int length) => Sha256.ComputeHash(data, offset, length);
 
     /// <summary>Provides the <c>Sha256Hash</c> API.</summary>
-    public static byte[] Sha256Hash(Stream data, bool restorePosition)
-    {
-        long position = 0;
-
-        if (restorePosition)
-            position = data.Position;
-
-        byte[] hash = Sha256.ComputeHash(data);
-
-        if (restorePosition)
-            data.Position = position;
-
-        return hash;
-    }
+    public static byte[] Sha256Hash(Stream data, bool restorePosition) => HashStream(Sha256, data, restorePosition);
 
     /// <summary>Provides the <c>Md5Hash</c> API.</summary>
     public static byte[] Md5Hash(byte[] data) => Md5.ComputeHash(data);
 
     /// <summary>Provides the <c>Md5Hash</c> API.</summary>
-    public static byte[] Md5Hash(Stream data, bool restorePosition)
+    public static byte[] Md5Hash(byte[] data, int offset, int length) => Md5.ComputeHash(data, offset, length);
+
+    /// <summary>Provides the <c>Md5Hash</c> API.</summary>
+    public static byte[] Md5Hash(Stream data, bool restorePosition) => HashStream(Md5, data, restorePosition);
+
+    private static byte[] HashStream(HashAlgorithm algorithm, Stream data, bool restorePosition)
     {
-        long position = 0;
+        if (restorePosition && !data.CanSeek)
+            throw new NotSupportedException("Restoring the position requires a seekable stream.");
 
-        if (restorePosition)
-            position = data.Position;
+        long position = restorePosition ? data.Position : 0;
 
-        byte[] hash = Md5.ComputeHash(data);
-
-        if (restorePosition)
-            data.Position = position;
-
-        return hash;
+        try
+        {
+            return algorithm.ComputeHash(data);
+        }
+        catch
+        {
+            // ComputeHash resets after success, but a failed read leaves partial input cached.
+            algorithm.Initialize();
+            throw;
+        }
+        finally
+        {
+            if (restorePosition)
+                data.Position = position;
+        }
     }
 
     /// <summary>Provides the <c>HmacSign</c> API.</summary>
