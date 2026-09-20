@@ -10,6 +10,7 @@ using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -60,26 +61,28 @@ public partial class DefaultResponseHandler : IResponseHandler
         IDictionary<string, string> headers = httpResp.Headers;
         int statusCode = httpResp.StatusCode;
 
-        TResp response = new TResp();
-        response.StatusCode = statusCode;
-        response.ContentLength = headers.GetHeaderLong(HttpHeaders.ContentLength);
-        response.ConnectionClosed = string.Equals("close", headers.GetOptionalValue(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
-        response.Date = headers.GetHeaderDate(HttpHeaders.Date, DateTimeFormat.Rfc1123);
-        response.Server = headers.GetOptionalValue(HttpHeaders.Server);
-        response.ResponseId = headers.GetOptionalValue(AmzHeaders.XAmzId2);
-        response.RequestId = headers.GetOptionalValue(AmzHeaders.XAmzRequestId);
-
-        // S3-001: HTTP success is strictly the inclusive 200-299 range.
-        response.IsSuccess = statusCode >= 200 && statusCode < 300;
-
         ContentStream? responseStream = httpResp.Content;
 
-        //Only marshal successful responses
-        if (response.IsSuccess)
-            _marshaller.MarshalResponse(_config, response, headers, responseStream ?? ContentStream.Null);
-        else if (responseStream != null)
+        try
         {
-            using (responseStream)
+            TResp response = new TResp();
+            response.StatusCode = statusCode;
+            response.ContentLength = headers.GetHeaderLong(HttpHeaders.ContentLength);
+            response.ConnectionClosed = string.Equals("close", headers.GetOptionalValue(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
+            response.Date = headers.GetHeaderDate(HttpHeaders.Date, DateTimeFormat.Rfc1123);
+            response.Server = headers.GetOptionalValue(HttpHeaders.Server);
+            response.ResponseId = headers.GetOptionalValue(AmzHeaders.XAmzId2);
+            response.RequestId = headers.GetOptionalValue(AmzHeaders.XAmzRequestId);
+
+            // S3-001: HTTP success is strictly the inclusive 200-299 range.
+            response.IsSuccess = statusCode >= 200 && statusCode < 300;
+
+            bool transfersContentOwnership = response.IsSuccess && response is IHasContent;
+
+            //Only marshal successful responses
+            if (response.IsSuccess)
+                _marshaller.MarshalResponse(_config, response, headers, responseStream ?? ContentStream.Null);
+            else if (responseStream != null)
             {
                 try
                 {
@@ -105,14 +108,30 @@ public partial class DefaultResponseHandler : IResponseHandler
                     FailedToMapError(ex);
                 }
             }
+
+            //We always map even if the request is not successful
+            _postMapper.PostMap(_config, request, response);
+
+            if (_config.ThrowExceptionOnError && !response.IsSuccess)
+                throw new S3RequestException(response, $"Received error: '{response.Error?.Message}'. Details: '{response.Error?.GetErrorDetails()}'");
+
+            if (!transfersContentOwnership)
+                responseStream?.Dispose();
+
+            return response;
         }
+        catch
+        {
+            try
+            {
+                responseStream?.Dispose();
+            }
+            catch
+            {
+                // Cleanup must not replace the exception that prevented delivery of the response.
+            }
 
-        //We always map even if the request is not successful
-        _postMapper.PostMap(_config, request, response);
-
-        if (_config.ThrowExceptionOnError && !response.IsSuccess)
-            throw new S3RequestException(response, $"Received error: '{response.Error?.Message}'. Details: '{response.Error?.GetErrorDetails()}'");
-
-        return response;
+            throw;
+        }
     }
 }
