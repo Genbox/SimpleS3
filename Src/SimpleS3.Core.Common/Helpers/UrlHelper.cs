@@ -13,7 +13,8 @@ public static class UrlHelper
 {
     //Valid URL characters according to RFC3986: https://tools.ietf.org/html/rfc3986#section-2.3
     private const string _validUrlCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-    private static readonly HashSet<byte> _validUrlLookup = new HashSet<byte>(BuildLookup(_validUrlCharacters));
+    private static readonly Func<string, Uri> _uriFactory = CreateUriFactory();
+    private static readonly HashSet<byte> _validUrlLookup = [.. BuildLookup(_validUrlCharacters)];
 
     private static IEnumerable<byte> BuildLookup(string charList)
     {
@@ -32,7 +33,7 @@ public static class UrlHelper
         return string.Join("/", pathSegments.Select(segment =>
         {
             // S3-010: Dot-only key segments must remain escaped so transport cannot retarget the request.
-            if (segment.Length > 0 && segment.All(c => c == '.'))
+            if (segment is "." or "..")
                 return string.Concat(segment.Select(_ => "%2E"));
 
             return UrlEncode(segment);
@@ -41,7 +42,10 @@ public static class UrlHelper
 
     /// <summary>Provides the <c>CreateUriWithoutPathNormalization</c> API.</summary>
     [SuppressMessage("Design", "CA1054", Justification = "This factory accepts the original URL text specifically to avoid normalization by an already-constructed Uri.")]
-    public static Uri CreateUriWithoutPathNormalization(string url)
+    public static Uri CreateUriWithoutPathNormalization(string url) => _uriFactory(url);
+
+    [SuppressMessage("Major Code Smell", "S3011", Justification = "The reflected method is private code in this type and only closes over the runtime UriCreationOptions value type.")]
+    private static Func<string, Uri> CreateUriFactory()
     {
         // S3-010: Resolve the runtime-specific option from the same core library as Uri.
         Type? optionsType = typeof(Uri).Assembly.GetType("System.UriCreationOptions");
@@ -50,24 +54,47 @@ public static class UrlHelper
             ParameterInfo[] parameters = x.GetParameters();
             return x.Name == nameof(Uri.TryCreate) && parameters.Length == 3 && parameters[1].ParameterType.GetElementType() == optionsType;
         });
+        PropertyInfo? disableCanonicalization = optionsType?.GetProperty("DangerousDisablePathAndQueryCanonicalization");
 
-        if (optionsType == null || method == null)
+        if (optionsType == null || method == null || disableCanonicalization == null || !optionsType.IsValueType)
+            return CreateNormalizedUriWithSafetyCheck;
+
+        try
         {
-            // S3-010: Older Uri implementations cannot represent these paths exactly; never retarget silently.
-            if (ContainsEscapedDotSegment(url))
-                throw new PlatformNotSupportedException("This runtime cannot send an S3 key containing a dot-only path segment without URI normalization.");
-
-            return new Uri(url, UriKind.Absolute);
+            MethodInfo factory = typeof(UrlHelper).GetMethod(nameof(CreateUriFactoryCore), BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly)!.MakeGenericMethod(optionsType);
+            return (Func<string, Uri>)factory.Invoke(null, [method, disableCanonicalization])!;
         }
+        catch (Exception)
+        {
+            return CreateNormalizedUriWithSafetyCheck;
+        }
+    }
 
-        object options = Activator.CreateInstance(optionsType)!;
-        optionsType.GetProperty("DangerousDisablePathAndQueryCanonicalization")!.SetValue(options, true);
-        object?[] args = [url, options, null];
+    private static Func<string, Uri> CreateUriFactoryCore<TOptions>(MethodInfo method, PropertyInfo disableCanonicalization) where TOptions : struct
+    {
+        object boxedOptions = default(TOptions);
+        disableCanonicalization.SetValue(boxedOptions, true);
+        TOptions options = (TOptions)boxedOptions;
+        TryCreateUri<TOptions> tryCreate = (TryCreateUri<TOptions>)method.CreateDelegate(typeof(TryCreateUri<TOptions>));
 
-        if (!(bool)method.Invoke(null, args)!)
-            throw new UriFormatException("Invalid request URI: " + url);
+        return url =>
+        {
+            TOptions invocationOptions = options;
 
-        return (Uri)args[2]!;
+            if (!tryCreate(url, in invocationOptions, out Uri result))
+                throw new UriFormatException("Invalid request URI: " + url);
+
+            return result;
+        };
+    }
+
+    private static Uri CreateNormalizedUriWithSafetyCheck(string url)
+    {
+        // S3-010: Older Uri implementations cannot represent these paths exactly; never retarget silently.
+        if (ContainsEscapedDotSegment(url))
+            throw new PlatformNotSupportedException("This runtime cannot send an S3 key containing a dot-only path segment without URI normalization.");
+
+        return new Uri(url, UriKind.Absolute);
     }
 
     private static bool ContainsEscapedDotSegment(string url)
@@ -83,21 +110,7 @@ public static class UrlHelper
 
         foreach (string segment in path.Split('/'))
         {
-            if (segment.Length == 0 || segment.Length % 3 != 0)
-                continue;
-
-            bool dotOnly = true;
-
-            for (int i = 0; i < segment.Length; i += 3)
-            {
-                if (!segment.Substring(i, 3).Equals("%2E", StringComparison.OrdinalIgnoreCase))
-                {
-                    dotOnly = false;
-                    break;
-                }
-            }
-
-            if (dotOnly)
+            if (segment.Equals("%2E", StringComparison.OrdinalIgnoreCase) || segment.Equals("%2E%2E", StringComparison.OrdinalIgnoreCase))
                 return true;
         }
 
@@ -123,6 +136,9 @@ public static class UrlHelper
     /// <summary>Provides the <c>CreateQueryString</c> API.</summary>
     public static string CreateQueryString(IEnumerable<KeyValuePair<string, string>> parameters, bool encode = true, bool outputEqualOnEmpty = false)
     {
+        if (parameters == null)
+            throw new ArgumentNullException(nameof(parameters));
+
         StringBuilder sb = StringBuilderPool.Shared.Rent(512);
 
         foreach (KeyValuePair<string, string> item in parameters)
@@ -145,4 +161,6 @@ public static class UrlHelper
 
         return StringBuilderPool.Shared.ReturnString(sb);
     }
+
+    private delegate bool TryCreateUri<TOptions>(string url, in TOptions options, out Uri result) where TOptions : struct;
 }
