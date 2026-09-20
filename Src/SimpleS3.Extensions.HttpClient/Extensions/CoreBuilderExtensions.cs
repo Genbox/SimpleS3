@@ -43,7 +43,9 @@ public static class CoreBuilderExtensions
                     HttpClientConfig options = opt.Get(builder.Name);
 
                     handler.UseCookies = false;
-                    handler.MaxAutomaticRedirections = 3;
+
+                    // Redirects must be handled by the caller because .NET can forward sensitive S3 headers such as session tokens and SSE-C keys to another origin.
+                    handler.AllowAutoRedirect = false;
                     handler.SslProtocols = SslProtocols.None; //Let the OS handle the protocol to use
                     handler.UseProxy = options.UseProxy;
 
