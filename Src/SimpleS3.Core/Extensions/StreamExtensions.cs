@@ -20,8 +20,9 @@ public static class StreamExtensions
     {
         encoding ??= Constants.Utf8NoBom;
 
-        byte[] data = await stream.AsDataAsync(token);
-        return encoding.GetString(data);
+        using MemoryStream buffer = new MemoryStream();
+        await stream.CopyToAsync(buffer, 81920, token);
+        return encoding.GetString(buffer.GetBuffer(), 0, checked((int)buffer.Length));
     }
 
     /// <summary>Provides the <c>CopyToFileAsync</c> API.</summary>
