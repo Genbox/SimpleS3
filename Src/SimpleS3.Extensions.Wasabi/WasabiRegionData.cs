@@ -25,5 +25,7 @@ public class WasabiRegionData : IRegionData
         yield return new RegionInfo(WasabiRegion.ApNorthEast2, "ap-northeast-2", "Asia Pacific (Osaka)");
         yield return new RegionInfo(WasabiRegion.ApSouthEast1, "ap-southeast-1", "Asia Pacific (Singapore)");
         yield return new RegionInfo(WasabiRegion.ApSouthEast2, "ap-southeast-2", "Asia Pacific (Sydney)");
+        yield return new RegionInfo(WasabiRegion.UsWest2, "us-west-2", "North America (San Jose)");
+        yield return new RegionInfo(WasabiRegion.EuWest3, "eu-west-3", "Europe (United Kingdom)");
     }
 }

@@ -46,5 +46,11 @@ public enum WasabiRegion
     ApSouthEast1,
 
     /// <summary>Asia Pacific (Sydney)</summary>
-    ApSouthEast2
+    ApSouthEast2,
+
+    /// <summary>North America (San Jose)</summary>
+    UsWest2,
+
+    /// <summary>Europe (United Kingdom)</summary>
+    EuWest3
 }
