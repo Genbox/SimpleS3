@@ -12,17 +12,22 @@ public class ParallelHelperTests
     {
         using CancellationTokenSource cts = new CancellationTokenSource();
         TaskCompletionSource entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        int started = 0;
 
-        Task task = ParallelHelper.ExecuteAsync([1, 2], async (_, token) =>
+        Task task = ParallelHelper.ExecuteAsync([1, 2], async (_, _) =>
         {
-            entered.SetResult();
-            await Task.Delay(Timeout.InfiniteTimeSpan, token);
+            Interlocked.Increment(ref started);
+            entered.TrySetResult();
+            await release.Task.WaitAsync(TestContext.Current.CancellationToken);
         }, 1, cts.Token);
 
         await entered.Task.WaitAsync(TestContext.Current.CancellationToken);
         await cts.CancelAsync();
+        release.SetResult();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task.WaitAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(1, Volatile.Read(ref started));
     }
 
     [Fact]
