@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -75,12 +76,18 @@ public class GoogleCloudStorageInputValidator : InputValidatorBase
         //https://cloud.google.com/storage/docs/naming-buckets
 
         //Spec: Bucket names must contain 3-63 characters. Names containing dots can contain up to 222 characters, but each dot-separated component can be no longer than 63 characters.
-        if (bucketName.Length is < 3 or > 63)
+        bool dotted = bucketName.IndexOf('.') >= 0;
+        int maximumLength = dotted ? 222 : 63;
+
+        if (bucketName.Length < 3 || bucketName.Length > maximumLength)
         {
             status = ValidationStatus.WrongLength;
-            message = "3-63";
+            message = dotted ? "3-222" : "3-63";
             return false;
         }
+
+        if (dotted && !TryValidateBucketDns(bucketName, out status, out message))
+            return false;
 
         //Spec: Bucket names must start and end with a number or letter.
         char start = bucketName[0];
@@ -108,6 +115,26 @@ public class GoogleCloudStorageInputValidator : InputValidatorBase
 
             status = ValidationStatus.WrongFormat;
             message = c.ToString();
+            return false;
+        }
+
+        // Dotted-decimal addresses are forbidden; numeric names and DNS suffixes are not addresses.
+        string[] components = bucketName.Split('.');
+        bool isAddress = components.Length == 4;
+
+        foreach (string component in components)
+        {
+            if (component.Length is < 1 or > 3 || !byte.TryParse(component, NumberStyles.None, CultureInfo.InvariantCulture, out _))
+            {
+                isAddress = false;
+                break;
+            }
+        }
+
+        if (isAddress)
+        {
+            status = ValidationStatus.WrongFormat;
+            message = bucketName;
             return false;
         }
 
@@ -147,15 +174,15 @@ public class GoogleCloudStorageInputValidator : InputValidatorBase
             return false;
         }
 
-        if (objectKey.Length == 3 && objectKey[0] == '.' && objectKey[1] == '.' && objectKey[2] == '.')
+        if (objectKey.Length == 2 && objectKey[0] == '.' && objectKey[1] == '.')
         {
             status = ValidationStatus.WrongFormat;
-            message = "...";
+            message = "..";
             return false;
         }
 
         //Spec: Object names cannot start with .well-known/acme-challenge/.
-        if (objectKey.StartsWith(".well-known/acme-challenge/", StringComparison.OrdinalIgnoreCase))
+        if (objectKey.StartsWith(".well-known/acme-challenge/", StringComparison.Ordinal))
         {
             status = ValidationStatus.WrongFormat;
             message = ".well-known/acme-challenge/";
