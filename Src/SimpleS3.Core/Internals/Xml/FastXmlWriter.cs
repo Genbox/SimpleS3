@@ -58,14 +58,14 @@ internal sealed class FastXmlWriter
     public void WriteElement(string name, bool value)
     {
         WriteStartElement(name);
-        WriteValue(value.ToString(NumberFormatInfo.InvariantInfo));
+        WriteValue(value ? "true" : "false");
         WriteEndElement(name);
     }
 
     public void WriteElement(string name, bool? value)
     {
         WriteStartElement(name);
-        WriteValue(value!.Value.ToString(NumberFormatInfo.InvariantInfo));
+        WriteValue(value!.Value ? "true" : "false");
         WriteEndElement(name);
     }
 

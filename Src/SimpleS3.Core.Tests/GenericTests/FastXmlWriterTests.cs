@@ -7,6 +7,18 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 
 public class FastXmlWriterTests
 {
+    [Fact]
+    public void WritesBooleanValuesUsingXmlLexicalForm()
+    {
+        FastXmlWriter writer = new FastXmlWriter(50);
+        writer.WriteElement("Enabled", true);
+        writer.WriteElement("Disabled", false);
+        writer.WriteElement("OptionalEnabled", (bool?)true);
+        writer.WriteElement("OptionalDisabled", (bool?)false);
+
+        Assert.Equal("<Enabled>true</Enabled><Disabled>false</Disabled><OptionalEnabled>true</OptionalEnabled><OptionalDisabled>false</OptionalDisabled>", Encoding.UTF8.GetString(writer.GetBytes()));
+    }
+
     [Theory]
     [InlineData(XmlStandard.Xml10)]
     [InlineData(XmlStandard.Xml11)]
