@@ -13,8 +13,9 @@ public class WasabiInputValidatorTests
     [InlineData("aKIAIOSFODNN7EXAMPLE", ValidationStatus.WrongFormat)] //It must be uppercase
     public void TryValidateKeyIdTest(string? keyId, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateKeyId(keyId, out ValidationStatus status, out _);
+        bool valid = _validator.TryValidateKeyId(keyId, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
     }
 
     [Theory]
@@ -23,8 +24,11 @@ public class WasabiInputValidatorTests
     [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, ValidationStatus.Ok)]
     public void TryValidateAccessKeyTest(byte[]? key, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateAccessKey(key, out ValidationStatus status, out _);
+        byte[]? original = key?.ToArray();
+        bool valid = _validator.TryValidateAccessKey(key, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
+        Assert.Equal(original, key);
     }
 
     [Theory]
@@ -43,8 +47,9 @@ public class WasabiInputValidatorTests
     [InlineData("127.0.0.1", ValidationStatus.WrongFormat)] //Must not be formatted as an IP address (for example, 192.168.5.4)
     public void TryValidateBucketNameTest(string? input, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateBucketName(input, BucketNameValidationMode.Default, out ValidationStatus status, out _);
+        bool valid = _validator.TryValidateBucketName(input, BucketNameValidationMode.Default, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
     }
 
     [Theory]
@@ -54,7 +59,8 @@ public class WasabiInputValidatorTests
     [InlineData("大三.txt", ValidationStatus.Ok)] //Test we can use UTF8 chars
     public void TryValidateObjectKeyTest(string? input, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateObjectKey(input, ObjectKeyValidationMode.Default, out ValidationStatus status, out _);
+        bool valid = _validator.TryValidateObjectKey(input, ObjectKeyValidationMode.Default, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
     }
 }

@@ -43,6 +43,7 @@ public class NonTransientServerErrorTests(ITestOutputHelper helper) : OfflineTes
         response = await ObjectClient.PutObjectAsync(BucketName, nameof(TestNonTransientServerError) + "-1", ms, token: TestContext.Current.CancellationToken);
 
         Assert.False(response.IsSuccess);
+        Assert.Equal(404, response.StatusCode);
         Assert.Equal(2, _handler.RequestCounter);
     }
 

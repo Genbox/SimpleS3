@@ -34,7 +34,7 @@ public class BucketVersioningTests : TestBase
 
         //Check if versioning is enabled (it shouldn't be)
         GetBucketVersioningResponse getResp3 = await client.GetBucketVersioningAsync(tempBucket, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp2.StatusCode);
+        Assert.Equal(200, getResp3.StatusCode);
         Assert.False(getResp3.Status);
     });
 }

@@ -12,7 +12,8 @@ public class ListBucketsTests : TestBase
     public async Task ListBuckets(S3Provider _, string bucket, ISimpleClient client)
     {
         ListBucketsResponse listResp = await client.ListBucketsAsync(token: TestContext.Current.CancellationToken);
-        Assert.True(listResp.Buckets.Count > 0);
+        Assert.Equal(200, listResp.StatusCode);
+        Assert.NotEmpty(listResp.Buckets);
         Assert.Single(listResp.Buckets, x => x.BucketName == bucket);
     }
 }

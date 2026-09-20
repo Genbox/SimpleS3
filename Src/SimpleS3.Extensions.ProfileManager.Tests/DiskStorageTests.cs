@@ -31,7 +31,7 @@ public sealed class DiskStorageTests : IDisposable
         DiskStorage storage = CreateStorage();
         storage.Put("profile", [1, 2, 3]);
 
-        Assert.Equal(["profile"], storage.List(), StringComparer.Ordinal);
+        Assert.Equal(["profile"], storage.List());
     }
 
     private DiskStorage CreateStorage() => new DiskStorage(Options.Create(new DiskStorageOptions { ProfileLocation = _profileLocation }));

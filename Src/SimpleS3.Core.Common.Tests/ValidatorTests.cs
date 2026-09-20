@@ -10,6 +10,7 @@ public class ValidatorTests
         try
         {
             Validator.RequireThat(1 == 2, "this is a message");
+            Assert.Fail("Expected RequireException.");
         }
         catch (RequireException e)
         {
@@ -26,12 +27,13 @@ public class ValidatorTests
         try
         {
             Validator.RequireNotNull((string?)null, "this is a message");
+            Assert.Fail("Expected RequireException.");
         }
         catch (RequireException e)
         {
             Assert.Equal("(string?)null", e.CallerArgument);
             Assert.Equal(nameof(RequireNotNullContainsUsefulDataTest), e.CallerMember);
-            Assert.Equal(28, e.LineNumber);
+            Assert.Equal(29, e.LineNumber);
             Assert.Equal("this is a message", e.Message);
         }
     }

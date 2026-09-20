@@ -15,8 +15,9 @@ public class BackblazeB2InputValidatorTests
     [InlineData("61a951f6ab", ValidationStatus.WrongLength)] //too short
     public void TryValidateKeyIdTest(string? keyId, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateKeyId(keyId, out ValidationStatus status, out _);
+        bool valid = _validator.TryValidateKeyId(keyId, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
     }
 
     [Theory]
@@ -25,8 +26,11 @@ public class BackblazeB2InputValidatorTests
     [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, ValidationStatus.Ok)]
     public void TryValidateAccessKeyTest(byte[]? key, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateAccessKey(key, out ValidationStatus status, out _);
+        byte[]? original = key?.ToArray();
+        bool valid = _validator.TryValidateAccessKey(key, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
+        Assert.Equal(original, key);
     }
 
     [Theory]
@@ -40,8 +44,9 @@ public class BackblazeB2InputValidatorTests
     [InlineData("contains space", ValidationStatus.WrongFormat)]
     public void TryValidateBucketNameTest(string? name, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateBucketName(name, BucketNameValidationMode.Default, out ValidationStatus status, out _);
+        bool valid = _validator.TryValidateBucketName(name, BucketNameValidationMode.Default, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
     }
 
     [Theory]
@@ -53,7 +58,8 @@ public class BackblazeB2InputValidatorTests
     [InlineData("大三.txt", ValidationStatus.Ok)] //Test we can use UTF8 chars
     public void TryValidateObjectKeyTest(string? name, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateObjectKey(name, ObjectKeyValidationMode.Default, out ValidationStatus status, out _);
+        bool valid = _validator.TryValidateObjectKey(name, ObjectKeyValidationMode.Default, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
     }
 }
