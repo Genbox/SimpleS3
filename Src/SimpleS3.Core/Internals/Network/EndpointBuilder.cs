@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Genbox.SimpleS3.Core.Abstracts;
@@ -13,8 +14,7 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
 {
     private static readonly Regex _templateRegex = new Regex("{(?:(?<pre>[^:}]*?):)?(?<val>Region|Bucket|Scheme)(?::(?<post>[^}]*?))?}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled, TimeSpan.FromSeconds(1));
     private readonly SimpleS3Config _config = config.Value;
-    private readonly object _lock = new object();
-    private EndpointData? _lastCache;
+    private readonly ConcurrentDictionary<(string Endpoint, string? Bucket, string Region, string Provider, bool UseTls, NamingMode NamingMode), EndpointData> _endpointCache = new ConcurrentDictionary<(string Endpoint, string? Bucket, string Region, string Provider, bool UseTls, NamingMode NamingMode), EndpointData>();
 
     public IEndpointData GetEndpoint(IRequest request)
     {
@@ -23,24 +23,30 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
         if (request is IHasBucketName bucketRequest)
             bucket = bucketRequest.BucketName;
 
-        lock (_lock)
-        {
-            //We want to avoid all the string manipulation GetEndpointData does, so we cache the result here. However, if anything changed, we need to recalculate it.
-            //We don't check on endpoint as it can be a template and therefore will never match.
-            if (_lastCache != null && _lastCache.Bucket == bucket && _lastCache.RegionCode == _config.RegionCode)
-                return _lastCache;
+        string endpoint = _config.Endpoint;
+        string region = _config.RegionCode;
+        string provider = _config.ProviderName;
+        bool useTls = _config.UseTls;
+        NamingMode namingMode = _config.NamingMode;
 
-            _lastCache = GetEndpointData(bucket, _config.RegionCode);
-            return _lastCache;
-        }
+        (string Endpoint, string? Bucket, string Region, string Provider, bool UseTls, NamingMode NamingMode) cacheKey = (endpoint, bucket, region, provider, useTls, namingMode);
+
+        if (_endpointCache.TryGetValue(cacheKey, out EndpointData? cached))
+            return cached;
+
+        EndpointData created = GetEndpointData(endpoint, bucket, region, provider, useTls, namingMode);
+
+        // Keep the cache useful for alternating buckets without retaining an unbounded set of tenant-controlled names.
+        if (_endpointCache.Count >= 256)
+            _endpointCache.Clear();
+
+        return _endpointCache.GetOrAdd(cacheKey, created);
     }
 
-    private EndpointData GetEndpointData(string? bucket, string regionCode)
+    private static EndpointData GetEndpointData(string endpoint, string? bucket, string regionCode, string provider, bool useTls, NamingMode namingMode)
     {
-        string endpoint = _config.Endpoint;
-
         // S3-012: AWS China regions use the amazonaws.com.cn DNS partition.
-        if (_config.ProviderName == "AmazonS3" && regionCode.StartsWith("cn-", StringComparison.OrdinalIgnoreCase) && endpoint.EndsWith("amazonaws.com", StringComparison.Ordinal))
+        if (provider == "AmazonS3" && regionCode.StartsWith("cn-", StringComparison.OrdinalIgnoreCase) && endpoint.EndsWith("amazonaws.com", StringComparison.Ordinal))
             endpoint += ".cn";
 
         if (endpoint.IndexOf('{') >= 0)
@@ -52,12 +58,12 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
                 string value = match.Groups["val"].Value.ToLowerInvariant();
 
                 //We only replace bucket if there is one and the naming mode is VirtualHost
-                if (value == "bucket" && bucket != null && _config.NamingMode == NamingMode.VirtualHost)
+                if (value == "bucket" && bucket != null && namingMode == NamingMode.VirtualHost)
                     str = bucket;
                 else if (value == "scheme")
-                    str = _config.UseTls ? "https" : "http";
+                    str = useTls ? "https" : "http";
                 else if (value == "region")
-                    str = _config.RegionCode;
+                    str = regionCode;
                 else
                     return null!;
 
@@ -69,6 +75,9 @@ internal class EndpointBuilder(IOptions<SimpleS3Config> config) : IEndpointBuild
 
         if (!Uri.TryCreate(endpoint, UriKind.Absolute, out Uri? parsed))
             throw new InvalidOperationException(nameof(SimpleS3Config.Endpoint) + " is an invalid url: " + endpoint);
+
+        if (parsed.Query.Length > 0 || parsed.Fragment.Length > 0)
+            throw new InvalidOperationException(nameof(SimpleS3Config.Endpoint) + " cannot contain a query string or fragment: " + endpoint);
 
         //We need to add port for services hosted on non-standard ports. See #61
         string host = parsed.Host;

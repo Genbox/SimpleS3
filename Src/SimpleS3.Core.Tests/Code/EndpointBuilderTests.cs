@@ -20,9 +20,13 @@ public class EndpointBuilderTests
     [InlineData("{:Scheme}://{:Bucket:}.s3.{Region:}.amazonaws.com", "testbucket", "https://testbucket.s3.eu-west-1.amazonaws.com")] //Test that we support empty pre-and post-fixes
     [InlineData("{some:Scheme}://{test-:Bucket:-production}.s3.{Region}.amazonaws.com", "testbucket", "somehttps://test-testbucket-production.s3.eu-west-1.amazonaws.com")] //Test that we have flexibility in pre- and post-fixes
     [InlineData("http://s3.{Region}.{Region}-amazonaws.com", null, "http://s3.eu-west-1.eu-west-1-amazonaws.com")] //Test that we can use a label twice
-    public void ParseEndpointTest(string template, string? bucketName, string result)
+    [InlineData("{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com", "testbucket", "http://testbucket.s3.eu-west-1.amazonaws.com", false)]
+    [InlineData("{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com", null, "http://s3.eu-west-1.amazonaws.com", false)]
+    [InlineData("https://s3.amazonaws.com", null, "https://s3.amazonaws.com", false)]
+    public void ParseEndpointTest(string template, string? bucketName, string result, bool useTls = true)
     {
         SimpleS3Config config = new SimpleS3Config(null, template, "eu-west-1");
+        config.UseTls = useTls;
         config.NamingMode = NamingMode.VirtualHost;
 
         EndpointBuilder builder = new EndpointBuilder(Options.Create(config));
@@ -36,6 +40,45 @@ public class EndpointBuilderTests
 
         IEndpointData data = builder.GetEndpoint(req);
         Assert.Equal(result, data.Endpoint);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void CachedEndpointReflectsSchemeAndNamingChanges(bool changeScheme)
+    {
+        SimpleS3Config config = new SimpleS3Config(null, "{Scheme}://{Bucket:.}s3.{Region}.amazonaws.com", "eu-west-1");
+        EndpointBuilder builder = new EndpointBuilder(Options.Create(config));
+        GetObjectRequest request = new GetObjectRequest("bucket", "key");
+        IEndpointData original = builder.GetEndpoint(request);
+        Assert.Equal("https://bucket.s3.eu-west-1.amazonaws.com", original.Endpoint);
+        if (changeScheme)
+            config.UseTls = false;
+        else
+            config.NamingMode = NamingMode.PathStyle;
+        IEndpointData changed = builder.GetEndpoint(request);
+        Assert.Equal(changeScheme ? "http://bucket.s3.eu-west-1.amazonaws.com" : "https://s3.eu-west-1.amazonaws.com", changed.Endpoint);
+        Assert.Equal(changeScheme ? "bucket.s3.eu-west-1.amazonaws.com" : "s3.eu-west-1.amazonaws.com", changed.Host);
+        config.UseTls = true;
+        config.NamingMode = NamingMode.VirtualHost;
+        Assert.Same(original, builder.GetEndpoint(request));
+    }
+
+    [Fact]
+    public void CachedEndpointReflectsProviderChanges()
+    {
+        SimpleS3Config config = new SimpleS3Config(null, "https://s3.amazonaws.com", "cn-north-1");
+        EndpointBuilder builder = new EndpointBuilder(Options.Create(config));
+        ListBucketsRequest request = new ListBucketsRequest();
+
+        IEndpointData original = builder.GetEndpoint(request);
+        Assert.Equal("https://s3.amazonaws.com", original.Endpoint);
+
+        config.ProviderName = "AmazonS3";
+        Assert.Equal("https://s3.amazonaws.com.cn", builder.GetEndpoint(request).Endpoint);
+
+        config.ProviderName = string.Empty;
+        Assert.Same(original, builder.GetEndpoint(request));
     }
 
     [Fact]
@@ -61,5 +104,33 @@ public class EndpointBuilderTests
             AssertEndpointAsync("bucket-b"),
             AssertEndpointAsync("bucket-c"),
             AssertEndpointAsync("bucket-d"));
+    }
+
+    [Fact]
+    public void AlternatingBucketsRetainTheirCachedEndpoints()
+    {
+        SimpleS3Config config = new SimpleS3Config(null, "{Scheme}://{Bucket:.}s3.{Region:.}amazonaws.com", "eu-west-1") { NamingMode = NamingMode.VirtualHost };
+        EndpointBuilder builder = new EndpointBuilder(Options.Create(config));
+        GetObjectRequest firstRequest = new GetObjectRequest("bucket-a", "object");
+        GetObjectRequest secondRequest = new GetObjectRequest("bucket-b", "object");
+
+        IEndpointData first = builder.GetEndpoint(firstRequest);
+        _ = builder.GetEndpoint(secondRequest);
+        IEndpointData firstAgain = builder.GetEndpoint(firstRequest);
+
+        Assert.Same(first, firstAgain);
+    }
+
+    [Theory]
+    [InlineData("https://s3.example.test?fixed=value")]
+    [InlineData("https://s3.example.test#fragment")]
+    public void RejectsEndpointQueryAndFragment(string endpoint)
+    {
+        SimpleS3Config config = new SimpleS3Config(null, endpoint, "eu-west-1");
+        EndpointBuilder builder = new EndpointBuilder(Options.Create(config));
+
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => builder.GetEndpoint(new ListBucketsRequest()));
+
+        Assert.Contains("cannot contain a query string or fragment", exception.Message, StringComparison.Ordinal);
     }
 }
