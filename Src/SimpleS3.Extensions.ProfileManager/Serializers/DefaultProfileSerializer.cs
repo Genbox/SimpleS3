@@ -38,10 +38,12 @@ public class DefaultProfileSerializer : IProfileSerializer
         using StreamReader sr = new StreamReader(ms, Encoding.UTF8);
 
         T p = Activator.CreateInstance<T>();
+        int lineNumber = 0;
 
         while (!sr.EndOfStream)
         {
             string? str = sr.ReadLine();
+            lineNumber++;
 
             if (string.IsNullOrWhiteSpace(str))
                 continue;
@@ -49,6 +51,9 @@ public class DefaultProfileSerializer : IProfileSerializer
             ReadOnlySpan<char> span = str.AsSpan();
 
             int idx = span.IndexOf('=');
+            if (idx < 0)
+                throw new InvalidDataException($"Invalid profile data on line {lineNumber}: expected key=value.");
+
             string key = span.Slice(0, idx).ToString();
             ReadOnlySpan<char> val = span.Slice(idx + 1);
 

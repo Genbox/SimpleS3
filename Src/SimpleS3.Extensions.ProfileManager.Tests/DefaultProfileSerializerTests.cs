@@ -30,6 +30,16 @@ public class DefaultProfileSerializerTests
         Assert.Contains("Tag.Protector=TestProtector", Encoding.UTF8.GetString(serialized), StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void DeserializeRejectsLinesWithoutAValueSeparator()
+    {
+        DefaultProfileSerializer serializer = new DefaultProfileSerializer();
+
+        InvalidDataException exception = Assert.Throws<InvalidDataException>(() => serializer.Deserialize<TestProfile>("malformed"u8.ToArray()));
+
+        Assert.Contains("line 1", exception.Message, StringComparison.Ordinal);
+    }
+
     private sealed class TestProfile : IProfile
     {
         public string Location { get; set; } = null!;
