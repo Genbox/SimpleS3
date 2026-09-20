@@ -8,7 +8,6 @@ namespace Genbox.SimpleS3.Core.Builders;
 /// <summary>Provides the <c>MetadataBuilder</c> API.</summary>
 public class MetadataBuilder : IEnumerable<KeyValuePair<string, string>>, IPooledObject
 {
-    private readonly HashSet<byte> _allowed = [33, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126];
     private Dictionary<string, string>? _metadata;
     private int _totalSize;
 
@@ -41,20 +40,19 @@ public class MetadataBuilder : IEnumerable<KeyValuePair<string, string>>, IPoole
 
         _metadata ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        byte[] utf8Bytes = Encoding.UTF8.GetBytes(key + value);
+        if (string.IsNullOrEmpty(key) || key.Any(c => !IsHeaderNameCharacter(c)))
+            throw new ArgumentException("Metadata keys must contain only HTTP header token characters.", nameof(key));
 
-        foreach (byte b in utf8Bytes)
-        {
-            if (!_allowed.Contains(b))
-                throw new ArgumentException($"Invalid character '{b}' in metadata", nameof(key));
-        }
+        if (value.Any(c => c is < ' ' or > '~'))
+            throw new ArgumentException("Metadata values must contain only printable ASCII characters.", nameof(value));
 
-        _totalSize += utf8Bytes.Length;
+        int totalSize = checked(_totalSize + Encoding.UTF8.GetByteCount(key) + Encoding.UTF8.GetByteCount(value));
 
-        if (_totalSize > 2048)
+        if (totalSize > 2048)
             throw new ArgumentException("Metadata too large", nameof(value));
 
         _metadata.Add(key, value);
+        _totalSize = totalSize;
 
         return this;
     }
@@ -64,4 +62,9 @@ public class MetadataBuilder : IEnumerable<KeyValuePair<string, string>>, IPoole
         foreach (KeyValuePair<string, string> item in this)
             yield return new KeyValuePair<string, string>(Constants.AmzMetadata + item.Key, item.Value);
     }
+
+    private static bool IsHeaderNameCharacter(char c) => c is >= 'a' and <= 'z'
+        or >= 'A' and <= 'Z'
+        or >= '0' and <= '9'
+        or '!' or '#' or '$' or '%' or '&' or '\'' or '*' or '+' or '-' or '.' or '^' or '_' or '`' or '|' or '~';
 }
