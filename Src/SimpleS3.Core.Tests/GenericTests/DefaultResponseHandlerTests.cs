@@ -50,9 +50,24 @@ public class DefaultResponseHandlerTests
         Assert.Equal(302, response.StatusCode);
     }
 
-    private sealed class StubNetworkDriver(ContentStream? content, int statusCode) : INetworkDriver
+    [Fact]
+    public async Task HandleResponseAsyncRecognizesConnectionClose()
     {
-        public Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken token = default) where T : IResponse => Task.FromResult(new HttpResponse(content, new Dictionary<string, string>(StringComparer.Ordinal), statusCode));
+        using ILoggerFactory loggerFactory = new LoggerFactory();
+        DefaultResponseHandler handler = new DefaultResponseHandler(Options.Create(new SimpleS3Config()),
+            new NoopRequestValidatorFactory(),
+            new NoopMarshalFactory(),
+            new NoopPostMapperFactory(),
+            new StubNetworkDriver(null, 200, new Dictionary<string, string>(StringComparer.Ordinal) { ["connection"] = "close" }),
+            loggerFactory.CreateLogger<DefaultResponseHandler>());
+
+        ListObjectsResponse response = await handler.HandleResponseAsync<ListObjectsRequest, ListObjectsResponse>(new ListObjectsRequest("bucket"), "https://example.com", null, TestContext.Current.CancellationToken);
+
+        Assert.True(response.ConnectionClosed);
+    }
+    private sealed class StubNetworkDriver(ContentStream? content, int statusCode, IDictionary<string, string>? headers = null) : INetworkDriver
+    {
+        public Task<HttpResponse> SendRequestAsync<T>(IRequest request, string url, Stream? requestStream, CancellationToken token = default) where T : IResponse => Task.FromResult(new HttpResponse(content, headers ?? new Dictionary<string, string>(StringComparer.Ordinal), statusCode));
     }
 
     private sealed class NoopMarshalFactory : IMarshalFactory

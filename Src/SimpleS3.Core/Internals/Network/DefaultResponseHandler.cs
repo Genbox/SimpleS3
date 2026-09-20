@@ -63,7 +63,7 @@ public partial class DefaultResponseHandler : IResponseHandler
         TResp response = new TResp();
         response.StatusCode = statusCode;
         response.ContentLength = headers.GetHeaderLong(HttpHeaders.ContentLength);
-        response.ConnectionClosed = string.Equals("closed", headers.GetOptionalValue(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
+        response.ConnectionClosed = string.Equals("close", headers.GetOptionalValue(HttpHeaders.Connection), StringComparison.OrdinalIgnoreCase);
         response.Date = headers.GetHeaderDate(HttpHeaders.Date, DateTimeFormat.Rfc1123);
         response.Server = headers.GetOptionalValue(HttpHeaders.Server);
         response.ResponseId = headers.GetOptionalValue(AmzHeaders.XAmzId2);
