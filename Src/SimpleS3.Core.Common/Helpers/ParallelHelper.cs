@@ -1,9 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.ExceptionServices;
 
 namespace Genbox.SimpleS3.Core.Common.Helpers;
 
 /// <summary>Executes asynchronous operations with bounded concurrency and coordinated cancellation.</summary>
+[SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP013:Await in using", Justification = "All overloads await their workers before disposing the enumerator and coordination resources.")]
 public static class ParallelHelper
 {
     /// <summary>Executes an asynchronous action for every item while limiting the number of concurrent operations.</summary>
@@ -16,62 +16,39 @@ public static class ParallelHelper
     {
         ValidateArguments(source, action, concurrentThreads);
 
-        CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
-        SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
+        using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        using IEnumerator<T> enumerator = source.GetEnumerator();
+        CancellationToken innerToken = cancellation.Token;
+        Action cancel = cancellation.Cancel;
+        object enumerationLock = new object();
+        Task[] workers = [.. Enumerable.Range(0, concurrentThreads).Select(_ => ExecuteWorkerAsync())];
+        await Task.WhenAll(workers);
 
-        try
+        async Task ExecuteWorkerAsync()
         {
-            using IEnumerator<T> enumerator = source.GetEnumerator();
-            List<Task> tasks = new List<Task>();
-            CancellationToken innerToken = cancellation.Token;
-            Action cancel = cancellation.Cancel;
-            Func<int> release = throttler.Release;
-
             try
             {
                 while (true)
                 {
-                    await throttler.WaitAsync(innerToken);
+                    innerToken.ThrowIfCancellationRequested();
 
-                    if (!enumerator.MoveNext())
+                    T element;
+
+                    lock (enumerationLock)
                     {
-                        throttler.Release();
-                        break;
+                        if (!enumerator.MoveNext())
+                            return;
+
+                        element = enumerator.Current;
                     }
 
-                    tasks.Add(ExecuteElementAsync(enumerator.Current, action, cancel, innerToken, release));
+                    await action(element, innerToken);
                 }
-            }
-            catch
-            {
-                cancellation.Cancel();
-                await WaitForRunningTasksAsync(tasks);
-                ThrowFirstTaskFailure(tasks);
-                throw;
-            }
-
-            await Task.WhenAll(tasks);
-        }
-        finally
-        {
-            throttler.Dispose();
-            cancellation.Dispose();
-        }
-
-        static async Task ExecuteElementAsync(T element, Func<T, CancellationToken, Task> action, Action cancel, CancellationToken innerToken, Func<int> release)
-        {
-            try
-            {
-                await action(element, innerToken);
             }
             catch
             {
                 cancel();
                 throw;
-            }
-            finally
-            {
-                release();
             }
         }
     }
@@ -88,63 +65,46 @@ public static class ParallelHelper
     {
         ValidateArguments(source, action, concurrentThreads);
 
-        CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
-        List<Task<TReturn>> tasks = new List<Task<TReturn>>();
+        using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        using IEnumerator<T> enumerator = source.GetEnumerator();
+        CancellationToken innerToken = cancellation.Token;
+        object stateLock = new object();
+        List<TReturn> results = [];
+        Task[] workers = [.. Enumerable.Range(0, concurrentThreads).Select(_ => ExecuteWorkerAsync())];
+        await Task.WhenAll(workers);
+        return results;
 
-        SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
-
-        try
+        async Task ExecuteWorkerAsync()
         {
-            using IEnumerator<T> enumerator = source.GetEnumerator();
-            CancellationToken innerToken = cancellation.Token;
-            Action cancel = cancellation.Cancel;
-            Func<int> release = throttler.Release;
-
             try
             {
                 while (true)
                 {
-                    await throttler.WaitAsync(innerToken);
+                    innerToken.ThrowIfCancellationRequested();
 
-                    if (!enumerator.MoveNext())
+                    T element;
+                    int index;
+
+                    lock (stateLock)
                     {
-                        throttler.Release();
-                        break;
+                        if (!enumerator.MoveNext())
+                            return;
+
+                        element = enumerator.Current;
+                        index = results.Count;
+                        results.Add(default!);
                     }
 
-                    tasks.Add(ExecuteElementAsync(enumerator.Current, action, cancel, innerToken, release));
+                    TReturn result = await action(element, innerToken);
+
+                    lock (stateLock)
+                        results[index] = result;
                 }
             }
             catch
             {
                 cancellation.Cancel();
-                await WaitForRunningTasksAsync(tasks);
-                ThrowFirstTaskFailure(tasks);
                 throw;
-            }
-
-            return await Task.WhenAll(tasks);
-        }
-        finally
-        {
-            throttler.Dispose();
-            cancellation.Dispose();
-        }
-
-        static async Task<TReturn> ExecuteElementAsync(T element, Func<T, CancellationToken, Task<TReturn>> action, Action cancel, CancellationToken innerToken, Func<int> release)
-        {
-            try
-            {
-                return await action(element, innerToken);
-            }
-            catch
-            {
-                cancel();
-                throw;
-            }
-            finally
-            {
-                release();
             }
         }
     }
@@ -162,83 +122,65 @@ public static class ParallelHelper
     {
         ValidateArguments(source, action, concurrentThreads);
 
-        CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
-        List<Task<TReturn>> tasks = new List<Task<TReturn>>();
-
-        SemaphoreSlim throttler = new SemaphoreSlim(concurrentThreads);
+        using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        using SemaphoreSlim enumerationLock = new SemaphoreSlim(1, 1);
+        IAsyncEnumerator<T> enumerator = source.GetAsyncEnumerator(cancellation.Token);
+        CancellationToken innerToken = cancellation.Token;
+        object resultsLock = new object();
+        List<TReturn> results = [];
 
         try
         {
-            IAsyncEnumerator<T> enumerator = source.GetAsyncEnumerator(cancellation.Token);
-            CancellationToken innerToken = cancellation.Token;
-            Action cancel = cancellation.Cancel;
-            Func<int> release = throttler.Release;
-
-            try
-            {
-                try
-                {
-                    while (true)
-                    {
-                        await throttler.WaitAsync(innerToken);
-
-                        if (!await enumerator.MoveNextAsync())
-                        {
-                            throttler.Release();
-                            break;
-                        }
-
-                        tasks.Add(ExecuteElementAsync(enumerator.Current, action, cancel, innerToken, release));
-                    }
-                }
-                catch
-                {
-                    cancellation.Cancel();
-                    await WaitForRunningTasksAsync(tasks);
-                    ThrowFirstTaskFailure(tasks);
-                    throw;
-                }
-
-                return await Task.WhenAll(tasks);
-            }
-            finally
-            {
-                await enumerator.DisposeAsync();
-            }
+            Task[] workers = [.. Enumerable.Range(0, concurrentThreads).Select(_ => ExecuteWorkerAsync())];
+            await Task.WhenAll(workers);
+            return results;
         }
         finally
         {
-            throttler.Dispose();
-            cancellation.Dispose();
+            await enumerator.DisposeAsync();
         }
 
-        static async Task<TReturn> ExecuteElementAsync(T element, Func<T, CancellationToken, Task<TReturn>> action, Action cancel, CancellationToken innerToken, Func<int> release)
+        async Task ExecuteWorkerAsync()
         {
             try
             {
-                return await action(element, innerToken);
+                while (true)
+                {
+                    innerToken.ThrowIfCancellationRequested();
+                    T element;
+                    int index;
+
+                    await enumerationLock.WaitAsync(innerToken);
+
+                    try
+                    {
+                        if (!await enumerator.MoveNextAsync())
+                            return;
+
+                        element = enumerator.Current;
+
+                        lock (resultsLock)
+                        {
+                            index = results.Count;
+                            results.Add(default!);
+                        }
+                    }
+                    finally
+                    {
+                        enumerationLock.Release();
+                    }
+
+                    TReturn result = await action(element, innerToken);
+
+                    lock (resultsLock)
+                        results[index] = result;
+                }
             }
             catch
             {
-                cancel();
+                cancellation.Cancel();
                 throw;
             }
-            finally
-            {
-                release();
-            }
-        }
-    }
-
-    private static async Task WaitForRunningTasksAsync(IEnumerable<Task> tasks)
-    {
-        try
-        {
-            await Task.WhenAll(tasks);
-        }
-        catch
-        {
-            // Preserve the original producer/cancellation failure.
         }
     }
 
@@ -252,14 +194,5 @@ public static class ParallelHelper
 
         if (concurrentThreads <= 0)
             throw new ArgumentOutOfRangeException(nameof(concurrentThreads), concurrentThreads, "Concurrency must be greater than zero.");
-    }
-
-    private static void ThrowFirstTaskFailure(IEnumerable<Task> tasks)
-    {
-        foreach (Task task in tasks)
-        {
-            if (task.Exception?.InnerExceptions.Count > 0)
-                ExceptionDispatchInfo.Capture(task.Exception.InnerExceptions[0]).Throw();
-        }
     }
 }
