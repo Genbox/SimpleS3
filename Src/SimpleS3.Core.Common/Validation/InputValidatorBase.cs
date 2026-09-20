@@ -7,8 +7,8 @@ using JetBrains.Annotations;
 namespace Genbox.SimpleS3.Core.Common.Validation;
 
 /// <summary>Provides the <c>InputValidatorBase</c> API.</summary>
-[PublicAPI]
 [SuppressMessage("Design", "CA1062", Justification = "The public InputValidatorBase entry points handle null input before invoking these protected validation routines.")]
+[PublicAPI]
 public abstract class InputValidatorBase : IInputValidator
 {
     /// <summary>Provides the <c>TryValidateKeyId</c> API.</summary>
@@ -41,7 +41,7 @@ public abstract class InputValidatorBase : IInputValidator
     /// <returns>True if the bucket name passed validation</returns>
     public bool TryValidateBucketName(string? bucketName, BucketNameValidationMode mode, out ValidationStatus status, out string? message)
     {
-        Validator.RequireThat(Enums.BucketNameValidationMode.IsDefined(mode), "Mode must not be Unknown");
+        Validator.RequireThat(mode != BucketNameValidationMode.Unknown && Enums.BucketNameValidationMode.IsDefined(mode), "Mode must be defined and must not be Unknown");
 
         if (mode == BucketNameValidationMode.Disabled)
         {
@@ -69,7 +69,7 @@ public abstract class InputValidatorBase : IInputValidator
     /// <summary>Provides the <c>TryValidateObjectKey</c> API.</summary>
     public bool TryValidateObjectKey(string? objectKey, ObjectKeyValidationMode mode, out ValidationStatus status, out string? message)
     {
-        Validator.RequireThat(Enums.ObjectKeyValidationMode.IsDefined(mode), "Mode must not be Unknown");
+        Validator.RequireThat(mode != ObjectKeyValidationMode.Unknown && Enums.ObjectKeyValidationMode.IsDefined(mode), "Mode must be defined and must not be Unknown");
 
         if (mode == ObjectKeyValidationMode.Disabled)
         {
@@ -111,10 +111,18 @@ public abstract class InputValidatorBase : IInputValidator
     /// <summary>Provides the <c>TryValidateBlacklisted</c> API.</summary>
     protected static bool TryValidateBlacklisted(string input, out ValidationStatus status, out string? message)
     {
-        foreach (char c in input)
+        for (int i = 0; i < input.Length; i++)
         {
-            //0xD800 to 0xDFFF are reserved code points in UTF-16. Since they will always be URL encoded to %EF%BF%BD (the � char) in UTF-8
-            if (CharHelper.InRange(c, '\uD800', '\uDFFF'))
+            char c = input[i];
+
+            // UTF-16 surrogate code units are only valid as high/low pairs; reject unpaired surrogates before UTF-8 URL encoding.
+            if (char.IsHighSurrogate(c) && i + 1 < input.Length && char.IsLowSurrogate(input[i + 1]))
+            {
+                i++;
+                continue;
+            }
+
+            if (char.IsSurrogate(c))
             {
                 status = ValidationStatus.WrongFormat;
                 message = c.ToString();
@@ -150,7 +158,7 @@ public abstract class InputValidatorBase : IInputValidator
     {
         foreach (char c in input)
         {
-            if (CharHelper.InRange(c, (char)0, (char)128))
+            if (CharHelper.InRange(c, (char)0, (char)127))
                 continue;
 
             message = c.ToString();
@@ -227,6 +235,13 @@ public abstract class InputValidatorBase : IInputValidator
                     continue;
 
                 message = c.ToString();
+                status = ValidationStatus.WrongFormat;
+                return false;
+            }
+
+            if (input[newPos - 1] == '-')
+            {
+                message = "-";
                 status = ValidationStatus.WrongFormat;
                 return false;
             }
