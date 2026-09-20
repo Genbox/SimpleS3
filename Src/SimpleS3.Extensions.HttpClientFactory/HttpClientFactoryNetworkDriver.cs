@@ -55,27 +55,43 @@ public partial class HttpClientFactoryNetworkDriver(IOptionsMonitor<HttpClientFa
             httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token);
         }
 
-        ReceivedResponse(httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
+        HttpResponse response;
+        bool disposeResponse;
 
-        Dictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Headers)
-            responseHeaders.Add(header.Key, header.Value.First());
-
-        ContentStream? contentStream = null;
-
-        if (httpResponse.Content != null)
+        try
         {
-            foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
+            ReceivedResponse(httpResponse.IsSuccessStatusCode ? "successful" : "unsuccessful", httpResponse.StatusCode);
+            int statusCode = (int)httpResponse.StatusCode;
+
+            Dictionary<string, string> responseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Headers)
                 responseHeaders.Add(header.Key, header.Value.First());
 
-            Stream innerStream = await httpResponse.Content.ReadAsStreamAsync();
-            contentStream = new ContentStream(innerStream, httpResponse.Content.Headers.ContentLength, httpResponse);
+            ContentStream? contentStream = null;
+
+            if (httpResponse.Content != null)
+            {
+                foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
+                    responseHeaders.Add(header.Key, header.Value.First());
+
+                Stream innerStream = await httpResponse.Content.ReadAsStreamAsync();
+                contentStream = new ContentStream(innerStream, httpResponse.Content.Headers.ContentLength, httpResponse);
+            }
+
+            disposeResponse = contentStream == null;
+            response = new HttpResponse(contentStream, responseHeaders, statusCode);
         }
-        else
+        catch
+        {
+            httpResponse.Dispose();
+            throw;
+        }
+
+        if (disposeResponse)
             httpResponse.Dispose();
 
-        return new HttpResponse(contentStream, responseHeaders, (int)httpResponse.StatusCode);
+        return response;
     }
 
     private static HttpMethod ConvertToMethod(HttpMethodType method) => method switch
