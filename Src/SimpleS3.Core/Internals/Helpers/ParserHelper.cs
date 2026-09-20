@@ -1,5 +1,5 @@
 using System.Globalization;
-using System.Text.RegularExpressions;
+using System.Net;
 using System.Xml;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
@@ -10,7 +10,59 @@ namespace Genbox.SimpleS3.Core.Internals.Helpers;
 
 internal static class ParserHelper
 {
-    private static readonly Regex _expirationRegex = new Regex("expiry-date=\"(?<date>.+?)\", rule-id=\"(?<id>.+?)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, TimeSpan.FromSeconds(1));
+    public static (bool inProgress, DateTimeOffset? expiresOn) ParseRestoreHeader(string? header)
+    {
+        if (header == null || !TryParseQuotedParameters(header, out Dictionary<string, string> values))
+            return default;
+
+        bool inProgress = false;
+        DateTimeOffset? expiresOn = null;
+        if (values.TryGetValue("ongoing-request", out string? ongoing) && !bool.TryParse(ongoing, out inProgress))
+            return default;
+
+        if (values.TryGetValue("expiry-date", out string? date))
+        {
+            if (!DateTimeOffset.TryParseExact(date, DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out DateTimeOffset parsed))
+                return default;
+            expiresOn = parsed;
+        }
+
+        return (inProgress, expiresOn);
+    }
+
+    private static bool TryParseQuotedParameters(string header, out Dictionary<string, string> values)
+    {
+        values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        int offset = 0;
+
+        while (offset < header.Length)
+        {
+            int separator = header.IndexOf('=', offset);
+            if (separator < 0)
+                return false;
+            string name = header.Substring(offset, separator - offset).Trim();
+            if (name.Length == 0 || name.IndexOfAny([',', '"']) >= 0 || values.ContainsKey(name))
+                return false;
+            offset = separator + 1;
+            while (offset < header.Length && char.IsWhiteSpace(header[offset]))
+                offset++;
+            if (offset >= header.Length || header[offset] != '"')
+                return false;
+            int endQuote = header.IndexOf('"', ++offset);
+            if (endQuote < 0)
+                return false;
+            values.Add(name, header.Substring(offset, endQuote - offset));
+            offset = endQuote + 1;
+            while (offset < header.Length && char.IsWhiteSpace(header[offset]))
+                offset++;
+            if (offset == header.Length)
+                return true;
+            if (header[offset++] != ',' || offset == header.Length)
+                return false;
+        }
+
+        return false;
+    }
 
     public static IDictionary<string, string> ParseMetadata(IDictionary<string, string> headers)
     {
@@ -32,15 +84,14 @@ internal static class ParserHelper
     {
         data = default;
 
-        if (!headers.TryGetValue(AmzHeaders.XAmzExpiration, out string? expiration))
+        if (!headers.TryGetValue(AmzHeaders.XAmzExpiration, out string? expiration) ||
+            !TryParseQuotedParameters(expiration, out Dictionary<string, string> values) ||
+            !values.TryGetValue("expiry-date", out string? date) ||
+            !values.TryGetValue("rule-id", out string? ruleId) ||
+            !DateTimeOffset.TryParseExact(date, DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out DateTimeOffset expiresOn))
             return false;
 
-        Match match = _expirationRegex.Match(expiration);
-
-        if (!match.Success)
-            return false;
-
-        data = (DateTimeOffset.ParseExact(match.Groups["date"].Value, DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo), match.Groups["id"].Value);
+        data = (expiresOn, WebUtility.UrlDecode(ruleId));
         return true;
     }
 
