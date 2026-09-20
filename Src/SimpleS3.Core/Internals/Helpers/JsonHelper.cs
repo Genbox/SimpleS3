@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using Genbox.SimpleS3.Core.Common.Pools;
 
@@ -36,7 +37,14 @@ internal static class JsonHelper
         //See http://json.org/
         foreach (char c in input)
         {
-            if (c is '"' or '\\' or '/' or '\b' or '\f' or '\n' or '\r' or '\t')
+            if (c < ' ')
+            {
+                sb.Append("\\u");
+                sb.Append(((int)c).ToString("x4", CultureInfo.InvariantCulture));
+                continue;
+            }
+
+            if (c is '"' or '\\' or '/')
                 sb.Append('\\');
 
             sb.Append(c);

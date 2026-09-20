@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
@@ -10,12 +11,12 @@ public class JsonHelperTests
         Dictionary<string, string> pairs = new Dictionary<string, string>(StringComparer.Ordinal);
         pairs.Add("\b \f \n \r \t \" \\ /", "value");
 
-        Assert.Equal($"{{\"\\{(char)8} \\{(char)12} \\{'\n'} \\{'\r'} \\{'\t'} \\\" \\\\ \\/\":\"value\"}}", JsonHelper.EncodeJson(pairs));
+        Assert.Equal(pairs, JsonSerializer.Deserialize<Dictionary<string, string>>(JsonHelper.EncodeJson(pairs)));
 
         pairs.Clear();
 
         pairs.Add("key", "\b \f \n \r \t \" \\ /");
-        Assert.Equal($"{{\"key\":\"\\{(char)8} \\{(char)12} \\{'\n'} \\{'\r'} \\{'\t'} \\\" \\\\ \\/\"}}", JsonHelper.EncodeJson(pairs));
+        Assert.Equal(pairs, JsonSerializer.Deserialize<Dictionary<string, string>>(JsonHelper.EncodeJson(pairs)));
     }
 
     [Fact]
