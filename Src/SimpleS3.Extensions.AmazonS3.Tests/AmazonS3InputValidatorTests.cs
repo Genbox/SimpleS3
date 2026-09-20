@@ -7,14 +7,28 @@ public class AmazonS3InputValidatorTests
     private readonly AmazonS3InputValidator _validator = new AmazonS3InputValidator();
 
     [Theory]
+    [InlineData(ObjectKeyValidationMode.Default)]
+    [InlineData(ObjectKeyValidationMode.DefaultStrict)]
+    public void UnicodeObjectKeysUseUtf8ByteLimits(ObjectKeyValidationMode mode)
+    {
+        string key = string.Concat(Enumerable.Repeat("\U0001F600", 256));
+
+        Assert.True(_validator.TryValidateObjectKey(key, mode, out ValidationStatus valid, out _));
+        Assert.Equal(ValidationStatus.Ok, valid);
+        Assert.False(_validator.TryValidateObjectKey(key + "a", mode, out ValidationStatus tooLong, out _));
+        Assert.Equal(ValidationStatus.WrongLength, tooLong);
+    }
+
+    [Theory]
     [InlineData(null, ValidationStatus.NullInput)]
     [InlineData("AKIAIOSFODNN7EXAMPLE", ValidationStatus.Ok)] //Normal key id
     [InlineData("1AKIAIOSFODNN7EXAMPLE", ValidationStatus.WrongLength)] //Too long
     [InlineData("aKIAIOSFODNN7EXAMPLE", ValidationStatus.WrongFormat)] //It must be uppercase
     public void TryValidateKeyIdTest(string? keyId, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateKeyId(keyId, out ValidationStatus status, out _);
+        bool valid = _validator.TryValidateKeyId(keyId, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
     }
 
     [Theory]
@@ -23,8 +37,11 @@ public class AmazonS3InputValidatorTests
     [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, ValidationStatus.Ok)]
     public void TryValidateAccessKeyTest(byte[]? key, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateAccessKey(key, out ValidationStatus status, out _);
+        byte[]? original = key?.ToArray();
+        bool valid = _validator.TryValidateAccessKey(key, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
+        Assert.Equal(original, key);
     }
 
     [Theory]
@@ -42,11 +59,12 @@ public class AmazonS3InputValidatorTests
     [InlineData("bucket^", ValidationStatus.WrongFormat)] //Must must begin and end with a letter or number
     [InlineData("127.0.0.1", ValidationStatus.WrongFormat)] //Must not be formatted as an IP address (for example, 192.168.5.4)
     [InlineData("xn--punyhulk", ValidationStatus.WrongFormat)] //Must not start with the prefix xn--
-    [InlineData("bucket-s3alias", ValidationStatus.WrongFormat)] //Must not end with the suffix -s3alias. This suffix is reserved for access point alias names
+    [InlineData("bucket-s3alias", ValidationStatus.Ok)] //Alias references are allowed; creation restrictions require request context
     public void TryValidateBucketNameTest(string? input, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateBucketName(input, BucketNameValidationMode.Default, out ValidationStatus status, out _);
+        bool valid = _validator.TryValidateBucketName(input, BucketNameValidationMode.Default, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
     }
 
     [Theory]
@@ -56,7 +74,20 @@ public class AmazonS3InputValidatorTests
     [InlineData("大三.txt", ValidationStatus.Ok)] //Test we can use UTF8 chars
     public void TryValidateObjectKeyTest(string? input, ValidationStatus expectedStatus)
     {
-        _validator.TryValidateObjectKey(input, ObjectKeyValidationMode.Default, out ValidationStatus status, out _);
+        bool valid = _validator.TryValidateObjectKey(input, ObjectKeyValidationMode.Default, out ValidationStatus status, out _);
         Assert.Equal(expectedStatus, status);
+        Assert.Equal(expectedStatus == ValidationStatus.Ok, valid);
+    }
+
+    [Theory]
+    [InlineData("example..com", false)]
+    [InlineData("a...b", false)]
+    [InlineData("example.com", true)]
+    public void AdjacentBucketPeriodsAreRejected(string name, bool expected)
+    {
+        bool valid = _validator.TryValidateBucketName(name, BucketNameValidationMode.Default, out ValidationStatus status, out string? message);
+        Assert.Equal(expected, valid);
+        Assert.Equal(expected ? ValidationStatus.Ok : ValidationStatus.WrongFormat, status);
+        Assert.Equal(expected ? null : "..", message);
     }
 }

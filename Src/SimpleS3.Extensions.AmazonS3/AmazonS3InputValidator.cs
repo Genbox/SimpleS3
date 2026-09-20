@@ -97,6 +97,13 @@ public class AmazonS3InputValidator : InputValidatorBase
             return false;
         }
 
+        if (bucketName.Contains(".."))
+        {
+            status = ValidationStatus.WrongFormat;
+            message = "..";
+            return false;
+        }
+
         //Spec: Bucket names must not be formatted as an IP address (for example, 192.168.5.4).
         if (_ipRegex.IsMatch(bucketName))
         {
@@ -110,14 +117,6 @@ public class AmazonS3InputValidator : InputValidatorBase
         {
             status = ValidationStatus.WrongFormat;
             message = "xn--";
-            return false;
-        }
-
-        //Spec: Bucket names must not end with the suffix -s3alias. This suffix is reserved for access point alias names. For more information, see Using a bucket-style alias for your access point.
-        if (bucketName.EndsWith("-s3alias", StringComparison.Ordinal))
-        {
-            status = ValidationStatus.WrongFormat;
-            message = "-s3alias";
             return false;
         }
 
