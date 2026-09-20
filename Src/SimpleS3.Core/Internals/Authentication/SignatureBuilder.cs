@@ -179,7 +179,11 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
         //4. The query string in the following URI example is prefix=somePrefix&marker=someMarker&max-keys=20:
         //5. If the URI does not include a '?', there is no query string in the request, and you set the canonical query string to an empty string (""). You will still need to include the "\n".
 
-        return UrlHelper.CreateQueryString(parameters.OrderBy(kvp => kvp.Key, StringComparer.Ordinal), outputEqualOnEmpty: true);
+        IEnumerable<KeyValuePair<string, string>> encodedParameters = parameters
+                                                                      .Select(x => new KeyValuePair<string, string>(UrlHelper.UrlEncode(x.Key), UrlHelper.UrlEncode(x.Value)))
+                                                                      .OrderBy(x => x.Key, StringComparer.Ordinal)
+                                                                      .ThenBy(x => x.Value, StringComparer.Ordinal);
+        return UrlHelper.CreateQueryString(encodedParameters, false, true);
     }
 
     private static string CanonicalizeHeaders(OrderedDictionary<string, string> headers)
@@ -197,14 +201,35 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
         foreach (KeyValuePair<string, string> item in headers)
         {
             sb.Append(item.Key)
-              .Append(SigningConstants.Colon)
-              .Append(item.Value)
-              .Append(SigningConstants.Newline);
+              .Append(SigningConstants.Colon);
+            AppendNormalizedHeaderValue(sb, item.Value);
+            sb.Append(SigningConstants.Newline);
         }
 
         return StringBuilderPool.Shared.ReturnString(sb, true);
     }
 
+    private static void AppendNormalizedHeaderValue(StringBuilder builder, string value)
+    {
+        bool hasValue = false;
+        bool pendingSpace = false;
+
+        foreach (char character in value)
+        {
+            if (char.IsWhiteSpace(character))
+            {
+                pendingSpace = hasValue;
+                continue;
+            }
+
+            if (pendingSpace)
+                builder.Append('' '');
+
+            builder.Append(character);
+            hasValue = true;
+            pendingSpace = false;
+        }
+    }
     private static string CanonicalizeHeaderNames(OrderedDictionary<string, string> headers)
     {
         if (headers.Count == 0)
