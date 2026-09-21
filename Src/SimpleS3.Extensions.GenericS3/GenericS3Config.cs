@@ -7,7 +7,7 @@ namespace Genbox.SimpleS3.Extensions.GenericS3;
 
 /// <summary>Provides the <c>GenericS3Config</c> API.</summary>
 [PublicAPI]
-public class GenericS3Config() : SimpleS3Config("GenericS3", string.Empty) //Needed for config binding
+public class GenericS3Config() : SimpleS3Config("GenericS3", null!) // The endpoint is populated during binding and validated before use.
 {
     /// <summary>Provides the <c>GenericS3Config</c> API.</summary>
     public GenericS3Config(string endpoint) : this()

@@ -57,7 +57,7 @@ public class SimpleS3Config
     ///     <see cref="UseTls" />, <see cref="NamingMode" /> and <see cref="RegionCode" />
     ///     </para>
     /// </summary>
-    public string Endpoint { get; set; } = string.Empty;
+    public string Endpoint { get; set; } = null!; // Validated as required after configuration binding.
 
     /// <summary>Controls the level of validation performed on bucket names. You should only create buckets that are valid DNS names.</summary>
     public BucketNameValidationMode BucketNameValidationMode { get; set; } = BucketNameValidationMode.Default;
@@ -82,7 +82,7 @@ public class SimpleS3Config
     public bool LogSensitiveMaterial { get; set; }
 
     /// <summary>Provides the <c>RegionCode</c> API.</summary>
-    public string RegionCode { get; set; } = string.Empty;
+    public string RegionCode { get; set; } = null!; // Validated as required after configuration binding.
 
     /// <summary>Provides the <c>ProviderName</c> API.</summary>
     public string ProviderName { get; set; } = string.Empty;
