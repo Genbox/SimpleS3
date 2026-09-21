@@ -17,7 +17,7 @@ public class ContentStream(Stream stream, long? length, IDisposable? owner = nul
     public override bool CanSeek => stream.CanSeek;
 
     /// <summary>Provides the <c>CanWrite</c> API.</summary>
-    public override bool CanWrite => stream.CanWrite;
+    public override bool CanWrite => false;
 
     /// <summary>Provides the <c>HasLength</c> API.</summary>
     public bool HasLength => length != null;
@@ -45,19 +45,19 @@ public class ContentStream(Stream stream, long? length, IDisposable? owner = nul
     public override long Seek(long offset, SeekOrigin origin) => stream.Seek(offset, origin);
 
     /// <summary>Provides the <c>SetLength</c> API.</summary>
-    public override void SetLength(long value) => throw new AbandonedMutexException("This is a read-only stream");
+    public override void SetLength(long value) => throw new NotSupportedException("This is a read-only stream");
 
     /// <summary>Provides the <c>Write</c> API.</summary>
-    public override void Write(byte[] buffer, int offset, int count) => stream.Write(buffer, offset, count);
+    public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException("This is a read-only stream");
 
     /// <summary>Provides the <c>WriteAsync</c> API.</summary>
-    public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => stream.WriteAsync(buffer, offset, count, cancellationToken);
+    public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => throw new NotSupportedException("This is a read-only stream");
 
     /// <summary>Provides the <c>Flush</c> API.</summary>
-    public override void Flush() => stream.Flush();
+    public override void Flush() => throw new NotSupportedException("This is a read-only stream");
 
     /// <summary>Provides the <c>FlushAsync</c> API.</summary>
-    public override Task FlushAsync(CancellationToken cancellationToken) => stream.FlushAsync(cancellationToken);
+    public override Task FlushAsync(CancellationToken cancellationToken) => throw new NotSupportedException("This is a read-only stream");
 
     /// <summary>Provides the <c>CopyToAsync</c> API.</summary>
     public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken) => stream.CopyToAsync(destination, bufferSize, cancellationToken);
@@ -73,8 +73,14 @@ public class ContentStream(Stream stream, long? length, IDisposable? owner = nul
 
         if (disposing)
         {
-            stream.Dispose();
-            owner?.Dispose();
+            try
+            {
+                stream.Dispose();
+            }
+            finally
+            {
+                owner?.Dispose();
+            }
         }
 
         base.Dispose(disposing);
