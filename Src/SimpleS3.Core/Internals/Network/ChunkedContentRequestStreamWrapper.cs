@@ -68,7 +68,7 @@ internal sealed class ChunkedContentRequestStreamWrapper : IRequestStreamWrapper
         else
             request.SetHeader(AmzHeaders.XAmzContentSha256, SigningConstants.StreamingPayload);
 
-        byte[] seedSignature = _signatureBuilder.CreateSignature(request);
+        byte[] seedSignature = _signatureBuilder.CreateSignature(request, SigningConstants.S3Service);
         return new ChunkedStream(_config, _chunkedSigBuilder, request, seedSignature, input);
     }
 

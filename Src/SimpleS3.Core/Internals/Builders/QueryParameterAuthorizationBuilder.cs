@@ -9,7 +9,7 @@ namespace Genbox.SimpleS3.Core.Internals.Builders;
 
 internal sealed partial class QueryParameterAuthorizationBuilder(ISignatureBuilder builder, ILogger<QueryParameterAuthorizationBuilder> logger) : IAuthorizationBuilder
 {
-    public void BuildAuthorization(IRequest request)
+    public void BuildAuthorization(IRequest request, string service)
     {
         Validator.RequireNotNull(request);
 
@@ -19,7 +19,7 @@ internal sealed partial class QueryParameterAuthorizationBuilder(ISignatureBuild
 
         try
         {
-            signature = builder.CreateSignature(request, false);
+            signature = builder.CreateSignature(request, service, false);
             request.SetQueryParameter(AmzParameters.XAmzSignature, signature.HexEncode());
         }
         finally

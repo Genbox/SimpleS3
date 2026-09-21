@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Factories;
 using Genbox.SimpleS3.Core.Abstracts.Provider;
@@ -11,6 +12,7 @@ using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Common.Pools;
 using Genbox.SimpleS3.Core.Common.Validation;
+using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Builders;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
@@ -74,6 +76,9 @@ internal sealed partial class DefaultRequestHandler : IRequestHandler
         request.SetHeader(HttpHeaders.Host, endpointData.Host);
         request.SetHeader(AmzHeaders.XAmzDate, request.Timestamp, DateTimeFormat.Iso8601DateTime);
 
+        if (_config.Credentials is ISessionAccessKey sessionCredentials)
+            request.SetHeader(AmzHeaders.XAmzSecurityToken, sessionCredentials.SessionToken);
+
         if (requestStream != null && _requestStreamWrappers != null)
         {
             foreach (IRequestStreamWrapper wrapper in _requestStreamWrappers)
@@ -97,7 +102,7 @@ internal sealed partial class DefaultRequestHandler : IRequestHandler
 
         //We add the authorization header here because we need ALL other headers to be present when we do
         if (_config.Credentials != null)
-            _authBuilder.BuildAuthorization(request);
+            _authBuilder.BuildAuthorization(request, SigningConstants.S3Service);
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
         sb.Append(endpointData.Endpoint);

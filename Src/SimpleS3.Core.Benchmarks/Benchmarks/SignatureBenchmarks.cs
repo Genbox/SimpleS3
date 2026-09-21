@@ -47,10 +47,10 @@ public sealed class SignatureBenchmarks : IDisposable
     public void Dispose() => _content.Dispose();
 
     [Benchmark]
-    public byte[] SignatureKeyBuilder() => _signingKeyBuilder.CreateSigningKey(_date);
+    public byte[] SignatureKeyBuilder() => _signingKeyBuilder.CreateSigningKey(_date, SigningConstants.S3Service);
 
     [Benchmark]
-    public byte[] SignatureBuilder() => _signatureBuilder.CreateSignature(_req);
+    public byte[] SignatureBuilder() => _signatureBuilder.CreateSignature(_req, SigningConstants.S3Service);
 
     [Benchmark]
     public byte[] ChunkedSignatureBuilder() => _chunkSigBuilder.CreateChunkSignature(_req, new byte[32], new byte[32], 0, 32);

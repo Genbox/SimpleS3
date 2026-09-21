@@ -62,6 +62,7 @@ public static class SimpleS3CoreServices
         collection.AddSingleton<ISignatureBuilder, SignatureBuilder>();
         collection.AddSingleton<IChunkedSignatureBuilder, ChunkedSignatureBuilder>();
         collection.AddSingleton<HeaderAuthorizationBuilder>();
+        collection.AddSingleton<IAuthorizationBuilder>(x => x.GetRequiredService<HeaderAuthorizationBuilder>());
         collection.AddSingleton<QueryParameterAuthorizationBuilder>();
 
         //Operations

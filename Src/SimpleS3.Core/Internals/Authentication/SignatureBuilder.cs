@@ -42,7 +42,7 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
 
     private readonly SimpleS3Config _options = options.Value;
 
-    public byte[] CreateSignature(IRequest request, bool enablePayloadSignature = true)
+    public byte[] CreateSignature(IRequest request, string service, bool enablePayloadSignature = true)
     {
         Validator.RequireNotNull(request);
 
@@ -59,8 +59,8 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
 
         string payloadSignature = enablePayloadSignature ? request.Headers[AmzHeaders.XAmzContentSha256] : "UNSIGNED-PAYLOAD";
         string canonicalRequest = CreateCanonicalRequest(request.RequestId, url, request.Method, request.Headers, request.QueryParameters, payloadSignature);
-        string stringToSign = CreateStringToSign(request.Timestamp, scopeBuilder.CreateScope("s3", request.Timestamp), canonicalRequest);
-        byte[] signature = CreateSignature(request.Timestamp, stringToSign);
+        string stringToSign = CreateStringToSign(request.Timestamp, scopeBuilder.CreateScope(service, request.Timestamp), canonicalRequest);
+        byte[] signature = CreateSignature(request.Timestamp, stringToSign, service);
 
         if (_options.LogSensitiveMaterial)
             LogSignature(signature);
@@ -90,7 +90,7 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
     }
 
     /// <summary>See https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html Consists of: Hmac-Sha256(SigningKey, StringToSign)</summary>
-    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign)
+    internal byte[] CreateSignature(DateTimeOffset date, string stringToSign, string service)
     {
         byte[]? stringToSignBytes = null;
         byte[]? signingKey = null;
@@ -98,7 +98,7 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
         try
         {
             stringToSignBytes = Encoding.UTF8.GetBytes(stringToSign);
-            signingKey = keyBuilder.CreateSigningKey(date);
+            signingKey = keyBuilder.CreateSigningKey(date, service);
             return CryptoHelper.HmacSign(stringToSignBytes, signingKey);
         }
         finally

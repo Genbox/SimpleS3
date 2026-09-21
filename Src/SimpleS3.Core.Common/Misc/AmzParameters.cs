@@ -133,6 +133,8 @@ public static class AmzParameters
     public const string XAmzExpires = "X-Amz-Expires";
     /// <summary>Provides the <c>XAmzDate</c> API.</summary>
     public const string XAmzDate = "X-Amz-Date";
+    /// <summary>Provides the <c>XAmzSecurityToken</c> API.</summary>
+    public const string XAmzSecurityToken = "X-Amz-Security-Token";
 
     #endregion
 }

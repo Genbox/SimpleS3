@@ -1,11 +1,14 @@
 using System.Security.Cryptography;
 using System.Text;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Authentication;
+using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Internals.Authentication;
+using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
@@ -115,11 +118,29 @@ public class AuthenticationTests
         SigningKeyBuilder builder = new SigningKeyBuilder(Options.Create(config), NullLogger<SigningKeyBuilder>.Instance);
         DateTimeOffset date = new DateTimeOffset(2026, 9, 8, 0, 0, 0, TimeSpan.Zero);
 
-        Assert.Equal(Convert.FromHexString(initialHex), builder.CreateSigningKey(date));
+        Assert.Equal(Convert.FromHexString(initialHex), builder.CreateSigningKey(date, SigningConstants.S3Service));
         config.RegionCode = "eu-west-1";
-        Assert.Equal(Convert.FromHexString(changedHex), builder.CreateSigningKey(date));
+        Assert.Equal(Convert.FromHexString(changedHex), builder.CreateSigningKey(date, SigningConstants.S3Service));
         config.RegionCode = "us-east-1";
-        Assert.Equal(Convert.FromHexString(initialHex), builder.CreateSigningKey(date));
+        Assert.Equal(Convert.FromHexString(initialHex), builder.CreateSigningKey(date, SigningConstants.S3Service));
+    }
+
+    [Fact]
+    public void AuthorizationBuilderUsesRequestedService()
+    {
+        using ServiceProvider provider = CreateSigningProvider();
+        IAuthorizationBuilder builder = provider.GetRequiredService<IAuthorizationBuilder>();
+        ListBucketsRequest request = new ListBucketsRequest
+        {
+            Timestamp = new DateTimeOffset(2026, 9, 8, 0, 0, 0, TimeSpan.Zero)
+        };
+        request.SetHeader(HttpHeaders.Host, "sts.amazonaws.com");
+        request.SetHeader(AmzHeaders.XAmzDate, "20260908T000000Z");
+        request.SetHeader(AmzHeaders.XAmzContentSha256, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+
+        builder.BuildAuthorization(request, "sts");
+
+        Assert.Contains("/20260908/us-east-1/sts/aws4_request,", request.Headers[HttpHeaders.Authorization], StringComparison.Ordinal);
     }
 
     [Fact]

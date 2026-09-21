@@ -24,6 +24,9 @@ public class AmazonS3Config() : SimpleS3Config("AmazonS3", "{Scheme}://{Bucket:.
     /// <summary>Provides the <c>AmazonS3Config</c> API.</summary>
     public AmazonS3Config(string keyId, string secretKey, AmazonS3Region region) : this(new StringAccessKey(keyId, secretKey), region) {}
 
+    /// <summary>Creates a configuration using temporary AWS session credentials.</summary>
+    public AmazonS3Config(string keyId, string secretKey, string sessionToken, AmazonS3Region region) : this(new StringSessionAccessKey(keyId, secretKey, sessionToken), region) {}
+
     /// <summary>Provides the <c>AmazonS3Config</c> API.</summary>
     public AmazonS3Config(IAccessKey? credentials, AmazonS3Region region) : this(credentials, _converter.GetRegion(region).Code) {}
 

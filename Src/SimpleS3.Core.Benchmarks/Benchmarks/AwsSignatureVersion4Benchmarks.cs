@@ -61,7 +61,7 @@ public sealed class AwsSignatureVersion4Benchmarks : IDisposable
     }
 
     [Benchmark]
-    public void SimpleS3() => _builder.BuildAuthorization(_request);
+    public void SimpleS3() => _builder.BuildAuthorization(_request, SigningConstants.S3Service);
 
     [Benchmark]
     public string Aws4()

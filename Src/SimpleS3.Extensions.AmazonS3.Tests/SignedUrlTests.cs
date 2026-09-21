@@ -51,7 +51,7 @@ public sealed class SignedUrlTests : IDisposable
     [Fact]
     public void TestAgainstAmazonsExample()
     {
-        string scope = _scopeBuilder.CreateScope("s3", _testDate);
+        string scope = _scopeBuilder.CreateScope(SigningConstants.S3Service, _testDate);
 
         GetObjectRequest request = new GetObjectRequest("examplebucket", "test.txt");
         request.SetHeader("host", "examplebucket.s3.amazonaws.com");
@@ -82,7 +82,7 @@ public sealed class SignedUrlTests : IDisposable
 
         Assert.Equal(expectedStringtoSign, stringToSign);
 
-        byte[] signature = _sigBuilder.CreateSignature(_testDate, stringToSign);
+        byte[] signature = _sigBuilder.CreateSignature(_testDate, stringToSign, SigningConstants.S3Service);
 
         Assert.Equal("aeeed9bbccd4d02ee5c0109b86d86835f995330da4c265957d157751f604d404", signature.HexEncode());
     }

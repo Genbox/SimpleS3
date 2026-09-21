@@ -6,5 +6,5 @@ namespace Genbox.SimpleS3.Core.Abstracts.Authentication;
 public interface IAuthorizationBuilder
 {
     /// <summary>Provides the <c>BuildAuthorization</c> API.</summary>
-    void BuildAuthorization(IRequest request);
+    void BuildAuthorization(IRequest request, string service);
 }

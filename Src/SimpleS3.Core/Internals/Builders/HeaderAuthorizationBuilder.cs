@@ -18,7 +18,7 @@ internal sealed partial class HeaderAuthorizationBuilder(IOptions<SimpleS3Config
 {
     private readonly SimpleS3Config _config = options.Value;
 
-    public void BuildAuthorization(IRequest request)
+    public void BuildAuthorization(IRequest request, string service)
     {
         Validator.RequireNotNull(request);
 
@@ -26,8 +26,8 @@ internal sealed partial class HeaderAuthorizationBuilder(IOptions<SimpleS3Config
 
         try
         {
-            signature = signatureBuilder.CreateSignature(request);
-            string auth = BuildInternal(request.Timestamp, request.Headers, signature);
+            signature = signatureBuilder.CreateSignature(request, service);
+            string auth = BuildInternal(request.Timestamp, request.Headers, signature, service);
             request.SetHeader(HttpHeaders.Authorization, auth);
         }
         finally
@@ -37,12 +37,12 @@ internal sealed partial class HeaderAuthorizationBuilder(IOptions<SimpleS3Config
         }
     }
 
-    internal string BuildInternal(DateTimeOffset date, IReadOnlyDictionary<string, string> headers, byte[] signature)
+    internal string BuildInternal(DateTimeOffset date, IReadOnlyDictionary<string, string> headers, byte[] signature, string service)
     {
         Validator.RequireNotNull(_config.Credentials, "If we get to this point, we expect to have valid credentials");
         BuildingHeaderAuthorization();
 
-        string scope = scopeBuilder.CreateScope("s3", date);
+        string scope = scopeBuilder.CreateScope(service, date);
 
         StringBuilder header = StringBuilderPool.Shared.Rent(250);
         header.Append(SigningConstants.AlgorithmTag);

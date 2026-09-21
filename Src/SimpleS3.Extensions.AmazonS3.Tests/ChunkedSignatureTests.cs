@@ -100,14 +100,14 @@ public sealed class ChunkedSignatureTests : IDisposable
             string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethodType.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(query), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
             Assert.Equal(expectedSeedCr, actualSeedCr);
 
-            string scope = _scopeBuilder.CreateScope("s3", _testDate);
+            string scope = _scopeBuilder.CreateScope(SigningConstants.S3Service, _testDate);
             string actualSts = _sigBuilder.CreateStringToSign(_testDate, scope, actualSeedCr);
             Assert.Equal(expectedSeedSts, actualSts);
 
             const string expectedAuthHeader = "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request,SignedHeaders=content-encoding;content-length;host;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length;x-amz-storage-class,Signature=4f232c4386841ef735655705268965c44a0e4690baa4adea153f7db9fa80a0a9";
 
-            byte[] seedSignature = _sigBuilder.CreateSignature(_testDate, actualSts);
-            string actualAuthHeader = _authBuilder.BuildInternal(_testDate, headers, seedSignature);
+            byte[] seedSignature = _sigBuilder.CreateSignature(_testDate, actualSts, SigningConstants.S3Service);
+            string actualAuthHeader = _authBuilder.BuildInternal(_testDate, headers, seedSignature, SigningConstants.S3Service);
             Assert.Equal(expectedAuthHeader, actualAuthHeader);
 
             //Now we test the actual chunks
@@ -222,12 +222,12 @@ public sealed class ChunkedSignatureTests : IDisposable
             string actualSeedCr = _sigBuilder.CreateCanonicalRequest(Guid.Empty, "/examplebucket/chunkObject.txt", HttpMethodType.PUT, new ReadOnlyDictionary<string, string>(headers), new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(StringComparer.Ordinal)), "STREAMING-AWS4-HMAC-SHA256-PAYLOAD-TRAILER");
             Assert.Equal(expectedSeedCr, actualSeedCr);
 
-            string scope = _scopeBuilder.CreateScope("s3", _testDate);
+            string scope = _scopeBuilder.CreateScope(SigningConstants.S3Service, _testDate);
             string actualSts = _sigBuilder.CreateStringToSign(_testDate, scope, actualSeedCr);
             Assert.Equal(expectedSeedSts, actualSts);
 
             const string expectedSeedSig = "106e2a8a18243abcf37539882f36619c00e2dfc72633413f02d3b74544bfeb8e";
-            byte[] seedSignature = _sigBuilder.CreateSignature(_testDate, actualSts);
+            byte[] seedSignature = _sigBuilder.CreateSignature(_testDate, actualSts, SigningConstants.S3Service);
             Assert.Equal(expectedSeedSig, seedSignature.HexEncode());
 
             byte[] file = new byte[65 * 1024];
@@ -330,7 +330,7 @@ public sealed class ChunkedSignatureTests : IDisposable
         req.Timestamp = new DateTimeOffset(2019, 1, 1, 12, 0, 0, TimeSpan.Zero);
         req.SetHeader(AmzHeaders.XAmzContentSha256, "STREAMING-AWS4-HMAC-SHA256-PAYLOAD");
 
-        byte[] seedSignature = _sigBuilder.CreateSignature(req);
+        byte[] seedSignature = _sigBuilder.CreateSignature(req, SigningConstants.S3Service);
 
         using ChunkedStream stream = new ChunkedStream(_config, _chunkedSigBuilder, req, seedSignature, req.Content!);
         using StreamReader sr = new StreamReader(stream, Encoding.UTF8);

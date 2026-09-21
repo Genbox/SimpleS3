@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SimpleS3.AmazonS3\SimpleS3.AmazonS3.csproj" />
     <ProjectReference Include="..\SimpleS3.Utility.Shared\SimpleS3.Utility.Shared.csproj" />
   </ItemGroup>
 

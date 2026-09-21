@@ -6,5 +6,5 @@ namespace Genbox.SimpleS3.Core.Abstracts.Authentication;
 public interface ISignatureBuilder
 {
     /// <summary>Provides the <c>CreateSignature</c> API.</summary>
-    byte[] CreateSignature(IRequest request, bool enablePayloadSignature = true);
+    byte[] CreateSignature(IRequest request, string service, bool enablePayloadSignature = true);
 }

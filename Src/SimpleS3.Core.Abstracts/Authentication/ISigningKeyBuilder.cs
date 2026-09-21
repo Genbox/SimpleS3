@@ -4,5 +4,5 @@ namespace Genbox.SimpleS3.Core.Abstracts.Authentication;
 public interface ISigningKeyBuilder
 {
     /// <summary>Provides the <c>CreateSigningKey</c> API.</summary>
-    byte[] CreateSigningKey(DateTimeOffset dateTime);
+    byte[] CreateSigningKey(DateTimeOffset dateTime, string service);
 }

@@ -24,6 +24,13 @@ internal sealed class AccessKeyValidator : ValidatorBase<IAccessKey>
         RuleFor(x => x.SecretKey)
             .NotNull().WithMessage("You must provide a secret key")
             .Custom(ValidateSecretKey);
+
+        RuleFor(x => x)
+            .Custom((credentials, context) =>
+            {
+                if (credentials is ISessionAccessKey session && string.IsNullOrWhiteSpace(session.SessionToken))
+                    context.AddFailure(nameof(ISessionAccessKey.SessionToken), "You must provide a session token");
+            });
     }
 
     private void ValidateKeyId(string input, ValidationContext<IAccessKey> context)

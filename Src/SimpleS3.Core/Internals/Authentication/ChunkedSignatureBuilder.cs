@@ -25,7 +25,7 @@ internal sealed partial class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuil
 
         CreatingChunkSignature(request.RequestId);
 
-        string stringToSign = CreateStringToSign(request.Timestamp, scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, content, offset, length);
+        string stringToSign = CreateStringToSign(request.Timestamp, scopeBuilder.CreateScope(SigningConstants.S3Service, request.Timestamp), previousSignature, content, offset, length);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
         if (_config.LogSensitiveMaterial)
@@ -44,7 +44,7 @@ internal sealed partial class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuil
 
         IReadOnlyDictionary<string, string> trailers = (request as IRequestTrailers)?.Trailers ?? EmptyTrailers;
         string canonicalTrailingHeaders = CreateCanonicalTrailingHeaders(trailers);
-        string stringToSign = CreateTrailerStringToSign(request.Timestamp, scopeBuilder.CreateScope("s3", request.Timestamp), previousSignature, canonicalTrailingHeaders);
+        string stringToSign = CreateTrailerStringToSign(request.Timestamp, scopeBuilder.CreateScope(SigningConstants.S3Service, request.Timestamp), previousSignature, canonicalTrailingHeaders);
         byte[] signature = CreateSignature(request.Timestamp, stringToSign);
 
         if (_config.LogSensitiveMaterial)
@@ -120,7 +120,7 @@ internal sealed partial class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuil
         try
         {
             stringToSignBytes = Encoding.UTF8.GetBytes(stringToSign);
-            signingKey = keyBuilder.CreateSigningKey(date);
+            signingKey = keyBuilder.CreateSigningKey(date, SigningConstants.S3Service);
             return CryptoHelper.HmacSign(stringToSignBytes, signingKey);
         }
         finally

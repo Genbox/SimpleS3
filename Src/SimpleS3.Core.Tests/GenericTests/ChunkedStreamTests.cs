@@ -412,7 +412,7 @@ public class ChunkedStreamTests
 
     private sealed class StableSignatureBuilder : ISignatureBuilder
     {
-        public byte[] CreateSignature(IRequest request, bool enablePayloadSignature = true) => new byte[32];
+        public byte[] CreateSignature(IRequest request, string service, bool enablePayloadSignature = true) => new byte[32];
     }
 
     private sealed class UnknownLengthStream : Stream

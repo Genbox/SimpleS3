@@ -19,7 +19,7 @@ public class SigningMaterialCleanupTests
         TrackingSigningKeyBuilder keyBuilder = new TrackingSigningKeyBuilder();
         SignatureBuilder builder = new SignatureBuilder(keyBuilder, new TestScopeBuilder(), Options.Create(CreateConfig()), NullLogger<SignatureBuilder>.Instance);
 
-        byte[] signature = builder.CreateSignature(DateTimeOffset.UtcNow, "string-to-sign");
+        byte[] signature = builder.CreateSignature(DateTimeOffset.UtcNow, "string-to-sign", SigningConstants.S3Service);
 
         Assert.NotEmpty(signature);
         Assert.All(keyBuilder.SigningKey, x => Assert.Equal(0, x));
@@ -48,7 +48,7 @@ public class SigningMaterialCleanupTests
         };
         request.SetHeader(HttpHeaders.Host, "example.com");
 
-        builder.BuildAuthorization(request);
+        builder.BuildAuthorization(request, SigningConstants.S3Service);
 
         Assert.All(signatureBuilder.Signature, x => Assert.Equal(0, x));
     }
@@ -60,7 +60,7 @@ public class SigningMaterialCleanupTests
         QueryParameterAuthorizationBuilder builder = new QueryParameterAuthorizationBuilder(signatureBuilder, NullLogger<QueryParameterAuthorizationBuilder>.Instance);
         PutObjectRequest request = new PutObjectRequest("bucket", "object", null);
 
-        builder.BuildAuthorization(request);
+        builder.BuildAuthorization(request, SigningConstants.S3Service);
 
         Assert.All(signatureBuilder.Signature, x => Assert.Equal(0, x));
     }
@@ -75,14 +75,14 @@ public class SigningMaterialCleanupTests
     {
         public byte[] SigningKey { get; } = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
-        public byte[] CreateSigningKey(DateTimeOffset dateTime) => SigningKey;
+        public byte[] CreateSigningKey(DateTimeOffset dateTime, string service) => SigningKey;
     }
 
     private sealed class TrackingSignatureBuilder : ISignatureBuilder
     {
         public byte[] Signature { get; } = [1, 2, 3, 4, 5, 6, 7, 8];
 
-        public byte[] CreateSignature(IRequest request, bool enablePayloadSignature = true) => Signature;
+        public byte[] CreateSignature(IRequest request, string service, bool enablePayloadSignature = true) => Signature;
     }
 
     private sealed class TestScopeBuilder : IScopeBuilder

@@ -1,4 +1,5 @@
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
@@ -8,6 +9,7 @@ namespace Genbox.ProviderTests.Code;
 
 internal sealed class ProviderSetup : IDisposable
 {
+    private readonly Dictionary<S3Provider, ServiceProvider> providers = [];
     private readonly List<ServiceProvider> serviceProviders = [];
 
     private ProviderSetup()
@@ -27,6 +29,10 @@ internal sealed class ProviderSetup : IDisposable
             serviceProvider.Dispose();
     }
 
+    public IProfile GetProfile(S3Provider provider) => Clients.First(x => x.Item1 == provider).Item2;
+
+    public IAccessKeyProtector GetAccessKeyProtector(S3Provider provider) => providers[provider].GetRequiredService<IAccessKeyProtector>();
+
     private void BuildProvider(S3Provider provider)
     {
         ServiceProvider services = UtilityHelper.CreateSimpleS3(provider, "TestSetup-" + provider, false, c => c.ObjectKeyValidationMode = ObjectKeyValidationMode.Disabled);
@@ -38,6 +44,7 @@ internal sealed class ProviderSetup : IDisposable
         if (profile != null)
         {
             serviceProviders.Add(services);
+            providers.Add(provider, services);
             Clients.Add((provider, profile, services.GetRequiredService<ISimpleClient>()));
         }
         else

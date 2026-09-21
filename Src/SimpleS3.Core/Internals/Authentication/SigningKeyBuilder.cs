@@ -16,7 +16,6 @@ internal sealed partial class SigningKeyBuilder : ISigningKeyBuilder
     private readonly IAccessKeyProtector? _protector;
     private readonly byte[] _requestBytes;
     private readonly byte[] _schemeBytes;
-    private readonly byte[] _serviceBytes;
 
     public SigningKeyBuilder(IOptions<SimpleS3Config> options, ILogger<SigningKeyBuilder> logger, IAccessKeyProtector? protector = null)
     {
@@ -25,12 +24,11 @@ internal sealed partial class SigningKeyBuilder : ISigningKeyBuilder
         _protector = protector;
 
         // Cache fixed signing components. RegionCode remains mutable.
-        _serviceBytes = "s3"u8.ToArray();
         _requestBytes = "aws4_request"u8.ToArray();
-        _schemeBytes = Encoding.UTF8.GetBytes(SigningConstants.Scheme);
+        _schemeBytes = "AWS4"u8.ToArray();
     }
 
-    public byte[] CreateSigningKey(DateTimeOffset dateTime)
+    public byte[] CreateSigningKey(DateTimeOffset dateTime, string service)
     {
         Validator.RequireNotNull(_config.Credentials, "If we get to this point, we expect to have valid credentials");
         CreatingSigningKey(dateTime);
@@ -57,7 +55,7 @@ internal sealed partial class SigningKeyBuilder : ISigningKeyBuilder
         Array.Clear(key, 0, key.Length);
 
         byte[] hashRegion = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(_config.RegionCode), hashDate);
-        byte[] hashService = CryptoHelper.HmacSign(_serviceBytes, hashRegion);
+        byte[] hashService = CryptoHelper.HmacSign(Encoding.UTF8.GetBytes(service), hashRegion);
         byte[] signingKey = CryptoHelper.HmacSign(_requestBytes, hashService);
 
         if (_config.LogSensitiveMaterial)

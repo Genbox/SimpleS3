@@ -49,6 +49,8 @@ public static class AmzHeaders
     public const string XAmzDate = "x-amz-date";
     /// <summary>Provides the <c>XAmzContentSha256</c> API.</summary>
     public const string XAmzContentSha256 = "x-amz-content-sha256";
+    /// <summary>Provides the <c>XAmzSecurityToken</c> API.</summary>
+    public const string XAmzSecurityToken = "x-amz-security-token";
 
     #endregion
 

@@ -65,11 +65,13 @@ internal sealed partial class DefaultSignedRequestHandler : ISignedRequestHandle
             IEndpointData endpointData = _endpointBuilder.GetEndpoint(request);
             request.SetHeader(HttpHeaders.Host, endpointData.Host);
 
-            string scope = _scopeBuilder.CreateScope("s3", request.Timestamp);
+            string scope = _scopeBuilder.CreateScope(SigningConstants.S3Service, request.Timestamp);
             request.SetQueryParameter(AmzParameters.XAmzAlgorithm, SigningConstants.AlgorithmTag);
             request.SetQueryParameter(AmzParameters.XAmzCredential, _config.Credentials.KeyId + '/' + scope);
             request.SetQueryParameter(AmzParameters.XAmzDate, request.Timestamp.ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
             request.SetQueryParameter(AmzParameters.XAmzExpires, expiresIn.TotalSeconds.ToString(NumberFormatInfo.InvariantInfo));
+            if (_config.Credentials is ISessionAccessKey sessionCredentials)
+                request.SetQueryParameter(AmzParameters.XAmzSecurityToken, sessionCredentials.SessionToken);
             request.SetQueryParameter(AmzParameters.XAmzSignedHeaders, string.Join(";", HeaderWhitelist.FilterHeaders(request.Headers).Select(x => x.Key)));
 
             //Copy all headers to query parameters
@@ -81,7 +83,7 @@ internal sealed partial class DefaultSignedRequestHandler : ISignedRequestHandle
                 request.SetQueryParameter(header.Key, header.Value);
             }
 
-            _authBuilder.BuildAuthorization(request);
+            _authBuilder.BuildAuthorization(request, SigningConstants.S3Service);
 
             StringBuilder sb = StringBuilderPool.Shared.Rent(200);
             sb.Append(endpointData.Endpoint);
