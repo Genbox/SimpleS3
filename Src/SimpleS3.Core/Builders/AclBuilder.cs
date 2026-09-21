@@ -72,49 +72,29 @@ public class AclBuilder : IHttpHeaderBuilder
         return StringBuilderPool.Shared.ReturnString(sb);
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public void Reset()
+    [SuppressMessage("Design", "CA1033", Justification = "Reset remains an implementation detail and is exposed only through the external header-builder contract.")]
+    void IHttpHeaderBuilder.Reset() => Reset();
+
+    /// <summary>Provides the <c>HasData</c> API.</summary>
+    public bool HasData() => _emails?.Count > 0 || _ids?.Count > 0 || _uris?.Count > 0;
+
+    internal void Reset()
     {
         _emails?.Clear();
         _ids?.Clear();
         _uris?.Clear();
     }
 
-    /// <summary>Provides the <c>HasData</c> API.</summary>
-    public bool HasData() => _emails?.Count > 0 || _ids?.Count > 0 || _uris?.Count > 0;
-
-    /// <summary>
-    /// Add an email to the ACL. Note that email support is only in these AWS regions:
-    /// <list type="bullet">
-    ///     <item>
-    ///         <term>US East (N. Virginia)</term>
-    ///     </item>
-    ///     <item>
-    ///         <term>US West (N. California)</term>
-    ///     </item>
-    ///     <item>
-    ///         <term>US West (Oregon)</term>
-    ///     </item>
-    ///     <item>
-    ///         <term>Asia Pacific (Singapore)</term>
-    ///     </item>
-    ///     <item>
-    ///         <term>Asia Pacific (Sydney)</term>
-    ///     </item>
-    ///     <item>
-    ///         <term>Asia Pacific (Tokyo)</term>
-    ///     </item>
-    ///     <item>
-    ///         <term>EU (Ireland)</term>
-    ///     </item>
-    ///     <item>
-    ///         <term>South America (São Paulo)</term>
-    ///     </item>
-    /// </list>
-    /// </summary>
+    /// <summary>Add an email grantee to the ACL header.</summary>
+    /// <remarks>
+    /// Amazon S3 discontinued email grantee ACLs on October 1, 2025 and rejects these requests with HTTP 405.
+    /// Use <see cref="AddUserId" /> with a canonical user ID for Amazon S3.
+    /// Other S3-compatible providers must be checked for email grantee support before using this method.
+    /// </remarks>
     /// <param name="email">The email you want to add</param>
     public AclBuilder AddEmail(string email)
     {
+        ValidateGrantee(email, nameof(email));
         _emails ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         if (!_emails.Add(email))
@@ -128,6 +108,7 @@ public class AclBuilder : IHttpHeaderBuilder
     public AclBuilder AddUserId(string id)
     {
         Validator.RequireNotNullOrWhiteSpace(id);
+        ValidateGrantee(id, nameof(id));
 
         _ids ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -146,6 +127,7 @@ public class AclBuilder : IHttpHeaderBuilder
     public AclBuilder AddGroup(string uri)
     {
         Validator.RequireNotNullOrWhiteSpace(uri);
+        ValidateGrantee(uri, nameof(uri));
 
         _uris ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -163,5 +145,13 @@ public class AclBuilder : IHttpHeaderBuilder
 
         string groupStr = group.GetDisplayName();
         return AddGroup(groupStr);
+    }
+
+    private static void ValidateGrantee(string value, string parameterName)
+    {
+        Validator.RequireNotNullOrWhiteSpace(value);
+
+        if (value.IndexOfAny(['"', '\\', ',', '\r', '\n']) >= 0)
+            throw new ArgumentException("ACL grantees cannot contain quotes, backslashes, commas, or line breaks.", parameterName);
     }
 }
