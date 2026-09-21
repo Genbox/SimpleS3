@@ -4,6 +4,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" />
+    <PackageReference Include="System.IO.Hashing" />
     <PackageReference Include="Genbox.HttpBuilders" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Genbox.FastEnum" PrivateAssets="all" ExcludeAssets="runtime" />

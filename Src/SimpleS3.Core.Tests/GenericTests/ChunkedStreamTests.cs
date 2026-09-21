@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using FluentValidation;
+using FluentValidation.Results;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Request;
@@ -9,6 +11,7 @@ using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Marshallers.Requests;
 using Genbox.SimpleS3.Core.Internals.Network;
+using Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Microsoft.Extensions.Options;
 
@@ -24,13 +27,13 @@ public class ChunkedStreamTests
     public void ConfigRejectsChunkSizesBelowEightKiB(int size, bool expectedValid)
     {
         SimpleS3Config config = new SimpleS3Config(null, "{Scheme}://{Bucket:.}s3.example.test", "region") { StreamingChunkSize = size };
-        Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs.ConfigValidator validator = new Genbox.SimpleS3.Core.Internals.Validation.Validators.Configs.ConfigValidator(new FluentValidation.InlineValidator<IAccessKey?>());
-        FluentValidation.Results.ValidationResult result = validator.Validate(config);
+        ConfigValidator validator = new ConfigValidator(new InlineValidator<IAccessKey?>());
+        ValidationResult result = validator.Validate(config);
         Assert.Equal(expectedValid, result.IsValid);
 
         if (!expectedValid)
         {
-            FluentValidation.Results.ValidationFailure error = Assert.Single(result.Errors);
+            ValidationFailure error = Assert.Single(result.Errors);
             Assert.Equal(nameof(SimpleS3Config.StreamingChunkSize), error.PropertyName);
             Assert.Contains("8192", error.ErrorMessage, StringComparison.Ordinal);
         }
@@ -325,17 +328,17 @@ public class ChunkedStreamTests
     }
 
     [Fact]
-    public void UnsupportedAutomaticChecksumRequiresPrecalculatedValue()
+    public void UnknownAutomaticChecksumIsRejected()
     {
         byte[] payload = "abc"u8.ToArray();
         SimpleS3Config config = new SimpleS3Config("Test", "https://s3.example.com") { StreamingChunkSize = 8192 };
         ChunkedContentRequestStreamWrapper wrapper = new ChunkedContentRequestStreamWrapper(Options.Create(config), new StableChunkedSignatureBuilder(), new StableSignatureBuilder());
-        using MemoryStream source = new MemoryStream(payload);
-        PutObjectRequest request = new PutObjectRequest("bucket", "object", source) { ChecksumAlgorithm = ChecksumAlgorithm.Md5 };
+        using MemoryStream input = new MemoryStream(payload);
+        PutObjectRequest request = new PutObjectRequest("bucket", "object", input) { ChecksumAlgorithm = (ChecksumAlgorithm)int.MaxValue };
 
         NotSupportedException exception = Assert.Throws<NotSupportedException>(() =>
         {
-            using Stream wrapped = wrapper.Wrap(request.Content!, request);
+            using Stream result = wrapper.Wrap(request.Content!, request);
         });
 
         Assert.Contains("precalculated", exception.Message, StringComparison.OrdinalIgnoreCase);

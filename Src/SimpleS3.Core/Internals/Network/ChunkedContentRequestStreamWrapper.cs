@@ -74,10 +74,13 @@ internal sealed class ChunkedContentRequestStreamWrapper : IRequestStreamWrapper
 
     private static ChecksumAlgorithm ConfigureTrailingChecksum(IRequest request, IRequestTrailers? requestTrailers)
     {
-        if (requestTrailers == null || request is not IHasChecksumProperties { ChecksumAlgorithm: not ChecksumAlgorithm.Unknown, Checksum: null } checksum)
+        if (requestTrailers == null || request is not IHasChecksumProperties { ChecksumAlgorithm: not ChecksumAlgorithm.Unknown } checksum)
             return ChecksumAlgorithm.Unknown;
 
         string checksumHeader = AmzHeaders.XAmzChecksum + checksum.ChecksumAlgorithm.ToString().ToLowerInvariant();
+
+        if (checksum.Checksum != null)
+            return ChecksumAlgorithm.Unknown;
 
         if (request.Headers.ContainsKey(checksumHeader))
             return ChecksumAlgorithm.Unknown;

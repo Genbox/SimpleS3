@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.IO.Hashing;
 using System.Security.Cryptography;
 using Genbox.SimpleS3.Core.Enums;
 
@@ -18,6 +19,10 @@ internal static class ChecksumHashAlgorithm
         ChecksumAlgorithm.Sha1 => SHA1.Create(),
         ChecksumAlgorithm.Sha256 => SHA256.Create(),
         ChecksumAlgorithm.Sha512 => SHA512.Create(),
+        ChecksumAlgorithm.Md5 => MD5.Create(),
+        ChecksumAlgorithm.XxHash64 => new NonCryptographicHashAdapter(new XxHash64()),
+        ChecksumAlgorithm.XxHash3 => new NonCryptographicHashAdapter(new XxHash3()),
+        ChecksumAlgorithm.XxHash128 => new NonCryptographicHashAdapter(new XxHash128()),
         _ => throw new NotSupportedException($"Automatic streaming checksum calculation does not support {algorithm}. Provide a precalculated checksum value instead.")
     };
 
@@ -28,17 +33,36 @@ internal static class ChecksumHashAlgorithm
         ChecksumAlgorithm.Sha1 => 28,
         ChecksumAlgorithm.Sha256 => 44,
         ChecksumAlgorithm.Sha512 => 88,
+        ChecksumAlgorithm.Md5 or ChecksumAlgorithm.XxHash128 => 24,
+        ChecksumAlgorithm.XxHash64 or ChecksumAlgorithm.XxHash3 => 12,
         _ => throw new NotSupportedException($"Automatic streaming checksum calculation does not support {algorithm}. Provide a precalculated checksum value instead.")
     };
 
+    private sealed class NonCryptographicHashAdapter : HashAlgorithm
+    {
+        private readonly NonCryptographicHashAlgorithm _algorithm;
+
+        public NonCryptographicHashAdapter(NonCryptographicHashAlgorithm algorithm)
+        {
+            _algorithm = algorithm;
+            HashSizeValue = algorithm.HashLengthInBytes * 8;
+        }
+
+        public override void Initialize() => _algorithm.Reset();
+        protected override void HashCore(byte[] array, int ibStart, int cbSize) => _algorithm.Append(new ReadOnlySpan<byte>(array, ibStart, cbSize));
+        protected override byte[] HashFinal() => _algorithm.GetCurrentHash();
+    }
+
     private sealed class Crc32Algorithm : HashAlgorithm
     {
-        private readonly uint _polynomial;
+        private static readonly uint[] _crc32Table = CreateTable(0xedb88320);
+        private static readonly uint[] _crc32CTable = CreateTable(0x82f63b78);
+        private readonly uint[] _table;
         private uint _value = uint.MaxValue;
 
         public Crc32Algorithm(uint polynomial)
         {
-            _polynomial = polynomial;
+            _table = polynomial == 0xedb88320 ? _crc32Table : _crc32CTable;
             HashSizeValue = 32;
         }
 
@@ -47,12 +71,7 @@ internal static class ChecksumHashAlgorithm
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
         {
             for (int i = ibStart; i < ibStart + cbSize; i++)
-            {
-                _value ^= array[i];
-
-                for (int bit = 0; bit < 8; bit++)
-                    _value = (_value >> 1) ^ ((_value & 1) == 0 ? 0 : _polynomial);
-            }
+                _value = (_value >> 8) ^ _table[(int)((_value ^ array[i]) & 0xff)];
         }
 
         protected override byte[] HashFinal()
@@ -64,11 +83,29 @@ internal static class ChecksumHashAlgorithm
                 return [(byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value];
             }
         }
+
+        private static uint[] CreateTable(uint polynomial)
+        {
+            uint[] table = new uint[256];
+
+            for (uint i = 0; i < table.Length; i++)
+            {
+                uint value = i;
+
+                for (int bit = 0; bit < 8; bit++)
+                    value = (value >> 1) ^ ((value & 1) == 0 ? 0 : polynomial);
+
+                table[i] = value;
+            }
+
+            return table;
+        }
     }
 
     private sealed class Crc64NvmeAlgorithm : HashAlgorithm
     {
         private const ulong _polynomial = 0x9a6c9329ac4bc9b5;
+        private static readonly ulong[] _table = CreateTable();
         private ulong _value = ulong.MaxValue;
 
         public Crc64NvmeAlgorithm()
@@ -81,12 +118,7 @@ internal static class ChecksumHashAlgorithm
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
         {
             for (int i = ibStart; i < ibStart + cbSize; i++)
-            {
-                _value ^= array[i];
-
-                for (int bit = 0; bit < 8; bit++)
-                    _value = (_value >> 1) ^ ((_value & 1) == 0 ? 0 : _polynomial);
-            }
+                _value = (_value >> 8) ^ _table[(int)((_value ^ array[i]) & 0xff)];
         }
 
         protected override byte[] HashFinal()
@@ -107,6 +139,23 @@ internal static class ChecksumHashAlgorithm
                     (byte)value
                 ];
             }
+        }
+
+        private static ulong[] CreateTable()
+        {
+            ulong[] table = new ulong[256];
+
+            for (ulong i = 0; i < (ulong)table.Length; i++)
+            {
+                ulong value = i;
+
+                for (int bit = 0; bit < 8; bit++)
+                    value = (value >> 1) ^ ((value & 1) == 0 ? 0 : _polynomial);
+
+                table[i] = value;
+            }
+
+            return table;
         }
     }
 }
