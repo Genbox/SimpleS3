@@ -25,7 +25,7 @@ internal sealed class GetObjectRetentionResponseMarshal : IResponseMarshal<GetOb
                 continue;
             }
 
-            switch (reader.Name)
+            switch (reader.LocalName)
             {
                 case "Mode":
                     response.LockMode = Core.Enums.Enums.LockMode.Parse(reader.ReadElementContentAsString(), LockModeFormat.DisplayName);

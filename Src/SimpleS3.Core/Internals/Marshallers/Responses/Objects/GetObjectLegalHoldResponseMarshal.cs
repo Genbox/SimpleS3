@@ -14,8 +14,7 @@ internal sealed class GetObjectLegalHoldResponseMarshal : IResponseMarshal<GetOb
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
-        reader.ReadToDescendant("Status");
-        reader.Read();
-        response.LegalHold = reader.Value == "ON";
+        XmlHelper.ReadToDescendant(reader, "Status");
+        response.LegalHold = reader.ReadElementContentAsString() == "ON";
     }
 }
