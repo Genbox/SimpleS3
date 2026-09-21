@@ -10,18 +10,21 @@ internal sealed class CompleteMultipartUploadRequestValidator : RequestValidator
 {
     public CompleteMultipartUploadRequestValidator(IInputValidator validator, IOptions<SimpleS3Config> config) : base(validator, config)
     {
+        RuleFor(x => x.UploadParts).Must(x => x is { Count: >= 1 and <= 10_000 })
+                                   .WithMessage("S3 allows between 1 and 10,000 parts in a multipart upload");
+
+        RuleForEach(x => x.UploadParts).Must(x => x.PartNumber is >= 1 and <= 10_000)
+                                       .WithMessage("S3 part numbers must be between 1 and 10,000");
+
         RuleFor(x => x.UploadParts).Must(x =>
         {
-            if (x.Count == 1)
-                return true;
-
             for (int i = 1; i < x.Count; i++)
             {
-                if (x[i - 1].PartNumber != x[i].PartNumber - 1)
+                if (x[i - 1].PartNumber >= x[i].PartNumber)
                     return false;
             }
 
             return true;
-        }).WithMessage("S3 require part numbers to be in ascending order");
+        }).WithMessage("S3 requires part numbers to be in ascending order");
     }
 }
