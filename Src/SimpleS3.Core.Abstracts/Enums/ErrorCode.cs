@@ -272,5 +272,8 @@ public enum ErrorCode
     InvalidBucketAclWithBlockPublicAccessError,
 
     /// <summary>Provides the <c>MalformedPolicy</c> API.</summary>
-    MalformedPolicy
+    MalformedPolicy,
+
+    /// <summary>The append offset does not match the current object size.</summary>
+    InvalidWriteOffset
 }
