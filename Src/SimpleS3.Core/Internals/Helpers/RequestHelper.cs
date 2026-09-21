@@ -16,7 +16,7 @@ internal static class RequestHelper
         if (config.NamingMode == NamingMode.PathStyle && request is IHasBucketName bn)
             sb.Append(bn.BucketName).Append('/');
 
-        if (request is IHasObjectKey ok)
+        if (request is IHasObjectKey { ObjectKey: not null } ok)
             sb.Append(UrlHelper.UrlPathEncode(ok.ObjectKey));
     }
 
