@@ -11,4 +11,10 @@ public class S3Filter
 
     /// <summary>Provides the <c>AndConditions</c> API.</summary>
     public S3AndCondition? AndConditions { get; set; }
+
+    /// <summary>Exclusive minimum object size in bytes for a lifecycle rule.</summary>
+    public long? ObjectSizeGreaterThan { get; set; }
+
+    /// <summary>Exclusive maximum object size in bytes for a lifecycle rule.</summary>
+    public long? ObjectSizeLessThan { get; set; }
 }

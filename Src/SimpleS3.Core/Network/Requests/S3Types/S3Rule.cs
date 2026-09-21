@@ -1,10 +1,10 @@
 namespace Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 /// <summary>Provides the <c>S3Rule</c> API.</summary>
-public class S3Rule(string id, bool enabled)
+public class S3Rule(string? id, bool enabled)
 {
-    /// <summary>Unique identifier for the rule. The value cannot be longer than 255 characters.</summary>
-    public string Id { get; } = id;
+    /// <summary>Optional unique identifier for the rule. Null omits the ID element. The value cannot be longer than 255 characters.</summary>
+    public string? Id { get; } = id;
 
     /// <summary>Specifies the days since the initiation of an incomplete multipart upload that Amazon S3 will wait before permanently removing all parts of the upload.</summary>
     public int? AbortIncompleteMultipartUploadDays { get; set; }
@@ -12,11 +12,17 @@ public class S3Rule(string id, bool enabled)
     /// <summary>Specifies the expiration for the lifecycle of the object in the form of date, days and, whether the object has a delete marker.</summary>
     public S3Expiration? Expiration { get; set; }
 
-    /// <summary>The Filter is used to identify objects that a Lifecycle Rule applies to. A Filter must have exactly one of Prefix, Tag, or And specified.</summary>
+    /// <summary>The legacy rule-level key prefix. Use Filter for new configurations; do not set both.</summary>
+    public string? Prefix { get; set; }
+
+    /// <summary>Identifies matching objects. The filter can be empty or specify one prefix, tag, size predicate, or And condition.</summary>
     public S3Filter? Filter { get; set; }
 
     /// <summary>Specifies the number of days an object is noncurrent before Amazon S3 can perform the associated action.</summary>
     public int? NonCurrentVersionExpirationDays { get; set; }
+
+    /// <summary>The number of newer noncurrent versions to retain before expiring an eligible version.</summary>
+    public int? NonCurrentVersionExpirationNewerVersions { get; set; }
 
     /// <summary>
     /// Specifies the transition rule for the lifecycle rule that describes when noncurrent objects transition to a specific storage class. If your bucket is versioning-enabled

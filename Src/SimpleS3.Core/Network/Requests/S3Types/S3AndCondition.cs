@@ -8,4 +8,10 @@ public class S3AndCondition
 
     /// <summary>Provides the <c>Tags</c> API.</summary>
     public IList<KeyValuePair<string, string>> Tags { get; internal set; } = new List<KeyValuePair<string, string>>();
+
+    /// <summary>Exclusive minimum object size in bytes for a lifecycle rule.</summary>
+    public long? ObjectSizeGreaterThan { get; set; }
+
+    /// <summary>Exclusive maximum object size in bytes for a lifecycle rule.</summary>
+    public long? ObjectSizeLessThan { get; set; }
 }
