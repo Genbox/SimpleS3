@@ -22,7 +22,7 @@ internal sealed class AccessKeyValidator : ValidatorBase<IAccessKey>
             .Custom(ValidateKeyId);
 
         RuleFor(x => x.SecretKey)
-            .NotNull().WithMessage("You must provide a secret key")
+            .NotEmpty().WithMessage("You must provide a secret key")
             .Custom(ValidateSecretKey);
 
         RuleFor(x => x)
