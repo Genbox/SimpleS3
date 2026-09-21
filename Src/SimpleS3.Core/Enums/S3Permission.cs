@@ -14,5 +14,9 @@ public enum S3Permission
     /// <summary>Provides the <c>Read</c> API.</summary>
     [Display(Name = "READ")]Read,
     /// <summary>Provides the <c>Write</c> API.</summary>
-    [Display(Name = "WRITE")]Write
+    [Display(Name = "WRITE")]Write,
+    /// <summary>Permission to read the access control policy.</summary>
+    [Display(Name = "READ_ACP")]ReadAcp,
+    /// <summary>Permission to write the access control policy.</summary>
+    [Display(Name = "WRITE_ACP")]WriteAcp
 }
