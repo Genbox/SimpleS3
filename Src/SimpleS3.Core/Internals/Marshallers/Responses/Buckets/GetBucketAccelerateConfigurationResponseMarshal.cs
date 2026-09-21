@@ -1,6 +1,7 @@
 using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
+using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
@@ -11,9 +12,11 @@ internal sealed class GetBucketAccelerateConfigurationResponseMarshal : IRespons
     public void MarshalResponse(SimpleS3Config config, GetBucketAccelerateConfigurationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
-        xmlReader.ReadToDescendant("AccelerateConfiguration");
+        XmlHelper.ReadToDescendant(xmlReader, "AccelerateConfiguration");
 
         if (xmlReader.Read())
             response.AccelerateEnabled = xmlReader.ReadElementContentAsString() == "Enabled";
+
+        response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
     }
 }
