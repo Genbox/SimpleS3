@@ -12,10 +12,9 @@ internal sealed class GetObjectAclResponseMarshal : IResponseMarshal<GetObjectAc
 {
     public void MarshalResponse(SimpleS3Config config, GetObjectAclResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
-
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
-        (S3Identity owner, List<S3Grant> grants) = ParserHelper.ParseAccessControlPolicy(xmlReader);
+        (S3Identity? owner, List<S3Grant> grants) = ParserHelper.ParseAccessControlPolicy(xmlReader);
+        response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
         response.Owner = owner;
 
         foreach (S3Grant grant in grants)

@@ -12,7 +12,7 @@ internal sealed class GetBucketAclResponseMarshal : IResponseMarshal<GetBucketAc
     public void MarshalResponse(SimpleS3Config config, GetBucketAclResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
-        (S3Identity owner, List<S3Grant> grants) = ParserHelper.ParseAccessControlPolicy(xmlReader);
+        (S3Identity? owner, List<S3Grant> grants) = ParserHelper.ParseAccessControlPolicy(xmlReader);
         response.Owner = owner;
 
         foreach (S3Grant grant in grants)

@@ -70,11 +70,8 @@ internal static class ParserHelper
 
         foreach (KeyValuePair<string, string> item in headers)
         {
-            if (!item.Key.StartsWith(Constants.AmzMetadata, StringComparison.OrdinalIgnoreCase))
-                continue;
-
-            //If we crash here, it is because AWS sent us an invalid header.
-            metadata[item.Key.Substring(Constants.AmzMetadata.Length)] = item.Value;
+            if (item.Key.StartsWith(Constants.AmzMetadata, StringComparison.OrdinalIgnoreCase))
+                metadata[item.Key.Substring(Constants.AmzMetadata.Length)] = item.Value;
         }
 
         return metadata;
@@ -109,8 +106,6 @@ internal static class ParserHelper
                     break;
                 case "DisplayName":
                     displayName = xmlReader.ReadString();
-
-                    // To circumvent providers that return empty. We want to represent missing display names as null.
                     if (displayName.Length == 0)
                         displayName = null;
                     break;
@@ -118,17 +113,17 @@ internal static class ParserHelper
         }
 
         if (id == null)
-            throw new InvalidOperationException("Missing required values in Owner section");
+            throw new InvalidOperationException($"Missing required values in {elementName} section");
 
         return new S3Identity(id, displayName);
     }
 
-    public static (S3Identity Owner, List<S3Grant> Grants) ParseAccessControlPolicy(XmlReader xmlReader)
+    public static (S3Identity? Owner, List<S3Grant> Grants) ParseAccessControlPolicy(XmlReader xmlReader)
     {
-        xmlReader.ReadToDescendant("AccessControlPolicy");
+        XmlHelper.ReadToDescendant(xmlReader, "AccessControlPolicy");
 
         S3Identity? owner = null;
-        List<S3Grant> grants = new List<S3Grant>();
+        List<S3Grant> grants = [];
 
         foreach (string name in XmlHelper.ReadElements(xmlReader, "AccessControlPolicy"))
         {
@@ -142,9 +137,6 @@ internal static class ParserHelper
                     break;
             }
         }
-
-        if (owner == null)
-            throw new InvalidOperationException("Missing required values in AccessControlPolicy section");
 
         return (owner, grants);
     }
@@ -160,8 +152,8 @@ internal static class ParserHelper
 
     private static S3Grant ParseGrant(XmlReader xmlReader)
     {
-        S3Permission permission = S3Permission.Unknown;
         S3Grantee? grantee = null;
+        S3Permission permission = S3Permission.Unknown;
 
         foreach (string name in XmlHelper.ReadElements(xmlReader, "Grant"))
         {
@@ -176,38 +168,31 @@ internal static class ParserHelper
             }
         }
 
-        if (grantee == null)
-            throw new InvalidOperationException("Missing required values in Grant section");
-
-        return new S3Grant(grantee, permission);
+        return new S3Grant(grantee ?? new S3Grantee(GrantType.Unknown, null, null, null), permission);
     }
 
     private static S3Grantee ParseGrantee(XmlReader xmlReader)
     {
-        xmlReader.MoveToAttribute("xsi:type");
-        xmlReader.ReadAttributeValue();
-
-        string grantType = xmlReader.Value;
+        const string xsiNamespace = "http://www.w3.org/2001/XMLSchema-instance";
+        string? typeValue = xmlReader.GetAttribute("type", xsiNamespace);
         string? id = null;
         string? displayName = null;
         string? uri = null;
+        string? emailAddress = null;
 
         foreach (string name in XmlHelper.ReadElements(xmlReader, "Grantee"))
         {
             switch (name)
             {
-                case "ID":
-                    id = xmlReader.ReadString();
-                    break;
-                case "DisplayName":
-                    displayName = xmlReader.ReadString();
-                    break;
-                case "URI":
-                    uri = xmlReader.ReadString();
-                    break;
+                case "Type" when typeValue == null: typeValue = xmlReader.ReadString(); break;
+                case "ID": id = xmlReader.ReadString(); break;
+                case "DisplayName": displayName = xmlReader.ReadString(); break;
+                case "URI": uri = xmlReader.ReadString(); break;
+                case "EmailAddress": emailAddress = xmlReader.ReadString(); break;
             }
         }
 
-        return new S3Grantee(Core.Enums.Enums.GrantType.Parse(grantType), id, displayName, uri);
+        GrantType type = string.IsNullOrWhiteSpace(typeValue) ? GrantType.Unknown : Core.Enums.Enums.GrantType.Parse(typeValue);
+        return new S3Grantee(type, id, displayName, uri, emailAddress);
     }
 }
