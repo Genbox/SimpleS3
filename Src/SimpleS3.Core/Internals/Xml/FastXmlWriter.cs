@@ -13,6 +13,7 @@ internal sealed class FastXmlWriter
     private readonly XmlCharMode _invalidCharMode;
     private readonly StringBuilder _sb;
     private readonly XmlStandard _xmlStandard;
+    private bool _hasXml11Declaration;
     private bool _used;
 
     /// <summary>Create a new <see cref="FastXmlWriter" /> with the specified capacity.</summary>
@@ -78,7 +79,11 @@ internal sealed class FastXmlWriter
         _sb.Append(name);
 
         if (xmlns != null)
-            _sb.Append(" xmlns=\"").Append(xmlns).Append('"');
+        {
+            _sb.Append(" xmlns=\"");
+            WriteValue(xmlns, true);
+            _sb.Append('"');
+        }
 
         _sb.Append('>');
     }
@@ -92,7 +97,7 @@ internal sealed class FastXmlWriter
         _sb.Append('>');
     }
 
-    private void WriteValue(string data)
+    private void WriteValue(string data, bool attribute = false)
     {
         // According to https://www.w3.org/TR/xml11/#syntax <, & and > must be escaped
         // According to https://www.unicode.org/versions/Unicode12.0.0/UnicodeStandard-12.0.pdf section 2.4 0xFDD0-0xFDEF, 0xFFFE and 0xFFFF are non-characters
@@ -103,10 +108,16 @@ internal sealed class FastXmlWriter
 
             if (c == '&')
                 _sb.Append("&amp;");
+            else if (attribute && c == '"')
+                _sb.Append("&quot;");
 
             // S3-014: XML parsers normalize literal CR, so preserve it as a character reference.
             else if (c == '\r')
                 _sb.Append("&#13;");
+            else if (attribute && c == '\n')
+                _sb.Append("&#10;");
+            else if (attribute && c == '\t')
+                _sb.Append("&#9;");
             else if (c == '<')
                 _sb.Append("&lt;");
             else if (c == '>')
@@ -123,7 +134,8 @@ internal sealed class FastXmlWriter
                     switch (_discouragedCharMode)
                     {
                         case XmlCharMode.EntityEncode:
-                            //Note: Entity encoding might only be valid for discouraged characters in XML 1.1
+                            if (_xmlStandard == XmlStandard.Xml11 && c < '\u0020' && c is not ('\u0009' or '\u000A' or '\u000D'))
+                                EnsureXml11Declaration();
                             _sb.Append("&#x");
                             _sb.Append(Convert.ToString(c, 16));
                             _sb.Append(';');
@@ -155,6 +167,15 @@ internal sealed class FastXmlWriter
                 }
             }
         }
+    }
+
+    private void EnsureXml11Declaration()
+    {
+        if (_hasXml11Declaration)
+            return;
+
+        _sb.Insert(0, "<?xml version=\"1.1\"?>");
+        _hasXml11Declaration = true;
     }
 
     private bool IsValidChar(char c)
