@@ -24,11 +24,7 @@ public static class Validator
     }
 
     /// <summary>Provides the <c>RequireNotNullOrEmpty</c> API.</summary>
-    public static void RequireNotNullOrEmpty([NotNull]string? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
-    {
-        RequireNotNull(value, message, callerArgument, callerMember, lineNumber);
-        RequireThat(value.Length > 0, message, callerArgument, callerMember, lineNumber);
-    }
+    public static void RequireNotNullOrEmpty([NotNull]string? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null) => RequireThat(value != null && value.Length != 0, message, callerArgument, callerMember, lineNumber);
 
     /// <summary>Provides the <c>RequireValueAndItemsNotNull</c> API.</summary>
     public static void RequireValueAndItemsNotNull([NotNull]ICollection? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
@@ -38,11 +34,7 @@ public static class Validator
     }
 
     /// <summary>Provides the <c>RequireNotNullOrWhiteSpace</c> API.</summary>
-    public static void RequireNotNullOrWhiteSpace([NotNull]string? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
-    {
-        RequireNotNull(value, message, callerArgument, callerMember, lineNumber);
-        RequireThat(!string.IsNullOrWhiteSpace(value), message, callerArgument, callerMember, lineNumber);
-    }
+    public static void RequireNotNullOrWhiteSpace([NotNull]string? value, string? message = null, [CallerArgumentExpression("value")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null) => RequireThat(value != null && !string.IsNullOrWhiteSpace(value), message, callerArgument, callerMember, lineNumber);
 
     /// <summary>Provides the <c>RequireThat</c> API.</summary>
     public static void RequireThat([DoesNotReturnIf(false)]bool condition, string? message = null, [CallerArgumentExpression("condition")]string? callerArgument = null, [CallerMemberName]string? callerMember = null, [CallerLineNumber]int? lineNumber = null)
