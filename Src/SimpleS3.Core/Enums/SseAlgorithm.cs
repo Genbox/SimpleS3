@@ -25,5 +25,9 @@ public enum SseAlgorithm
 
     /// <summary>Dual-layer server-side encryption with AWS KMS keys.</summary>
     [Display(Name = "aws:kms:dsse")]
-    AwsKmsDsse
+    AwsKmsDsse,
+
+    /// <summary>Server-side encryption used by AWS Backup.</summary>
+    [Display(Name = "aws:backup")]
+    AwsBackup
 }
