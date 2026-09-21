@@ -22,7 +22,7 @@ internal sealed class MultipleProvidersAttribute(S3Provider providers) : DataAtt
             TheoryDataRow<S3Provider, string, ISimpleClient> row = new TheoryDataRow<S3Provider, string, ISimpleClient>(provider, bucket, client);
 
             if (!providers.HasFlag(provider))
-                row.Skip = "Not supported";
+                row.Skip = "Not selected for this scenario";
 
             data.Add(row);
         }
