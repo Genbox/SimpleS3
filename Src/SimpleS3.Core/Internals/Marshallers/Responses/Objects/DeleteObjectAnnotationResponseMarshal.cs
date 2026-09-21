@@ -10,7 +10,7 @@ internal sealed class DeleteObjectAnnotationResponseMarshal : IResponseMarshal<D
 {
     public void MarshalResponse(SimpleS3Config config, DeleteObjectAnnotationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
+        response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzObjectVersionId);
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
     }
 }

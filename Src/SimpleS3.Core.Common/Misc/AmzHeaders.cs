@@ -60,6 +60,8 @@ public static class AmzHeaders
     public const string XAmzStorageClass = "x-amz-storage-class";
     /// <summary>Provides the <c>XAmzVersionId</c> API.</summary>
     public const string XAmzVersionId = "x-amz-version-id";
+    /// <summary>Provides the <c>XAmzObjectVersionId</c> API.</summary>
+    public const string XAmzObjectVersionId = "x-amz-object-version-id";
     /// <summary>Provides the <c>XAmzExpiration</c> API.</summary>
     public const string XAmzExpiration = "x-amz-expiration";
 
