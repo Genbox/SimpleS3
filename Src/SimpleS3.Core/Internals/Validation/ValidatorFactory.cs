@@ -32,10 +32,16 @@ internal sealed class ValidatorFactory : IRequestValidatorFactory
 
     public void ValidateAndThrow<T>(T obj) where T : IRequest
     {
-        if (_validators.TryGetValue(typeof(T), out IValidator? validator))
+        if (_validators.TryGetValue(obj.GetType(), out IValidator? validator) || _validators.TryGetValue(typeof(T), out validator))
         {
-            ValidationResult result = ((IValidator<T>)validator).Validate(obj);
+            ValidationResult result = validator.Validate(new ValidationContext<T>(obj));
 
+            if (!result.IsValid)
+                throw new ValidationException(result.Errors);
+        }
+        else if (_validators.TryGetValue(typeof(IRequest), out IValidator? commonValidator))
+        {
+            ValidationResult result = ((IValidator<IRequest>)commonValidator).Validate(obj);
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
         }

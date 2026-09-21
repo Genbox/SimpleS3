@@ -25,9 +25,9 @@ internal abstract class RequestValidatorBase<T> : ValidatorBase<T> where T : IRe
 
         When(x => x is IHasUploadId, () => RuleFor(x => ((IHasUploadId)x).UploadId).NotEmpty());
 
-        When(x => x is IHasSseCustomerKey key && key.SseCustomerAlgorithm != SseCustomerAlgorithm.Unknown, () =>
+        When(x => x is IHasSseCustomerKey key && (key.SseCustomerAlgorithm != SseCustomerAlgorithm.Unknown || key.SseCustomerKey != null || key.SseCustomerKeyMd5 != null), () =>
         {
-            RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerAlgorithm).NotEmpty();
+            RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerAlgorithm).IsInEnum().NotEqual(SseCustomerAlgorithm.Unknown);
             RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerKey).NotNull().Must(x => x != null && x.Length == 32);
             RuleFor(x => ((IHasSseCustomerKey)x).SseCustomerKeyMd5).NotNull().Must(x => x != null && x.Length == 16);
         });
@@ -45,13 +45,13 @@ internal abstract class RequestValidatorBase<T> : ValidatorBase<T> where T : IRe
                 .Custom(ValidateObjectKey));
     }
 
-    private void ValidateObjectKey(string input, ValidationContext<T> context)
+    private void ValidateObjectKey(string? input, ValidationContext<T> context)
     {
         if (!_validator.TryValidateObjectKey(input, _cfg.ObjectKeyValidationMode, out ValidationStatus status, out string? allowed))
             context.AddFailure("Invalid object key: " + ValidationMessages.GetMessage(status, allowed));
     }
 
-    private void ValidateBucketName(string input, ValidationContext<T> context)
+    private void ValidateBucketName(string? input, ValidationContext<T> context)
     {
         if (!_validator.TryValidateBucketName(input, _cfg.BucketNameValidationMode, out ValidationStatus status, out string? allowed))
             context.AddFailure("Invalid bucket name: " + ValidationMessages.GetMessage(status, allowed));
