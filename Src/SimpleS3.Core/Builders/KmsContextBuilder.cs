@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.HttpBuilders.Abstracts;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 
@@ -30,11 +31,13 @@ public class KmsContextBuilder : IHttpHeaderBuilder
         return JsonHelper.EncodeJson(_dict!);
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public void Reset() => _dict?.Clear();
+    [SuppressMessage("Design", "CA1033", Justification = "Reset remains an implementation detail and is exposed only through the external header-builder contract.")]
+    void IHttpHeaderBuilder.Reset() => Reset();
 
     /// <summary>Provides the <c>HasData</c> API.</summary>
     public bool HasData() => _dict != null && _dict.Count > 0;
+
+    internal void Reset() => _dict?.Clear();
 
     /// <summary>Provides the <c>AddEntry</c> API.</summary>
     public void AddEntry(string key, string value)

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.HttpBuilders.Abstracts;
 
 namespace Genbox.SimpleS3.Core.Builders;
@@ -20,15 +21,17 @@ public class MfaAuthenticationBuilder : IHttpHeaderBuilder
         return $"{_serialNumber} {_value}";
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public void Reset()
+    [SuppressMessage("Design", "CA1033", Justification = "Reset remains an implementation detail and is exposed only through the external header-builder contract.")]
+    void IHttpHeaderBuilder.Reset() => Reset();
+
+    /// <summary>Provides the <c>HasData</c> API.</summary>
+    public bool HasData() => _serialNumber != null;
+
+    internal void Reset()
     {
         _serialNumber = null;
         _value = null;
     }
-
-    /// <summary>Provides the <c>HasData</c> API.</summary>
-    public bool HasData() => _serialNumber != null;
 
     /// <summary>Provides the <c>SetAuth</c> API.</summary>
     public void SetAuth(string serialNumber, string value)

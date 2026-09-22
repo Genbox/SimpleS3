@@ -26,7 +26,9 @@ public class MetadataBuilder : IEnumerable<KeyValuePair<string, string>>, IPoole
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public void Reset()
+    void IPooledObject.Reset() => Reset();
+
+    internal void Reset()
     {
         _metadata?.Clear();
         _totalSize = 0;
