@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 namespace Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 /// <summary>Provides the <c>ListMultipartUploadsResponse</c> API.</summary>
-public class ListMultipartUploadsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt
+public class ListMultipartUploadsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt, IHasRequestCharged
 {
     /// <summary>Provides the <c>ListMultipartUploadsResponse</c> API.</summary>
     public ListMultipartUploadsResponse()
@@ -15,7 +15,7 @@ public class ListMultipartUploadsResponse : BaseResponse, IHasTruncated, IHasTru
     }
 
     /// <summary>Name of the bucket to which the multipart upload was initiated.</summary>
-    public string Bucket { get; internal set; } = null!;
+    public string? Bucket { get; internal set; }
 
     /// <summary>The key at or after which the listing began.</summary>
     public string? KeyMarker { get; internal set; }
@@ -38,6 +38,9 @@ public class ListMultipartUploadsResponse : BaseResponse, IHasTruncated, IHasTru
     /// </summary>
     public IList<S3Upload> Uploads { get; }
 
+    /// <summary>Indicates that the requester was charged for the request.</summary>
+    public bool RequestCharged { get; internal set; }
+
     /// <summary>Provides the <c>EncodingType</c> API.</summary>
     public EncodingType EncodingType { get; internal set; }
 
@@ -51,5 +54,5 @@ public class ListMultipartUploadsResponse : BaseResponse, IHasTruncated, IHasTru
     public string? Delimiter { get; internal set; }
 
     /// <summary>Provides the <c>CommonPrefixes</c> API.</summary>
-    public IList<string>? CommonPrefixes { get; }
+    public IList<string> CommonPrefixes { get; }
 }
