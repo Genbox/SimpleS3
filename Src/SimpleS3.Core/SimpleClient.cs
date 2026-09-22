@@ -180,6 +180,21 @@ public class SimpleClient : ISimpleClient
     /// <summary>Provides the <c>UpdateBucketMetadataAnnotationTableConfigurationAsync</c> API.</summary>
     public Task<UpdateBucketMetadataAnnotationTableConfigurationResponse> UpdateBucketMetadataAnnotationTableConfigurationAsync(string bucketName, S3AnnotationTableConfiguration configuration, Action<UpdateBucketMetadataAnnotationTableConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.UpdateBucketMetadataAnnotationTableConfigurationAsync(bucketName, configuration, config, token);
 
+    /// <summary>Provides the <c>CreateBucketMetadataConfigurationAsync</c> API.</summary>
+    public virtual Task<CreateBucketMetadataConfigurationResponse> CreateBucketMetadataConfigurationAsync(string bucketName, S3MetadataConfiguration configuration, Action<CreateBucketMetadataConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.CreateBucketMetadataConfigurationAsync(bucketName, configuration, config, token);
+
+    /// <summary>Provides the <c>DeleteBucketMetadataConfigurationAsync</c> API.</summary>
+    public virtual Task<DeleteBucketMetadataConfigurationResponse> DeleteBucketMetadataConfigurationAsync(string bucketName, Action<DeleteBucketMetadataConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.DeleteBucketMetadataConfigurationAsync(bucketName, config, token);
+
+    /// <summary>Provides the <c>GetBucketMetadataConfigurationAsync</c> API.</summary>
+    public virtual Task<GetBucketMetadataConfigurationResponse> GetBucketMetadataConfigurationAsync(string bucketName, Action<GetBucketMetadataConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketMetadataConfigurationAsync(bucketName, config, token);
+
+    /// <summary>Provides the <c>UpdateBucketMetadataInventoryTableConfigurationAsync</c> API.</summary>
+    public virtual Task<UpdateBucketMetadataInventoryTableConfigurationResponse> UpdateBucketMetadataInventoryTableConfigurationAsync(string bucketName, S3InventoryTableConfiguration configuration, Action<UpdateBucketMetadataInventoryTableConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.UpdateBucketMetadataInventoryTableConfigurationAsync(bucketName, configuration, config, token);
+
+    /// <summary>Provides the <c>UpdateBucketMetadataJournalTableConfigurationAsync</c> API.</summary>
+    public virtual Task<UpdateBucketMetadataJournalTableConfigurationResponse> UpdateBucketMetadataJournalTableConfigurationAsync(string bucketName, S3JournalTableConfiguration configuration, Action<UpdateBucketMetadataJournalTableConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.UpdateBucketMetadataJournalTableConfigurationAsync(bucketName, configuration, config, token);
+
     /// <summary>Provides the <c>PutBucketTaggingAsync</c> API.</summary>
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketTaggingAsync(bucketName, tags, config, token);
 
@@ -239,6 +254,42 @@ public class SimpleClient : ISimpleClient
 
     /// <summary>Provides the <c>PutBucketAbacAsync</c> API.</summary>
     public virtual Task<PutBucketAbacResponse> PutBucketAbacAsync(string bucketName, bool enabled, Action<PutBucketAbacRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketAbacAsync(bucketName, enabled, config, token);
+
+    /// <summary>Gets an analytics configuration.</summary>
+    public virtual Task<GetBucketAnalyticsConfigurationResponse> GetBucketAnalyticsConfigurationAsync(string bucketName, string configurationId, Action<GetBucketAnalyticsConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketAnalyticsConfigurationAsync(bucketName, configurationId, config, token);
+
+    /// <summary>Creates or replaces an analytics configuration.</summary>
+    public virtual Task<PutBucketAnalyticsConfigurationResponse> PutBucketAnalyticsConfigurationAsync(string bucketName, string configurationId, S3AnalyticsConfiguration configuration, Action<PutBucketAnalyticsConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketAnalyticsConfigurationAsync(bucketName, configurationId, configuration, config, token);
+
+    /// <summary>Lists analytics configurations.</summary>
+    public virtual Task<ListBucketAnalyticsConfigurationsResponse> ListBucketAnalyticsConfigurationsAsync(string bucketName, Action<ListBucketAnalyticsConfigurationsRequest>? config = null, CancellationToken token = default) => _bucketClient.ListBucketAnalyticsConfigurationsAsync(bucketName, config, token);
+
+    /// <summary>Gets an inventory configuration.</summary>
+    public virtual Task<GetBucketInventoryConfigurationResponse> GetBucketInventoryConfigurationAsync(string bucketName, string configurationId, Action<GetBucketInventoryConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketInventoryConfigurationAsync(bucketName, configurationId, config, token);
+
+    /// <summary>Creates or replaces an inventory configuration.</summary>
+    public virtual Task<PutBucketInventoryConfigurationResponse> PutBucketInventoryConfigurationAsync(string bucketName, string configurationId, S3InventoryConfiguration configuration, Action<PutBucketInventoryConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketInventoryConfigurationAsync(bucketName, configurationId, configuration, config, token);
+
+    /// <summary>Lists inventory configurations.</summary>
+    public virtual Task<ListBucketInventoryConfigurationsResponse> ListBucketInventoryConfigurationsAsync(string bucketName, Action<ListBucketInventoryConfigurationsRequest>? config = null, CancellationToken token = default) => _bucketClient.ListBucketInventoryConfigurationsAsync(bucketName, config, token);
+
+    /// <summary>Gets a metrics configuration.</summary>
+    public virtual Task<GetBucketMetricsConfigurationResponse> GetBucketMetricsConfigurationAsync(string bucketName, string configurationId, Action<GetBucketMetricsConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketMetricsConfigurationAsync(bucketName, configurationId, config, token);
+
+    /// <summary>Creates or replaces a metrics configuration.</summary>
+    public virtual Task<PutBucketMetricsConfigurationResponse> PutBucketMetricsConfigurationAsync(string bucketName, string configurationId, S3MetricsConfiguration configuration, Action<PutBucketMetricsConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketMetricsConfigurationAsync(bucketName, configurationId, configuration, config, token);
+
+    /// <summary>Lists metrics configurations.</summary>
+    public virtual Task<ListBucketMetricsConfigurationsResponse> ListBucketMetricsConfigurationsAsync(string bucketName, Action<ListBucketMetricsConfigurationsRequest>? config = null, CancellationToken token = default) => _bucketClient.ListBucketMetricsConfigurationsAsync(bucketName, config, token);
+
+    /// <summary>Gets an Intelligent-Tiering configuration.</summary>
+    public virtual Task<GetBucketIntelligentTieringConfigurationResponse> GetBucketIntelligentTieringConfigurationAsync(string bucketName, string configurationId, Action<GetBucketIntelligentTieringConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketIntelligentTieringConfigurationAsync(bucketName, configurationId, config, token);
+
+    /// <summary>Creates or replaces an Intelligent-Tiering configuration.</summary>
+    public virtual Task<PutBucketIntelligentTieringConfigurationResponse> PutBucketIntelligentTieringConfigurationAsync(string bucketName, string configurationId, S3IntelligentTieringConfiguration configuration, Action<PutBucketIntelligentTieringConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketIntelligentTieringConfigurationAsync(bucketName, configurationId, configuration, config, token);
+
+    /// <summary>Lists Intelligent-Tiering configurations.</summary>
+    public virtual Task<ListBucketIntelligentTieringConfigurationsResponse> ListBucketIntelligentTieringConfigurationsAsync(string bucketName, Action<ListBucketIntelligentTieringConfigurationsRequest>? config = null, CancellationToken token = default) => _bucketClient.ListBucketIntelligentTieringConfigurationsAsync(bucketName, config, token);
 
     /// <summary>Provides the <c>DeleteObjectAsync</c> API.</summary>
     public Task<DeleteObjectResponse> DeleteObjectAsync(string bucketName, string objectKey, Action<DeleteObjectRequest>? config = null, CancellationToken token = default) => _objectClient.DeleteObjectAsync(bucketName, objectKey, config, token);

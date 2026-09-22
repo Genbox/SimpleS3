@@ -223,6 +223,36 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         config?.Invoke(req);
     }, req => operations.UpdateBucketMetadataAnnotationTableConfigurationAsync(req, token));
 
+    public Task<CreateBucketMetadataConfigurationResponse> CreateBucketMetadataConfigurationAsync(string bucketName, S3MetadataConfiguration configuration, Action<CreateBucketMetadataConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<CreateBucketMetadataConfigurationRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName, configuration);
+        config?.Invoke(req);
+    }, req => operations.CreateBucketMetadataConfigurationAsync(req, token));
+
+    public Task<DeleteBucketMetadataConfigurationResponse> DeleteBucketMetadataConfigurationAsync(string bucketName, Action<DeleteBucketMetadataConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<DeleteBucketMetadataConfigurationRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName);
+        config?.Invoke(req);
+    }, req => operations.DeleteBucketMetadataConfigurationAsync(req, token));
+
+    public Task<GetBucketMetadataConfigurationResponse> GetBucketMetadataConfigurationAsync(string bucketName, Action<GetBucketMetadataConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketMetadataConfigurationRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName);
+        config?.Invoke(req);
+    }, req => operations.GetBucketMetadataConfigurationAsync(req, token));
+
+    public Task<UpdateBucketMetadataInventoryTableConfigurationResponse> UpdateBucketMetadataInventoryTableConfigurationAsync(string bucketName, S3InventoryTableConfiguration configuration, Action<UpdateBucketMetadataInventoryTableConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<UpdateBucketMetadataInventoryTableConfigurationRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName, configuration);
+        config?.Invoke(req);
+    }, req => operations.UpdateBucketMetadataInventoryTableConfigurationAsync(req, token));
+
+    public Task<UpdateBucketMetadataJournalTableConfigurationResponse> UpdateBucketMetadataJournalTableConfigurationAsync(string bucketName, S3JournalTableConfiguration configuration, Action<UpdateBucketMetadataJournalTableConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<UpdateBucketMetadataJournalTableConfigurationRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName, configuration);
+        config?.Invoke(req);
+    }, req => operations.UpdateBucketMetadataJournalTableConfigurationAsync(req, token));
+
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default)
     {
         return ObjectPool<PutBucketTaggingRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
@@ -460,4 +490,76 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         request.Initialize(bucketName, enabled);
         config?.Invoke(request);
     }, request => operations.PutBucketAbacAsync(request, token));
+
+    public Task<GetBucketAnalyticsConfigurationResponse> GetBucketAnalyticsConfigurationAsync(string bucketName, string configurationId, Action<GetBucketAnalyticsConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketAnalyticsConfigurationRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName, configurationId);
+        config?.Invoke(request);
+    }, request => operations.GetBucketAnalyticsConfigurationAsync(request, token));
+
+    public Task<PutBucketAnalyticsConfigurationResponse> PutBucketAnalyticsConfigurationAsync(string bucketName, string configurationId, S3AnalyticsConfiguration configuration, Action<PutBucketAnalyticsConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketAnalyticsConfigurationRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName, configurationId, configuration);
+        config?.Invoke(request);
+    }, request => operations.PutBucketAnalyticsConfigurationAsync(request, token));
+
+    public Task<ListBucketAnalyticsConfigurationsResponse> ListBucketAnalyticsConfigurationsAsync(string bucketName, Action<ListBucketAnalyticsConfigurationsRequest>? config = null, CancellationToken token = default) => ObjectPool<ListBucketAnalyticsConfigurationsRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName);
+        config?.Invoke(request);
+    }, request => operations.ListBucketAnalyticsConfigurationsAsync(request, token));
+
+    public Task<GetBucketInventoryConfigurationResponse> GetBucketInventoryConfigurationAsync(string bucketName, string configurationId, Action<GetBucketInventoryConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketInventoryConfigurationRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName, configurationId);
+        config?.Invoke(request);
+    }, request => operations.GetBucketInventoryConfigurationAsync(request, token));
+
+    public Task<PutBucketInventoryConfigurationResponse> PutBucketInventoryConfigurationAsync(string bucketName, string configurationId, S3InventoryConfiguration configuration, Action<PutBucketInventoryConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketInventoryConfigurationRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName, configurationId, configuration);
+        config?.Invoke(request);
+    }, request => operations.PutBucketInventoryConfigurationAsync(request, token));
+
+    public Task<ListBucketInventoryConfigurationsResponse> ListBucketInventoryConfigurationsAsync(string bucketName, Action<ListBucketInventoryConfigurationsRequest>? config = null, CancellationToken token = default) => ObjectPool<ListBucketInventoryConfigurationsRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName);
+        config?.Invoke(request);
+    }, request => operations.ListBucketInventoryConfigurationsAsync(request, token));
+
+    public Task<GetBucketMetricsConfigurationResponse> GetBucketMetricsConfigurationAsync(string bucketName, string configurationId, Action<GetBucketMetricsConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketMetricsConfigurationRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName, configurationId);
+        config?.Invoke(request);
+    }, request => operations.GetBucketMetricsConfigurationAsync(request, token));
+
+    public Task<PutBucketMetricsConfigurationResponse> PutBucketMetricsConfigurationAsync(string bucketName, string configurationId, S3MetricsConfiguration configuration, Action<PutBucketMetricsConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketMetricsConfigurationRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName, configurationId, configuration);
+        config?.Invoke(request);
+    }, request => operations.PutBucketMetricsConfigurationAsync(request, token));
+
+    public Task<ListBucketMetricsConfigurationsResponse> ListBucketMetricsConfigurationsAsync(string bucketName, Action<ListBucketMetricsConfigurationsRequest>? config = null, CancellationToken token = default) => ObjectPool<ListBucketMetricsConfigurationsRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName);
+        config?.Invoke(request);
+    }, request => operations.ListBucketMetricsConfigurationsAsync(request, token));
+
+    public Task<GetBucketIntelligentTieringConfigurationResponse> GetBucketIntelligentTieringConfigurationAsync(string bucketName, string configurationId, Action<GetBucketIntelligentTieringConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketIntelligentTieringConfigurationRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName, configurationId);
+        config?.Invoke(request);
+    }, request => operations.GetBucketIntelligentTieringConfigurationAsync(request, token));
+
+    public Task<PutBucketIntelligentTieringConfigurationResponse> PutBucketIntelligentTieringConfigurationAsync(string bucketName, string configurationId, S3IntelligentTieringConfiguration configuration, Action<PutBucketIntelligentTieringConfigurationRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketIntelligentTieringConfigurationRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName, configurationId, configuration);
+        config?.Invoke(request);
+    }, request => operations.PutBucketIntelligentTieringConfigurationAsync(request, token));
+
+    public Task<ListBucketIntelligentTieringConfigurationsResponse> ListBucketIntelligentTieringConfigurationsAsync(string bucketName, Action<ListBucketIntelligentTieringConfigurationsRequest>? config = null, CancellationToken token = default) => ObjectPool<ListBucketIntelligentTieringConfigurationsRequest>.Shared.RentAndUseAsync(request =>
+    {
+        request.Initialize(bucketName);
+        config?.Invoke(request);
+    }, request => operations.ListBucketIntelligentTieringConfigurationsAsync(request, token));
 }

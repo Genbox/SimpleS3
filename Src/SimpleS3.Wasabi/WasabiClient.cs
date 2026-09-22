@@ -289,6 +289,15 @@ public sealed class WasabiClient : ClientBase, ISimpleClient
     /// <summary>Provides the <c>CreateUpload</c> API.</summary>
     public IUpload CreateUpload(string bucket, string objectKey) => Client.CreateUpload(bucket, objectKey);
 
+    /// <inheritdoc />
+    public Task<GetBucketInventoryConfigurationResponse> GetBucketInventoryConfigurationAsync(string bucketName, string configurationId, Action<GetBucketInventoryConfigurationRequest>? config = null, CancellationToken token = default) => Client.GetBucketInventoryConfigurationAsync(bucketName, configurationId, config, token);
+
+    /// <inheritdoc />
+    public Task<PutBucketInventoryConfigurationResponse> PutBucketInventoryConfigurationAsync(string bucketName, string configurationId, S3InventoryConfiguration configuration, Action<PutBucketInventoryConfigurationRequest>? config = null, CancellationToken token = default) => Client.PutBucketInventoryConfigurationAsync(bucketName, configurationId, configuration, config, token);
+
+    /// <inheritdoc />
+    public Task<ListBucketInventoryConfigurationsResponse> ListBucketInventoryConfigurationsAsync(string bucketName, Action<ListBucketInventoryConfigurationsRequest>? config = null, CancellationToken token = default) => Client.ListBucketInventoryConfigurationsAsync(bucketName, config, token);
+
     /// <summary>Provides the <c>CreateDownload</c> API.</summary>
     public IDownload CreateDownload(string bucket, string objectKey) => Client.CreateDownload(bucket, objectKey);
 

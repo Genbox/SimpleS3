@@ -104,6 +104,21 @@ public interface IBucketOperations
     /// <summary>Provides the <c>UpdateBucketMetadataAnnotationTableConfigurationAsync</c> API.</summary>
     Task<UpdateBucketMetadataAnnotationTableConfigurationResponse> UpdateBucketMetadataAnnotationTableConfigurationAsync(UpdateBucketMetadataAnnotationTableConfigurationRequest request, CancellationToken token = default);
 
+    /// <summary>Creates an S3 Metadata V2 configuration.</summary>
+    Task<CreateBucketMetadataConfigurationResponse> CreateBucketMetadataConfigurationAsync(CreateBucketMetadataConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Deletes an S3 Metadata V2 configuration.</summary>
+    Task<DeleteBucketMetadataConfigurationResponse> DeleteBucketMetadataConfigurationAsync(DeleteBucketMetadataConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Gets an S3 Metadata V2 configuration.</summary>
+    Task<GetBucketMetadataConfigurationResponse> GetBucketMetadataConfigurationAsync(GetBucketMetadataConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Updates the S3 Metadata inventory table configuration.</summary>
+    Task<UpdateBucketMetadataInventoryTableConfigurationResponse> UpdateBucketMetadataInventoryTableConfigurationAsync(UpdateBucketMetadataInventoryTableConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Updates the S3 Metadata journal table configuration.</summary>
+    Task<UpdateBucketMetadataJournalTableConfigurationResponse> UpdateBucketMetadataJournalTableConfigurationAsync(UpdateBucketMetadataJournalTableConfigurationRequest request, CancellationToken token = default);
+
     /// <summary>Sets the tags for a bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketTagging.html for details.</summary>
     Task<PutBucketTaggingResponse> PutBucketTaggingAsync(PutBucketTaggingRequest request, CancellationToken token = default);
 
@@ -183,4 +198,40 @@ public interface IBucketOperations
 
     /// <summary>Sets a bucket's ABAC status.</summary>
     Task<PutBucketAbacResponse> PutBucketAbacAsync(PutBucketAbacRequest request, CancellationToken token = default);
+
+    /// <summary>Gets an analytics configuration.</summary>
+    Task<GetBucketAnalyticsConfigurationResponse> GetBucketAnalyticsConfigurationAsync(GetBucketAnalyticsConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Creates or replaces an analytics configuration.</summary>
+    Task<PutBucketAnalyticsConfigurationResponse> PutBucketAnalyticsConfigurationAsync(PutBucketAnalyticsConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Lists analytics configurations.</summary>
+    Task<ListBucketAnalyticsConfigurationsResponse> ListBucketAnalyticsConfigurationsAsync(ListBucketAnalyticsConfigurationsRequest request, CancellationToken token = default);
+
+    /// <summary>Gets an inventory configuration.</summary>
+    Task<GetBucketInventoryConfigurationResponse> GetBucketInventoryConfigurationAsync(GetBucketInventoryConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Creates or replaces an inventory configuration.</summary>
+    Task<PutBucketInventoryConfigurationResponse> PutBucketInventoryConfigurationAsync(PutBucketInventoryConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Lists inventory configurations.</summary>
+    Task<ListBucketInventoryConfigurationsResponse> ListBucketInventoryConfigurationsAsync(ListBucketInventoryConfigurationsRequest request, CancellationToken token = default);
+
+    /// <summary>Gets a metrics configuration.</summary>
+    Task<GetBucketMetricsConfigurationResponse> GetBucketMetricsConfigurationAsync(GetBucketMetricsConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Creates or replaces a metrics configuration.</summary>
+    Task<PutBucketMetricsConfigurationResponse> PutBucketMetricsConfigurationAsync(PutBucketMetricsConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Lists metrics configurations.</summary>
+    Task<ListBucketMetricsConfigurationsResponse> ListBucketMetricsConfigurationsAsync(ListBucketMetricsConfigurationsRequest request, CancellationToken token = default);
+
+    /// <summary>Gets an Intelligent-Tiering configuration.</summary>
+    Task<GetBucketIntelligentTieringConfigurationResponse> GetBucketIntelligentTieringConfigurationAsync(GetBucketIntelligentTieringConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Creates or replaces an Intelligent-Tiering configuration.</summary>
+    Task<PutBucketIntelligentTieringConfigurationResponse> PutBucketIntelligentTieringConfigurationAsync(PutBucketIntelligentTieringConfigurationRequest request, CancellationToken token = default);
+
+    /// <summary>Lists Intelligent-Tiering configurations.</summary>
+    Task<ListBucketIntelligentTieringConfigurationsResponse> ListBucketIntelligentTieringConfigurationsAsync(ListBucketIntelligentTieringConfigurationsRequest request, CancellationToken token = default);
 }
