@@ -56,7 +56,7 @@ internal sealed class PutBucketLifecycleConfigurationRequestMarshal : IRequestMa
 
             if (rule.Filter != null)
             {
-                FilterHelper.Validate(rule.Filter);
+                FilterHelper.Validate(rule.Filter, "Lifecycle", true);
                 writer.WriteStartElement("Filter");
 
                 if (rule.Filter.Prefix != null)
