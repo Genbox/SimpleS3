@@ -40,6 +40,21 @@ public sealed class GetObjectAttributesResponse : BaseResponse, IHasDeleteMarker
     /// <summary>Provides the <c>ChecksumSha256</c> API.</summary>
     public byte[]? ChecksumSha256 { get; internal set; }
 
+    /// <summary>The Base64-decoded SHA512 checksum, when returned by the provider.</summary>
+    public byte[]? ChecksumSha512 { get; internal set; }
+
+    /// <summary>The Base64-decoded MD5 checksum, when returned by the provider.</summary>
+    public byte[]? ChecksumMd5 { get; internal set; }
+
+    /// <summary>The Base64-decoded XXHASH64 checksum, when returned by the provider.</summary>
+    public byte[]? ChecksumXxHash64 { get; internal set; }
+
+    /// <summary>The Base64-decoded XXHASH3 checksum, when returned by the provider.</summary>
+    public byte[]? ChecksumXxHash3 { get; internal set; }
+
+    /// <summary>The Base64-decoded XXHASH128 checksum, when returned by the provider.</summary>
+    public byte[]? ChecksumXxHash128 { get; internal set; }
+
     /// <summary>Provides the <c>TotalPartsCount</c> API.</summary>
     public int TotalPartsCount { get; internal set; }
 

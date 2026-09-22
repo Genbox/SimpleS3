@@ -18,11 +18,14 @@ internal sealed class GetObjectAttributesResponseMarshal : IResponseMarshal<GetO
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
         response.IsDeleteMarker = headers.GetHeaderBool(AmzHeaders.XAmzDeleteMarker);
         response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
+        response.LastModified = headers.GetHeaderNullableDate(HttpHeaders.LastModified, DateTimeFormat.Rfc1123);
 
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
-        xmlReader.ReadToDescendant("GetObjectAttributesResponse");
+        xmlReader.MoveToContent();
+        if (xmlReader.LocalName != "GetObjectAttributesResponse")
+            throw new InvalidOperationException($"Expected XML root 'GetObjectAttributesResponse', but found '{xmlReader.LocalName}'.");
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "GetObjectAttributesResponse"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -41,48 +44,72 @@ internal sealed class GetObjectAttributesResponseMarshal : IResponseMarshal<GetO
                 case "ObjectSize":
                     response.ObjectSize = ValueHelper.ParseLong(xmlReader.ReadString());
                     break;
-                case "LastModified":
-                    response.LastModified = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
-                    break;
             }
         }
     }
 
     private static void ParseChecksum(GetObjectAttributesResponse response, XmlReader xmlReader)
     {
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "Checksum"))
+        bool composite = false;
+
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
                 case "ChecksumCRC32":
-                    response.ChecksumCrc32 = Convert.FromBase64String(xmlReader.ReadString());
+                    response.ChecksumCrc32 = ParseObjectChecksum(xmlReader.ReadString(), ref composite);
                     break;
                 case "ChecksumCRC32C":
-                    response.ChecksumCrc32C = Convert.FromBase64String(xmlReader.ReadString());
+                    response.ChecksumCrc32C = ParseObjectChecksum(xmlReader.ReadString(), ref composite);
                     break;
                 case "ChecksumCRC64NVME":
-                    response.ChecksumCrc64Nvme = Convert.FromBase64String(xmlReader.ReadString());
+                    response.ChecksumCrc64Nvme = ParseObjectChecksum(xmlReader.ReadString(), ref composite);
                     break;
                 case "ChecksumSHA1":
-                    response.ChecksumSha1 = Convert.FromBase64String(xmlReader.ReadString());
+                    response.ChecksumSha1 = ParseObjectChecksum(xmlReader.ReadString(), ref composite);
                     break;
                 case "ChecksumSHA256":
-                    response.ChecksumSha256 = Convert.FromBase64String(xmlReader.ReadString());
+                    response.ChecksumSha256 = ParseObjectChecksum(xmlReader.ReadString(), ref composite);
+                    break;
+                case "ChecksumSHA512":
+                    response.ChecksumSha512 = ParseObjectChecksum(xmlReader.ReadString(), ref composite);
+                    break;
+                case "ChecksumMD5":
+                    response.ChecksumMd5 = ParseObjectChecksum(xmlReader.ReadString(), ref composite);
+                    break;
+                case "ChecksumXXHASH64":
+                    response.ChecksumXxHash64 = ParseObjectChecksum(xmlReader.ReadString(), ref composite);
+                    break;
+                case "ChecksumXXHASH3":
+                    response.ChecksumXxHash3 = ParseObjectChecksum(xmlReader.ReadString(), ref composite);
+                    break;
+                case "ChecksumXXHASH128":
+                    response.ChecksumXxHash128 = ParseObjectChecksum(xmlReader.ReadString(), ref composite);
                     break;
                 case "ChecksumType":
                     response.ChecksumType = Core.Enums.Enums.ChecksumType.Parse(xmlReader.ReadString(), ChecksumTypeFormat.DisplayName);
                     break;
             }
         }
+
+        if (response.ChecksumType == ChecksumType.Unknown && composite)
+            response.ChecksumType = ChecksumType.Composite;
+    }
+
+    private static byte[] ParseObjectChecksum(string value, ref bool composite)
+    {
+        byte[] checksum = ChecksumHelper.Decode(value, out bool valueIsComposite);
+        composite |= valueIsComposite;
+        return checksum;
     }
 
     private static void ParseObjectParts(GetObjectAttributesResponse response, XmlReader xmlReader)
     {
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "ObjectParts"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
-                case "TotalPartsCount":
+                case "PartsCount":
                     response.TotalPartsCount = ValueHelper.ParseInt(xmlReader.ReadString());
                     break;
                 case "PartNumberMarker":
@@ -113,8 +140,13 @@ internal sealed class GetObjectAttributesResponseMarshal : IResponseMarshal<GetO
         byte[]? checksumCrc64Nvme = null;
         byte[]? checksumSha1 = null;
         byte[]? checksumSha256 = null;
+        byte[]? checksumSha512 = null;
+        byte[]? checksumMd5 = null;
+        byte[]? checksumXxHash64 = null;
+        byte[]? checksumXxHash3 = null;
+        byte[]? checksumXxHash128 = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "Part"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -139,6 +171,21 @@ internal sealed class GetObjectAttributesResponseMarshal : IResponseMarshal<GetO
                 case "ChecksumSHA256":
                     checksumSha256 = Convert.FromBase64String(xmlReader.ReadString());
                     break;
+                case "ChecksumSHA512":
+                    checksumSha512 = Convert.FromBase64String(xmlReader.ReadString());
+                    break;
+                case "ChecksumMD5":
+                    checksumMd5 = Convert.FromBase64String(xmlReader.ReadString());
+                    break;
+                case "ChecksumXXHASH64":
+                    checksumXxHash64 = Convert.FromBase64String(xmlReader.ReadString());
+                    break;
+                case "ChecksumXXHASH3":
+                    checksumXxHash3 = Convert.FromBase64String(xmlReader.ReadString());
+                    break;
+                case "ChecksumXXHASH128":
+                    checksumXxHash128 = Convert.FromBase64String(xmlReader.ReadString());
+                    break;
             }
         }
 
@@ -151,7 +198,12 @@ internal sealed class GetObjectAttributesResponseMarshal : IResponseMarshal<GetO
             ChecksumCrc32C = checksumCrc32C,
             ChecksumCrc64Nvme = checksumCrc64Nvme,
             ChecksumSha1 = checksumSha1,
-            ChecksumSha256 = checksumSha256
+            ChecksumSha256 = checksumSha256,
+            ChecksumSha512 = checksumSha512,
+            ChecksumMd5 = checksumMd5,
+            ChecksumXxHash64 = checksumXxHash64,
+            ChecksumXxHash3 = checksumXxHash3,
+            ChecksumXxHash128 = checksumXxHash128
         };
     }
 }

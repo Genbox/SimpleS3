@@ -25,6 +25,8 @@ internal static class DictionaryExtensions
 
     public static DateTimeOffset GetHeaderDate(this IDictionary<string, string> response, string key, DateTimeFormat format) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseDate(value, format) : default;
 
+    public static DateTimeOffset? GetHeaderNullableDate(this IDictionary<string, string> response, string key, DateTimeFormat format) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseDate(value, format) : null;
+
     public static byte[]? GetHeaderByteArray(this IDictionary<string, string> response, string key, BinaryEncoding encoding) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseByteArray(value, encoding) : null;
 
     public static bool GetHeaderBool(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) && ValueHelper.ParseBool(value);
