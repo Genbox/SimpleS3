@@ -1,0 +1,38 @@
+using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Common.Marshal;
+using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
+
+namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
+
+/// <summary>Gets an inventory configuration.</summary>
+public sealed class GetBucketInventoryConfigurationRequest : BaseRequest, IHasBucketName
+{
+    internal GetBucketInventoryConfigurationRequest() : base(HttpMethodType.GET) {}
+
+    /// <summary>Creates a request.</summary>
+    public GetBucketInventoryConfigurationRequest(string bucketName, string configurationId) : this()
+    {
+        Initialize(bucketName, configurationId);
+    }
+
+    /// <summary>Configuration identifier.</summary>
+    public string ConfigurationId { get; set; } = null!;
+
+    /// <summary>Bucket name.</summary>
+    public string BucketName { get; set; } = null!;
+
+    internal void Initialize(string bucketName, string configurationId)
+    {
+        BucketName = bucketName;
+        ConfigurationId = configurationId;
+    }
+
+    /// <summary>Provides the <c>Reset</c> API.</summary>
+    public override void Reset()
+    {
+
+        ConfigurationId = null!;
+        BucketName = null!;
+        base.Reset();
+    }
+}
