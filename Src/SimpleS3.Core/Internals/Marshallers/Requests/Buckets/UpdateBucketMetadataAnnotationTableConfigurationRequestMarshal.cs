@@ -2,6 +2,7 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -33,6 +34,8 @@ internal sealed class UpdateBucketMetadataAnnotationTableConfigurationRequestMar
             writer.WriteElement("Role", configuration.Role);
 
         writer.WriteEndElement("AnnotationTableConfiguration");
-        return new MemoryStream(writer.GetBytes());
+        byte[] body = writer.GetBytes();
+        ChecksumHelper.ApplyRequest(request, request, body);
+        return new MemoryStream(body);
     }
 }
