@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
+using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
@@ -13,10 +14,15 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
 {
     public void MarshalResponse(SimpleS3Config config, GetBucketLifecycleConfigurationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
-        xmlReader.ReadToDescendant("LifecycleConfiguration");
+        TransitionDefaultMinimumObjectSize minimum = TransitionDefaultMinimumObjectSize.Unknown;
+        if (headers.TryGetHeader("x-amz-transition-default-minimum-object-size", out string? minimumSize))
+            minimum = Core.Enums.Enums.TransitionDefaultMinimumObjectSize.Parse(minimumSize, TransitionDefaultMinimumObjectSizeFormat.DisplayName);
+        response.TransitionDefaultMinimumObjectSize = minimum;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader))
+        using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
+        XmlHelper.ReadToDescendant(xmlReader, "LifecycleConfiguration");
+
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -30,15 +36,17 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
     private static void ReadRule(GetBucketLifecycleConfigurationResponse response, XmlReader xmlReader)
     {
         string? id = null;
+        string? prefix = null;
         bool? status = null;
         int? abortMultipartDays = null;
         int? nonCurrentDays = null;
+        int? newerNonCurrentVersions = null;
         IList<S3NonCurrentVersionTransition>? nonCurrentVersionTransitions = null;
         S3Expiration? expiration = null;
         S3Filter? filter = null;
         IList<S3Transition>? transitions = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "Rule"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -49,18 +57,31 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
                     status = xmlReader.ReadString() == "Enabled";
                     break;
                 case "AbortIncompleteMultipartUpload":
-                    xmlReader.ReadToDescendant("DaysAfterInitiation");
-                    abortMultipartDays = ValueHelper.ParseInt(xmlReader.ReadString());
+                    abortMultipartDays = ReadAbortDays(xmlReader);
                     break;
                 case "Expiration":
                     expiration = ReadExpiration(xmlReader);
+                    break;
+                case "Prefix":
+                    prefix = xmlReader.ReadString();
                     break;
                 case "Filter":
                     filter = ReadFilter(xmlReader);
                     break;
                 case "NoncurrentVersionExpiration":
-                    xmlReader.ReadToDescendant("NoncurrentDays");
-                    abortMultipartDays = ValueHelper.ParseInt(xmlReader.ReadString());
+                    foreach (string field in XmlHelper.ReadChildren(xmlReader))
+                    {
+                        switch (field)
+                        {
+                            case "NoncurrentDays":
+                                nonCurrentDays = XmlConvert.ToInt32(xmlReader.ReadString());
+                                break;
+                            case "NewerNoncurrentVersions":
+                                newerNonCurrentVersions = XmlConvert.ToInt32(xmlReader.ReadString());
+                                break;
+                        }
+                    }
+
                     break;
                 case "NoncurrentVersionTransition":
                     nonCurrentVersionTransitions ??= new List<S3NonCurrentVersionTransition>();
@@ -73,14 +94,16 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
             }
         }
 
-        if (id == null || status == null)
+        if (status == null)
             throw new InvalidOperationException("Missing required values");
 
         S3Rule rule = new S3Rule(id, status.Value);
         rule.AbortIncompleteMultipartUploadDays = abortMultipartDays;
         rule.Expiration = expiration;
         rule.Filter = filter;
+        rule.Prefix = prefix;
         rule.NonCurrentVersionExpirationDays = nonCurrentDays;
+        rule.NonCurrentVersionExpirationNewerVersions = newerNonCurrentVersions;
 
         if (nonCurrentVersionTransitions != null)
         {
@@ -97,13 +120,26 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
         response.Rules.Add(rule);
     }
 
+    private static int ReadAbortDays(XmlReader xmlReader)
+    {
+        int? days = null;
+
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
+        {
+            if (name == "DaysAfterInitiation")
+                days = ValueHelper.ParseInt(xmlReader.ReadString());
+        }
+
+        return days ?? throw new InvalidOperationException("Missing required values");
+    }
+
     private static S3Expiration ReadExpiration(XmlReader xmlReader)
     {
         DateTimeOffset? date = null;
         int? days = null;
         bool? expiredObjectDeleteMarker = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "Expiration"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -130,8 +166,10 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
         string? prefix = null;
         KeyValuePair<string, string>? tag = null;
         S3AndCondition? andCondition = null;
+        long? objectSizeGreaterThan = null;
+        long? objectSizeLessThan = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "Filter"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -144,6 +182,12 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
                 case "And":
                     andCondition = ReadAndCondition(xmlReader);
                     break;
+                case "ObjectSizeGreaterThan":
+                    objectSizeGreaterThan = XmlConvert.ToInt64(xmlReader.ReadString());
+                    break;
+                case "ObjectSizeLessThan":
+                    objectSizeLessThan = XmlConvert.ToInt64(xmlReader.ReadString());
+                    break;
             }
         }
 
@@ -153,6 +197,8 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
         filter.Prefix = prefix;
         filter.Tag = tag;
         filter.AndConditions = andCondition;
+        filter.ObjectSizeGreaterThan = objectSizeGreaterThan;
+        filter.ObjectSizeLessThan = objectSizeLessThan;
 
         return filter;
     }
@@ -160,9 +206,11 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
     private static S3AndCondition ReadAndCondition(XmlReader xmlReader)
     {
         string? prefix = null;
-        List<KeyValuePair<string, string>> tags = new List<KeyValuePair<string, string>>();
+        List<KeyValuePair<string, string>> tags = [];
+        long? objectSizeGreaterThan = null;
+        long? objectSizeLessThan = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "And"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -172,15 +220,20 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
                 case "Tag":
                     tags.Add(ReadTag(xmlReader));
                     break;
+                case "ObjectSizeGreaterThan":
+                    objectSizeGreaterThan = XmlConvert.ToInt64(xmlReader.ReadString());
+                    break;
+                case "ObjectSizeLessThan":
+                    objectSizeLessThan = XmlConvert.ToInt64(xmlReader.ReadString());
+                    break;
             }
         }
-
-        if (prefix == null && tags.Count == 0)
-            throw new InvalidOperationException("Missing required values");
 
         S3AndCondition condition = new S3AndCondition();
         condition.Prefix = prefix;
         condition.Tags = tags;
+        condition.ObjectSizeGreaterThan = objectSizeGreaterThan;
+        condition.ObjectSizeLessThan = objectSizeLessThan;
         return condition;
     }
 
@@ -189,7 +242,7 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
         string? key = null;
         string? value = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "Tag"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -211,12 +264,16 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
     private static void ReadNonCurrentVersionTransition(IList<S3NonCurrentVersionTransition> list, XmlReader xmlReader)
     {
         int? nonCurrentDays = null;
+        int? newerNonCurrentVersions = null;
         StorageClass storageClass = StorageClass.Unknown;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "NoncurrentVersionTransition"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
+                case "NewerNoncurrentVersions":
+                    newerNonCurrentVersions = XmlConvert.ToInt32(xmlReader.ReadString());
+                    break;
                 case "NoncurrentDays":
                     nonCurrentDays = ValueHelper.ParseInt(xmlReader.ReadString());
                     break;
@@ -229,7 +286,7 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
         if (nonCurrentDays == null || storageClass == StorageClass.Unknown)
             throw new InvalidOperationException("Missing required values");
 
-        list.Add(new S3NonCurrentVersionTransition(nonCurrentDays.Value, storageClass));
+        list.Add(new S3NonCurrentVersionTransition(nonCurrentDays.Value, storageClass) { NewerNonCurrentVersions = newerNonCurrentVersions });
     }
 
     private static void ReadTransition(IList<S3Transition> list, XmlReader xmlReader)
@@ -238,7 +295,7 @@ internal sealed class GetBucketLifecycleConfigurationResponseMarshal : IResponse
         int? days = null;
         StorageClass storageClass = StorageClass.Unknown;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "Transition"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
