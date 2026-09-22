@@ -36,7 +36,13 @@ public class ListPartsResponse : BaseResponse, IHasRequestCharged, IHasAbort, IH
     /// Identifies who initiated the multipart upload. If the initiator is an AWS account, this element provides the same information as the Owner element. If the initiator is an
     /// IAM User, then this element provides the user ARN and display name.
     /// </summary>
-    public S3Identity Initiator { get; internal set; } = null!;
+    public S3Identity? Initiator { get; internal set; }
+
+    /// <summary>The checksum algorithm selected when the multipart upload was initiated.</summary>
+    public ChecksumAlgorithm ChecksumAlgorithm { get; internal set; }
+
+    /// <summary>How part checksums are combined into the completed object's checksum.</summary>
+    public ChecksumType ChecksumType { get; internal set; }
 
     /// <summary>The list of parts</summary>
     public IList<S3Part> Parts { get; }
@@ -48,10 +54,10 @@ public class ListPartsResponse : BaseResponse, IHasRequestCharged, IHasAbort, IH
     public string? AbortRuleId { get; internal set; }
 
     /// <summary>Name of the bucket to which the multipart upload was initiated.</summary>
-    public string BucketName { get; internal set; } = null!;
+    public string? BucketName { get; internal set; }
 
     /// <summary>Object key for which the multipart upload was initiated.</summary>
-    public string ObjectKey { get; internal set; } = null!;
+    public string? ObjectKey { get; internal set; }
 
     /// <summary>Provides the <c>RequestCharged</c> API.</summary>
     public bool RequestCharged { get; internal set; }
@@ -66,5 +72,5 @@ public class ListPartsResponse : BaseResponse, IHasRequestCharged, IHasAbort, IH
     public EncodingType EncodingType { get; internal set; }
 
     /// <summary>Provides the <c>UploadId</c> API.</summary>
-    public string UploadId { get; internal set; } = null!;
+    public string? UploadId { get; internal set; }
 }

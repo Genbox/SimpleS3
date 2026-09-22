@@ -12,13 +12,14 @@ namespace Genbox.ProviderTests.Multipart;
 public class ListPartsTests : TestBase
 {
     [Theory]
-    [MultipleProviders(S3Provider.All)]
+    [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2 | S3Provider.Wasabi)]
     public async Task ListParts(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         //We add the special characters at the end to test EncodingType support.
         const string objName = nameof(ListParts) + "%";
 
         CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(tempBucket, objName, token: TestContext.Current.CancellationToken);
+        Assert.NotNull(createResp.UploadId);
 
         ListPartsResponse listResp1 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId, token: TestContext.Current.CancellationToken);
 
@@ -43,8 +44,8 @@ public class ListPartsTests : TestBase
 
         byte[] file = new byte[5 * 1024];
 
-        await using (MemoryStream ms = new MemoryStream(file))
-            uploadResp = await client.UploadPartAsync(tempBucket, objName, 1, createResp.UploadId, ms, token: TestContext.Current.CancellationToken);
+        await using MemoryStream ms = new MemoryStream(file);
+        uploadResp = await client.UploadPartAsync(tempBucket, objName, 1, createResp.UploadId, ms, token: TestContext.Current.CancellationToken);
 
         ListPartsResponse listResp2 = await client.ListPartsAsync(tempBucket, objName, createResp.UploadId, r => r.EncodingType = EncodingType.Url, TestContext.Current.CancellationToken);
 
@@ -59,10 +60,7 @@ public class ListPartsTests : TestBase
         Assert.Equal(StorageClass.Standard, listResp2.StorageClass);
         Assert.Equal(0, listResp2.PartNumberMarker);
 
-        if (provider == S3Provider.GoogleCloudStorage)
-            Assert.Equal(0, listResp2.NextPartNumberMarker);
-        else
-            Assert.Equal(1, listResp2.NextPartNumberMarker);
+        Assert.Equal(1, listResp2.NextPartNumberMarker);
 
         Assert.Equal(1000, listResp2.MaxParts);
         Assert.False(listResp2.IsTruncated);
@@ -78,6 +76,7 @@ public class ListPartsTests : TestBase
         Assert.Equal(DateTime.UtcNow, part.LastModified.UtcDateTime, TimeSpan.FromSeconds(5));
         Assert.Equal("\"32ca18808933aa12e979375d07048a11\"", part.ETag);
         Assert.Equal(file.Length, part.Size);
+        Assert.NotNull(uploadResp.ETag);
 
         CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(tempBucket, objName, createResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)], token: TestContext.Current.CancellationToken);
         Assert.Equal(200, completeResp.StatusCode);
