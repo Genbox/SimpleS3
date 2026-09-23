@@ -29,7 +29,7 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
         IfETagNotMatch = new ETagBuilder();
         IfETagMatch = new ETagBuilder();
         Metadata = new MetadataBuilder();
-        Tags = new TagBuilder();
+        Tags = new TagBuilder(10);
         SseContext = new KmsContextBuilder();
     }
 

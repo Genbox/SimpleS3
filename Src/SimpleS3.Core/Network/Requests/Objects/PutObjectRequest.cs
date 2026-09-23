@@ -19,7 +19,7 @@ public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpire
 
     internal PutObjectRequest() : base(HttpMethodType.PUT)
     {
-        Tags = new TagBuilder();
+        Tags = new TagBuilder(10);
         Metadata = new MetadataBuilder();
         CacheControl = new CacheControlBuilder();
         ContentDisposition = new ContentDispositionBuilder();

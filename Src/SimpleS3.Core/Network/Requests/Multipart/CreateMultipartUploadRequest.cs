@@ -19,7 +19,7 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
 
     internal CreateMultipartUploadRequest() : base(HttpMethodType.POST)
     {
-        Tags = new TagBuilder();
+        Tags = new TagBuilder(10);
         Metadata = new MetadataBuilder();
         CacheControl = new CacheControlBuilder();
         ContentDisposition = new ContentDispositionBuilder();

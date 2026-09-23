@@ -17,7 +17,7 @@ public class PutBucketTaggingRequest : BaseRequest, IHasBucketName, IContentMd5C
 {
     internal PutBucketTaggingRequest() : base(HttpMethodType.PUT)
     {
-        Tags = new TagBuilder();
+        Tags = new TagBuilder(50);
     }
 
     /// <summary>Provides the <c>PutBucketTaggingRequest</c> API.</summary>
