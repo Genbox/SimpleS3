@@ -31,6 +31,10 @@ public static class AmzParameters
     public const string Delimiter = "delimiter";
     /// <summary>Provides the <c>MaxKeys</c> API.</summary>
     public const string MaxKeys = "max-keys";
+    /// <summary>Provides the <c>MaxBuckets</c> API.</summary>
+    public const string MaxBuckets = "max-buckets";
+    /// <summary>Provides the <c>BucketRegion</c> API.</summary>
+    public const string BucketRegion = "bucket-region";
     /// <summary>Provides the <c>Prefix</c> API.</summary>
     public const string Prefix = "prefix";
     /// <summary>Provides the <c>ListType</c> API.</summary>
@@ -118,8 +122,6 @@ public static class AmzParameters
     /// <summary>Provides the <c>MetadataAnnotationTable</c> API.</summary>
     public const string MetadataAnnotationTable = "metadataAnnotationTable";
 
-    #region Presigning
-
     //Note: These are actually case-sensitive
     /// <summary>Provides the <c>XAmzAlgorithm</c> API.</summary>
     public const string XAmzAlgorithm = "X-Amz-Algorithm";
@@ -135,6 +137,4 @@ public static class AmzParameters
     public const string XAmzDate = "X-Amz-Date";
     /// <summary>Provides the <c>XAmzSecurityToken</c> API.</summary>
     public const string XAmzSecurityToken = "X-Amz-Security-Token";
-
-    #endregion
 }

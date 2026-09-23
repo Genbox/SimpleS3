@@ -13,7 +13,7 @@ internal sealed class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsR
     public void MarshalResponse(SimpleS3Config config, ListBucketsResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
-        xmlReader.ReadToDescendant("ListAllMyBucketsResult");
+        XmlHelper.ReadToDescendant(xmlReader, "ListAllMyBucketsResult");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))
         {
@@ -24,6 +24,12 @@ internal sealed class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsR
                     break;
                 case "Buckets":
                     ReadBuckets(response, xmlReader);
+                    break;
+                case "ContinuationToken":
+                    response.ContinuationToken = xmlReader.ReadString();
+                    break;
+                case "Prefix":
+                    response.Prefix = xmlReader.ReadString();
                     break;
             }
         }
@@ -41,7 +47,9 @@ internal sealed class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsR
     private static void ReadBucket(ListBucketsResponse response, XmlReader xmlReader)
     {
         string? bucketName = null;
-        DateTimeOffset? creationData = null;
+        DateTimeOffset? creationDate = null;
+        string? bucketRegion = null;
+        string? bucketArn = null;
 
         foreach (string name in XmlHelper.ReadElements(xmlReader, "Bucket"))
         {
@@ -51,14 +59,20 @@ internal sealed class ListBucketsResponseMarshal : IResponseMarshal<ListBucketsR
                     bucketName = xmlReader.ReadString();
                     break;
                 case "CreationDate":
-                    creationData = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                    creationDate = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                    break;
+                case "BucketRegion":
+                    bucketRegion = xmlReader.ReadString();
+                    break;
+                case "BucketArn":
+                    bucketArn = xmlReader.ReadString();
                     break;
             }
         }
 
-        if (bucketName == null || creationData == null)
+        if (bucketName == null || creationDate == null)
             throw new InvalidOperationException("Missing required values");
 
-        response.Buckets.Add(new S3Bucket(bucketName, creationData.Value));
+        response.Buckets.Add(new S3Bucket(bucketName, creationDate.Value, bucketRegion, bucketArn));
     }
 }

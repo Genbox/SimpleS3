@@ -16,4 +16,10 @@ public class ListBucketsResponse : BaseResponse
 
     /// <summary>The list of buckets</summary>
     public IList<S3Bucket> Buckets { get; }
+
+    /// <summary>Opaque token used to retrieve the next page, or <see langword="null" /> when this is the final page.</summary>
+    public string? ContinuationToken { get; internal set; }
+
+    /// <summary>The prefix included in the request.</summary>
+    public string? Prefix { get; internal set; }
 }
