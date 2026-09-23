@@ -23,7 +23,7 @@ internal sealed class CompleteMultipartUploadRequestMarshal : IRequestMarshal<Co
             if (partInfo.Checksum != null)
                 xml.WriteElement("Checksum" + partInfo.ChecksumAlgorithm.GetDisplayName(), Convert.ToBase64String(partInfo.Checksum));
 
-            xml.WriteElement("ETag", partInfo.ETag.Trim('"'));
+            xml.WriteElement("ETag", partInfo.ETag);
             xml.WriteElement("PartNumber", partInfo.PartNumber.ToString(NumberFormatInfo.InvariantInfo));
             xml.WriteEndElement("Part");
         }
