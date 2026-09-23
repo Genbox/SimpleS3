@@ -1,6 +1,7 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Misc;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
@@ -17,6 +18,8 @@ internal sealed class PutBucketAccelerateConfigurationRequestMarshal : IRequestM
         writer.WriteElement("Status", request.AccelerationEnabled ? "Enabled" : "Suspended");
         writer.WriteEndElement("AccelerateConfiguration");
 
-        return new MemoryStream(writer.GetBytes());
+        byte[] body = writer.GetBytes();
+        ChecksumHelper.ApplyRequest(request, request, body);
+        return new MemoryStream(body);
     }
 }

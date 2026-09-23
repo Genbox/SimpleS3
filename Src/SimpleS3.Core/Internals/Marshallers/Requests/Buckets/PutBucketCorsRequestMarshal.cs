@@ -35,6 +35,8 @@ internal sealed class PutBucketCorsRequestMarshal : IRequestMarshal<PutBucketCor
         }
 
         writer.WriteEndElement("CORSConfiguration");
-        return new MemoryStream(writer.GetBytes());
+        byte[] body = writer.GetBytes();
+        ChecksumHelper.ApplyRequest(request, request, body);
+        return new MemoryStream(body);
     }
 }
