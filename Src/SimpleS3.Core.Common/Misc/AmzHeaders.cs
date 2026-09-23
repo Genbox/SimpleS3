@@ -29,8 +29,6 @@ public static class AmzHeaders
     public const string XAmzRequestPayer = "x-amz-request-payer";
     /// <summary>Provides the <c>XAmzRequestCharged</c> API.</summary>
     public const string XAmzRequestCharged = "x-amz-request-charged";
-    /// <summary>Provides the <c>XAmzRestoreOutputPath</c> API.</summary>
-    public const string XAmzRestoreOutputPath = "x-amz-restore-output-path";
 
     #region Streaming
 

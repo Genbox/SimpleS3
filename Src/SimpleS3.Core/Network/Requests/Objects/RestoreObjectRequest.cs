@@ -2,7 +2,6 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
-using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 
@@ -29,17 +28,8 @@ public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId
     /// <summary>Glacier retrieval tier at which the restore will be processed.</summary>
     public RetrievalTier RequestTier { get; set; }
 
-    /// <summary>Provides the <c>RequestType</c> API.</summary>
-    public RestoreRequestType RequestType { get; set; }
-
     /// <summary>The optional description for the job.</summary>
     public string? Description { get; set; }
-
-    /// <summary>Provides the <c>SelectParameters</c> API.</summary>
-    public S3SelectParameters? SelectParameters { get; set; }
-
-    /// <summary>Provides the <c>OutputLocation</c> API.</summary>
-    public S3OutputLocation? OutputLocation { get; set; }
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
@@ -59,19 +49,18 @@ public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId
         ObjectKey = objectKey;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
+    /// <summary>Resets the request for reuse.</summary>
     public override void Reset()
     {
-        SelectParameters?.Reset();
-        OutputLocation?.Reset();
         Days = 0;
         GlacierTier = RetrievalTier.Unknown;
         RequestTier = RetrievalTier.Unknown;
-        RequestType = RestoreRequestType.Unknown;
         Description = null;
         RequestPayer = Payer.Unknown;
         VersionId = null;
 
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }
