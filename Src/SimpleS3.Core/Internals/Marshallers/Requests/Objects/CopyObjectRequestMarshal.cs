@@ -25,6 +25,10 @@ internal sealed class CopyObjectRequestMarshal : IRequestMarshal<CopyObjectReque
         request.SetHeader(AmzHeaders.XAmzCopySourceIfModifiedSince, request.IfModifiedSince, DateTimeFormat.Rfc1123);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfUnmodifiedSince, request.IfUnmodifiedSince, DateTimeFormat.Rfc1123);
 
+        // Wasabi accepts failed source conditions and performs the copy, so never send a conditional copy there.
+        if (string.Equals(config.ProviderName, "Wasabi", StringComparison.OrdinalIgnoreCase) && (request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfMatch) || request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfNoneMatch) || request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfModifiedSince) || request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfUnmodifiedSince)))
+            throw new NotSupportedException("Wasabi does not enforce source conditions for CopyObject. The copy was not sent.");
+
         if (request.SseCustomerAlgorithm != SseCustomerAlgorithm.Unknown)
             request.SetHeader(AmzHeaders.XAmzCopySourceSseCustomerAlgorithm, request.SseCustomerAlgorithm.GetDisplayName());
 

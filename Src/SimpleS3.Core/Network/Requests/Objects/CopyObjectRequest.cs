@@ -57,9 +57,9 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
     /// <summary>Provides the <c>TaggingDirective</c> API.</summary>
     public TaggingDirective TaggingDirective { get; set; }
 
-    // S3-003: Generic version mapping would incorrectly put the source version on the destination query.
+    // Source version and conditions must use copy-source headers rather than destination query parameters or generic If-* headers.
     /// <summary>Provides the <c>AutoMapDisabledFor</c> API.</summary>
-    public Func<Type, bool> AutoMapDisabledFor => type => type == typeof(IHasVersionId);
+    public Func<Type, bool> AutoMapDisabledFor => type => type == typeof(IHasVersionId) || type == typeof(IHasCache);
 
     string IHasBucketName.BucketName => DestinationBucketName;
 
