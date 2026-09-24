@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
@@ -16,8 +17,10 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart;
 /// response header that specifies a 200 OK response. While processing is in progress, Amazon S3 periodically sends whitespace characters to keep the connection from timing out.
 /// Because a request could fail after the initial 200 OK response has been sent, it is important that you check the response body to determine whether the request succeeded.
 /// </summary>
-public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId, IHasChecksumProperties
+public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId, IHasChecksumProperties, IHasSseCustomerKey
 {
+    private byte[]? _sseCustomerKey;
+
     internal CompleteMultipartUploadRequest() : base(HttpMethodType.POST)
     {
         UploadParts = new List<S3PartInfo>();
@@ -63,6 +66,29 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
     /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
 
+    /// <summary>The customer-provided encryption algorithm.</summary>
+    public SseCustomerAlgorithm SseCustomerAlgorithm { get; set; }
+
+    /// <summary>The MD5 digest of the customer-provided encryption key.</summary>
+    public byte[]? SseCustomerKeyMd5 { get; set; }
+
+    /// <summary>The customer-provided encryption key. The request keeps its own copy.</summary>
+    public byte[]? SseCustomerKey
+    {
+        get => _sseCustomerKey;
+        set => CopyHelper.ReplaceAndClear(ref _sseCustomerKey, value);
+    }
+
+    /// <summary>Clears the request's copy of the customer-provided key.</summary>
+    public void ClearSensitiveMaterial()
+    {
+        if (_sseCustomerKey != null)
+        {
+            Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
+            _sseCustomerKey = null;
+        }
+    }
+
     /// <summary>Provides the <c>UploadId</c> API.</summary>
     public string UploadId { get; set; } = null!;
 
@@ -80,6 +106,7 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
     /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
+        ClearSensitiveMaterial();
         RequestPayer = Payer.Unknown;
         UploadParts.Clear();
         IfMatch = null;
@@ -88,6 +115,8 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
         Checksum = null;
         ChecksumType = ChecksumType.Unknown;
         MpuObjectSize = null;
+        SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
+        SseCustomerKeyMd5 = null;
 
         base.Reset();
     }
