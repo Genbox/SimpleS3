@@ -158,6 +158,8 @@ public static class AmzHeaders
 
     #region CopyObject
 
+    /// <summary>Controls whether source annotations are copied.</summary>
+    public const string XAmzObjectAnnotationDirective = "x-amz-object-annotation-directive";
     /// <summary>Provides the <c>XAmzCopySource</c> API.</summary>
     public const string XAmzCopySource = "x-amz-copy-source";
     /// <summary>Provides the <c>XAmzCopySourceIfMatch</c> API.</summary>

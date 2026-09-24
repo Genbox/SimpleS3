@@ -41,6 +41,9 @@ internal sealed class CopyObjectRequestMarshal : IRequestMarshal<CopyObjectReque
 
         if (request.TaggingDirective != TaggingDirective.Unknown)
             request.SetHeader(AmzHeaders.XAmzTaggingDirective, request.TaggingDirective.GetDisplayName());
+
+        if (request.AnnotationDirective != AnnotationDirective.Unknown)
+            request.SetHeader(AmzHeaders.XAmzObjectAnnotationDirective, request.AnnotationDirective.GetDisplayName());
         return null;
     }
 }

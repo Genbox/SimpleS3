@@ -61,6 +61,9 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
     /// <summary>Provides the <c>TaggingDirective</c> API.</summary>
     public TaggingDirective TaggingDirective { get; set; }
 
+    /// <summary>Controls whether source annotations are copied.</summary>
+    public AnnotationDirective AnnotationDirective { get; set; }
+
     /// <summary>Encryption algorithm of the customer-provided key used to decrypt the source.</summary>
     public SseCustomerAlgorithm SourceSseCustomerAlgorithm { get; set; }
 
@@ -189,6 +192,7 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
 
         MetadataDirective = MetadataDirective.Copy;
         TaggingDirective = TaggingDirective.Copy;
+        AnnotationDirective = AnnotationDirective.Unknown;
         IfModifiedSince = null;
         IfUnmodifiedSince = null;
         IfETagMatch.Reset();
