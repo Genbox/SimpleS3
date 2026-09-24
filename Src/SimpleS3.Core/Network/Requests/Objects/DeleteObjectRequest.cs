@@ -23,6 +23,9 @@ public class DeleteObjectRequest : BaseRequest, IHasVersionId, IHasRequestPayer,
         Initialize(bucketName, objectKey);
     }
 
+    /// <summary>Delete only if the object's ETag matches this HTTP entity-tag value.</summary>
+    public string? IfMatch { get; set; }
+
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
@@ -54,6 +57,7 @@ public class DeleteObjectRequest : BaseRequest, IHasVersionId, IHasRequestPayer,
         BypassGovernanceRetention = null;
         RequestPayer = Payer.Unknown;
         VersionId = null;
+        IfMatch = null;
 
         base.Reset();
     }
