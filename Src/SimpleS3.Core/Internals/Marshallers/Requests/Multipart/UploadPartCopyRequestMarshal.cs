@@ -14,6 +14,7 @@ internal sealed class UploadPartCopyRequestMarshal : IRequestMarshal<UploadPartC
     public Stream? MarshalRequest(UploadPartCopyRequest request, SimpleS3Config config)
     {
         request.SetHeader(AmzHeaders.XAmzCopySource, '/' + UrlHelper.UrlEncode(request.SourceBucketName) + '/' + UrlHelper.UrlPathEncode(request.SourceObjectKey));
+        request.SetOptionalHeader(AmzHeaders.XAmzSourceExpectedBucketOwner, request.ExpectedSourceBucketOwner);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfMatch, request.CopySourceIfETagMatch);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfNoneMatch, request.CopySourceIfETagNotMatch);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfModifiedSince, request.CopySourceIfModifiedSince, DateTimeFormat.Rfc1123);

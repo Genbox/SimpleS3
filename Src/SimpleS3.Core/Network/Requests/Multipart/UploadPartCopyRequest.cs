@@ -43,6 +43,9 @@ public sealed class UploadPartCopyRequest : BaseRequest, IHasBucketName, IHasObj
     /// <summary>Provides the <c>SourceBucketName</c> API.</summary>
     public string SourceBucketName { get; private set; } = null!;
 
+    /// <summary>The expected source bucket owner account ID. ExpectedBucketOwner applies to the destination bucket.</summary>
+    public string? ExpectedSourceBucketOwner { get; set; }
+
     /// <summary>Provides the <c>SourceObjectKey</c> API.</summary>
     public string SourceObjectKey { get; private set; } = null!;
 
@@ -131,6 +134,7 @@ public sealed class UploadPartCopyRequest : BaseRequest, IHasBucketName, IHasObj
         SseCustomerKeyMd5 = null;
         SourceSseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
         SourceSseCustomerKeyMd5 = null;
+        ExpectedSourceBucketOwner = null;
         base.Reset();
     }
 }

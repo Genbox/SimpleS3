@@ -193,6 +193,8 @@ public static class AmzHeaders
     public const string XAmzConfirmRemoveSelfBucketAccess = "x-amz-confirm-remove-self-bucket-access";
     /// <summary>Provides the <c>XAmzExpectedBucketOwner</c> API.</summary>
     public const string XAmzExpectedBucketOwner = "x-amz-expected-bucket-owner";
+    /// <summary>Account ID of the expected copy source bucket owner.</summary>
+    public const string XAmzSourceExpectedBucketOwner = "x-amz-source-expected-bucket-owner";
 
     #endregion
 }

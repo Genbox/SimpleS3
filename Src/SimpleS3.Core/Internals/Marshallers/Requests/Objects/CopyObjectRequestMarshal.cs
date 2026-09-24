@@ -20,6 +20,7 @@ internal sealed class CopyObjectRequestMarshal : IRequestMarshal<CopyObjectReque
             copySource += "?versionId=" + UrlHelper.UrlEncode(request.VersionId);
 
         request.SetHeader(AmzHeaders.XAmzCopySource, copySource);
+        request.SetOptionalHeader(AmzHeaders.XAmzSourceExpectedBucketOwner, request.ExpectedSourceBucketOwner);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfMatch, request.IfETagMatch);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfNoneMatch, request.IfETagNotMatch);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfModifiedSince, request.IfModifiedSince, DateTimeFormat.Rfc1123);
