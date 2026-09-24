@@ -1,7 +1,9 @@
 using System.Globalization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
+using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -12,6 +14,12 @@ internal sealed class CompleteMultipartUploadRequestMarshal : IRequestMarshal<Co
 {
     public Stream MarshalRequest(CompleteMultipartUploadRequest request, SimpleS3Config config)
     {
+        if ((string.Equals(config.ProviderName, "GoogleCloudStorage", StringComparison.OrdinalIgnoreCase) || string.Equals(config.ProviderName, "Wasabi", StringComparison.OrdinalIgnoreCase)) && (request.IfMatch != null || request.IfNoneMatch != null))
+            throw new NotSupportedException($"{config.ProviderName} does not enforce CompleteMultipartUpload conditions. The completion was not sent.");
+
+        request.SetOptionalHeader(HttpHeaders.IfMatch, request.IfMatch);
+        request.SetOptionalHeader(HttpHeaders.IfNoneMatch, request.IfNoneMatch);
+
         //build the XML required to describe each part
         FastXmlWriter xml = new FastXmlWriter(512);
         xml.WriteStartElement("CompleteMultipartUpload");

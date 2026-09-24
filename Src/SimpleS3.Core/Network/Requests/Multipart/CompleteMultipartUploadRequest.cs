@@ -33,6 +33,12 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
         Initialize(bucketName, objectKey, uploadId, parts);
     }
 
+    /// <summary>Complete only if the destination object's ETag matches this HTTP entity-tag value.</summary>
+    public string? IfMatch { get; set; }
+
+    /// <summary>Complete only if the destination does not match this condition. Use * to require that no object exists.</summary>
+    public string? IfNoneMatch { get; set; }
+
     /// <summary>Provides the <c>UploadParts</c> API.</summary>
     public IList<S3PartInfo> UploadParts { get; private set; }
 
@@ -64,6 +70,8 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
     {
         RequestPayer = Payer.Unknown;
         UploadParts.Clear();
+        IfMatch = null;
+        IfNoneMatch = null;
 
         base.Reset();
     }
