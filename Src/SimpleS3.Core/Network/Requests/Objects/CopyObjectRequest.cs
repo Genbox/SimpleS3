@@ -15,6 +15,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// </summary>
 public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey, IHasLegalHold, IAutoMapConfig
 {
+    private byte[]? _sourceSseCustomerKey;
     private byte[]? _sseCustomerKey;
 
     internal CopyObjectRequest() : base(HttpMethodType.PUT)
@@ -59,6 +60,19 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
 
     /// <summary>Provides the <c>TaggingDirective</c> API.</summary>
     public TaggingDirective TaggingDirective { get; set; }
+
+    /// <summary>Encryption algorithm of the customer-provided key used to decrypt the source.</summary>
+    public SseCustomerAlgorithm SourceSseCustomerAlgorithm { get; set; }
+
+    /// <summary>MD5 digest of the customer-provided source encryption key.</summary>
+    public byte[]? SourceSseCustomerKeyMd5 { get; set; }
+
+    /// <summary>Customer-provided source encryption key. The request owns a copy.</summary>
+    public byte[]? SourceSseCustomerKey
+    {
+        get => _sourceSseCustomerKey;
+        set => CopyHelper.ReplaceAndClear(ref _sourceSseCustomerKey, value);
+    }
 
     // Source version and conditions must use copy-source headers rather than destination query parameters or generic If-* headers.
     /// <summary>Provides the <c>AutoMapDisabledFor</c> API.</summary>
@@ -126,7 +140,7 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
     public byte[]? SseCustomerKey
     {
         get => _sseCustomerKey;
-        set => _sseCustomerKey = CopyHelper.CopyWithNull(value);
+        set => CopyHelper.ReplaceAndClear(ref _sseCustomerKey, value);
     }
 
     /// <summary>Provides the <c>ClearSensitiveMaterial</c> API.</summary>
@@ -136,6 +150,12 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
         {
             Array.Clear(_sseCustomerKey, 0, _sseCustomerKey.Length);
             _sseCustomerKey = null;
+        }
+
+        if (_sourceSseCustomerKey != null)
+        {
+            Array.Clear(_sourceSseCustomerKey, 0, _sourceSseCustomerKey.Length);
+            _sourceSseCustomerKey = null;
         }
     }
 
@@ -188,6 +208,8 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
         SseContext.Reset();
         SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
         SseCustomerKeyMd5 = null;
+        SourceSseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
+        SourceSseCustomerKeyMd5 = null;
         StorageClass = StorageClass.Unknown;
         Tags.Reset();
         VersionId = null;

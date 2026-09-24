@@ -30,11 +30,11 @@ internal sealed class CopyObjectRequestMarshal : IRequestMarshal<CopyObjectReque
         if (string.Equals(config.ProviderName, "Wasabi", StringComparison.OrdinalIgnoreCase) && (request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfMatch) || request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfNoneMatch) || request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfModifiedSince) || request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfUnmodifiedSince)))
             throw new NotSupportedException("Wasabi does not enforce source conditions for CopyObject. The copy was not sent.");
 
-        if (request.SseCustomerAlgorithm != SseCustomerAlgorithm.Unknown)
-            request.SetHeader(AmzHeaders.XAmzCopySourceSseCustomerAlgorithm, request.SseCustomerAlgorithm.GetDisplayName());
+        if (request.SourceSseCustomerAlgorithm != SseCustomerAlgorithm.Unknown)
+            request.SetHeader(AmzHeaders.XAmzCopySourceSseCustomerAlgorithm, request.SourceSseCustomerAlgorithm.GetDisplayName());
 
-        request.SetHeader(AmzHeaders.XAmzCopySourceSseCustomerKey, request.SseCustomerKey, BinaryEncoding.Base64);
-        request.SetHeader(AmzHeaders.XAmzCopySourceSseCustomerKeyMd5, request.SseCustomerKeyMd5, BinaryEncoding.Base64);
+        request.SetHeader(AmzHeaders.XAmzCopySourceSseCustomerKey, request.SourceSseCustomerKey, BinaryEncoding.Base64);
+        request.SetHeader(AmzHeaders.XAmzCopySourceSseCustomerKeyMd5, request.SourceSseCustomerKeyMd5, BinaryEncoding.Base64);
 
         if (request.MetadataDirective != MetadataDirective.Unknown)
             request.SetHeader(AmzHeaders.XAmzMetadataDirective, request.MetadataDirective.GetDisplayName());
