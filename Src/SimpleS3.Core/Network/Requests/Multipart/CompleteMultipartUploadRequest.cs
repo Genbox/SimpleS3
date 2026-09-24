@@ -16,7 +16,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart;
 /// response header that specifies a 200 OK response. While processing is in progress, Amazon S3 periodically sends whitespace characters to keep the connection from timing out.
 /// Because a request could fail after the initial 200 OK response has been sent, it is important that you check the response body to determine whether the request succeeded.
 /// </summary>
-public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId
+public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasUploadId, IHasChecksumProperties
 {
     internal CompleteMultipartUploadRequest() : base(HttpMethodType.POST)
     {
@@ -39,11 +39,23 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
     /// <summary>Complete only if the destination does not match this condition. Use * to require that no object exists.</summary>
     public string? IfNoneMatch { get; set; }
 
+    /// <summary>Whether checksums cover the full object or are composed from part checksums.</summary>
+    public ChecksumType ChecksumType { get; set; }
+
+    /// <summary>The expected total size of the uploaded object, in bytes.</summary>
+    public long? MpuObjectSize { get; set; }
+
     /// <summary>Provides the <c>UploadParts</c> API.</summary>
     public IList<S3PartInfo> UploadParts { get; private set; }
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
+
+    /// <summary>The algorithm used for the supplied object checksum.</summary>
+    public ChecksumAlgorithm ChecksumAlgorithm { get; set; }
+
+    /// <summary>The object checksum supplied to S3 at completion.</summary>
+    public byte[]? Checksum { get; set; }
 
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
@@ -72,6 +84,10 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
         UploadParts.Clear();
         IfMatch = null;
         IfNoneMatch = null;
+        ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
+        Checksum = null;
+        ChecksumType = ChecksumType.Unknown;
+        MpuObjectSize = null;
 
         base.Reset();
     }

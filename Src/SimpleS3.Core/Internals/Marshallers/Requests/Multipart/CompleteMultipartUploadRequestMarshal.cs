@@ -19,6 +19,10 @@ internal sealed class CompleteMultipartUploadRequestMarshal : IRequestMarshal<Co
 
         request.SetOptionalHeader(HttpHeaders.IfMatch, request.IfMatch);
         request.SetOptionalHeader(HttpHeaders.IfNoneMatch, request.IfNoneMatch);
+        if (request.ChecksumType != ChecksumType.Unknown)
+            request.SetHeader(AmzHeaders.XAmzChecksumType, request.ChecksumType.GetDisplayName());
+        if (request.MpuObjectSize.HasValue)
+            request.SetHeader("x-amz-mp-object-size", request.MpuObjectSize.Value.ToString(CultureInfo.InvariantCulture));
 
         //build the XML required to describe each part
         FastXmlWriter xml = new FastXmlWriter(512);
