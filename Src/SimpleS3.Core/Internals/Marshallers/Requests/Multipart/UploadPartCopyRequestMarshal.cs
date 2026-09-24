@@ -18,6 +18,11 @@ internal sealed class UploadPartCopyRequestMarshal : IRequestMarshal<UploadPartC
         request.SetHeader(AmzHeaders.XAmzCopySourceIfNoneMatch, request.CopySourceIfETagNotMatch);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfModifiedSince, request.CopySourceIfModifiedSince, DateTimeFormat.Rfc1123);
         request.SetHeader(AmzHeaders.XAmzCopySourceIfUnmodifiedSince, request.CopySourceIfUnmodifiedSince, DateTimeFormat.Rfc1123);
+
+        // Wasabi returns HTTP 200 when these conditions fail, so reject the request rather than silently perform an unconditional copy.
+        if (string.Equals(config.ProviderName, "Wasabi", StringComparison.OrdinalIgnoreCase) && (request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfMatch) || request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfNoneMatch) || request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfModifiedSince) || request.Headers.ContainsKey(AmzHeaders.XAmzCopySourceIfUnmodifiedSince)))
+            throw new NotSupportedException("Wasabi does not enforce source conditions for UploadPartCopy. The copy was not sent.");
+
         request.SetOptionalHeader(AmzHeaders.XAmzCopySourceRange, request.CopySourceRange);
 
         if (request.SourceSseCustomerAlgorithm != SseCustomerAlgorithm.Unknown)
