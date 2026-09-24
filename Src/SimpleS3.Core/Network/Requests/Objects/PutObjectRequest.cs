@@ -38,6 +38,12 @@ public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpire
         Initialize(bucketName, objectKey, content);
     }
 
+    /// <summary>Write only if the destination object's ETag matches this HTTP entity-tag value.</summary>
+    public string? IfMatch { get; set; }
+
+    /// <summary>Write only if the destination does not match this condition. Use * to require that no object exists.</summary>
+    public string? IfNoneMatch { get; set; }
+
     /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
 
@@ -184,6 +190,8 @@ public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpire
 
         Content = null;
         ContentMd5 = null;
+        IfMatch = null;
+        IfNoneMatch = null;
         base.Reset();
     }
 }
