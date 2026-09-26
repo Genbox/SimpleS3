@@ -16,7 +16,7 @@ internal sealed class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObje
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
-        xmlReader.ReadToDescendant("DeleteResult");
+        XmlHelper.ReadToDescendant(xmlReader, "DeleteResult");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))
         {
@@ -58,9 +58,6 @@ internal sealed class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObje
             }
         }
 
-        if (key == null)
-            throw new InvalidOperationException("Missing required values");
-
         response.Deleted.Add(new S3DeletedObject(key, versionId, deleteMarker, deleteVersionId));
     }
 
@@ -89,9 +86,6 @@ internal sealed class DeleteObjectsResponseMarshal : IResponseMarshal<DeleteObje
                     break;
             }
         }
-
-        if (key == null || message == null)
-            throw new InvalidOperationException("Missing required values");
 
         response.Errors.Add(new S3DeleteError(key, code, message, versionId));
     }
