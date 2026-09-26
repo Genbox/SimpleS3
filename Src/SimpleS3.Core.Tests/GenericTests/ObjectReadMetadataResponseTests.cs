@@ -1,6 +1,7 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common.Misc;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
@@ -34,5 +35,28 @@ public class ObjectReadMetadataResponseTests
         Assert.Null(response.ExpiresOn);
         Assert.Null(response.LockRetainUntil);
         Assert.Null(response.NumberOfParts);
+    }
+
+    [Fact]
+    public void GetObjectUsesHeadMetadataAndRetainsContent()
+    {
+        Dictionary<string, string> headers = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            [AmzHeaders.XAmzArchiveStatus] = "ARCHIVE_ACCESS",
+            [AmzHeaders.XAmzChecksumMd5] = "AQID-2",
+            [AmzHeaders.XAmzRequestCharged] = "requester",
+            [AmzHeaders.XAmzRestore] = "ongoing-request=\"true\""
+        };
+        using GetObjectResponse response = new GetObjectResponse();
+
+        new GetObjectResponseMarshal().MarshalResponse(new SimpleS3Config(), response, headers, ContentStream.Null);
+
+        Assert.Equal(ArchiveStatus.ArchiveAccess, response.ArchiveStatus);
+        Assert.True(response.RestoreInProgress);
+        Assert.Equal(ChecksumAlgorithm.Md5, response.ChecksumAlgorithm);
+        Assert.Equal(new byte[] { 1, 2, 3 }, response.Checksum);
+        Assert.Equal(ChecksumType.Composite, response.ChecksumType);
+        Assert.True(response.RequestCharged);
+        Assert.Same(ContentStream.Null, response.Content);
     }
 }
