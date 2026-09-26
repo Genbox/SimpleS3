@@ -65,6 +65,38 @@ public class ListResponseMarshalTests
     }
 
     [Fact]
+    public void ListingsAcceptOwnersWithoutCanonicalIds()
+    {
+        const string objectsXml = """
+                                  <ListBucketResult>
+                                    <Contents><Key>one</Key><LastModified>2026-09-26T12:00:00Z</LastModified><Size>1</Size><Owner><DisplayName>alice</DisplayName></Owner></Contents>
+                                    <Contents><Key>two</Key><LastModified>2026-09-26T12:00:00Z</LastModified><Size>2</Size></Contents>
+                                  </ListBucketResult>
+                                  """;
+        const string versionsXml = """
+                                   <ListVersionsResult>
+                                     <Version><Key>one</Key><VersionId>v1</VersionId><IsLatest>true</IsLatest><LastModified>2026-09-26T12:00:00Z</LastModified><ETag>"etag"</ETag><Size>1</Size><Owner><DisplayName>alice</DisplayName></Owner></Version>
+                                     <Version><Key>two</Key><VersionId>v2</VersionId><IsLatest>false</IsLatest><LastModified>2026-09-26T12:00:00Z</LastModified><ETag>"etag"</ETag><Size>2</Size></Version>
+                                   </ListVersionsResult>
+                                   """;
+
+        using ContentStream objectsContent = CreateContent(objectsXml);
+        ListObjectsResponse objects = new ListObjectsResponse();
+        new ListObjectsResponseMarshal().MarshalResponse(CreateConfig(), objects, new Dictionary<string, string>(StringComparer.Ordinal), objectsContent);
+
+        using ContentStream versionsContent = CreateContent(versionsXml);
+        ListObjectVersionsResponse versions = new ListObjectVersionsResponse();
+        new ListObjectVersionsResponseMarshal().MarshalResponse(CreateConfig(), versions, new Dictionary<string, string>(StringComparer.Ordinal), versionsContent);
+
+        Assert.Equal("alice", objects.Objects[0].Owner?.Name);
+        Assert.Equal(string.Empty, objects.Objects[0].Owner?.Id);
+        Assert.Equal("two", objects.Objects[1].ObjectKey);
+        Assert.Equal("alice", versions.Versions[0].Owner?.Name);
+        Assert.Equal(string.Empty, versions.Versions[0].Owner?.Id);
+        Assert.Equal("two", versions.Versions[1].ObjectKey);
+    }
+
+    [Fact]
     public void ErrorXmlReaderRejectsDtds()
     {
         const string xml = """

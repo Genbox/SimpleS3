@@ -137,7 +137,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
                     storageClass = Core.Enums.Enums.StorageClass.Parse(xmlReader.ReadString(), StorageClassFormat.DisplayName);
                     break;
                 case "Owner":
-                    owner = ParserHelper.ParseOwner(xmlReader);
+                    owner = ParserHelper.ParseOwner(xmlReader, requireId: false);
                     break;
                 case "ChecksumAlgorithm":
                     checksumAlgorithm = Core.Enums.Enums.ChecksumAlgorithm.Parse(xmlReader.ReadString(), ChecksumAlgorithmFormat.DisplayName);
@@ -182,7 +182,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
                     lastModified = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
                     break;
                 case "Owner":
-                    owner = ParserHelper.ParseOwner(xmlReader);
+                    owner = ParserHelper.ParseOwner(xmlReader, requireId: false);
                     break;
             }
         }

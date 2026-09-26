@@ -92,12 +92,12 @@ internal static class ParserHelper
         return true;
     }
 
-    public static S3Identity ParseOwner(XmlReader xmlReader, string elementName = "Owner")
+    public static S3Identity ParseOwner(XmlReader xmlReader, string elementName = "Owner", bool requireId = true)
     {
         string? id = null;
         string? displayName = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, elementName))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -106,16 +106,14 @@ internal static class ParserHelper
                     break;
                 case "DisplayName":
                     displayName = xmlReader.ReadString();
-                    if (displayName.Length == 0)
-                        displayName = null;
                     break;
             }
         }
 
-        if (id == null)
+        if (requireId && id == null)
             throw new InvalidOperationException($"Missing required values in {elementName} section");
 
-        return new S3Identity(id, displayName);
+        return new S3Identity(id ?? string.Empty, string.IsNullOrEmpty(displayName) ? null : displayName);
     }
 
     public static S3RestoreStatus ParseRestoreStatus(XmlReader reader)
@@ -215,5 +213,4 @@ internal static class ParserHelper
         GrantType type = string.IsNullOrWhiteSpace(typeValue) ? GrantType.Unknown : Core.Enums.Enums.GrantType.Parse(typeValue);
         return new S3Grantee(type, id, displayName, uri, emailAddress);
     }
-
 }
