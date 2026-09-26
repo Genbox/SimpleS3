@@ -65,6 +65,21 @@ public class SigningMaterialCleanupTests
         Assert.All(signatureBuilder.Signature, x => Assert.Equal(0, x));
     }
 
+    [Fact]
+    public void ReplacingAnEncryptionKeyClearsTheRequestOwnedCopy()
+    {
+        byte[] supplied = [1, 2, 3];
+        PutObjectRequest request = new PutObjectRequest("bucket", "object", null) { SseCustomerKey = supplied };
+        byte[] owned = Assert.IsType<byte[]>(request.SseCustomerKey);
+
+        request.SseCustomerKey = [4, 5, 6];
+
+        Assert.NotSame(supplied, owned);
+        Assert.Equal(new byte[] { 1, 2, 3 }, supplied);
+        Assert.All(owned, value => Assert.Equal(0, value));
+        Assert.Equal(new byte[] { 4, 5, 6 }, request.SseCustomerKey);
+    }
+
     private static SimpleS3Config CreateConfig() => new SimpleS3Config
     {
         Credentials = new StringAccessKey("key-id", "secret-key"),

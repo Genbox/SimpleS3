@@ -54,7 +54,7 @@ public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5
     public byte[]? SseCustomerKey
     {
         get => _sseCustomerKey;
-        set => _sseCustomerKey = CopyHelper.CopyWithNull(value);
+        set => CopyHelper.ReplaceAndClear(ref _sseCustomerKey, value);
     }
 
     /// <summary>Provides the <c>ClearSensitiveMaterial</c> API.</summary>
