@@ -1,6 +1,4 @@
 using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 
@@ -8,7 +6,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// This implementation of the GET operation retrieves objects from Amazon S3. To use GET, you must have READ access to the object. If you grant READ access to the anonymous
 /// user, you can return the object without using an authorization header.
 /// </summary>
-public class GetObjectRequest : HeadObjectRequest, IHasRequestPayer
+public class GetObjectRequest : HeadObjectRequest
 {
     internal GetObjectRequest() : base(HttpMethodType.GET) {}
 
@@ -18,14 +16,4 @@ public class GetObjectRequest : HeadObjectRequest, IHasRequestPayer
         Initialize(bucketName, objectKey);
     }
 
-    /// <summary>Provides the <c>RequestPayer</c> API.</summary>
-    public Payer RequestPayer { get; set; }
-
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
-    {
-        RequestPayer = Payer.Unknown;
-
-        base.Reset();
-    }
 }

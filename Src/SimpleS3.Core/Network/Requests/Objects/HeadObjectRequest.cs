@@ -14,7 +14,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// use HEAD, you must have READ access to the object. A HEAD request has the same options as a GET operation on an object. The response is identical to the GET response except that
 /// there is no response body.
 /// </summary>
-public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId, IHasBucketName, IHasObjectKey, IHasPartNumber
+public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCustomerKey, IHasResponseHeader, IHasVersionId, IHasBucketName, IHasObjectKey, IHasPartNumber, IHasRequestPayer
 {
     private byte[]? _sseCustomerKey;
 
@@ -69,6 +69,9 @@ public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCusto
 
     /// <summary>Provides the <c>Range</c> API.</summary>
     public RangeBuilder Range { get; internal set; }
+
+    /// <summary>Provides the <c>RequestPayer</c> API.</summary>
+    public Payer RequestPayer { get; set; }
 
     /// <summary>Provides the <c>ResponseExpires</c> API.</summary>
     public DateTimeOffset? ResponseExpires { get; set; }
@@ -141,6 +144,7 @@ public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCusto
         SseCustomerKeyMd5 = null;
         ResponseExpires = null;
         EnableChecksum = false;
+        RequestPayer = Payer.Unknown;
 
         base.Reset();
     }
