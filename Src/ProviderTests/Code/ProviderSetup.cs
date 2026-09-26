@@ -1,6 +1,8 @@
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Abstracts.Request;
+using Genbox.SimpleS3.Extensions.HttpClientFactory;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +11,7 @@ namespace Genbox.ProviderTests.Code;
 
 internal sealed class ProviderSetup : IDisposable
 {
+    private readonly string auditDirectory = Path.Combine(Path.Combine(AppContext.BaseDirectory, "NetworkAudit"), $"{DateTime.UtcNow:yyyyMMdd-HHmmss}-{Guid.NewGuid():N}");
     private readonly Dictionary<S3Provider, ServiceProvider> providers = [];
     private readonly List<ServiceProvider> serviceProviders = [];
 
@@ -35,7 +38,13 @@ internal sealed class ProviderSetup : IDisposable
 
     private void BuildProvider(S3Provider provider)
     {
-        ServiceProvider services = UtilityHelper.CreateSimpleS3(provider, "TestSetup-" + provider, false, c => c.ObjectKeyValidationMode = ObjectKeyValidationMode.Disabled);
+        ServiceProvider services = UtilityHelper.CreateSimpleS3(provider, "TestSetup-" + provider, false, c => c.ObjectKeyValidationMode = ObjectKeyValidationMode.Disabled, collection =>
+        {
+            ServiceDescriptor transport = collection.Last(x => x.ServiceType == typeof(INetworkDriver));
+            collection.Remove(transport);
+            collection.AddSingleton(sp => (HttpClientFactoryNetworkDriver)transport.ImplementationFactory!(sp));
+            collection.AddSingleton<INetworkDriver>(sp => new AuditingNetworkDriver(sp.GetRequiredService<HttpClientFactoryNetworkDriver>(), Path.Combine(auditDirectory, provider.ToString())));
+        });
 
         IProfileManager profileManager = services.GetRequiredService<IProfileManager>();
 

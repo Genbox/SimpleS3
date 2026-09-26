@@ -42,7 +42,7 @@ public static class UtilityHelper
         return bucketName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && Guid.TryParseExact(bucketName[prefix.Length..], "D", out _);
     }
 
-    public static ServiceProvider CreateSimpleS3(S3Provider provider, string profileName, bool enableRetry, Action<SimpleS3Config>? configure = null)
+    public static ServiceProvider CreateSimpleS3(S3Provider provider, string profileName, bool enableRetry, Action<SimpleS3Config>? configure = null, Action<IServiceCollection>? configureServices = null)
     {
         ServiceCollection services = new ServiceCollection();
         ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(services, configure);
@@ -80,6 +80,7 @@ public static class UtilityHelper
         else
             throw new ArgumentOutOfRangeException(nameof(provider), provider, null);
 
+        configureServices?.Invoke(services);
         return services.BuildServiceProvider();
     }
 

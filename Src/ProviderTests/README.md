@@ -33,6 +33,14 @@ Missing profiles produce skipped provider rows. Tests also skip unsupported prov
 
 Review the passed, failed, and skipped counts and the skip reasons. A successful command with skipped providers does not establish coverage of those providers.
 
+## Request/response auditing
+
+Provider clients automatically use `Code/AuditingNetworkDriver.cs` to capture network exchanges. Files are written beneath `NetworkAudit/<run>/<provider>/<sequence>-<response-type>/` in the test output directory. Set `SIMPLES3_AUDIT_DIRECTORY` to choose a different root directory.
+
+Each exchange contains `request.json` (UTC timestamp, method, exact signed URL, headers), `response.json` (UTC timestamp, status code, headers), and raw `request.body` / `response.body` files when content streams exist. Transport failures are recorded in `error.txt`.
+
+Bodies are copied to disk as the transport or caller reads them, without buffering the entire payload in memory. An unread or partially read download therefore has an empty or partial body file; repeated reads after seeking are appended. Files are flushed after each read so they can be inspected during a test. Headers and bodies are captured verbatim, including authentication headers and object contents. These are driver-level captures; headers added internally by HttpClient are not included.
+
 ## Clean up temporary buckets
 
 Run cleanup after the live tests:
