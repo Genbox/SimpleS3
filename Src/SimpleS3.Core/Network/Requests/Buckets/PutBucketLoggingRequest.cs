@@ -34,7 +34,7 @@ public sealed class PutBucketLoggingRequest : BaseRequest, IHasBucketName, ICont
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         LoggingConfiguration = null;

@@ -15,7 +15,7 @@ public abstract class MetadataConfigurationSimpleRequest : BaseRequest, IHasBuck
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         BucketName = null!;
         base.Reset();

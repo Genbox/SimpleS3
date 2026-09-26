@@ -41,13 +41,14 @@ public sealed class GetObjectAnnotationRequest : BaseRequest, IHasBucketName, IH
         AnnotationName = annotationName;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         AnnotationName = null!;
         VersionId = null;
         RequestPayer = Payer.Unknown;
         EnableChecksum = false;
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

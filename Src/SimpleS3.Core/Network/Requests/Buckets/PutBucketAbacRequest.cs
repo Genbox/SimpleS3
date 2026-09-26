@@ -41,7 +41,7 @@ public sealed class PutBucketAbacRequest : BaseRequest, IHasBucketName, IContent
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Enabled = false;
         ContentMd5 = null;

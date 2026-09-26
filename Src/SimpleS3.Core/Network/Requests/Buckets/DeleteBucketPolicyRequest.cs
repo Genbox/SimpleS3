@@ -15,7 +15,13 @@ public class DeleteBucketPolicyRequest : BaseRequest, IHasBucketName
     }
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
-    public string BucketName { get; set; } = null!;
+    public string BucketName { get; set; } = null!; // Initialized before a pooled request is used.
 
     internal void Initialize(string bucketName) => BucketName = bucketName;
+
+    internal override void Reset()
+    {
+        BucketName = null!;
+        base.Reset();
+    }
 }

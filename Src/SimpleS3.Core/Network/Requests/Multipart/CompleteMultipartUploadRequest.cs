@@ -103,8 +103,7 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
             UploadParts.Add(part);
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ClearSensitiveMaterial();
         RequestPayer = Payer.Unknown;
@@ -117,7 +116,9 @@ public class CompleteMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHa
         MpuObjectSize = null;
         SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
         SseCustomerKeyMd5 = null;
-
+        BucketName = null!;
+        ObjectKey = null!;
+        UploadId = null!;
         base.Reset();
     }
 }

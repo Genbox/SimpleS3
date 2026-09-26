@@ -75,8 +75,7 @@ public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
 
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Delimiter = null;
         MaxKeys = null;
@@ -87,7 +86,7 @@ public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
         StartAfter = null;
         RequestPayer = Payer.Unknown;
         OptionalObjectAttributes.Clear();
-
+        BucketName = null!;
         base.Reset();
     }
 }

@@ -18,7 +18,7 @@ public sealed class PutObjectTaggingRequest : BaseRequest, IHasBucketName, IHasO
     }
 
     /// <summary>Provides the <c>Tags</c> API.</summary>
-    public IDictionary<string, string> Tags { get; private set; } = new Dictionary<string, string>(StringComparer.Ordinal);
+    public IDictionary<string, string> Tags { get; private set; } = null!;
 
     /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
@@ -44,13 +44,14 @@ public sealed class PutObjectTaggingRequest : BaseRequest, IHasBucketName, IHasO
         Tags = tags;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         RequestPayer = Payer.Unknown;
-        Tags = new Dictionary<string, string>(StringComparer.Ordinal);
+        Tags = null!;
         VersionId = null;
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

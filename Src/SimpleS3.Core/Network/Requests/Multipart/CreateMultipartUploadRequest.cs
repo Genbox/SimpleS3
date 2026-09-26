@@ -38,6 +38,8 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
         Initialize(bucketName, objectKey);
     }
 
+    internal bool CalculateContentMd5 { get; set; }
+
     /// <summary>Specifies whether Amazon S3 should use an S3 Bucket Key for server-side encryption with AWS KMS.</summary>
     public bool? BucketKeyEnabled { get; set; }
 
@@ -52,8 +54,6 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
 
     /// <summary>Provides the <c>ChecksumType</c> API.</summary>
     public ChecksumType ChecksumType { get; set; }
-
-    internal bool CalculateContentMd5 { get; set; }
 
     /// <summary>Provides the <c>ContentDisposition</c> API.</summary>
     public ContentDispositionBuilder ContentDisposition { get; internal set; }
@@ -147,8 +147,7 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
         ObjectKey = objectKey;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ClearSensitiveMaterial();
 
@@ -180,6 +179,8 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
         ChecksumType = ChecksumType.Unknown;
         CalculateContentMd5 = false;
 
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

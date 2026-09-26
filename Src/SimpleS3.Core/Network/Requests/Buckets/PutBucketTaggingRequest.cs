@@ -47,12 +47,12 @@ public class PutBucketTaggingRequest : BaseRequest, IHasBucketName, IContentMd5C
             Tags.Add(pair.Key, pair.Value);
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         Tags.Reset();
 
+        BucketName = null!;
         base.Reset();
     }
 }

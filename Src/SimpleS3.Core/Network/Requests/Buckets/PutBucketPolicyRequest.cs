@@ -19,10 +19,10 @@ public class PutBucketPolicyRequest : BaseRequest, IHasBucketName, IHasContentMd
     public bool ConfirmRemoveSelfBucketAccess { get; set; }
 
     /// <summary>Provides the <c>Policy</c> API.</summary>
-    public string Policy { get; set; } = null!;
+    public string Policy { get; set; } = null!; // Initialized before a pooled request is used.
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
-    public string BucketName { get; set; } = null!;
+    public string BucketName { get; set; } = null!; // Initialized before a pooled request is used.
 
     /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
@@ -33,12 +33,13 @@ public class PutBucketPolicyRequest : BaseRequest, IHasBucketName, IHasContentMd
         Policy = policy;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ConfirmRemoveSelfBucketAccess = false;
         ContentMd5 = null;
 
+        Policy = null!;
+        BucketName = null!;
         base.Reset();
     }
 }

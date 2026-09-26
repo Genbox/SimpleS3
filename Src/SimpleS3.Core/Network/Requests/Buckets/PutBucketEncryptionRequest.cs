@@ -38,12 +38,12 @@ public class PutBucketEncryptionRequest : BaseRequest, IHasBucketName, IContentM
             Rules.Add(rule);
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         Rules.Clear();
 
+        BucketName = null!;
         base.Reset();
     }
 }

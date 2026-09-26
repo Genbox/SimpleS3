@@ -60,8 +60,7 @@ public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBy
             Objects.Add(info);
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Objects.Clear();
         Mfa.Reset();
@@ -70,6 +69,7 @@ public sealed class DeleteObjectsRequest : BaseRequest, IHasRequestPayer, IHasBy
         ContentMd5 = null;
         RequestPayer = Payer.Unknown;
 
+        BucketName = null!;
         base.Reset();
     }
 }

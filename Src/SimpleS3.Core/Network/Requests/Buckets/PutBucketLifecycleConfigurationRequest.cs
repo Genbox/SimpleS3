@@ -45,8 +45,7 @@ public class PutBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
             Rules.Add(s3Rule);
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         Rules.Clear();

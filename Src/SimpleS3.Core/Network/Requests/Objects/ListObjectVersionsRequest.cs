@@ -58,8 +58,7 @@ public class ListObjectVersionsRequest : BaseRequest, IHasBucketName
 
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Delimiter = null;
         MaxKeys = null;
@@ -68,7 +67,7 @@ public class ListObjectVersionsRequest : BaseRequest, IHasBucketName
         KeyMarker = null;
         VersionIdMarker = null;
         OptionalObjectAttributes.Clear();
-
+        BucketName = null!;
         base.Reset();
     }
 }

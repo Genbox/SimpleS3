@@ -44,14 +44,16 @@ public class ListPartsRequest : BaseRequest, IHasUploadId, IHasRequestPayer, IHa
         UploadId = uploadId;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         RequestPayer = Payer.Unknown;
         PartNumberMarker = null;
         MaxParts = null;
         EncodingType = EncodingType.Unknown;
 
+        BucketName = null!;
+        ObjectKey = null!;
+        UploadId = null!;
         base.Reset();
     }
 }

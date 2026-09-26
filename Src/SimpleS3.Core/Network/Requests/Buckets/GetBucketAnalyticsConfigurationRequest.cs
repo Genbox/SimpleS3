@@ -27,7 +27,7 @@ public sealed class GetBucketAnalyticsConfigurationRequest : BaseRequest, IHasBu
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ConfigurationId = null!;
         BucketName = null!;

@@ -33,13 +33,19 @@ public class S3DeleteInfo : IPooledObject, IHasObjectKey, IHasVersionId
     public string? VersionId { get; set; }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public void Reset()
+    void IPooledObject.Reset() => Reset();
+
+    internal void Reset()
     {
-        //Do nothing as both variables are set through initialize
+        ObjectKey = null!;
+        VersionId = null;
+        ETag = null;
+        LastModifiedTime = null;
+        Size = null;
     }
 
     /// <summary>Provides the <c>Initialize</c> API.</summary>
-    public void Initialize(string objectKey, string? versionId = null)
+    internal void Initialize(string objectKey, string? versionId = null)
     {
         ObjectKey = objectKey;
         VersionId = versionId;

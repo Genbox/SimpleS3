@@ -123,8 +123,7 @@ public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCusto
         ObjectKey = objectKey;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ClearSensitiveMaterial();
 
@@ -146,6 +145,8 @@ public class HeadObjectRequest : BaseRequest, IHasRange, IHasCache, IHasSseCusto
         EnableChecksum = false;
         RequestPayer = Payer.Unknown;
 
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

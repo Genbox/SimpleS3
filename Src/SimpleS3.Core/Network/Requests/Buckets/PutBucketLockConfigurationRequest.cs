@@ -26,14 +26,6 @@ public sealed class PutBucketLockConfigurationRequest : BaseRequest, IHasBucketN
     /// <summary>Provides the <c>LockToken</c> API.</summary>
     public string? LockToken { get; set; }
 
-    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
-    public byte[]? ContentMd5 { get; set; }
-
-    Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
-
-    /// <summary>Provides the <c>BucketName</c> API.</summary>
-    public string BucketName { get; set; } = null!;
-
     /// <summary>Provides the <c>LockMode</c> API.</summary>
     public LockMode LockMode { get; set; }
 
@@ -42,6 +34,14 @@ public sealed class PutBucketLockConfigurationRequest : BaseRequest, IHasBucketN
 
     /// <summary>Default retention duration in calendar years. Specify either days or years.</summary>
     public int? LockRetainYears { get; set; }
+
+    /// <summary>Provides the <c>ContentMd5</c> API.</summary>
+    public byte[]? ContentMd5 { get; set; }
+
+    Func<bool> IContentMd5Config.ForceContentMd5 => () => true;
+
+    /// <summary>Provides the <c>BucketName</c> API.</summary>
+    public string BucketName { get; set; } = null!;
 
     /// <summary>Provides the <c>RequestPayer</c> API.</summary>
     public Payer RequestPayer { get; set; }
@@ -53,7 +53,7 @@ public sealed class PutBucketLockConfigurationRequest : BaseRequest, IHasBucketN
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         LockToken = null;
         LockMode = LockMode.Unknown;
@@ -61,6 +61,7 @@ public sealed class PutBucketLockConfigurationRequest : BaseRequest, IHasBucketN
         LockRetainYears = null;
         ContentMd5 = null;
         RequestPayer = Payer.Unknown;
+        ExpectedBucketOwner = null;
         Enabled = default;
         BucketName = null!;
         base.Reset();

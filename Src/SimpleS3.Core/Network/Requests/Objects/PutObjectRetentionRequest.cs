@@ -51,8 +51,7 @@ public sealed class PutObjectRetentionRequest : BaseRequest, IHasBucketName, IHa
         LockRetainUntil = retainUntil;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         BypassGovernanceRetention = null;
         ContentMd5 = null;
@@ -60,6 +59,8 @@ public sealed class PutObjectRetentionRequest : BaseRequest, IHasBucketName, IHa
         LockRetainUntil = null;
         RequestPayer = Payer.Unknown;
         VersionId = null;
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

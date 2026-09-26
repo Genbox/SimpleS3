@@ -18,4 +18,10 @@ public class GetBucketLifecycleConfigurationRequest : BaseRequest, IHasBucketNam
     public string BucketName { get; set; } = null!;
 
     internal void Initialize(string bucketName) => BucketName = bucketName;
+
+    internal override void Reset()
+    {
+        BucketName = null!;
+        base.Reset();
+    }
 }

@@ -70,8 +70,7 @@ public sealed class GetObjectAttributesRequest : BaseRequest, IHasBucketName, IH
         ObjectAttributes = objectAttributes;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ClearSensitiveMaterial();
         ObjectAttributes = Array.Empty<ObjectAttribute>();
@@ -81,6 +80,8 @@ public sealed class GetObjectAttributesRequest : BaseRequest, IHasBucketName, IH
         SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
         SseCustomerKeyMd5 = null;
         VersionId = null;
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

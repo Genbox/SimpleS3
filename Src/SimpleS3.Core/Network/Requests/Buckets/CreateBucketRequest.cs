@@ -3,7 +3,6 @@ using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
-using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
@@ -60,8 +59,7 @@ public class CreateBucketRequest : BaseRequest, IHasBucketAcl, IHasBucketName
 
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         EnableObjectLocking = null;
         Acl = BucketCannedAcl.Unknown;

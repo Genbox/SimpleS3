@@ -1,7 +1,6 @@
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Common.Marshal;
-using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
@@ -34,11 +33,11 @@ public sealed class PutBucketWebsiteRequest : BaseRequest, IHasBucketName, ICont
         WebsiteConfiguration = websiteConfiguration;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         WebsiteConfiguration = null!;
+        BucketName = null!;
         base.Reset();
     }
 }

@@ -36,7 +36,7 @@ public sealed class PutBucketMetricsConfigurationRequest : BaseRequest, IHasBuck
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Configuration = null!;
         ContentMd5 = null;

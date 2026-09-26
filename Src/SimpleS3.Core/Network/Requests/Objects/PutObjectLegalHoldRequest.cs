@@ -44,14 +44,15 @@ public sealed class PutObjectLegalHoldRequest : BaseRequest, IHasBucketName, IHa
         LockLegalHold = legalHold;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         RequestPayer = Payer.Unknown;
         VersionId = null;
         ContentMd5 = null;
         LockLegalHold = null;
 
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

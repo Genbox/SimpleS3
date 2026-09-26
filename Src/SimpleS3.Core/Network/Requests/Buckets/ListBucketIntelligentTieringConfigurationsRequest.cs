@@ -23,7 +23,7 @@ public sealed class ListBucketIntelligentTieringConfigurationsRequest : BaseRequ
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContinuationToken = null;
         BucketName = null!;

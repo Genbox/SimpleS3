@@ -40,11 +40,12 @@ public class AbortMultipartUploadRequest : BaseRequest, IHasRequestPayer, IHasBu
         UploadId = uploadId;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         RequestPayer = Payer.Unknown;
-
+        BucketName = null!;
+        ObjectKey = null!;
+        UploadId = null!;
         base.Reset();
     }
 }

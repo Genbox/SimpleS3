@@ -40,8 +40,6 @@ public abstract class BaseRequest(HttpMethodType method) : IRequest, IRequestTra
         //Query parameters can contain different casing. 'partNumber' and 'uploadId' are two of them. They MUST be cased as such.
         _queryParameters[key] = value;
 
-    internal void RemoveQueryParameter(string key) => _queryParameters.Remove(key);
-
     /// <summary>Provides the <c>SetHeader</c> API.</summary>
     public void SetHeader(string key, string value)
     {
@@ -71,8 +69,10 @@ public abstract class BaseRequest(HttpMethodType method) : IRequest, IRequestTra
         _trailers[normalizedKey] = value;
     }
 
+    internal void RemoveQueryParameter(string key) => _queryParameters.Remove(key);
+
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public virtual void Reset()
+    internal virtual void Reset()
     {
         _headers.Clear();
         _queryParameters.Clear();

@@ -119,8 +119,7 @@ public sealed class UploadPartCopyRequest : BaseRequest, IHasBucketName, IHasObj
         PartNumber = partNumber;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ClearSensitiveMaterial();
         CopySourceIfETagMatch.Reset();
@@ -135,6 +134,11 @@ public sealed class UploadPartCopyRequest : BaseRequest, IHasBucketName, IHasObj
         SourceSseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
         SourceSseCustomerKeyMd5 = null;
         ExpectedSourceBucketOwner = null;
+        SourceBucketName = null!;
+        SourceObjectKey = null!;
+        BucketName = null!;
+        ObjectKey = null!;
+        UploadId = null!;
         base.Reset();
     }
 }

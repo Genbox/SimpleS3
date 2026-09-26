@@ -41,8 +41,7 @@ public sealed class PutBucketCorsRequest : BaseRequest, IHasBucketName, IContent
         Rules = rules;
     }
 
-    /// <summary>Resets the request for reuse.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         ChecksumAlgorithm = ChecksumAlgorithm.Unknown;

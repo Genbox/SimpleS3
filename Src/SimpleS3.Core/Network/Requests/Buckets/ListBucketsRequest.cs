@@ -17,8 +17,7 @@ public class ListBucketsRequest() : BaseRequest(HttpMethodType.GET)
     /// <summary>Limits results to buckets in this region.</summary>
     public string? BucketRegion { get; set; }
 
-    /// <summary>Resets the request for reuse.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         MaxBuckets = null;
         ContinuationToken = null;

@@ -34,12 +34,13 @@ public class GetObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, I
         ObjectKey = objectKey;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         RequestPayer = Payer.Unknown;
         VersionId = null;
 
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

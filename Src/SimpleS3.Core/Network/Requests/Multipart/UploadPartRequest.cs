@@ -82,8 +82,7 @@ public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5
         Content = content;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ClearSensitiveMaterial();
 
@@ -93,7 +92,12 @@ public class UploadPartRequest : BaseRequest, IHasSseCustomerKey, IHasContentMd5
         SseCustomerKeyMd5 = null;
         ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
         Checksum = null;
+        Content = null;
 
+        BucketName = null!;
+        ObjectKey = null!;
+        PartNumber = null;
+        UploadId = null!;
         base.Reset();
     }
 }

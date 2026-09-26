@@ -61,23 +61,23 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
     /// <summary>Provides the <c>TaggingDirective</c> API.</summary>
     public TaggingDirective TaggingDirective { get; set; }
 
-    /// <summary>Controls whether source annotations are copied.</summary>
+    /// <summary>Provides the <c>AnnotationDirective</c> API.</summary>
     public AnnotationDirective AnnotationDirective { get; set; }
 
-    /// <summary>Encryption algorithm of the customer-provided key used to decrypt the source.</summary>
+    /// <summary>Provides the <c>SourceSseCustomerAlgorithm</c> API.</summary>
     public SseCustomerAlgorithm SourceSseCustomerAlgorithm { get; set; }
 
-    /// <summary>MD5 digest of the customer-provided source encryption key.</summary>
+    /// <summary>Provides the <c>SourceSseCustomerKeyMd5</c> API.</summary>
     public byte[]? SourceSseCustomerKeyMd5 { get; set; }
 
-    /// <summary>Customer-provided source encryption key. The request owns a copy.</summary>
+    /// <summary>Provides the <c>SourceSseCustomerKey</c> API.</summary>
     public byte[]? SourceSseCustomerKey
     {
         get => _sourceSseCustomerKey;
         set => CopyHelper.ReplaceAndClear(ref _sourceSseCustomerKey, value);
     }
 
-    // Source version and conditions must use copy-source headers rather than destination query parameters or generic If-* headers.
+    // Copy conditions and version identify the source and must only use copy-source headers.
     /// <summary>Provides the <c>AutoMapDisabledFor</c> API.</summary>
     public Func<Type, bool> AutoMapDisabledFor => type => type == typeof(IHasVersionId) || type == typeof(IHasCache);
 
@@ -188,8 +188,7 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
         DestinationObjectKey = destinationObjectKey;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ClearSensitiveMaterial();
 
@@ -224,6 +223,10 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
         WebsiteRedirectLocation = null;
         ExpectedSourceBucketOwner = null;
 
+        SourceBucketName = null!;
+        SourceObjectKey = null!;
+        DestinationBucketName = null!;
+        DestinationObjectKey = null!;
         base.Reset();
     }
 }

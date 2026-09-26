@@ -1,6 +1,5 @@
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Common.Marshal;
-using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
@@ -21,8 +20,9 @@ public sealed class DeleteBucketReplicationRequest : BaseRequest, IHasBucketName
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
+        ExpectedBucketOwner = null;
         base.Reset();
     }
 }

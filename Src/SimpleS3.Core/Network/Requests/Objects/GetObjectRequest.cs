@@ -15,5 +15,4 @@ public class GetObjectRequest : HeadObjectRequest
     {
         Initialize(bucketName, objectKey);
     }
-
 }

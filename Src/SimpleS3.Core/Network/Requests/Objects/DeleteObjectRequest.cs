@@ -12,9 +12,11 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// </summary>
 public class DeleteObjectRequest : BaseRequest, IHasVersionId, IHasRequestPayer, IHasBypassGovernanceRetention, IHasObjectKey, IHasBucketName, IHasMfa
 {
+    private readonly MfaAuthenticationBuilder _ownedMfa;
+
     internal DeleteObjectRequest() : base(HttpMethodType.DELETE)
     {
-        Mfa = new MfaAuthenticationBuilder();
+        _ownedMfa = Mfa = new MfaAuthenticationBuilder();
     }
 
     /// <summary>Provides the <c>DeleteObjectRequest</c> API.</summary>
@@ -50,15 +52,17 @@ public class DeleteObjectRequest : BaseRequest, IHasVersionId, IHasRequestPayer,
         ObjectKey = objectKey;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
+        Mfa = _ownedMfa;
         Mfa.Reset();
         BypassGovernanceRetention = null;
         RequestPayer = Payer.Unknown;
         VersionId = null;
-        IfMatch = null;
 
+        IfMatch = null;
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

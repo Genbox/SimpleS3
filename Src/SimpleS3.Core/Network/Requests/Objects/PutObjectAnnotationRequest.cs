@@ -55,8 +55,7 @@ public sealed class PutObjectAnnotationRequest : BaseRequest, IHasBucketName, IH
         Content = content;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         AnnotationName = null!;
         Content = null;
@@ -66,6 +65,8 @@ public sealed class PutObjectAnnotationRequest : BaseRequest, IHasBucketName, IH
         ContentMd5 = null;
         ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
         Checksum = null;
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

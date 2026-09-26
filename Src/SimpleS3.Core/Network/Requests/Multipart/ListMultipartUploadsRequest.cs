@@ -67,8 +67,7 @@ public class ListMultipartUploadsRequest : BaseRequest, IHasBucketName
 
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Delimiter = null;
         EncodingType = EncodingType.Unknown;
@@ -77,6 +76,7 @@ public class ListMultipartUploadsRequest : BaseRequest, IHasBucketName
         Prefix = null;
         UploadIdMarker = null;
 
+        BucketName = null!;
         base.Reset();
     }
 }

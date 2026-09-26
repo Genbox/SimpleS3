@@ -160,8 +160,7 @@ public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpire
         ObjectKey = objectKey;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ClearSensitiveMaterial();
 
@@ -196,6 +195,9 @@ public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpire
         ContentMd5 = null;
         IfMatch = null;
         IfNoneMatch = null;
+
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

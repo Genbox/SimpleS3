@@ -43,14 +43,15 @@ public sealed class ListObjectAnnotationsRequest : BaseRequest, IHasBucketName, 
         ObjectKey = objectKey;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         AnnotationPrefix = null;
         ContinuationToken = null;
         MaxAnnotationResults = null;
         VersionId = null;
         RequestPayer = Payer.Unknown;
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

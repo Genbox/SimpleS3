@@ -53,8 +53,7 @@ public sealed class PutBucketAclRequest : BaseRequest, IHasBucketName, IHasBucke
 
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         Acl = BucketCannedAcl.Unknown;
@@ -64,6 +63,7 @@ public sealed class PutBucketAclRequest : BaseRequest, IHasBucketName, IHasBucke
         AclGrantWriteAcp.Reset();
         AclGrantFullControl.Reset();
         ObjectOwnership = ObjectOwnership.Unknown;
+        BucketName = null!;
         base.Reset();
     }
 }

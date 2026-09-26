@@ -29,7 +29,7 @@ public abstract class MetadataConfigurationBodyRequest : BaseRequest, IHasBucket
     public byte[]? Checksum { get; set; }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
@@ -60,7 +60,7 @@ public sealed class CreateBucketMetadataConfigurationRequest : MetadataConfigura
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Configuration = null!;
         base.Reset();
@@ -88,7 +88,7 @@ public sealed class UpdateBucketMetadataInventoryTableConfigurationRequest : Met
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Configuration = null!;
         base.Reset();
@@ -116,7 +116,7 @@ public sealed class UpdateBucketMetadataJournalTableConfigurationRequest : Metad
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Configuration = null!;
         base.Reset();

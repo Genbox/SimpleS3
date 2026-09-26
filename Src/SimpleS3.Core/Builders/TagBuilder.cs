@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Genbox.HttpBuilders.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -43,14 +44,16 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
         return string.Join("&", _tags!.Select(x => UrlHelper.UrlEncode(x.Key) + '=' + UrlHelper.UrlEncode(x.Value)));
     }
 
-    /// <summary>Clears the tags for reuse.</summary>
-    public void Reset() => _tags?.Clear();
+    [SuppressMessage("Design", "CA1033", Justification = "Reset remains an implementation detail and is exposed only through the external header-builder contract.")]
+    void IHttpHeaderBuilder.Reset() => Reset();
 
     /// <summary>Provides the <c>HasData</c> API.</summary>
     public bool HasData() => _tags != null && _tags.Count > 0;
 
     /// <summary>Provides the <c>HeaderName</c> API.</summary>
     public string? HeaderName => null;
+
+    internal void Reset() => _tags?.Clear();
 
     // S3 user-defined tag rules:
     // https://docs.aws.amazon.com/AmazonS3/latest/userguide/tagging.html#how-tags-work
@@ -106,6 +109,7 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
         for (int i = 0; i < text.Length; i++)
         {
             char current = text[i];
+
             if (char.IsHighSurrogate(current))
             {
                 if (i + 1 >= text.Length || !char.IsLowSurrogate(text[i + 1]))
@@ -115,8 +119,9 @@ public class TagBuilder : IHttpHeaderBuilder, IEnumerable<KeyValuePair<string, s
                 return false;
 
             UnicodeCategory category = CharUnicodeInfo.GetUnicodeCategory(text, i);
+
             if (category is UnicodeCategory.UppercaseLetter or UnicodeCategory.LowercaseLetter or UnicodeCategory.TitlecaseLetter or UnicodeCategory.ModifierLetter or UnicodeCategory.OtherLetter or
-                UnicodeCategory.DecimalDigitNumber or UnicodeCategory.LetterNumber or UnicodeCategory.OtherNumber || char.IsWhiteSpace(current) || AllowedSymbols.IndexOf(current) >= 0)
+                    UnicodeCategory.DecimalDigitNumber or UnicodeCategory.LetterNumber or UnicodeCategory.OtherNumber || char.IsWhiteSpace(current) || AllowedSymbols.IndexOf(current) >= 0)
             {
                 if (char.IsHighSurrogate(current))
                     i++;

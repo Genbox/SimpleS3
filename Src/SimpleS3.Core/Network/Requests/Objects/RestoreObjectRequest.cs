@@ -49,8 +49,7 @@ public class RestoreObjectRequest : BaseRequest, IHasRequestPayer, IHasVersionId
         ObjectKey = objectKey;
     }
 
-    /// <summary>Resets the request for reuse.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Days = 0;
         GlacierTier = RetrievalTier.Unknown;

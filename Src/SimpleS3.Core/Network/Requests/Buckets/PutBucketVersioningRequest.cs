@@ -45,12 +45,13 @@ public class PutBucketVersioningRequest : BaseRequest, IHasBucketName, IContentM
         Status = enabled;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         MfaDelete = null;
         Mfa.Reset();
+        Status = default;
+        BucketName = null!;
         base.Reset();
     }
 }

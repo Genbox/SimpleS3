@@ -39,10 +39,11 @@ public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketNa
     }
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         AccelerationEnabled = false;
         BucketName = null!;
+        ExpectedBucketOwner = null;
         ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
         Checksum = null;
         base.Reset();

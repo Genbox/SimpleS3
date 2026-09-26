@@ -75,8 +75,7 @@ public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, I
         ObjectKey = objectKey;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         Acl = ObjectCannedAcl.Unknown;
@@ -89,6 +88,8 @@ public class PutObjectAclRequest : BaseRequest, IHasBucketName, IHasObjectKey, I
         Owner = null;
         Grants.Clear();
 
+        BucketName = null!;
+        ObjectKey = null!;
         base.Reset();
     }
 }

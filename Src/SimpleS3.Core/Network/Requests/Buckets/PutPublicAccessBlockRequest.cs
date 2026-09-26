@@ -65,14 +65,14 @@ public class PutPublicAccessBlockRequest : BaseRequest, IHasBucketName
 
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         BlockPublicAcls = false;
         BlockPublicPolicy = false;
         IgnorePublicAcls = false;
         RestrictPublicBuckets = false;
 
+        BucketName = null!;
         base.Reset();
     }
 }

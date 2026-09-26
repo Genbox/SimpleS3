@@ -2,7 +2,6 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Features;
 using Genbox.SimpleS3.Core.Common.Marshal;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
@@ -34,11 +33,11 @@ public sealed class PutBucketRequestPaymentRequest : BaseRequest, IHasBucketName
         Payer = payer;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         ContentMd5 = null;
         Payer = RequestPaymentPayer.Unknown;
+        BucketName = null!;
         base.Reset();
     }
 }

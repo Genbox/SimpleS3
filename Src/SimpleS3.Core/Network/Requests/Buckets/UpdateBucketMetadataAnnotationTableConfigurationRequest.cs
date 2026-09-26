@@ -41,13 +41,13 @@ public sealed class UpdateBucketMetadataAnnotationTableConfigurationRequest : Ba
         Configuration = configuration;
     }
 
-    /// <summary>Provides the <c>Reset</c> API.</summary>
-    public override void Reset()
+    internal override void Reset()
     {
         Configuration = null!;
         ContentMd5 = null;
         ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
         Checksum = null;
+        BucketName = null!;
         base.Reset();
     }
 }
