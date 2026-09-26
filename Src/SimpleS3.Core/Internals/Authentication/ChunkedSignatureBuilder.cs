@@ -5,7 +5,6 @@ using Genbox.SimpleS3.Core.Abstracts.Authentication;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Pools;
-using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Misc;
 using Microsoft.Extensions.Logging;
@@ -21,8 +20,6 @@ internal sealed partial class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuil
 
     public byte[] CreateChunkSignature(IRequest request, byte[] previousSignature, byte[] content, int offset, int length)
     {
-        Validator.RequireNotNull(request);
-
         CreatingChunkSignature(request.RequestId);
 
         string stringToSign = CreateStringToSign(request.Timestamp, scopeBuilder.CreateScope(SigningConstants.S3Service, request.Timestamp), previousSignature, content, offset, length);
@@ -38,8 +35,6 @@ internal sealed partial class ChunkedSignatureBuilder(ISigningKeyBuilder keyBuil
 
     public byte[] CreateTrailerSignature(IRequest request, byte[] previousSignature)
     {
-        Validator.RequireNotNull(request);
-
         CreatingTrailerSignature(request.RequestId);
 
         IReadOnlyDictionary<string, string> trailers = (request as IRequestTrailers)?.Trailers ?? EmptyTrailers;

@@ -9,7 +9,6 @@ using Genbox.SimpleS3.Core.Authentication;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Common.Pools;
-using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Internals.Extensions;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Misc;
@@ -44,8 +43,6 @@ internal sealed partial class SignatureBuilder(ISigningKeyBuilder keyBuilder, IS
 
     public byte[] CreateSignature(IRequest request, string service, bool enablePayloadSignature = true)
     {
-        Validator.RequireNotNull(request);
-
         CreatingSignature(request.RequestId);
 
         StringBuilder sb = StringBuilderPool.Shared.Rent(200);
