@@ -1,44 +1,23 @@
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Request;
-using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 namespace Genbox.SimpleS3.Core.Internals.Operations;
 
-internal sealed class MultipartOperations : IMultipartOperations
+internal sealed class MultipartOperations(IRequestHandler requestHandler) : IMultipartOperations
 {
-    private readonly IRequestHandler _requestHandler;
+    public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(CreateMultipartUploadRequest request, CancellationToken token = default) => requestHandler.SendRequestAsync<CreateMultipartUploadRequest, CreateMultipartUploadResponse>(request, token);
 
-    public MultipartOperations(IRequestHandler requestHandler, IEnumerable<IRequestWrapper>? requestWrappers = null, IEnumerable<IResponseWrapper>? responseWrappers = null)
-    {
-        _requestHandler = requestHandler;
+    public Task<UploadPartResponse> UploadPartAsync(UploadPartRequest request, CancellationToken token = default) => requestHandler.SendRequestAsync<UploadPartRequest, UploadPartResponse>(request, token);
 
-        if (requestWrappers != null)
-            RequestWrappers = requestWrappers.ToList();
-        else
-            RequestWrappers = Array.Empty<IRequestWrapper>();
+    public Task<UploadPartCopyResponse> UploadPartCopyAsync(UploadPartCopyRequest request, CancellationToken token = default) => requestHandler.SendRequestAsync<UploadPartCopyRequest, UploadPartCopyResponse>(request, token);
 
-        if (responseWrappers != null)
-            ResponseWrappers = responseWrappers.ToList();
-        else
-            ResponseWrappers = Array.Empty<IResponseWrapper>();
-    }
+    public Task<ListPartsResponse> ListPartsAsync(ListPartsRequest request, CancellationToken token = default) => requestHandler.SendRequestAsync<ListPartsRequest, ListPartsResponse>(request, token);
 
-    public IList<IRequestWrapper> RequestWrappers { get; }
-    public IList<IResponseWrapper> ResponseWrappers { get; }
+    public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(CompleteMultipartUploadRequest request, CancellationToken token = default) => requestHandler.SendRequestAsync<CompleteMultipartUploadRequest, CompleteMultipartUploadResponse>(request, token);
 
-    public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(CreateMultipartUploadRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<CreateMultipartUploadRequest, CreateMultipartUploadResponse>(request, token);
+    public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(AbortMultipartUploadRequest request, CancellationToken token = default) => requestHandler.SendRequestAsync<AbortMultipartUploadRequest, AbortMultipartUploadResponse>(request, token);
 
-    public Task<UploadPartResponse> UploadPartAsync(UploadPartRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<UploadPartRequest, UploadPartResponse>(request, token);
-
-    public Task<UploadPartCopyResponse> UploadPartCopyAsync(UploadPartCopyRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<UploadPartCopyRequest, UploadPartCopyResponse>(request, token);
-
-    public Task<ListPartsResponse> ListPartsAsync(ListPartsRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<ListPartsRequest, ListPartsResponse>(request, token);
-
-    public Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(CompleteMultipartUploadRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<CompleteMultipartUploadRequest, CompleteMultipartUploadResponse>(request, token);
-
-    public Task<AbortMultipartUploadResponse> AbortMultipartUploadAsync(AbortMultipartUploadRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<AbortMultipartUploadRequest, AbortMultipartUploadResponse>(request, token);
-
-    public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(ListMultipartUploadsRequest request, CancellationToken token = default) => _requestHandler.SendRequestAsync<ListMultipartUploadsRequest, ListMultipartUploadsResponse>(request, token);
+    public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(ListMultipartUploadsRequest request, CancellationToken token = default) => requestHandler.SendRequestAsync<ListMultipartUploadsRequest, ListMultipartUploadsResponse>(request, token);
 }

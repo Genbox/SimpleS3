@@ -1,4 +1,3 @@
-using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using JetBrains.Annotations;
@@ -9,12 +8,6 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations;
 [PublicAPI]
 public interface IMultipartOperations
 {
-    /// <summary>Provides the <c>RequestWrappers</c> API.</summary>
-    IList<IRequestWrapper> RequestWrappers { get; }
-
-    /// <summary>Provides the <c>ResponseWrappers</c> API.</summary>
-    IList<IResponseWrapper> ResponseWrappers { get; }
-
     /// <summary>Create a multipart upload See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_CreateMultipartUpload.html for details</summary>
     Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(CreateMultipartUploadRequest request, CancellationToken token = default);
 
