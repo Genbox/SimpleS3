@@ -7,6 +7,9 @@ namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
 /// <summary>Provides the <c>S3Version</c> API.</summary>
 public class S3Version(string objectKey, string? versionId, bool isLatest, DateTimeOffset lastModified, string etag, int size, S3Identity? owner, StorageClass storageClass, ChecksumAlgorithm checksumAlgorithm, ChecksumType checksumType) : IHasObjectKey, IHasVersionId
 {
+    /// <summary>The optional restoration status returned by the service.</summary>
+    public S3RestoreStatus? RestoreStatus { get; internal set; }
+
     /// <summary>Provides the <c>Etag</c> API.</summary>
     public string Etag { get; } = etag;
 

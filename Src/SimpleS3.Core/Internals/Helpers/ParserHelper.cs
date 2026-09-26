@@ -118,6 +118,26 @@ internal static class ParserHelper
         return new S3Identity(id, displayName);
     }
 
+    public static S3RestoreStatus ParseRestoreStatus(XmlReader reader)
+    {
+        S3RestoreStatus result = new S3RestoreStatus();
+
+        foreach (string name in XmlHelper.ReadChildren(reader))
+        {
+            switch (name)
+            {
+                case "IsRestoreInProgress":
+                    result.IsRestoreInProgress = XmlConvert.ToBoolean(reader.ReadString());
+                    break;
+                case "RestoreExpiryDate":
+                    result.RestoreExpiryDate = XmlConvert.ToDateTimeOffset(reader.ReadString());
+                    break;
+            }
+        }
+
+        return result;
+    }
+
     public static (S3Identity? Owner, List<S3Grant> Grants) ParseAccessControlPolicy(XmlReader xmlReader)
     {
         XmlHelper.ReadToDescendant(xmlReader, "AccessControlPolicy");

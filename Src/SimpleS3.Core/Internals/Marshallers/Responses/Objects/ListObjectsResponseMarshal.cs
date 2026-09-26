@@ -89,6 +89,7 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
         S3Identity? owner = null;
         ChecksumAlgorithm checksumAlgorithm = ChecksumAlgorithm.Unknown;
         ChecksumType checksumType = ChecksumType.Unknown;
+        S3RestoreStatus? restoreStatus = null;
 
         foreach (string name in XmlHelper.ReadElements(xmlReader, "Contents"))
         {
@@ -118,13 +119,16 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
                 case "ChecksumType":
                     checksumType = Core.Enums.Enums.ChecksumType.Parse(xmlReader.ReadString(), ChecksumTypeFormat.DisplayName);
                     break;
+                case "RestoreStatus":
+                    restoreStatus = ParserHelper.ParseRestoreStatus(xmlReader);
+                    break;
             }
         }
 
         if (key == null || lastModified == null || size == null)
             throw new InvalidOperationException("Missing required values");
 
-        response.Objects.Add(new S3Object(key, lastModified.Value, size.Value, owner, eTag, storageClass, checksumAlgorithm, checksumType));
+        response.Objects.Add(new S3Object(key, lastModified.Value, size.Value, owner, eTag, storageClass, checksumAlgorithm, checksumType) { RestoreStatus = restoreStatus });
     }
 
     private static void ReadCommonPrefixes(ListObjectsResponse response, XmlReader xmlReader)
