@@ -19,7 +19,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
 
         using (XmlReader xmlReader = XmlHelper.CreateReader(responseStream))
         {
-            //To support Google's lack of versions which is identical to S3 ListObjectVersions, but not quite
+            // Google's version listing uses a different root, but the response fields are the same.
             xmlReader.MoveToContent();
 
             foreach (string name in XmlHelper.ReadChildren(xmlReader))
@@ -27,7 +27,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
                 switch (name)
                 {
                     case "IsTruncated":
-                        response.IsTruncated = ValueHelper.ParseBool(xmlReader.ReadString());
+                        response.IsTruncated = XmlConvert.ToBoolean(xmlReader.ReadString());
                         break;
                     case "EncodingType":
                         response.EncodingType = Core.Enums.Enums.EncodingType.Parse(xmlReader.ReadString(), EncodingTypeFormat.DisplayName);
@@ -99,17 +99,17 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
                 return xmlReader.ReadString();
         }
 
-        throw new InvalidOperationException("Could not parse common prefix");
+        return string.Empty;
     }
 
     private static S3Version ParseVersion(XmlReader xmlReader)
     {
         string? objectKey = null;
         string? versionId = null;
-        bool? isLatest = null;
-        DateTimeOffset? lastModified = null;
+        bool isLatest = false;
+        DateTimeOffset lastModified = default;
         string? etag = null;
-        long size = -1;
+        long size = default;
         StorageClass storageClass = StorageClass.Unknown;
         S3Identity? owner = null;
         List<ChecksumAlgorithm> checksumAlgorithms = [];
@@ -127,7 +127,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
                     versionId = xmlReader.ReadString();
                     break;
                 case "IsLatest":
-                    isLatest = ValueHelper.ParseBool(xmlReader.ReadString());
+                    isLatest = XmlConvert.ToBoolean(xmlReader.ReadString());
                     break;
                 case "LastModified":
                     lastModified = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
@@ -156,10 +156,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
             }
         }
 
-        if (objectKey == null || isLatest == null || lastModified == null || etag == null || size == -1)
-            throw new InvalidOperationException("Missing required values");
-
-        return new S3Version(objectKey, versionId, isLatest.Value, lastModified.Value, etag, size, owner, storageClass, checksumAlgorithms, checksumType) { RestoreStatus = restoreStatus };
+        return new S3Version(objectKey ?? string.Empty, versionId, isLatest, lastModified, etag ?? string.Empty, size, owner, storageClass, checksumAlgorithms, checksumType) { RestoreStatus = restoreStatus };
     }
 
     private static S3DeleteMarker ParseDeleteMarker(XmlReader xmlReader)
@@ -167,7 +164,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
         bool isLatest = false;
         string? versionId = null;
         string? objectKey = null;
-        DateTimeOffset? lastModified = null;
+        DateTimeOffset lastModified = default;
         S3Identity? owner = null;
 
         foreach (string name in XmlHelper.ReadChildren(xmlReader))
@@ -181,7 +178,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
                     versionId = xmlReader.ReadString();
                     break;
                 case "IsLatest":
-                    isLatest = ValueHelper.ParseBool(xmlReader.ReadString());
+                    isLatest = XmlConvert.ToBoolean(xmlReader.ReadString());
                     break;
                 case "LastModified":
                     lastModified = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
@@ -192,9 +189,6 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
             }
         }
 
-        if (owner == null || objectKey == null || versionId == null || lastModified == null)
-            throw new InvalidOperationException("Missing required values");
-
-        return new S3DeleteMarker(isLatest, objectKey, lastModified.Value, owner, versionId);
+        return new S3DeleteMarker(isLatest, objectKey ?? string.Empty, lastModified, owner ?? new S3Identity(string.Empty, null), versionId ?? string.Empty);
     }
 }

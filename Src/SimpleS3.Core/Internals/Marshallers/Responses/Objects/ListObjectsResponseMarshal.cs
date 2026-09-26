@@ -38,7 +38,7 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
                         response.MaxKeys = ValueHelper.ParseInt(xmlReader.ReadString());
                         break;
                     case "IsTruncated":
-                        response.IsTruncated = ValueHelper.ParseBool(xmlReader.ReadString());
+                        response.IsTruncated = XmlConvert.ToBoolean(xmlReader.ReadString());
                         break;
                     case "EncodingType":
                         response.EncodingType = Core.Enums.Enums.EncodingType.Parse(xmlReader.ReadString(), EncodingTypeFormat.DisplayName);
@@ -82,9 +82,9 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
     private static void ReadContents(ListObjectsResponse response, XmlReader xmlReader)
     {
         string? key = null;
-        DateTimeOffset? lastModified = null;
+        DateTimeOffset lastModified = default;
         string? eTag = null;
-        long? size = null;
+        long size = default;
         StorageClass storageClass = StorageClass.Unknown;
         S3Identity? owner = null;
         List<ChecksumAlgorithm> checksumAlgorithms = [];
@@ -125,10 +125,7 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
             }
         }
 
-        if (key == null || lastModified == null || size == null)
-            throw new InvalidOperationException("Missing required values");
-
-        response.Objects.Add(new S3Object(key, lastModified.Value, size.Value, owner, eTag, storageClass, checksumAlgorithms, checksumType) { RestoreStatus = restoreStatus });
+        response.Objects.Add(new S3Object(key ?? string.Empty, lastModified, size, owner, eTag, storageClass, checksumAlgorithms, checksumType) { RestoreStatus = restoreStatus });
     }
 
     private static void ReadCommonPrefixes(ListObjectsResponse response, XmlReader xmlReader)
@@ -141,9 +138,6 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
                 key = xmlReader.ReadString();
         }
 
-        if (key == null)
-            throw new InvalidOperationException("Missing required values");
-
-        response.CommonPrefixes.Add(key);
+        response.CommonPrefixes.Add(key ?? string.Empty);
     }
 }

@@ -31,6 +31,7 @@ internal sealed class ListObjectAnnotationsResponseMarshal : IResponseMarshal<Li
                         if (child == "AnnotationEntry")
                             response.Annotations.Add(ParseAnnotation(reader));
                     }
+
                     break;
                 case "Bucket":
                     response.BucketName = reader.ReadString();
@@ -60,9 +61,9 @@ internal sealed class ListObjectAnnotationsResponseMarshal : IResponseMarshal<Li
     private static S3Annotation ParseAnnotation(XmlReader reader)
     {
         string? annotationName = null;
-        DateTimeOffset? lastModified = null;
-        long? size = null;
-        string? etag = null;
+        DateTimeOffset lastModified = default;
+        long size = default;
+        string? eTag = null;
         ReplicationStatus replicationStatus = ReplicationStatus.Unknown;
         List<ChecksumAlgorithm> checksumAlgorithms = new List<ChecksumAlgorithm>();
 
@@ -70,25 +71,36 @@ internal sealed class ListObjectAnnotationsResponseMarshal : IResponseMarshal<Li
         {
             switch (name)
             {
-                case "AnnotationName": annotationName = reader.ReadString(); break;
-                case "LastModified": lastModified = ValueHelper.ParseDate(reader.ReadString(), DateTimeFormat.Iso8601DateTimeExt); break;
-                case "Size": size = ValueHelper.ParseLong(reader.ReadString()); break;
-                case "ETag": etag = reader.ReadString(); break;
-                case "ChecksumAlgorithm": checksumAlgorithms.Add(Core.Enums.Enums.ChecksumAlgorithm.Parse(reader.ReadString(), ChecksumAlgorithmFormat.DisplayName)); break;
-                case "ReplicationStatus": replicationStatus = Core.Enums.Enums.ReplicationStatus.Parse(reader.ReadString(), ReplicationStatusFormat.DisplayName); break;
+                case "AnnotationName":
+                    annotationName = reader.ReadString();
+                    break;
+                case "LastModified":
+                    lastModified = ValueHelper.ParseDate(reader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                    break;
+                case "Size":
+                    size = ValueHelper.ParseLong(reader.ReadString());
+                    break;
+                case "ETag":
+                    eTag = reader.ReadString();
+                    break;
+                case "ChecksumAlgorithm":
+                    checksumAlgorithms.Add(Core.Enums.Enums.ChecksumAlgorithm.Parse(reader.ReadString(), ChecksumAlgorithmFormat.DisplayName));
+                    break;
+                case "ReplicationStatus":
+                    replicationStatus = Core.Enums.Enums.ReplicationStatus.Parse(reader.ReadString(), ReplicationStatusFormat.DisplayName);
+                    break;
             }
         }
 
-        if (annotationName == null || lastModified == null || size == null)
-            throw new InvalidOperationException("Missing required values in AnnotationEntry");
-
-        S3Annotation annotation = new S3Annotation(annotationName, lastModified.Value, size.Value)
+        S3Annotation annotation = new S3Annotation(annotationName ?? string.Empty, lastModified, size)
         {
-            ETag = etag,
+            ETag = eTag,
             ReplicationStatus = replicationStatus
         };
-        foreach (ChecksumAlgorithm algorithm in checksumAlgorithms)
-            annotation.ChecksumAlgorithms.Add(algorithm);
+
+        foreach (ChecksumAlgorithm checksum in checksumAlgorithms)
+            annotation.ChecksumAlgorithms.Add(checksum);
+
         return annotation;
     }
 }
