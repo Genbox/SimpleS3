@@ -7,8 +7,7 @@ namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
 [PublicAPI]
 public class S3Bucket : IHasBucketName
 {
-    /// <summary>Creates a bucket entry returned by a listing.</summary>
-    public S3Bucket(string bucketName, DateTimeOffset createdOn, string? bucketRegion = null, string? bucketArn = null)
+    internal S3Bucket(string bucketName, DateTimeOffset createdOn, string? bucketRegion = null, string? bucketArn = null)
     {
         CreatedOn = createdOn;
         BucketRegion = bucketRegion;
