@@ -46,6 +46,25 @@ public class ListResponseMarshalTests
     }
 
     [Fact]
+    public void ListObjectVersionsReadsSizesLargerThanInt32()
+    {
+        const string xml = """
+                           <ListVersionsResult>
+                             <Version>
+                               <Key>large-object</Key><VersionId>v1</VersionId><IsLatest>true</IsLatest>
+                               <LastModified>2026-09-26T12:00:00.000Z</LastModified><ETag>"etag"</ETag><Size>4294967296</Size>
+                             </Version>
+                           </ListVersionsResult>
+                           """;
+
+        using ContentStream content = CreateContent(xml);
+        ListObjectVersionsResponse response = new ListObjectVersionsResponse();
+        new ListObjectVersionsResponseMarshal().MarshalResponse(CreateConfig(), response, new Dictionary<string, string>(StringComparer.Ordinal), content);
+
+        Assert.Equal(4294967296L, Assert.Single(response.Versions).Size);
+    }
+
+    [Fact]
     public void ErrorXmlReaderRejectsDtds()
     {
         const string xml = """

@@ -102,7 +102,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
         bool? isLatest = null;
         DateTimeOffset? lastModified = null;
         string? etag = null;
-        int size = -1;
+        long size = -1;
         StorageClass storageClass = StorageClass.Unknown;
         S3Identity? owner = null;
         ChecksumAlgorithm checksumAlgorithm = ChecksumAlgorithm.Unknown;
@@ -129,7 +129,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
                     etag = xmlReader.ReadString();
                     break;
                 case "Size":
-                    size = ValueHelper.ParseInt(xmlReader.ReadString());
+                    size = ValueHelper.ParseLong(xmlReader.ReadString());
                     break;
                 case "StorageClass":
                     storageClass = Core.Enums.Enums.StorageClass.Parse(xmlReader.ReadString(), StorageClassFormat.DisplayName);

@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 /// <summary>Provides the <c>S3Version</c> API.</summary>
-public class S3Version(string objectKey, string? versionId, bool isLatest, DateTimeOffset lastModified, string etag, int size, S3Identity? owner, StorageClass storageClass, ChecksumAlgorithm checksumAlgorithm, ChecksumType checksumType) : IHasObjectKey, IHasVersionId
+public class S3Version(string objectKey, string? versionId, bool isLatest, DateTimeOffset lastModified, string etag, long size, S3Identity? owner, StorageClass storageClass, ChecksumAlgorithm checksumAlgorithm, ChecksumType checksumType) : IHasObjectKey, IHasVersionId
 {
     /// <summary>The optional restoration status returned by the service.</summary>
     public S3RestoreStatus? RestoreStatus { get; internal set; }
@@ -23,7 +23,7 @@ public class S3Version(string objectKey, string? versionId, bool isLatest, DateT
     public S3Identity? Owner { get; } = owner;
 
     /// <summary>Provides the <c>Size</c> API.</summary>
-    public int Size { get; } = size;
+    public long Size { get; } = size;
 
     /// <summary>Provides the <c>StorageClass</c> API.</summary>
     public StorageClass StorageClass { get; } = storageClass;
