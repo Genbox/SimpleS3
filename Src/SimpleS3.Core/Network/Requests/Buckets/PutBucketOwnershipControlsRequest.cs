@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 /// <summary>Provides the <c>PutBucketOwnershipControlsRequest</c> API.</summary>
-public sealed class PutBucketOwnershipControlsRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner, IContentMd5Config
+public sealed class PutBucketOwnershipControlsRequest : BaseRequest, IHasBucketName, IContentMd5Config
 {
     internal PutBucketOwnershipControlsRequest() : base(HttpMethodType.PUT) {}
 
@@ -28,9 +28,6 @@ public sealed class PutBucketOwnershipControlsRequest : BaseRequest, IHasBucketN
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
-
     internal void Initialize(string bucketName, IEnumerable<S3OwnershipControlsRule> rules)
     {
         BucketName = bucketName;
@@ -41,7 +38,6 @@ public sealed class PutBucketOwnershipControlsRequest : BaseRequest, IHasBucketN
     public override void Reset()
     {
         ContentMd5 = null;
-        ExpectedBucketOwner = null;
         Rules = Array.Empty<S3OwnershipControlsRule>();
         base.Reset();
     }

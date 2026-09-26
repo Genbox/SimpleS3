@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 
 /// <summary>Provides the <c>GetObjectAttributesRequest</c> API.</summary>
-public sealed class GetObjectAttributesRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasVersionId, IHasRequestPayer, IHasSseCustomerKey, IHasExpectedBucketOwner
+public sealed class GetObjectAttributesRequest : BaseRequest, IHasBucketName, IHasObjectKey, IHasVersionId, IHasRequestPayer, IHasSseCustomerKey
 {
     private byte[]? _sseCustomerKey;
 
@@ -30,9 +30,6 @@ public sealed class GetObjectAttributesRequest : BaseRequest, IHasBucketName, IH
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
-
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
 
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
@@ -84,7 +81,6 @@ public sealed class GetObjectAttributesRequest : BaseRequest, IHasBucketName, IH
         SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
         SseCustomerKeyMd5 = null;
         VersionId = null;
-        ExpectedBucketOwner = null;
         base.Reset();
     }
 }

@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 /// <summary>Provides the <c>DeleteBucketInventoryConfigurationRequest</c> API.</summary>
-public sealed class DeleteBucketInventoryConfigurationRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner
+public sealed class DeleteBucketInventoryConfigurationRequest : BaseRequest, IHasBucketName
 {
     internal DeleteBucketInventoryConfigurationRequest() : base(HttpMethodType.DELETE) {}
 
@@ -21,9 +21,6 @@ public sealed class DeleteBucketInventoryConfigurationRequest : BaseRequest, IHa
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
-
     internal void Initialize(string bucketName, string configurationId)
     {
         BucketName = bucketName;
@@ -33,7 +30,6 @@ public sealed class DeleteBucketInventoryConfigurationRequest : BaseRequest, IHa
     /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
-        ExpectedBucketOwner = null;
         base.Reset();
     }
 }

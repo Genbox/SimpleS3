@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 /// <summary>Provides the <c>PutBucketWebsiteRequest</c> API.</summary>
-public sealed class PutBucketWebsiteRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner, IContentMd5Config
+public sealed class PutBucketWebsiteRequest : BaseRequest, IHasBucketName, IContentMd5Config
 {
     internal PutBucketWebsiteRequest() : base(HttpMethodType.PUT) {}
 
@@ -28,9 +28,6 @@ public sealed class PutBucketWebsiteRequest : BaseRequest, IHasBucketName, IHasE
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
-
     internal void Initialize(string bucketName, S3WebsiteConfiguration websiteConfiguration)
     {
         BucketName = bucketName;
@@ -41,7 +38,6 @@ public sealed class PutBucketWebsiteRequest : BaseRequest, IHasBucketName, IHasE
     public override void Reset()
     {
         ContentMd5 = null;
-        ExpectedBucketOwner = null;
         WebsiteConfiguration = null!;
         base.Reset();
     }

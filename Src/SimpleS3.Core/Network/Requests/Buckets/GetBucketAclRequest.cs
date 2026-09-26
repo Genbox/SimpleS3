@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 /// <summary>Provides the <c>GetBucketAclRequest</c> API.</summary>
-public sealed class GetBucketAclRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner
+public sealed class GetBucketAclRequest : BaseRequest, IHasBucketName
 {
     internal GetBucketAclRequest() : base(HttpMethodType.GET) {}
 
@@ -18,15 +18,11 @@ public sealed class GetBucketAclRequest : BaseRequest, IHasBucketName, IHasExpec
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
-
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
     public override void Reset()
     {
-        ExpectedBucketOwner = null;
         base.Reset();
     }
 }

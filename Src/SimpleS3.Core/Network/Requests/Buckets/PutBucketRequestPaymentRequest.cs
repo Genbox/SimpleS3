@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 /// <summary>Provides the <c>PutBucketRequestPaymentRequest</c> API.</summary>
-public sealed class PutBucketRequestPaymentRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner, IContentMd5Config
+public sealed class PutBucketRequestPaymentRequest : BaseRequest, IHasBucketName, IContentMd5Config
 {
     internal PutBucketRequestPaymentRequest() : base(HttpMethodType.PUT) {}
 
@@ -28,9 +28,6 @@ public sealed class PutBucketRequestPaymentRequest : BaseRequest, IHasBucketName
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
-
     internal void Initialize(string bucketName, RequestPaymentPayer payer)
     {
         BucketName = bucketName;
@@ -41,7 +38,6 @@ public sealed class PutBucketRequestPaymentRequest : BaseRequest, IHasBucketName
     public override void Reset()
     {
         ContentMd5 = null;
-        ExpectedBucketOwner = null;
         Payer = RequestPaymentPayer.Unknown;
         base.Reset();
     }

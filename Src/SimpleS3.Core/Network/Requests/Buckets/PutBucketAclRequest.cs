@@ -7,7 +7,7 @@ using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 /// <summary>Provides the <c>PutBucketAclRequest</c> API.</summary>
-public sealed class PutBucketAclRequest : BaseRequest, IHasBucketName, IHasBucketAcl, IHasExpectedBucketOwner, IHasContentMd5
+public sealed class PutBucketAclRequest : BaseRequest, IHasBucketName, IHasBucketAcl, IHasContentMd5
 {
     internal PutBucketAclRequest() : base(HttpMethodType.PUT)
     {
@@ -51,9 +51,6 @@ public sealed class PutBucketAclRequest : BaseRequest, IHasBucketName, IHasBucke
     /// <summary>Provides the <c>ContentMd5</c> API.</summary>
     public byte[]? ContentMd5 { get; set; }
 
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
-
     internal void Initialize(string bucketName) => BucketName = bucketName;
 
     /// <summary>Provides the <c>Reset</c> API.</summary>
@@ -67,7 +64,6 @@ public sealed class PutBucketAclRequest : BaseRequest, IHasBucketName, IHasBucke
         AclGrantWriteAcp.Reset();
         AclGrantFullControl.Reset();
         ObjectOwnership = ObjectOwnership.Unknown;
-        ExpectedBucketOwner = null;
         base.Reset();
     }
 }

@@ -10,7 +10,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// Amazon S3. To use this operation, you must have permission to perform the s3:PutAccelerateConfiguration action. The bucket owner has this permission by default. The bucket owner
 /// can grant this permission to others.
 /// </summary>
-public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner, IHasChecksumProperties
+public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketName, IHasChecksumProperties
 {
     internal PutBucketAccelerateConfigurationRequest() : base(HttpMethodType.PUT) {}
 
@@ -25,9 +25,6 @@ public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketNa
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
-
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
 
     /// <summary>Checksum algorithm for the request body.</summary>
     public ChecksumAlgorithm ChecksumAlgorithm { get; set; }
@@ -46,7 +43,6 @@ public class PutBucketAccelerateConfigurationRequest : BaseRequest, IHasBucketNa
     {
         AccelerationEnabled = false;
         BucketName = null!;
-        ExpectedBucketOwner = null;
         ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
         Checksum = null;
         base.Reset();

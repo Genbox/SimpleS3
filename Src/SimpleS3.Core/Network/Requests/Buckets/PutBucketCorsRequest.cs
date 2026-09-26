@@ -8,7 +8,7 @@ using Genbox.SimpleS3.Core.Network.Requests.S3Types;
 namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 /// <summary>Provides the <c>PutBucketCorsRequest</c> API.</summary>
-public sealed class PutBucketCorsRequest : BaseRequest, IHasBucketName, IHasExpectedBucketOwner, IContentMd5Config, IHasChecksumProperties
+public sealed class PutBucketCorsRequest : BaseRequest, IHasBucketName, IContentMd5Config, IHasChecksumProperties
 {
     internal PutBucketCorsRequest() : base(HttpMethodType.PUT) {}
 
@@ -29,9 +29,6 @@ public sealed class PutBucketCorsRequest : BaseRequest, IHasBucketName, IHasExpe
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
 
-    /// <summary>Provides the <c>ExpectedBucketOwner</c> API.</summary>
-    public string? ExpectedBucketOwner { get; set; }
-
     /// <summary>Checksum algorithm used for the request body.</summary>
     public ChecksumAlgorithm ChecksumAlgorithm { get; set; }
 
@@ -48,7 +45,6 @@ public sealed class PutBucketCorsRequest : BaseRequest, IHasBucketName, IHasExpe
     public override void Reset()
     {
         ContentMd5 = null;
-        ExpectedBucketOwner = null;
         ChecksumAlgorithm = ChecksumAlgorithm.Unknown;
         Checksum = null;
         Rules = [];

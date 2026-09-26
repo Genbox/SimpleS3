@@ -3,15 +3,19 @@ using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Pools;
+using Genbox.SimpleS3.Core.Network.Requests.Interfaces;
 
 namespace Genbox.SimpleS3.Core.Network.Requests;
 
 /// <summary>Provides the <c>BaseRequest</c> API.</summary>
-public abstract class BaseRequest(HttpMethodType method) : IRequest, IRequestTrailers, IPooledObject
+public abstract class BaseRequest(HttpMethodType method) : IRequest, IRequestTrailers, IHasExpectedBucketOwner, IPooledObject
 {
     private readonly Dictionary<string, string> _headers = new Dictionary<string, string>(StringComparer.Ordinal);
     private readonly Dictionary<string, string> _queryParameters = new Dictionary<string, string>(StringComparer.Ordinal);
     private readonly Dictionary<string, string> _trailers = new Dictionary<string, string>(StringComparer.Ordinal);
+
+    /// <summary>Expected bucket owner for the request.</summary>
+    public string? ExpectedBucketOwner { get; set; }
 
     void IPooledObject.Reset() => Reset();
 
@@ -75,6 +79,7 @@ public abstract class BaseRequest(HttpMethodType method) : IRequest, IRequestTra
         _trailers.Clear();
         RequestId = Guid.Empty;
         Timestamp = default;
+        ExpectedBucketOwner = null;
     }
 
     internal void ClearTransportState()
