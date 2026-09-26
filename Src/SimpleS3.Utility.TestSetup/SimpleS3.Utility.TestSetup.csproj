@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Spectre.Console" />
     <ProjectReference Include="..\SimpleS3.Utility.Shared\SimpleS3.Utility.Shared.csproj" />
   </ItemGroup>
 
