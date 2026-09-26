@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// Creates a copy of an object that is already stored in Amazon S3. When copying an object, you can preserve all metadata (default) or specify new metadata. However, the ACL
 /// is not preserved and is set to private for the user making the request. To override the default ACL setting, specify a new ACL when generating a copy request.
 /// </summary>
-public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey, IHasLegalHold, IAutoMapConfig
+public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, IHasMetadata, IHasTags, IHasLock, IHasSse, IHasBucketKeyEnabled, IHasSseCustomerKey, IHasStorageClass, IHasRequestPayer, IHasWebsiteRedirect, IHasVersionId, IHasBucketName, IHasObjectKey, IHasLegalHold, IAutoMapConfig
 {
     private byte[]? _sourceSseCustomerKey;
     private byte[]? _sseCustomerKey;
@@ -80,6 +80,9 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
     // Source version and conditions must use copy-source headers rather than destination query parameters or generic If-* headers.
     /// <summary>Provides the <c>AutoMapDisabledFor</c> API.</summary>
     public Func<Type, bool> AutoMapDisabledFor => type => type == typeof(IHasVersionId) || type == typeof(IHasCache);
+
+    /// <summary>Specifies whether Amazon S3 should use an S3 Bucket Key for server-side encryption with AWS KMS.</summary>
+    public bool? BucketKeyEnabled { get; set; }
 
     string IHasBucketName.BucketName => DestinationBucketName;
 
@@ -208,6 +211,7 @@ public sealed class CopyObjectRequest : BaseRequest, IHasObjectAcl, IHasCache, I
         AclGrantFullControl.Reset();
         RequestPayer = Payer.Unknown;
         SseAlgorithm = SseAlgorithm.Unknown;
+        BucketKeyEnabled = null;
         SseKmsKeyId = null;
         SseContext.Reset();
         SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;

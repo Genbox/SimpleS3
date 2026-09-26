@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Fluent;
 using Genbox.SimpleS3.Core.Internals.Operations;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
@@ -29,6 +30,22 @@ public class FluentUploadTests
         PutObjectRequest request = Assert.IsType<PutObjectRequest>(handler.Request);
         Assert.Equal(CryptoHelper.Md5Hash(data[2..]), request.ContentMd5);
         Assert.Equal(2, content.Position);
+    }
+
+    [Fact]
+    public async Task KmsBucketKeySelectionIsPassedToPutRequest()
+    {
+        RecordingRequestHandler handler = new RecordingRequestHandler();
+        ObjectOperations operations = new ObjectOperations(handler, [], []);
+        Upload upload = new Upload(operations, null!, "bucket", "object");
+
+        upload.WithEncryptionKms("kms-key", null, true);
+        await upload.UploadAsync(Stream.Null, TestContext.Current.CancellationToken);
+
+        PutObjectRequest request = Assert.IsType<PutObjectRequest>(handler.Request);
+        Assert.Equal(SseAlgorithm.AwsKms, request.SseAlgorithm);
+        Assert.Equal("kms-key", request.SseKmsKeyId);
+        Assert.True(request.BucketKeyEnabled);
     }
 
     private sealed class RecordingRequestHandler : IRequestHandler

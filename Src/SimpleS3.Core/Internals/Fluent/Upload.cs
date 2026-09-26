@@ -109,6 +109,14 @@ internal sealed class Upload : IUpload
         return this;
     }
 
+    /// <summary>Enables server-side encryption with AWS KMS and selects whether to use an S3 Bucket Key.</summary>
+    public IUpload WithEncryptionKms(string? kmsKeyId, KmsContextBuilder? kmsContext, bool bucketKeyEnabled)
+    {
+        WithEncryptionKms(kmsKeyId, kmsContext);
+        _request.BucketKeyEnabled = bucketKeyEnabled;
+        return this;
+    }
+
     /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
     public IUpload WithEncryptionCustomerKey(byte[] encryptionKey)
     {

@@ -49,6 +49,12 @@ public interface IUpload
     /// <remarks>Replaces other encryption modes. Repeated KMS calls retain the existing key or context when its argument is omitted.</remarks>
     IUpload WithEncryptionKms(string? kmsKeyId = null, KmsContextBuilder? kmsContext = null);
 
+    /// <summary>Enables server-side encryption with AWS KMS and explicitly selects whether to use an S3 Bucket Key.</summary>
+    /// <param name="kmsKeyId">The KMS key to use, or <see langword="null" /> to retain the current key.</param>
+    /// <param name="kmsContext">The encryption context to use, or <see langword="null" /> to retain the current context.</param>
+    /// <param name="bucketKeyEnabled">Whether Amazon S3 should use an S3 Bucket Key.</param>
+    IUpload WithEncryptionKms(string? kmsKeyId, KmsContextBuilder? kmsContext, bool bucketKeyEnabled);
+
     /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
     IUpload WithEncryptionCustomerKey(byte[] encryptionKey);
 

@@ -132,6 +132,9 @@ internal static class GenericRequestMapper
             }
         }
 
+        if (req is IHasBucketKeyEnabled hasBucketKey && !disabledFor(typeof(IHasBucketKeyEnabled)))
+            req.SetOptionalHeader(AmzHeaders.XAmzSseBucketKeyEnabled, hasBucketKey.BucketKeyEnabled?.ToString().ToLowerInvariant());
+
         if (req is IHasSseCustomerKey hasSseCustomerKey && !disabledFor(typeof(IHasSseCustomerKey)))
         {
             if (hasSseCustomerKey.SseCustomerAlgorithm != SseCustomerAlgorithm.Unknown)

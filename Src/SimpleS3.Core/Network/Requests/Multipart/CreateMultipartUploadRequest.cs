@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Multipart;
 /// this upload ID in each of your subsequent upload part requests (see Upload Part). You also include this upload ID in the final request to either complete or abort the multipart
 /// upload request.
 /// </summary>
-public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsiteRedirect, IHasMetadata, IHasTags, IHasLegalHold, IHasChecksum
+public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasBucketKeyEnabled, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsiteRedirect, IHasMetadata, IHasTags, IHasLegalHold, IHasChecksum
 {
     private byte[]? _sseCustomerKey;
 
@@ -37,6 +37,9 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
     {
         Initialize(bucketName, objectKey);
     }
+
+    /// <summary>Specifies whether Amazon S3 should use an S3 Bucket Key for server-side encryption with AWS KMS.</summary>
+    public bool? BucketKeyEnabled { get; set; }
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
@@ -167,6 +170,7 @@ public class CreateMultipartUploadRequest : BaseRequest, IHasContentProps, IHasE
         Acl = ObjectCannedAcl.Unknown;
         RequestPayer = Payer.Unknown;
         SseAlgorithm = SseAlgorithm.Unknown;
+        BucketKeyEnabled = null;
         SseKmsKeyId = null;
         SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
         SseCustomerKeyMd5 = null;

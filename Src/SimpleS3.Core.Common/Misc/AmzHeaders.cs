@@ -107,6 +107,8 @@ public static class AmzHeaders
     public const string XAmzSseAwsKmsKeyId = "x-amz-server-side-encryption-aws-kms-key-id";
     /// <summary>Provides the <c>XAmzSseContext</c> API.</summary>
     public const string XAmzSseContext = "x-amz-server-side-encryption-context";
+    /// <summary>Provides the <c>XAmzSseBucketKeyEnabled</c> API.</summary>
+    public const string XAmzSseBucketKeyEnabled = "x-amz-server-side-encryption-bucket-key-enabled";
 
     /// <summary>Provides the <c>XAmzSseCustomerAlgorithm</c> API.</summary>
     public const string XAmzSseCustomerAlgorithm = "x-amz-server-side-encryption-customer-algorithm";

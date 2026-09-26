@@ -13,7 +13,7 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Objects;
 /// This implementation of the PUT operation adds an object to a bucket. You must have WRITE permissions on a bucket to add an object to it. Amazon S3 never adds partial
 /// objects; if you receive a success response, Amazon S3 added the entire object to the bucket.
 /// </summary>
-public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsiteRedirect, IHasMetadata, IHasTags, IHasLegalHold, IHasContent, ISupportStreaming, IContentMd5Config, IHasChecksumProperties
+public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpiresOn, IHasCacheControl, IHasStorageClass, IHasLock, IHasObjectAcl, IHasSse, IHasBucketKeyEnabled, IHasSseCustomerKey, IHasRequestPayer, IHasBucketName, IHasObjectKey, IHasWebsiteRedirect, IHasMetadata, IHasTags, IHasLegalHold, IHasContent, ISupportStreaming, IContentMd5Config, IHasChecksumProperties
 {
     private byte[]? _sseCustomerKey;
 
@@ -48,6 +48,9 @@ public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpire
     public byte[]? ContentMd5 { get; set; }
 
     Func<bool> IContentMd5Config.ForceContentMd5 => () => LockLegalHold == true || LockMode != LockMode.Unknown;
+
+    /// <summary>Specifies whether Amazon S3 should use an S3 Bucket Key for server-side encryption with AWS KMS.</summary>
+    public bool? BucketKeyEnabled { get; set; }
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; set; } = null!;
@@ -180,6 +183,7 @@ public sealed class PutObjectRequest : BaseRequest, IHasContentProps, IHasExpire
         Acl = ObjectCannedAcl.Unknown;
         RequestPayer = Payer.Unknown;
         SseAlgorithm = SseAlgorithm.Unknown;
+        BucketKeyEnabled = null;
         SseKmsKeyId = null;
         SseCustomerAlgorithm = SseCustomerAlgorithm.Unknown;
         SseCustomerKeyMd5 = null;
