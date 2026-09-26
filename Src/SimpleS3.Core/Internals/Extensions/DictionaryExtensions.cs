@@ -21,6 +21,8 @@ internal static class DictionaryExtensions
 
     public static int GetHeaderInt(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseInt(value) : default;
 
+    public static int? GetHeaderNullableInt(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseInt(value) : null;
+
     public static long GetHeaderLong(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseLong(value) : default;
 
     public static long? GetHeaderNullableLong(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseLong(value) : null;

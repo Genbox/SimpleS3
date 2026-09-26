@@ -22,4 +22,17 @@ public class ObjectReadMetadataResponseTests
         Assert.False(response.RestoreInProgress);
         Assert.Equal(new DateTimeOffset(2026, 9, 26, 12, 0, 0, TimeSpan.Zero), response.RestoreExpiresOn);
     }
+
+    [Fact]
+    public void HeadObjectLeavesUnreportedDatesAndPartCountUnset()
+    {
+        HeadObjectResponse response = new HeadObjectResponse();
+
+        new HeadObjectResponseMarshal().MarshalResponse(new SimpleS3Config(), response, new Dictionary<string, string>(StringComparer.Ordinal), ContentStream.Null);
+
+        Assert.Null(response.LastModified);
+        Assert.Null(response.ExpiresOn);
+        Assert.Null(response.LockRetainUntil);
+        Assert.Null(response.NumberOfParts);
+    }
 }

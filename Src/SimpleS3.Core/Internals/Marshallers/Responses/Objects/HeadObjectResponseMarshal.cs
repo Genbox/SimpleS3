@@ -16,14 +16,14 @@ internal sealed class HeadObjectResponseMarshal : IResponseMarshal<HeadObjectRes
         response.Metadata = ParserHelper.ParseMetadata(headers);
         response.ETag = headers.GetOptionalValue(HttpHeaders.ETag);
         response.CacheControl = headers.GetOptionalValue(HttpHeaders.CacheControl);
-        response.LastModified = headers.GetHeaderDate(HttpHeaders.LastModified, DateTimeFormat.Rfc1123);
+        response.LastModified = headers.GetHeaderNullableDate(HttpHeaders.LastModified, DateTimeFormat.Rfc1123);
         response.ContentType = headers.GetOptionalValue(HttpHeaders.ContentType);
         response.ContentDisposition = headers.GetOptionalValue(HttpHeaders.ContentDisposition);
         response.ContentEncoding = headers.GetOptionalValue(HttpHeaders.ContentEncoding);
         response.ContentLanguage = headers.GetOptionalValue(HttpHeaders.ContentLanguage);
         response.ContentRange = headers.GetOptionalValue(HttpHeaders.ContentRange);
         response.AcceptRanges = headers.GetOptionalValue(HttpHeaders.AcceptRanges);
-        response.ExpiresOn = headers.GetHeaderDate(HttpHeaders.Expires, DateTimeFormat.Rfc1123);
+        response.ExpiresOn = headers.GetHeaderNullableDate(HttpHeaders.Expires, DateTimeFormat.Rfc1123);
 
         if (headers.TryGetHeader(AmzHeaders.XAmzReplicationStatus, out string? status))
             response.ReplicationStatus = Core.Enums.Enums.ReplicationStatus.Parse(status, ReplicationStatusFormat.DisplayName);
@@ -58,9 +58,9 @@ internal sealed class HeadObjectResponseMarshal : IResponseMarshal<HeadObjectRes
         if (headers.TryGetHeader(AmzHeaders.XAmzObjectLockMode, out string? lockMode))
             response.LockMode = Core.Enums.Enums.LockMode.Parse(lockMode, LockModeFormat.DisplayName);
 
-        response.LockRetainUntil = headers.GetHeaderDate(AmzHeaders.XAmzObjectLockRetainUntilDate, DateTimeFormat.Iso8601DateTimeExt);
+        response.LockRetainUntil = headers.GetHeaderNullableDate(AmzHeaders.XAmzObjectLockRetainUntilDate, DateTimeFormat.Iso8601DateTimeExt);
         response.LockLegalHold = headers.GetOptionalValue(AmzHeaders.XAmzObjectLockLegalHold) == "ON";
-        response.NumberOfParts = headers.GetHeaderInt(AmzHeaders.XAmzPartsCount);
+        response.NumberOfParts = headers.GetHeaderNullableInt(AmzHeaders.XAmzPartsCount);
 
         if (ParserHelper.TryParseExpiration(headers, out (DateTimeOffset expiresOn, string ruleId) data))
         {
