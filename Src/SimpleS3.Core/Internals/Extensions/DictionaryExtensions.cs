@@ -30,4 +30,6 @@ internal static class DictionaryExtensions
     public static byte[]? GetHeaderByteArray(this IDictionary<string, string> response, string key, BinaryEncoding encoding) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseByteArray(value, encoding) : null;
 
     public static bool GetHeaderBool(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) && ValueHelper.ParseBool(value);
+
+    public static bool? GetHeaderNullableBool(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseBool(value) : null;
 }

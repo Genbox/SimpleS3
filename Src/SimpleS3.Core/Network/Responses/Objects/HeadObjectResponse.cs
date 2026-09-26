@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 /// <summary>Provides the <c>HeadObjectResponse</c> API.</summary>
-public class HeadObjectResponse : BaseResponse, IHasMetadata, IHasReplicationStatus, IHasSse, IHasStorageClass, IHasResponseContent, IHasCache, IHasSseCustomerKey, IHasLock, IHasDeleteMarker, IHasVersionId, IHasExpiresOn, IHasExpiration, IHasRestoration, IHasLegalHold, IHasWebsiteRedirect
+public class HeadObjectResponse : BaseResponse, IHasMetadata, IHasReplicationStatus, IHasSse, IHasBucketKeyEnabled, IHasStorageClass, IHasResponseContent, IHasCache, IHasSseCustomerKey, IHasLock, IHasDeleteMarker, IHasVersionId, IHasExpiresOn, IHasExpiration, IHasRestoration, IHasLegalHold, IHasWebsiteRedirect
 {
     /// <summary>Provides information about the object restoration operation and expiration time of the restored object copy.</summary>
     public string? Restore { get; internal set; }
@@ -23,6 +23,9 @@ public class HeadObjectResponse : BaseResponse, IHasMetadata, IHasReplicationSta
 
     /// <summary>Provides the <c>Checksum</c> API.</summary>
     public byte[]? Checksum { get; internal set; }
+
+    /// <summary>Whether Amazon S3 used an S3 Bucket Key for SSE-KMS.</summary>
+    public bool? BucketKeyEnabled { get; internal set; }
 
     /// <summary>Provides the <c>CacheControl</c> API.</summary>
     public string? CacheControl { get; internal set; }

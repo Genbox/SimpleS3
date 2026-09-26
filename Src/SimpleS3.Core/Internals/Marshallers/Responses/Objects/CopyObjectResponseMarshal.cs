@@ -29,6 +29,7 @@ internal sealed class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectRes
             response.SseAlgorithm = Core.Enums.Enums.SseAlgorithm.Parse(sseHeader, SseAlgorithmFormat.DisplayName);
 
         response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
+        response.BucketKeyEnabled = headers.GetHeaderNullableBool(AmzHeaders.XAmzSseBucketKeyEnabled);
         response.SseContext = headers.GetOptionalValue(AmzHeaders.XAmzSseContext);
 
         if (headers.TryGetHeader(AmzHeaders.XAmzSseCustomerAlgorithm, out string? sseAlgorithm))

@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 /// <summary>Provides the <c>CompleteMultipartUploadResponse</c> API.</summary>
-public class CompleteMultipartUploadResponse : BaseResponse, IHasRequestCharged, IHasVersionId, IHasExpiration, IHasETag, IHasSse, IHasBucketName, IHasObjectKey
+public class CompleteMultipartUploadResponse : BaseResponse, IHasRequestCharged, IHasVersionId, IHasExpiration, IHasETag, IHasSse, IHasBucketKeyEnabled, IHasBucketName, IHasObjectKey
 {
     /// <summary>The URI that identifies the newly created object.</summary>
     public string Location { get; internal set; } = null!;
@@ -21,6 +21,9 @@ public class CompleteMultipartUploadResponse : BaseResponse, IHasRequestCharged,
 
     /// <summary>Provides the <c>Checksum</c> API.</summary>
     public byte[]? Checksum { get; internal set; }
+
+    /// <summary>Whether Amazon S3 used an S3 Bucket Key for SSE-KMS.</summary>
+    public bool? BucketKeyEnabled { get; internal set; }
 
     /// <summary>The name of the bucket that contains the newly created object.</summary>
     public string BucketName { get; internal set; } = null!;

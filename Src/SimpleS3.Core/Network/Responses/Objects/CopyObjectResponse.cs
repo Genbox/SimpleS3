@@ -4,10 +4,13 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 /// <summary>Provides the <c>CopyObjectResponse</c> API.</summary>
-public class CopyObjectResponse : BaseResponse, IHasRequestCharged, IHasVersionId, IHasSse, IHasSseContext, IHasSseCustomerKey, IHasExpiration, IHasETag, IHasLastModified
+public class CopyObjectResponse : BaseResponse, IHasRequestCharged, IHasVersionId, IHasSse, IHasBucketKeyEnabled, IHasSseContext, IHasSseCustomerKey, IHasExpiration, IHasETag, IHasLastModified
 {
     /// <summary>Provides the <c>NewVersionId</c> API.</summary>
     public string? NewVersionId { get; internal set; }
+
+    /// <summary>Whether Amazon S3 used an S3 Bucket Key for SSE-KMS.</summary>
+    public bool? BucketKeyEnabled { get; internal set; }
 
     /// <summary>Provides the <c>ETag</c> API.</summary>
     public string? ETag { get; internal set; }

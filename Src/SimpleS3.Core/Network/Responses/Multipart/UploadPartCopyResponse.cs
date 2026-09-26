@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 /// <summary>Provides the <c>UploadPartCopyResponse</c> API.</summary>
-public sealed class UploadPartCopyResponse : BaseResponse, IHasETag, IHasRequestCharged, IHasSse, IHasSseCustomerKey
+public sealed class UploadPartCopyResponse : BaseResponse, IHasETag, IHasRequestCharged, IHasSse, IHasBucketKeyEnabled, IHasSseCustomerKey
 {
     /// <summary>Provides the <c>ChecksumAlgorithm</c> API.</summary>
     public ChecksumAlgorithm ChecksumAlgorithm { get; internal set; }
@@ -20,6 +20,9 @@ public sealed class UploadPartCopyResponse : BaseResponse, IHasETag, IHasRequest
 
     /// <summary>The version ID of the source object that was copied.</summary>
     public string? CopySourceVersionId { get; internal set; }
+
+    /// <summary>Whether Amazon S3 used an S3 Bucket Key for SSE-KMS.</summary>
+    public bool? BucketKeyEnabled { get; internal set; }
 
     /// <summary>Provides the <c>ETag</c> API.</summary>
     public string ETag { get; internal set; } = null!;

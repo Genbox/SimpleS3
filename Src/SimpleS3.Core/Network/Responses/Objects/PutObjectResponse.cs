@@ -4,7 +4,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 /// <summary>Provides the <c>PutObjectResponse</c> API.</summary>
-public class PutObjectResponse : BaseResponse, IHasExpiresOn, IHasETag, IHasSse, IHasSseCustomerKey, IHasStorageClass, IHasRequestCharged, IHasVersionId, IHasSseContext, IHasExpiration
+public class PutObjectResponse : BaseResponse, IHasExpiresOn, IHasETag, IHasSse, IHasBucketKeyEnabled, IHasSseCustomerKey, IHasStorageClass, IHasRequestCharged, IHasVersionId, IHasSseContext, IHasExpiration
 {
     /// <summary>Provides the <c>ChecksumType</c> API.</summary>
     public ChecksumType ChecksumType { get; internal set; }
@@ -14,6 +14,9 @@ public class PutObjectResponse : BaseResponse, IHasExpiresOn, IHasETag, IHasSse,
 
     /// <summary>Provides the <c>Checksum</c> API.</summary>
     public byte[]? Checksum { get; internal set; }
+
+    /// <summary>Whether Amazon S3 used an S3 Bucket Key for SSE-KMS.</summary>
+    public bool? BucketKeyEnabled { get; internal set; }
 
     /// <summary>Provides the <c>ETag</c> API.</summary>
     public string? ETag { get; internal set; }

@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 /// <summary>Provides the <c>CreateMultipartUploadResponse</c> API.</summary>
-public class CreateMultipartUploadResponse : BaseResponse, IHasSse, IHasSseCustomerKey, IHasRequestCharged, IHasAbort, IHasSseContext, IHasUploadId, IHasBucketName, IHasObjectKey
+public class CreateMultipartUploadResponse : BaseResponse, IHasSse, IHasBucketKeyEnabled, IHasSseCustomerKey, IHasRequestCharged, IHasAbort, IHasSseContext, IHasUploadId, IHasBucketName, IHasObjectKey
 {
     /// <summary>Provides the <c>ChecksumType</c> API.</summary>
     public ChecksumType ChecksumType { get; internal set; }
@@ -18,6 +18,9 @@ public class CreateMultipartUploadResponse : BaseResponse, IHasSse, IHasSseCusto
 
     /// <summary>Provides the <c>AbortRuleId</c> API.</summary>
     public string? AbortRuleId { get; internal set; }
+
+    /// <summary>Whether Amazon S3 used an S3 Bucket Key for SSE-KMS.</summary>
+    public bool? BucketKeyEnabled { get; internal set; }
 
     /// <summary>Name of the bucket to which the multipart upload was initiated.</summary>
     public string BucketName { get; internal set; } = null!;
