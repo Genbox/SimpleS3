@@ -18,6 +18,9 @@ public sealed class UploadPartCopyResponse : BaseResponse, IHasETag, IHasRequest
     /// <summary>Provides the <c>PartNumber</c> API.</summary>
     public int PartNumber { get; internal set; }
 
+    /// <summary>The version ID of the source object that was copied.</summary>
+    public string? CopySourceVersionId { get; internal set; }
+
     /// <summary>Provides the <c>ETag</c> API.</summary>
     public string ETag { get; internal set; } = null!;
 

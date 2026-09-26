@@ -20,6 +20,7 @@ internal sealed class UploadPartCopyResponseMarshal : IResponseMarshal<UploadPar
             response.SseAlgorithm = Core.Enums.Enums.SseAlgorithm.Parse(sseHeader, SseAlgorithmFormat.DisplayName);
 
         response.SseKmsKeyId = headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId);
+        response.CopySourceVersionId = headers.GetOptionalValue(AmzHeaders.XAmzCopySourceVersionId);
 
         if (headers.TryGetHeader(AmzHeaders.XAmzSseCustomerAlgorithm, out string? sseAlgorithm))
             response.SseCustomerAlgorithm = Core.Enums.Enums.SseCustomerAlgorithm.Parse(sseAlgorithm, SseCustomerAlgorithmFormat.DisplayName);
