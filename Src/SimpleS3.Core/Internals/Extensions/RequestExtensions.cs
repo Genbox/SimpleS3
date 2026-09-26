@@ -37,7 +37,7 @@ internal static class RequestExtensions
                 request.SetHeader(key, date.Value.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTime, DateTimeFormatInfo.InvariantInfo));
                 break;
             case DateTimeFormat.Iso8601DateTimeExt:
-                request.SetHeader(key, date.Value.ToUniversalTime().ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo));
+                request.SetHeader(key, date.Value.UtcDateTime.ToString(DateTimeFormats.Iso8601DateTimeExtended, DateTimeFormatInfo.InvariantInfo));
                 break;
             case DateTimeFormat.Rfc1123:
                 request.SetHeader(key, date.Value.ToUniversalTime().ToString(DateTimeFormats.Rfc1123, DateTimeFormatInfo.InvariantInfo));
