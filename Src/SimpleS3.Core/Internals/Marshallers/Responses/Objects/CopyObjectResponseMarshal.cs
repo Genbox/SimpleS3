@@ -48,10 +48,20 @@ internal sealed class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectRes
             return;
         }
 
-        xmlReader.ReadToDescendant("CopyObjectResult");
+        if (xmlReader.LocalName != "CopyObjectResult")
+            XmlHelper.ReadToDescendant(xmlReader, "CopyObjectResult");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))
         {
+            ChecksumAlgorithm algorithm = ChecksumHelper.GetXmlAlgorithm(name);
+
+            if (algorithm != ChecksumAlgorithm.Unknown)
+            {
+                response.ChecksumAlgorithm = algorithm;
+                response.Checksum = ChecksumHelper.ParseHash(xmlReader.ReadString());
+                continue;
+            }
+
             switch (name)
             {
                 case "ETag":
@@ -59,6 +69,9 @@ internal sealed class CopyObjectResponseMarshal : IResponseMarshal<CopyObjectRes
                     break;
                 case "LastModified":
                     response.LastModified = ValueHelper.ParseDate(xmlReader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
+                    break;
+                case "ChecksumType":
+                    response.ChecksumType = Core.Enums.Enums.ChecksumType.Parse(xmlReader.ReadString(), ChecksumTypeFormat.DisplayName);
                     break;
             }
         }

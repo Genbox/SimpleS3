@@ -6,6 +6,15 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects;
 /// <summary>Provides the <c>CopyObjectResponse</c> API.</summary>
 public class CopyObjectResponse : BaseResponse, IHasRequestCharged, IHasVersionId, IHasSse, IHasBucketKeyEnabled, IHasSseContext, IHasSseCustomerKey, IHasExpiration, IHasETag, IHasLastModified
 {
+    /// <summary>The type of checksum returned for the copied object.</summary>
+    public ChecksumType ChecksumType { get; internal set; }
+
+    /// <summary>The algorithm used for the copied object's checksum.</summary>
+    public ChecksumAlgorithm ChecksumAlgorithm { get; internal set; }
+
+    /// <summary>The decoded checksum of the copied object.</summary>
+    public byte[]? Checksum { get; internal set; }
+
     /// <summary>Provides the <c>NewVersionId</c> API.</summary>
     public string? NewVersionId { get; internal set; }
 
