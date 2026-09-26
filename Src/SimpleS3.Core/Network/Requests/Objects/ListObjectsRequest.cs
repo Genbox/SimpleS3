@@ -19,6 +19,9 @@ public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
         Initialize(bucketName);
     }
 
+    /// <summary>Additional attributes to include in the listing results.</summary>
+    public IList<OptionalObjectAttribute> OptionalObjectAttributes { get; } = new List<OptionalObjectAttribute>();
+
     /// <summary>
     /// A delimiter is a character you use to group keys. If you specify a <see cref="Prefix" />, all of the keys that contain the same string between the prefix and the first
     /// occurrence of the delimiter after the prefix are grouped under a single result element called CommonPrefixes. If you don't specify the prefix parameter, the substring starts at
@@ -83,6 +86,7 @@ public class ListObjectsRequest : BaseRequest, IHasRequestPayer, IHasBucketName
         FetchOwner = null;
         StartAfter = null;
         RequestPayer = Payer.Unknown;
+        OptionalObjectAttributes.Clear();
 
         base.Reset();
     }

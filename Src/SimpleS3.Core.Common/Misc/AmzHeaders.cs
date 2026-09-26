@@ -72,6 +72,8 @@ public static class AmzHeaders
     public const string XAmzChecksumAlgorithm = "x-amz-checksum-algorithm";
     /// <summary>Provides the <c>XAmzObjectAttributes</c> API.</summary>
     public const string XAmzObjectAttributes = "x-amz-object-attributes";
+    /// <summary>Provides the <c>XAmzOptionalObjectAttributes</c> API.</summary>
+    public const string XAmzOptionalObjectAttributes = "x-amz-optional-object-attributes";
     /// <summary>Provides the <c>XAmzObjectSize</c> API.</summary>
     public const string XAmzObjectSize = "x-amz-object-size";
     /// <summary>Provides the <c>XAmzChecksum</c> API.</summary>
