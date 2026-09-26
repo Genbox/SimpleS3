@@ -114,12 +114,12 @@ internal static class GenericRequestMapper
 
         if (req is IHasSse hasSse && !disabledFor(typeof(IHasSse)))
         {
+            string? sseContext = hasSse.SseContext.Build();
+
             if (hasSse.SseAlgorithm != SseAlgorithm.Unknown)
                 req.SetHeader(AmzHeaders.XAmzSse, hasSse.SseAlgorithm.GetDisplayName());
 
             req.SetOptionalHeader(AmzHeaders.XAmzSseAwsKmsKeyId, hasSse.SseKmsKeyId);
-
-            string? sseContext = hasSse.SseContext.Build();
 
             if (sseContext != null)
             {

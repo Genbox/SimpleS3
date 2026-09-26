@@ -4,11 +4,16 @@ using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Misc;
+using Genbox.SimpleS3.Core.Network.Requests;
 
 namespace Genbox.SimpleS3.Core.Internals.Extensions;
 
 internal static class RequestExtensions
 {
+    internal static void SetHeader(this IRequest request, string key, string value) => ((BaseRequest)request).SetHeader(key, value);
+
+    internal static void SetQueryParameter(this IRequest request, string key, string value) => ((BaseRequest)request).SetQueryParameter(key, value);
+
     public static void SetOptionalHeader(this IRequest request, string key, string? value)
     {
         if (value == null)
