@@ -4,32 +4,38 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Extensions.ProfileManager.Abstracts;
 using Genbox.SimpleS3.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Spectre.Console;
 
 namespace Genbox.SimpleS3.Utility.TestCleanup;
 
 internal static class Program
 {
-    private static async Task<int> Main(string[] args)
+    private static async Task<int> Main()
     {
-        if (!args.Contains("--temporary-only", StringComparer.OrdinalIgnoreCase))
-        {
-            Console.Error.WriteLine("Usage: SimpleS3.Utility.TestCleanup --temporary-only");
-            return 2;
-        }
-
         int failures = 0;
 
-        Console.WriteLine("Deleting buckets matching 'tempbucket-{guid}' from configured providers.");
+        AnsiConsole.MarkupLine("[bold]Clean up temporary provider test buckets[/]");
 
-        foreach (S3Provider s3Provider in UtilityHelper.SelectProviders())
+        List<S3Provider> providers = await AnsiConsole.PromptAsync(new MultiSelectionPrompt<S3Provider>()
+                                                                   .Title("Select the [green]providers[/] to clean up")
+                                                                   .Required()
+                                                                   .PageSize(10)
+                                                                   .MoreChoicesText("[grey](Move up and down to reveal more providers)[/]")
+                                                                   .InstructionsText("[grey](Press [blue]<space>[/] to select, [green]<enter>[/] to accept)[/]")
+                                                                   .AddChoices(Enum.GetValues<S3Provider>().Where(x => x is not S3Provider.None and not S3Provider.All)),
+            CancellationToken.None);
+
+        foreach (S3Provider s3Provider in providers)
         {
+            AnsiConsole.WriteLine();
+
             string profileName = UtilityHelper.GetProfileName(s3Provider);
             await using ServiceProvider provider = UtilityHelper.CreateSimpleS3(s3Provider, profileName, true);
             IProfileManager profileManager = provider.GetRequiredService<IProfileManager>();
 
             if (profileManager.GetProfile(profileName) == null)
             {
-                Console.WriteLine($"# {s3Provider}: profile not configured");
+                AnsiConsole.MarkupLine($"[blue]{Markup.Escape(s3Provider.ToString())}[/]: profile not configured");
                 continue;
             }
 
@@ -38,24 +44,30 @@ internal static class Program
 
             if (!listResponse.IsSuccess)
             {
-                Console.WriteLine($"# {s3Provider}: unable to list buckets ({listResponse.StatusCode})");
+                AnsiConsole.MarkupLine($"[blue]{Markup.Escape(s3Provider.ToString())}[/]: [red]unable to list buckets ({listResponse.StatusCode})[/]");
                 failures++;
                 continue;
             }
 
             S3Bucket[] buckets = listResponse.Buckets.Where(x => UtilityHelper.IsTemporaryBucket(x.BucketName)).ToArray();
 
-            Console.WriteLine($"# {s3Provider}: {buckets.Length} bucket(s)");
+            AnsiConsole.MarkupLine($"[blue]{Markup.Escape(s3Provider.ToString())}[/]: {buckets.Length} temporary bucket(s)");
 
             foreach (S3Bucket bucket in buckets)
             {
                 string bucketName = bucket.BucketName;
 
-                Console.Write(bucketName);
-
                 (Exception? failure, bool deferred) = await UtilityHelper.TryDeleteTemporaryBucketAsync(s3Provider, client, bucketName, token: CancellationToken.None);
-                string outcome = deferred ? " [ ] deferred: " + failure?.Message : " [ ] failed: " + failure?.Message;
-                Console.WriteLine(failure == null ? " [x] deleted" : outcome);
+                string outcome = "[green]deleted[/]";
+
+                if (failure != null)
+                {
+                    string color = deferred ? "yellow" : "red";
+                    string status = deferred ? "deferred" : "failed";
+                    outcome = $"[{color}]{status}: {Markup.Escape(failure.Message)}[/]";
+                }
+
+                AnsiConsole.MarkupLine($"- {Markup.Escape(bucketName)}: {outcome}");
 
                 if (failure != null)
                     failures++;

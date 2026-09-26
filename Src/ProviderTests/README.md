@@ -38,10 +38,10 @@ Review the passed, failed, and skipped counts and the skip reasons. A successful
 Run cleanup after the live tests:
 
 ```powershell
-dotnet run --project Src/SimpleS3.Utility.TestCleanup/SimpleS3.Utility.TestCleanup.csproj -- --temporary-only
+dotnet run --project Src/SimpleS3.Utility.TestCleanup/SimpleS3.Utility.TestCleanup.csproj
 ```
 
-Cleanup visits configured providers in turn, empties and deletes buckets matching `tempbucket-{guid}`, and reports the result for each bucket. It leaves the configured `testbucket-...` bucket and locally stored profiles in place.
+Select the providers to clean up. The utility empties and deletes buckets matching `tempbucket-{guid}` for those providers and reports the result for each bucket. It leaves the configured `testbucket-...` bucket and locally stored profiles in place.
 
 ## Offline tests and CI
 

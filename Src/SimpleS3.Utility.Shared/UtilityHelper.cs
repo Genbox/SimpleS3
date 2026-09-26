@@ -1,11 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
-using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -30,52 +28,6 @@ namespace Genbox.SimpleS3.Utility.Shared;
 
 public static class UtilityHelper
 {
-    public static IEnumerable<S3Provider> SelectProviders()
-    {
-        //Skip 'unknown'
-        S3Provider[] choices = Enum.GetValues<S3Provider>().Skip(1).ToArray();
-
-        bool success = false;
-        int i;
-
-        S3Provider[] returnChoices = new S3Provider[choices.Length];
-
-        Console.WriteLine("Please select which providers you want to use. Use ',' to select more than one.");
-
-        for (i = 0; i < choices.Length; i++)
-            Console.WriteLine($"{i + 1}. {choices[i]}");
-
-        do
-        {
-            string? input = Console.ReadLine();
-            Validator.RequireNotNull(input);
-
-            string[] userChoices = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-            for (i = 0; i < userChoices.Length; i++)
-            {
-                string c = userChoices[i];
-
-                if (!int.TryParse(c, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out int intVal) || intVal <= 0 || intVal > choices.Length)
-                {
-                    Console.WriteLine($"Invalid input '{c}'. Try again.");
-                    Array.Clear(returnChoices);
-                    success = false;
-                    break;
-                }
-
-                success = true;
-                returnChoices[i] = choices[intVal - 1];
-            }
-        } while (!success);
-
-        //Special case if 'All' was chosen
-        if (returnChoices.Any(x => x == S3Provider.All))
-            return choices.Take(choices.Length - 1);
-
-        return returnChoices.Take(i);
-    }
-
     public static string GetProfileName(S3Provider provider) => "TestSetup-" + provider;
 
     public static string GetTestBucket(IProfile profile) => "testbucket-" + profile.KeyId[..8].ToLowerInvariant();
