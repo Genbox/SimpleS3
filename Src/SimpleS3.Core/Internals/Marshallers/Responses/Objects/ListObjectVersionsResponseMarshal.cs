@@ -16,12 +16,13 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
     public void MarshalResponse(SimpleS3Config config, ListObjectVersionsResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
+
         using (XmlReader xmlReader = XmlHelper.CreateReader(responseStream))
         {
             //To support Google's lack of versions which is identical to S3 ListObjectVersions, but not quite
-            //xmlReader.ReadToDescendant("ListVersionsResult");
+            xmlReader.MoveToContent();
 
-            foreach (string name in XmlHelper.ReadElements(xmlReader))
+            foreach (string name in XmlHelper.ReadChildren(xmlReader))
             {
                 switch (name)
                 {
@@ -88,7 +89,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
 
     private static string ParseCommonPrefixes(XmlReader xmlReader)
     {
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "CommonPrefixes"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             if (name == "Prefix")
                 return xmlReader.ReadString();
@@ -111,7 +112,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
         ChecksumType checksumType = ChecksumType.Unknown;
         S3RestoreStatus? restoreStatus = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "Version"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -165,7 +166,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
         DateTimeOffset? lastModified = null;
         S3Identity? owner = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "DeleteMarker"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
