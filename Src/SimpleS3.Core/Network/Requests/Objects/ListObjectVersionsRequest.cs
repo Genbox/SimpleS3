@@ -18,6 +18,9 @@ public class ListObjectVersionsRequest : BaseRequest, IHasBucketName
         Initialize(bucketName);
     }
 
+    /// <summary>Additional attributes to include in the listing results.</summary>
+    public IList<OptionalObjectAttribute> OptionalObjectAttributes { get; } = new List<OptionalObjectAttribute>();
+
     /// <summary>
     /// A delimiter is a character that you specify to group keys. All keys that contain the same string between the prefix and the first occurrence of the delimiter are grouped
     /// under a single result element in CommonPrefixes. These groups are counted as one result against the max-keys limitation. These keys are not returned elsewhere in the response.
@@ -64,6 +67,7 @@ public class ListObjectVersionsRequest : BaseRequest, IHasBucketName
         Prefix = null;
         KeyMarker = null;
         VersionIdMarker = null;
+        OptionalObjectAttributes.Clear();
 
         base.Reset();
     }

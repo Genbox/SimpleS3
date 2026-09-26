@@ -23,6 +23,10 @@ internal sealed class ListObjectVersionsRequestMarshal : IRequestMarshal<ListObj
         request.SetOptionalQueryParameter(AmzParameters.Prefix, request.Prefix);
         request.SetOptionalQueryParameter(AmzParameters.VersionIdMarker, request.VersionIdMarker);
 
+        string optionalAttributes = string.Join(",", request.OptionalObjectAttributes.Where(x => x != OptionalObjectAttribute.Unknown).Select(x => x.GetDisplayName()));
+        if (optionalAttributes.Length > 0)
+            request.SetHeader(AmzHeaders.XAmzOptionalObjectAttributes, optionalAttributes);
+
         return null;
     }
 }
