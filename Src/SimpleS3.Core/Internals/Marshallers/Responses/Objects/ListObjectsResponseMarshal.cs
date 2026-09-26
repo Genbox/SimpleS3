@@ -19,9 +19,9 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
 
         using (XmlReader xmlReader = XmlHelper.CreateReader(responseStream))
         {
-            xmlReader.ReadToDescendant("ListBucketResult");
+            xmlReader.MoveToContent();
 
-            foreach (string name in XmlHelper.ReadElements(xmlReader))
+            foreach (string name in XmlHelper.ReadChildren(xmlReader))
             {
                 switch (name)
                 {
@@ -91,7 +91,7 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
         ChecksumType checksumType = ChecksumType.Unknown;
         S3RestoreStatus? restoreStatus = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "Contents"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             switch (name)
             {
@@ -135,7 +135,7 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
     {
         string? key = null;
 
-        foreach (string name in XmlHelper.ReadElements(xmlReader, "CommonPrefixes"))
+        foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
             if (name == "Prefix")
                 key = xmlReader.ReadString();
