@@ -1,13 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Web;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Common.Exceptions;
 using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Common.Validation;
-using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Pools;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -224,9 +222,6 @@ public static class ObjectClientExtensions
                     string? keyMarker = response.NextKeyMarker;
                     string? versionIdMarker = response.NextVersionIdMarker;
 
-                    if (response.EncodingType == EncodingType.Url)
-                        keyMarker = HttpUtility.UrlDecode(keyMarker);
-
                     if (string.IsNullOrEmpty(keyMarker) || !seenMarkers.Add((keyMarker, versionIdMarker)))
                         throw new InvalidOperationException("Object version listing returned missing or non-progressing markers.");
 
@@ -441,9 +436,6 @@ public static class ObjectClientExtensions
                     string? keyMarker = response.NextKeyMarker;
                     string? versionIdMarker = response.NextVersionIdMarker;
 
-                    if (response.EncodingType == EncodingType.Url)
-                        keyMarker = HttpUtility.UrlDecode(keyMarker);
-
                     if (string.IsNullOrEmpty(keyMarker) || !seenMarkers.Add((keyMarker, versionIdMarker)))
                         throw new InvalidOperationException("Object version listing returned missing or non-progressing markers.");
 
@@ -520,8 +512,6 @@ public static class ObjectClientExtensions
 
             keyMarker = response.NextKeyMarker;
             versionIdMarker = response.NextVersionIdMarker;
-            if (response.EncodingType == EncodingType.Url)
-                keyMarker = HttpUtility.UrlDecode(keyMarker);
             if (string.IsNullOrEmpty(keyMarker) || !seenMarkers.Add((keyMarker, versionIdMarker)))
                 throw new InvalidOperationException("Object version listing returned missing or non-progressing markers.");
         }

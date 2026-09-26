@@ -69,10 +69,14 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
             }
         }
 
+        if (response.EncodingType == EncodingType.Url)
+        {
+            response.KeyMarker = response.KeyMarker == null ? null : Uri.UnescapeDataString(response.KeyMarker);
+            response.NextKeyMarker = response.NextKeyMarker == null ? null : Uri.UnescapeDataString(response.NextKeyMarker);
+        }
+
         if (config.AutoUrlDecodeResponses && response.EncodingType == EncodingType.Url)
         {
-            response.KeyMarker = WebUtility.UrlDecode(response.KeyMarker);
-            response.NextKeyMarker = WebUtility.UrlDecode(response.NextKeyMarker);
             response.Prefix = WebUtility.UrlDecode(response.Prefix);
             response.Delimiter = WebUtility.UrlDecode(response.Delimiter);
 
