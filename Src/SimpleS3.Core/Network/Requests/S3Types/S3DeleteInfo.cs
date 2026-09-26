@@ -17,6 +17,15 @@ public class S3DeleteInfo : IPooledObject, IHasObjectKey, IHasVersionId
         Initialize(objectKey, versionId);
     }
 
+    /// <summary>Deletes the object only if its ETag matches this value.</summary>
+    public string? ETag { get; set; }
+
+    /// <summary>Deletes the object only if its last modification time matches this value.</summary>
+    public DateTimeOffset? LastModifiedTime { get; set; }
+
+    /// <summary>Deletes the object only if its size in bytes matches this value.</summary>
+    public long? Size { get; set; }
+
     /// <summary>Provides the <c>ObjectKey</c> API.</summary>
     public string ObjectKey { get; set; } = null!;
 
@@ -34,5 +43,8 @@ public class S3DeleteInfo : IPooledObject, IHasObjectKey, IHasVersionId
     {
         ObjectKey = objectKey;
         VersionId = versionId;
+        ETag = null;
+        LastModifiedTime = null;
+        Size = null;
     }
 }

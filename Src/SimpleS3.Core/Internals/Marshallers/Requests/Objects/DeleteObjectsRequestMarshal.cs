@@ -1,6 +1,9 @@
+using System.Globalization;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Common.Misc;
+using Genbox.SimpleS3.Core.Internals.Enums;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Internals.Xml;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -26,6 +29,15 @@ internal sealed class DeleteObjectsRequestMarshal : IRequestMarshal<DeleteObject
 
             if (info.VersionId != null)
                 xml.WriteElement("VersionId", info.VersionId);
+
+            if (info.ETag != null)
+                xml.WriteElement("ETag", info.ETag);
+
+            if (info.LastModifiedTime.HasValue)
+                xml.WriteElement("LastModifiedTime", ValueHelper.DateToString(info.LastModifiedTime.Value, DateTimeFormat.Rfc1123));
+
+            if (info.Size.HasValue)
+                xml.WriteElement("Size", info.Size.Value.ToString(CultureInfo.InvariantCulture));
 
             xml.WriteEndElement("Object");
         }
