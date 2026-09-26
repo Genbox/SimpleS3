@@ -42,7 +42,7 @@ public class MultipartTransferTests
         int activeCallbacks = 0;
         int maxActiveCallbacks = 0;
 
-        CompleteMultipartUploadResponse response = await transfer.MultipartUploadAsync("bucket", "object", data, 1, 4, onPartResponse: _ =>
+        CompleteMultipartUploadResponse response = await transfer.MultipartUploadAsync("bucket", "object", data, 1, onPartResponse: _ =>
         {
             int active = Interlocked.Increment(ref activeCallbacks);
             SetMax(ref maxActiveCallbacks, active);
@@ -151,6 +151,8 @@ public class MultipartTransferTests
 
     private sealed class FakeMultipartApi : IMultipartClient, IMultipartOperations
     {
+        public IList<IRequestWrapper> RequestWrappers { get; } = Array.Empty<IRequestWrapper>();
+        public IList<IResponseWrapper> ResponseWrappers { get; } = Array.Empty<IResponseWrapper>();
         public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
 
         public async Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default)
@@ -179,8 +181,6 @@ public class MultipartTransferTests
         });
 
         public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
-        public IList<IRequestWrapper> RequestWrappers { get; } = Array.Empty<IRequestWrapper>();
-        public IList<IResponseWrapper> ResponseWrappers { get; } = Array.Empty<IResponseWrapper>();
 
         public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(CreateMultipartUploadRequest request, CancellationToken token = default) => Task.FromResult(new CreateMultipartUploadResponse
         {
