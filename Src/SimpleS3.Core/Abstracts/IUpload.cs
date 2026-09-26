@@ -56,6 +56,7 @@ public interface IUpload
     IUpload WithEncryptionKms(string? kmsKeyId, KmsContextBuilder? kmsContext, bool bucketKeyEnabled);
 
     /// <summary>Enabled Server Side Encryption (SSE) with the provided key.</summary>
+    /// <remarks>Replaces any previously selected server-managed or KMS encryption settings.</remarks>
     IUpload WithEncryptionCustomerKey(byte[] encryptionKey);
 
     /// <summary>Provides the <c>WithMetadata</c> API.</summary>
@@ -64,7 +65,6 @@ public interface IUpload
     /// <summary>Provides the <c>WithMetadata</c> API.</summary>
     IUpload WithMetadata(string key, string value);
 
-    /// <remarks>Replaces any previously selected server-managed or KMS encryption settings.</remarks>
     /// <summary>Provides the <c>WithStorageClass</c> API.</summary>
     IUpload WithStorageClass(StorageClass storageClass);
 
@@ -75,20 +75,20 @@ public interface IUpload
     IUpload WithTag(string key, string value);
 
     /// <summary>Provides the <c>WithAccessControl</c> API.</summary>
+    /// <remarks>Replaces previously selected explicit grants without modifying a caller-supplied ACL builder.</remarks>
     IUpload WithAccessControl(ObjectCannedAcl acl);
 
     /// <summary>Provides the <c>WithAccessControl</c> API.</summary>
+    /// <remarks>Replaces any previously selected canned ACL.</remarks>
     IUpload WithAccessControl(ObjectAclBuilder acl);
 
     /// <summary>Provides the <c>CalculateContentMd5</c> API.</summary>
     IUpload CalculateContentMd5();
 
     /// <summary>Provides the <c>WithLock</c> API.</summary>
-    /// <remarks>Replaces previously selected explicit grants without modifying a caller-supplied ACL builder.</remarks>
     IUpload WithLock(LockMode lockMode, DateTimeOffset retainUntil);
 
     /// <summary>Provides the <c>WithLegalHold</c> API.</summary>
-    /// <remarks>Replaces any previously selected canned ACL.</remarks>
     IUpload WithLegalHold();
 
     /// <summary>Provides the <c>RemoveLegalHold</c> API.</summary>
