@@ -18,13 +18,10 @@ public class LifecycleTransitionTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void UnknownStorageClassesAreRejected(bool useDate)
+    public void UnknownStorageClassesAreRejected(bool useDate) => Assert.Throws<RequireException>(() =>
     {
-        Assert.Throws<RequireException>(() =>
-        {
-            _ = useDate
-                ? new S3Transition(DateTimeOffset.UtcNow, StorageClass.Unknown)
-                : new S3Transition(1, StorageClass.Unknown);
-        });
-    }
+        _ = useDate
+            ? new S3Transition(DateTimeOffset.UtcNow, StorageClass.Unknown)
+            : new S3Transition(1, StorageClass.Unknown);
+    });
 }
