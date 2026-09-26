@@ -3,6 +3,7 @@ using System.Text;
 using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
+using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Errors;
 using Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
@@ -94,6 +95,32 @@ public class ListResponseMarshalTests
         Assert.Equal("alice", versions.Versions[0].Owner?.Name);
         Assert.Equal(string.Empty, versions.Versions[0].Owner?.Id);
         Assert.Equal("two", versions.Versions[1].ObjectKey);
+    }
+
+    [Fact]
+    public void ListingsPreserveMultipleChecksumAlgorithms()
+    {
+        const string objectsXml = """
+                                  <ListBucketResult>
+                                    <Contents><Key>object</Key><LastModified>2026-09-26T12:00:00Z</LastModified><Size>1</Size><ChecksumAlgorithm>CRC32</ChecksumAlgorithm><ChecksumAlgorithm>SHA256</ChecksumAlgorithm></Contents>
+                                  </ListBucketResult>
+                                  """;
+        const string versionsXml = """
+                                   <ListVersionsResult>
+                                     <Version><Key>object</Key><VersionId>v1</VersionId><IsLatest>true</IsLatest><LastModified>2026-09-26T12:00:00Z</LastModified><ETag>"etag"</ETag><Size>1</Size><ChecksumAlgorithm>CRC32</ChecksumAlgorithm><ChecksumAlgorithm>SHA256</ChecksumAlgorithm></Version>
+                                   </ListVersionsResult>
+                                   """;
+
+        using ContentStream objectsContent = CreateContent(objectsXml);
+        ListObjectsResponse objects = new ListObjectsResponse();
+        new ListObjectsResponseMarshal().MarshalResponse(CreateConfig(), objects, new Dictionary<string, string>(StringComparer.Ordinal), objectsContent);
+
+        using ContentStream versionsContent = CreateContent(versionsXml);
+        ListObjectVersionsResponse versions = new ListObjectVersionsResponse();
+        new ListObjectVersionsResponseMarshal().MarshalResponse(CreateConfig(), versions, new Dictionary<string, string>(StringComparer.Ordinal), versionsContent);
+
+        Assert.Equal(new[] { ChecksumAlgorithm.Crc32, ChecksumAlgorithm.Sha256 }, Assert.Single(objects.Objects).ChecksumAlgorithms);
+        Assert.Equal(new[] { ChecksumAlgorithm.Crc32, ChecksumAlgorithm.Sha256 }, Assert.Single(versions.Versions).ChecksumAlgorithms);
     }
 
     [Fact]

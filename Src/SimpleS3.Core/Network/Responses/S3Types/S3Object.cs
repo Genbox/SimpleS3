@@ -5,7 +5,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
 namespace Genbox.SimpleS3.Core.Network.Responses.S3Types;
 
 /// <summary>Provides the <c>S3Object</c> API.</summary>
-public class S3Object(string objectKey, DateTimeOffset lastModifiedOn, long size, S3Identity? owner, string? eTag, StorageClass storageClass, ChecksumAlgorithm checksumAlgorithm, ChecksumType checksumType) : IHasStorageClass, IHasETag, IHasObjectKey
+public class S3Object(string objectKey, DateTimeOffset lastModifiedOn, long size, S3Identity? owner, string? eTag, StorageClass storageClass, IEnumerable<ChecksumAlgorithm> checksumAlgorithms, ChecksumType checksumType) : IHasStorageClass, IHasETag, IHasObjectKey
 {
     /// <summary>The optional restoration status returned by the service.</summary>
     public S3RestoreStatus? RestoreStatus { get; internal set; }
@@ -19,8 +19,8 @@ public class S3Object(string objectKey, DateTimeOffset lastModifiedOn, long size
     /// <summary>Provides the <c>Owner</c> API.</summary>
     public S3Identity? Owner { get; } = owner;
 
-    /// <summary>Provides the <c>ChecksumAlgorithm</c> API.</summary>
-    public ChecksumAlgorithm ChecksumAlgorithm { get; } = checksumAlgorithm;
+    /// <summary>All checksum algorithms reported by the service.</summary>
+    public IList<ChecksumAlgorithm> ChecksumAlgorithms { get; } = new List<ChecksumAlgorithm>(checksumAlgorithms);
 
     /// <summary>Provides the <c>ChecksumType</c> API.</summary>
     public ChecksumType ChecksumType { get; } = checksumType;

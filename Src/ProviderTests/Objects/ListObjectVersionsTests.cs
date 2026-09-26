@@ -216,7 +216,7 @@ public class ListObjectVersionsTests : TestBase
         Assert.Equal(200, listResp.StatusCode);
         S3Version obj = Assert.Single(listResp.Versions);
 
-        Assert.Equal(ChecksumAlgorithm.Sha1, obj.ChecksumAlgorithm);
+        Assert.Contains(ChecksumAlgorithm.Sha1, obj.ChecksumAlgorithms);
         Assert.Equal(ChecksumType.FullObject, obj.ChecksumType);
     });
 }

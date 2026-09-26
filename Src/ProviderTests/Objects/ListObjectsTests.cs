@@ -186,7 +186,7 @@ public class ListObjectsTests : TestBase
         Assert.Equal(200, listResp.StatusCode);
         S3Object obj = Assert.Single(listResp.Objects);
 
-        Assert.Equal(ChecksumAlgorithm.Sha1, obj.ChecksumAlgorithm);
+        Assert.Contains(ChecksumAlgorithm.Sha1, obj.ChecksumAlgorithms);
         Assert.Equal(ChecksumType.FullObject, obj.ChecksumType);
     });
 }

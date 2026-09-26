@@ -190,10 +190,10 @@ public class ObjectClientExtensionsTests
                 NextContinuationToken = "next"
             };
 
-            response.Objects.Add(new S3Object("first", DateTimeOffset.UnixEpoch, 0, null, null, default, default, default));
+            response.Objects.Add(new S3Object("first", DateTimeOffset.UnixEpoch, 0, null, null, default, [], default));
 
             if (_objectsPerPage > 1)
-                response.Objects.Add(new S3Object("second", DateTimeOffset.UnixEpoch, 0, null, null, default, default, default));
+                response.Objects.Add(new S3Object("second", DateTimeOffset.UnixEpoch, 0, null, null, default, [], default));
 
             return response;
         }
@@ -243,7 +243,7 @@ public class ObjectClientExtensionsTests
                 NextVersionIdMarker = "next-version"
             };
 
-            response.Versions.Add(new S3Version("version-" + call, "id-" + call, true, DateTimeOffset.UnixEpoch, "etag", 0, null, default, default, default));
+            response.Versions.Add(new S3Version("version-" + call, "id-" + call, true, DateTimeOffset.UnixEpoch, "etag", 0, null, default, [], default));
             return Task.FromResult(response);
         }
     }

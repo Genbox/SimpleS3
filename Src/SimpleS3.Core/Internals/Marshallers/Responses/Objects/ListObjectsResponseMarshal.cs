@@ -87,7 +87,7 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
         long? size = null;
         StorageClass storageClass = StorageClass.Unknown;
         S3Identity? owner = null;
-        ChecksumAlgorithm checksumAlgorithm = ChecksumAlgorithm.Unknown;
+        List<ChecksumAlgorithm> checksumAlgorithms = [];
         ChecksumType checksumType = ChecksumType.Unknown;
         S3RestoreStatus? restoreStatus = null;
 
@@ -114,7 +114,7 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
                     owner = ParserHelper.ParseOwner(xmlReader, requireId: false);
                     break;
                 case "ChecksumAlgorithm":
-                    checksumAlgorithm = Core.Enums.Enums.ChecksumAlgorithm.Parse(xmlReader.ReadString(), ChecksumAlgorithmFormat.DisplayName);
+                    checksumAlgorithms.Add(Core.Enums.Enums.ChecksumAlgorithm.Parse(xmlReader.ReadString(), ChecksumAlgorithmFormat.DisplayName));
                     break;
                 case "ChecksumType":
                     checksumType = Core.Enums.Enums.ChecksumType.Parse(xmlReader.ReadString(), ChecksumTypeFormat.DisplayName);
@@ -128,7 +128,7 @@ internal sealed class ListObjectsResponseMarshal : IResponseMarshal<ListObjectsR
         if (key == null || lastModified == null || size == null)
             throw new InvalidOperationException("Missing required values");
 
-        response.Objects.Add(new S3Object(key, lastModified.Value, size.Value, owner, eTag, storageClass, checksumAlgorithm, checksumType) { RestoreStatus = restoreStatus });
+        response.Objects.Add(new S3Object(key, lastModified.Value, size.Value, owner, eTag, storageClass, checksumAlgorithms, checksumType) { RestoreStatus = restoreStatus });
     }
 
     private static void ReadCommonPrefixes(ListObjectsResponse response, XmlReader xmlReader)
