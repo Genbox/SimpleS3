@@ -20,7 +20,7 @@ internal sealed class GetObjectAnnotationResponseMarshal : IResponseMarshal<GetO
         response.ChecksumAlgorithm = data.ChecksumAlgorithm;
         response.ChecksumType = data.ChecksumType;
         response.Checksum = data.Checksum;
-        response.LastModified = headers.GetHeaderDate(HttpHeaders.LastModified, DateTimeFormat.Rfc1123);
+        response.LastModified = headers.GetHeaderNullableDate(HttpHeaders.LastModified, DateTimeFormat.Rfc1123);
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
         if (headers.TryGetHeader(AmzHeaders.XAmzReplicationStatus, out string? replicationStatus))
             response.ReplicationStatus = Core.Enums.Enums.ReplicationStatus.Parse(replicationStatus, ReplicationStatusFormat.DisplayName);
