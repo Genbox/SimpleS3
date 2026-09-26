@@ -9,6 +9,9 @@ public class HeadObjectResponse : BaseResponse, IHasMetadata, IHasReplicationSta
     /// <summary>Provides information about the object restoration operation and expiration time of the restored object copy.</summary>
     public string? Restore { get; internal set; }
 
+    /// <summary>The object's Intelligent-Tiering archive access tier, or Unknown when the service does not report it.</summary>
+    public ArchiveStatus ArchiveStatus { get; internal set; }
+
     /// <summary>Returns the count of the tags associated with the object. This header is returned only if the count is greater than zero.</summary>
     public int TagCount { get; internal set; }
 
