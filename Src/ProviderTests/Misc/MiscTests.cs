@@ -12,21 +12,48 @@ public class MiscTests : TestBase
     [SingleProvider(S3Provider.AmazonS3)]
     public async Task IsEncodingCorrect(S3Provider _, string bucket, ISimpleClient client)
     {
-        //This tests if '=' is NOT encoded. S3 does not use encoding of paths in signed requests, but all other AWS APIs do
-        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, "a=a", "hello", token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp.StatusCode);
+        string key = "equals-" + Guid.NewGuid().ToString("N") + "/a=a";
+        CancellationToken token = TestContext.Current.CancellationToken;
+        PutObjectResponse uploaded = await client.PutObjectStringAsync(bucket, key, "hello", token: token);
+        Assert.Equal(200, uploaded.StatusCode);
+
+        try
+        {
+            using GetObjectResponse response = await client.GetObjectAsync(bucket, key, token: token);
+            Assert.Equal(200, response.StatusCode);
+            Assert.Equal("hello", await response.Content.AsStringAsync(token: token));
+        }
+        finally
+        {
+            using CancellationTokenSource cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            Assert.Equal(204, (await client.DeleteObjectAsync(bucket, key, r => r.VersionId = uploaded.VersionId, cleanup.Token)).StatusCode);
+            Assert.Equal(404, (await client.HeadObjectAsync(bucket, key, token: cleanup.Token)).StatusCode);
+        }
     }
 
     [Theory]
     [SingleProvider(S3Provider.AmazonS3)]
     public async Task StreamReturnsLength(S3Provider _, string bucket, ISimpleClient client)
     {
-        //We need a file to test with
-        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, "testfile", "hello world", token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp.StatusCode);
+        string key = "stream-length-" + Guid.NewGuid().ToString("N");
+        CancellationToken token = TestContext.Current.CancellationToken;
+        PutObjectResponse uploaded = await client.PutObjectStringAsync(bucket, key, "hello world", token: token);
+        Assert.Equal(200, uploaded.StatusCode);
 
-        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, "testfile", token: TestContext.Current.CancellationToken);
-        Assert.True(getResp.Content.HasLength);
-        Assert.Equal(11, getResp.Content.Length);
+        try
+        {
+            using GetObjectResponse response = await client.GetObjectAsync(bucket, key, token: token);
+            Assert.Equal(200, response.StatusCode);
+            Assert.Equal(11, response.ContentLength);
+            Assert.True(response.Content.HasLength);
+            Assert.Equal(11, response.Content.Length);
+            Assert.Equal("hello world", await response.Content.AsStringAsync(token: token));
+        }
+        finally
+        {
+            using CancellationTokenSource cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            Assert.Equal(204, (await client.DeleteObjectAsync(bucket, key, r => r.VersionId = uploaded.VersionId, cleanup.Token)).StatusCode);
+            Assert.Equal(404, (await client.HeadObjectAsync(bucket, key, token: cleanup.Token)).StatusCode);
+        }
     }
 }
