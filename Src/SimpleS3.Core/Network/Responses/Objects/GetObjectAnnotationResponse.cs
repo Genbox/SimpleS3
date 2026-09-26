@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Response;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Interfaces;
@@ -21,7 +20,6 @@ public sealed class GetObjectAnnotationResponse : BaseResponse, IHasContent, IHa
     public ContentStream Content { get; internal set; } = ContentStream.Null;
 
     /// <summary>Provides the <c>Dispose</c> API.</summary>
-    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP007:Don't dispose injected", Justification = "The response owns its returned content stream.")]
     public void Dispose() => Content.Dispose();
 
     /// <summary>Provides the <c>ETag</c> API.</summary>
