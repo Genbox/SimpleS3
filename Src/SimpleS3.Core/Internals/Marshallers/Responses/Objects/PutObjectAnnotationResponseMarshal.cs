@@ -22,9 +22,9 @@ internal sealed class PutObjectAnnotationResponseMarshal : IResponseMarshal<PutO
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
-        reader.ReadToDescendant("PutObjectAnnotationOutput");
+        reader.MoveToContent();
 
-        foreach (string name in XmlHelper.ReadElements(reader))
+        foreach (string name in XmlHelper.ReadChildren(reader))
         {
             if (name == "Key")
                 response.ObjectKey = reader.ReadString();
