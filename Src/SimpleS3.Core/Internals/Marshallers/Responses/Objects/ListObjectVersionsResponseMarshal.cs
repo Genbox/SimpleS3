@@ -2,6 +2,7 @@ using System.Net;
 using System.Xml;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Response;
+using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Helpers;
@@ -14,6 +15,7 @@ internal sealed class ListObjectVersionsResponseMarshal : IResponseMarshal<ListO
 {
     public void MarshalResponse(SimpleS3Config config, ListObjectVersionsResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
+        response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
         using (XmlReader xmlReader = XmlHelper.CreateReader(responseStream))
         {
             //To support Google's lack of versions which is identical to S3 ListObjectVersions, but not quite

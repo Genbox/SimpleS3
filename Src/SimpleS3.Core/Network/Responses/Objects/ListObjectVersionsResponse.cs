@@ -6,7 +6,7 @@ using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 namespace Genbox.SimpleS3.Core.Network.Responses.Objects;
 
 /// <summary>Provides the <c>ListObjectVersionsResponse</c> API.</summary>
-public class ListObjectVersionsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt, IHasBucketName
+public class ListObjectVersionsResponse : BaseResponse, IHasTruncated, IHasTruncatedExt, IHasBucketName, IHasRequestCharged
 {
     /// <summary>Provides the <c>ListObjectVersionsResponse</c> API.</summary>
     public ListObjectVersionsResponse()
@@ -39,6 +39,9 @@ public class ListObjectVersionsResponse : BaseResponse, IHasTruncated, IHasTrunc
 
     /// <summary>Provides the <c>BucketName</c> API.</summary>
     public string BucketName { get; internal set; } = null!;
+
+    /// <summary>Whether the requester was charged for this request.</summary>
+    public bool RequestCharged { get; internal set; }
 
     /// <summary>Provides the <c>IsTruncated</c> API.</summary>
     public bool IsTruncated { get; internal set; }
