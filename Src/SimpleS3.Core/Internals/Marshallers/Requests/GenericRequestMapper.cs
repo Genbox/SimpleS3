@@ -92,8 +92,12 @@ internal static class GenericRequestMapper
         if (req is IHasPartNumber hasPartNumber && !disabledFor(typeof(IHasPartNumber)))
             req.SetQueryParameter(AmzParameters.PartNumber, hasPartNumber.PartNumber);
 
-        if (req is IHasRange hasRange && !disabledFor(typeof(IHasRange)))
-            req.SetHeader(HttpHeaders.Range, hasRange.Range);
+        if (req is IHasRange hasRange && !disabledFor(typeof(IHasRange)) && hasRange.Range.HasData())
+        {
+            if (hasRange.Range.Build() is not { Length: > 0 } range)
+                throw new ArgumentException("The configured range does not contain a usable byte range.");
+            req.SetHeader(HttpHeaders.Range, range);
+        }
 
         if (req is IHasRequestPayer hasRequestPayer && !disabledFor(typeof(IHasRequestPayer)))
             req.SetOptionalHeader(AmzHeaders.XAmzRequestPayer, hasRequestPayer.RequestPayer == Payer.Requester ? "requester" : null);
