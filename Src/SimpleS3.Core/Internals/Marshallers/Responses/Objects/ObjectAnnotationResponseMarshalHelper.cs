@@ -19,7 +19,7 @@ internal static class ObjectAnnotationResponseMarshalHelper
 
         (ChecksumAlgorithm algorithm, byte[]? checksum) = ChecksumHelper.ReadHeaders(headers);
 
-        return (headers.GetOptionalValue(AmzHeaders.XAmzVersionId), headers.GetOptionalValue(HttpHeaders.ETag), sseAlgorithm,
+        return (headers.GetOptionalValue(AmzHeaders.XAmzObjectVersionId), headers.GetOptionalValue(HttpHeaders.ETag), sseAlgorithm,
                 headers.GetOptionalValue(AmzHeaders.XAmzSseAwsKmsKeyId), algorithm, checksumType,
                 checksum);
     }

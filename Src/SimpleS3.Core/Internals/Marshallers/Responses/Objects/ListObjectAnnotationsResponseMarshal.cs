@@ -15,7 +15,7 @@ internal sealed class ListObjectAnnotationsResponseMarshal : IResponseMarshal<Li
 {
     public void MarshalResponse(SimpleS3Config config, ListObjectAnnotationsResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzVersionId);
+        response.VersionId = headers.GetOptionalValue(AmzHeaders.XAmzObjectVersionId);
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
