@@ -14,7 +14,7 @@ internal sealed class CreateMultipartUploadResponseMarshal : IResponseMarshal<Cr
 {
     public void MarshalResponse(SimpleS3Config config, CreateMultipartUploadResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
-        response.AbortsOn = headers.GetHeaderDate(AmzHeaders.XAmzAbortDate, DateTimeFormat.Rfc1123);
+        response.AbortsOn = headers.TryGetHeader(AmzHeaders.XAmzAbortDate, out string? abortDate) ? ValueHelper.ParseDate(abortDate, DateTimeFormat.Rfc1123) : null;
         response.AbortRuleId = headers.GetOptionalValue(AmzHeaders.XAmzAbortRuleId);
 
         if (headers.TryGetHeader(AmzHeaders.XAmzSse, out string? sseHeader))
@@ -34,10 +34,10 @@ internal sealed class CreateMultipartUploadResponseMarshal : IResponseMarshal<Cr
             response.ChecksumType = Core.Enums.Enums.ChecksumType.Parse(checksumType, ChecksumTypeFormat.DisplayName);
 
         if (headers.TryGetHeader(AmzHeaders.XAmzChecksumAlgorithm, out string? checksumAlgorithm))
-            response.ChecksumAlgorithm = Core.Enums.Enums.ChecksumAlgorithm.Parse(checksumAlgorithm, ChecksumAlgorithmFormat.DisplayName);
+            response.ChecksumAlgorithm = Core.Enums.Enums.ChecksumAlgorithm.Parse(checksumAlgorithm, ChecksumAlgorithmFormat.DisplayName, StringComparison.OrdinalIgnoreCase);
 
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
-        xmlReader.ReadToDescendant("InitiateMultipartUploadResult");
+        XmlHelper.ReadToDescendant(xmlReader, "InitiateMultipartUploadResult");
 
         foreach (string name in XmlHelper.ReadElements(xmlReader))
         {
