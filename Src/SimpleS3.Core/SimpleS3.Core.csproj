@@ -17,6 +17,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="$(AssemblyNamePrefix)ProviderTests" />
     <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.AmazonS3.Tests" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Utility.Shared" />
   </ItemGroup>
 
 </Project>
