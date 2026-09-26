@@ -19,14 +19,18 @@ internal sealed class ListObjectAnnotationsResponseMarshal : IResponseMarshal<Li
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
-        reader.ReadToDescendant("ListObjectAnnotationsOutput");
+        reader.MoveToContent();
 
-        foreach (string name in XmlHelper.ReadElements(reader))
+        foreach (string name in XmlHelper.ReadChildren(reader))
         {
             switch (name)
             {
-                case "AnnotationEntry":
-                    response.Annotations.Add(ParseAnnotation(reader));
+                case "Annotations":
+                    foreach (string child in XmlHelper.ReadChildren(reader))
+                    {
+                        if (child == "AnnotationEntry")
+                            response.Annotations.Add(ParseAnnotation(reader));
+                    }
                     break;
                 case "Bucket":
                     response.BucketName = reader.ReadString();
@@ -62,7 +66,7 @@ internal sealed class ListObjectAnnotationsResponseMarshal : IResponseMarshal<Li
         ReplicationStatus replicationStatus = ReplicationStatus.Unknown;
         List<ChecksumAlgorithm> checksumAlgorithms = new List<ChecksumAlgorithm>();
 
-        foreach (string name in XmlHelper.ReadElements(reader, "AnnotationEntry"))
+        foreach (string name in XmlHelper.ReadChildren(reader))
         {
             switch (name)
             {
