@@ -13,6 +13,7 @@ internal sealed class PutObjectResponseMarshal : IResponseMarshal<PutObjectRespo
 {
     public void MarshalResponse(SimpleS3Config config, PutObjectResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
+        response.Size = headers.GetHeaderNullableLong(AmzHeaders.XAmzObjectSize);
         if (headers.TryGetHeader(AmzHeaders.XAmzStorageClass, out string? storageClass))
             response.StorageClass = Core.Enums.Enums.StorageClass.Parse(storageClass, StorageClassFormat.DisplayName);
 
@@ -21,6 +22,7 @@ internal sealed class PutObjectResponseMarshal : IResponseMarshal<PutObjectRespo
             response.StorageClass = StorageClass.Standard;
 
         response.ETag = headers.GetOptionalValue(HttpHeaders.ETag);
+        response.ExpiresOn = headers.GetHeaderNullableDate(HttpHeaders.Expires, DateTimeFormat.Rfc1123);
 
         if (headers.TryGetHeader(AmzHeaders.XAmzSse, out string? sseHeader))
             response.SseAlgorithm = Core.Enums.Enums.SseAlgorithm.Parse(sseHeader, SseAlgorithmFormat.DisplayName);

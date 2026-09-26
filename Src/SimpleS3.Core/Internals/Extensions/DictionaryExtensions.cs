@@ -23,6 +23,8 @@ internal static class DictionaryExtensions
 
     public static long GetHeaderLong(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseLong(value) : default;
 
+    public static long? GetHeaderNullableLong(this IDictionary<string, string> response, string key) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseLong(value) : null;
+
     public static DateTimeOffset GetHeaderDate(this IDictionary<string, string> response, string key, DateTimeFormat format) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseDate(value, format) : default;
 
     public static DateTimeOffset? GetHeaderNullableDate(this IDictionary<string, string> response, string key, DateTimeFormat format) => response.TryGetHeader(key, out string? value) ? ValueHelper.ParseDate(value, format) : null;

@@ -6,6 +6,9 @@ namespace Genbox.SimpleS3.Core.Network.Responses.Objects;
 /// <summary>Provides the <c>PutObjectResponse</c> API.</summary>
 public class PutObjectResponse : BaseResponse, IHasExpiresOn, IHasETag, IHasSse, IHasBucketKeyEnabled, IHasSseCustomerKey, IHasStorageClass, IHasRequestCharged, IHasVersionId, IHasSseContext, IHasExpiration
 {
+    /// <summary>The resulting object size in bytes returned by a directory-bucket append, or null when absent.</summary>
+    public long? Size { get; internal set; }
+
     /// <summary>Provides the <c>ChecksumType</c> API.</summary>
     public ChecksumType ChecksumType { get; internal set; }
 
