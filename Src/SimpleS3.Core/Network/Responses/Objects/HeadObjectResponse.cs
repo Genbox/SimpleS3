@@ -85,10 +85,10 @@ public class HeadObjectResponse : BaseResponse, IHasMetadata, IHasReplicationSta
     public DateTimeOffset? LastModified { get; internal set; }
 
     /// <summary>Provides the <c>RestoreExpiresOn</c> API.</summary>
-    public DateTimeOffset? RestoreExpiresOn { get; }
+    public DateTimeOffset? RestoreExpiresOn { get; internal set; }
 
     /// <summary>Provides the <c>RestoreInProgress</c> API.</summary>
-    public bool RestoreInProgress { get; }
+    public bool RestoreInProgress { get; internal set; }
 
     /// <summary>Provides the <c>SseAlgorithm</c> API.</summary>
     public SseAlgorithm SseAlgorithm { get; internal set; }

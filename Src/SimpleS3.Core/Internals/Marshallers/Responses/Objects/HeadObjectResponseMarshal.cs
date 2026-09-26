@@ -49,6 +49,7 @@ internal sealed class HeadObjectResponseMarshal : IResponseMarshal<HeadObjectRes
             response.StorageClass = StorageClass.Standard;
 
         response.Restore = headers.GetOptionalValue(AmzHeaders.XAmzRestore);
+        (response.RestoreInProgress, response.RestoreExpiresOn) = ParserHelper.ParseRestoreHeader(response.Restore);
         if (headers.TryGetHeader(AmzHeaders.XAmzArchiveStatus, out string? archiveStatus))
             response.ArchiveStatus = Core.Enums.Enums.ArchiveStatus.Parse(archiveStatus, ArchiveStatusFormat.DisplayName);
         response.TagCount = headers.GetHeaderInt(AmzHeaders.XAmzTaggingCount);
