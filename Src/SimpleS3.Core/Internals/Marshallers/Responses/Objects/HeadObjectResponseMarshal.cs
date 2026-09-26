@@ -68,18 +68,8 @@ internal sealed class HeadObjectResponseMarshal : IResponseMarshal<HeadObjectRes
         if (headers.TryGetHeader(AmzHeaders.XAmzChecksumType, out string? checksumType))
             response.ChecksumType = Core.Enums.Enums.ChecksumType.Parse(checksumType, ChecksumTypeFormat.DisplayName);
 
-        if (headers.TryGetHeader(AmzHeaders.XAmzChecksumCrc32, out string? checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Crc32;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumCrc32C, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Crc32C;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumCrc64Nvme, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Crc64Nvme;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumSha1, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumSha256, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Sha256;
-
-        if (checksum != null)
-            response.Checksum = Convert.FromBase64String(checksum);
+        (response.ChecksumAlgorithm, response.Checksum) = ChecksumHelper.ReadHeaders(headers, out bool composite);
+        if (composite)
+            response.ChecksumType = ChecksumType.Composite;
     }
 }

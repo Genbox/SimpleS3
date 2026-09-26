@@ -28,26 +28,22 @@ internal sealed class UploadPartCopyResponseMarshal : IResponseMarshal<UploadPar
 
         response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
 
-        string? checksum = null;
-        if (headers.TryGetHeader(AmzHeaders.XAmzChecksumCrc32, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Crc32;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumCrc32C, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Crc32C;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumCrc64Nvme, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Crc64Nvme;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumSha1, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumSha256, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Sha256;
-
-        if (checksum != null)
-            response.Checksum = Convert.FromBase64String(checksum);
+        (response.ChecksumAlgorithm, response.Checksum) = ChecksumHelper.ReadHeaders(headers);
 
         using XmlReader reader = XmlHelper.CreateReader(responseStream);
-        reader.ReadToDescendant("CopyPartResult");
+        XmlHelper.ReadToDescendant(reader, "CopyPartResult");
 
         foreach (string name in XmlHelper.ReadElements(reader))
         {
+            ChecksumAlgorithm algorithm = ChecksumHelper.GetXmlAlgorithm(name);
+
+            if (algorithm != ChecksumAlgorithm.Unknown)
+            {
+                response.ChecksumAlgorithm = algorithm;
+                response.Checksum = ChecksumHelper.ParseHash(reader.ReadString());
+                continue;
+            }
+
             switch (name)
             {
                 case "ETag":
@@ -55,26 +51,6 @@ internal sealed class UploadPartCopyResponseMarshal : IResponseMarshal<UploadPar
                     break;
                 case "LastModified":
                     response.LastModified = ValueHelper.ParseDate(reader.ReadString(), DateTimeFormat.Iso8601DateTimeExt);
-                    break;
-                case "ChecksumCRC32":
-                    response.ChecksumAlgorithm = ChecksumAlgorithm.Crc32;
-                    response.Checksum = Convert.FromBase64String(reader.ReadString());
-                    break;
-                case "ChecksumCRC32C":
-                    response.ChecksumAlgorithm = ChecksumAlgorithm.Crc32C;
-                    response.Checksum = Convert.FromBase64String(reader.ReadString());
-                    break;
-                case "ChecksumCRC64NVME":
-                    response.ChecksumAlgorithm = ChecksumAlgorithm.Crc64Nvme;
-                    response.Checksum = Convert.FromBase64String(reader.ReadString());
-                    break;
-                case "ChecksumSHA1":
-                    response.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
-                    response.Checksum = Convert.FromBase64String(reader.ReadString());
-                    break;
-                case "ChecksumSHA256":
-                    response.ChecksumAlgorithm = ChecksumAlgorithm.Sha256;
-                    response.Checksum = Convert.FromBase64String(reader.ReadString());
                     break;
             }
         }

@@ -313,6 +313,59 @@ public class ListingChecksumMetadataTests : TestBase
         }
     }
 
+    [Theory]
+    [MultipleProvidersWithData(S3Provider.AmazonS3 | S3Provider.BackBlazeB2 | S3Provider.Wasabi, ChecksumAlgorithm.Md5, ChecksumAlgorithm.Sha512, ChecksumAlgorithm.XxHash64, ChecksumAlgorithm.XxHash3, ChecksumAlgorithm.XxHash128)]
+    public async Task ExtendedChecksumMetadataInObjectListings(S3Provider provider, string bucket, ISimpleClient client, ChecksumAlgorithm algorithm)
+    {
+        byte[] data = "listing-extended-checksum-metadata"u8.ToArray();
+        byte[] checksum = ComputeChecksum(algorithm, data);
+        string key = "listing-extended-checksum-metadata-" + algorithm.ToString().ToLowerInvariant() + "-" + Guid.NewGuid().ToString("N");
+        CancellationToken token = TestContext.Current.CancellationToken;
+        string? version = null;
+        bool created = false;
+
+        try
+        {
+            PutObjectResponse put = await client.PutObjectDataAsync(bucket, key, data, request =>
+            {
+                request.ChecksumAlgorithm = algorithm;
+                request.Checksum = checksum;
+            }, token);
+
+            if (provider is S3Provider.BackBlazeB2 or S3Provider.Wasabi)
+            {
+                Assert.False(put.IsSuccess);
+                Assert.Equal(provider == S3Provider.BackBlazeB2 ? 501 : 400, put.StatusCode);
+                return;
+            }
+
+            Assert.True(put.IsSuccess, $"PUT: {put.StatusCode} {put.Error?.Code}");
+            created = true;
+            version = put.VersionId;
+            await AssertReadAsync(client, bucket, key, version, data, algorithm, checksum, token);
+
+            ListObjectsResponse objects = await client.ListObjectsAsync(bucket, request => request.Prefix = key, token);
+            ListObjectVersionsResponse versions = await client.ListObjectVersionsAsync(bucket, request => request.Prefix = key, token);
+            Assert.True(objects.IsSuccess, $"ListObjects: {objects.StatusCode} {objects.Error?.Code}");
+            Assert.True(versions.IsSuccess, $"ListObjectVersions: {versions.StatusCode} {versions.Error?.Code}");
+            S3Object listedObject = Assert.Single(objects.Objects, item => item.ObjectKey == key);
+            S3Version listedVersion = Assert.Single(versions.Versions, item => item.ObjectKey == key && (version == null || item.VersionId == version));
+            ChecksumAlgorithm expectedAlgorithm = algorithm;
+            ChecksumType expectedType = provider == S3Provider.AmazonS3 ? ChecksumType.FullObject : ChecksumType.Unknown;
+            Assert.Multiple(() => Assert.Contains(expectedAlgorithm, listedObject.ChecksumAlgorithms),
+                () => Assert.Equal(expectedType, listedObject.ChecksumType),
+                () => Assert.Contains(expectedAlgorithm, listedVersion.ChecksumAlgorithms),
+                () => Assert.Equal(expectedType, listedVersion.ChecksumType));
+        }
+        finally
+        {
+            using CancellationTokenSource cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            if (created)
+                Assert.Equal(204, (await client.DeleteObjectAsync(bucket, key, request => request.VersionId = version, cleanup.Token)).StatusCode);
+            Assert.Equal(404, (await client.HeadObjectAsync(bucket, key, token: cleanup.Token)).StatusCode);
+        }
+    }
+
     private static async Task AssertReadAsync(ISimpleClient client, string bucket, string key, string? version, byte[] expectedData,
                                               ChecksumAlgorithm uploadAlgorithm, byte[] uploadChecksum, CancellationToken token, string? expectedAuditMetadata = null)
     {

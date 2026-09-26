@@ -4,6 +4,7 @@ using Genbox.SimpleS3.Core.Common.Misc;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Enums;
 using Genbox.SimpleS3.Core.Internals.Extensions;
+using Genbox.SimpleS3.Core.Internals.Helpers;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Multipart;
@@ -28,18 +29,6 @@ internal sealed class UploadPartResponseMarshal : IResponseMarshal<UploadPartRes
         response.SseCustomerKeyMd5 = headers.GetHeaderByteArray(AmzHeaders.XAmzSseCustomerKeyMd5, BinaryEncoding.Base64);
         response.RequestCharged = headers.ContainsKey(AmzHeaders.XAmzRequestCharged);
 
-        if (headers.TryGetHeader(AmzHeaders.XAmzChecksumCrc32, out string? checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Crc32;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumCrc32C, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Crc32C;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumCrc64Nvme, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Crc64Nvme;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumSha1, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
-        else if (headers.TryGetHeader(AmzHeaders.XAmzChecksumSha256, out checksum))
-            response.ChecksumAlgorithm = ChecksumAlgorithm.Sha256;
-
-        if (checksum != null)
-            response.Checksum = Convert.FromBase64String(checksum);
+        (response.ChecksumAlgorithm, response.Checksum) = ChecksumHelper.ReadHeaders(headers);
     }
 }
