@@ -130,12 +130,19 @@ public class ListObjectVersionsTests : TestBase
         Assert.Equal(10, listResp.MaxKeys);
         Assert.Equal(10, listResp.Versions.Count);
 
-        ListObjectVersionsResponse listResp2 = await client.ListObjectVersionsAsync(tempBucket, r => r.KeyMarker = listResp.NextKeyMarker, TestContext.Current.CancellationToken);
+        S3Version last = listResp.Versions[^1];
+        Assert.Equal(last.ObjectKey, listResp.NextKeyMarker);
+        Assert.False(string.IsNullOrEmpty(last.VersionId));
+        Assert.Equal(last.VersionId, listResp.NextVersionIdMarker);
+
+        ListObjectVersionsResponse listResp2 = await client.ListObjectVersionsAsync(tempBucket, r =>
+        {
+            r.KeyMarker = listResp.NextKeyMarker;
+            r.VersionIdMarker = listResp.NextVersionIdMarker;
+        }, TestContext.Current.CancellationToken);
         Assert.True(listResp2.IsSuccess);
         Assert.False(listResp2.IsTruncated);
-
-        if (provider != S3Provider.GoogleCloudStorage)
-            Assert.Single(listResp2.Versions);
+        Assert.Single(listResp2.Versions);
     });
 
     [Theory]
