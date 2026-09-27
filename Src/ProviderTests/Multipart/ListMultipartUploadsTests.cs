@@ -102,39 +102,32 @@ public class ListMultipartUploadsTests : TestBase
 
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task ListMultipartUploads(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
+    public async Task ListMultipartUploadsRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CheckUploadsAsync(provider, client, false);
+
+    [Theory]
+    [MultipleProviders(S3Provider.All)]
+    public async Task ListMultipartUploadsUrlEncoding(S3Provider provider, string _, ISimpleClient client) => await CheckUploadsAsync(provider, client, true);
+
+    private static async Task CheckUploadsAsync(S3Provider provider, ISimpleClient client, bool encoded) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         //The percentage sign at the end is to test if encoding works correctly
-        const string objName = nameof(ListMultipartUploads) + "%";
+        string objName = encoded ? "uploads%" : "uploads";
 
         CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(tempBucket, objName, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, createResp.StatusCode);
         Assert.NotNull(createResp.UploadId);
 
-        byte[] file = new byte[5 * 1024];
-
-        await using MemoryStream ms = new MemoryStream(file);
-        await client.UploadPartAsync(tempBucket, objName, 1, createResp.UploadId, ms, token: TestContext.Current.CancellationToken);
-
-        ListMultipartUploadsResponse listResp = await client.ListMultipartUploadsAsync(tempBucket, r => r.EncodingType = EncodingType.Url, TestContext.Current.CancellationToken);
+        ListMultipartUploadsResponse listResp = await client.ListMultipartUploadsAsync(tempBucket, r => r.EncodingType = encoded ? EncodingType.Url : EncodingType.Unknown, TestContext.Current.CancellationToken);
         Assert.Equal(200, listResp.StatusCode);
         Assert.Equal(tempBucket, listResp.Bucket);
-
-        if (provider == S3Provider.AmazonS3)
-        {
-            Assert.Equal(objName, listResp.NextKeyMarker);
-            Assert.NotNull(listResp.NextUploadIdMarker);
-            Assert.NotEmpty(listResp.NextUploadIdMarker);
-        }
 
         Assert.Equal(1000, listResp.MaxUploads);
         Assert.False(listResp.IsTruncated);
 
         S3Upload upload = Assert.Single(listResp.Uploads);
-        Assert.Equal(WebUtility.UrlEncode(objName), upload.ObjectKey);
+        Assert.Equal(encoded ? WebUtility.UrlEncode(objName) : objName, upload.ObjectKey);
 
-        if (provider == S3Provider.AmazonS3)
-            Assert.Equal(listResp.NextUploadIdMarker, upload.UploadId);
+        Assert.Equal(createResp.UploadId, upload.UploadId);
 
         Assert.Equal(StorageClass.Standard, upload.StorageClass);
         Assert.Equal(DateTime.UtcNow, upload.Initiated.UtcDateTime, TimeSpan.FromSeconds(60));

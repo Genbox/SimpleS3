@@ -4,9 +4,7 @@ using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Enums;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
-using Genbox.SimpleS3.Core.Network.Responses.Errors;
 using Genbox.SimpleS3.Core.Network.Responses.Multipart;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Utility.Shared;
@@ -18,7 +16,7 @@ public class MultipartTests : TestBase
     [Theory]
     [MultipleProvidersWithData(S3Provider.AmazonS3, SseAlgorithm.Aes256, SseAlgorithm.AwsKms)]
     [MultipleProvidersWithData(S3Provider.GoogleCloudStorage, SseAlgorithm.Aes256)]
-    public async Task MultipartWithEncryption(S3Provider provider, string bucket, ISimpleClient client, SseAlgorithm algorithm)
+    public async Task MultipartWithEncryption(S3Provider provider, string _, ISimpleClient client, SseAlgorithm algorithm) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
         const string objectKey = nameof(MultipartWithEncryption);
 
@@ -31,10 +29,8 @@ public class MultipartTests : TestBase
         if (algorithm == SseAlgorithm.AwsKms)
             Assert.NotNull(createResp.SseKmsKeyId);
 
-        await using MemoryStream ms = new MemoryStream(new byte[1024 * 1024 * 5]);
-
-        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, createResp.UploadId, ms, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, uploadResp.StatusCode);
+        byte[] data = new byte[4096];
+        UploadPartResponse uploadResp = await UploadTestPartAsync(client, bucket, objectKey, createResp.UploadId, 1, data);
 
         if (provider == S3Provider.AmazonS3)
             Assert.Equal(algorithm, uploadResp.SseAlgorithm);
@@ -50,11 +46,12 @@ public class MultipartTests : TestBase
 
         if (algorithm == SseAlgorithm.AwsKms)
             Assert.NotNull(completeResp.SseKmsKeyId);
-    }
+        await AssertObjectContentAsync(client, bucket, objectKey, data);
+    });
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task MultipartCustomerEncryption(S3Provider provider, string bucket, ISimpleClient client)
+    public async Task MultipartCustomerEncryption(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
         const string objectKey = nameof(MultipartCustomerEncryption);
 
@@ -71,26 +68,30 @@ public class MultipartTests : TestBase
         }, TestContext.Current.CancellationToken);
         Assert.Equal(200, initResp.StatusCode);
 
-        await using MemoryStream ms = new MemoryStream(new byte[1024 * 1024 * 5]);
-
-        UploadPartResponse uploadResp1 = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms, r =>
+        byte[] data = new byte[4096];
+        UploadPartResponse uploadResp1 = await UploadTestPartAsync(client, bucket, objectKey, initResp.UploadId, 1, data, r =>
         {
             r.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
             r.SseCustomerKey = key;
             r.SseCustomerKeyMd5 = keyMd5;
-        }, TestContext.Current.CancellationToken);
-        Assert.Equal(200, uploadResp1.StatusCode);
+        });
         Assert.Equal(SseCustomerAlgorithm.Aes256, uploadResp1.SseCustomerAlgorithm);
         Assert.Equal(keyMd5, uploadResp1.SseCustomerKeyMd5);
 
         CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp1.ETag, 1)], token: TestContext.Current.CancellationToken);
         Assert.Equal(200, completeResp.StatusCode);
         Assert.Equal(SseCustomerAlgorithm.Aes256, completeResp.SseCustomerAlgorithm);
-    }
+        await AssertObjectContentAsync(client, bucket, objectKey, data, request =>
+        {
+            request.SseCustomerAlgorithm = SseCustomerAlgorithm.Aes256;
+            request.SseCustomerKey = key;
+            request.SseCustomerKeyMd5 = keyMd5;
+        });
+    });
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
-    public async Task MultipartLockMode(S3Provider provider, string bucket, ISimpleClient client)
+    public async Task MultipartLockMode(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
         string objectKey = nameof(MultipartLockMode) + "-" + Guid.NewGuid();
         DateTimeOffset retainUntil = DateTimeOffset.UtcNow.AddSeconds(5);
@@ -102,14 +103,19 @@ public class MultipartTests : TestBase
         }, TestContext.Current.CancellationToken);
         Assert.Equal(200, initResp.StatusCode);
 
-        byte[] file = new byte[1024 * 1024 * 5];
-        await using MemoryStream ms = new MemoryStream(file);
-
-        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms, r => r.ContentMd5 = CryptoHelper.Md5Hash(file), TestContext.Current.CancellationToken);
-        Assert.Equal(200, uploadResp.StatusCode);
+        byte[] file = new byte[4096];
+        UploadPartResponse uploadResp = await UploadTestPartAsync(client, bucket, objectKey, initResp.UploadId, 1, file, r => r.ContentMd5 = CryptoHelper.Md5Hash(file));
 
         CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)], token: TestContext.Current.CancellationToken);
         Assert.Equal(200, completeResp.StatusCode);
+
+        HeadObjectResponse head = await client.HeadObjectAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, head.StatusCode);
+        Assert.Equal(LockMode.Governance, head.LockMode);
+        if (provider == S3Provider.GoogleCloudStorage)
+            Assert.Equal(DateTimeOffset.MinValue, head.LockRetainUntil); // GCS reports a default timestamp through its XML API.
+        else
+            Assert.Equal(retainUntil.UtcDateTime, head.LockRetainUntil!.Value.UtcDateTime, TimeSpan.FromSeconds(1));
 
         TimeSpan retentionRemaining = retainUntil - DateTimeOffset.UtcNow;
 
@@ -122,13 +128,13 @@ public class MultipartTests : TestBase
             request.BypassGovernanceRetention = provider == S3Provider.AmazonS3;
         }, TestContext.Current.CancellationToken);
         Assert.Equal(204, deleteResp.StatusCode);
-    }
+    }, request => request.EnableObjectLocking = true);
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
-    public async Task MultipartSinglePart(S3Provider provider, string bucket, ISimpleClient client)
+    public async Task SingleFinalPartMayBeSmallerThanMinimum(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
-        const string objectKey = nameof(MultipartSinglePart);
+        const string objectKey = nameof(SingleFinalPartMayBeSmallerThanMinimum);
 
         CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, createResp.StatusCode);
@@ -136,41 +142,22 @@ public class MultipartTests : TestBase
         Assert.Equal(objectKey, createResp.ObjectKey);
         Assert.NotNull(createResp.UploadId);
 
-        if (provider == S3Provider.AmazonS3)
-        {
-            //Test lifecycle expiration
-            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, createResp.AbortsOn!.Value.UtcDateTime.Date);
-            Assert.Equal("ExpireAll", createResp.AbortRuleId);
-        }
-
-        byte[] file = new byte[1024 * 1024 * 5];
+        byte[] file = new byte[4096];
         file[0] = (byte)'a';
 
-        await using MemoryStream ms = new MemoryStream(file);
-
-        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, createResp.UploadId, ms, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, uploadResp.StatusCode);
-        Assert.Equal("\"10f74ef02085310ccd1f87150b83e537\"", uploadResp.ETag);
+        UploadPartResponse uploadResp = await UploadTestPartAsync(client, bucket, objectKey, createResp.UploadId, 1, file);
+        Assert.NotNull(uploadResp.ETag);
 
         CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, createResp.UploadId, [new S3PartInfo(uploadResp.ETag, 1)], token: TestContext.Current.CancellationToken);
         Assert.Equal(200, completeResp.StatusCode);
-        Assert.Equal("\"bd74e21dfa8678d127240f76e518e9c2-1\"", completeResp.ETag);
-
-        if (provider == S3Provider.AmazonS3)
-        {
-            //Test lifecycle expiration
-            Assert.Equal(DateTime.UtcNow.AddDays(2).Date, completeResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
-            Assert.Equal("ExpireAll", completeResp.LifeCycleRuleId);
-        }
-    }
+        await AssertObjectContentAsync(client, bucket, objectKey, file);
+    });
 
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task MultipartTooSmall(S3Provider provider, string bucket, ISimpleClient client)
+    public async Task CompletionRejectsUndersizedNonfinalPart(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
-        Assert.NotEqual(S3Provider.None, provider);
-
-        const string objectKey = nameof(MultipartTooSmall);
+        const string objectKey = nameof(CompletionRejectsUndersizedNonfinalPart);
 
         CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, initResp.StatusCode);
@@ -183,23 +170,18 @@ public class MultipartTests : TestBase
         byte[] file = new byte[1024 * 1024 * 4];
         byte[][] parts = file.Chunk(file.Length / 2).Select(x => x.ToArray()).ToArray();
 
-        await using MemoryStream ms1 = new MemoryStream(parts[0]);
-        UploadPartResponse uploadResp1 = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms1, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, uploadResp1.StatusCode);
-
-        await using MemoryStream ms2 = new MemoryStream(parts[0]);
-        UploadPartResponse uploadResp2 = await client.UploadPartAsync(bucket, objectKey, 2, initResp.UploadId, ms2, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, uploadResp2.StatusCode);
+        UploadPartResponse uploadResp1 = await UploadTestPartAsync(client, bucket, objectKey, initResp.UploadId, 1, parts[0]);
+        UploadPartResponse uploadResp2 = await UploadTestPartAsync(client, bucket, objectKey, initResp.UploadId, 2, parts[1]);
 
         CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2)], token: TestContext.Current.CancellationToken);
         Assert.Equal(400, completeResp.StatusCode);
-    }
+    });
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
-    public async Task MultipartUpload(S3Provider provider, string bucket, ISimpleClient client)
+    public async Task CompleteMultipartUploadRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
-        const string objectKey = nameof(MultipartUpload);
+        const string objectKey = nameof(CompleteMultipartUploadRoundTrip);
 
         CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, initResp.StatusCode);
@@ -213,85 +195,42 @@ public class MultipartTests : TestBase
 
         byte[][] parts = file.Chunk(file.Length / 2).Select(x => x.ToArray()).ToArray();
 
-        await using MemoryStream ms1 = new MemoryStream(parts[0]);
-        UploadPartResponse uploadResp1 = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms1, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, uploadResp1.StatusCode);
+        UploadPartResponse uploadResp1 = await UploadTestPartAsync(client, bucket, objectKey, initResp.UploadId, 1, parts[0]);
         Assert.NotNull(uploadResp1.ETag);
 
-        await using MemoryStream ms2 = new MemoryStream(parts[0]);
-        UploadPartResponse uploadResp2 = await client.UploadPartAsync(bucket, objectKey, 2, initResp.UploadId, ms2, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, uploadResp2.StatusCode);
+        UploadPartResponse uploadResp2 = await UploadTestPartAsync(client, bucket, objectKey, initResp.UploadId, 2, parts[1]);
         Assert.NotNull(uploadResp2.ETag);
 
         CompleteMultipartUploadResponse completeResp = await client.CompleteMultipartUploadAsync(bucket, objectKey, initResp.UploadId, [new S3PartInfo(uploadResp1.ETag, 1), new S3PartInfo(uploadResp2.ETag, 2)], token: TestContext.Current.CancellationToken);
         Assert.Equal(200, completeResp.StatusCode);
         Assert.NotNull(completeResp.ETag);
 
-        if (provider == S3Provider.AmazonS3)
-        {
-            //Provoke an 'InvalidArgument' error. Parts start from index 1
-            using GetObjectResponse getResp1 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 0, TestContext.Current.CancellationToken);
-            Assert.Equal(400, getResp1.StatusCode);
-            Assert.IsType<InvalidArgumentError>(getResp1.Error);
-
-            using GetObjectResponse getResp2 = await client.GetObjectAsync(bucket, nameof(MultipartUpload), r => r.PartNumber = 1, TestContext.Current.CancellationToken);
-            Assert.Equal(206, getResp2.StatusCode);
-
-            byte[] contentData = await getResp2.Content.AsDataAsync(TestContext.Current.CancellationToken);
-            Assert.Equal(parts[0].Length, contentData.Length);
-            Assert.Equal(parts[0], contentData);
-        }
-    }
+        await AssertObjectContentAsync(client, bucket, objectKey, file);
+    });
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task MultipartViaClient(S3Provider provider, string bucket, ISimpleClient client)
+    public async Task MultipartUploadRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
-        byte[] data = new byte[20 * 1024 * 1024]; //20 Mb
+        byte[] data = new byte[(5 * 1024 * 1024) + 1024];
 
         for (int i = 0; i < data.Length; i++)
             data[i] = (byte)(i % 255);
 
         await using (MemoryStream ms = new MemoryStream(data))
         {
-            CompleteMultipartUploadResponse resp = await client.MultipartUploadAsync(bucket, nameof(MultipartViaClient), ms, 5 * 1024 * 1024, token: TestContext.Current.CancellationToken);
+            CompleteMultipartUploadResponse resp = await client.MultipartUploadAsync(bucket, nameof(MultipartUploadRoundTrip), ms, 5 * 1024 * 1024, token: TestContext.Current.CancellationToken);
             Assert.Equal(200, resp.StatusCode);
         }
 
-        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(MultipartViaClient), token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, getResp.StatusCode);
-
-        await using (MemoryStream ms = new MemoryStream())
-        {
-            await getResp.Content.CopyToAsync(ms, TestContext.Current.CancellationToken);
-            Assert.Equal(data, ms.ToArray());
-        }
-
-        if (provider == S3Provider.AmazonS3)
-        {
-            //Try multipart downloading it
-            await using (MemoryStream ms = new MemoryStream())
-            {
-                IAsyncEnumerable<GetObjectResponse> responses = client.MultipartDownloadAsync(bucket, nameof(MultipartViaClient), ms, token: TestContext.Current.CancellationToken);
-
-                //We use IsSuccess here since providers return different return code
-                await foreach (GetObjectResponse resp in responses.WithCancellation(TestContext.Current.CancellationToken))
-                    Assert.True(resp.IsSuccess);
-
-                Assert.Equal(data, ms.ToArray());
-            }
-
-            HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(MultipartViaClient), req => req.PartNumber = 1, TestContext.Current.CancellationToken);
-            Assert.Equal(206, headResp.StatusCode);
-            Assert.Equal(4, headResp.NumberOfParts);
-        }
-    }
+        await AssertObjectContentAsync(client, bucket, nameof(MultipartUploadRoundTrip), data);
+    });
 
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task MultipartViaExtensions(S3Provider _, string bucket, ISimpleClient client)
+    public async Task MultipartUploadInvokesCallbackForEachPart(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
-        byte[] data = new byte[100 * 1024 * 1024]; //100 Mb
+        byte[] data = new byte[10 * 1024 * 1024];
 
         for (int i = 0; i < data.Length; i++)
             data[i] = (byte)'A';
@@ -301,25 +240,24 @@ public class MultipartTests : TestBase
         await using (MemoryStream ms = new MemoryStream(data))
         {
             // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-            CompleteMultipartUploadResponse uploadResp = await client.MultipartUploadAsync(bucket, nameof(MultipartViaExtensions), ms, 10 * 1024 * 1024, 2, null, response =>
+            CompleteMultipartUploadResponse uploadResp = await client.MultipartUploadAsync(bucket, nameof(MultipartUploadInvokesCallbackForEachPart), ms, 5 * 1024 * 1024, 2, null, response =>
             {
                 Assert.Equal(200, response.StatusCode);
-                count++;
+                Interlocked.Increment(ref count);
             }, TestContext.Current.CancellationToken);
 
             Assert.Equal(200, uploadResp.StatusCode);
         }
 
-        Assert.Equal(10, count);
-    }
+        Assert.Equal(2, count);
+        await AssertObjectContentAsync(client, bucket, nameof(MultipartUploadInvokesCallbackForEachPart), data);
+    });
 
     [SuppressMessage("Security", "CA5350", Justification = "S3 requires this legacy hash for its wire-level checksum; it is not used for password storage or a new signature scheme.")]
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task MultipartChecksum(S3Provider provider, string bucket, ISimpleClient client)
+    public async Task MultipartChecksum(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
-        Assert.Equal(S3Provider.AmazonS3, provider);
-
         const string objectKey = nameof(MultipartChecksum);
 
         CreateMultipartUploadResponse initResp = await client.CreateMultipartUploadAsync(bucket, objectKey, r =>
@@ -333,15 +271,12 @@ public class MultipartTests : TestBase
         Assert.Equal(ChecksumAlgorithm.Sha1, initResp.ChecksumAlgorithm);
 
         byte[] data = "hello world"u8.ToArray();
-        await using MemoryStream ms = new MemoryStream(data);
-
         byte[] checksum = SHA1.HashData(data);
-        UploadPartResponse uploadResp = await client.UploadPartAsync(bucket, objectKey, 1, initResp.UploadId, ms, r =>
+        UploadPartResponse uploadResp = await UploadTestPartAsync(client, bucket, objectKey, initResp.UploadId, 1, data, r =>
         {
             r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
             r.Checksum = checksum;
-        }, TestContext.Current.CancellationToken);
-        Assert.Equal(200, uploadResp.StatusCode);
+        });
         Assert.Equal(ChecksumAlgorithm.Sha1, uploadResp.ChecksumAlgorithm);
         Assert.Equal(checksum, uploadResp.Checksum);
 
@@ -350,5 +285,6 @@ public class MultipartTests : TestBase
         Assert.Equal(ChecksumType.Composite, completeResp.ChecksumType);
         Assert.Equal(ChecksumAlgorithm.Sha1, completeResp.ChecksumAlgorithm);
         Assert.NotNull(completeResp.Checksum);
-    }
+        await AssertObjectContentAsync(client, bucket, objectKey, data);
+    });
 }

@@ -9,9 +9,9 @@ public class AbortMultipartTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task AbortIncompleteUpload(S3Provider _, string bucket, ISimpleClient client)
+    public async Task AbortMultipartUploadRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
-        const string objectKey = nameof(AbortIncompleteUpload);
+        const string objectKey = nameof(AbortMultipartUploadRoundTrip);
 
         CreateMultipartUploadResponse createResp = await client.CreateMultipartUploadAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, createResp.StatusCode);
@@ -21,5 +21,6 @@ public class AbortMultipartTests : TestBase
 
         AbortMultipartUploadResponse abortResp = await client.AbortMultipartUploadAsync(bucket, objectKey, createResp.UploadId, token: TestContext.Current.CancellationToken);
         Assert.Equal(204, abortResp.StatusCode);
-    }
+        Assert.Equal(404, (await client.ListPartsAsync(bucket, objectKey, createResp.UploadId, token: TestContext.Current.CancellationToken)).StatusCode);
+    });
 }
