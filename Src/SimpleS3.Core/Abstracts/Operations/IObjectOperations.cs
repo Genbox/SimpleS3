@@ -8,6 +8,9 @@ namespace Genbox.SimpleS3.Core.Abstracts.Operations;
 [PublicAPI]
 public interface IObjectOperations
 {
+    /// <summary>Updates an object's SSE-KMS encryption configuration.</summary>
+    Task<UpdateObjectEncryptionResponse> UpdateObjectEncryptionAsync(UpdateObjectEncryptionRequest request, CancellationToken token = default);
+
     /// <summary>Deletes an object. See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_DeleteObject.html for details</summary>
     Task<DeleteObjectResponse> DeleteObjectAsync(DeleteObjectRequest request, CancellationToken token = default);
 
@@ -30,10 +33,10 @@ public interface IObjectOperations
     Task<ListObjectVersionsResponse> ListObjectVersionsAsync(ListObjectVersionsRequest request, CancellationToken token = default);
 
     /// <summary>Restores an archived copy of an object back into Amazon S3. See https://docs.aws.amazon.com/en_pv/AmazonS3/latest/API/API_RestoreObject.html for details</summary>
-    Task<RestoreObjectResponse> RestoreObjectsAsync(RestoreObjectRequest request, CancellationToken token = default);
+    Task<RestoreObjectResponse> RestoreObjectAsync(RestoreObjectRequest request, CancellationToken token = default);
 
     /// <summary>Copies an object that is already present in an S3 bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html for details</summary>
-    Task<CopyObjectResponse> CopyObjectsAsync(CopyObjectRequest request, CancellationToken token = default);
+    Task<CopyObjectResponse> CopyObjectAsync(CopyObjectRequest request, CancellationToken token = default);
 
     /// <summary>
     /// Set the access control list (ACL) permissions for an object that already exists in a bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectAcl.html for

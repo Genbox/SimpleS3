@@ -29,9 +29,6 @@ public interface IMultipartClient
     /// <param name="token">A cancellation token</param>
     Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default);
 
-    /// <summary>Provides the <c>UploadPartCopyAsync</c> API.</summary>
-    Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default);
-
     /// <summary>List the parts of a multipart upload</summary>
     /// <param name="bucketName">Name of the bucket</param>
     /// <param name="objectKey">The key of the object</param>
@@ -62,4 +59,7 @@ public interface IMultipartClient
     /// <param name="config">A delegate to configure the request</param>
     /// <param name="token">A cancellation token</param>
     Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Provides the <c>UploadPartCopyAsync</c> API.</summary>
+    Task<UploadPartCopyResponse> UploadPartCopyAsync(string sourceBucketName, string sourceObjectKey, string destinationBucketName, string destinationObjectKey, int partNumber, string uploadId, Action<UploadPartCopyRequest>? config = null, CancellationToken token = default);
 }

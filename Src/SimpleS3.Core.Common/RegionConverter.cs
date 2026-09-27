@@ -29,4 +29,6 @@ public class RegionConverter : IRegionConverter
 
     /// <summary>Provides the <c>GetRegion</c> API.</summary>
     public IRegionInfo GetRegion(string regionCode) => _stringMap[regionCode];
+
+    internal IRegionInfo? FindRegion(string? regionCode) => regionCode != null && _stringMap.TryGetValue(regionCode, out IRegionInfo? region) ? region : null;
 }

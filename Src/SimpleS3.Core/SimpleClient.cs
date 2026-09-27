@@ -18,12 +18,12 @@ namespace Genbox.SimpleS3.Core;
 /// <summary>This class provides a convenient way to access all the functionality related to the S3 service, buckets and objects at the same time.</summary>
 public class SimpleClient : ISimpleClient
 {
-    private readonly IBucketClient _bucketClient = null!;
-    private readonly IMultipartClient _multipartClient = null!;
-    private readonly IMultipartTransfer _multipartTransfer = null!;
-    private readonly IObjectClient _objectClient = null!;
-    private readonly ISignedClient _signedClient = null!;
-    private readonly ITransfer _transfer = null!;
+    private readonly IBucketClient _bucketClient;
+    private readonly IMultipartClient _multipartClient;
+    private readonly IMultipartTransfer _multipartTransfer;
+    private readonly IObjectClient _objectClient;
+    private readonly ISignedClient _signedClient;
+    private readonly ITransfer _transfer;
 
     /// <summary>Provides the <c>SimpleClient</c> API.</summary>
     public SimpleClient(IObjectClient objectClient, IBucketClient bucketClient, IMultipartClient multipartClient, IMultipartTransfer multipartTransfer, ITransfer transfer, ISignedClient signedObject)
@@ -36,8 +36,17 @@ public class SimpleClient : ISimpleClient
         _signedClient = signedObject;
     }
 
-    /// <summary>Provides the <c>SimpleClient</c> API.</summary>
-    protected SimpleClient() {}
+    /// <summary>Initializes a derived client from an existing client graph.</summary>
+    protected SimpleClient(SimpleClient client) : this(client._objectClient, client._bucketClient, client._multipartClient, client._multipartTransfer, client._transfer, client._signedClient) {}
+
+    /// <summary>Provides the <c>GetBucketLoggingAsync</c> API.</summary>
+    public virtual Task<GetBucketLoggingResponse> GetBucketLoggingAsync(string bucketName, Action<GetBucketLoggingRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketLoggingAsync(bucketName, config, token);
+
+    /// <summary>Provides the <c>PutBucketLoggingAsync</c> API.</summary>
+    public virtual Task<PutBucketLoggingResponse> PutBucketLoggingAsync(string bucketName, S3LoggingConfiguration? loggingConfiguration, Action<PutBucketLoggingRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketLoggingAsync(bucketName, loggingConfiguration, config, token);
+
+    /// <summary>Updates an existing object's SSE-KMS configuration.</summary>
+    public Task<UpdateObjectEncryptionResponse> UpdateObjectEncryptionAsync(string bucketName, string objectKey, string kmsKeyArn, Action<UpdateObjectEncryptionRequest>? config = null, CancellationToken token = default) => _objectClient.UpdateObjectEncryptionAsync(bucketName, objectKey, kmsKeyArn, config, token);
 
     /// <summary>Provides the <c>ListObjectsAsync</c> API.</summary>
     public Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default) => _objectClient.ListObjectsAsync(bucketName, config, token);

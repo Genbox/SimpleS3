@@ -11,4 +11,27 @@
     <ProjectReference Include="..\SimpleS3.Core.Abstracts\SimpleS3.Core.Abstracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)ProviderTests" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.AmazonS3" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.BackBlazeB2" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Core" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Core.Benchmarks" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Core.Tests" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.AmazonS3" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.AmazonS3.Tests" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.BackBlazeB2" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.GenericS3" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.GoogleCloudStorage" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.HttpClient" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.HttpClientFactory" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.HttpClientFactory.Polly" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.ProfileManager" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Extensions.Wasabi" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.GenericS3" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.GoogleCloudStorage" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Utility.Shared" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Wasabi" />
+  </ItemGroup>
+
 </Project>

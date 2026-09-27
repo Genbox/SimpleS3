@@ -13,6 +13,7 @@ using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
 using Genbox.SimpleS3.Core.Common;
 using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.Common.Internals;
 using Genbox.SimpleS3.Core.Internals;
 using Genbox.SimpleS3.Core.Internals.Authentication;
 using Genbox.SimpleS3.Core.Internals.Builders;
@@ -66,17 +67,16 @@ public static class SimpleS3CoreServices
         collection.AddSingleton<QueryParameterAuthorizationBuilder>();
 
         //Operations
-        collection.AddSingleton<IObjectOperations, ObjectOperations>();
-        collection.AddSingleton<IBucketOperations, BucketOperations>();
-        collection.AddSingleton<IMultipartOperations, MultipartOperations>();
-        collection.AddSingleton<ISignedOperations, SignedOperations>();
+        collection.TryAddSingleton<IObjectOperations, ObjectOperations>();
+        collection.TryAddSingleton<IBucketOperations, BucketOperations>();
+        collection.TryAddSingleton<IMultipartOperations, MultipartOperations>();
 
         //Clients
-        collection.AddSingleton<IObjectClient, ObjectClient>();
-        collection.AddSingleton<IBucketClient, BucketClient>();
-        collection.AddSingleton<IMultipartClient, MultipartClient>();
-        collection.AddSingleton<ISignedClient, SignedClient>();
-        collection.AddSingleton<ISimpleClient, SimpleClient>();
+        collection.TryAddSingleton<IObjectClient, ObjectClient>();
+        collection.TryAddSingleton<IBucketClient, BucketClient>();
+        collection.TryAddSingleton<IMultipartClient, MultipartClient>();
+        collection.TryAddSingleton<ISignedClient, SignedClient>();
+        collection.TryAddSingleton<ISimpleClient, SimpleClient>();
 
         //Misc
         collection.AddSingleton<IResponseHandler, DefaultResponseHandler>();

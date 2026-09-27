@@ -1,21 +1,29 @@
+using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Common.Authentication;
-using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.TestBase;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.Extensions.GenericS3;
+using Genbox.SimpleS3.GenericS3.Extensions;
+using Genbox.SimpleS3.ProviderBase;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.GenericS3.Tests;
 
-public class StaticCreatorTests
+[SuppressMessage("Maintainability", "CA1515", Justification = "xUnit requires public classes to discover inherited tests.")]
+public class StaticCreatorTests : ProviderClientTestBase<GenericS3Client>
 {
-    [Fact]
-    public async Task StaticClient()
+    protected override string ExpectedObjectUrl => "https://myendpoint.com/GetObjectAsync";
+
+    protected override GenericS3Client CreateClient(NullNetworkDriver driver) => new GenericS3Client(new GenericS3Config(Credentials(), "https://myendpoint.com", "us-east-1"), driver);
+
+    protected override GenericS3Client CreateClient(NetworkConfig? networkConfig) => new GenericS3Client(Credentials(), "https://myendpoint.com", "us-east-1", networkConfig);
+
+    protected override void ConfigureServices(IServiceCollection services) => services.AddGenericS3(config =>
     {
-        NullNetworkDriver driver = new NullNetworkDriver();
+        config.Credentials = Credentials();
+        config.Endpoint = "https://myendpoint.com";
+        config.RegionCode = "us-east-1";
+    });
 
-        GenericS3Config config = new GenericS3Config(new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"), "https://myendpoint.com", "us-east-1");
-        using GenericS3Client client = new GenericS3Client(config, driver);
-
-        using GetObjectResponse response = await client.GetObjectAsync("testbucket", "GetObjectAsync", token: TestContext.Current.CancellationToken);
-        Assert.Equal("https://myendpoint.com/GetObjectAsync", driver.LastUrl);
-    }
+    private static StringAccessKey Credentials() => new StringAccessKey("ExampleKeyId00000000", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY");
 }

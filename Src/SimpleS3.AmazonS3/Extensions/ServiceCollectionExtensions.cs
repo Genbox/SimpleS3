@@ -1,12 +1,6 @@
-using Genbox.SimpleS3.Core.Abstracts;
-using Genbox.SimpleS3.Core.Abstracts.Clients;
-using Genbox.SimpleS3.Core.Abstracts.Transfer;
 using Genbox.SimpleS3.Core.Common.Extensions;
-using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Extensions.AmazonS3;
 using Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
-using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
-using Genbox.SimpleS3.Extensions.HttpClientFactory.Polly.Extensions;
 using Genbox.SimpleS3.ProviderBase;
 using Genbox.SimpleS3.ProviderBase.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,49 +10,20 @@ namespace Genbox.SimpleS3.AmazonS3.Extensions;
 /// <summary>Provides Amazon S3 registration extensions.</summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>Add SimpleS3 services to a service collection.</summary>
-    /// <param name="collection">The service collection</param>
-    /// <param name="config">The configuration delegate</param>
-    public static IClientBuilder AddAmazonS3(this IServiceCollection collection, Action<AmazonS3Config, IServiceProvider> config)
+    /// <summary>Adds Amazon S3 services.</summary>
+    public static IClientBuilder AddAmazonS3(this IServiceCollection services, Action<AmazonS3Config, IServiceProvider> configure)
     {
-        collection.Configure(config);
-        return collection.AddAmazonS3();
+        services.Configure(configure);
+        return services.AddAmazonS3();
     }
 
-    /// <summary>Add SimpleS3 services to a service collection.</summary>
-    /// <param name="collection">The service collection</param>
-    /// <param name="config">The configuration delegate</param>
-    public static IClientBuilder AddAmazonS3(this IServiceCollection collection, Action<AmazonS3Config> config)
+    /// <summary>Adds Amazon S3 services.</summary>
+    public static IClientBuilder AddAmazonS3(this IServiceCollection services, Action<AmazonS3Config> configure)
     {
-        collection.Configure(config);
-        return collection.AddAmazonS3();
+        services.Configure(configure);
+        return services.AddAmazonS3();
     }
 
-    /// <summary>Add SimpleS3 services to a service collection.</summary>
-    /// <param name="collection">The service collection</param>
-    public static IClientBuilder AddAmazonS3(this IServiceCollection collection)
-    {
-        ICoreBuilder coreBuilder = SimpleS3CoreServices.AddSimpleS3Core(collection);
-        coreBuilder.UseAmazonS3();
-
-        IHttpClientBuilder httpBuilder = coreBuilder.UseHttpClientFactory();
-        httpBuilder.UseRetryAndTimeout();
-
-        coreBuilder.Services.AddSingleton(x =>
-        {
-            //We have to call a specific constructor for dependency injection
-            IObjectClient objectClient = x.GetRequiredService<IObjectClient>();
-            IBucketClient bucketClient = x.GetRequiredService<IBucketClient>();
-            IMultipartClient multipartClient = x.GetRequiredService<IMultipartClient>();
-            IMultipartTransfer multipartTransfer = x.GetRequiredService<IMultipartTransfer>();
-            ITransfer transfer = x.GetRequiredService<ITransfer>();
-            ISignedClient signedObjectClient = x.GetRequiredService<ISignedClient>();
-            return new AmazonS3Client(objectClient, bucketClient, multipartClient, multipartTransfer, transfer, signedObjectClient);
-        });
-
-        //Add the client as the interface too
-        coreBuilder.Services.AddSingleton<ISimpleClient>(x => x.GetRequiredService<AmazonS3Client>());
-
-        return new ClientBuilder(collection, httpBuilder, coreBuilder);
-    }
+    /// <summary>Adds Amazon S3 services.</summary>
+    public static IClientBuilder AddAmazonS3(this IServiceCollection services) => services.AddS3Provider(core => core.UseAmazonS3(), client => new AmazonS3Client(client));
 }

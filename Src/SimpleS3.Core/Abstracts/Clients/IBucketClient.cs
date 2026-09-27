@@ -22,14 +22,54 @@ public interface IBucketClient
 
     /// <summary>List all buckets you own</summary>
     /// <param name="config">A delegate to configure the request</param>
-    /// <param name="token">A cancellation token </param>
+    /// <param name="token">A cancellation token</param>
     Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest>? config = null, CancellationToken token = default);
 
     /// <summary>Use this to determine if a bucket exists and you have permission to access it</summary>
     /// <param name="bucketName">The bucket name</param>
     /// <param name="config">A delegate to configure the request</param>
-    /// <param name="token">A cancellation token </param>
+    /// <param name="token">A cancellation token</param>
     Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>
+    /// Gets the Object Lock configuration for a bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the
+    /// specified bucket.
+    /// </summary>
+    /// <param name="bucketName">The bucket name</param>
+    /// <param name="config">A delegate to configure the request</param>
+    /// <param name="token">A cancellation token</param>
+    Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Provides the <c>GetBucketAclAsync</c> API.</summary>
+    Task<GetBucketAclResponse> GetBucketAclAsync(string bucketName, Action<GetBucketAclRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Provides the <c>PutBucketAclAsync</c> API.</summary>
+    Task<PutBucketAclResponse> PutBucketAclAsync(string bucketName, Action<PutBucketAclRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Provides the <c>GetBucketLocationAsync</c> API.</summary>
+    Task<GetBucketLocationResponse> GetBucketLocationAsync(string bucketName, Action<GetBucketLocationRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Get the versioning configuration on an existing bucket.</summary>
+    /// <param name="bucketName">The bucket name</param>
+    /// <param name="config">A delegate to configure the request</param>
+    /// <param name="token">A cancellation token</param>
+    Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Creates a new lifecycle configuration for the bucket or replaces an existing lifecycle configuration.</summary>
+    /// <param name="bucketName">The bucket name</param>
+    /// <param name="rules">A list of rules you wish to use</param>
+    /// <param name="config">A delegate to configure the request</param>
+    /// <param name="token">A cancellation token</param>
+    Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Provides the <c>DeleteBucketLifecycleAsync</c> API.</summary>
+    Task<DeleteBucketLifecycleResponse> DeleteBucketLifecycleAsync(string bucketName, Action<DeleteBucketLifecycleRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Returns the lifecycle configuration information set on the bucket.</summary>
+    /// <param name="bucketName">The bucket name</param>
+    /// <param name="config">A delegate to configure the request</param>
+    /// <param name="token">A cancellation token</param>
+    Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default);
 
     /// <summary>
     /// Places an Object Lock configuration on the specified bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in
@@ -38,29 +78,20 @@ public interface IBucketClient
     /// <param name="bucketName">The bucket name</param>
     /// <param name="enabled">A boolean indicating if locking is enabled or not</param>
     /// <param name="config">A delegate to configure the request</param>
-    /// <param name="token">A cancellation token </param>
+    /// <param name="token">A cancellation token</param>
     Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default);
 
-    /// <summary>
-    /// Gets the Object Lock configuration for a bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the
-    /// specified bucket.
-    /// </summary>
-    /// <param name="bucketName">The bucket name</param>
-    /// <param name="config">A delegate to configure the request</param>
-    /// <param name="token">A cancellation token </param>
-    Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default);
+    /// <summary>Gets the logging configuration for a bucket.</summary>
+    Task<GetBucketLoggingResponse> GetBucketLoggingAsync(string bucketName, Action<GetBucketLoggingRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Sets or disables logging for a bucket.</summary>
+    Task<PutBucketLoggingResponse> PutBucketLoggingAsync(string bucketName, S3LoggingConfiguration? loggingConfiguration, Action<PutBucketLoggingRequest>? config = null, CancellationToken token = default);
 
     /// <summary>Get the tags associated with the bucket.</summary>
     /// <param name="bucketName">The bucket name</param>
     /// <param name="config">A delegate to configure the request</param>
     /// <param name="token">A cancellation token </param>
     Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default);
-
-    /// <summary>Provides the <c>GetBucketAclAsync</c> API.</summary>
-    Task<GetBucketAclResponse> GetBucketAclAsync(string bucketName, Action<GetBucketAclRequest>? config = null, CancellationToken token = default);
-
-    /// <summary>Provides the <c>PutBucketAclAsync</c> API.</summary>
-    Task<PutBucketAclResponse> PutBucketAclAsync(string bucketName, Action<PutBucketAclRequest>? config = null, CancellationToken token = default);
 
     /// <summary>Provides the <c>GetBucketCorsAsync</c> API.</summary>
     Task<GetBucketCorsResponse> GetBucketCorsAsync(string bucketName, Action<GetBucketCorsRequest>? config = null, CancellationToken token = default);
@@ -79,9 +110,6 @@ public interface IBucketClient
 
     /// <summary>Provides the <c>DeleteBucketOwnershipControlsAsync</c> API.</summary>
     Task<DeleteBucketOwnershipControlsResponse> DeleteBucketOwnershipControlsAsync(string bucketName, Action<DeleteBucketOwnershipControlsRequest>? config = null, CancellationToken token = default);
-
-    /// <summary>Provides the <c>GetBucketLocationAsync</c> API.</summary>
-    Task<GetBucketLocationResponse> GetBucketLocationAsync(string bucketName, Action<GetBucketLocationRequest>? config = null, CancellationToken token = default);
 
     /// <summary>Provides the <c>GetBucketRequestPaymentAsync</c> API.</summary>
     Task<GetBucketRequestPaymentResponse> GetBucketRequestPaymentAsync(string bucketName, Action<GetBucketRequestPaymentRequest>? config = null, CancellationToken token = default);
@@ -166,16 +194,6 @@ public interface IBucketClient
     /// <param name="token">A cancellation token </param>
     Task<GetBucketAccelerateConfigurationResponse> GetBucketAccelerateConfigurationAsync(string bucketName, Action<GetBucketAccelerateConfigurationRequest>? config = null, CancellationToken token = default);
 
-    /// <summary>Creates a new lifecycle configuration for the bucket or replaces an existing lifecycle configuration.</summary>
-    /// <param name="bucketName">The bucket name</param>
-    /// <param name="rules">A list of rules you wish to use</param>
-    /// <param name="config">A delegate to configure the request</param>
-    /// <param name="token">A cancellation token </param>
-    Task<PutBucketLifecycleConfigurationResponse> PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default);
-
-    /// <summary>Provides the <c>DeleteBucketLifecycleAsync</c> API.</summary>
-    Task<DeleteBucketLifecycleResponse> DeleteBucketLifecycleAsync(string bucketName, Action<DeleteBucketLifecycleRequest>? config = null, CancellationToken token = default);
-
     /// <summary>Configures default encryption and blocked encryption types for an existing bucket.</summary>
     /// <param name="bucketName">The bucket name</param>
     /// <param name="rules">A list of encryption rules you wish to use</param>
@@ -195,18 +213,6 @@ public interface IBucketClient
     /// <param name="config">A delegate to configure the request</param>
     /// <param name="token">A cancellation token </param>
     Task<PutBucketVersioningResponse> PutBucketVersioningAsync(string bucketName, bool enabled, Action<PutBucketVersioningRequest>? config = null, CancellationToken token = default);
-
-    /// <summary>Get the versioning configuration on an existing bucket.</summary>
-    /// <param name="bucketName">The bucket name</param>
-    /// <param name="config">A delegate to configure the request</param>
-    /// <param name="token">A cancellation token </param>
-    Task<GetBucketVersioningResponse> GetBucketVersioningAsync(string bucketName, Action<GetBucketVersioningRequest>? config = null, CancellationToken token = default);
-
-    /// <summary>Returns the lifecycle configuration information set on the bucket.</summary>
-    /// <param name="bucketName">The bucket name</param>
-    /// <param name="config">A delegate to configure the request</param>
-    /// <param name="token">A cancellation token </param>
-    Task<GetBucketLifecycleConfigurationResponse> GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config = null, CancellationToken token = default);
 
     /// <summary>Provides the <c>PutPublicAccessBlockAsync</c> API.</summary>
     Task<PutPublicAccessBlockResponse> PutPublicAccessBlockAsync(string bucketName, Action<PutPublicAccessBlockRequest>? config = null, CancellationToken token = default);

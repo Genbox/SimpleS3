@@ -81,7 +81,7 @@ internal sealed class ObjectClient(IObjectOperations operations) : IObjectClient
 
     public Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default)
     {
-        return ObjectPool<RestoreObjectRequest>.Shared.RentAndUseAsync(Setup, request => operations.RestoreObjectsAsync(request, token));
+        return ObjectPool<RestoreObjectRequest>.Shared.RentAndUseAsync(Setup, request => operations.RestoreObjectAsync(request, token));
 
         void Setup(RestoreObjectRequest req)
         {
@@ -92,7 +92,7 @@ internal sealed class ObjectClient(IObjectOperations operations) : IObjectClient
 
     public Task<CopyObjectResponse> CopyObjectAsync(string sourceBucketName, string sourceObjectKey, string destinationBucket, string destinationObjectKey, Action<CopyObjectRequest>? config = null, CancellationToken token = default)
     {
-        return ObjectPool<CopyObjectRequest>.Shared.RentAndUseAsync(Setup, request => operations.CopyObjectsAsync(request, token));
+        return ObjectPool<CopyObjectRequest>.Shared.RentAndUseAsync(Setup, request => operations.CopyObjectAsync(request, token));
 
         void Setup(CopyObjectRequest req)
         {
@@ -246,4 +246,10 @@ internal sealed class ObjectClient(IObjectOperations operations) : IObjectClient
             config?.Invoke(req);
         }
     }
+
+    public Task<UpdateObjectEncryptionResponse> UpdateObjectEncryptionAsync(string bucketName, string objectKey, string kmsKeyArn, Action<UpdateObjectEncryptionRequest>? config = null, CancellationToken token = default) => ObjectPool<UpdateObjectEncryptionRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName, objectKey, kmsKeyArn);
+        config?.Invoke(req);
+    }, request => operations.UpdateObjectEncryptionAsync(request, token));
 }

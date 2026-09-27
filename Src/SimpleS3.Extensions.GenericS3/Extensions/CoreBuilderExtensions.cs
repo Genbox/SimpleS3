@@ -3,6 +3,7 @@ using Genbox.SimpleS3.Core.Abstracts.Provider;
 using Genbox.SimpleS3.Core.Abstracts.Region;
 using Genbox.SimpleS3.Core.Common.Extensions;
 using Genbox.SimpleS3.Core.Common.Helpers;
+using Genbox.SimpleS3.Core.Common.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -27,6 +28,11 @@ public static class CoreBuilderExtensions
     public static ICoreBuilder UseGenericS3(this ICoreBuilder clientBuilder)
     {
         clientBuilder.Services.AddSingleton<IRegionData, GenericS3RegionData>();
+
+        ServiceDescriptor? fallback = clientBuilder.Services.FirstOrDefault(x => x.ServiceType == typeof(IInputValidator) && x.ImplementationType == typeof(NullInputValidator));
+        if (fallback != null)
+            clientBuilder.Services.Remove(fallback);
+
         clientBuilder.Services.TryAddSingleton<IInputValidator, GenericS3InputValidator>();
 
         clientBuilder.Services.PostConfigure<SimpleS3Config>((x, y) =>

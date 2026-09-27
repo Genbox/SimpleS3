@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Request;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
-using Genbox.SimpleS3.Core.Common.Validation;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 
@@ -12,6 +11,7 @@ internal sealed class ObjectOperations(IRequestHandler handler, IEnumerable<IReq
 {
     private readonly IRequestWrapper[] _requestWrappers = requestWrappers.ToArray();
     private readonly IResponseWrapper[] _responseWrappers = responseWrappers.ToArray();
+    public Task<UpdateObjectEncryptionResponse> UpdateObjectEncryptionAsync(UpdateObjectEncryptionRequest request, CancellationToken token = default) => handler.SendRequestAsync<UpdateObjectEncryptionRequest, UpdateObjectEncryptionResponse>(request, token);
 
     public Task<DeleteObjectResponse> DeleteObjectAsync(DeleteObjectRequest request, CancellationToken token = default) => handler.SendRequestAsync<DeleteObjectRequest, DeleteObjectResponse>(request, token);
 
@@ -21,8 +21,6 @@ internal sealed class ObjectOperations(IRequestHandler handler, IEnumerable<IReq
 
     public Task<PutObjectResponse> PutObjectAsync(PutObjectRequest request, CancellationToken token = default)
     {
-        Validator.RequireNotNull(request);
-
         if (request.Content != null)
         {
             foreach (IRequestWrapper wrapper in _requestWrappers)
@@ -50,9 +48,9 @@ internal sealed class ObjectOperations(IRequestHandler handler, IEnumerable<IReq
 
     public Task<ListObjectVersionsResponse> ListObjectVersionsAsync(ListObjectVersionsRequest request, CancellationToken token = default) => handler.SendRequestAsync<ListObjectVersionsRequest, ListObjectVersionsResponse>(request, token);
 
-    public Task<RestoreObjectResponse> RestoreObjectsAsync(RestoreObjectRequest request, CancellationToken token = default) => handler.SendRequestAsync<RestoreObjectRequest, RestoreObjectResponse>(request, token);
+    public Task<RestoreObjectResponse> RestoreObjectAsync(RestoreObjectRequest request, CancellationToken token = default) => handler.SendRequestAsync<RestoreObjectRequest, RestoreObjectResponse>(request, token);
 
-    public Task<CopyObjectResponse> CopyObjectsAsync(CopyObjectRequest request, CancellationToken token = default) => handler.SendRequestAsync<CopyObjectRequest, CopyObjectResponse>(request, token);
+    public Task<CopyObjectResponse> CopyObjectAsync(CopyObjectRequest request, CancellationToken token = default) => handler.SendRequestAsync<CopyObjectRequest, CopyObjectResponse>(request, token);
 
     public Task<PutObjectAclResponse> PutObjectAclAsync(PutObjectAclRequest request, CancellationToken token = default) => handler.SendRequestAsync<PutObjectAclRequest, PutObjectAclResponse>(request, token);
 

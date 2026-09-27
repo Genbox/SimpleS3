@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="xunit.v3.extensibility.core" PrivateAssets="all" />
+    <PackageReference Include="xunit.v3.assert" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +32,7 @@
     <ProjectReference Include="..\SimpleS3.Extensions.HttpClientFactory\SimpleS3.Extensions.HttpClientFactory.csproj" />
     <ProjectReference Include="..\SimpleS3.Extensions.ProfileManager\SimpleS3.Extensions.ProfileManager.csproj" />
     <ProjectReference Include="..\SimpleS3.Core\SimpleS3.Core.csproj" />
+    <ProjectReference Include="..\SimpleS3.ProviderBase\SimpleS3.ProviderBase.csproj" />
   </ItemGroup>
 
 </Project>

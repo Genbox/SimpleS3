@@ -5,6 +5,7 @@ using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Core.TestBase.Code;
 using Genbox.SimpleS3.GenericS3;
 using Genbox.SimpleS3.GenericS3.Extensions;
+using Genbox.SimpleS3.ProviderBase.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -19,7 +20,7 @@ public class GenericS3IssueTests
 
         ServiceCollection services = new ServiceCollection();
 
-        services.AddGenericS3(c =>
+        IClientBuilder builder = services.AddGenericS3(c =>
         {
             string endpoint = "http://domain.internal";
             string accessKey = "mykey";
@@ -32,8 +33,8 @@ public class GenericS3IssueTests
             c.NamingMode = NamingMode.PathStyle;
         });
 
-        //Replace the network driver with the null one for testing
-        services.Replace(ServiceDescriptor.Singleton<INetworkDriver, NullNetworkDriver>());
+        // Replace the driver in the provider's client graph so the regression stays offline.
+        builder.Services.Replace(ServiceDescriptor.Singleton<INetworkDriver, NullNetworkDriver>());
 
         await using ServiceProvider provider = services.BuildServiceProvider();
 

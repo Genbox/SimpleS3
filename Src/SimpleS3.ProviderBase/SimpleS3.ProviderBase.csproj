@@ -13,4 +13,12 @@
     <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.AmazonS3" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.BackBlazeB2" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.GenericS3" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.GoogleCloudStorage" />
+    <InternalsVisibleTo Include="$(AssemblyNamePrefix)SimpleS3.Wasabi" />
+  </ItemGroup>
+
 </Project>

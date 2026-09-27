@@ -21,5 +21,6 @@
     <PackageVersion Include="Polly" Version="8.7.0" />
     <PackageVersion Include="Spectre.Console" Version="0.57.2" />
     <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.0" />
+    <PackageVersion Include="xunit.v3.assert" Version="4.0.0" />
   </ItemGroup>
 </Project>

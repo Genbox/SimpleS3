@@ -562,4 +562,16 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         request.Initialize(bucketName);
         config?.Invoke(request);
     }, request => operations.ListBucketIntelligentTieringConfigurationsAsync(request, token));
+
+    public Task<GetBucketLoggingResponse> GetBucketLoggingAsync(string bucketName, Action<GetBucketLoggingRequest>? config = null, CancellationToken token = default) => ObjectPool<GetBucketLoggingRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName);
+        config?.Invoke(req);
+    }, req => operations.GetBucketLoggingAsync(req, token));
+
+    public Task<PutBucketLoggingResponse> PutBucketLoggingAsync(string bucketName, S3LoggingConfiguration? loggingConfiguration, Action<PutBucketLoggingRequest>? config = null, CancellationToken token = default) => ObjectPool<PutBucketLoggingRequest>.Shared.RentAndUseAsync(req =>
+    {
+        req.Initialize(bucketName, loggingConfiguration);
+        config?.Invoke(req);
+    }, req => operations.PutBucketLoggingAsync(req, token));
 }

@@ -99,6 +99,7 @@ public class MultipartTransferTests
         private int _getPartRequests;
 
         public int GetPartRequests => Volatile.Read(ref _getPartRequests);
+        public Task<UpdateObjectEncryptionResponse> UpdateObjectEncryptionAsync(string bucketName, string objectKey, string kmsKeyArn, Action<UpdateObjectEncryptionRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
 
         public Task<HeadObjectResponse> HeadObjectAsync(string bucketName, string objectKey, Action<HeadObjectRequest>? config = null, CancellationToken token = default)
         {

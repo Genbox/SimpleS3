@@ -25,7 +25,7 @@ public class SignedTests : TestBase
 
         await using (MemoryStream ms = new MemoryStream("hello world"u8.ToArray()))
         {
-            PutObjectResponse putResp = await client.SendSignedRequestAsync<PutObjectResponse>(url, HttpMethodType.PUT, ms, TestContext.Current.CancellationToken);
+            PutObjectResponse putResp = await client.SendSignedRequestAsync<PutObjectResponse>(url, HttpMethodType.PUT, ms, token: TestContext.Current.CancellationToken);
             Assert.Equal(200, putResp.StatusCode);
         }
 
@@ -68,7 +68,7 @@ public class SignedTests : TestBase
             //Upload (pre-signed)
             UploadPartRequest req = new UploadPartRequest(bucket, key, createResp.UploadId, 1, null);
             url = client.SignRequest(req, expire);
-            UploadPartResponse partResp = await client.SendSignedRequestAsync<UploadPartResponse>(url, HttpMethodType.PUT, ms, TestContext.Current.CancellationToken);
+            UploadPartResponse partResp = await client.SendSignedRequestAsync<UploadPartResponse>(url, HttpMethodType.PUT, ms, token: TestContext.Current.CancellationToken);
             Assert.Equal(200, partResp.StatusCode);
 
             infos.Add(new S3PartInfo(partResp.ETag, 1));

@@ -52,13 +52,6 @@ public interface IObjectClient
     /// <param name="token">A cancellation token</param>
     Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default);
 
-    /// <summary>Restores an object from Amazon Glacier</summary>
-    /// <param name="bucketName">Name of the bucket</param>
-    /// <param name="objectKey">The key of the object</param>
-    /// <param name="config">A delegate to configure the request</param>
-    /// <param name="token">A cancellation token</param>
-    Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default);
-
     /// <summary>Copies an object already present in an S3 bucket to a new object in the same or another S3 bucket</summary>
     /// <param name="sourceBucketName">The source bucket</param>
     /// <param name="sourceObjectKey">The source object key</param>
@@ -81,6 +74,25 @@ public interface IObjectClient
     /// <param name="config">A delegate to configure the request</param>
     /// <param name="token">A cancellation token</param>
     Task<GetObjectAclResponse> GetObjectAclAsync(string bucketName, string objectKey, Action<GetObjectAclRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Provides the <c>GetObjectRetentionAsync</c> API.</summary>
+    Task<GetObjectRetentionResponse> GetObjectRetentionAsync(string bucketName, string objectKey, Action<GetObjectRetentionRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Provides the <c>PutObjectRetentionAsync</c> API.</summary>
+    Task<PutObjectRetentionResponse> PutObjectRetentionAsync(string bucketName, string objectKey, LockMode lockMode, DateTimeOffset retainUntil, Action<PutObjectRetentionRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Provides the <c>ListObjectVersionsAsync</c> API.</summary>
+    Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Updates an object's SSE-KMS encryption configuration.</summary>
+    Task<UpdateObjectEncryptionResponse> UpdateObjectEncryptionAsync(string bucketName, string objectKey, string kmsKeyArn, Action<UpdateObjectEncryptionRequest>? config = null, CancellationToken token = default);
+
+    /// <summary>Restores an object from Amazon Glacier</summary>
+    /// <param name="bucketName">Name of the bucket</param>
+    /// <param name="objectKey">The key of the object</param>
+    /// <param name="config">A delegate to configure the request</param>
+    /// <param name="token">A cancellation token</param>
+    Task<RestoreObjectResponse> RestoreObjectAsync(string bucketName, string objectKey, Action<RestoreObjectRequest>? config = null, CancellationToken token = default);
 
     /// <summary>Provides the <c>GetObjectAttributesAsync</c> API.</summary>
     Task<GetObjectAttributesResponse> GetObjectAttributesAsync(string bucketName, string objectKey, IEnumerable<ObjectAttribute> objectAttributes, Action<GetObjectAttributesRequest>? config = null, CancellationToken token = default);
@@ -120,13 +132,4 @@ public interface IObjectClient
 
     /// <summary>Provides the <c>DeleteObjectTaggingAsync</c> API.</summary>
     Task<DeleteObjectTaggingResponse> DeleteObjectTaggingAsync(string bucketName, string objectKey, Action<DeleteObjectTaggingRequest>? config = null, CancellationToken token = default);
-
-    /// <summary>Provides the <c>GetObjectRetentionAsync</c> API.</summary>
-    Task<GetObjectRetentionResponse> GetObjectRetentionAsync(string bucketName, string objectKey, Action<GetObjectRetentionRequest>? config = null, CancellationToken token = default);
-
-    /// <summary>Provides the <c>PutObjectRetentionAsync</c> API.</summary>
-    Task<PutObjectRetentionResponse> PutObjectRetentionAsync(string bucketName, string objectKey, LockMode lockMode, DateTimeOffset retainUntil, Action<PutObjectRetentionRequest>? config = null, CancellationToken token = default);
-
-    /// <summary>Provides the <c>ListObjectVersionsAsync</c> API.</summary>
-    Task<ListObjectVersionsResponse> ListObjectVersionsAsync(string bucketName, Action<ListObjectVersionsRequest>? config = null, CancellationToken token = default);
 }

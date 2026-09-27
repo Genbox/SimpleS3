@@ -163,6 +163,7 @@ public class ObjectClientExtensionsTests
         public Task PrefetchCanceled => _prefetchCanceled.Task;
         public string? SecondVersionRequestKeyMarker { get; private set; }
         public string? SecondVersionRequestVersionIdMarker { get; private set; }
+        public Task<UpdateObjectEncryptionResponse> UpdateObjectEncryptionAsync(string bucketName, string objectKey, string kmsKeyArn, Action<UpdateObjectEncryptionRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
 
         public async Task<ListObjectsResponse> ListObjectsAsync(string bucketName, Action<ListObjectsRequest>? config = null, CancellationToken token = default)
         {
@@ -307,6 +308,9 @@ public class ObjectClientExtensionsTests
 
     private sealed class StaticBucketClient : IBucketClient
     {
+        public Task<GetBucketLoggingResponse> GetBucketLoggingAsync(string bucketName, Action<GetBucketLoggingRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+        public Task<PutBucketLoggingResponse> PutBucketLoggingAsync(string bucketName, S3LoggingConfiguration? loggingConfiguration, Action<PutBucketLoggingRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
+
         public Task<ListBucketsResponse> ListBucketsAsync(Action<ListBucketsRequest>? config = null, CancellationToken token = default)
         {
             ListBucketsResponse response = new ListBucketsResponse { IsSuccess = true };
