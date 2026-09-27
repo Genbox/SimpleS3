@@ -27,7 +27,19 @@ public class DeleteBucketTests : TestBase
         Assert.Equal(204, deleteResp2.StatusCode);
 
         ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucketName, token: TestContext.Current.CancellationToken);
-        Assert.False(listResp.IsSuccess);
-        Assert.Equal(404, listResp.StatusCode);
+
+        if (provider == S3Provider.GoogleCloudStorage && listResp.StatusCode == 200)
+        {
+            // GCS can return an empty XML listing for a recently deleted bucket rather than NoSuchBucket.
+            Assert.Empty(listResp.Objects);
+            ListBucketsResponse buckets = await client.ListBucketsAsync(token: TestContext.Current.CancellationToken);
+            Assert.True(buckets.IsSuccess);
+            Assert.DoesNotContain(buckets.Buckets, item => item.BucketName == tempBucketName);
+        }
+        else
+        {
+            Assert.False(listResp.IsSuccess);
+            Assert.Equal(404, listResp.StatusCode);
+        }
     }
 }
