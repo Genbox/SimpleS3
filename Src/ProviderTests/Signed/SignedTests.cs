@@ -1,6 +1,7 @@
 using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
+using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
 using Genbox.SimpleS3.Core.Network.Requests.Objects;
 using Genbox.SimpleS3.Core.Network.Requests.S3Types;
@@ -14,7 +15,7 @@ public class SignedTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task FullPreSignTest(S3Provider _, string bucket, ISimpleClient client)
+    public async Task SendSignedRequestRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
         TimeSpan expire = TimeSpan.FromSeconds(100);
         const string objectKey = "test.zip";
@@ -34,6 +35,7 @@ public class SignedTests : TestBase
 
         using GetObjectResponse getResp = await client.SendSignedRequestAsync<GetObjectResponse>(url, HttpMethodType.GET, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
+        Assert.Equal("hello world", await getResp.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
 
         DeleteObjectRequest deleteReq = new DeleteObjectRequest(bucket, objectKey);
         url = client.SignRequest(deleteReq, expire);
@@ -46,11 +48,11 @@ public class SignedTests : TestBase
 
         HeadObjectResponse headResp = await client.SendSignedRequestAsync<HeadObjectResponse>(url, HttpMethodType.HEAD, token: TestContext.Current.CancellationToken);
         Assert.Equal(404, headResp.StatusCode);
-    }
+    });
 
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task PreSignedMultipartUpload(S3Provider _, string bucket, ISimpleClient client)
+    public async Task PreSignedMultipartUploadRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
         const string key = "data.txt";
         TimeSpan expire = TimeSpan.FromSeconds(100);
@@ -77,5 +79,6 @@ public class SignedTests : TestBase
         //Complete (not pre-signed due to using XML)
         CompleteMultipartUploadResponse compResp = await client.CompleteMultipartUploadAsync(bucket, key, createResp.UploadId, infos, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, compResp.StatusCode);
-    }
+        await AssertObjectContentAsync(client, bucket, key, "hello world"u8.ToArray());
+    });
 }
