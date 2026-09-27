@@ -2,7 +2,7 @@ using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Abstracts.Enums;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
-using Genbox.SimpleS3.Core.Network.Responses.Objects;
+using Genbox.SimpleS3.Core.Network.Responses.S3Types;
 using Genbox.SimpleS3.Utility.Shared;
 
 namespace Genbox.ProviderTests.Buckets;
@@ -11,35 +11,42 @@ public class DeleteBucketTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task DeleteBucket(S3Provider provider, string _, ISimpleClient client)
+    public async Task DeleteBucketRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucketName =>
     {
-        Assert.NotEqual(S3Provider.None, provider);
-        string tempBucketName = GetTemporaryBucket();
+        DeleteBucketResponse deleted = await client.DeleteBucketAsync(tempBucketName, token: TestContext.Current.CancellationToken);
+        Assert.Equal(204, deleted.StatusCode);
 
-        DeleteBucketResponse deleteResp1 = await client.DeleteBucketAsync(tempBucketName, token: TestContext.Current.CancellationToken);
-        Assert.False(deleteResp1.IsSuccess);
-        Assert.Equal(ErrorCode.NoSuchBucket, deleteResp1.Error?.Code);
+        await ReadExpectedAsync(token => ReadBucketNamesAsync(client, token), names => !names.Contains(tempBucketName),
+            $"'{tempBucketName}' to disappear from the complete bucket inventory", TestContext.Current.CancellationToken);
+    });
 
-        await client.CreateBucketAsync(tempBucketName, token: TestContext.Current.CancellationToken);
+    [Theory]
+    [MultipleProviders(S3Provider.All)]
+    public async Task MissingBucket(S3Provider _1, string _2, ISimpleClient client)
+    {
+        DeleteBucketResponse response = await client.DeleteBucketAsync(GetTemporaryBucket(), token: TestContext.Current.CancellationToken);
+        Assert.Equal(404, response.StatusCode);
+        Assert.Equal(ErrorCode.NoSuchBucket, response.Error?.Code);
+    }
 
-        DeleteBucketResponse deleteResp2 = await client.DeleteBucketAsync(tempBucketName, token: TestContext.Current.CancellationToken);
-        Assert.True(deleteResp2.IsSuccess);
-        Assert.Equal(204, deleteResp2.StatusCode);
+    private static async Task<HashSet<string>> ReadBucketNamesAsync(ISimpleClient client, CancellationToken token)
+    {
+        HashSet<string> names = new HashSet<string>(StringComparer.Ordinal);
+        HashSet<string> tokens = new HashSet<string>(StringComparer.Ordinal);
+        string? continuation = null;
 
-        ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucketName, token: TestContext.Current.CancellationToken);
-
-        if (provider == S3Provider.GoogleCloudStorage && listResp.StatusCode == 200)
+        do
         {
-            // GCS can return an empty XML listing for a recently deleted bucket rather than NoSuchBucket.
-            Assert.Empty(listResp.Objects);
-            ListBucketsResponse buckets = await client.ListBucketsAsync(token: TestContext.Current.CancellationToken);
-            Assert.True(buckets.IsSuccess);
-            Assert.DoesNotContain(buckets.Buckets, item => item.BucketName == tempBucketName);
-        }
-        else
-        {
-            Assert.False(listResp.IsSuccess);
-            Assert.Equal(404, listResp.StatusCode);
-        }
+            ListBucketsResponse page = await client.ListBucketsAsync(request => request.ContinuationToken = continuation, token);
+            Assert.Equal(200, page.StatusCode);
+            foreach (S3Bucket bucket in page.Buckets)
+                names.Add(bucket.BucketName);
+
+            continuation = page.ContinuationToken;
+            if (!string.IsNullOrEmpty(continuation))
+                Assert.True(tokens.Add(continuation), "Bucket inventory repeated a continuation token.");
+        } while (!string.IsNullOrEmpty(continuation));
+
+        return names;
     }
 }

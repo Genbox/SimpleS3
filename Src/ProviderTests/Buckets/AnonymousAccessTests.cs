@@ -4,21 +4,18 @@ using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 using Genbox.SimpleS3.Core.Network.Responses.Objects;
 using Genbox.SimpleS3.Extensions.AmazonS3.Extensions;
-using Genbox.SimpleS3.Extensions.BackBlazeB2.Extensions;
-using Genbox.SimpleS3.Extensions.GoogleCloudStorage.Extensions;
 using Genbox.SimpleS3.Extensions.HttpClientFactory.Extensions;
 using Genbox.SimpleS3.Extensions.ProfileManager.Extensions;
-using Genbox.SimpleS3.Extensions.Wasabi.Extensions;
 using Genbox.SimpleS3.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.ProviderTests.Buckets;
 
-public class MiscTests : TestBase
+public class AnonymousAccessTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task CanAccessPublicBucket(S3Provider provider, string _1, ISimpleClient authedClient)
+    public async Task PutObjectRoundTrip(S3Provider provider, string _, ISimpleClient authedClient)
     {
         //This tests if we can access a public bucket without credentials
         //We don't use the client provided. Instead, we build a new one.
@@ -32,14 +29,7 @@ public class MiscTests : TestBase
 
         builder.UseHttpClientFactory();
 
-        if (provider == S3Provider.AmazonS3)
-            builder.UseAmazonS3();
-        else if (provider == S3Provider.BackBlazeB2)
-            builder.UseBackBlazeB2();
-        else if (provider == S3Provider.GoogleCloudStorage)
-            builder.UseGoogleCloudStorage();
-        else if (provider == S3Provider.Wasabi)
-            builder.UseWasabi();
+        builder.UseAmazonS3();
 
         await using ServiceProvider services = collection.BuildServiceProvider();
         ISimpleClient client = services.GetRequiredService<ISimpleClient>();
@@ -80,6 +70,7 @@ public class MiscTests : TestBase
 
             using GetObjectResponse resp4 = await client.GetObjectAsync(tempBucket, "test", token: TestContext.Current.CancellationToken);
             Assert.True(resp4.IsSuccess);
+            Assert.Equal("test", await resp4.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
         });
     }
 }

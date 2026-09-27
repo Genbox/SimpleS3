@@ -9,7 +9,7 @@ public class BucketTaggingTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task GetPutDeleteBucketTagging(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
+    public async Task PutBucketTaggingRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         Dictionary<string, string> tags = new Dictionary<string, string>(StringComparer.Ordinal);
         tags.Add("MyKey", "MyValue");
@@ -25,6 +25,7 @@ public class BucketTaggingTests : TestBase
 
         DeleteBucketTaggingResponse deleteResp = await client.DeleteBucketTaggingAsync(tempBucket, token: TestContext.Current.CancellationToken);
         Assert.True(deleteResp.IsSuccess);
+        Assert.Equal(404, (await client.GetBucketTaggingAsync(tempBucket, token: TestContext.Current.CancellationToken)).StatusCode);
     });
 
     [Theory]

@@ -9,15 +9,14 @@ public class BucketVersioningTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)] //BackBlaze does not support suspending versioning
-    public async Task PutBucketVersioningRequest(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
+    public async Task PutBucketVersioningRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         //Check if versioning is enabled (it shouldn't be)
         GetBucketVersioningResponse getResp = await client.GetBucketVersioningAsync(tempBucket, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.False(getResp.MfaDelete);
 
-        if (provider != S3Provider.BackBlazeB2) //backblaze always return true for versioning
-            Assert.False(getResp.Status);
+        Assert.False(getResp.Status);
 
         //Enable versioning
         PutBucketVersioningResponse putResp = await client.PutBucketVersioningAsync(tempBucket, true, token: TestContext.Current.CancellationToken);

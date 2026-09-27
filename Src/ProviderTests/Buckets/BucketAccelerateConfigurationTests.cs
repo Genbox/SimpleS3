@@ -9,7 +9,7 @@ public class BucketAccelerateConfigurationTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task PutGetBucketAccelerateConfiguration(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async x =>
+    public async Task PutBucketAccelerateConfigurationRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async x =>
     {
         GetBucketAccelerateConfigurationResponse getResp = await client.GetBucketAccelerateConfigurationAsync(x, token: TestContext.Current.CancellationToken);
         Assert.True(getResp.IsSuccess);

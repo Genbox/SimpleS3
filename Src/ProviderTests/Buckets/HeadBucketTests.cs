@@ -9,12 +9,17 @@ public class HeadBucketTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task HeadBucket(S3Provider _, string bucket, ISimpleClient client)
+    public async Task HeadBucketRoundTrip(S3Provider _, string bucket, ISimpleClient client)
     {
         HeadBucketResponse headResp = await client.HeadBucketAsync(bucket, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, headResp.StatusCode);
+    }
 
-        headResp = await client.HeadBucketAsync(GetTemporaryBucket(), token: TestContext.Current.CancellationToken);
-        Assert.False(headResp.IsSuccess);
+    [Theory]
+    [MultipleProviders(S3Provider.All)]
+    public async Task MissingBucket(S3Provider _1, string _2, ISimpleClient client)
+    {
+        HeadBucketResponse response = await client.HeadBucketAsync(GetTemporaryBucket(), token: TestContext.Current.CancellationToken);
+        Assert.Equal(404, response.StatusCode);
     }
 }
