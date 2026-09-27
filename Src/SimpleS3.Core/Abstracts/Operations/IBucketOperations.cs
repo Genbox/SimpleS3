@@ -24,13 +24,13 @@ public interface IBucketOperations
     /// Places an Object Lock configuration on the specified bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in
     /// the specified bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectLockConfiguration.html for details
     /// </summary>
-    Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(PutBucketLockConfigurationRequest request, CancellationToken token = default);
+    Task<PutObjectLockConfigurationResponse> PutObjectLockConfigurationAsync(PutObjectLockConfigurationRequest request, CancellationToken token = default);
 
     /// <summary>
     /// Gets the Object Lock configuration for a bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the
     /// specified bucket. See https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectLockConfiguration.html for details
     /// </summary>
-    Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(GetBucketLockConfigurationRequest request, CancellationToken token = default);
+    Task<GetObjectLockConfigurationResponse> GetObjectLockConfigurationAsync(GetObjectLockConfigurationRequest request, CancellationToken token = default);
 
     /// <summary>Gets the bucket logging configuration.</summary>
     Task<GetBucketLoggingResponse> GetBucketLoggingAsync(GetBucketLoggingRequest request, CancellationToken token = default);

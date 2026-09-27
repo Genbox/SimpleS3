@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 
-public class BucketLockConfigurationTests
+public class ObjectLockConfigurationTests
 {
     [Fact]
     public async Task DisablingObjectLockIsRejectedBeforeSending()
@@ -20,7 +20,7 @@ public class BucketLockConfigurationTests
         await using ServiceProvider provider = CreateProvider(driver);
         IBucketClient client = provider.GetRequiredService<IBucketClient>();
 
-        await Assert.ThrowsAsync<ArgumentException>(() => client.PutBucketLockConfigurationAsync("bucket", false, token: TestContext.Current.CancellationToken));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.PutObjectLockConfigurationAsync("bucket", false, token: TestContext.Current.CancellationToken));
         Assert.Null(driver.Configuration);
     }
 
@@ -31,7 +31,7 @@ public class BucketLockConfigurationTests
         await using ServiceProvider provider = CreateProvider(driver);
         IBucketClient client = provider.GetRequiredService<IBucketClient>();
 
-        PutBucketLockConfigurationResponse response = await client.ClearBucketDefaultRetentionAsync("bucket", request =>
+        PutObjectLockConfigurationResponse response = await client.ClearBucketDefaultRetentionAsync("bucket", request =>
         {
             request.LockMode = LockMode.Governance;
             request.LockRetainDays = 7;

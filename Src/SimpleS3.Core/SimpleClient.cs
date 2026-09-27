@@ -117,11 +117,11 @@ public class SimpleClient : ISimpleClient
     /// <summary>Provides the <c>HeadBucketAsync</c> API.</summary>
     public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest>? config = null, CancellationToken token = default) => _bucketClient.HeadBucketAsync(bucketName, config, token);
 
-    /// <summary>Provides the <c>PutBucketLockConfigurationAsync</c> API.</summary>
-    public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.PutBucketLockConfigurationAsync(bucketName, enabled, config, token);
+    /// <summary>Provides the <c>PutObjectLockConfigurationAsync</c> API.</summary>
+    public Task<PutObjectLockConfigurationResponse> PutObjectLockConfigurationAsync(string bucketName, bool enabled, Action<PutObjectLockConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.PutObjectLockConfigurationAsync(bucketName, enabled, config, token);
 
-    /// <summary>Provides the <c>GetBucketLockConfigurationAsync</c> API.</summary>
-    public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketLockConfigurationAsync(bucketName, config, token);
+    /// <summary>Provides the <c>GetObjectLockConfigurationAsync</c> API.</summary>
+    public Task<GetObjectLockConfigurationResponse> GetObjectLockConfigurationAsync(string bucketName, Action<GetObjectLockConfigurationRequest>? config = null, CancellationToken token = default) => _bucketClient.GetObjectLockConfigurationAsync(bucketName, config, token);
 
     /// <summary>Provides the <c>GetBucketTaggingAsync</c> API.</summary>
     public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default) => _bucketClient.GetBucketTaggingAsync(bucketName, config, token);

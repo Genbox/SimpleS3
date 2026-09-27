@@ -52,7 +52,7 @@ public abstract class ProviderClientAdapter : ISimpleClient
     Task<DeleteBucketResponse> IBucketClient.DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest>? config, CancellationToken token) => throw new NotSupportedException();
     Task<ListBucketsResponse> IBucketClient.ListBucketsAsync(Action<ListBucketsRequest>? config, CancellationToken token) => throw new NotSupportedException();
     Task<HeadBucketResponse> IBucketClient.HeadBucketAsync(string bucketName, Action<HeadBucketRequest>? config, CancellationToken token) => throw new NotSupportedException();
-    Task<GetBucketLockConfigurationResponse> IBucketClient.GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config, CancellationToken token) => throw new NotSupportedException();
+    Task<GetObjectLockConfigurationResponse> IBucketClient.GetObjectLockConfigurationAsync(string bucketName, Action<GetObjectLockConfigurationRequest>? config, CancellationToken token) => throw new NotSupportedException();
     Task<GetBucketAclResponse> IBucketClient.GetBucketAclAsync(string bucketName, Action<GetBucketAclRequest>? config, CancellationToken token) => throw new NotSupportedException();
     Task<PutBucketAclResponse> IBucketClient.PutBucketAclAsync(string bucketName, Action<PutBucketAclRequest>? config, CancellationToken token) => throw new NotSupportedException();
     Task<GetBucketLocationResponse> IBucketClient.GetBucketLocationAsync(string bucketName, Action<GetBucketLocationRequest>? config, CancellationToken token) => throw new NotSupportedException();
@@ -83,7 +83,7 @@ public abstract class ProviderClientAdapter : ISimpleClient
     Task<PutBucketLifecycleConfigurationResponse> IBucketClient.PutBucketLifecycleConfigurationAsync(string bucketName, IEnumerable<S3Rule> rules, Action<PutBucketLifecycleConfigurationRequest>? config, CancellationToken token) => throw new NotSupportedException();
     Task<DeleteBucketLifecycleResponse> IBucketClient.DeleteBucketLifecycleAsync(string bucketName, Action<DeleteBucketLifecycleRequest>? config, CancellationToken token) => throw new NotSupportedException();
     Task<GetBucketLifecycleConfigurationResponse> IBucketClient.GetBucketLifecycleConfigurationAsync(string bucketName, Action<GetBucketLifecycleConfigurationRequest>? config, CancellationToken token) => throw new NotSupportedException();
-    Task<PutBucketLockConfigurationResponse> IBucketClient.PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config, CancellationToken token) => throw new NotSupportedException();
+    Task<PutObjectLockConfigurationResponse> IBucketClient.PutObjectLockConfigurationAsync(string bucketName, bool enabled, Action<PutObjectLockConfigurationRequest>? config, CancellationToken token) => throw new NotSupportedException();
 
     Task<GetBucketTaggingResponse> IBucketClient.GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config, CancellationToken token) => throw new NotSupportedException();
     Task<GetBucketCorsResponse> IBucketClient.GetBucketCorsAsync(string bucketName, Action<GetBucketCorsRequest>? config, CancellationToken token) => throw new NotSupportedException();

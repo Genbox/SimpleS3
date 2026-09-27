@@ -5,9 +5,9 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
-internal sealed class GetBucketLockConfigurationRequestMarshal : IRequestMarshal<GetBucketLockConfigurationRequest>
+internal sealed class GetObjectLockConfigurationRequestMarshal : IRequestMarshal<GetObjectLockConfigurationRequest>
 {
-    public Stream? MarshalRequest(GetBucketLockConfigurationRequest request, SimpleS3Config config)
+    public Stream? MarshalRequest(GetObjectLockConfigurationRequest request, SimpleS3Config config)
     {
         request.SetQueryParameter(AmzParameters.ObjectLock, string.Empty);
         return null;

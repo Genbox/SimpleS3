@@ -10,7 +10,7 @@ using Genbox.SimpleS3.Utility.Shared;
 
 namespace Genbox.ProviderTests.Buckets;
 
-public class BucketLockConfigurationTests : TestBase
+public class ObjectLockConfigurationTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
@@ -25,13 +25,13 @@ public class BucketLockConfigurationTests : TestBase
 
         try
         {
-            PutBucketLockConfigurationResponse years = await client.PutBucketLockConfigurationAsync(bucket, true, request =>
+            PutObjectLockConfigurationResponse years = await client.PutObjectLockConfigurationAsync(bucket, true, request =>
             {
                 request.LockMode = LockMode.Governance;
                 request.LockRetainYears = 1;
             }, token);
             Assert.True(years.IsSuccess, $"{provider} years default: HTTP {years.StatusCode}, {years.Error?.Code}");
-            GetBucketLockConfigurationResponse configured = await client.GetBucketLockConfigurationAsync(bucket, token: token);
+            GetObjectLockConfigurationResponse configured = await client.GetObjectLockConfigurationAsync(bucket, token: token);
             Assert.True(configured.IsSuccess);
             Assert.True(configured.Enabled);
             Assert.Equal(LockMode.Governance, configured.LockMode);
@@ -51,9 +51,9 @@ public class BucketLockConfigurationTests : TestBase
             Assert.InRange(retainedHead.LockRetainUntil.Value, beforeUpload.AddDays(364), DateTimeOffset.UtcNow.AddDays(366));
             Assert.Equal(403, (await client.DeleteObjectAsync(bucket, retainedKey, request => request.VersionId = retainedVersion, token)).StatusCode);
 
-            PutBucketLockConfigurationResponse cleared = await client.PutBucketLockConfigurationAsync(bucket, true, token: token);
+            PutObjectLockConfigurationResponse cleared = await client.PutObjectLockConfigurationAsync(bucket, true, token: token);
             Assert.True(cleared.IsSuccess, $"{provider} clear default: HTTP {cleared.StatusCode}, {cleared.Error?.Code}");
-            GetBucketLockConfigurationResponse empty = await client.GetBucketLockConfigurationAsync(bucket, token: token);
+            GetObjectLockConfigurationResponse empty = await client.GetObjectLockConfigurationAsync(bucket, token: token);
             Assert.True(empty.IsSuccess);
             Assert.True(empty.Enabled);
             Assert.Equal(LockMode.Unknown, empty.LockMode);
@@ -92,16 +92,16 @@ public class BucketLockConfigurationTests : TestBase
 
     [Theory]
     [MultipleProvidersWithData(S3Provider.AmazonS3, LockMode.Compliance, LockMode.Governance)]
-    public async Task GetPutBucketLockConfiguration(S3Provider provider, string _, ISimpleClient client, LockMode mode) => await CreateTempBucketAsync(provider, client, async tempBucket =>
+    public async Task GetPutObjectLockConfiguration(S3Provider provider, string _, ISimpleClient client, LockMode mode) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
-        PutBucketLockConfigurationResponse putResp = await client.PutBucketLockConfigurationAsync(tempBucket, true, x =>
+        PutObjectLockConfigurationResponse putResp = await client.PutObjectLockConfigurationAsync(tempBucket, true, x =>
         {
             x.LockMode = mode;
             x.LockRetainDays = 2;
         }, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetBucketLockConfigurationResponse getResp = await client.GetBucketLockConfigurationAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        GetObjectLockConfigurationResponse getResp = await client.GetObjectLockConfigurationAsync(tempBucket, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal(mode, getResp.LockMode);
         Assert.Equal(2, getResp.LockRetainDays);
@@ -111,7 +111,7 @@ public class BucketLockConfigurationTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
     public async Task GetEmptyBucketLock(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
-        GetBucketLockConfigurationResponse getResp = await client.GetBucketLockConfigurationAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        GetObjectLockConfigurationResponse getResp = await client.GetObjectLockConfigurationAsync(tempBucket, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.True(getResp.Enabled);
         Assert.Equal(LockMode.Unknown, getResp.LockMode);
@@ -123,7 +123,7 @@ public class BucketLockConfigurationTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
     public async Task GetWhenBucketLockIsDisabled(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
-        GetBucketLockConfigurationResponse getResp = await client.GetBucketLockConfigurationAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        GetObjectLockConfigurationResponse getResp = await client.GetObjectLockConfigurationAsync(tempBucket, token: TestContext.Current.CancellationToken);
         Assert.Equal(404, getResp.StatusCode);
     });
 
@@ -131,26 +131,26 @@ public class BucketLockConfigurationTests : TestBase
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task OverwriteExistingLock(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
-        PutBucketLockConfigurationResponse putResp = await client.PutBucketLockConfigurationAsync(tempBucket, true, r =>
+        PutObjectLockConfigurationResponse putResp = await client.PutObjectLockConfigurationAsync(tempBucket, true, r =>
         {
             r.LockMode = LockMode.Compliance;
             r.LockRetainDays = 2;
         }, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        GetBucketLockConfigurationResponse getResp = await client.GetBucketLockConfigurationAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        GetObjectLockConfigurationResponse getResp = await client.GetObjectLockConfigurationAsync(tempBucket, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp.StatusCode);
         Assert.Equal(LockMode.Compliance, getResp.LockMode);
         Assert.Equal(2, getResp.LockRetainDays);
 
-        PutBucketLockConfigurationResponse putResp2 = await client.PutBucketLockConfigurationAsync(tempBucket, true, r =>
+        PutObjectLockConfigurationResponse putResp2 = await client.PutObjectLockConfigurationAsync(tempBucket, true, r =>
         {
             r.LockMode = LockMode.Governance;
             r.LockRetainDays = 5;
         }, TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp2.StatusCode);
 
-        GetBucketLockConfigurationResponse getResp2 = await client.GetBucketLockConfigurationAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        GetObjectLockConfigurationResponse getResp2 = await client.GetObjectLockConfigurationAsync(tempBucket, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, getResp2.StatusCode);
         Assert.Equal(LockMode.Governance, getResp2.LockMode);
         Assert.Equal(5, getResp2.LockRetainDays);

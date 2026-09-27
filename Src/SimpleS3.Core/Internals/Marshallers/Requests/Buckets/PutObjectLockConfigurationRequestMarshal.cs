@@ -7,9 +7,9 @@ using Genbox.SimpleS3.Core.Network.Requests.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Requests.Buckets;
 
-internal sealed class PutBucketLockConfigurationRequestMarshal : IRequestMarshal<PutBucketLockConfigurationRequest>
+internal sealed class PutObjectLockConfigurationRequestMarshal : IRequestMarshal<PutObjectLockConfigurationRequest>
 {
-    public Stream MarshalRequest(PutBucketLockConfigurationRequest request, SimpleS3Config config)
+    public Stream MarshalRequest(PutObjectLockConfigurationRequest request, SimpleS3Config config)
     {
         if (!request.Enabled)
             throw new ArgumentException("Object Lock cannot be disabled. Use ClearBucketDefaultRetentionAsync to remove the default retention rule.", nameof(request));

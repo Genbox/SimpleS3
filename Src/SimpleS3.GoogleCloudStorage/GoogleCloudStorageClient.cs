@@ -62,9 +62,9 @@ public sealed class GoogleCloudStorageClient : ProviderClientAdapter, ISimpleCli
     /// <remarks>Sets GCS bucket labels. Keys and values must satisfy GCS label restrictions.</remarks>
     public Task<PutBucketTaggingResponse> PutBucketTaggingAsync(string bucketName, IDictionary<string, string> tags, Action<PutBucketTaggingRequest>? config = null, CancellationToken token = default) => _client.PutBucketTaggingAsync(bucketName, tags, config, token);
 
-    /// <inheritdoc cref="SimpleClient.GetBucketLockConfigurationAsync" />
+    /// <inheritdoc cref="SimpleClient.GetObjectLockConfigurationAsync" />
     /// <remarks>Reports whether object retention is enabled. GCS does not return an S3 default-retention rule; a bucket without object retention returns HTTP 404.</remarks>
-    public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default) => _client.GetBucketLockConfigurationAsync(bucketName, config, token);
+    public Task<GetObjectLockConfigurationResponse> GetObjectLockConfigurationAsync(string bucketName, Action<GetObjectLockConfigurationRequest>? config = null, CancellationToken token = default) => _client.GetObjectLockConfigurationAsync(bucketName, config, token);
 
     /// <inheritdoc />
     public Task<CreateBucketResponse> CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config = null, CancellationToken token = default) => _client.CreateBucketAsync(bucketName, config, token);

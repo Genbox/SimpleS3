@@ -38,7 +38,7 @@ public interface IBucketClient
     /// <param name="bucketName">The bucket name</param>
     /// <param name="config">A delegate to configure the request</param>
     /// <param name="token">A cancellation token</param>
-    Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default);
+    Task<GetObjectLockConfigurationResponse> GetObjectLockConfigurationAsync(string bucketName, Action<GetObjectLockConfigurationRequest>? config = null, CancellationToken token = default);
 
     /// <summary>Provides the <c>GetBucketAclAsync</c> API.</summary>
     Task<GetBucketAclResponse> GetBucketAclAsync(string bucketName, Action<GetBucketAclRequest>? config = null, CancellationToken token = default);
@@ -79,7 +79,7 @@ public interface IBucketClient
     /// <param name="enabled">A boolean indicating if locking is enabled or not</param>
     /// <param name="config">A delegate to configure the request</param>
     /// <param name="token">A cancellation token</param>
-    Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default);
+    Task<PutObjectLockConfigurationResponse> PutObjectLockConfigurationAsync(string bucketName, bool enabled, Action<PutObjectLockConfigurationRequest>? config = null, CancellationToken token = default);
 
     /// <summary>Gets the logging configuration for a bucket.</summary>
     Task<GetBucketLoggingResponse> GetBucketLoggingAsync(string bucketName, Action<GetBucketLoggingRequest>? config = null, CancellationToken token = default);

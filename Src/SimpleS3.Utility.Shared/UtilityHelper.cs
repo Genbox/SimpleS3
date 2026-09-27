@@ -115,7 +115,7 @@ public static class UtilityHelper
             GetBucketVersioningResponse versioning = await client.GetBucketVersioningAsync(bucket, token: token);
             if (!versioning.IsSuccess)
                 throw new InvalidOperationException(versioning.Error?.Message ?? "Unable to read bucket versioning before cleanup.");
-            GetBucketLockConfigurationResponse objectLock = await client.GetBucketLockConfigurationAsync(bucket, token: token);
+            GetObjectLockConfigurationResponse objectLock = await client.GetObjectLockConfigurationAsync(bucket, token: token);
             if (!objectLock.IsSuccess && objectLock.StatusCode != 404)
                 throw new InvalidOperationException(objectLock.Error?.Message ?? "Unable to read bucket Object Lock before cleanup.");
             options = new BucketDeletionOptions(!versioning.Status, objectLock.IsSuccess && objectLock.Enabled);

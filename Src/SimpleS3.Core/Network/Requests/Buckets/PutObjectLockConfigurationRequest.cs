@@ -10,12 +10,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// Places an Object Lock configuration on the specified bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in
 /// the specified bucket.
 /// </summary>
-public sealed class PutBucketLockConfigurationRequest : BaseRequest, IHasBucketName, IHasRequestPayer, IContentMd5Config
+public sealed class PutObjectLockConfigurationRequest : BaseRequest, IHasBucketName, IHasRequestPayer, IContentMd5Config
 {
-    internal PutBucketLockConfigurationRequest() : base(HttpMethodType.PUT) {}
+    internal PutObjectLockConfigurationRequest() : base(HttpMethodType.PUT) {}
 
-    /// <summary>Provides the <c>PutBucketLockConfigurationRequest</c> API.</summary>
-    public PutBucketLockConfigurationRequest(string bucketName, bool enabled) : this()
+    /// <summary>Provides the <c>PutObjectLockConfigurationRequest</c> API.</summary>
+    public PutObjectLockConfigurationRequest(string bucketName, bool enabled) : this()
     {
         Initialize(bucketName, enabled);
     }

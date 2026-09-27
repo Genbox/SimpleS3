@@ -7,9 +7,9 @@ using Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
 namespace Genbox.SimpleS3.Core.Internals.Marshallers.Responses.Buckets;
 
-internal sealed class GetBucketLockConfigurationResponseMarshal : IResponseMarshal<GetBucketLockConfigurationResponse>
+internal sealed class GetObjectLockConfigurationResponseMarshal : IResponseMarshal<GetObjectLockConfigurationResponse>
 {
-    public void MarshalResponse(SimpleS3Config config, GetBucketLockConfigurationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
+    public void MarshalResponse(SimpleS3Config config, GetObjectLockConfigurationResponse response, IDictionary<string, string> headers, ContentStream responseStream)
     {
         using XmlReader xmlReader = XmlHelper.CreateReader(responseStream);
         if (!XmlHelper.ReadToDescendant(xmlReader, "ObjectLockConfiguration"))
@@ -29,7 +29,7 @@ internal sealed class GetBucketLockConfigurationResponseMarshal : IResponseMarsh
         }
     }
 
-    private static void ReadRule(GetBucketLockConfigurationResponse response, XmlReader xmlReader)
+    private static void ReadRule(GetObjectLockConfigurationResponse response, XmlReader xmlReader)
     {
         foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {
@@ -38,7 +38,7 @@ internal sealed class GetBucketLockConfigurationResponseMarshal : IResponseMarsh
         }
     }
 
-    private static void ReadDefaultRetention(GetBucketLockConfigurationResponse response, XmlReader xmlReader)
+    private static void ReadDefaultRetention(GetObjectLockConfigurationResponse response, XmlReader xmlReader)
     {
         foreach (string name in XmlHelper.ReadChildren(xmlReader))
         {

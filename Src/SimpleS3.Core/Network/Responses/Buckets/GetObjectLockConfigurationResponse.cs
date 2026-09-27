@@ -2,8 +2,8 @@ using Genbox.SimpleS3.Core.Enums;
 
 namespace Genbox.SimpleS3.Core.Network.Responses.Buckets;
 
-/// <summary>Provides the <c>GetBucketLockConfigurationResponse</c> API.</summary>
-public class GetBucketLockConfigurationResponse : BaseResponse
+/// <summary>Provides the <c>GetObjectLockConfigurationResponse</c> API.</summary>
+public class GetObjectLockConfigurationResponse : BaseResponse
 {
     /// <summary>Whether object lock is enabled for the bucket.</summary>
     public bool Enabled { get; internal set; }

@@ -95,7 +95,7 @@ internal static class Program
 
     private static async Task SetLockConfigAsync(IBucketClient bucketClient, string bucketName)
     {
-        PutBucketLockConfigurationResponse resp = await bucketClient.PutBucketLockConfigurationAsync(bucketName, true, token: CancellationToken.None);
+        PutObjectLockConfigurationResponse resp = await bucketClient.PutObjectLockConfigurationAsync(bucketName, true, token: CancellationToken.None);
         WriteResult("Lock configuration", resp.IsSuccess);
     }
 

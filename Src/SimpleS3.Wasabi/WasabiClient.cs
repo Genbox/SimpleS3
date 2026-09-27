@@ -82,7 +82,7 @@ public sealed class WasabiClient : ProviderClientAdapter, ISimpleClient, IDispos
     public Task<PutBucketLoggingResponse> PutBucketLoggingAsync(string bucketName, S3LoggingConfiguration? loggingConfiguration, Action<PutBucketLoggingRequest>? config = null, CancellationToken token = default) => _client.PutBucketLoggingAsync(bucketName, loggingConfiguration, config, token);
 
     /// <inheritdoc />
-    public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default) => _client.PutBucketLockConfigurationAsync(bucketName, enabled, config, token);
+    public Task<PutObjectLockConfigurationResponse> PutObjectLockConfigurationAsync(string bucketName, bool enabled, Action<PutObjectLockConfigurationRequest>? config = null, CancellationToken token = default) => _client.PutObjectLockConfigurationAsync(bucketName, enabled, config, token);
 
     /// <inheritdoc />
     /// <remarks>Uses byte ranges for parts because Wasabi GET ignores partNumber. Output response lengths are checked before writing.</remarks>
@@ -126,7 +126,7 @@ public sealed class WasabiClient : ProviderClientAdapter, ISimpleClient, IDispos
     public Task<HeadBucketResponse> HeadBucketAsync(string bucketName, Action<HeadBucketRequest>? config = null, CancellationToken token = default) => _client.HeadBucketAsync(bucketName, config, token);
 
     /// <inheritdoc />
-    public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default) => _client.GetBucketLockConfigurationAsync(bucketName, config, token);
+    public Task<GetObjectLockConfigurationResponse> GetObjectLockConfigurationAsync(string bucketName, Action<GetObjectLockConfigurationRequest>? config = null, CancellationToken token = default) => _client.GetObjectLockConfigurationAsync(bucketName, config, token);
 
     /// <inheritdoc />
     public Task<GetBucketAclResponse> GetBucketAclAsync(string bucketName, Action<GetBucketAclRequest>? config = null, CancellationToken token = default) => _client.GetBucketAclAsync(bucketName, config, token);

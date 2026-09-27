@@ -12,7 +12,7 @@ namespace Genbox.SimpleS3.Core.Extensions;
 public static class BucketClientExtensions
 {
     /// <summary>Removes the bucket's default retention rule while keeping Object Lock enabled. Existing object retention is unchanged.</summary>
-    public static Task<PutBucketLockConfigurationResponse> ClearBucketDefaultRetentionAsync(this IBucketClient client, string bucketName, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default) => client.PutBucketLockConfigurationAsync(bucketName, true, request =>
+    public static Task<PutObjectLockConfigurationResponse> ClearBucketDefaultRetentionAsync(this IBucketClient client, string bucketName, Action<PutObjectLockConfigurationRequest>? config = null, CancellationToken token = default) => client.PutObjectLockConfigurationAsync(bucketName, true, request =>
     {
         config?.Invoke(request);
         request.Enabled = true;

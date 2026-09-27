@@ -7,12 +7,12 @@ namespace Genbox.SimpleS3.Core.Network.Requests.Buckets;
 /// Gets the Object Lock configuration for a bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the
 /// specified bucket.
 /// </summary>
-public class GetBucketLockConfigurationRequest : BaseRequest, IHasBucketName
+public class GetObjectLockConfigurationRequest : BaseRequest, IHasBucketName
 {
-    internal GetBucketLockConfigurationRequest() : base(HttpMethodType.GET) {}
+    internal GetObjectLockConfigurationRequest() : base(HttpMethodType.GET) {}
 
-    /// <summary>Provides the <c>GetBucketLockConfigurationRequest</c> API.</summary>
-    public GetBucketLockConfigurationRequest(string bucketName) : this()
+    /// <summary>Provides the <c>GetObjectLockConfigurationRequest</c> API.</summary>
+    public GetObjectLockConfigurationRequest(string bucketName) : this()
     {
         Initialize(bucketName);
     }

@@ -58,30 +58,30 @@ internal sealed class BucketClient(IBucketOperations operations) : IBucketClient
         Task<HeadBucketResponse> ActionAsync(HeadBucketRequest request) => operations.HeadBucketAsync(request, token);
     }
 
-    public Task<PutBucketLockConfigurationResponse> PutBucketLockConfigurationAsync(string bucketName, bool enabled, Action<PutBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
+    public Task<PutObjectLockConfigurationResponse> PutObjectLockConfigurationAsync(string bucketName, bool enabled, Action<PutObjectLockConfigurationRequest>? config = null, CancellationToken token = default)
     {
-        return ObjectPool<PutBucketLockConfigurationRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+        return ObjectPool<PutObjectLockConfigurationRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
 
-        void Setup(PutBucketLockConfigurationRequest req)
+        void Setup(PutObjectLockConfigurationRequest req)
         {
             req.Initialize(bucketName, enabled);
             config?.Invoke(req);
         }
 
-        Task<PutBucketLockConfigurationResponse> ActionAsync(PutBucketLockConfigurationRequest request) => operations.PutBucketLockConfigurationAsync(request, token);
+        Task<PutObjectLockConfigurationResponse> ActionAsync(PutObjectLockConfigurationRequest request) => operations.PutObjectLockConfigurationAsync(request, token);
     }
 
-    public Task<GetBucketLockConfigurationResponse> GetBucketLockConfigurationAsync(string bucketName, Action<GetBucketLockConfigurationRequest>? config = null, CancellationToken token = default)
+    public Task<GetObjectLockConfigurationResponse> GetObjectLockConfigurationAsync(string bucketName, Action<GetObjectLockConfigurationRequest>? config = null, CancellationToken token = default)
     {
-        return ObjectPool<GetBucketLockConfigurationRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
+        return ObjectPool<GetObjectLockConfigurationRequest>.Shared.RentAndUseAsync(Setup, ActionAsync);
 
-        void Setup(GetBucketLockConfigurationRequest req)
+        void Setup(GetObjectLockConfigurationRequest req)
         {
             req.Initialize(bucketName);
             config?.Invoke(req);
         }
 
-        Task<GetBucketLockConfigurationResponse> ActionAsync(GetBucketLockConfigurationRequest request) => operations.GetBucketLockConfigurationAsync(request, token);
+        Task<GetObjectLockConfigurationResponse> ActionAsync(GetObjectLockConfigurationRequest request) => operations.GetObjectLockConfigurationAsync(request, token);
     }
 
     public Task<GetBucketTaggingResponse> GetBucketTaggingAsync(string bucketName, Action<GetBucketTaggingRequest>? config = null, CancellationToken token = default)
