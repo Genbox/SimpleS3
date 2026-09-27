@@ -351,6 +351,6 @@ public class SimpleClient : ISimpleClient
     /// <summary>Provides the <c>SignRequest&lt;TReq&gt;</c> API.</summary>
     public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest => _signedClient.SignRequest(request, expiresIn);
 
-    /// <summary>Provides the <c>SendSignedRequestAsync&lt;TResp&gt;</c> API.</summary>
-    public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new() => _signedClient.SendSignedRequestAsync<TResp>(url, httpMethod, content, token);
+    /// <summary>Sends a presigned request with additional HTTP headers, such as a byte range.</summary>
+    public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, IDictionary<string, string>? headers = null, CancellationToken token = default) where TResp : IResponse, new() => _signedClient.SendSignedRequestAsync<TResp>(url, httpMethod, content, headers, token);
 }

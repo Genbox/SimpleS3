@@ -46,7 +46,7 @@ public abstract class ProviderClientAdapter : ISimpleClient
     public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest => _client.SignRequest(request, expiresIn);
 
     /// <inheritdoc />
-    public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new() => _client.SendSignedRequestAsync<TResp>(url, httpMethod, content, token);
+    public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, IDictionary<string, string>? headers = null, CancellationToken token = default) where TResp : IResponse, new() => _client.SendSignedRequestAsync<TResp>(url, httpMethod, content, headers, token);
 
     Task<CreateBucketResponse> IBucketClient.CreateBucketAsync(string bucketName, Action<CreateBucketRequest>? config, CancellationToken token) => throw new NotSupportedException();
     Task<DeleteBucketResponse> IBucketClient.DeleteBucketAsync(string bucketName, Action<DeleteBucketRequest>? config, CancellationToken token) => throw new NotSupportedException();

@@ -9,5 +9,5 @@ internal sealed class SignedClient(ISignedRequestHandler handler) : ISignedClien
 {
     public string SignRequest<TReq>(TReq request, TimeSpan expiresIn) where TReq : IRequest => handler.SignRequest(request, expiresIn);
 
-    public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new() => handler.SendRequestAsync<TResp>(url, httpMethod, content, token);
+    public Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, IDictionary<string, string>? headers = null, CancellationToken token = default) where TResp : IResponse, new() => handler.SendRequestAsync<TResp>(url, httpMethod, content, headers, token);
 }

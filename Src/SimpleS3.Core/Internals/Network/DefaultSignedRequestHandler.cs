@@ -108,9 +108,16 @@ internal sealed partial class DefaultSignedRequestHandler : ISignedRequestHandle
 
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP001:Dispose created", Justification = "The response handler owns the prepared request stream after a successful handoff; this method disposes it on preparation failure.")]
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP003:Dispose previous before re-assigning", Justification = "Each request stream wrapper owns the stream it replaces.")]
-    public async Task<TResp> SendRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new()
+    public async Task<TResp> SendRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, IDictionary<string, string>? headers = null, CancellationToken token = default) where TResp : IResponse, new()
     {
         SignedRequest req = new SignedRequest(httpMethod);
+
+        if (headers != null)
+        {
+            foreach (KeyValuePair<string, string> header in headers)
+                req.SetHeader(header.Key, header.Value);
+        }
+
         return await _responseHandler.HandleResponseAsync<SignedRequest, TResp>(req, url, content, token);
     }
 }

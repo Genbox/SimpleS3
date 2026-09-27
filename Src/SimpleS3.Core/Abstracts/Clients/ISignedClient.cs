@@ -13,5 +13,5 @@ public interface ISignedClient
 
     /// <summary>Provides the <c>SendSignedRequestAsync&lt;TResp&gt;</c> API.</summary>
     [SuppressMessage("Design", "CA1054", Justification = "The signing pipeline preserves the raw escaped request URL; constructing a Uri earlier can normalize object keys and invalidate signatures.")]
-    Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, CancellationToken token = default) where TResp : IResponse, new();
+    Task<TResp> SendSignedRequestAsync<TResp>(string url, HttpMethodType httpMethod, Stream? content = null, IDictionary<string, string>? headers = null, CancellationToken token = default) where TResp : IResponse, new();
 }
