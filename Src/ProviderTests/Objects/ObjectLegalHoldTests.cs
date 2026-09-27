@@ -9,33 +9,25 @@ public class ObjectLegalHoldTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
-    public async Task PutGetObjectLegalHold(S3Provider _, string bucket, ISimpleClient client)
+    public async Task PutObjectLegalHoldRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
-        const string objectKey = nameof(PutGetObjectLegalHold);
+        const string objectKey = nameof(PutObjectLegalHoldRoundTrip);
 
-        try
-        {
-            //Create an object
-            await client.PutObjectAsync(bucket, objectKey, null, token: TestContext.Current.CancellationToken);
+        //Create an object
+        Assert.Equal(200, (await client.PutObjectAsync(bucket, objectKey, null, token: TestContext.Current.CancellationToken)).StatusCode);
 
-            //Check that there is no lock
-            GetObjectLegalHoldResponse getLegalResp = await client.GetObjectLegalHoldAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
-            Assert.Equal(404, getLegalResp.StatusCode);
-            Assert.False(getLegalResp.LegalHold);
+        //Check that there is no lock
+        GetObjectLegalHoldResponse getLegalResp = await client.GetObjectLegalHoldAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
+        Assert.Equal(404, getLegalResp.StatusCode);
+        Assert.False(getLegalResp.LegalHold);
 
-            //Set a lock
-            PutObjectLegalHoldResponse putLegalResp = await client.PutObjectLegalHoldAsync(bucket, objectKey, true, token: TestContext.Current.CancellationToken);
-            Assert.Equal(200, putLegalResp.StatusCode);
+        //Set a lock
+        PutObjectLegalHoldResponse putLegalResp = await client.PutObjectLegalHoldAsync(bucket, objectKey, true, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, putLegalResp.StatusCode);
 
-            //There should be a lock now
-            GetObjectLegalHoldResponse getLegalResp2 = await client.GetObjectLegalHoldAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
-            Assert.Equal(200, getLegalResp2.StatusCode);
-            Assert.True(getLegalResp2.LegalHold);
-        }
-        finally
-        {
-            await client.PutObjectLegalHoldAsync(bucket, objectKey, false, token: TestContext.Current.CancellationToken);
-            await client.DeleteObjectAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
-        }
-    }
+        //There should be a lock now
+        GetObjectLegalHoldResponse getLegalResp2 = await client.GetObjectLegalHoldAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, getLegalResp2.StatusCode);
+        Assert.True(getLegalResp2.LegalHold);
+    }, request => request.EnableObjectLocking = true);
 }

@@ -11,80 +11,43 @@ public class ObjectAclTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
-    public async Task PutGetObjectAcl(S3Provider provider, string bucket, ISimpleClient client)
+    public async Task PutObjectAclRoundTrip(S3Provider _, string bucket, ISimpleClient client)
     {
-        const string objectKey = nameof(PutGetObjectAcl);
-
-        //Create an object
-        PutObjectResponse putResp1 = await client.PutObjectAsync(bucket, objectKey, null, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp1.StatusCode);
-
-        //Get the ACL, which should be the default one (owner has ACL)
-        GetObjectAclResponse getResp = await client.GetObjectAclAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, getResp.StatusCode);
-
-        S3Grant grant = Assert.Single(getResp.Grants);
-        Assert.Equal(S3Permission.FullControl, grant.Permission);
-
-        if (provider == S3Provider.AmazonS3)
+        string objectKey = nameof(PutObjectAclRoundTrip) + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, objectKey, () => client.PutObjectAsync(bucket, objectKey, null, token: TestContext.Current.CancellationToken), async _ =>
         {
-            Assert.NotNull(grant.Grantee.Id);
-            Assert.Equal(GrantType.CanonicalUser, grant.Grantee.Type);
-        }
-        else
-            Assert.Equal(GrantType.AmazonCustomerByEmail, grant.Grantee.Type);
+            //Update the object to have another ACL using Canned ACLs
+            PutObjectAclResponse updated = await client.PutObjectAclAsync(bucket, objectKey, r => r.Acl = ObjectCannedAcl.PublicRead, TestContext.Current.CancellationToken);
+            Assert.Equal(200, updated.StatusCode);
 
-        Assert.Null(grant.Grantee.DisplayName);
+            GetObjectAclResponse acl = await client.GetObjectAclAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
+            Assert.Equal(200, acl.StatusCode);
+            Assert.Equal(2, acl.Grants.Count);
 
-        //Update the object to have another ACL using Canned ACLs
-        PutObjectAclResponse putResp2 = await client.PutObjectAclAsync(bucket, objectKey, r => r.Acl = ObjectCannedAcl.PublicRead, TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp2.StatusCode);
+            //This is the default owner ACL
+            S3Grant ownerGrant = Assert.Single(acl.Grants, grant => grant.Permission == S3Permission.FullControl);
+            AssertOwnerGrant(acl.Owner, ownerGrant);
+            Assert.Null(ownerGrant.Grantee.DisplayName);
 
-        GetObjectAclResponse getResp2 = await client.GetObjectAclAsync(bucket, objectKey, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, getResp2.StatusCode);
-        Assert.Equal(2, getResp2.Grants.Count);
-        S3Identity? owner = getResp2.Owner;
-        Assert.NotNull(owner);
-        Assert.NotNull(owner.Id);
+            S3Grant publicGrant = Assert.Single(acl.Grants, grant => grant.Permission == S3Permission.Read);
+            Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", publicGrant.Grantee.Uri);
+            Assert.Equal(S3Permission.Read, publicGrant.Permission);
+            Assert.Equal(GrantType.Group, publicGrant.Grantee.Type);
+        });
+    }
 
-        if (provider == S3Provider.AmazonS3)
-            Assert.Null(owner.Name);
-        else if (provider == S3Provider.GoogleCloudStorage)
+    [Theory]
+    [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
+    public async Task DefaultAcl(S3Provider _, string bucket, ISimpleClient client)
+    {
+        string key = nameof(DefaultAcl) + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectAsync(bucket, key, null, token: TestContext.Current.CancellationToken), async _ =>
         {
-            Assert.NotNull(owner.Name);
-            Assert.Equal(TestConstants.TestEmail, owner.Name, StringComparer.OrdinalIgnoreCase);
-        }
-
-        //This is the default owner ACL
-        S3Grant first = getResp2.Grants[0];
-
-        if (provider == S3Provider.AmazonS3)
-        {
-            Assert.NotNull(first.Grantee.Id);
-            Assert.Equal(GrantType.CanonicalUser, first.Grantee.Type);
-        }
-        else if (provider == S3Provider.GoogleCloudStorage)
-        {
-            Assert.Null(first.Grantee.Id);
-            Assert.Equal(GrantType.AmazonCustomerByEmail, first.Grantee.Type);
-        }
-
-        Assert.Null(first.Grantee.DisplayName);
-
-        Assert.Equal(S3Permission.FullControl, first.Permission);
-
-        //Next 2 ACLs should be READ + WRITE for AllUsers
-        S3Grant second = getResp2.Grants[1];
-        Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", second.Grantee.Uri);
-        Assert.Equal(S3Permission.Read, second.Permission);
-        Assert.Equal(GrantType.Group, second.Grantee.Type);
-
-        //if (provider == S3Provider.AmazonS3)
-        //{
-        //    S3Grant third = getResp2.Grants[2];
-        //    Assert.Equal("http://acs.amazonaws.com/groups/global/AllUsers", third.Grantee.Uri);
-        //    Assert.Equal(S3Permission.Write, third.Permission);
-        //    Assert.Equal(GrantType.Group, third.Grantee.Type);
-        //}
+            GetObjectAclResponse response = await client.GetObjectAclAsync(bucket, key, token: TestContext.Current.CancellationToken);
+            Assert.Equal(200, response.StatusCode);
+            S3Grant grant = Assert.Single(response.Grants);
+            AssertOwnerGrant(response.Owner, grant);
+            Assert.Null(grant.Grantee.DisplayName);
+        });
     }
 }

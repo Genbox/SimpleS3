@@ -16,11 +16,19 @@ namespace Genbox.ProviderTests.Objects;
 public class ObjectEncryptionTests : TestBase
 {
     [Theory]
-    [MultipleProvidersWithData(S3Provider.AmazonS3, 0, 1, 2, 3, 4, 5)]
-    public async Task ExplicitBucketKeySelectionAppliesToWriteShapes(S3Provider _, string bucket, ISimpleClient client, int testCase)
+    [MultipleProvidersWithData(S3Provider.AmazonS3, false, true)]
+    public async Task PutObjectBucketKey(S3Provider _, string bucket, ISimpleClient client, bool enabled) => await WriteWithBucketKeyAsync(bucket, client, WriteOperation.Put, enabled);
+
+    [Theory]
+    [MultipleProvidersWithData(S3Provider.AmazonS3, false, true)]
+    public async Task CopyObjectBucketKey(S3Provider _, string bucket, ISimpleClient client, bool enabled) => await WriteWithBucketKeyAsync(bucket, client, WriteOperation.Copy, enabled);
+
+    [Theory]
+    [MultipleProvidersWithData(S3Provider.AmazonS3, false, true)]
+    public async Task MultipartBucketKey(S3Provider _, string bucket, ISimpleClient client, bool enabled) => await WriteWithBucketKeyAsync(bucket, client, WriteOperation.Multipart, enabled);
+
+    private static async Task WriteWithBucketKeyAsync(string bucket, ISimpleClient client, WriteOperation operation, bool enabled)
     {
-        int shape = testCase / 2;
-        bool enabled = testCase % 2 == 1;
         CancellationToken token = TestContext.Current.CancellationToken;
         string prefix = "explicit-bucket-key-" + Guid.NewGuid().ToString("N");
         string sourceKey = prefix + "-source";
@@ -34,7 +42,7 @@ public class ObjectEncryptionTests : TestBase
         {
             bool? writeBucketKey;
 
-            if (shape == 0)
+            if (operation == WriteOperation.Put)
             {
                 PutObjectResponse response = await client.PutObjectStringAsync(bucket, destinationKey, payload, config: request =>
                 {
@@ -45,7 +53,7 @@ public class ObjectEncryptionTests : TestBase
                 Assert.True(response.IsSuccess, response.Error?.Message);
                 writeBucketKey = response.BucketKeyEnabled;
             }
-            else if (shape == 1)
+            else if (operation == WriteOperation.Copy)
             {
                 PutObjectResponse source = await client.PutObjectStringAsync(bucket, sourceKey, payload, token: token);
                 Assert.True(source.IsSuccess, source.Error?.Message);
@@ -107,7 +115,13 @@ public class ObjectEncryptionTests : TestBase
 
     [Theory]
     [SingleProvider(S3Provider.AmazonS3)]
-    public async Task UpdateObjectEncryption(S3Provider provider, string _, ISimpleClient client)
+    public async Task UpdateObjectEncryptionRoundTrip(S3Provider provider, string _, ISimpleClient client) => await UpdateEncryptionAsync(provider, client, null);
+
+    [Theory]
+    [MultipleProvidersWithData(S3Provider.AmazonS3, false, true)]
+    public async Task UpdateObjectEncryptionBucketKey(S3Provider provider, string _, ISimpleClient client, bool enabled) => await UpdateEncryptionAsync(provider, client, enabled);
+
+    private static async Task UpdateEncryptionAsync(S3Provider provider, ISimpleClient client, bool? bucketKeyEnabled)
     {
         const string kmsKeyId = "alias/aws/s3";
         await CreateTempBucketAsync(provider, client, async tempBucket =>
@@ -123,38 +137,42 @@ public class ObjectEncryptionTests : TestBase
             Assert.NotNull(putResp.SseKmsKeyId);
             Assert.StartsWith("arn:", putResp.SseKmsKeyId, StringComparison.Ordinal);
 
-            foreach (bool? bucketKeyEnabled in new bool?[] { true, false, null })
+            PutObjectResponse source = await client.PutObjectStringAsync(tempBucket, objectKey, "encryption-round-trip", config: request => request.SseAlgorithm = SseAlgorithm.Aes256, token: TestContext.Current.CancellationToken);
+            Assert.True(source.IsSuccess);
+            Assert.Equal(SseAlgorithm.Aes256, source.SseAlgorithm);
+            UpdateObjectEncryptionResponse updateResp = await client.UpdateObjectEncryptionAsync(tempBucket, objectKey, putResp.SseKmsKeyId, request => request.BucketKeyEnabled = bucketKeyEnabled, TestContext.Current.CancellationToken);
+            Assert.True(updateResp.IsSuccess, updateResp.Error?.Message);
+
+            HeadObjectResponse headResp = await client.HeadObjectAsync(tempBucket, objectKey, token: TestContext.Current.CancellationToken);
+            Assert.Equal(200, headResp.StatusCode);
+            Assert.Equal(SseAlgorithm.AwsKms, headResp.SseAlgorithm);
+            Assert.Equal(putResp.SseKmsKeyId, headResp.SseKmsKeyId);
+            Assert.Equal(source.ETag, headResp.ETag);
+            using HttpClient http = new HttpClient();
+            string signedHead = client.SignRequest(new HeadObjectRequest(tempBucket, objectKey), TimeSpan.FromMinutes(2));
+            using HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Head, signedHead);
+            using HttpResponseMessage rawHead = await http.SendAsync(message, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.OK, rawHead.StatusCode);
+            bool hasBucketKey = rawHead.Headers.TryGetValues("x-amz-server-side-encryption-bucket-key-enabled", out IEnumerable<string>? bucketKeyValues);
+
+            if (bucketKeyEnabled == true)
             {
-                PutObjectResponse source = await client.PutObjectStringAsync(tempBucket, objectKey, "encryption-round-trip", config: request => request.SseAlgorithm = SseAlgorithm.Aes256, token: TestContext.Current.CancellationToken);
-                Assert.True(source.IsSuccess);
-                Assert.Equal(SseAlgorithm.Aes256, source.SseAlgorithm);
-                UpdateObjectEncryptionResponse updateResp = await client.UpdateObjectEncryptionAsync(tempBucket, objectKey, putResp.SseKmsKeyId, request => request.BucketKeyEnabled = bucketKeyEnabled, TestContext.Current.CancellationToken);
-                Assert.True(updateResp.IsSuccess, updateResp.Error?.Message);
-
-                HeadObjectResponse headResp = await client.HeadObjectAsync(tempBucket, objectKey, token: TestContext.Current.CancellationToken);
-                Assert.Equal(200, headResp.StatusCode);
-                Assert.Equal(SseAlgorithm.AwsKms, headResp.SseAlgorithm);
-                Assert.Equal(putResp.SseKmsKeyId, headResp.SseKmsKeyId);
-                Assert.Equal(source.ETag, headResp.ETag);
-                using HttpClient http = new HttpClient();
-                string signedHead = client.SignRequest(new HeadObjectRequest(tempBucket, objectKey), TimeSpan.FromMinutes(2));
-                using HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Head, signedHead);
-                using HttpResponseMessage rawHead = await http.SendAsync(message, TestContext.Current.CancellationToken);
-                Assert.Equal(HttpStatusCode.OK, rawHead.StatusCode);
-                bool hasBucketKey = rawHead.Headers.TryGetValues("x-amz-server-side-encryption-bucket-key-enabled", out IEnumerable<string>? bucketKeyValues);
-
-                if (bucketKeyEnabled == true)
-                {
-                    Assert.True(hasBucketKey);
-                    Assert.Equal("true", Assert.Single(bucketKeyValues!));
-                }
-                else if (hasBucketKey)
-                    Assert.Equal("false", Assert.Single(bucketKeyValues!));
-
-                using GetObjectResponse content = await client.GetObjectAsync(tempBucket, objectKey, token: TestContext.Current.CancellationToken);
-                Assert.True(content.IsSuccess);
-                Assert.Equal("encryption-round-trip", await content.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
+                Assert.True(hasBucketKey);
+                Assert.Equal("true", Assert.Single(bucketKeyValues!));
             }
+            else if (hasBucketKey)
+                Assert.Equal("false", Assert.Single(bucketKeyValues!));
+
+            using GetObjectResponse content = await client.GetObjectAsync(tempBucket, objectKey, token: TestContext.Current.CancellationToken);
+            Assert.True(content.IsSuccess);
+            Assert.Equal("encryption-round-trip", await content.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
         });
+    }
+
+    private enum WriteOperation
+    {
+        Put,
+        Copy,
+        Multipart
     }
 }
