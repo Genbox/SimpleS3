@@ -10,19 +10,17 @@ public class CopyObjectTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.GoogleCloudStorage)]
-    public async Task CopyObject(S3Provider _, string bucket, ISimpleClient client)
+    public async Task CopyObjectRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
         //Upload an object to copy
-        const string sourceKey = nameof(CopyObject);
+        const string sourceKey = nameof(CopyObjectRoundTrip);
         const string destinationKey = sourceKey + "2";
 
-        await client.PutObjectStringAsync(bucket, sourceKey, "test", token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, (await client.PutObjectStringAsync(bucket, sourceKey, "test", token: TestContext.Current.CancellationToken)).StatusCode);
 
         CopyObjectResponse copyResp = await client.CopyObjectAsync(bucket, sourceKey, bucket, destinationKey, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, copyResp.StatusCode);
 
-        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, destinationKey, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, getResp.StatusCode);
-        Assert.Equal("test", await getResp.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
-    }
+        await AssertObjectContentAsync(client, bucket, destinationKey, "test"u8.ToArray());
+    });
 }

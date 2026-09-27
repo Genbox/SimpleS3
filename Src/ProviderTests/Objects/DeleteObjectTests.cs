@@ -9,15 +9,14 @@ public class DeleteObjectTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task DeleteObject(S3Provider provider, string bucket, ISimpleClient client)
+    public async Task DeleteObjectRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(DeleteObject), null, token: TestContext.Current.CancellationToken);
+        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(DeleteObjectRoundTrip), null, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
-        DeleteObjectResponse delREsp = await client.DeleteObjectAsync(bucket, nameof(DeleteObject), token: TestContext.Current.CancellationToken);
+        DeleteObjectResponse delREsp = await client.DeleteObjectAsync(bucket, nameof(DeleteObjectRoundTrip), token: TestContext.Current.CancellationToken);
         Assert.Equal(204, delREsp.StatusCode);
 
-        if (provider == S3Provider.AmazonS3)
-            Assert.True(delREsp.IsDeleteMarker);
-    }
+        Assert.Equal(404, (await client.HeadObjectAsync(bucket, nameof(DeleteObjectRoundTrip), token: TestContext.Current.CancellationToken)).StatusCode);
+    });
 }
