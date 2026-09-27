@@ -108,12 +108,25 @@ public static class UtilityHelper
 
     private static async Task<int> EmptyBucketAsync(S3Provider provider, ISimpleClient client, string bucket, bool useUrlEncodedListings, List<string> failures, CancellationToken token)
     {
+        BucketDeletionOptions options = new BucketDeletionOptions(false, true);
+
+        if (provider == S3Provider.AmazonS3)
+        {
+            GetBucketVersioningResponse versioning = await client.GetBucketVersioningAsync(bucket, token: token);
+            if (!versioning.IsSuccess)
+                throw new InvalidOperationException(versioning.Error?.Message ?? "Unable to read bucket versioning before cleanup.");
+            GetBucketLockConfigurationResponse objectLock = await client.GetBucketLockConfigurationAsync(bucket, token: token);
+            if (!objectLock.IsSuccess && objectLock.StatusCode != 404)
+                throw new InvalidOperationException(objectLock.Error?.Message ?? "Unable to read bucket Object Lock before cleanup.");
+            options = new BucketDeletionOptions(!versioning.Status, objectLock.IsSuccess && objectLock.Enabled);
+        }
+
         Dictionary<(string? ObjectKey, string? VersionId), S3DeleteError> errors = new Dictionary<(string? ObjectKey, string? VersionId), S3DeleteError>();
         int operationErrors = await AbortAllMultipartUploadsAsync(client, bucket, useUrlEncodedListings, failures, token);
 
         if (provider != S3Provider.GoogleCloudStorage)
         {
-            await foreach (S3DeleteError error in DeleteAllObjectVersionsAsync(provider, client, bucket, useUrlEncodedListings, token).WithCancellation(token))
+            await foreach (S3DeleteError error in DeleteAllObjectVersionsAsync(provider, client, bucket, useUrlEncodedListings, options, token).WithCancellation(token))
                 errors[(error.ObjectKey, error.VersionId)] = error;
         }
 
@@ -123,7 +136,7 @@ public static class UtilityHelper
         {
             DeleteObjectResponse deleteResponse = provider == S3Provider.GoogleCloudStorage
                 ? await client.DeleteObjectAsync(bucket, obj.ObjectKey, token: token)
-                : await DeleteObjectVersionAsync(client, bucket, obj.ObjectKey, null, token);
+                : await DeleteObjectVersionAsync(client, bucket, obj.ObjectKey, null, options, token);
 
             if (!deleteResponse.IsSuccess && deleteResponse.StatusCode != 404)
                 errors[(obj.ObjectKey, null)] = new S3DeleteError(obj.ObjectKey, deleteResponse.Error?.Code ?? ErrorCode.Unknown, deleteResponse.Error?.Message ?? "Unable to delete object.", null);
@@ -133,7 +146,7 @@ public static class UtilityHelper
 
         if (provider != S3Provider.GoogleCloudStorage)
         {
-            await foreach (S3DeleteError error in DeleteAllObjectVersionsAsync(provider, client, bucket, useUrlEncodedListings, token).WithCancellation(token))
+            await foreach (S3DeleteError error in DeleteAllObjectVersionsAsync(provider, client, bucket, useUrlEncodedListings, options, token).WithCancellation(token))
                 errors[(error.ObjectKey, error.VersionId)] = error;
         }
 
@@ -149,7 +162,7 @@ public static class UtilityHelper
 
                 try
                 {
-                    remaining = await TryForceDeleteObjectVersionAsync(client, bucket, error, token);
+                    remaining = await TryForceDeleteObjectVersionAsync(client, bucket, error, options, token);
                 }
                 catch (OperationCanceledException) when (token.IsCancellationRequested)
                 {
@@ -174,7 +187,7 @@ public static class UtilityHelper
             foreach (S3DeleteInfo info in residue)
             {
                 S3DeleteError residualError = new S3DeleteError(info.ObjectKey, ErrorCode.Unknown, "Object version remained after batch deletion.", info.VersionId);
-                S3DeleteError? remaining = await TryForceDeleteObjectVersionAsync(client, bucket, residualError, token);
+                S3DeleteError? remaining = await TryForceDeleteObjectVersionAsync(client, bucket, residualError, options, token);
 
                 if (remaining == null)
                     errors.Remove((info.ObjectKey, info.VersionId));
@@ -232,9 +245,9 @@ public static class UtilityHelper
         }
     }
 
-    private static async Task<S3DeleteError?> TryForceDeleteObjectVersionAsync(ISimpleClient client, string bucket, S3DeleteError error, CancellationToken token)
+    private static async Task<S3DeleteError?> TryForceDeleteObjectVersionAsync(ISimpleClient client, string bucket, S3DeleteError error, BucketDeletionOptions options, CancellationToken token)
     {
-        DeleteObjectResponse deleteResponse = await DeleteObjectVersionAsync(client, bucket, error.ObjectKey!, error.VersionId, token);
+        DeleteObjectResponse deleteResponse = await DeleteObjectVersionAsync(client, bucket, error.ObjectKey!, error.VersionId, options, token);
 
         if (deleteResponse.IsSuccess || deleteResponse.StatusCode == 404)
             return null;
@@ -243,7 +256,7 @@ public static class UtilityHelper
 
         if (legalHoldResponse.IsSuccess)
         {
-            deleteResponse = await DeleteObjectVersionAsync(client, bucket, error.ObjectKey!, error.VersionId, token);
+            deleteResponse = await DeleteObjectVersionAsync(client, bucket, error.ObjectKey!, error.VersionId, options, token);
 
             if (deleteResponse.IsSuccess || deleteResponse.StatusCode == 404)
                 return null;
@@ -258,11 +271,12 @@ public static class UtilityHelper
         return new S3DeleteError(error.ObjectKey, deleteResponse.Error?.Code ?? error.Code, message + retention, error.VersionId);
     }
 
-    private static Task<DeleteObjectResponse> DeleteObjectVersionAsync(ISimpleClient client, string bucket, string objectKey, string? versionId, CancellationToken token) =>
+    private static Task<DeleteObjectResponse> DeleteObjectVersionAsync(ISimpleClient client, string bucket, string objectKey, string? versionId, BucketDeletionOptions options, CancellationToken token) =>
         client.DeleteObjectAsync(bucket, objectKey, request =>
         {
-            request.VersionId = versionId;
-            request.BypassGovernanceRetention = true;
+            bool unversionedObject = options.OmitNullVersionId && (versionId == null || versionId == "null");
+            request.VersionId = unversionedObject ? null : versionId;
+            request.BypassGovernanceRetention = !unversionedObject && options.BypassGovernanceRetention ? true : null;
         }, token);
 
     private static async Task<List<S3DeleteInfo>> ListRemainingObjectVersionsAsync(ISimpleClient client, string bucket, bool useUrlEncodedListings, CancellationToken token)
@@ -383,7 +397,7 @@ public static class UtilityHelper
         return (lastFailure, deferred);
     }
 
-    private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(S3Provider provider, ISimpleClient client, string bucket, bool useUrlEncodedListings, [EnumeratorCancellation]CancellationToken token = default)
+    private static async IAsyncEnumerable<S3DeleteError> DeleteAllObjectVersionsAsync(S3Provider provider, ISimpleClient client, string bucket, bool useUrlEncodedListings, BucketDeletionOptions options, [EnumeratorCancellation]CancellationToken token = default)
     {
         HashSet<(string Key, string? Version)> seenMarkers = [];
         Task<ListObjectVersionsResponse>? responseTask = null;
@@ -445,11 +459,11 @@ public static class UtilityHelper
                 }
                 else
                 {
-                    S3DeleteInfo[] batchDelete = delete.Where(info => CanSerializeInXml(info.ObjectKey)).ToArray();
+                    S3DeleteInfo[] batchDelete = delete.Where(info => CanSerializeInXml(info.ObjectKey) && !(options.OmitNullVersionId && (info.VersionId == null || info.VersionId == "null"))).ToArray();
 
-                    foreach (S3DeleteInfo info in delete.Where(info => !CanSerializeInXml(info.ObjectKey)))
+                    foreach (S3DeleteInfo info in delete.Where(info => !CanSerializeInXml(info.ObjectKey) || (options.OmitNullVersionId && (info.VersionId == null || info.VersionId == "null"))))
                     {
-                        DeleteObjectResponse deleteResponse = await DeleteObjectVersionAsync(client, bucket, info.ObjectKey, info.VersionId, prefetchCancellation.Token);
+                        DeleteObjectResponse deleteResponse = await DeleteObjectVersionAsync(client, bucket, info.ObjectKey, info.VersionId, options, prefetchCancellation.Token);
 
                         if (!deleteResponse.IsSuccess && deleteResponse.StatusCode != 404)
                             yield return new S3DeleteError(info.ObjectKey, deleteResponse.Error?.Code ?? ErrorCode.Unknown, deleteResponse.Error?.Message ?? "Unable to delete object.", info.VersionId);
@@ -461,7 +475,7 @@ public static class UtilityHelper
                     DeleteObjectsResponse multiDelResponse = await client.DeleteObjectsAsync(bucket, batchDelete, req =>
                     {
                         req.Quiet = false;
-                        req.BypassGovernanceRetention = true;
+                        req.BypassGovernanceRetention = options.BypassGovernanceRetention ? true : null;
                     }, prefetchCancellation.Token);
 
                     if (!multiDelResponse.IsSuccess)
@@ -517,4 +531,6 @@ public static class UtilityHelper
             // The abandoned prefetch is canceled and observed so it cannot surface later as an unobserved exception.
         }
     }
+
+    private readonly record struct BucketDeletionOptions(bool OmitNullVersionId, bool BypassGovernanceRetention);
 }
