@@ -279,11 +279,23 @@ public class ListingChecksumMetadataTests : TestBase
 
         try
         {
-            PutObjectResponse put = await client.PutObjectDataAsync(bucket, key, data, request =>
+            PutObjectResponse put;
+
+            // Backblaze occasionally returns HTTP 500 for checksummed PUTs; retry the same key and payload so a transient upload error does not mask the listing assertion.
+            for (int attempt = 0;; attempt++)
             {
-                request.ChecksumAlgorithm = algorithm;
-                request.Checksum = checksum;
-            }, token);
+                put = await client.PutObjectDataAsync(bucket, key, data, request =>
+                {
+                    request.ChecksumAlgorithm = algorithm;
+                    request.Checksum = checksum;
+                }, token);
+
+                if (provider != S3Provider.BackBlazeB2 || put.StatusCode != 500 || attempt == 2)
+                    break;
+
+                await Task.Delay(TimeSpan.FromSeconds(1 << attempt), token);
+            }
+
             Assert.True(put.IsSuccess, $"PUT: {put.StatusCode} {put.Error?.Code}");
             created = true;
             version = put.VersionId;
