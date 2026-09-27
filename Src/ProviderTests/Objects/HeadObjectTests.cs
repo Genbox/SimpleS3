@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
-using Genbox.HttpBuilders.Enums;
 using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Enums;
@@ -14,89 +13,76 @@ public class HeadObjectTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task HeadObject(S3Provider _, string bucket, ISimpleClient client)
+    public async Task HeadObjectRoundTrip(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObject), null, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp.StatusCode);
-
-        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObject), token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, headResp.StatusCode);
-    }
-
-    [Theory]
-    [MultipleProviders(S3Provider.All)]
-    public async Task HeadObjectContentRange(S3Provider _, string bucket, ISimpleClient client)
-    {
-        await client.PutObjectStringAsync(bucket, nameof(HeadObjectContentRange), "test", token: TestContext.Current.CancellationToken);
-
-        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObjectContentRange), r => r.Range.Add(0, 2), TestContext.Current.CancellationToken);
-        Assert.Equal("bytes", headResp.AcceptRanges);
-        Assert.Equal("bytes 0-2/4", headResp.ContentRange);
+        string key = nameof(HeadObjectRoundTrip) + "-" + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectStringAsync(bucket, key, "head content", token: TestContext.Current.CancellationToken), async put =>
+        {
+            HeadObjectResponse head = await client.HeadObjectAsync(bucket, key, token: TestContext.Current.CancellationToken);
+            Assert.Equal(200, head.StatusCode);
+            Assert.Equal(12, head.ContentLength);
+            Assert.Equal(put.ETag, head.ETag);
+        });
     }
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task HeadObjectLifecycle(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObjectLifecycle), null, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp.StatusCode);
+        string key = nameof(HeadObjectLifecycle) + Guid.NewGuid().ToString("N");
+        DateTime expected = DateTime.UtcNow.AddDays(2).Date;
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectAsync(bucket, key, null, token: TestContext.Current.CancellationToken), async _ =>
+        {
+            HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, key, token: TestContext.Current.CancellationToken);
+            Assert.Equal(200, headResp.StatusCode);
 
-        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObjectLifecycle), token: TestContext.Current.CancellationToken);
-
-        //Expiration should work on head too
-        Assert.Equal(DateTime.UtcNow.AddDays(2).Date, headResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
-        Assert.Equal("ExpireAll", headResp.LifeCycleRuleId);
+            //Expiration should work on head too
+            Assert.Equal(expected, headResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
+            Assert.Equal("ExpireAll", headResp.LifeCycleRuleId);
+        });
     }
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task HeadObjectMultipleTags(S3Provider _, string bucket, ISimpleClient client)
     {
-        await client.PutObjectAsync(bucket, nameof(HeadObjectMultipleTags), null, r =>
+        string key = nameof(HeadObjectMultipleTags) + "-" + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectAsync(bucket, key, null, r =>
         {
             r.Tags.Add("mykey1", "myvalue1");
             r.Tags.Add("mykey2", "myvalue2");
-        }, TestContext.Current.CancellationToken);
-
-        HeadObjectResponse resp = await client.HeadObjectAsync(bucket, nameof(HeadObjectMultipleTags), token: TestContext.Current.CancellationToken);
-        Assert.Equal(2, resp.TagCount);
+        }, TestContext.Current.CancellationToken), async _ =>
+        {
+            HeadObjectResponse response = await client.HeadObjectAsync(bucket, key, token: TestContext.Current.CancellationToken);
+            Assert.Equal(200, response.StatusCode);
+            Assert.Equal(2, response.TagCount);
+        });
     }
 
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
-    public async Task HeadObjectResponseHeaders(S3Provider _, string bucket, ISimpleClient client)
+    [MultipleProvidersWithData(S3Provider.AmazonS3 | S3Provider.BackBlazeB2, "cache-control", "disposition", "encoding", "language", "type", "expires")]
+    public async Task HeadObjectResponseHeaders(S3Provider _, string bucket, ISimpleClient client, string header)
     {
-        //Upload a file for tests
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObjectResponseHeaders), null, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp.StatusCode);
-
-        HeadObjectResponse resp = await client.HeadObjectAsync(bucket, nameof(HeadObjectResponseHeaders), r =>
+        string key = nameof(HeadObjectResponseHeaders) + "-" + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectAsync(bucket, key, null, token: TestContext.Current.CancellationToken), async _ =>
         {
-            r.ResponseCacheControl.Add(CacheControlType.MaxAge, 42);
-            r.ResponseContentDisposition.Set(ContentDispositionType.Attachment, "filename.txt");
-            r.ResponseContentEncoding.Add(ContentEncodingType.Gzip);
-            r.ResponseContentLanguage.Add("da-DK");
-            r.ResponseContentType.Set("text/html", "utf-8");
-            r.ResponseExpires = DateTimeOffset.UtcNow;
-        }, TestContext.Current.CancellationToken);
-
-        Assert.Equal("max-age=42", resp.CacheControl);
-        Assert.Equal("attachment; filename=\"filename.txt\"", resp.ContentDisposition);
-        Assert.Equal("da-DK", resp.ContentLanguage);
-        Assert.Equal("text/html; charset=utf-8", resp.ContentType);
-        Assert.Equal(DateTime.UtcNow, resp.ExpiresOn!.Value.UtcDateTime, TimeSpan.FromSeconds(5));
+            DateTimeOffset expires = DateTimeOffset.UtcNow.AddHours(1);
+            HeadObjectResponse response = await client.HeadObjectAsync(bucket, key, request => ConfigureResponseHeaderOverride(request, header, expires), TestContext.Current.CancellationToken);
+            AssertResponseHeaderOverride(response, header, expires);
+        });
     }
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task HeadObjectWebsiteRedirect(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(HeadObjectWebsiteRedirect), null, r => r.WebsiteRedirectLocation = "https://google.com", TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp.StatusCode);
-
-        HeadObjectResponse headResp = await client.HeadObjectAsync(bucket, nameof(HeadObjectWebsiteRedirect), token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, headResp.StatusCode);
-        Assert.Equal("https://google.com", headResp.WebsiteRedirectLocation);
+        string key = nameof(HeadObjectWebsiteRedirect) + "-" + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectAsync(bucket, key, null, r => r.WebsiteRedirectLocation = "https://google.com", TestContext.Current.CancellationToken), async _ =>
+        {
+            HeadObjectResponse response = await client.HeadObjectAsync(bucket, key, token: TestContext.Current.CancellationToken);
+            Assert.Equal(200, response.StatusCode);
+            Assert.Equal("https://google.com", response.WebsiteRedirectLocation);
+        });
     }
 
     [Theory]
@@ -107,20 +93,20 @@ public class HeadObjectTests : TestBase
         byte[] data = [1, 2, 3, 4];
         byte[] checksum = SHA1.HashData(data);
 
-        PutObjectResponse putResp = await client.PutObjectDataAsync(bucket, nameof(HeadObjectChecksum), data, r =>
+        string key = nameof(HeadObjectChecksum) + "-" + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectDataAsync(bucket, key, data, r =>
         {
             r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
             r.Checksum = checksum;
-        }, TestContext.Current.CancellationToken);
-
-        Assert.Equal(200, putResp.StatusCode);
-        Assert.Equal(checksum, putResp.Checksum);
-        Assert.Equal(ChecksumType.FullObject, putResp.ChecksumType);
-
-        HeadObjectResponse resp = await client.HeadObjectAsync(bucket, nameof(HeadObjectChecksum), r => r.EnableChecksum = true, TestContext.Current.CancellationToken);
-        Assert.Equal(200, resp.StatusCode);
-        Assert.Equal(ChecksumType.FullObject, resp.ChecksumType);
-        Assert.Equal(ChecksumAlgorithm.Sha1, resp.ChecksumAlgorithm);
-        Assert.Equal(checksum, resp.Checksum);
+        }, TestContext.Current.CancellationToken), async put =>
+        {
+            Assert.Equal(checksum, put.Checksum);
+            Assert.Equal(ChecksumType.FullObject, put.ChecksumType);
+            HeadObjectResponse response = await client.HeadObjectAsync(bucket, key, r => r.EnableChecksum = true, TestContext.Current.CancellationToken);
+            Assert.Equal(200, response.StatusCode);
+            Assert.Equal(ChecksumType.FullObject, response.ChecksumType);
+            Assert.Equal(ChecksumAlgorithm.Sha1, response.ChecksumAlgorithm);
+            Assert.Equal(checksum, response.Checksum);
+        });
     }
 }

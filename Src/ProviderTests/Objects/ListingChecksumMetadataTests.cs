@@ -17,7 +17,7 @@ public class ListingChecksumMetadataTests : TestBase
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2 | S3Provider.Wasabi)]
     public async Task ChecksumOverwritePreservesVersionMetadata(S3Provider provider, string bucket, ISimpleClient client)
-        => await ChecksumOverwritePreservesVersionMetadataCoreAsync(provider, bucket, client);
+        => await AssertChecksumOverwritePreservesVersionMetadataAsync(provider, bucket, client, ChecksumAlgorithm.Crc32, ChecksumAlgorithm.Crc64Nvme);
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2 | S3Provider.Wasabi)]
@@ -28,12 +28,9 @@ public class ListingChecksumMetadataTests : TestBase
         ChecksumAlgorithm.Sha256);
 
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2 | S3Provider.Wasabi)]
-    public async Task OrdinaryAndMultipartOverwritesPreserveBothChecksumVersions(S3Provider provider, string bucket, ISimpleClient client)
-    {
-        await AssertChecksumTransitionAsync(provider, bucket, client, true);
-        await AssertChecksumTransitionAsync(provider, bucket, client, false);
-    }
+    [MultipleProvidersWithData(S3Provider.AmazonS3 | S3Provider.BackBlazeB2 | S3Provider.Wasabi, true, false)]
+    public async Task OrdinaryAndMultipartOverwritesPreserveBothChecksumVersions(S3Provider provider, string bucket, ISimpleClient client, bool multipartFirst)
+        => await AssertChecksumTransitionAsync(provider, bucket, client, multipartFirst);
 
     private static async Task AssertChecksumTransitionAsync(S3Provider provider, string bucket, ISimpleClient client, bool multipartFirst)
     {
@@ -135,37 +132,27 @@ public class ListingChecksumMetadataTests : TestBase
             string multipartVersion = multipartFirst ? firstVersion : secondVersion;
             string ordinaryVersion = multipartFirst ? secondVersion : firstVersion;
 
-            if (provider == S3Provider.BackBlazeB2)
-                await Task.Delay(TimeSpan.FromSeconds(1), token);
-
-            ChecksumAlgorithm ordinaryReadAlgorithm = ordinaryAlgorithm;
-            byte[] ordinaryReadChecksum = ComputeChecksum(ordinaryReadAlgorithm, ordinaryData);
             await AssertReadAsync(client, bucket, key, null,
                 multipartFirst ? ordinaryData : multipartData,
-                multipartFirst ? ordinaryReadAlgorithm : multipartAlgorithm,
-                multipartFirst ? ordinaryReadChecksum : multipartChecksum,
+                multipartFirst ? ordinaryAlgorithm : multipartAlgorithm,
+                multipartFirst ? ordinaryChecksum : multipartChecksum,
                 token, multipartFirst ? "ordinary" : "multipart");
             await AssertReadAsync(client, bucket, key, multipartVersion, multipartData, multipartAlgorithm, multipartChecksum, token, "multipart");
-            await AssertReadAsync(client, bucket, key, ordinaryVersion, ordinaryData, ordinaryReadAlgorithm, ordinaryReadChecksum, token, "ordinary");
+            await AssertReadAsync(client, bucket, key, ordinaryVersion, ordinaryData, ordinaryAlgorithm, ordinaryChecksum, token, "ordinary");
 
-            ListObjectsResponse objects = await client.ListObjectsAsync(bucket, request => request.Prefix = key, token);
-            ListObjectVersionsResponse listedVersions = await client.ListObjectVersionsAsync(bucket, request => request.Prefix = key, token);
-            Assert.True(objects.IsSuccess, $"ListObjects: {objects.StatusCode} {objects.Error?.Code}");
-            Assert.True(listedVersions.IsSuccess, $"ListObjectVersions: {listedVersions.StatusCode} {listedVersions.Error?.Code}");
+            (ListObjectsResponse objects, ListObjectVersionsResponse listedVersions) = await ReadChecksumListingsAsync(client, bucket, key, secondVersion, 2,
+                multipartFirst ? ordinaryAlgorithm : multipartAlgorithm, token);
             S3Object current = Assert.Single(objects.Objects, item => item.ObjectKey == key);
             S3Version multipartListed = Assert.Single(listedVersions.Versions, item => item.ObjectKey == key && item.VersionId == multipartVersion);
             S3Version ordinaryListed = Assert.Single(listedVersions.Versions, item => item.ObjectKey == key && item.VersionId == ordinaryVersion);
-            ChecksumAlgorithm listedOrdinaryAlgorithm = ordinaryAlgorithm;
-            ChecksumAlgorithm listedMultipartAlgorithm = multipartAlgorithm;
-            ChecksumType ordinaryListedType = provider is S3Provider.AmazonS3 or S3Provider.BackBlazeB2 ? ChecksumType.FullObject : ChecksumType.Unknown;
-            ChecksumType multipartListedType = provider is S3Provider.AmazonS3 or S3Provider.BackBlazeB2 ? ChecksumType.FullObject : ChecksumType.Unknown;
-            Assert.Multiple(() => Assert.Contains(multipartFirst ? listedOrdinaryAlgorithm : listedMultipartAlgorithm, current.ChecksumAlgorithms),
-                () => Assert.Equal(multipartFirst ? ordinaryListedType : multipartListedType, current.ChecksumType),
-                () => Assert.Contains(listedMultipartAlgorithm, multipartListed.ChecksumAlgorithms),
-                () => Assert.Equal(multipartListedType, multipartListed.ChecksumType),
+            ChecksumType listedType = provider is S3Provider.AmazonS3 or S3Provider.BackBlazeB2 ? ChecksumType.FullObject : ChecksumType.Unknown;
+            Assert.Multiple(() => Assert.Contains(multipartFirst ? ordinaryAlgorithm : multipartAlgorithm, current.ChecksumAlgorithms),
+                () => Assert.Equal(listedType, current.ChecksumType),
+                () => Assert.Contains(multipartAlgorithm, multipartListed.ChecksumAlgorithms),
+                () => Assert.Equal(listedType, multipartListed.ChecksumType),
                 () => Assert.Equal(!multipartFirst, multipartListed.IsLatest),
-                () => Assert.Contains(listedOrdinaryAlgorithm, ordinaryListed.ChecksumAlgorithms),
-                () => Assert.Equal(ordinaryListedType, ordinaryListed.ChecksumType),
+                () => Assert.Contains(ordinaryAlgorithm, ordinaryListed.ChecksumAlgorithms),
+                () => Assert.Equal(listedType, ordinaryListed.ChecksumType),
                 () => Assert.Equal(multipartFirst, ordinaryListed.IsLatest));
         }
         finally
@@ -182,17 +169,6 @@ public class ListingChecksumMetadataTests : TestBase
             Assert.True(pending.IsSuccess);
             Assert.DoesNotContain(pending.Uploads, upload => upload.ObjectKey == key);
         }
-    }
-
-    private static async Task ChecksumOverwritePreservesVersionMetadataCoreAsync(S3Provider provider, string bucket, ISimpleClient client)
-    {
-        const ChecksumAlgorithm firstAlgorithm = ChecksumAlgorithm.Crc32;
-        const ChecksumAlgorithm secondAlgorithm = ChecksumAlgorithm.Crc64Nvme;
-        await AssertChecksumOverwritePreservesVersionMetadataAsync(provider,
-            bucket,
-            client,
-            firstAlgorithm,
-            secondAlgorithm);
     }
 
     private static async Task AssertChecksumOverwritePreservesVersionMetadataAsync(S3Provider provider,
@@ -230,29 +206,21 @@ public class ListingChecksumMetadataTests : TestBase
             Assert.NotEqual(first.VersionId, second.VersionId, StringComparer.Ordinal);
             versions.Add(second.VersionId);
 
-            if (provider == S3Provider.BackBlazeB2)
-                await Task.Delay(TimeSpan.FromSeconds(1), token);
-
             await AssertReadAsync(client, bucket, key, null, secondData, secondAlgorithm, secondChecksum, token);
             await AssertReadAsync(client, bucket, key, first.VersionId, firstData, firstAlgorithm, firstChecksum, token);
             await AssertReadAsync(client, bucket, key, second.VersionId, secondData, secondAlgorithm, secondChecksum, token);
 
-            ListObjectsResponse objects = await client.ListObjectsAsync(bucket, request => request.Prefix = key, token);
-            ListObjectVersionsResponse listedVersions = await client.ListObjectVersionsAsync(bucket, request => request.Prefix = key, token);
-            Assert.True(objects.IsSuccess, $"ListObjects: {objects.StatusCode} {objects.Error?.Code}");
-            Assert.True(listedVersions.IsSuccess, $"ListObjectVersions: {listedVersions.StatusCode} {listedVersions.Error?.Code}");
+            (ListObjectsResponse objects, ListObjectVersionsResponse listedVersions) = await ReadChecksumListingsAsync(client, bucket, key, second.VersionId, 2, secondAlgorithm, token);
             S3Object current = Assert.Single(objects.Objects, item => item.ObjectKey == key);
             S3Version firstListed = Assert.Single(listedVersions.Versions, item => item.ObjectKey == key && item.VersionId == first.VersionId);
             S3Version secondListed = Assert.Single(listedVersions.Versions, item => item.ObjectKey == key && item.VersionId == second.VersionId);
-            ChecksumAlgorithm firstListedAlgorithm = firstAlgorithm;
-            ChecksumAlgorithm secondListedAlgorithm = secondAlgorithm;
             ChecksumType listedType = provider is S3Provider.AmazonS3 or S3Provider.BackBlazeB2 ? ChecksumType.FullObject : ChecksumType.Unknown;
-            Assert.Multiple(() => Assert.Contains(secondListedAlgorithm, current.ChecksumAlgorithms),
+            Assert.Multiple(() => Assert.Contains(secondAlgorithm, current.ChecksumAlgorithms),
                 () => Assert.Equal(listedType, current.ChecksumType),
-                () => Assert.Contains(firstListedAlgorithm, firstListed.ChecksumAlgorithms),
+                () => Assert.Contains(firstAlgorithm, firstListed.ChecksumAlgorithms),
                 () => Assert.Equal(listedType, firstListed.ChecksumType),
                 () => Assert.False(firstListed.IsLatest),
-                () => Assert.Contains(secondListedAlgorithm, secondListed.ChecksumAlgorithms),
+                () => Assert.Contains(secondAlgorithm, secondListed.ChecksumAlgorithms),
                 () => Assert.Equal(listedType, secondListed.ChecksumType),
                 () => Assert.True(secondListed.IsLatest));
         }
@@ -300,20 +268,13 @@ public class ListingChecksumMetadataTests : TestBase
             created = true;
             version = put.VersionId;
 
-            if (provider == S3Provider.BackBlazeB2)
-                await Task.Delay(TimeSpan.FromSeconds(1), token);
-
-            ListObjectsResponse objects = await client.ListObjectsAsync(bucket, request => request.Prefix = key, token);
-            ListObjectVersionsResponse versions = await client.ListObjectVersionsAsync(bucket, request => request.Prefix = key, token);
-            Assert.True(objects.IsSuccess, $"ListObjects: {objects.StatusCode} {objects.Error?.Code}");
-            Assert.True(versions.IsSuccess, $"ListObjectVersions: {versions.StatusCode} {versions.Error?.Code}");
+            (ListObjectsResponse objects, ListObjectVersionsResponse versions) = await ReadChecksumListingsAsync(client, bucket, key, version, 1, algorithm, token);
             S3Object listedObject = Assert.Single(objects.Objects, item => item.ObjectKey == key);
             S3Version listedVersion = Assert.Single(versions.Versions, item => item.ObjectKey == key && (version == null || item.VersionId == version));
-            ChecksumAlgorithm expectedAlgorithm = algorithm;
             ChecksumType expectedType = provider is S3Provider.AmazonS3 or S3Provider.BackBlazeB2 ? ChecksumType.FullObject : ChecksumType.Unknown;
-            Assert.Multiple(() => Assert.Contains(expectedAlgorithm, listedObject.ChecksumAlgorithms),
+            Assert.Multiple(() => Assert.Contains(algorithm, listedObject.ChecksumAlgorithms),
                 () => Assert.Equal(expectedType, listedObject.ChecksumType),
-                () => Assert.Contains(expectedAlgorithm, listedVersion.ChecksumAlgorithms),
+                () => Assert.Contains(algorithm, listedVersion.ChecksumAlgorithms),
                 () => Assert.Equal(expectedType, listedVersion.ChecksumType));
         }
         finally
@@ -326,66 +287,69 @@ public class ListingChecksumMetadataTests : TestBase
     }
 
     [Theory]
-    [MultipleProvidersWithData(S3Provider.AmazonS3 | S3Provider.BackBlazeB2 | S3Provider.Wasabi, ChecksumAlgorithm.Md5, ChecksumAlgorithm.Sha512, ChecksumAlgorithm.XxHash64, ChecksumAlgorithm.XxHash3, ChecksumAlgorithm.XxHash128)]
-    public async Task ExtendedChecksumMetadataInObjectListings(S3Provider provider, string bucket, ISimpleClient client, ChecksumAlgorithm algorithm)
+    [MultipleProvidersWithData(S3Provider.AmazonS3, ChecksumAlgorithm.Md5, ChecksumAlgorithm.Sha512, ChecksumAlgorithm.XxHash64, ChecksumAlgorithm.XxHash3, ChecksumAlgorithm.XxHash128)]
+    public async Task ExtendedChecksumMetadataInObjectListings(S3Provider _, string bucket, ISimpleClient client, ChecksumAlgorithm algorithm)
     {
         byte[] data = "listing-extended-checksum-metadata"u8.ToArray();
         byte[] checksum = ComputeChecksum(algorithm, data);
         string key = "listing-extended-checksum-metadata-" + algorithm.ToString().ToLowerInvariant() + "-" + Guid.NewGuid().ToString("N");
         CancellationToken token = TestContext.Current.CancellationToken;
-        string? version = null;
-        bool created = false;
-
-        try
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectDataAsync(bucket, key, data, request =>
         {
-            PutObjectResponse put = await client.PutObjectDataAsync(bucket, key, data, request =>
-            {
-                request.ChecksumAlgorithm = algorithm;
-                request.Checksum = checksum;
-            }, token);
-
-            if (provider is S3Provider.BackBlazeB2 or S3Provider.Wasabi)
-            {
-                Assert.False(put.IsSuccess);
-                Assert.Equal(provider == S3Provider.BackBlazeB2 ? 501 : 400, put.StatusCode);
-                return;
-            }
-
-            Assert.True(put.IsSuccess, $"PUT: {put.StatusCode} {put.Error?.Code}");
-            created = true;
-            version = put.VersionId;
+            request.ChecksumAlgorithm = algorithm;
+            request.Checksum = checksum;
+        }, token), async put =>
+        {
+            string? version = put.VersionId;
             await AssertReadAsync(client, bucket, key, version, data, algorithm, checksum, token);
 
-            ListObjectsResponse objects = await client.ListObjectsAsync(bucket, request => request.Prefix = key, token);
-            ListObjectVersionsResponse versions = await client.ListObjectVersionsAsync(bucket, request => request.Prefix = key, token);
-            Assert.True(objects.IsSuccess, $"ListObjects: {objects.StatusCode} {objects.Error?.Code}");
-            Assert.True(versions.IsSuccess, $"ListObjectVersions: {versions.StatusCode} {versions.Error?.Code}");
+            (ListObjectsResponse objects, ListObjectVersionsResponse versions) = await ReadChecksumListingsAsync(client, bucket, key, version, 1, algorithm, token);
             S3Object listedObject = Assert.Single(objects.Objects, item => item.ObjectKey == key);
             S3Version listedVersion = Assert.Single(versions.Versions, item => item.ObjectKey == key && (version == null || item.VersionId == version));
-            ChecksumAlgorithm expectedAlgorithm = algorithm;
-            ChecksumType expectedType = provider == S3Provider.AmazonS3 ? ChecksumType.FullObject : ChecksumType.Unknown;
-            Assert.Multiple(() => Assert.Contains(expectedAlgorithm, listedObject.ChecksumAlgorithms),
-                () => Assert.Equal(expectedType, listedObject.ChecksumType),
-                () => Assert.Contains(expectedAlgorithm, listedVersion.ChecksumAlgorithms),
-                () => Assert.Equal(expectedType, listedVersion.ChecksumType));
-        }
-        finally
-        {
-            using CancellationTokenSource cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-            if (created)
-                Assert.Equal(204, (await client.DeleteObjectAsync(bucket, key, request => request.VersionId = version, cleanup.Token)).StatusCode);
-            Assert.Equal(404, (await client.HeadObjectAsync(bucket, key, token: cleanup.Token)).StatusCode);
-        }
+            Assert.Multiple(() => Assert.Contains(algorithm, listedObject.ChecksumAlgorithms),
+                () => Assert.Equal(ChecksumType.FullObject, listedObject.ChecksumType),
+                () => Assert.Contains(algorithm, listedVersion.ChecksumAlgorithms),
+                () => Assert.Equal(ChecksumType.FullObject, listedVersion.ChecksumType));
+        });
     }
+
+    [Theory]
+    [MultipleProvidersWithData(S3Provider.BackBlazeB2 | S3Provider.Wasabi, ChecksumAlgorithm.Md5, ChecksumAlgorithm.Sha512, ChecksumAlgorithm.XxHash64, ChecksumAlgorithm.XxHash3, ChecksumAlgorithm.XxHash128)]
+    public async Task UnsupportedExtendedChecksumRejected(S3Provider provider, string _, ISimpleClient client, ChecksumAlgorithm algorithm) => await CreateTempBucketAsync(provider, client, async bucket =>
+    {
+        byte[] data = "unsupported-checksum"u8.ToArray();
+        PutObjectResponse response = await client.PutObjectDataAsync(bucket, "checksum", data, request =>
+        {
+            request.ChecksumAlgorithm = algorithm;
+            request.Checksum = ComputeChecksum(algorithm, data);
+        }, TestContext.Current.CancellationToken);
+        Assert.Equal(provider == S3Provider.BackBlazeB2 ? 501 : 400, response.StatusCode);
+    });
+
+    private static Task<(ListObjectsResponse Objects, ListObjectVersionsResponse Versions)> ReadChecksumListingsAsync(ISimpleClient client, string bucket, string key,
+                                                                                                                      string? latestVersion, int versionCount, ChecksumAlgorithm algorithm, CancellationToken token)
+        => ReadExpectedAsync(async t =>
+            {
+                ListObjectsResponse objects = await client.ListObjectsAsync(bucket, request => request.Prefix = key, t);
+                ListObjectVersionsResponse versions = await client.ListObjectVersionsAsync(bucket, request => request.Prefix = key, t);
+                Assert.True(objects.IsSuccess, objects.Error?.Message);
+                Assert.True(versions.IsSuccess, versions.Error?.Message);
+                return (Objects: objects, Versions: versions);
+            }, result => result.Objects.Objects.Any(item => item.ObjectKey == key && item.ChecksumAlgorithms.Contains(algorithm)) &&
+                         result.Versions.Versions.Count == versionCount && result.Versions.Versions.All(item => item.ObjectKey == key) &&
+                         result.Versions.Versions.Any(item => item.ObjectKey == key && item.IsLatest && (latestVersion == null || item.VersionId == latestVersion) && item.ChecksumAlgorithms.Contains(algorithm)),
+            $"checksum listings for '{key}'", token);
 
     private static async Task AssertReadAsync(ISimpleClient client, string bucket, string key, string? version, byte[] expectedData,
                                               ChecksumAlgorithm uploadAlgorithm, byte[] uploadChecksum, CancellationToken token, string? expectedAuditMetadata = null)
     {
-        HeadObjectResponse head = await client.HeadObjectAsync(bucket, key, request =>
-        {
-            request.VersionId = version;
-            request.EnableChecksum = true;
-        }, token);
+        HeadObjectResponse head = await ReadExpectedAsync(t => client.HeadObjectAsync(bucket, key, request =>
+            {
+                request.VersionId = version;
+                request.EnableChecksum = true;
+            }, t), response => response.IsSuccess && response.ChecksumAlgorithm == uploadAlgorithm &&
+                               response.ContentLength == expectedData.Length && response.Checksum != null && response.Checksum.SequenceEqual(uploadChecksum),
+            $"checksum metadata for '{key}' version '{version ?? "latest"}'", token);
         using GetObjectResponse get = await client.GetObjectAsync(bucket, key, request =>
         {
             request.VersionId = version;
@@ -396,15 +360,12 @@ public class ListingChecksumMetadataTests : TestBase
         Assert.Equal(expectedData, await get.Content.AsDataAsync(token: token));
         if (expectedAuditMetadata != null)
             Assert.Equal(expectedAuditMetadata, get.Metadata["audit"]);
-        ChecksumAlgorithm expectedAlgorithm = uploadAlgorithm;
-        byte[] expectedChecksum = uploadChecksum;
-        ChecksumType expectedType = ChecksumType.FullObject;
-        Assert.Multiple(() => Assert.Equal(expectedAlgorithm, head.ChecksumAlgorithm),
-            () => Assert.Equal(expectedChecksum, head.Checksum),
-            () => Assert.Equal(expectedType, head.ChecksumType),
-            () => Assert.Equal(expectedAlgorithm, get.ChecksumAlgorithm),
-            () => Assert.Equal(expectedChecksum, get.Checksum),
-            () => Assert.Equal(expectedType, get.ChecksumType));
+        Assert.Multiple(() => Assert.Equal(uploadAlgorithm, head.ChecksumAlgorithm),
+            () => Assert.Equal(uploadChecksum, head.Checksum),
+            () => Assert.Equal(ChecksumType.FullObject, head.ChecksumType),
+            () => Assert.Equal(uploadAlgorithm, get.ChecksumAlgorithm),
+            () => Assert.Equal(uploadChecksum, get.Checksum),
+            () => Assert.Equal(ChecksumType.FullObject, get.ChecksumType));
     }
 
     private static byte[] ComputeChecksum(ChecksumAlgorithm algorithm, byte[] data)

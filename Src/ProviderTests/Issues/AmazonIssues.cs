@@ -1,5 +1,6 @@
 using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;
+using Genbox.SimpleS3.Core.Common.Helpers;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Extensions;
 using Genbox.SimpleS3.Core.Network.Responses.S3Types;
@@ -12,10 +13,8 @@ public class AmazonIssues : TestBase
     /// <summary>https://github.com/Genbox/SimpleS3/issues/66</summary>
     [Theory]
     [SingleProvider(S3Provider.AmazonS3)]
-    public async Task Issue66(S3Provider provider, string bucket, ISimpleClient client)
+    public async Task Issue66(S3Provider provider, string _, ISimpleClient client)
     {
-        Assert.NotEmpty(bucket);
-
         //Issue: When setting EncodingType to Url, it creates an infinite loop
         //Investigation: Amazon URL encode the NextKeyMarker value, so when returned to AWS as KeyMarker, it gets double encoded.
         //Resolution: KeyMarker is now URL decoded before sent to AWS
@@ -26,7 +25,7 @@ public class AmazonIssues : TestBase
         {
             //Create objects
             foreach (string name in names)
-                await client.PutObjectStringAsync(tempBucket, name, "", token: TestContext.Current.CancellationToken);
+                Assert.Equal(200, (await client.PutObjectStringAsync(tempBucket, name, "", token: TestContext.Current.CancellationToken)).StatusCode);
 
             //List them while forcing pagination
             List<S3Version> objects = await ToListAsync(client.ListAllObjectVersionsAsync(tempBucket, r =>
@@ -36,6 +35,7 @@ public class AmazonIssues : TestBase
             }, TestContext.Current.CancellationToken));
 
             Assert.Equal(4, objects.Count);
+            Assert.Equal(names.Select(UrlHelper.UrlPathEncode).Order(StringComparer.Ordinal), objects.Select(item => item.ObjectKey).Order(StringComparer.Ordinal));
         });
     }
 

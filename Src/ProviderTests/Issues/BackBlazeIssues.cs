@@ -11,7 +11,7 @@ public class BackBlazeIssues : TestBase
     /// <summary>https://github.com/Genbox/SimpleS3/issues/55</summary>
     [Theory]
     [SingleProvider(S3Provider.BackBlazeB2)]
-    public async Task Issue55(S3Provider _, string bucket, ISimpleClient client)
+    public async Task Issue55(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
         //Issue: When uploading 460+ KB to BackBlaze, it gives an exception with "error occured while sending the request".
         //Investigation: BackBlaze does not support the 2MB chunk size that I defaulted to in SimpleS3Config.
@@ -21,5 +21,6 @@ public class BackBlazeIssues : TestBase
         Random.Shared.NextBytes(bytes);
         PutObjectResponse resp = await client.PutObjectDataAsync(bucket, "Technical Details.pdf", bytes, token: TestContext.Current.CancellationToken);
         Assert.True(resp.IsSuccess);
-    }
+        await AssertObjectContentAsync(client, bucket, "Technical Details.pdf", bytes);
+    });
 }

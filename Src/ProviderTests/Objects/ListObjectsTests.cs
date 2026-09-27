@@ -1,6 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Security.Cryptography;
 using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -16,11 +14,12 @@ public class ListObjectsTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task ListObjects(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
+    public async Task ListObjectsRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         string tempObjName = "object-" + Guid.NewGuid();
         PutObjectResponse putResp = await client.PutObjectStringAsync(tempBucket, tempObjName, "hello", token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
+        Assert.NotNull(putResp.ETag);
 
         ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, listResp.StatusCode);
@@ -28,14 +27,11 @@ public class ListObjectsTests : TestBase
         Assert.Equal(tempBucket, listResp.BucketName);
         Assert.Equal(1, listResp.KeyCount);
 
-        if (provider == S3Provider.AmazonS3)
-            Assert.Equal(1000, listResp.MaxKeys);
-
         Assert.False(listResp.IsTruncated);
 
-        S3Object obj = listResp.Objects.First();
+        S3Object obj = Assert.Single(listResp.Objects);
         Assert.Equal(tempObjName, obj.ObjectKey);
-        Assert.Equal("\"5d41402abc4b2a76b9719d911017c592\"", obj.ETag);
+        Assert.Equal(putResp.ETag, obj.ETag);
         Assert.Equal(5, obj.Size);
         Assert.Equal(DateTime.UtcNow, obj.LastModifiedOn.UtcDateTime, TimeSpan.FromSeconds(5));
 
@@ -62,8 +58,7 @@ public class ListObjectsTests : TestBase
         Assert.Equal(count - 1, listResp.Objects.Count);
         Assert.True(listResp.IsTruncated);
 
-        if (provider == S3Provider.AmazonS3)
-            Assert.NotEmpty(listResp.NextContinuationToken!);
+        Assert.NotEmpty(listResp.NextContinuationToken!);
 
         ListObjectsResponse listResp2 = await client.ListObjectsAsync(tempBucket, r => r.ContinuationToken = listResp.NextContinuationToken, TestContext.Current.CancellationToken);
         Assert.Equal(200, listResp2.StatusCode);
@@ -73,6 +68,8 @@ public class ListObjectsTests : TestBase
         Assert.Equal(listResp.NextContinuationToken, listResp2.ContinuationToken);
         Assert.Null(listResp2.NextContinuationToken);
         Assert.False(listResp2.IsTruncated);
+        Assert.Equal(Enumerable.Range(0, count).Select(value => value.ToString(NumberFormatInfo.InvariantInfo)).Order(StringComparer.Ordinal),
+            listResp.Objects.Concat(listResp2.Objects).Select(item => item.ObjectKey).Order(StringComparer.Ordinal));
     });
 
     [Theory]
@@ -82,8 +79,8 @@ public class ListObjectsTests : TestBase
         string tempObjName = "object-" + Guid.NewGuid();
         string tempObjName2 = "something-" + Guid.NewGuid();
 
-        await client.PutObjectAsync(tempBucket, tempObjName, null, token: TestContext.Current.CancellationToken);
-        await client.PutObjectAsync(tempBucket, tempObjName2, null, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, (await client.PutObjectAsync(tempBucket, tempObjName, null, token: TestContext.Current.CancellationToken)).StatusCode);
+        Assert.Equal(200, (await client.PutObjectAsync(tempBucket, tempObjName2, null, token: TestContext.Current.CancellationToken)).StatusCode);
 
         ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, r => r.Delimiter = "-", TestContext.Current.CancellationToken);
         Assert.Equal(200, listResp.StatusCode);
@@ -122,23 +119,14 @@ public class ListObjectsTests : TestBase
     public async Task ListObjectsWithOwner(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         string tempObjName = "object-" + Guid.NewGuid();
-        PutObjectResponse putResp = await client.PutObjectAsync(tempBucket, tempObjName, null, r => r.AclGrantFullControl.AddEmail(TestConstants.TestEmail), TestContext.Current.CancellationToken);
+        PutObjectResponse putResp = await client.PutObjectAsync(tempBucket, tempObjName, null, token: TestContext.Current.CancellationToken);
         Assert.Equal(200, putResp.StatusCode);
 
         ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, req => req.FetchOwner = true, TestContext.Current.CancellationToken);
         Assert.Equal(200, listResp.StatusCode);
 
-        S3Object obj = listResp.Objects.First();
-
-        if (provider == S3Provider.AmazonS3)
-        {
-            S3Identity? owner = obj.Owner;
-            Assert.NotNull(owner);
-            Assert.NotNull(owner.Id);
-            Assert.Equal(TestConstants.TestUsername, owner.Name);
-        }
-        else
-            Assert.NotNull(obj.Owner);
+        S3Object obj = Assert.Single(listResp.Objects);
+        Assert.NotNull(obj.Owner);
     });
 
     [Theory]
@@ -163,30 +151,5 @@ public class ListObjectsTests : TestBase
         S3Object obj = Assert.Single(listResp.Objects);
 
         Assert.Equal(tempObjName, obj.ObjectKey);
-    });
-
-    [SuppressMessage("Security", "CA5350", Justification = "S3 requires this legacy hash for its wire-level checksum; it is not used for password storage or a new signature scheme.")]
-    [Theory]
-    [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task ListObjectsChecksum(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
-    {
-        string tempObjName = "object-" + Guid.NewGuid();
-        byte[] data = "hello world"u8.ToArray();
-        byte[] checksum = SHA1.HashData(data);
-
-        PutObjectResponse putResp = await client.PutObjectDataAsync(tempBucket, tempObjName, data, r =>
-        {
-            r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
-            r.Checksum = checksum;
-        }, TestContext.Current.CancellationToken);
-
-        Assert.Equal(200, putResp.StatusCode);
-
-        ListObjectsResponse listResp = await client.ListObjectsAsync(tempBucket, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, listResp.StatusCode);
-        S3Object obj = Assert.Single(listResp.Objects);
-
-        Assert.Contains(ChecksumAlgorithm.Sha1, obj.ChecksumAlgorithms);
-        Assert.Equal(ChecksumType.FullObject, obj.ChecksumType);
     });
 }

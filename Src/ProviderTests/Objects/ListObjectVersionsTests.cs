@@ -1,6 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Security.Cryptography;
 using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Common.Helpers;
@@ -17,112 +15,97 @@ public class ListObjectVersionsTests : TestBase
 {
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)] //This test returns the wrong IsLatest on Google
-    public async Task ListObjectVersions(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
+    public async Task OverwriteAndDeletePreserveVersionHistory(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         //Enable versioning on the bucket
-        await client.PutBucketVersioningAsync(tempBucket, true, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, (await client.PutBucketVersioningAsync(tempBucket, true, token: TestContext.Current.CancellationToken)).StatusCode);
 
         //Verify that we enabled bucket versioning
-        GetBucketVersioningResponse getVerResp = await client.GetBucketVersioningAsync(tempBucket, token: TestContext.Current.CancellationToken);
-        Assert.True(getVerResp.Status);
+        GetBucketVersioningResponse versioning = await client.GetBucketVersioningAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, versioning.StatusCode);
+        Assert.True(versioning.Status);
 
-        PutObjectResponse putResp1 = await client.PutObjectStringAsync(tempBucket, "1", "a", token: TestContext.Current.CancellationToken);
-        PutObjectResponse putResp2 = await client.PutObjectStringAsync(tempBucket, "2", "aa", token: TestContext.Current.CancellationToken);
-        PutObjectResponse putResp3 = await client.PutObjectStringAsync(tempBucket, "3", "aaa", token: TestContext.Current.CancellationToken);
+        PutObjectResponse first = await client.PutObjectStringAsync(tempBucket, "1", "a", token: TestContext.Current.CancellationToken);
+        PutObjectResponse second = await client.PutObjectStringAsync(tempBucket, "2", "aa", token: TestContext.Current.CancellationToken);
+        PutObjectResponse originalThird = await client.PutObjectStringAsync(tempBucket, "3", "aaa", token: TestContext.Current.CancellationToken);
 
-        DeleteObjectResponse putResp4 = await client.DeleteObjectAsync(tempBucket, "2", token: TestContext.Current.CancellationToken); //Delete object 2
-        PutObjectResponse putResp5 = await client.PutObjectStringAsync(tempBucket, "3", "aaaa", token: TestContext.Current.CancellationToken); //Overwrite object 3
+        DeleteObjectResponse deletedSecond = await client.DeleteObjectAsync(tempBucket, "2", token: TestContext.Current.CancellationToken);
+        PutObjectResponse replacementThird = await client.PutObjectStringAsync(tempBucket, "3", "aaaa", token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, first.StatusCode);
+        Assert.Equal(200, second.StatusCode);
+        Assert.Equal(200, originalThird.StatusCode);
+        Assert.Equal(204, deletedSecond.StatusCode);
+        Assert.Equal(200, replacementThird.StatusCode);
 
-        ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(tempBucket, token: TestContext.Current.CancellationToken);
-        Assert.True(listResp.IsSuccess);
-        Assert.Equal(4, listResp.Versions.Count);
+        ListObjectVersionsResponse listing = await client.ListObjectVersionsAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        Assert.True(listing.IsSuccess);
+        Assert.Equal(4, listing.Versions.Count);
 
-        if (provider == S3Provider.AmazonS3)
+        Assert.Equal(tempBucket, listing.BucketName);
+        Assert.False(listing.IsTruncated);
+
+        (string Key, string? VersionId, int Size, string? ETag, bool IsLatest)[] expected =
+        [
+            ("1", first.VersionId, 1, first.ETag, true),
+            ("2", second.VersionId, 2, second.ETag, false),
+            ("3", replacementThird.VersionId, 4, replacementThird.ETag, true),
+            ("3", originalThird.VersionId, 3, originalThird.ETag, false)
+        ];
+        DateTime now = DateTime.UtcNow;
+
+        for (int i = 0; i < expected.Length; i++)
         {
-            Assert.Single(listResp.DeleteMarkers);
-            Assert.Equal(1000, listResp.MaxKeys);
+            S3Version version = listing.Versions[i];
+            Assert.Equal(expected[i].Key, version.ObjectKey);
+            Assert.Equal(expected[i].VersionId, version.VersionId);
+            Assert.Equal(expected[i].Size, version.Size);
+            Assert.NotNull(version.Etag);
+            Assert.Equal(expected[i].ETag, version.Etag);
+            Assert.Equal(expected[i].IsLatest, version.IsLatest);
+            Assert.Equal(now, version.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(StorageClass.Standard, version.StorageClass);
+            Assert.NotNull(version.Owner?.Id);
+            Assert.Null(version.Owner?.Name);
         }
 
-        Assert.Equal(tempBucket, listResp.BucketName);
-        Assert.False(listResp.IsTruncated);
-
-        S3Version version1 = listResp.Versions[0];
-        Assert.Equal("1", version1.ObjectKey);
-        Assert.Equal(putResp1.VersionId, version1.VersionId);
-        Assert.True(version1.IsLatest);
-        Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, version1.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
-        Assert.Equal("\"0cc175b9c0f1b6a831c399e269772661\"", version1.Etag);
-        Assert.Equal(1, version1.Size);
-
-        if (provider != S3Provider.GoogleCloudStorage)
-            Assert.Equal(StorageClass.Standard, version1.StorageClass);
-
-        Assert.NotNull(version1.Owner?.Id);
-        Assert.Null(version1.Owner?.Name);
-
-        S3Version version2 = listResp.Versions[1];
-        Assert.Equal("2", version2.ObjectKey);
-        Assert.Equal(putResp2.VersionId, version2.VersionId);
-        Assert.False(version2.IsLatest);
-        Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, version2.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
-        Assert.Equal("\"4124bc0a9335c27f086f24ba207a4912\"", version2.Etag);
-        Assert.Equal(2, version2.Size);
-
-        if (provider != S3Provider.GoogleCloudStorage)
-            Assert.Equal(StorageClass.Standard, version2.StorageClass);
-
-        Assert.NotNull(version2.Owner?.Id);
-        Assert.Null(version2.Owner?.Name);
-
-        //This is the latest version of object 3 and should be 4 in size
-        S3Version version3 = listResp.Versions[2];
-        Assert.Equal("3", version3.ObjectKey);
-        Assert.Equal(putResp5.VersionId, version3.VersionId);
-        Assert.True(version3.IsLatest);
-        Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, version3.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
-        Assert.Equal("\"74b87337454200d4d33f80c4663dc5e5\"", version3.Etag);
-        Assert.Equal(4, version3.Size);
-
-        if (provider != S3Provider.GoogleCloudStorage)
-            Assert.Equal(StorageClass.Standard, version3.StorageClass);
-
-        Assert.NotNull(version3.Owner?.Id);
-        Assert.Null(version3.Owner?.Name);
-
-        //This was the previous version of object 3, so it should not be the latest and have 3 in size
-        S3Version version3A = listResp.Versions[3];
-        Assert.Equal("3", version3A.ObjectKey);
-        Assert.Equal(putResp3.VersionId, version3A.VersionId);
-        Assert.False(version3A.IsLatest);
-        Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, version3A.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
-        Assert.Equal("\"47bce5c74f589f4867dbd57e9ca9f808\"", version3A.Etag);
-        Assert.Equal(3, version3A.Size);
-
-        if (provider != S3Provider.GoogleCloudStorage)
-            Assert.Equal(StorageClass.Standard, version3A.StorageClass);
-
-        Assert.NotNull(version3A.Owner?.Id);
-        Assert.Null(version3A.Owner?.Name);
-
         //This is the latest version of object 2, since it was deleted
-        S3DeleteMarker delMarker = listResp.DeleteMarkers[0];
-        Assert.True(delMarker.IsLatest);
-        Assert.Equal("2", delMarker.ObjectKey);
-        Assert.Equal(putResp4.VersionId, delMarker.VersionId);
-        Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, delMarker.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
+        S3DeleteMarker deleteMarker = Assert.Single(listing.DeleteMarkers);
+        Assert.True(deleteMarker.IsLatest);
+        Assert.Equal("2", deleteMarker.ObjectKey);
+        Assert.Equal(deletedSecond.VersionId, deleteMarker.VersionId);
+        Assert.Equal(DateTimeOffset.UtcNow.UtcDateTime, deleteMarker.LastModified.UtcDateTime, TimeSpan.FromMinutes(1));
 
-        Assert.NotNull(delMarker.Owner.Id);
-        Assert.Null(delMarker.Owner.Name);
+        Assert.NotNull(deleteMarker.Owner.Id);
+        Assert.Null(deleteMarker.Owner.Name);
+    });
+
+    [Theory]
+    [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
+    public async Task ListObjectVersionsRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
+    {
+        Assert.Equal(200, (await client.PutBucketVersioningAsync(bucket, true, token: TestContext.Current.CancellationToken)).StatusCode);
+        PutObjectResponse put = await client.PutObjectStringAsync(bucket, "version", "content", token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, put.StatusCode);
+        ListObjectVersionsResponse response = await client.ListObjectVersionsAsync(bucket, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, response.StatusCode);
+        S3Version version = Assert.Single(response.Versions);
+        Assert.Equal("version", version.ObjectKey);
+        Assert.Equal(put.VersionId, version.VersionId);
+        Assert.Equal(put.ETag, version.Etag);
+        Assert.Equal(7, version.Size);
+        Assert.True(version.IsLatest);
+        Assert.Empty(response.DeleteMarkers);
     });
 
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task ListObjectsMoreThanMaxKeys(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
+    public async Task ListObjectVersionsMoreThanMaxKeys(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         const int concurrent = 10;
         const int count = 11;
 
-        await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), (val, token) => client.PutObjectAsync(tempBucket, val.ToString(NumberFormatInfo.InvariantInfo), null, null, token), concurrent, TestContext.Current.CancellationToken);
+        IEnumerable<PutObjectResponse> uploads = await ParallelHelper.ExecuteAsync(Enumerable.Range(0, count), (val, token) => client.PutObjectAsync(tempBucket, val.ToString(NumberFormatInfo.InvariantInfo), null, null, token), concurrent, TestContext.Current.CancellationToken);
+        Assert.All(uploads, response => Assert.Equal(200, response.StatusCode));
 
         ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(tempBucket, r => r.MaxKeys = count - 1, TestContext.Current.CancellationToken);
         Assert.True(listResp.IsSuccess);
@@ -143,6 +126,8 @@ public class ListObjectVersionsTests : TestBase
         Assert.True(listResp2.IsSuccess);
         Assert.False(listResp2.IsTruncated);
         Assert.Single(listResp2.Versions);
+        Assert.Equal(Enumerable.Range(0, count).Select(value => value.ToString(NumberFormatInfo.InvariantInfo)).Order(StringComparer.Ordinal),
+            listResp.Versions.Concat(listResp2.Versions).Select(item => item.ObjectKey).Order(StringComparer.Ordinal));
     });
 
     [Theory]
@@ -152,8 +137,8 @@ public class ListObjectVersionsTests : TestBase
         string tempObjName = "object-" + Guid.NewGuid();
         string tempObjName2 = "something-" + Guid.NewGuid();
 
-        await client.PutObjectAsync(tempBucket, tempObjName, null, token: TestContext.Current.CancellationToken);
-        await client.PutObjectAsync(tempBucket, tempObjName2, null, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, (await client.PutObjectAsync(tempBucket, tempObjName, null, token: TestContext.Current.CancellationToken)).StatusCode);
+        Assert.Equal(200, (await client.PutObjectAsync(tempBucket, tempObjName2, null, token: TestContext.Current.CancellationToken)).StatusCode);
 
         ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.Delimiter = "-", TestContext.Current.CancellationToken);
         Assert.True(resp.IsSuccess);
@@ -170,7 +155,7 @@ public class ListObjectVersionsTests : TestBase
     {
         const string tempObjName = "!#/()";
 
-        await client.PutObjectAsync(tempBucket, tempObjName, null, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, (await client.PutObjectAsync(tempBucket, tempObjName, null, token: TestContext.Current.CancellationToken)).StatusCode);
 
         ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.EncodingType = EncodingType.Url, TestContext.Current.CancellationToken);
         Assert.True(resp.IsSuccess);
@@ -184,13 +169,13 @@ public class ListObjectVersionsTests : TestBase
 
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task ListObjectsWithPrefix(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
+    public async Task ListObjectVersionsWithPrefix(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         string tempObjName = "object-" + Guid.NewGuid();
         string tempObjName2 = "something-" + Guid.NewGuid();
 
-        await client.PutObjectAsync(tempBucket, tempObjName, null, token: TestContext.Current.CancellationToken);
-        await client.PutObjectAsync(tempBucket, tempObjName2, null, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, (await client.PutObjectAsync(tempBucket, tempObjName, null, token: TestContext.Current.CancellationToken)).StatusCode);
+        Assert.Equal(200, (await client.PutObjectAsync(tempBucket, tempObjName2, null, token: TestContext.Current.CancellationToken)).StatusCode);
 
         ListObjectVersionsResponse resp = await client.ListObjectVersionsAsync(tempBucket, r => r.Prefix = "object", TestContext.Current.CancellationToken);
         Assert.True(resp.IsSuccess);
@@ -200,30 +185,5 @@ public class ListObjectVersionsTests : TestBase
         S3Version obj = Assert.Single(resp.Versions);
 
         Assert.Equal(tempObjName, obj.ObjectKey);
-    });
-
-    [SuppressMessage("Security", "CA5350", Justification = "S3 requires this legacy hash for its wire-level checksum; it is not used for password storage or a new signature scheme.")]
-    [Theory]
-    [MultipleProviders(S3Provider.AmazonS3)]
-    public async Task ListObjectsChecksum(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
-    {
-        string tempObjName = "object-" + Guid.NewGuid();
-        byte[] data = "hello world"u8.ToArray();
-        byte[] checksum = SHA1.HashData(data);
-
-        PutObjectResponse putResp = await client.PutObjectDataAsync(tempBucket, tempObjName, data, r =>
-        {
-            r.ChecksumAlgorithm = ChecksumAlgorithm.Sha1;
-            r.Checksum = checksum;
-        }, TestContext.Current.CancellationToken);
-
-        Assert.Equal(200, putResp.StatusCode);
-
-        ListObjectVersionsResponse listResp = await client.ListObjectVersionsAsync(tempBucket, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, listResp.StatusCode);
-        S3Version obj = Assert.Single(listResp.Versions);
-
-        Assert.Contains(ChecksumAlgorithm.Sha1, obj.ChecksumAlgorithms);
-        Assert.Equal(ChecksumType.FullObject, obj.ChecksumType);
     });
 }

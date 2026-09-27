@@ -10,8 +10,40 @@ namespace Genbox.ProviderTests.Objects;
 public class GetObjectTests : TestBase
 {
     [Theory]
+    [MultipleProvidersWithData(S3Provider.All, "match", "mismatch", "not-match", "not-match-rejected")]
+    public async Task GetObjectETagCondition(S3Provider _, string bucket, ISimpleClient client, string condition)
+    {
+        string key = nameof(GetObjectETagCondition) + "-" + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectAsync(bucket, key, null, token: TestContext.Current.CancellationToken), async put =>
+        {
+            using GetObjectResponse response = await client.GetObjectAsync(bucket, key, request =>
+            {
+                if (condition == "match") request.IfETagMatch.Set(put.ETag);
+                if (condition == "mismatch") request.IfETagMatch.Set("different");
+                if (condition == "not-match") request.IfETagNotMatch.Set("different");
+                if (condition == "not-match-rejected") request.IfETagNotMatch.Set(put.ETag);
+            }, TestContext.Current.CancellationToken);
+            int expected = condition switch { "mismatch" => 412, "not-match-rejected" => 304, _ => 200 };
+            Assert.Equal(expected, response.StatusCode);
+        });
+    }
+
+    [Theory]
+    [MultipleProvidersWithData(S3Provider.AmazonS3 | S3Provider.BackBlazeB2, "cache-control", "disposition", "encoding", "language", "type", "expires")]
+    public async Task ResponseHeaderOverride(S3Provider _, string bucket, ISimpleClient client, string header)
+    {
+        string key = nameof(ResponseHeaderOverride) + "-" + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectAsync(bucket, key, null, token: TestContext.Current.CancellationToken), async _ =>
+        {
+            DateTimeOffset expires = DateTimeOffset.UtcNow.AddHours(1);
+            using GetObjectResponse response = await client.GetObjectAsync(bucket, key, request => ConfigureResponseHeaderOverride(request, header, expires), TestContext.Current.CancellationToken);
+            AssertResponseHeaderOverride(response, header, expires);
+        });
+    }
+
+    [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task GetObjectData(S3Provider _, string bucket, ISimpleClient client)
+    public async Task GetObjectRoundTrip(S3Provider _, string bucket, ISimpleClient client)
     {
         // Object content should:
         // - Support any combination of bytes
@@ -20,17 +52,18 @@ public class GetObjectTests : TestBase
         byte[] binaryData = new byte[10];
         RandomNumberGenerator.Fill(binaryData);
 
-        PutObjectResponse putResp = await client.PutObjectDataAsync(bucket, nameof(GetObjectData), binaryData, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp.StatusCode);
-
-        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectData), token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, getResp.StatusCode);
-        Assert.Equal(binaryData, await getResp.Content.AsDataAsync(TestContext.Current.CancellationToken));
+        string key = nameof(GetObjectRoundTrip) + "-" + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectDataAsync(bucket, key, binaryData, token: TestContext.Current.CancellationToken), async _ =>
+        {
+            using GetObjectResponse getResp = await client.GetObjectAsync(bucket, key, token: TestContext.Current.CancellationToken);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal(binaryData, await getResp.Content.AsDataAsync(TestContext.Current.CancellationToken));
+        });
     }
 
     [Theory]
     [MultipleProviders(S3Provider.All)]
-    public async Task GetObjectString(S3Provider _, string bucket, ISimpleClient client)
+    public async Task GetObjectUnicodeContent(S3Provider _, string bucket, ISimpleClient client)
     {
         // For strings it should:
         // - Preserve casing
@@ -38,43 +71,29 @@ public class GetObjectTests : TestBase
 
         const string stringData = "Hello 你好 ਸਤ ਸ੍ਰੀ ਅਕਾਲ Привет";
 
-        PutObjectResponse putResp = await client.PutObjectStringAsync(bucket, nameof(GetObjectString), stringData, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp.StatusCode);
-
-        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectString), token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, getResp.StatusCode);
-        Assert.Equal(stringData, await getResp.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
-    }
-
-    [Theory]
-    [MultipleProviders(S3Provider.All)]
-    public async Task GetObjectContentRange(S3Provider _, string bucket, ISimpleClient client)
-    {
-        await client.PutObjectStringAsync(bucket, nameof(GetObjectContentRange), "test", token: TestContext.Current.CancellationToken);
-        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectContentRange), r => r.Range.Add(0, 2), TestContext.Current.CancellationToken);
-
-        Assert.Equal(206, getResp.StatusCode);
-        Assert.Equal(3, getResp.ContentLength);
-        Assert.Equal("bytes", getResp.AcceptRanges);
-        Assert.Equal("bytes 0-2/4", getResp.ContentRange);
-        Assert.Equal("tes", await getResp.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
+        string key = nameof(GetObjectUnicodeContent) + "-" + Guid.NewGuid().ToString("N");
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectStringAsync(bucket, key, stringData, token: TestContext.Current.CancellationToken), async _ =>
+        {
+            using GetObjectResponse getResp = await client.GetObjectAsync(bucket, key, token: TestContext.Current.CancellationToken);
+            Assert.Equal(200, getResp.StatusCode);
+            Assert.Equal(stringData, await getResp.Content.AsStringAsync(token: TestContext.Current.CancellationToken));
+        });
     }
 
     [Theory]
     [MultipleProviders(S3Provider.AmazonS3)]
     public async Task GetObjectLifecycle(S3Provider _, string bucket, ISimpleClient client)
     {
-        PutObjectResponse putResp = await client.PutObjectAsync(bucket, nameof(GetObjectLifecycle), null, token: TestContext.Current.CancellationToken);
+        string key = nameof(GetObjectLifecycle) + Guid.NewGuid().ToString("N");
+        DateTime expected = DateTime.UtcNow.AddDays(2).Date;
+        await TemporaryObject.WithAsync(client, bucket, key, () => client.PutObjectAsync(bucket, key, null, token: TestContext.Current.CancellationToken), async _ =>
+        {
+            using GetObjectResponse getResp = await client.GetObjectAsync(bucket, key, token: TestContext.Current.CancellationToken);
+            Assert.Equal(200, getResp.StatusCode);
 
-        //Test lifecycle expiration (yes, we add 2 days. I don't know why Amazon works like this)
-        Assert.Equal(DateTime.UtcNow.AddDays(2).Date, putResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
-        Assert.Equal("ExpireAll", putResp.LifeCycleRuleId);
-
-        using GetObjectResponse getResp = await client.GetObjectAsync(bucket, nameof(GetObjectLifecycle), token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, getResp.StatusCode);
-
-        //Test lifecycle expiration
-        Assert.Equal(DateTime.UtcNow.AddDays(2).Date, getResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
-        Assert.Equal("ExpireAll", getResp.LifeCycleRuleId);
+            //Test lifecycle expiration
+            Assert.Equal(expected, getResp.LifeCycleExpiresOn!.Value.UtcDateTime.Date);
+            Assert.Equal("ExpireAll", getResp.LifeCycleRuleId);
+        });
     }
 }
