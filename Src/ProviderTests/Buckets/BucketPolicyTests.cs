@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using Genbox.ProviderTests.Code;
 using Genbox.SimpleS3.Core.Abstracts;
 using Genbox.SimpleS3.Core.Network.Responses.Buckets;
@@ -8,8 +9,8 @@ namespace Genbox.ProviderTests.Buckets;
 public class BucketPolicyTests : TestBase
 {
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3)] //Not supported on other cloud providers
-    public async Task PutBucketPolicyRequest(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
+    [MultipleProviders(S3Provider.AmazonS3)]
+    public async Task PutBucketPolicyRoundTrip(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         string policy = $$"""
                           {
@@ -36,17 +37,18 @@ public class BucketPolicyTests : TestBase
         }, TestContext.Current.CancellationToken);
         Assert.True(resp1.IsSuccess);
 
-        PutBucketPolicyResponse getResp = await client.PutBucketPolicyAsync(tempBucket, policy, token: TestContext.Current.CancellationToken);
-        Assert.Equal(204, getResp.StatusCode);
+        PutBucketPolicyResponse putResp = await client.PutBucketPolicyAsync(tempBucket, policy, token: TestContext.Current.CancellationToken);
+        Assert.Equal(204, putResp.StatusCode);
 
-        GetBucketPolicyResponse putResp = await client.GetBucketPolicyAsync(tempBucket, token: TestContext.Current.CancellationToken);
-        Assert.Equal(200, putResp.StatusCode);
-        Assert.NotEmpty(putResp.Policy);
+        GetBucketPolicyResponse getResp = await client.GetBucketPolicyAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        Assert.Equal(200, getResp.StatusCode);
+        Assert.NotNull(getResp.Policy);
+        Assert.True(JsonNode.DeepEquals(JsonNode.Parse(policy), JsonNode.Parse(getResp.Policy)));
 
-        DeleteBucketPolicyResponse getResp2 = await client.DeleteBucketPolicyAsync(tempBucket, token: TestContext.Current.CancellationToken);
-        Assert.Equal(204, getResp2.StatusCode);
+        DeleteBucketPolicyResponse deleteResp = await client.DeleteBucketPolicyAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        Assert.Equal(204, deleteResp.StatusCode);
 
-        GetBucketPolicyResponse putResp2 = await client.GetBucketPolicyAsync(tempBucket, token: TestContext.Current.CancellationToken);
-        Assert.Equal(404, putResp2.StatusCode);
+        GetBucketPolicyResponse deleted = await client.GetBucketPolicyAsync(tempBucket, token: TestContext.Current.CancellationToken);
+        Assert.Equal(404, deleted.StatusCode);
     });
 }

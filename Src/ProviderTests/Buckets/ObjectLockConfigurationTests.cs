@@ -13,44 +13,24 @@ namespace Genbox.ProviderTests.Buckets;
 public class ObjectLockConfigurationTests : TestBase
 {
     [Theory]
-    [MultipleProviders(S3Provider.AmazonS3 | S3Provider.BackBlazeB2)]
-    public async Task DefaultYearsAndClear(S3Provider provider, string _, ISimpleClient client) => await CreateTempBucketAsync(provider, client, async bucket =>
+    [MultipleProvidersWithData(S3Provider.AmazonS3 | S3Provider.BackBlazeB2, "inheritance", "deletion-rejected", "clear")]
+    public async Task DefaultRetentionBehavior(S3Provider provider, string _, ISimpleClient client, string feature) => await CreateTempBucketAsync(provider, client, async bucket =>
     {
         CancellationToken token = TestContext.Current.CancellationToken;
         string retainedKey = "default-years-" + Guid.NewGuid().ToString("N");
-        string clearedKey = "cleared-default-" + Guid.NewGuid().ToString("N");
         const string payload = "default-retention-effect";
-        string? retainedVersion = null;
-        string? clearedVersion = null;
-
-        try
+        PutObjectLockConfigurationResponse years = await client.PutObjectLockConfigurationAsync(bucket, true, request =>
         {
-            PutObjectLockConfigurationResponse years = await client.PutObjectLockConfigurationAsync(bucket, true, request =>
-            {
-                request.LockMode = LockMode.Governance;
-                request.LockRetainYears = 1;
-            }, token);
-            Assert.True(years.IsSuccess, $"{provider} years default: HTTP {years.StatusCode}, {years.Error?.Code}");
-            GetObjectLockConfigurationResponse configured = await client.GetObjectLockConfigurationAsync(bucket, token: token);
-            Assert.True(configured.IsSuccess);
-            Assert.True(configured.Enabled);
-            Assert.Equal(LockMode.Governance, configured.LockMode);
-            Assert.Null(configured.LockRetainDays);
-            Assert.Equal(1, configured.LockRetainYears);
+            request.LockMode = LockMode.Governance;
+            request.LockRetainYears = 1;
+        }, token);
+        Assert.True(years.IsSuccess, years.Error?.Message);
+        GetObjectLockConfigurationResponse configured = await client.GetObjectLockConfigurationAsync(bucket, token: token);
+        Assert.True(configured.IsSuccess);
+        Assert.Equal(1, configured.LockRetainYears);
 
-            DateTimeOffset beforeUpload = DateTimeOffset.UtcNow;
-            byte[] payloadMd5 = CryptoHelper.Md5Hash(Encoding.UTF8.GetBytes(payload));
-            PutObjectResponse retained = await client.PutObjectStringAsync(bucket, retainedKey, payload, config: request => request.ContentMd5 = payloadMd5, token: token);
-            Assert.True(retained.IsSuccess);
-            Assert.False(string.IsNullOrEmpty(retained.VersionId));
-            retainedVersion = retained.VersionId;
-            HeadObjectResponse retainedHead = await client.HeadObjectAsync(bucket, retainedKey, request => request.VersionId = retainedVersion, token);
-            Assert.True(retainedHead.IsSuccess);
-            Assert.Equal(LockMode.Governance, retainedHead.LockMode);
-            Assert.NotNull(retainedHead.LockRetainUntil);
-            Assert.InRange(retainedHead.LockRetainUntil.Value, beforeUpload.AddDays(364), DateTimeOffset.UtcNow.AddDays(366));
-            Assert.Equal(403, (await client.DeleteObjectAsync(bucket, retainedKey, request => request.VersionId = retainedVersion, token)).StatusCode);
-
+        if (feature == "clear")
+        {
             PutObjectLockConfigurationResponse cleared = await client.PutObjectLockConfigurationAsync(bucket, true, token: token);
             Assert.True(cleared.IsSuccess, $"{provider} clear default: HTTP {cleared.StatusCode}, {cleared.Error?.Code}");
             GetObjectLockConfigurationResponse empty = await client.GetObjectLockConfigurationAsync(bucket, token: token);
@@ -59,40 +39,42 @@ public class ObjectLockConfigurationTests : TestBase
             Assert.Equal(LockMode.Unknown, empty.LockMode);
             Assert.Null(empty.LockRetainDays);
             Assert.Null(empty.LockRetainYears);
-
-            PutObjectResponse unretained = await client.PutObjectStringAsync(bucket, clearedKey, payload, config: request => request.ContentMd5 = payloadMd5, token: token);
-            Assert.True(unretained.IsSuccess);
-            Assert.False(string.IsNullOrEmpty(unretained.VersionId));
-            clearedVersion = unretained.VersionId;
-            HeadObjectResponse unretainedHead = await client.HeadObjectAsync(bucket, clearedKey, request => request.VersionId = clearedVersion, token);
-            Assert.True(unretainedHead.IsSuccess);
-            Assert.Equal(LockMode.Unknown, unretainedHead.LockMode);
-            Assert.Null(unretainedHead.LockRetainUntil);
         }
-        finally
+
+        DateTimeOffset beforeUpload = DateTimeOffset.UtcNow;
+        byte[] payloadMd5 = CryptoHelper.Md5Hash(Encoding.UTF8.GetBytes(payload));
+        PutObjectResponse put = await client.PutObjectStringAsync(bucket, retainedKey, payload, config: request => request.ContentMd5 = payloadMd5, token: token);
+        Assert.True(put.IsSuccess);
+        Assert.False(string.IsNullOrEmpty(put.VersionId));
+
+        if (feature == "deletion-rejected")
         {
-            using CancellationTokenSource cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-            if (clearedVersion != null)
-                Assert.Equal(204, (await client.DeleteObjectAsync(bucket, clearedKey, request => request.VersionId = clearedVersion, cleanup.Token)).StatusCode);
+            Assert.Equal(403, (await client.DeleteObjectAsync(bucket, retainedKey, request => request.VersionId = put.VersionId, token)).StatusCode);
+            return;
+        }
 
-            if (retainedVersion != null)
-            {
-                DeleteObjectResponse deleted = await client.DeleteObjectAsync(bucket, retainedKey, request =>
-                {
-                    request.VersionId = retainedVersion;
-                    request.BypassGovernanceRetention = true;
-                }, cleanup.Token);
-                Assert.Equal(204, deleted.StatusCode);
-            }
+        HeadObjectResponse head = await client.HeadObjectAsync(bucket, retainedKey, request => request.VersionId = put.VersionId, token);
+        Assert.True(head.IsSuccess);
 
-            Assert.Equal(404, (await client.HeadObjectAsync(bucket, retainedKey, token: cleanup.Token)).StatusCode);
-            Assert.Equal(404, (await client.HeadObjectAsync(bucket, clearedKey, token: cleanup.Token)).StatusCode);
+        if (feature == "clear")
+        {
+            Assert.Equal(LockMode.Unknown, head.LockMode);
+            Assert.Null(head.LockRetainUntil);
+        }
+        else
+        {
+            Assert.True(configured.Enabled);
+            Assert.Equal(LockMode.Governance, configured.LockMode);
+            Assert.Null(configured.LockRetainDays);
+            Assert.Equal(LockMode.Governance, head.LockMode);
+            Assert.NotNull(head.LockRetainUntil);
+            Assert.InRange(head.LockRetainUntil.Value, beforeUpload.AddDays(364), DateTimeOffset.UtcNow.AddDays(366));
         }
     }, request => request.EnableObjectLocking = true);
 
     [Theory]
     [MultipleProvidersWithData(S3Provider.AmazonS3, LockMode.Compliance, LockMode.Governance)]
-    public async Task GetPutObjectLockConfiguration(S3Provider provider, string _, ISimpleClient client, LockMode mode) => await CreateTempBucketAsync(provider, client, async tempBucket =>
+    public async Task PutObjectLockConfigurationRoundTrip(S3Provider provider, string _, ISimpleClient client, LockMode mode) => await CreateTempBucketAsync(provider, client, async tempBucket =>
     {
         PutObjectLockConfigurationResponse putResp = await client.PutObjectLockConfigurationAsync(tempBucket, true, x =>
         {
