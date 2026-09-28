@@ -57,6 +57,9 @@ internal sealed partial class DefaultSignedRequestHandler : ISignedRequestHandle
             request.Timestamp = DateTimeOffset.UtcNow;
             request.RequestId = Guid.NewGuid();
 
+            if (request is BaseRequest reusableRequest)
+                reusableRequest.ClearTransportState();
+
 #pragma warning disable IDISP004 // MarshalRequest may return caller-owned request content; signing must not dispose it.
             _ = _marshaller.MarshalRequest(_config, request);
 #pragma warning restore IDISP004
