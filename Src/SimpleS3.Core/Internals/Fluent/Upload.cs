@@ -209,6 +209,9 @@ internal sealed class Upload : IUpload
         req.ContentEncoding = _request.ContentEncoding;
         req.SseAlgorithm = _request.SseAlgorithm;
         req.SseKmsKeyId = _request.SseKmsKeyId;
+        req.SseContext = _request.SseContext;
+        req.BucketKeyEnabled = _request.BucketKeyEnabled;
+        req.WebsiteRedirectLocation = _request.WebsiteRedirectLocation;
         req.SseCustomerAlgorithm = _request.SseCustomerAlgorithm;
         req.SseCustomerKey = _request.SseCustomerKey;
         req.SseCustomerKeyMd5 = _request.SseCustomerKeyMd5;
