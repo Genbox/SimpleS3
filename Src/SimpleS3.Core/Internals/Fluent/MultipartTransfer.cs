@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
@@ -82,14 +83,13 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             uploadId = initResp.UploadId;
             token.ThrowIfCancellationRequested();
 
-            IAsyncEnumerable<ArraySegment<byte>> chunks = ReadChunksAsync(data, partSize, token);
+            IAsyncEnumerable<(int PartNumber, ArraySegment<byte> Bytes)> chunks = ReadChunksAsync(data, partSize, token);
 
-            int partNumber = 0;
             object onPartResponseLock = new object();
 
-            IEnumerable<UploadPartResponse> responses = await ParallelHelper.ExecuteAsync(chunks, async (bytes, innerToken) =>
+            IEnumerable<UploadPartResponse> responses = await ParallelHelper.ExecuteAsync(chunks, async (chunk, innerToken) =>
             {
-                int currentPartNumber = Interlocked.Increment(ref partNumber);
+                (int currentPartNumber, ArraySegment<byte> bytes) = chunk;
                 byte[]? contentMd5 = req.CalculateContentMd5 ? CryptoHelper.Md5Hash(bytes.Array!, bytes.Offset, bytes.Count) : null;
 
                 using MemoryStream ms = new MemoryStream(bytes.Array!, 0, bytes.Count);
@@ -140,14 +140,75 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         }
     }
 
+    [SuppressMessage("Usage", "S4456", Justification = "Configuration is evaluated per enumeration so sensitive settings can be cleared in the iterator's finally block.")]
     private async IAsyncEnumerable<GetObjectResponse> MultipartDownloadCoreAsync(string bucketName, string objectKey, Stream output, int bufferSize, int numParallelParts, Action<GetObjectRequest>? config, [EnumeratorCancellation]CancellationToken token)
     {
+        GetObjectRequest settings = new GetObjectRequest(bucketName, objectKey);
+
+        try
+        {
+            config?.Invoke(settings);
+            if (settings.Range.HasData() || settings.PartNumber != null)
+                throw new ArgumentException("Multipart downloads control Range and PartNumber.", nameof(config));
+
+            await foreach (GetObjectResponse response in DownloadConfiguredAsync(bucketName, objectKey, output, bufferSize, numParallelParts, settings, config, token))
+                yield return response;
+        }
+        finally
+        {
+            settings.ClearSensitiveMaterial();
+        }
+    }
+
+    [SuppressMessage("Usage", "S4456", Justification = "The seek requirement depends on metadata obtained asynchronously during enumeration.")]
+    private async IAsyncEnumerable<GetObjectResponse> DownloadConfiguredAsync(string bucketName, string objectKey, Stream output, int bufferSize, int numParallelParts, GetObjectRequest settings, Action<GetObjectRequest>? config, [EnumeratorCancellation]CancellationToken token)
+    {
+        long initialPosition = output.CanSeek ? output.Position : 0;
+
         //Use a HEAD request on the object key to determine if the file was originally uploaded with multipart
-        HeadObjectResponse headResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req => req.PartNumber = 1, token);
+        HeadObjectResponse headResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req => ConfigureHead(req, 1), token);
+        if (!headResp.IsSuccess)
+            throw new S3RequestException(headResp);
+
+        string? versionId = settings.VersionId ?? headResp.VersionId;
+        string? etag = string.IsNullOrEmpty(versionId) || versionId == "null" ? headResp.ETag : null;
+
+        void PinObject(HeadObjectRequest request)
+        {
+            request.VersionId = versionId;
+            if (!string.IsNullOrEmpty(etag))
+                request.IfETagMatch.Set(etag);
+        }
+
+        void ConfigureGet(GetObjectRequest request)
+        {
+            int? partNumber = request.PartNumber;
+            config?.Invoke(request);
+            PinObject(request);
+            request.PartNumber = partNumber;
+        }
+
+        void ConfigureHead(HeadObjectRequest request, int partNumber)
+        {
+            request.PartNumber = partNumber;
+            request.VersionId = settings.VersionId;
+            request.ExpectedBucketOwner = settings.ExpectedBucketOwner;
+            request.RequestPayer = settings.RequestPayer;
+            request.SseCustomerAlgorithm = settings.SseCustomerAlgorithm;
+            request.SseCustomerKey = settings.SseCustomerKey;
+            request.SseCustomerKeyMd5 = settings.SseCustomerKeyMd5;
+            request.EnableChecksum = settings.EnableChecksum;
+            request.IfModifiedSince = settings.IfModifiedSince;
+            request.IfUnmodifiedSince = settings.IfUnmodifiedSince;
+            if (settings.IfETagMatch.HasData())
+                request.IfETagMatch.Set(settings.IfETagMatch.Build());
+            if (settings.IfETagNotMatch.HasData())
+                request.IfETagNotMatch.Set(settings.IfETagNotMatch.Build());
+        }
 
         if (headResp.NumberOfParts == null)
         {
-            GetObjectResponse getResp = await objectClient.GetObjectAsync(bucketName, objectKey, config, token);
+            GetObjectResponse getResp = await objectClient.GetObjectAsync(bucketName, objectKey, ConfigureGet, token);
 
             if (!getResp.IsSuccess)
                 throw new S3RequestException(getResp);
@@ -168,14 +229,24 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         }
         else
         {
+            if (!output.CanSeek)
+                throw new ArgumentException("Multipart downloads require a seekable output stream.", nameof(output));
+
             int parts = headResp.NumberOfParts.Value;
             long[] partOffsets = new long[parts];
-            long nextOffset = headResp.ContentLength;
+            partOffsets[0] = initialPosition;
+            long nextOffset = initialPosition + headResp.ContentLength;
 
             for (int i = 2; i <= parts; i++)
             {
                 partOffsets[i - 1] = nextOffset;
-                HeadObjectResponse partHeadResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req => req.PartNumber = i, token);
+                HeadObjectResponse partHeadResp = await objectClient.HeadObjectAsync(bucketName, objectKey, req =>
+                {
+                    ConfigureHead(req, i);
+                    PinObject(req);
+                }, token);
+                if (!partHeadResp.IsSuccess)
+                    throw new S3RequestException(partHeadResp);
                 nextOffset += partHeadResp.ContentLength;
             }
 
@@ -201,7 +272,7 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
 
                     // The finally block awaits every task before disposing these captured synchronization objects.
 #pragma warning disable CA2025
-                    tasks.Add(DownloadPartAsync(bucketName, objectKey, output, partOffsets[i - 1], i, bufferSize, semaphore, writeLock, config, cancellation, ex => Interlocked.CompareExchange(ref firstFailure, ExceptionDispatchInfo.Capture(ex), null)));
+                    tasks.Add(DownloadPartAsync(bucketName, objectKey, output, partOffsets[i - 1], i, bufferSize, semaphore, writeLock, ConfigureGet, cancellation, ex => Interlocked.CompareExchange(ref firstFailure, ExceptionDispatchInfo.Capture(ex), null)));
 #pragma warning restore CA2025
                 }
 
@@ -261,6 +332,9 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             using (getResp.Content)
 #pragma warning restore IDISP007
             {
+                if (!getResp.IsSuccess)
+                    throw new S3RequestException(getResp);
+
                 byte[] buffer = new byte[bufferSize];
 
                 while (true)
@@ -303,8 +377,10 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
         }
     }
 
-    private static async IAsyncEnumerable<ArraySegment<byte>> ReadChunksAsync(Stream data, int chunkSize, [EnumeratorCancellation]CancellationToken token = default)
+    private static async IAsyncEnumerable<(int PartNumber, ArraySegment<byte> Bytes)> ReadChunksAsync(Stream data, int chunkSize, [EnumeratorCancellation]CancellationToken token = default)
     {
+        int partNumber = 0;
+
         while (true)
         {
             byte[] chunkData = new byte[chunkSize];
@@ -313,7 +389,7 @@ internal class MultipartTransfer(IObjectClient objectClient, IMultipartClient mu
             if (read == 0)
                 break;
 
-            yield return new ArraySegment<byte>(chunkData, 0, read);
+            yield return (++partNumber, new ArraySegment<byte>(chunkData, 0, read));
         }
     }
 }

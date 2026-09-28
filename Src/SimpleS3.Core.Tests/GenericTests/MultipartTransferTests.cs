@@ -1,8 +1,10 @@
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Genbox.SimpleS3.Core.Abstracts.Clients;
 using Genbox.SimpleS3.Core.Abstracts.Operations;
 using Genbox.SimpleS3.Core.Abstracts.Wrappers;
+using Genbox.SimpleS3.Core.Builders;
 using Genbox.SimpleS3.Core.Enums;
 using Genbox.SimpleS3.Core.Internals.Fluent;
 using Genbox.SimpleS3.Core.Network.Requests.Multipart;
@@ -15,6 +17,41 @@ namespace Genbox.SimpleS3.Core.Tests.GenericTests;
 
 public class MultipartTransferTests
 {
+    [Fact]
+    public async Task MultipartUploadNumbersChunksInSourceOrder()
+    {
+        FakeMultipartApi multipartApi = new FakeMultipartApi();
+        MultipartTransfer transfer = new MultipartTransfer(null!, multipartApi, multipartApi, []);
+        byte[] bytes = Enumerable.Range(1, 100).Select(x => (byte)x).ToArray();
+        await using NonSeekableDataStream data = new NonSeekableDataStream(bytes);
+
+        await transfer.MultipartUploadAsync("bucket", "object", data, 1, 8, token: TestContext.Current.CancellationToken);
+
+        Assert.Equal(bytes, multipartApi.Parts.OrderBy(x => x.Key).SelectMany(x => x.Value).ToArray());
+        Assert.Equal(Enumerable.Range(1, bytes.Length), multipartApi.Parts.Keys.Order());
+    }
+
+    [Fact]
+    public async Task FluentMultipartUploadPreservesEncryptionAndRedirectOptions()
+    {
+        FakeMultipartApi multipartApi = new FakeMultipartApi();
+        MultipartTransfer transfer = new MultipartTransfer(null!, multipartApi, multipartApi, []);
+        Upload upload = new Upload(null!, transfer, "bucket", "object");
+        KmsContextBuilder context = new KmsContextBuilder();
+        context.AddEntry("purpose", "test");
+        upload.WithEncryptionKms("kms-key", context, true);
+        upload.WithWebsiteRedirectLocation("/target");
+        await using MemoryStream data = new MemoryStream([1]);
+
+        await upload.UploadMultipartAsync(data, TestContext.Current.CancellationToken);
+
+        CreateMultipartUploadRequest request = Assert.IsType<CreateMultipartUploadRequest>(multipartApi.CreateRequest);
+        Assert.Equal("kms-key", request.SseKmsKeyId);
+        Assert.Equal(context.Build(), request.SseContext.Build());
+        Assert.True(request.BucketKeyEnabled);
+        Assert.Equal("/target", request.WebsiteRedirectLocation);
+    }
+
     [Fact]
     public async Task MultipartDownloadAsyncStopsSchedulingPartsWhenPartFails()
     {
@@ -152,12 +189,17 @@ public class MultipartTransferTests
 
     private sealed class FakeMultipartApi : IMultipartClient, IMultipartOperations
     {
+        public ConcurrentDictionary<int, byte[]> Parts { get; } = new ConcurrentDictionary<int, byte[]>();
+        public CreateMultipartUploadRequest? CreateRequest { get; private set; }
         public IList<IRequestWrapper> RequestWrappers { get; } = Array.Empty<IRequestWrapper>();
         public IList<IResponseWrapper> ResponseWrappers { get; } = Array.Empty<IResponseWrapper>();
         public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(string bucketName, string objectKey, Action<CreateMultipartUploadRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
 
         public async Task<UploadPartResponse> UploadPartAsync(string bucketName, string objectKey, int partNumber, string uploadId, Stream content, Action<UploadPartRequest>? config = null, CancellationToken token = default)
         {
+            await using MemoryStream copy = new MemoryStream();
+            await content.CopyToAsync(copy, token);
+            Parts[partNumber] = copy.ToArray();
             await Task.Delay(10, token);
 
             return new UploadPartResponse
@@ -183,11 +225,15 @@ public class MultipartTransferTests
 
         public Task<ListMultipartUploadsResponse> ListMultipartUploadsAsync(string bucketName, Action<ListMultipartUploadsRequest>? config = null, CancellationToken token = default) => throw new NotSupportedException();
 
-        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(CreateMultipartUploadRequest request, CancellationToken token = default) => Task.FromResult(new CreateMultipartUploadResponse
+        public Task<CreateMultipartUploadResponse> CreateMultipartUploadAsync(CreateMultipartUploadRequest request, CancellationToken token = default)
         {
-            IsSuccess = true,
-            UploadId = "upload-id"
-        });
+            CreateRequest = request;
+            return Task.FromResult(new CreateMultipartUploadResponse
+            {
+                IsSuccess = true,
+                UploadId = "upload-id"
+            });
+        }
 
         public Task<UploadPartResponse> UploadPartAsync(UploadPartRequest request, CancellationToken token = default) => throw new NotSupportedException();
         public Task<UploadPartCopyResponse> UploadPartCopyAsync(UploadPartCopyRequest request, CancellationToken token = default) => throw new NotSupportedException();
